@@ -1,22 +1,12 @@
-//let arr = [1,2,3,4,5,6]; 
+var Parser = require('expr-eval').Parser;
 
-let obj = {
-    a:1, 
-    b:2, 
-}
-//arr.push(7);
+var parser = new Parser();
+var expr = parser.parse('2 * x + 1');
 
-var arr = [];
-arr[0] = "Jani";
-arr[1] = "Hege";
-arr[2] = "Stale";
-arr[3] = "Kai Jim";
-arr[4] = "Borge";
+//console.log(expr.evaluate({ x: 3 })); // 7
 
-console.log(arr);
-arr.splice(2, 0, "Lene");
-let names = arr.filter(function(e){
-    return e.length > 4; 
-})
+// or
+//Parser.evaluate('6 * x', { x: 7 }) // 42
 
-console.log(names);
+let returnlog = parser.parse("lg x"); 
+console.log(returnlog.evaluate({x:1000}))
