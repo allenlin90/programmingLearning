@@ -1,12 +1,12 @@
-arr = [1,2,3,4,5,6] 
+import pprint
+message = '''It was a bright cold day in Apirl, 
+and the clocks were striking thirteen''' 
+count = {}
+for character in message.upper(): 
+    count.setdefault(character, 0)
+    count[character] += 1
+textInOrder = pprint.pformat(count)
+#print(type(textInOrder))
 
-array = list("hello")
-
-arr.insert(len(arr),7)
-
-arr.remove(5)
-
-spam = ["a", "b", "A", "B"] 
-spam.sort()
-print(spam)
-spam.sort(reverse=True, key=str.lower) 
+text = "SpamSpamSpamSpamEggsBoilerHeadSpamSpamSpamSpam" 
+print(text.strip("mpSa123"))

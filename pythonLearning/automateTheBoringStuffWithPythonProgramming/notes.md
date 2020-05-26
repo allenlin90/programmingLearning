@@ -34,7 +34,7 @@
 **Scope**
 1. Variables in different scopes can be called in different conditions. **Global** variables are created when the program starts. **Local** variables can only be called in the same code block. If variables are in different functions, they can't affect to each, while only the **Global** variable can be modified by the expression in the function. 
 1. Unlike in JavaScript, if the global variable is not reassigned in the global scope, the variable will remain the same (in JavaScript, if a global variable is modified by a function call, the value will change after the function is called.). 
-1. We can use keyword `global` before the variable in the function body. Therefore, after the function which manipulates the global variable is called, the value of global variable is changed. (Note that the `global` variable should be declared in the funciton body with `global variable` before it can be manipulated) 
+1. We can use keyword `global` before the variable in the function body. Therefore, after the function which manipulates the global variable is called, the value of global variable is changed. (Note that the `global` variable should be declared in the funciton body with `global variable` before it can be manipulated). However, if we refer mutable values such as `list` and `dictionary`, the variable will still be changed after the fucntion executes. We don't need to use `global` keyword to declare. 
     ```
     name = "Allen" 
     def changeName(newName): 
@@ -145,3 +145,119 @@
     spam.sort() #["A", "B", "a", "b"]
     spam.sort(key=str.lower) #["A", "a", "B", "b"]
     ```
+
+**Lists vs Strings** 
+`copy`, `value1 = copy.deepcopy(value1)`, **_mutable vs immutable values_**
+1. We can use square bracket notation to retrieve characters from a string value as a list value. However, `strings` are immutable values which means that we can only assign a new value to the variable to change the value. 
+1. In Python, variable are just the reference to the value in computer's memory, which means that if the value type is mutable, all the variable refer to the same value will be modified if any of them are modified at the same time. However, this only happens when a variable is given value by assign another variable. If both variables have the same value but in separated assignment, these variables are "**_equivalent_**" but not "**_identical_**". 
+    ```
+    spam = [1,2,3,4,5]
+    cheese = spam
+    ham = [1,2,3,4,5]
+    cheese[1] = "Hello" 
+    spam #[1,"Hello",3,4,5]
+    cheese #[1,"Hello",3,4,5]
+    ham #[1,2,3,4,5]
+    ```
+1. This feature has both pros and cons as that it creates a shortcut if the list is huge and computer can use less processing memories to handle the value. However, it also means when we manipulate the value, the other variables will also be changed. (Note that this feature is the same in JavaScript as if 2 bindings are pointing to the same value, by assinging value to one another. If the variable is mutable and one of them is modified, the other binding will also change.)
+1. Therefore, we can use a module "**copy**" by `import copy` to duplicate the value to another variable which are only "**_equivalent_**" to each other. `variable2 = copy.deepcopy(variable1)`. 
+1. We can use backslash "**\\**" to change line of an expression or statement. 
+    ```
+    print("This is the first line." + \
+    " This is the 2nd Line, but all text is actually in one line")
+    #This is the first line. This is the 2nd Line, but all text is actually in one line
+    ```
+
+**The dictionary data type**
+`dict.keys()`, `dict.values()`, `dict.items()`, `dict.get(key, fallbackValue)`, `dict.setdefault()`, `pprint`, `pprint.pprint(dictionary)`, `pprint.pformat(dictionary)`
+1. `Dictionaries` are structure in curly braces. Every value is a KEY/VALUE pair, which key is a `String` that should be declared in quotes. (However, Objects in JavaScript are PROPERTY/VALUE pair and the property doesn't need to declared in quotes). 
+1. Unlike `list` values, elements in dictionary are not in order. We can use square brackets to call the value of a key from a dictionary value. 
+1. We can use keyword `in` and `not in` to check if a key is in a dictionary value. 
+`.keys()` method will return key(s) of the dictionary in a list-like value (though we can use for loop to check each elements, but we can't use index notation in square brackets to retrieve the value). We can use `list()` function to turn the keys into a list `list(dict.keys())` will return a `list` of keys of `dict`. (In JavaScript, we can pass the objecty to `Object.getPropertyNames(object)` to get a list of properties in the object)
+1. Similar to `keys()`, `.value()` method will return a list-like value which contains all values of the key/value pair in the dictionary value. We can use `list()` function the turn the list-like value into a `list`. (In JavaScript, there's also `Object.value(obj)` that we will get an array of values from the pair of the object.)
+1. `.items()` will return the KEY/VALUE pairs in tuples in a list-like. 
+1. We can use for loop to loop through the list-like value. Note that for `.items()` method, as it returns each KEY/VALUE pair as tuples, we can give 2 variables in the for loop to get the values of each separately. 
+    ```
+    dict1 = {"a":1, "b":2}
+    for i, j in dict1.items(): 
+        print(i, j) 
+    ```
+1. `.get()` is a method like a TRY/EXCEPT or IF statement that takes 2 agrguments, the first one is a key value, if which is a key in the dictionary, the method will return the value of the key. The 2nd argument is the fallback value that if the key is not found, the fallback value will be return, so we can prevent the program crashes if the we try to use a key to retrieve data from a dictionary. 
+1. `.setdefault()` can set a new key to a dictionary value if it doesn't exist. On the other hand, if the key has been in the dictionary value, nothing will be changed. This method is similar to use an IF statement to check if the key is in the dictionary first. If not, the key with a value will be added to the dictionary rather than overwrite the key's value. (In JavaScript, there's no such function as that if we assign a value to a property, the value will override the value of the property or create a new property if it doesn't exist. This feature is the same in Python.)
+1. In Python, we can use triple quotes to have a multi-line String vlaue. Note that the new line character is also counted in the string value, so if we print the string out, the text will follow the line as given to the variable. 
+    ```
+    message = '''It was a bright cold day in Apirl, 
+    and the clocks were striking thirteen''' 
+    count = {}
+    for character in message.upper(): 
+        count.setdefault(character, 0)
+        count[character] += 1
+    print(count)
+    ```
+1. However, printing a dictionary value directly is hard to read. Therefore, we can use `pprint` module (with double p's) to print a dicionary value out in order by the keys. We use `pprint.pprint(dictionary)` to print the value out in an ascending order. Note that we can use `pprint.pformat(dictionary)` which returns the formated value as a "**String**" value as the output of `pprint.pprint()`. 
+
+**Data Structure**
+1. Here is introducing about the combination of using both dictionary and list value to create a hybrid type of value. 
+1. We can use `type(value)` to check the type of the value whether it is `string`, `integer`, `float`, etc. 
+
+**Advanced string syntax** 
+1. We can use escape character which is backslash `\` that we can use both single and double quote signs in a string value. For example, `\'`, `\"`, `\t` (tab), `\n` (line break), `\\` (backslash)
+1. We can use raw string value which is a string started with character `r` and in quotes such as `r"hello"`. In this case, a back slash won't be treated as a escape character. 
+    ```
+    print(r'Hello I\`m Allen.') #Hello I\'m Allen
+    #Note that in this case we can't take the back slash off either as it will cause an error. 
+    ```
+1. `""" string value that can be in multiple lines. """` anything bettwen the pair of triple quotes will be considered to be part of the string value, even though the strings are in different lines. This features is very useful when parsing large amount of text. 
+1. `indices`, `slices` (square bracket notation), `in` and `not in` all work with string values. 
+
+**String methods** 
+`string.lower()`, `string.upper()`, `string.islower()`, `string.isupper()`, `string.isalpha()`, `string.isalnum()`, `string.isdecimal()`, `string.isspace()`, `string.istitle()`, `string.title()`, `.startswith()`, `.endswith()`, `.join`, `.split()`, `.ljust()`, `.rjust()`, `.center()`, `.strip()`, `.rstrip()`, `.lstrip()`, `.replace()`, `pyperclip`, `pyperclip.copy()`, `pyperclip.paste()` 
+1. `string.lower()` method will return a copied string value and turn all characters into lowercase. `sting.upper()` is in opposite that it turn all characters into uppercase. These methods are useful to clean 
+1. `.islower()` is to check if a string value has "**all**" characters in lowercase and returns a boolean value. `.isupper()` method is on the opposite that it checks if all characters are uppercase and returns a boolean value. If the string value has any non-alphabet characters but using `.upper()` method to them all into uppercase, by using `.isupper()` it returns a boolean `True`. However, if we check a non-text character such as a question mark "?", both `"?".isupper()` and `"?".islower()` return `False`. But if the string value has at least one alphabet character, it returns a True if the character is lowercase, such as `"?a".islower()`. 
+    ```
+    "Hello".upper().isupper() #True 
+    ```
+1. There are other methods to check if the string value is in a certain type and return a boolean value. 
+    1. `.isalpha()` checks if the string has letters only. 
+    1. `.isalnum()` checks if the string has letters and number only. 
+    1. `.isdecimal()` checks if the string has numbers only. Note that the number should be whole numbers (integers) rather than floats. 
+    1. `.isspace()` checks if the string has whitespace only. 
+    1. `.istitle()` checks if the string has titlecase only. (It means that all the phrase and text in the string should start with a capital letter.) This is related to another method `.title()` that it will change all the word in the string to start with a capital letter. 
+1. `.startswith()` method will check if a string value starts with a certain set of string value, while `.endswith()` method is on the opposite to check reversely. 
+    ```
+    text = "Hello world" 
+    text.startswith("Hello") #True 
+    text.endswith("world") #True 
+    ```
+1. `string.join(String or List)` method takes an iteratable argument such as a `string` or a `list` and returns a `string` value that puts the given string between each of the elements (or characters in a string). (Note that `.join()` method works differently in JavaScript that it is a method to manipulate an array and pass in the given string as the argument to concatenate the elements of an array. Note that the method in JavaScript also returns a string type value.)
+    ```
+    print(", ".join(["a", "b", "c"]))
+    ```
+1. `string.split()` method returns a list that contains all the text in a string. The defualt argument is a **whitespace** `" "`. If we pass other characters as an argument, we can separate the string into a list value differently. (In JavaScript, `.split()` is also available for string type values, while its default argument is an **empty string** `""` which means that if there's no argument passed in, it will turn the whole string into an element of an array, so that the return array has only one element which is the whole string value.)
+    ```
+    "My name is Simon".split("m") 
+    #["my na", "e is Si", "on"]
+    ```
+1. `string.ljust(number, char)` and `string.rjust(number, char)` methods will put a given character as argument (whitespaces in default) to either right or left of th string passed in, so the string value is "justified". Both methods takes a number as argument to inject the given number of whitespaces. 
+    ```
+    "Hello".ljust(10) 
+    #"Hello          "
+    "Hello".rjust(10, "*") 
+    #"**********Hello"
+    ```
+1. `.center()` is similar to justfy but put both given characters on the left and right of the string as a returned value. 
+    ```
+    "Hello".center(5, "-")
+    #"-----Hello-----"
+    ```
+1. `.strip()`, `.rstrip()`, `.lstrip()` chop off the given character (whitespace as default) accoring to the method. The given character (as the argument) doesn't need to be in order. The method will parse the text and check if it hits a character which is not given. This is similar to use regex to clean the text data. 
+    1. `.strip()` remove the given character(s) on both sides of the string until it reaches a character which is not given. 
+    1. `.rstrip()` remove the given character on the right. 
+    1. `.lstrip()` remove the given character on the left. 
+    ```
+    text = "SpamSpamSpamSpamEggsBoilerHeadSpamSpamSpamSpam" 
+    text.strip("mpSa123") 
+    #EggsBoilerHead
+    ```
+1. `.replace()` method take 2 arguments. The first one is the character(s) to search in the string, and the 2nd is the character(s) to replace with the searched characters. (In JavaScript, String values have exact the same method to replace characters in a string.) 
+1. `pyperclip` is the module which have `pyperclip.copy()` and `pyperclip.paste()` functions that can copy a string value to computer's clipsboard, and paste the value back. (This module and methods have been introduced in the very first section.) 
