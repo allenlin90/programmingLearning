@@ -142,3 +142,27 @@ Every time a function is invoked, an new execution context is created and run th
     "3" === "3" //true 
     3 === "3" //false 
     ```
+1. By the features in JavaScript, if a variable is not `null`, `undefined`, or `""` (empty string), its boolean type will be `true`. Therefore, we can use this to check if a data is retrieved and assigned correctly with a truthy value. However, note that if the variable has number `0` as value, the condition in IF statement will return false. Thus, we can have an `or` expression to check if the variable is strictly equal to `0`. (Note that if the zero is a string, it will be a truthy value, so the equality here must be triple equals. Besides, `||` or sign has a lower precedence than triple equal, so that the equality condition will be checked first.) This is an example to demonstrate that why **coercion** feature is useful in JavaScript. 
+    ```
+    var a; //set variable to grasp data from else where. 
+    if (a){console.log("'a' has a truthy value")} //Nothing happens
+    a = 1;
+    if (a || a === 0){console.log("'a' has a truthy value")}
+    ```
+1. When using `||` or operator it will return the first value, left-to-right, that it truthy. If both values are falsy, it will return a `false`. It will **coerce** the value and check if it is `true` or `false`. Thus, We can set a default value for a function, if the argument is not given correctly. Note that `null`, `undefined`, `NaN`, and `""` are all falsy values. Though we can use `IF` statement to check the arugment value as well, this method is neat and simple. 
+    ```
+    function greet(name){
+        name = name || "<Your name here>"; 
+        console.log("Hi " + name);
+    }
+    greet(); //Hi Your name
+    ```
+1. When we refer JavaScript files in HTML by `<src>` tag, it's actually stacking up the code from each file as in the same file in order from top to bottom. In the following code, the JavaScript files stack from `lib1.js`, `lib2.js`, to `app.js`. If we have a variable `libraryName` in both lib1 and lib2 JS file and print it out in `app.js`, the result will be the one in `lib2.js` as the variable. However, note that if a variable is declared by keyword `let`, we will get an error if we have the same variable name declared by keyword `var` in the same file. If we use both `let` or `var` to declare the same variable name, the last one will be applied as the final result. Therefore, as to order and import the JS code correctly we can have another line to check if a variable has been declared in the other imported library/framework. In a browser, the global object which takes all variables is `window` object. Thus, we can check if the variable is declared and assigned without overriding it with a new value
+    ```
+    <script src="lib1.js"></script>
+    <script src="lib2.js"></script>
+    <script src="app.js"></script>
+
+    //Check if variable "libraryName" has been declared in the JS file imported before this file. 
+    window.libraryName = window.libraryName || "Lib 2" 
+    ```
