@@ -261,3 +261,18 @@
     ```
 1. `.replace()` method take 2 arguments. The first one is the character(s) to search in the string, and the 2nd is the character(s) to replace with the searched characters. (In JavaScript, String values have exact the same method to replace characters in a string.) 
 1. `pyperclip` is the module which have `pyperclip.copy()` and `pyperclip.paste()` functions that can copy a string value to computer's clipsboard, and paste the value back. (This module and methods have been introduced in the very first section.) 
+
+**String Formatting** 
+1. We can use plus sign "+" to concatenate the strings values and variables. 
+1. We can use "**conversion specifiers**" when there are many string variables to be concatenated in the same line. That we can put `%s` in a string value and have `%(string variable1, var2, var3...)` the each of the string values in the `%()` will be passed into the string value by sequence. 
+```
+name = "Alice" 
+place = "Main Stree" 
+time = "6 pm"
+food = "turnips" 
+print("Hello " + name + ", you are invited to a party at " + place + " at " + time + ". Please bring " + food + ".")
+print("Hello %s, you are invited to a party at %s at %s. Please bring %s." %(name, place, time, food))
+#"Hello Alice, you are invited to a party at Main Street at 6pm. Please bring turnips." 
+```
+
+**Regular Expressions** 
