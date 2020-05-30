@@ -172,7 +172,7 @@ Every time a function is invoked, an new execution context is created and run th
     1. <ins>**Primitive**</ins> properties are those having primitive data type as values, such as `String` and `Boolean`.
     1. <ins>**Object**</ins> properties are properties that have other `child` objects (or array, as arraies are also objects) as values. 
     1. <ins>**Function**</ins> properties are those values that are functions. Note that in this condition, these functions are the `methods` of the object. 
-1. Square brackets notation (dot notation as well) is an operator which has very high precedence. Besides, associativity of both notations are left-to-right. If we have a "**list**" which is a data structure that has multiple layers of objects in it, we can use "dot notation" to get into each layer as a chain by its property names. It's suggested to use "**dot notation**" if the data is static and use "**square brackets notation**" for dynamic property names or other purpose. 
+1. "**Object literal syntax** is that we can use "Square brackets notation (or dot notation) as the operator which has very high precedence. Besides, associativity of both notations are left-to-right. If we have a "**list**" which is a data structure that has multiple layers of objects in it, we can use "dot notation" to get into each layer as a chain by its property names. It's suggested to use "**dot notation**" if the data is static and use "**square brackets notation**" for dynamic property names or other purpose. 
     ```
     var person = new Object(); 
     person["firstname"] = "Allen"; 
@@ -183,3 +183,87 @@ Every time a function is invoked, an new execution context is created and run th
     person.address.city = "Bangkok"; 
     person.address.state = "NY"; 
     ```
+1. We can use shorthands to create an object in JavaScript rather than assign properties in the object line by line. Besides, a funciton can take a value such as an object as its parameter(s), the argument can be the data without having it assigned to a variable in advance. This feature is due ot the dynamic type of JavaScript that the language knows (or try to guess) what is the type of value that the user creats or tries to pass in. 
+    ```
+    var person = {
+        firstname: "Allen", 
+        lastname: "Lin", 
+        address: {
+            street: "Sukhumvit", 
+            city: "Bangkok, 
+            state: "Bangkok"
+        }
+    }
+
+    var person = new Object(); 
+    person.firstname = "Allen"; 
+    person.lastname = "Lin";
+    person.address = new Object(); 
+    person.address.street = "Sukhumvit"; 
+    person.address.city = "Bangkok"; 
+    person.address.state = "Bangkok"; 
+
+    function greet(person) {
+        console.log("Hi " + person.firstname);
+    }
+
+    greet(person);
+    greet({firstname: "Mai", lastname: "Ko"});
+    ```
+1. **Namespace** is a <ins>**container**</ins> for variables and functions. It is typically used to keep variables and functions with the same name separate. For example, we can have objects as containers to hold variables in the same name (which is the property of the object and so as functions to be its values). We then can keep the variable in the same name without overwriting each other. Besides, to create an inner layer of property, we need to ensure the middle properties are object type values, or we must declare the type of property first before assigning new value to it. 
+    ``` 
+    var greet = "Hello!"; 
+    var greet = "Sawadi"; 
+    console.log(greet); //Sawadi
+    var english = {}; 
+    var thai = {};
+
+    english.greet = "Hello"; 
+    thai.greet = "Sawadi"; 
+
+    english.basics.greet = "Hello"; //Error 
+    ``` 
+### JSON and Objects 
+1. `JSON` stands for JavaScript Object Notation which is a `String` type value, which name is given as it is inspired by object literal syntax. In the past, people use `XML` type data to send the information which is similar to HTML structures and have multiple opening and closings tags. However, at the time the bandwith and internet speed wasn't fast. The additional characters consumes much more bandwith and memories for programs and computers to deal with. Therefore, people found `JSON` is more simple and succinct to have the data transfering job done. 
+1. In `JSON`, the properties are quoted with double quotes. `JSON` is technically a subset of object literal syntax. Therefore, <ins>**all JSON valid value is also valid Object literal syntax**</ins>. 1. We can use `JSON.stringify()` function to turn an Object value into a JSON string and use `JSON.parse()` to turn a JSON string into a JavaScript Object value.  
+1. **`JSON` and `Object literal` are 2 different types of value**, but they can use functions to transfer into each other. (Object literal is the regular JavaScript object syntax.)
+
+### Functions are objects 
+1. **First class function** means that everything we can do with other types of value can be done with functions. It means that we can assign a function to a variable, pass them as values or arguments, or create them as an one-off or anonymous function. 
+1. A `Function` is a special type of `Object`. It can take primitive types of values as value of a property, an object, another function. Besides, a function can be anonymous that it can be called only in certain conditions. The code we put in the function is also part of the function object property that is "<ins>**invocable**</ins>" which can be invoked with parenthesis "**()**". 
+    ```
+    //a function is a special property 
+    function greet() {
+        console.log("hi"); 
+    }
+
+    greet.language = "english"; 
+    console.log(greet.language); //english 
+    ```
+
+### Function statements and function expressions 
+1. `Expression` is a unit of code that results in a value. It doesn't have to save to a variable. An `expression` returns a value (in any type). A `statement` is a code to mainpulate something in the code block or its scope such as an `IF` statement. A function statement is a regular function declaration that it doesn't execute the code, while it is created and stored in the execution context in the "**creation phase**". The function then can be called immediately right after JavaScript gets into "**execution phase**".  
+    ```
+    //function statement
+    greet() //function declared with function statement can be called  
+    function greet() {
+        console.log("hi"); 
+    }
+
+    //function expression can be called only after the variable is declared with value.     
+    var anonymousGreet = function (){
+        console.log("hi"); 
+    }
+    anonymousGreet(); 
+    ```
+1. The difference between `function statement` and `function expression` is that in the creation phase, when the engine see `function` as the keyword, the function will be hoisted that the function can be called immediately though it is called at the end of the code. While for function expression, it is assigned to a variable which is assigned `undefined` in the creation phase. Thus, if we call the function before it is declared, we will get an error as the `undefined` value can't be called as a function. Besides, we can pass a function as variable. To call the passed function we can have the paraments with parenthesis "()" to invoke it. This is a function expression and can be done due to "first class function" 
+    ```
+    function log(a) {
+        a();
+    }
+
+    log(function(){
+        console.log("Hi");
+    })
+    ```
+1. 
