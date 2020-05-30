@@ -166,3 +166,20 @@ Every time a function is invoked, an new execution context is created and run th
     //Check if variable "libraryName" has been declared in the JS file imported before this file. 
     window.libraryName = window.libraryName || "Lib 2" 
     ```
+
+# Objects and Functinos 
+1. In other programming languages, `Objects` and `Functions` are very different entities. In JavaScript, however, they are very close related to each other. An `Object` is a collection of values. There are 3 main types of properties. The object has a reference of where it is stored on memory. Unlike values in array that each element of the array is stored in a chunk of memory, properties of an object stores separately in the memory and can be called by reference its property name as calling a variable. 
+    1. <ins>**Primitive**</ins> properties are those having primitive data type as values, such as `String` and `Boolean`.
+    1. <ins>**Object**</ins> properties are properties that have other `child` objects (or array, as arraies are also objects) as values. 
+    1. <ins>**Function**</ins> properties are those values that are functions. Note that in this condition, these functions are the `methods` of the object. 
+1. Square brackets notation (dot notation as well) is an operator which has very high precedence. Besides, associativity of both notations are left-to-right. If we have a "**list**" which is a data structure that has multiple layers of objects in it, we can use "dot notation" to get into each layer as a chain by its property names. It's suggested to use "**dot notation**" if the data is static and use "**square brackets notation**" for dynamic property names or other purpose. 
+    ```
+    var person = new Object(); 
+    person["firstname"] = "Allen"; 
+    person["lastname"] = "Lin"; 
+
+    person.address = new Object(); 
+    person.address.street = "Sukhumvit 26"; 
+    person.address.city = "Bangkok"; 
+    person.address.state = "NY"; 
+    ```
