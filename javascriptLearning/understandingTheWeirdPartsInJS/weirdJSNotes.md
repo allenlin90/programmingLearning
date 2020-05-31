@@ -304,3 +304,53 @@ Every time a function is invoked, an new execution context is created and run th
     console.log(c);
     console.log(d);
     ```
+### Objects, functions, and "this" 
+1. Everytime a function is invoked, an execution context is created. When calling (invoking) a funciton, there are 3 components created in the creation phase, "**variable environment**", "**outer environment**", and "**this**'. If we call a variable which doesn't exist in the variable environment, it will keep refering to outer environment until it reaches global environment. Besides, keyword `this` is also created in the execution context. The keyword `this` points to an object which depending on where and how the function is called. 
+    ```
+    function a(){
+        console.log(this); 
+        this.newvariable = "hello"; 
+    }
+    var b = function() {
+        console.log(this);
+    }
+    a();
+    console.log(newvariable);
+    b(); 
+    ```
+1. Note that we can understand that a variable is a property of the "<ins>**global object**</ins>". 
+1. Keyword `this` points to the object which carries the keyword. If it's called in a regular function, it refers outer environment which is the `global object` of the environment, as the function is a `method` of the `global object`. However, if it's called in a `method` (which is a function value of an `Object`), it will refer to the `Object` which carries the `method`. 
+    ```
+    //"this" in the function which in a method refers to the global object 
+    var c = {
+    name: "The c object", 
+    log: function(){
+        console.log(this); //this refers to object variable c
+        var setname = function (newname) {
+            this.name = newname; 
+        }
+        setname("Updated again! The c object");
+        console.log(this); //this refers to the global object 
+    }
+    }
+
+    c.log(); 
+    ```
+1. <ins>**Set a variable that refers to the correct object**</ins>. However, if we have another inner function in the method and call the inner function, the keyword `this` will refer to the `global Object` which is not the object that carries the method and function. The solution is to set an variable in the method function body a variable that is equal to `this` which is the "**object variable c**". Therefore, we can create a variable (`self` in this case) in the method code body and assign `this` to make it point to the whole `object variable "c"`. We then change all the `this` keyword in the code to the newly created variable, so that the the funcitons will point to the desirable object. 
+    ```
+    var c = {
+    name: "The c object", 
+    log: function(){
+        var self = this; //this variable self is pointing to parent object variable c 
+        console.log(this); //this refers to object variable c
+        var setname = function (newname) {
+            self.name = newname; 
+        }
+        setname("Updated again! The c object");
+        console.log(self); //this refers to the global object 
+    }
+    }
+
+    c.log(); 
+    ```
+    
