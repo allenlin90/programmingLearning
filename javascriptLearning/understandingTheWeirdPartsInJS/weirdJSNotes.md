@@ -266,4 +266,41 @@ Every time a function is invoked, an new execution context is created and run th
         console.log("Hi");
     })
     ```
-1. 
+
+### By value and by reference 
+1. When we set a value (primitive types) to a variable `a` and assign the variable `a` to another variable `b`. The variable `b` gets a copy of the value of variable `a`. However, when the value is an `Object` or other mutable values (such as `Array` but note that `Array` is actually an `Object` in JavaScript), both variable `c` and `d` are having reference and pointing to the same location in the memeory. Therefore, when we change either of the variable, the other variable will be changed as they are pointing to the same value in the memeory. 
+1. <ins>**Mutate**</ins> means to change something. If an entity is "**immutable**", it means the entity can't be changed. In the case below, for variable `c` and `d`, they are alias to each other. **Equal operator** "=" sets up new memory space (new address). Therefore, if we assign a new `Object` to an variable, JavaScript detects that the variable IS NOT referncing to one another. A new `Object` is created and variable `c` and `d` are not pointing to the same value in the memory. 
+1. In JavaScript, there's no option to choose a variable can be set by value or by reference. All `primitive` values are set by value, while all `Objects` are set by reference only if there's an `object literal` or keyword `new` to declare that the `Object` is a new one.
+    ```
+    //by value (primitives) 
+    var a = 3; 
+    var b; 
+
+    b = a; 
+    a = 2 
+    console.log(a);
+    console.log(b);
+
+    //by reference (all objects including functions)
+    var c = { greeting: "hi" }; 
+    var d; 
+
+    d = c 
+    c.greeting = "Hello"; //mutate 
+
+    console.log(c); 
+    console.log(d); 
+
+    //by reference (even as parameters) 
+    function changeGreeting(obj){
+        obj.greeting = "Hola"; //mutate
+    }
+    changeGreeting(d); 
+    console.log(c); 
+    console.log(d); 
+
+    //equals operator sets up new memory space (new address)
+    c = {greeting: "Howdy"}; 
+    console.log(c);
+    console.log(d);
+    ```
