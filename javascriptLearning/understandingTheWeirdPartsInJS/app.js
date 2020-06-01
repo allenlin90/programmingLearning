@@ -1,27 +1,14 @@
-function a(){
-    console.log(this); 
-    this.newvariable = "hello"; 
+function greet(firstname, lastname, language, ...other) {
+    firstname = firstname || "[Put your name in the argumet!]"
+    if (arguments.length === 0) return "This function takes 3 arguments!"
+    console.log(firstname); 
+    console.log(lastname); 
+    console.log(language); 
+    console.log(arguments); 
+    console.log(other); 
+    console.log("arg 0: " + arguments[0]);
+    console.log(other[0]);
+    console.log("------------"); 
 }
 
-var b = function() {
-    console.log(this);
-}
-
-a();
-console.log(newvariable);
-b(); 
-
-var c = {
-    name: "The c object", 
-    log: function(){
-        var self = this; 
-        console.log(self); 
-        var setname = function (newname) {
-            self.name = newname; 
-        }
-        setname("Updated again! The c object");
-        console.log(self);
-    }
-}
-
-c.log(); 
+greet("John", "Oliver", "en", "Birmingham", "Funny", "LW2N");

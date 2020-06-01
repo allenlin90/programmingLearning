@@ -353,4 +353,44 @@ Every time a function is invoked, an new execution context is created and run th
 
     c.log(); 
     ```
-    
+### Arrays 
+1. We can create an `Array` by "Array literal" which is similar to an `Object` but a pair of square brackets "**[]**" or `new Array()`. It's a collection of anything. All elements in an `Array` are indexed and can be in any type, such as `pimitive types`, `Objects`, `Functions`, and `Array`. If a function (which is anonymous) is an element in an `Array`, we can use index notation to call the function with parenthesis and give arguments. 
+    ```
+    var arr = [ 
+        1, 
+        false, 
+        {
+            name: "Allen", 
+            address: "Sukhumvit 26"
+        }, 
+        function(name){
+            var greeting = "Hello "; 
+            console.log(greeting + name); 
+        },
+        "hello"
+    ]; 
+    console.log(arr); 
+    arr[3](arr[2].name);
+    ```
+### Keyword "arguments", triple dots "...", and its alias paremeters of functions 
+1. **Arguments** are the parameters you pass to a function. When calling a function, the execution context is set up during the creation phase, and `arguments` are also set up which carry all the values and parameters. JavaScript is very special that though a function has parameters to pass in, if we don't pass any argument to the function, the argument will be like an empty variable that just a placeholder in the memory and assign with `undefined` in the creation phase (note that in other languages, such as Python, this will cause an error if a function takes argument(s) but we pass nothing to it.). 
+1. By this feature, we can set value to the arguments by default, or skip part of or all the arguments of the function. 
+1. In JavaScript, a keyword `arguments` is reserved to use in functions that it returns an "**array-like**" list of arguments that passed into the function. We can use this to perform a detector to check if there no or insufficient arguments are given to the function with `.length` method. Besides, we can use `index notation` to call an element from the argument list. 
+1. After ES6, a new feature "**triple dots**" `...` is introduced to take all the extra arguments given to the function in a list. In the example below, variable `other` is an array that takes all the given arguments after `language`. Besides, `argument` and variable `other` is different array that `other` IS NOT nested in `arguments`. As we pass 6 arguments in the example, `arguments` is a list which `length` is 6.  
+
+```
+function greet(firstname, lastname, language, ...other) {
+    firstname = firstname || "[Put your name in the argumet!]"
+    if (arguments.length === 0) return "This function takes 3 arguments!"
+    console.log(firstname); 
+    console.log(lastname); 
+    console.log(language); 
+    console.log(arguments); 
+    console.log("arg 0: " + arguments[0]);
+    console.log("------------"); 
+}
+
+greet("John", "Oliver", "en", "Birmingham", "Funny", "LW2N");
+```
+
+
