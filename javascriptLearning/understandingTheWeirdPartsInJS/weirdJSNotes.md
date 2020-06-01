@@ -55,8 +55,8 @@ Every time a function is invoked, an new execution context is created and run th
     //1
     ```
 1. When executing code, JavaScript will check the variable in the current execution context, if the variable is not found, it will refer to the outer environment. In the example, function b is at the same level as function a which is the global scope. When a execution context refers a variable from the outer environment, it may pass one or several execution stack and link to the correct execution context to get the variable, such behavior is called a "**scope chain**". Besides, if function b is not declared in the global scope, the function will not be allocated in the creation phase. Therefore, if we call function b, JavaScript will return an error as the b is not defined. The other way is to think that when and where the code is created. If a function is nested in another function, the function will only be created when the outer function is called.
-1. "**Scope**" is where a variable is available in the code. In ES6, the keyword for variable declaration is updated from "**var**" to "**let**". Keyword "**let**" is different that it allows "**block scoping**". In this case, if we try to call the variable before it is declared by `let`. Though it is in the same execution context, JavaScript will return an error for the issue (Note that the variable is stored memory as declared by `var`). On the other hand, if we use `var` to declare the variable, the variable is assigned `undefined` in the creation phase. 
-1. If we use `let` to declare a variable in `for` loop the variable is actually different as it will be created and destroyed everytime a loop iterates. 
+1. "**Scope**" is where a variable is available in the code. In ES6, the keyword for variable declaration is updated from "**var**" to "**let**". Keyword "**let**" is different that it allows "**block scoping**" (or <ins>**block scope**</ins>). In this case, if we try to call the variable before it is declared by `let`. Though it is in the same execution context, JavaScript will return an error for the issue (Note that the variable is stored memory as declared by `var`). On the other hand, if we use `var` to declare the variable, the variable is assigned `undefined` in the creation phase. 
+1. If we use `let` to declare a variable in `for` loop the variable is actually different as it will be created and destroyed everytime a loop iterates. This the most essential distinction between `let` and `var` that `let` and `const` is scoped by <ins>**code block**</ins> which is the <ins>**curly braces**</ins> "{}", while `var` only scope the variable in a function. Therefore, variable declared by `var` will be hoisted and "**leak out**" the scope which can cause problems such as overriding other global variables or creating undesirable variables in the global scope. 
 1. **Asynchronous** means more than one at a time. Besides <ins>**execution stack**</ins>, there's another <ins>**event stack**</ins>. In a browser, there's not only the JavaScript engine but also other engines such as rendering engine or send a HTTP request. These components have hooks to link to each other, so as they can work asynchronously. However, the JavaScript engine itself still works synchronously. 
 1. When the code runs, it will run through the JavaScript synchronously, while all events, such as "click" by a mouse will be held in the event queue. The events that store in the "**event queue**" will be executed when the execution stack is empty. Note that JavaScript will look into the "event queue" periodically to check if there's an event to be fulfilled. If an event is aligned with a function, the function will be called and create an execution context accordingly. In the code below, as `waitThreeSeconds` function is executed first before the last `console.log()` executes. The program will wait for 3 seconds and print out "finished function", "finished execution", and "click event!" if the user click in the browser during the code executes. 
     ```
@@ -372,7 +372,7 @@ Every time a function is invoked, an new execution context is created and run th
     console.log(arr); 
     arr[3](arr[2].name);
     ```
-### Keyword "arguments", triple dots "...", and its alias paremeters of functions 
+### Keyword "arguments", triple dots (spread) "...", and its alias paremeters of functions 
 1. **Arguments** are the parameters you pass to a function. When calling a function, the execution context is set up during the creation phase, and `arguments` are also set up which carry all the values and parameters. JavaScript is very special that though a function has parameters to pass in, if we don't pass any argument to the function, the argument will be like an empty variable that just a placeholder in the memory and assign with `undefined` in the creation phase (note that in other languages, such as Python, this will cause an error if a function takes argument(s) but we pass nothing to it.). 
 1. By this feature, we can set value to the arguments by default, or skip part of or all the arguments of the function. 
 1. In JavaScript, a keyword `arguments` is reserved to use in functions that it returns an "**array-like**" list of arguments that passed into the function. We can use this to perform a detector to check if there no or insufficient arguments are given to the function with `.length` method. Besides, we can use `index notation` to call an element from the argument list. 
@@ -393,4 +393,146 @@ function greet(firstname, lastname, language, ...other) {
 greet("John", "Oliver", "en", "Birmingham", "Funny", "LW2N");
 ```
 
+1. **Function overloading** is that we can pass a fucntion into another function with its parameters. For example, we have a function which takes 3 parameters as for generic purpose, and we set this function in the other function to give default values similar to using OR `||` when argument(s) is not given. Therefore, we can build up function based on other functions for different purpose. 
+    ```
+    function greet(firstname, lastname, language) {
+        language = language || "en"; 
+        if (language == "en") {
+            console.log("Hello " + firstname + ' ' + lastname); 
+        }
+        if (language == 'es') {
+            console.log("Hola " + firstname + ' ' + lastname); 
+        }
+    }
+    function greetEnglish(firstname, lastname) {
+        greet(firstname, lastname, "en"); 
+    }
+    function greetSpanish(firstname, lastname) {
+        greet(firstname, lastname, 'es'); 
+    }
+    greetEnglish("Allen", "Lin");
+    greetSpanish("Steve", "Jobs");
+    ``` 
+### Syntax parser 
+1. JavaScript engine recognizes the language syntax that if there's a line break (a "return" character which is "\n" that is usually invisible), it will add a semi-column automatically to follow the syntax. Therefore, when coding, we should always put a semi-column at the end of the line. Otherwise, it will be hard to review and debug when there's an issue or error. 
+1. This is the reason why when declaring a function, the first curly brace should be on the same line as the declaration. If it's not on the same line, JavaScript will automatically add a semi-column that breaks the code. In the example below, we put the returned `Object` value in the line between keyword `return`, the function returns `undefined` as after `return`, a semi-column is added and all the code after `return` is ignored. 
+    ```
+    function getPerson(){
+    return 
+    {
+        firstname: "Tony"
+        }
+    }
+    console.log(getPerson()); //undefined 
+    ```
+### Whitespace 
+1. "**Whitespaces**" are invisible characters that create literal "space" in the written code, including `carriage returns`, `tabs`, and `spaces`. 
+1. These characters don't affect to code execution and somehow useful as we can insert comments in lines to explain what the code is about. This can be helpful when making large project in a large line of code. 
 
+
+### Immediately invoked function expressions (<ins>**IIFEs**</ins>) and <ins>**safe code**</ins>
+1. We can invoke a function immediately after it is created by a function expression which is assigned to a variable. In this case, variable `greeting` holds a `String` value "Hello Allen" rather than a function. The argument is passed right after the function expression. 
+    ``` 
+    var greeting =  function(name){
+        return "Hello " + name;
+    }("Allen");
+    ``` 
+1. In JavaScript we can just put a value in lines of code without doing anything such as returning or printing. The value will just be there which has no pointer as variable to refer. However, it is not avaiable if we put keyword `function` directly in the line because the syntax parser will treat it as function declaration which force every function to have a name to be a function statement. The way to avoid it is to trick JavaScript by giving any other character, so that the first thing when JavaScript read the line, it doesn't find keyword `function`. We can use parenthesis `()` to wrap the function up for the trick. 
+1. Note that "**parenthesis()**" are mainly used for "**expression**" that returns a value and JavaScript notes this feature as well. Therefore, JavaScipt will treat a funciton in the parenthesis as an expression. Note that in the example, if we don't put semi-column after variable declaration, the following function expression will be passed as an argument to `String` value "Allen" which will cause an error. This also shows that we should always put a semi-column to allow syntax parser works correctly. 
+    ``` 
+    var name = "Allen"; 
+    (function (name) {
+        console.log("Hi " + name); 
+    }(name));
+    ``` 
+1. This feature can prevent variable collision when a HTML file refers multiple JS files. The variables and function only executes at its own scope without affect the global environment. This is often used in JavaScript libraries. Thus, we can create "**Safe code**" to prevent from colliding to other code in the program. 
+1.  On the other hand, we still can create a variable in the global environment by referring to `global Object` in the function expression. For example, in browser environment, we can refer to `windwo` object and createa variable. 
+    ```
+    (function(global, name){
+        var greeting = "Hello"; 
+        global.greeting = greeting; 
+        console.log(greeting + " " + name); 
+    }(window, "Allen")); 
+    console.log(greeting);
+    ```
+
+### **Closures** 
+Note that the issue here is the scopeing of variable declaration by keyword `var` and `let` 
+1. "**Closures**" are simply a feature of JavaScript programming language that it makes functions have access to the variables that it is supposed to have access to. This property is that when we have a function return another function as a returned value, the inner returned value still can access the variables that are in the outer function which returns the function. In summary, all functions in JavaScript are closures. 
+    ```
+    function greet(whattosay){
+        let text = "How are you?"; 
+        return function(name) {
+            console.log(whattosay + " " + name  + ". " + text);
+        }
+    }
+    var sayHi = greet("Hi"); 
+    sayHi("Tony"); //Hi Tony. How are you?
+    ```
+1. In the following example, the function is trying to catch the counter `i` in an ascending order. However, in the variable assignment, we assign 3 elements to `arr` when calling the funciton `buildFuctions`. We then assign this array to variable `fs` which is an array that has 3 funcitons as elements. 
+    1. When we run the code, `Global execution context` is the **1st** item which has function `buildFunctions` and `fs` as the <ins>**variable declaration**</ins> with a <ins>**funciton invocation**</ins> in the scope in the execution stack. 
+    1. The 2nd execution context is the invocation of function `buildFunctions`. There are variable in the context which are `arr` the empty array that collects data and  `i` as the `for` loop counter. However, there's no other funciton is invoked as, in the `for` loop, it's only pushing a "**function object**" (which can be invoked with parenthesis behind) to the array. Therefore, when the code finishes `for` loop and runs to the last line `return`, variable `i` is at "<ins>**3**</ins>" because it's when the `for` loop stops when the counter is no longer less than 3. Thus, all function objects pushed to the array carry variable `i` as "<ins>**3**</ins>". 
+    1. Therefore, when we call the functions from element in the array, it refers to the data in the closure which is the `buildFunctions` execution context. Thus, `i` is "<ins>**3**</ins>" and all invocation will return 3. 
+    1. Note that `i` is declared by `var` which is in scope of function. However, if `i` is declared by `let`, it's in the scope in the `for` loop rather than the function because `let` is in `block scope` which is scoped by "**code block**" (the curly braces). The statements in `for` conditions are actually part of the `for` loop. If we use `let` rather than `var`. The output of the following code will be the desireable output which is from 0 to 2. 
+    ```
+    function buildFunctions(){
+        var arr = []; 
+        for (var i = 0; i < 3; i++){
+            arr.push(
+                function(){
+                    console.log(i);
+                }
+            )
+        }
+        console.log("1st version");
+        return arr 
+    }
+
+
+    var fs = buildFunctions(); 
+    fs[0](); //3 
+    fs[1](); //3 
+    fs[2](); //3 
+    ```
+1. We can use `let` to have another variable created in every iteration of the `for` loop. However, `function declaration` is very similar to keyword `let` that it only exists in the block scope where it is declared unless it is assigned and held by a variable. We can't use `var` as this keyword is in "**function scope**" which only limits the declared variable in the function scope. If `var` declared variable is not in a function body code, it will be in the outer scope though it's in a code block (curly braces "{}"). 
+1. Without keyword `let`, the other way is to invoke the function immediately to return the current value of the counter and push it to the array. We can use function expression to invoke the function immediately which returns a function object and be pushed into the array. 
+    ```
+    function buildFunctions2(){
+        var arr = []; 
+        for (let i = 0; i < 3; i++){
+            let j = i //We can't use var to declare as the variable will be in function scope 
+            arr.push(
+                function(){
+                    console.log(j);
+                }
+            )
+        }
+        console.log("2nd version");
+        return arr 
+    }
+
+    var fs2 = buildFunctions2(); 
+    fs2[0]();
+    fs2[1]();
+    fs2[2]();
+
+    function buildFunctions3(){
+        var arr = []; 
+        for (var i = 0; i < 3; i++){
+            arr.push(
+                (function(j){
+                    return function(){
+                        console.log(j);
+                    }
+                }(i))
+            )
+        }
+        console.log("3rd version");
+        return arr 
+    }           
+
+    var fs3 = buildFunctions3(); 
+    fs3[0]();
+    fs3[1]();
+    fs3[2]();
+    ```
