@@ -266,6 +266,7 @@
 1. We can use plus sign "+" to concatenate the strings values and variables. 
 1. We can use "**conversion specifiers**" when there are many string variables to be concatenated in the same line. That we can put `%s` in a string value and have `%(string variable1, var2, var3...)` the each of the string values in the `%()` will be passed into the string value by sequence. 
 ```
+import pprint
 name = "Alice" 
 place = "Main Stree" 
 time = "6 pm"
@@ -275,4 +276,15 @@ print("Hello %s, you are invited to a party at %s at %s. Please bring %s." %(nam
 #"Hello Alice, you are invited to a party at Main Street at 6pm. Please bring turnips." 
 ```
 
-**Regular Expressions** 
+### **Regular Expressions** 
+Module `re`, `re.compile()`, `.search()`, `.group()`, `findall()`
+1. Regex is helps us to search and parse values and data that are in certain patterns. For example, phones in the USA and Canada starts with an area code in 3 numbers, a dash "-", another 3 number, another dash "-", and another 4 numbers. Without <ins>**regualr expressions**</ins>, we have to use several `IF` statements and `for` loop to check if a phone number is in a valid pattern. 
+1. To use regular expression, we import `re` module to the code and use `re.compile()` method which takes regular expression patterns in raw string (starts with `r"String"`) because regex often uses <ins>**backslashes**</ins> "\". We then use `.search()` method to and pass the `String` value that we want to use regex to parse. `.search()` method returns a "**Match Object**" which shows if there's a match anywhere in the string (Note that this method only returns one of the matches if there's many). We then can use `.group()` method to return the matched result. On the other hand, we can use `.findall` method directly that it will retun a list of matched values. 
+    ``` 
+    import re 
+    message = "Text to be parsed by regex 123-456-7890"
+    phoneNumberRegex = re.compile(r'\d\d\d-\d\d\d-\d\d\d\d') 
+    mo = phoneNumberRegex.search(message)
+    print(mo.group()) #123-456-7890
+    print(phoneNumberRegex.findall(message)) #['123-456-7890']
+    ```
