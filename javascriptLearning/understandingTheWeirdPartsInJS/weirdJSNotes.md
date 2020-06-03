@@ -641,10 +641,18 @@ Note that the issue here is the scopeing of variable declaration by keyword `var
     console.log(arr5); 
     ```
 1. `underscore.js` and `lodash` library are good examples for funcitonal programming. We can import it from the HTML file and use it in a separate JS file. 
-    ```javascript
+    ```js
     var arr6 = _.map(arr1, function(item){return item * 3 }); 
     console.log(arr6);
 
     var arr7 = _.filter([2,3,4,5,6,7], function(item) {return item % 2 === 0}); 
     console.log(arr7); 
     ```
+# Object-oriented JavaScript and prototypal inheritance 
+### Classical and prototypal inheritance 
+1. <ins>**Inheritance**</ins> means that an `Object` can get access to the properties and methods of another `Object`. 
+    1. <ins>**Classical Inheritance**</ins> is relative "**verbose**" and several methods to work with. This mainly used in other programming languages, such as C and Java. 
+    1. <ins>**Prototypal Inheritance**</ins> is relatively "**simple**", flexible, extensible, and easier to understand. 
+### <ins>**Prototypes**</ins>
+1. Every `Object` value (including functions) in JavaScript has a property `proto` which is from its <ins>**Prototypes**</ins> and point to another `Object`. A `proto` property can have another `proto` inherited from its prototype as a chain. Therefore, when we try to call a property or method that is not directly in its property, the engine will go further in the `proto` property to find if there's any property matches until it reaches a `null`. This is called a "**prototype chain**" 
+1. Different `Object` values can share the same `proto`, so each of the `Object` values can call the same property or method by sharing the same "property chain". Therefore, we can use this feature to create "classes" which is similar to the concept to work on OOP in the other programming languages. 
