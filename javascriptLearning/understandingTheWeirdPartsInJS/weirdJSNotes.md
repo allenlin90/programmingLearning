@@ -649,6 +649,19 @@ Note that the issue here is the scopeing of variable declaration by keyword `var
     console.log(arr7); 
     ```
 # Object-oriented JavaScript and prototypal inheritance 
+1. Everything in JavaScript is an `Object` or a primitive value. 
+1. Every `Object` has a property `__proto__` which has the prototype from which the `Object` inherits. For example, an empty `Object` has `__proto__` that has all the methods that every `Object` values can use. 
+1. In the example below, we can noticed that all variables have `__proto__ ` property which is inherited from another `Object` which is the orignal setup of an `Object` prototype. Therefore, for empty funcitons and arrays, they have an additional `__proto__` that is the `Object` prototype. 
+    ```js
+    var a = {}; 
+    var b = function(){};
+    var c = []; 
+    a.__proto__.__proto__ //null 
+    b.__proto__.__proto__.__proto__ //null 
+    c.__proto__.__proto__.__proto__ //null 
+    a.__proto__ == b.__proto__.__proto__ //true 
+    b.__proto__.__proto__ == c.__proto__.__proto__ //true 
+    ```
 ### Classical and prototypal inheritance 
 1. <ins>**Inheritance**</ins> means that an `Object` can get access to the properties and methods of another `Object`. 
     1. <ins>**Classical Inheritance**</ins> is relative "**verbose**" and several methods to work with. This mainly used in other programming languages, such as C and Java. 
@@ -656,3 +669,277 @@ Note that the issue here is the scopeing of variable declaration by keyword `var
 ### <ins>**Prototypes**</ins>
 1. Every `Object` value (including functions) in JavaScript has a property `proto` which is from its <ins>**Prototypes**</ins> and point to another `Object`. A `proto` property can have another `proto` inherited from its prototype as a chain. Therefore, when we try to call a property or method that is not directly in its property, the engine will go further in the `proto` property to find if there's any property matches until it reaches a `null`. This is called a "**prototype chain**" 
 1. Different `Object` values can share the same `proto`, so each of the `Object` values can call the same property or method by sharing the same "property chain". Therefore, we can use this feature to create "classes" which is similar to the concept to work on OOP in the other programming languages. 
+### Reflection and Extend 
+1. <ins>**Reflection**</ins> means that an `Object` can look at itself, listing and changing its properties and methods. 
+1. We can use keyword `in` (which is similar to `of` for array elements) in a `for` loop for to iterate through each property of an `Object`. Note that if an `Object` inherits properties and methods from another `Object` as its prototype, it will be listed if we loop through the `Object`. 
+    ```js
+    var person = {
+        firstname: "Default", 
+        lastname: "Default",
+        getFullName: function(){
+            return this.firstname + " " + this.lastname;
+        }
+    };
+
+    var john = {
+        firstname: "John", 
+        lastname: "Doe"
+    }
+
+    john.__proto__ = person; 
+    for (var prop in john) {
+        if(john.(prop)){
+            console.log(prop + ": " + john[prop]); //include "getFullName" method!
+        }
+    }
+
+    for (var prop in john) {
+        if(john.hasOwnProperty(prop)){
+            console.log(prop + ": " + john[prop]); //does not include "getFullName" method
+        }
+    }
+    ```
+1. We can use `underscore.js` library with functions such as `_.extend(objToExtend, obj1, obj2, ...)`. The function is to add properties and methods from `obj1` and other given `Objects` that `objToExtend` doesn't have. This function is different from add from `prototype object` that the properties will become `objToExtend`'s own properties, so the `objToExtend` is "**extended**" with the new properties. 
+1. This `_.extend()` function uses 2 `for` loops to iterate through the properies of the `Object` to be extended and `Objects` which has the source of properties and methods. 
+1. However, if the `Objects` which are used to extend have the same property of the `Object` to be extended, the original properties on the `Object` to be extended will be overwritten. 
+    ```js
+    var john = {
+        firstname: "John", 
+        lastname: "Doe"
+    }
+
+    var jane = {
+        address: "26 soi Sukhumvit", 
+        getFormalFullName: function(){
+            return this.lastname + ", " + this.firstname; 
+        }
+    }
+
+    var jim = {
+        getFirstName: function(){
+            return firstname; 
+        }
+    }
+
+    _.extend(john,jane,jim); 
+    ```
+# Building Objects 
+### Function constructors (or constructor functions)
+1. Function constructros, keyword `new`, which is a very similar feature in `Java` language, as `JavaScript` is a browser-based programming language that was firstly created to attract `Java` programmers to use it. In Java, the keyword `new` creates an `Object` from a "**class**". 
+1. In JavaScript, we can use keyword `new` to create an `Object` that inherits properties from the `Function Object` as its prototype. Note that this is just one of the ways to create an `Object` in JavaScript. 
+1. According to the table of JavaScript Operator precendence, we can learn that keyword `new` is actually an operator with precedence at <ins>**18**</ins>. 
+    1. When we use the keyword `new`, an empty `Object` is created and invokes the function that follows. 
+    1. keyword `this` in the function will point to the new `Object` created by keyword `new`, so the properties in the constructor function will be added to the new created empty `Object`. 
+    1. Then the new created `Object` is "**returned**" as the value, so the declared varibale can hold the `Object` as a value. 
+    ```js 
+    function Person(){
+        this.firstname = "John"; 
+        this.lastname = "Doe"; 
+    } 
+    var john = new Person(); 
+    ``` 
+1. Since the new `Object` created in this way will inherit the properties, we can also give arguments to the "**constructor function**" which can hold the properties as default but create with customized values. In the following example, we can see both variable `john` and `jane` have properties `firstname` and `lastname` but with different given values when created as arguments. 
+    ```js 
+    function Person(firstname, lastname) {
+        this.firstname = firstname; 
+        this.lastname = lastname; 
+    }
+    var john = new Person("John", "Doe"); 
+    var jane = new Person("Jane", "Doe"); 
+
+    ```
+1. "**Function constructors**" (or constructor functions) are functions which are used to construct `Objects`. It makes keyword `this` in the function points to the new created empty `Object`, and the `Object` is the returned value of the keyword `new`. 
+
+### Function constructors and ".prototype" 
+1. When we use keyword `new` and "constructor function" to create an `Object`, the `Object` has the constructor function as its prototype stored in its property `__proto__`
+1. Every `Function` in JavaScript is a special type of `Object` (as function object), which has several properties in default such as 
+    1. `code` which is the code body that in the "**code block**" (curly braces) and is "invocable" by parenthesis "`()`" 
+    1. `name` which is optional that a function can be anonymous as in an expresssion. 
+    1. `prototype` that is only used by keyword `new` (as an operator). Note that this prototype will point to the `Object` that is the same from any `Object` that creates by `new`. 
+    ```js
+    function Person(firstname, lastname) {
+        this.firstname = firstname; 
+        this.lastname = lastname; 
+    }
+    var john = new Person("John", "Doe"); 
+    john.__proto__ === Person.prototype //true 
+    ```
+1. We can use this feature to extend/update the "**constructor function**" and add new features to all `Objects` that created by this "constructor function" with keyword `new`. 
+    ```js
+    function Person(firstname, lastname) {
+        this.firstname = firstname; 
+        this.lastname = lastname; 
+    }
+    var john = new Person("John", "Doe"); 
+    var jane = new Person("Jane", "Doe");
+
+    Person.prototype.getFullName = function(){
+        return this.firstname + " " + this.lastname; 
+    }
+
+    console.log(john);
+    console.log(jane);
+    ``` 
+1. The main benefit from this feature is that not all the `Objects` created with the constructor function carries all the properties it should have, while, if we add on later, the `Object` has fewer properties and all the common property and methods are linked with prototype, so the program can take less space (memory) to run the code. Besides, we don't need to add the new method to each of the `Object` in the same "**class**", so it can save a lot of time and space for efficiency. Usually `Objects` in the same class same properties with different values and use the same methods. 
+1. If we forget to put keyword `new` before function constructor to assign a variable, the variable we get the return value from the executed function which is usually `undefined`. The code will cause erros by trying to use methods or call properties from `undefined`.
+1. In convention, a constructor function usualy named with a capital letter as the first character, so developers will find the bug easier as if the `new` keyword is missing. Besides, we can use `Lint` (such as "**ESLint**") to ensure the code is following a certain format and pattern. 
+1. There are several built-in function constructors such as `Number()` and `String()`. If we assign a variable with `new` and the built-in function constructor, we will get an `Object` which can use the methods of the type of the primitive values in JavaScript. These variables are `Objects` rather than primitives.
+1. However, JavaScript engine knows the type of the value and give it aligned methods. That's the reason why we can manipulate the primitive values with certain methods. 
+    ```js
+    var a = new String('John'); 
+    console.log(a.indexOf("o")); 
+    //1 is the index of string 'John'
+    "John".indexOf("o") == a.indexOf("o"); 
+    //true 
+
+    String.prototype.isLengthGreater = function(limit){
+        return this.length > limit;
+    };
+    "John".isLengthGreater(3); //true 
+    ``` 
+1. However, using built-in function constructors to create primitives, as problems may happen because of coercion. This is similar to compare `String` `"3"` with `Number` `3`. This built-in constructor functions are usually used for converting value types, such as from `String` to a `Number` 
+    ```js 
+    var a = 3; 
+    var b = new Number(3); 
+    a == b; //true 
+    a === b; //false 
+    "3" == 3; //true 
+    "3" === 3; //false 
+    var c = Number("3"); 
+    c === 3; //true 
+    ```
+1. Therefore, it's not recommended to use built-in function constructor to create `Objects`. We can use other libraries for the purpose instead such as `moments.js` which is library mainly for parsing, manipulating, and displaying dates in JavaScript. 
+
+### Issues with Arrays and for in 
+1. Since `Arrays` are actually a type of `Object` in JavaScript, we should avoid using `for in` loop for `Arrays`, as it may loop out other customized properties of the value. Besides, there's another shorthand `for of` to loop through all elements similar to using a regualr `for` loop with counters. 
+    ```js
+    Array.prototype.myCustomFeature = 'cool!'; 
+    var arr = ['John', 'Jane', 'Jim'];
+
+    for (var prop in arr) {
+    console.log(prop + ': ' + arr[prop]);
+    }
+
+    //use regular for loop with counter 
+    for (let i = 0; i < arr.length; i++) {
+        console.log(i + ': ' + arr[i]); 
+    }
+
+    //use for of loop 
+    let i = 0; 
+    for (var element of arr) {
+        console.log(i++ + ': ' + element); 
+    }
+    ```
+### Object.create and Pure prototypal inheritance 
+1. We can use `Object.create(prototypeObj)` to create a another `Object` that inherits all the properties in its `__proto__` property, so the new variable will be an empty `Object` when assigned. Though the new created `Object` is empty, we still can its properties inherited from its prototype, which is hidden in its `__proto__` property. 
+1. Besides, as the inherited properties are hidden in the `__proto__` property, we can assign properties with the same name as its prototype to override the value when called but without affecting its prototype. 
+1. The main difference between "**prototypal inheritance**" and "**function constructor**" are that 
+    1. "**Prototypal inheritance**" uses an `ProtoObject` to build an `Object` which is an <ins>**empty**</ins>. `Object.__proto__ == ProtoObject` is `true`. 
+    1. "**Function constructor**" uses a `Function` and keyword `new` to build an `Object` which has properties inherited from the <ins>**constructor function**</ins>. `Object.__proto__ == ConstructorFunction.prototype` is `true`. 
+    ```js 
+    var person = {
+    firstname: 'Default',
+    lastname: 'Default',
+    greet: function() {
+        return 'Hi ' + this.firstname;
+        },
+    };
+
+    var john = Object.create(person); //john is an empty object 
+    john.firstname = 'John';
+    john.lastname = 'Doe';
+    console.log(john.greet());
+    john.__proto__ == person //true 
+    ```
+1. We can edit/update the `Object` for prototype similar to constructor function that once the prototypal `Object` is updated, all the `Object` created by this methods will be updated as well. 
+1. **Polyfill** is code that adds a feature which the engine may lack. It means that if the code runs on an older browser and the old browser's engine lack of certain function or feature, we can fill the gap by adding other code to have the same function or feature in the new version of code. For example, `Object.create()` is a new feature that it's not in the JavaScript engine of older browsers. `!Object.create` will be true when `Object.create` is `undefined` which is a falsy value. That means `Object.create` doesn't support in the JavaScript engine. 
+    1. The `Object` is the "**global object**" in the runtime, and we assign it with a new function. 
+    1. The `IF` statement catches the error if there's more than one `Object` is passed into the function. 
+    1. We make a constructor function `F()` and assign the prototype object to its `.prototype` property and return an `Object` built by `new F()`.
+    1. Therefore, we create the `Object.create()` method if it doesn't exist in the older browser. 
+    ```js
+    //polyfill for Object.create() function
+    if(!Object.create) {
+        Object.create = function (o) {
+            if (arguments.length > 1) {
+                throw new Error('Object.create implementation' + ' only accepts the first parameter.');
+            }
+            function F(){}
+                F.prototype = o; 
+                return new F(); 
+            };
+        };
+    ``` 
+### ES6 and Classes 
+1. "Classes" in other programming languages are very popular. It's a way to defining an object in of a class with certain methods and properties. However, this feature **IS NOT** available in JavaScript. 
+1. A JavaScript `class` defines an `Object`. It has a constructor which is similar to constructor functions worked with `new` and we can have a function liked method to be declared in the code block directly with less code. 
+1. However, "class" in the other programming languages is not an object. It's a definition or template to define an object. We must use a `new` keyword to create an object that is in certain "class". 
+1. Keyword `class` in JavaScript creates an `Object` and use that `Object` to create other `Objects` which is similar to the concept of what "class" does in the other programming language but in a different way. 
+    ```js 
+    class Person {    
+        constructor(firstname, lastname) {
+            this.firstname = firstname; 
+            this.lastname = lastname;
+        }
+        greet() {
+            return 'Hi' + firstname; 
+        }
+    }
+    var john = new Person('John', 'Doe'); 
+    ```
+1. To extend the `class` as adding new properties or methods to `.prototype` property of constructor functions, we use keyword `extends` to create another `class` which inherits the properties and methods from a given `Object`. `super()` method is to inherit the properties from its parent `class`. The arguments in `super()` are the properties that is with `this` in its parent `class`. Note that the methods will also be inherited if it's not overwritten with new statement.
+    ```js 
+    class Person {    
+        constructor(firstname, lastname) {
+            this.firstname = firstname; 
+            this.lastname = lastname;
+        }
+        greet() {
+            return 'Hi' + firstname; 
+        }
+    }
+
+    class InformalPerson extends Person {
+        constructor(firstname, lastname) {
+            super(firstname, lastname); 
+        }
+        greeting () {
+            return 'Yo ' + this.firstname; 
+        }
+    }
+
+    var jane = new InformalPerson('Jane', 'Doe');
+    jane.greet() //Hi Jane 
+    jane.greeting() //Yo Jane 
+    ```
+1. "**Syntactic Sugar**" means that the code just uses a different to be written without changing the way of how it works under the hood. We can see `Object.create`, `constructor functions`, and `class` work similarly. 
+
+# Odds and Ends 
+### Use "typeof" and "instanceof" and figure out what something is  
+1. We can use `typeof` to check the type of a value. However, `Array` values in JavaScript are also `Objects`, so the type will be also be `Object`. We can use `Object.prototype.toString.call(d)` to change the `Object` input from built-in function `Object` to the given empty `Array`. 
+1. We can use `instanceof` to check if an `Object` is an instance of a "class" (constructor function). 
+1. `null` is very special and considered a bug but stays too long to be fixed that its type is `object`. 
+    ```js 
+    var d = [];
+    console.log(typeof d); //object 
+    console.log(Object.prototype.toString.call(d));//[object Array] 
+
+
+    function Person(name){
+        this.name = name; 
+    }
+    var e = new Person('Jane'); 
+    console.log(e instanceof Person); //true 
+
+    console.log(typeof undefined); //undefined 
+    console.log(typeof null); //object 
+    ``` 
+### Strict mode 
+1. We can change JavaScript to be more "strict" on the type of values and variables. This "strict mode" can help to prevent some errors in some circumstances. For example, a variable must be declared before it can be assigned a value. 
+1. Strict mode code and non-strict mode code can coexist, so scripts can opt into strict mode incrementally. We can use "strict" in a function's code body without affecting to the global environment. This is useful as on a webpage may import several JS files and not all the code follow the "strict mode". 
+1. We can use `"strict mode";` (in double or single quotes) to invoke strict mode for scripts. 
+    ```js
+    person = {}; 
+    //The statement can work but not in strict mode
+    ```
