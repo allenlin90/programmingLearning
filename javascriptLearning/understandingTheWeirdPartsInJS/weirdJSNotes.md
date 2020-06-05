@@ -943,3 +943,4 @@ Note that the issue here is the scopeing of variable declaration by keyword `var
     person = {}; 
     //The statement can work but not in strict mode
     ```
+
