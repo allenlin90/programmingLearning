@@ -45,5 +45,40 @@ endsWithWorldRegex = re.compile(r'world!$')
 #print(endsWithWorldRegex.search('He said "Hello there!"') == None) #True
 
 allDigitsRegex = re.compile(r'^\d+$')
-print(allDigitsRegex.findall('12345678901234567890'))
-print(allDigitsRegex.search('123456789x01234567890') == None)
+#print(allDigitsRegex.findall('12345678901234567890'))
+#print(allDigitsRegex.search('123456789x01234567890') == None)
+
+atRegex = re.compile(r'.{1,2}at')
+#print(atRegex.findall('The cat in the hat sat on the flat mat.'))
+
+nameRegex = re.compile(r'First Name: (.*) Last Name: (.*)')
+#print(nameRegex.findall('First Name: Al Last Name: Sweigart'))
+
+serve = '<To serve humans> for dinner.>' 
+nongreedy = re.compile(r'<(.*?)>')
+#print(nongreedy.findall(serve))
+greedy = re.compile(r'<(.*)>')
+#print(greedy.findall(serve)) 
+
+prime = 'Serve the public trust.\nProtect the innocent.\nUpload the law.' 
+#print(prime)
+
+dotStar = re.compile(r'.*')
+#print(dotStar.search(prime))
+
+dotStar = re.compile(r'.*', re.DOTALL) 
+#print(dotStar.search(prime))
+
+vowelRegex = re.compile(r'[aeiou]', re.I) 
+#print(vowelRegex.findall('Al, why does your programming book talk about RoboCop so much?'))
+
+
+##################################################
+
+namesRegex = re.compile(r'Agent \w+') 
+#print(namesRegex.findall('Agent Alice gave the secret documents to Agent Bob.')) 
+#print(namesRegex.sub('REDACTED', 'Agent Alice gave the secret documents to Agent Bob.')) #substitute matched value with the given argument 
+
+namesRegex = re.compile(r'Agent (\w)\w*')
+print(namesRegex.findall('Agent Alice gave the secret documents to Agent Bob.'))
+print(namesRegex.sub('Agent \\1****', 'Agent Alice gave the secret documents to Agent Bob.'))

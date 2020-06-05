@@ -1,17 +1,17 @@
 # [Automate the Boring Stuff with Python](https://automatetheboringstuff.com/)  
 [Visualize Python code](http://www.pythontutor.com/visualize.html) at http://www.pythontutor.com/visualize.html
 ***
-**for loops**
+### for loops
 `range()` function can take up to 3 arguments, `start`, `end`, and `step`. `start` is included, while `end` is excluded, and `step` can be any whole number including negative numbers. `range(start, end)`
 
-**Built-in functions** 
+### Built-in functions 
 `random`, `random.randint()`, `sys`, `sys.exit()`, `pyperclip`, `pyperclip.copy()`, `pyperclip.paste()`
 1. There are several libraries and modules that can work on different purpose, such as `random`. We can use `import random` to import the module to the code. Besides, we can use comma `,` to separate different modules and import all of them in one line. `import random, sys, os, math`. For example, `.randint()` method from random module, `random.randint(1, 10)` returns any number from 1 to 10.
 1. We can ues "**from _module_ import _methodName_**" to import certain method from the module. To call imported methods, we have to use `moduleName.method()` to use. By using `from` we can use the method directly without making it suffix to the module name. Besides, asterisk `*` is like a wild card that if we use it as method name it will import all methods from the module, such as `from random import *`. 
 1. We can import `sys` module and use `sys.exit()`. 
 1. We can use `pip` to install `pyperclip` module, which has **_copy_** and **_paste_** function as a clipboard to copy text and paste text. 
 
-**Functions** 
+### Functions
 `def`, `None`, `print(end=\n, sep=", ")`
 1. We can use keyword `def` to define a function. We can also put parameters in it. 
     ```python
@@ -31,7 +31,7 @@
 1. `print()` function will add a new line character `\n` automatically after print the text out which is in `print()` function's keyword argument `end`. Thus, we can change the default new line character to other characters. For example, after `print('Hello', end='')`, the next returned value will show on the same line as the printed value. 
 1. Besides `end`, `print()` function has another keyword argument `sep`, which is the separating character using `, ` (comma and a space) in default, so when we give `print("a", "b", "c")`, it returns `a b c`. If we change it, `print()` function will print the text according to it. 
 
-**Scope**
+### Scope
 1. Variables in different scopes can be called in different conditions. **Global** variables are created when the program starts. **Local** variables can only be called in the same code block. If variables are in different functions, they can't affect to each, while only the **Global** variable can be modified by the expression in the function. 
 1. Unlike in JavaScript, if the global variable is not reassigned in the global scope, the variable will remain the same (in JavaScript, if a global variable is modified by a function call, the value will change after the function is called.). 
 1. We can use keyword `global` before the variable in the function body. Therefore, after the function which manipulates the global variable is called, the value of global variable is changed. (Note that the `global` variable should be declared in the funciton body with `global variable` before it can be manipulated). However, if we refer mutable values such as `list` and `dictionary`, the variable will still be changed after the fucntion executes. We don't need to use `global` keyword to declare. 
@@ -46,12 +46,12 @@
     ```
 1. Since Python doesn't use curly braces to define clock but indentation, it doesn't like JavaScript that scope are limited to the code block of curly braces. In Python, the scope is only bettwen declared function and global. If we use `for` loop in global scope, the variables in the loop, though indented, can be called in its parent scope. 
 
-**Try and Except statement** 
+### Try and Except statement 
 `try`, `except` 
 1. We can use `try` and `except` statement in a function declaration to skip the potential errors which is similar to IF/ELSE that if the statement or expression in the `try` block has caused an error, it will execute the code in the `except` block. We can specify the specific type of error in `except` statement. If there's no specific type of error given, it will catch **All** types of error and execute its code block. 
 1. This is useful for **_input validation_** from users. For example, if a user gives an type of input which doesn't match to the desirable type to the function to execute, we can use TRY/EXCEPT statement to prevent the program from returning an error and crashing. 
 
-**The List data type** 
+### The List data type
 `[ ]`, `[:]`, `range(len(list))`, `del list[index]`, `value in list`, `value not in list` 
 1. `Lists` are similar to Array in JavaScript an other programmning language and represented in square brackets ` [ ] `. We can use "**indices**" in square brackets after the list variable to call the element in the list at certain position. 
 1. We can have `Lists` in other `Lists` to create multi-dimensional lists. 
@@ -93,7 +93,7 @@
     "h" in "hello" #true 
     ```
 
-**For loops with LIsts, Multiple Assignment, and Augmented Operators** 
+### For loops with LIsts, Multiple Assignment, and Augmented Operators
 `Multiple Assignment`, `Value Swapping`, `Augmented Operator`
 1. To use for loop to loop through a list, we can set the counter of the loop as range(len(**_list_**)). Therefore, we can loop the exact time as the number of elements of the list, and the counter is dynamic. 
 1. In `for` loop, the counter variable is set up to take each element `in` the following list, or list-like sequence as the returned value from `range()`. 
@@ -123,7 +123,7 @@
     a += 1 
     ```
 
-**List Methods** 
+### List Methods
 `.index(value)`, `.append(value)`, `insert(index, value)`, `.remove(value)`, `.sort(key=str.lower, reverse=true)`
 1. `.index()` method returns the index of a value which is the poisition of which in a list. 
     ```python
@@ -146,7 +146,7 @@
     spam.sort(key=str.lower) #["A", "a", "B", "b"]
     ```
 
-**Lists vs Strings** 
+### Lists vs Strings
 `copy`, `value1 = copy.deepcopy(value1)`, **_mutable vs immutable values_**
 1. We can use square bracket notation to retrieve characters from a string value as a list value. However, `strings` are immutable values which means that we can only assign a new value to the variable to change the value. 
 1. In Python, variable are just the reference to the value in computer's memory, which means that if the value type is mutable, all the variable refer to the same value will be modified if any of them are modified at the same time. However, this only happens when a variable is given value by assign another variable. If both variables have the same value but in separated assignment, these variables are "**_equivalent_**" but not "**_identical_**". 
@@ -168,7 +168,7 @@
     #This is the first line. This is the 2nd Line, but all text is actually in one line
     ```
 
-**The dictionary data type**
+### The dictionary data type
 `dict.keys()`, `dict.values()`, `dict.items()`, `dict.get(key, fallbackValue)`, `dict.setdefault()`, `pprint`, `pprint.pprint(dictionary)`, `pprint.pformat(dictionary)`
 1. `Dictionaries` are structure in curly braces. Every value is a KEY/VALUE pair, which key is a `String` that should be declared in quotes. (However, Objects in JavaScript are PROPERTY/VALUE pair and the property doesn't need to declared in quotes). 
 1. Unlike `list` values, elements in dictionary are not in order. We can use square brackets to call the value of a key from a dictionary value. 
@@ -196,11 +196,11 @@
     ```
 1. However, printing a dictionary value directly is hard to read. Therefore, we can use `pprint` module (with double p's) to print a dicionary value out in order by the keys. We use `pprint.pprint(dictionary)` to print the value out in an ascending order. Note that we can use `pprint.pformat(dictionary)` which returns the formated value as a "**String**" value as the output of `pprint.pprint()`. 
 
-**Data Structure**
+### Data Structur
 1. Here is introducing about the combination of using both dictionary and list value to create a hybrid type of value. 
 1. We can use `type(value)` to check the type of the value whether it is `string`, `integer`, `float`, etc. 
 
-**Advanced string syntax** 
+### Advanced string syntax 
 1. We can use escape character which is backslash `\` that we can use both single and double quote signs in a string value. For example, `\'`, `\"`, `\t` (tab), `\n` (line break), `\\` (backslash)
 1. We can use raw string value which is a string started with character `r` and in quotes such as `r"hello"`. In this case, a back slash won't be treated as a escape character. 
     ```python
@@ -210,7 +210,7 @@
 1. `""" string value that can be in multiple lines. """` anything bettwen the pair of triple quotes will be considered to be part of the string value, even though the strings are in different lines. This features is very useful when parsing large amount of text. 
 1. `indices`, `slices` (square bracket notation), `in` and `not in` all work with string values. 
 
-**String methods** 
+### String methods 
 `string.lower()`, `string.upper()`, `string.islower()`, `string.isupper()`, `string.isalpha()`, `string.isalnum()`, `string.isdecimal()`, `string.isspace()`, `string.istitle()`, `string.title()`, `.startswith()`, `.endswith()`, `.join`, `.split()`, `.ljust()`, `.rjust()`, `.center()`, `.strip()`, `.rstrip()`, `.lstrip()`, `.replace()`, `pyperclip`, `pyperclip.copy()`, `pyperclip.paste()` 
 1. `string.lower()` method will return a copied string value and turn all characters into lowercase. `sting.upper()` is in opposite that it turn all characters into uppercase. These methods are useful to clean 
 1. `.islower()` is to check if a string value has "**all**" characters in lowercase and returns a boolean value. `.isupper()` method is on the opposite that it checks if all characters are uppercase and returns a boolean value. If the string value has any non-alphabet characters but using `.upper()` method to them all into uppercase, by using `.isupper()` it returns a boolean `True`. However, if we check a non-text character such as a question mark "?", both `"?".isupper()` and `"?".islower()` return `False`. But if the string value has at least one alphabet character, it returns a True if the character is lowercase, such as `"?a".islower()`. 
@@ -262,7 +262,7 @@
 1. `.replace()` method take 2 arguments. The first one is the character(s) to search in the string, and the 2nd is the character(s) to replace with the searched characters. (In JavaScript, String values have exact the same method to replace characters in a string.) 
 1. `pyperclip` is the module which have `pyperclip.copy()` and `pyperclip.paste()` functions that can copy a string value to computer's clipsboard, and paste the value back. (This module and methods have been introduced in the very first section.) 
 
-**String Formatting** 
+### String Formatting 
 1. We can use plus sign "+" to concatenate the strings values and variables. 
 1. We can use "**conversion specifiers**" when there are many string variables to be concatenated in the same line. That we can put `%s` in a string value and have `%(string variable1, var2, var3...)` the each of the string values in the `%()` will be passed into the string value by sequence. 
 ```python
@@ -276,7 +276,7 @@ print("Hello %s, you are invited to a party at %s at %s. Please bring %s." %(nam
 #"Hello Alice, you are invited to a party at Main Street at 6pm. Please bring turnips." 
 ```
 
-## **Regular Expressions** 
+# Regular Expressions
 Module `re`, `re.compile()`, `.search()`, `.group()`, `findall()`
 1. Regex is helps us to search and parse values and data that are in certain patterns. For example, phones in the USA and Canada starts with an area code in 3 numbers, a dash "-", another 3 number, another dash "-", and another 4 numbers. Without <ins>**regualr expressions**</ins>, we have to use several `IF` statements and `for` loop to check if a phone number is in a valid pattern. 
 1. To use regular expression, we import `re` module to the code and use `re.compile()` method which takes regular expression patterns in raw string (starts with `r"String"`) because regex often uses <ins>**backslashes**</ins> "\". We then use `.search()` method to and pass the `String` value that we want to use regex to parse. `.search()` method returns a "**Match Object**" which shows if there's a match anywhere in the string (Note that this method only returns one of the matches if there's many). We then can use `.group()` method to return the matched result. On the other hand, we can use `.findall` method directly that it will retun a list of matched values. 
@@ -365,7 +365,7 @@ Module `re`, `re.compile()`, `.search()`, `.group()`, `findall()`
 1. Caret character "`^`" used in square brackets "[ ]" means <ins>**IS NOT**</ins>. Therefore, with the previous vowel example, we can use the syntax to find characters that <ins>**IS NOT**</ins> in the given set, such as `[^aeiouAEIOU]`. Note that this will include "whitespace" as well because it includes <ins>**EVERY**</ins> character that IS NOT in the given set of the `String`. 
 
 ### Dot-star and caret/dollar characters
-Dollar Sign`$`, Caret `^`
+Dollar Sign`$`, Caret `^`, `re.DOTALL`, `re.IGNORECASE` and `re.I` 
 1. If we put a caret '^' at front, the following characters must be in the beginning of the `String`. 
     ```py
     import re 
@@ -387,3 +387,122 @@ Dollar Sign`$`, Caret `^`
     print(allDigitsRegex.findall('12345678901234567890')) #['12345678901234567890']
     print(allDigitsRegex.search('123456789x01234567890') == None) #True because there's a letter in the digits
     ```
+1. A dot " . " stands for <ins>**any character rather than the new line "\n"**</ins>. However, this "wildcard" also includes whitespace. In the example below, if we have range 1 or 2 characters before at, whitespace is included though it's not making a word. We can use both dot "." and asterisk "*" for 0 or more to retrive all the characters we wants. Besides, we can use question mark "?" to have non-greedy search as well. The query will stop at the first match as the idea of stopping at the minimum for a giving range. 
+    ```py 
+    atRegex = re.compile(r'.{1,2}at') #1 or 2 characters before "at"
+    print(atRegex.findall('The cat in the hat sat on the flat mat.')) #this include white space 
+
+    nameRegex = re.compile(r'First Name: (.*) Last Name: (.*)') #select all characters in the group 
+    print(nameRegex.findall('First Name: Al Last Name: Sweigart')) #findall method returns list of tuples of the groups
+
+    serve = '<To serve humans> for dinner.>' 
+    nongreedy = re.compile(r'<(.*?)>') #non-greedy search, which stops at the first match 
+    print(nongreedy.findall(serve)) #['To serve humans'] 
+    greedy = re.compile(r'<(.*)>') #regular greedy search which goes further for if any matches 
+    print(greedy.findall(serve)) #['To serve humans> for dinner.'] 
+    ```
+1. We can pass a 2nd argument `re.DOTALL` to `.compile()` method to change the "dot" cover any character including new line character. (This is a bit weird that the last sentence isn't included and so does the instruction video) 
+    ```py
+    import re 
+    dotStar = re.compile(r'.*', re.DOTALL) 
+    print(dotStar.search(prime))
+    ```
+1. We can pass `re.IGNORECASE` as the 2nd argument to `.compile()`, so the regex will <ins>**NOT**</ins> be case sensitive. We can also use its shorthand `re.I` (which also stands for ignoring case)
+    ```py 
+    vowelRegex = re.compile(r'[aeiou]') 
+    print(vowelRegex.findall('Al, why does your programming book talk about RoboCop so much?'))
+    #['o', 'e', 'o', 'u', 'o', 'a', 'i', 'o', 'o', 'a', 'a', 'o', 'u', 'o', 'o', 'o', 'o', 'u']
+    vowelRegex = re.compile(r'[aeiou]', re.I)
+    print(vowelRegex.findall('Al, why does your programming book talk about RoboCop so much?'))
+    #['A', 'o', 'e', 'o', 'u', 'o', 'a', 'i', 'o', 'o', 'a', 'a', 'o', 'u', 'o', 'o', 'o', 'o', 'u']
+    ```
+### Regex sub() method and verbose mode 
+`sub()` method for "**substitution**" 
+1. We can use `.sub()` method to "substitute" characters or words. The matched value will be replaced as the 1st arugment in `.sub()` method. 
+    ```py
+    nameRegex = re.compile(r'Agent \w+') 
+    print(nameRegex.findall('Agent Alice gave the secret documents to Agent Bob.')) 
+    #['Agent Alice', 'Agent Bob']
+    print(nameRegex.sub('REDACTED', 'Agent Alice gave the secret documents to Agent Bob.')) #replace mathced agents 
+    #REDACTED gave the secret documents to REDACTED. 
+    ```
+1. We can use `\(number)` <ins>**backslash number syntax**</ins> which represent the group in the regex. Note that we must use "raw string", `r''`, to present the "**backslash number syntax**" (or use backslash to escape the backslash before number). If we have a 2nd group, we can use `\2` to represent it. 
+    ```py
+    namesRegex = re.compile(r'Agent (\w)\w*') #a group of the 1st character of the name of a found Agent 
+    print(namesRegex.findall('Agent Alice gave the secret documents to Agent Bob.')) #['A', 'B']
+    print(namesRegex.sub(r'Agent \1****', 'Agent Alice gave the secret documents to Agent Bob.'))
+    print(namesRegex.sub('Agent \\1****', 'Agent Alice gave the secret documents to Agent Bob.')) #the same as using raw string by escaping backslash 
+    Agent A**** gave the secret documents to Agent B****.
+    ``` 
+1. We can use pass `re.VERBOSE` as the 2nd argument to `re.compile()` function to start **Verbose Mode**. IN this mode, we can add whitespaces and comments in lines. The regex can be wrapped with triple quotes `'''` in multilple lines that we can give comments and separate the parts of the regex which makes the expression easier to read and understand. 
+1. We've learnt `re.DOTALL` and `re.IGNORECASE`(`re.I`) as the 2nd argument to pass to `re.compile()`. However, the function can only take one of the feature as the 2nd argument. Therefore, we can use a pipe character "|" to separate the argumetns and pass all the features we make `re.compile()` to work on. 
+    ```py
+    re.compile(r'''
+    (\d\d\d-) |     #area code (without parenthesis, with dash)
+    (\(\d\d\d-\) )  #-or- area code with parenthesis and no dash
+    \d\d\d          #first 3 digits
+    -               #second dash
+    \d\d\d\d        #last 4 digits
+    \sx\d{2,4}      #extension, like x1234''', re.VERBOSE | re.I | re.DOTALL) 
+    #regex for pattern of phone numbers in USA and Canada 
+
+    #Easier than reading 
+    re.compile(r'(\d\d\d-)|(\(\d\d\d-\) )\d\d\d-\d\d\d\d\sx\d{2,4}', re.I | re.DOTALL)
+    ```
+
+### Regex example program: email and phone scraper 
+1. We firstly declare which version of Python we use to run the code on the top with "**#! python3**" (a comment). 
+1. `import` module `re` and `pyperclip` for clipboard with copy and paste functions. 
+1. Build a Todo list for each task 
+    1. \# TODO: Create a regex for phone numbers. We can use `re.VERBOSE` to turn on verbose mode to make comments of regex for phone numbers. 
+    1. \# TODO: Create a regex for emial addresses 
+    1. \# TODO: Get the text off the clipboard 
+    1. \# TODO: Extract the email/phone from this text 
+    1. \# TODO: Copy the extracted email/phone to the clipboard 
+1. Note that in this program we parse the data that is "**copied**" in the computer clipboard, which means that we must open a text or PDF file, select the area (texts), and use Ctrl C or mouse right click to copy it. (Just a regualr copy as word processing! The Python module `pyperclip` can read what's the current value in the computer's clipboard.) 
+1. We use `.join()` method to concatenate all the found emails and phones (as entities) into a large `String` which values separated by new line character `\n`. Note that we can change the separator of `.join()` method and use comma or tab character to make CSV or TSV file. 
+```py
+#! python3 
+import re, pyperclip
+
+# Create a regex for phone numbers 
+phoneRegex = re.compile(r'''
+#415-555-0000, 555-0000, (415) 555-0000, 555-0000 ext 12345, ext. 12345, x12345
+(                            #a large group to wrap all regex code (start)
+((\d\d\d) | (\(\d\d\d\)))?   #area code (optional). This is an optional group with OR "|" for 3 digit w/n wrapped with parenthesis 
+(\s|-)                       #first separator. This can be a single whitespace or a dash "-"
+\d\d\d                       #first 3 digits 
+-                            #serparator
+\d\d\d\d                     #last 4 digits 
+(((ext(\.)?\s)|x)            #extension word-part (optional). The word-part and number-part are actually in the same group but different line
+ (\d{2,5}))?                 #extension number-part (optional). There's a whitespace between word-part and number-part, so this line has a whitespce in the beginnning
+)                            #a large group to wrap all regex code (end)
+''', re.VERBOSE)
+
+# Create a regex for emial addresses 
+emailRegex = re.compile(r'''
+# some.+_thing@something.com
+
+[a-zA-Z0-9_.+]+        #name part. We can't use \w directly as it only covers letters and underscore, so we create a customized one with square brackets []. Besides, we only cover dot, underscore, and plus sign in the name part rather than covering all the possible characters in email. 
+@                      #@ symbol 
+[a-zA-Z0-9_.+]+        #domain name part 
+''', re.VERBOSE)
+
+# Get the text off the clipboard. Note that we must open a text or pdf file, select the texts, and use Ctrl c or mouse right lick to copy the texts. pyperclip function will check the clipboard of computer when this python program runs
+text = pyperclip.paste() 
+
+# Extract the email/phone from this text 
+extractPhone = phoneRegex.findall(text) #findall() method returns list of tuples if regex has groups. A way to solve the problem is to wrap all the regex in a single big group
+extractEmail = emailRegex.findall(text)
+
+allPhoneNumbers = [] #a list to keep parsed phone numbers 
+for phoneNumber in extractPhone: #loop through the list of tuples 
+    allPhoneNumbers.append(phoneNumber[0]) #only the first value of the tuple is the whole phone number 
+
+print(allPhoneNumbers)
+print(extractEmail)
+
+# Copy the extracted email/phone to the clipboard 
+results = '\n'.join(allPhoneNumbers) + '\n' + '\n'.join(extractEmail) #use join() method to concatenate all phones and emails in a single String value that separate each entity with a new line character '\n'
+pyperclip.copy(results) # use Ctrl v or other methods to paste the results to word processing software or text editor
+```
