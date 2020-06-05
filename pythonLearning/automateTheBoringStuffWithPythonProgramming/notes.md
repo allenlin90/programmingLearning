@@ -363,3 +363,27 @@ Module `re`, `re.compile()`, `.search()`, `.group()`, `findall()`
 ### Self-made character classes 
 1. We can use square brackets "[ ]" to wrap the characters we want such as all the vowels as `[aeiou]` which is the same as `(a|e|i|o|u)`. Therefore, we can have a shorter version of the regex. Besides, we can use dash for a range of letters such as `[a-z]` which means from a to z in **lowercase** and `[A-Z]` which means from A to Z in **uppercase**. This can also be used with curly braces for repetition such as `[aeiouAEIOU]{2}`, so regex will find the vowels which has 2 letters attached in a row. 
 1. Caret character "`^`" used in square brackets "[ ]" means <ins>**IS NOT**</ins>. Therefore, with the previous vowel example, we can use the syntax to find characters that <ins>**IS NOT**</ins> in the given set, such as `[^aeiouAEIOU]`. Note that this will include "whitespace" as well because it includes <ins>**EVERY**</ins> character that IS NOT in the given set of the `String`. 
+
+### Dot-star and caret/dollar characters
+Dollar Sign`$`, Caret `^`
+1. If we put a caret '^' at front, the following characters must be in the beginning of the `String`. 
+    ```py
+    import re 
+    beginsWithHelloRegex = re.compile(r'^Hello')
+    print(beginsWithHelloRegex.findall('Hello there!')) #['Hello']
+    beginsWithHelloRegex.search('He said "Hello there!"') == None #True
+    ```
+1. Dollar sign "$" is on the opposite to caret "^" that the `String` value should be at the very end of the parsed `String`. 
+    ```py 
+    import re 
+    endsWithWorldRegex = re.compile(r'world!$')
+    print(endsWithWorldRegex.findall('Hello world!')) #['world!']
+    endsWithWorldRegex.search('He said "Hello there!"') == None #True
+    ```
+1. We can use both dollar sign "$" and caret sign "^" to check if the `String` values matcehs exactly as the given regex, as `^both$`. In the following example, the `String` must be only digits (plus sign '+' means one or more). If there's another character other than numbers, there's no value will match. 
+    ```py 
+    import re 
+    allDigitsRegex = re.compile(r'^\d+$')
+    print(allDigitsRegex.findall('12345678901234567890')) #['12345678901234567890']
+    print(allDigitsRegex.search('123456789x01234567890') == None) #True because there's a letter in the digits
+    ```

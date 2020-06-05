@@ -34,4 +34,16 @@ phoneRegex = re.compile(r'((\d\d\d)-(\d\d\d-\d\d\d\d))') #3 groups, as 1 of the 
 #print(phoneRegex.findall("123-456-7890 123-456-7890"))
 
 vowelRegex = re.compile(r'[^aeiouAEIOU\s]') 
-print(vowelRegex.findall("Robocop eats bady food"))
+#print(vowelRegex.findall("Robocop eats bady food"))
+
+beginsWithHelloRegex = re.compile(r'^Hello')
+#print(beginsWithHelloRegex.findall('Hello there!'))
+#print(beginsWithHelloRegex.search('He said "Hello there!"') == None) 
+
+endsWithWorldRegex = re.compile(r'world!$')
+#print(endsWithWorldRegex.findall('Hello world!')) #['world!']
+#print(endsWithWorldRegex.search('He said "Hello there!"') == None) #True
+
+allDigitsRegex = re.compile(r'^\d+$')
+print(allDigitsRegex.findall('12345678901234567890'))
+print(allDigitsRegex.search('123456789x01234567890') == None)
