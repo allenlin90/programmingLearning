@@ -944,3 +944,205 @@ Note that the issue here is the scopeing of variable declaration by keyword `var
     //The statement can work but not in strict mode
     ```
 
+# Examining Famous Frameworks and Libraries
+### jQuery
+1. When we use a jQuery selector which start with a dollar sign "$", we get an array-like value which include all the elements we select by jQuery selector. Each of the elements has several properties of a regular HTML element. Besides, we can check the methods we can work on a jQuery object in its `__proto__` property.  
+1. When we look into the jQuery source code, we notice that variable `jQuery` is a variable that holds a function value which function returns an `Object` created with keyword `new` in `jQuery.fn.init`. Then we find that `jQuery.fn = jQuery.prototype = {properties and methods}`. 
+1. jQuery also uses other JavaScript libraries such as [`Sizzle`](https://sizzlejs.com/). 
+1. We can do "**Method chaining**" in jQuery, which is calling one method after another, and each method affects the parent `Object`. This works as jQuery selector returns an `Object` and jQuery methods will return the modified `Object` after processs. If we investigate the source code, we can find that every method returns a `this`, which is the `Object` that the method manipulates. 
+1. In the last section of jQuery source code, we can find that a variable `_$` is set up as `window.$` which is also assigned to variable `jQuery`, and all these variables have function value, so can be invoked (As in the very first section of the source code that `var jQuery = function(selector, context){...}`). This is the reason why we can use dollar sign with parenthesis as jQuery selector because the dollar sign is actually a variable after we import jQuery library. (This is the same concept as the underscore library, as variables in JavaScript can start with punctuation characters). 
+    ```js
+    _$ = window.$; 
+    window.jQuery = window.$ = jQuery;
+    $ == jQuery; //true 
+    ```
+
+# Build a Framework/Library 
+### Greetr library 
+1. This `Greetr` is the framework instructed to be built in the course and have several functions. 
+    1. When given a firstname, lastname, and optional language, it generates formal and informal greetings. 
+    1. Support English and Spanish languages. 
+    1. Reusable library/framework 
+    1. Easy to type 'G$()' structure (which mimics jQuery). 
+    1. Support jQuery. 
+1. Therefore, we import `jQuery`, `Greetr`, and `app.js` to the HTML file in order. We use immediate invoked functions. The structure is similar to jQuery that it returns an `Object`, which should be created by keyword `new`. With the shorthand, we can skip `new` as the function IFEEs. Note that by using IFEEs, we can prevent the variables and code "**pollute**" the execution context. 
+    ```js
+    (function (global, $) {
+        //Create a Greetr object with constructor function when invocation
+        var Greetr = function(firstName, lastName, language) {
+            return new Greetr.init(firstName, lastName, language);
+        }
+        //properties and methods of Greetr objects 
+        Greetr.prototype = {}; 
+
+        //initiation of a Greetr object 
+        Greetr.init = function(firstName, lastName, language) {
+            var self = this; 
+            self.firstName = firstName || ''; //set default value as empty if argument isn't given
+            self.lastName = lastName || ''; //set default value as empty if argument isn't given
+            self.language = language || 'en'; //set default value as english if argument isn't given
+            
+        }
+        
+        //link new created Greetr objects with added methods. 
+        Greetr.init.prototype = Greetr.prototype; 
+
+        //align variables with shorthands
+        global.Greetr = global.G$ = Greetr; 
+
+    }(window, $));//pass global object and jQuery library (variable $ or jQuery) to this library 
+    ```
+1. With the feature of "**closure**" in JavaScript, we can set up variables in the IFEE without leaking it out to pollute the environment. Thus, other developers can only modify the source code to access the variables that declared in the function expression. Even though we use `var` to declare, as it's in a function, it can't leak out from the scope. 
+    ```js 
+    (function (global, $) {
+        //Create a Greetr object with constructor function when invocation
+        var Greetr = function(firstName, lastName, language) {
+            return new Greetr.init(firstName, lastName, language);
+        }
+        //variables declared here can't access or be changed from outside
+        var supportedLangs = ['en', 'es']; 
+        var greetings = { 
+            en: 'Hello', 
+            es: 'Halo'
+        };
+        var formalGreetings = { 
+            en: 'Greetings', 
+            es: 'Saludos'
+        };
+        var logMessages = { 
+            en: 'Logged in', 
+            es: 'Inicio sesion'
+        };
+
+        //methods of Greetr objects which can be access after the object is created 
+        Greetr.prototype = {
+            fullName: function(){
+                return this.firstName + ' ' + this.lastName; 
+            }, 
+
+            validate: function() {
+                if (supportedLangs.indexOf(this.language) === -1) { //if the given language isn't found in the supportedLangs array, index will reutrn -1 as not found 
+                    throw 'Invalid language'; //return an error as the given language isn't found 
+                } 
+            },
+
+            greeting: function(){ //checks the object variable above for and return the text with aligned language
+                return greetings[this.language] + ' ' + this.firstName + '!'; 
+            }, 
+
+            formalGreeting: function(){
+                return formalGreetings[this.language] + ' ' + this.fullName(); 
+            }, 
+
+            greet: function(formal){
+                var msg; 
+                
+                //if undefined or null it will be coerced to 'false'
+                if (formal) {
+                    msg = this.formalGreeting();
+                }
+                else {
+                    msg = this.greeting(); 
+                }
+
+                if (console){
+                    console.log(msg); 
+                }
+
+                //'this' refers to the calling object at execution time 
+                //makes the method chainable 
+                return this; 
+            }, 
+
+            log: function(){
+                if (console) {
+                    console.log(logMessages[this.language] + ': ' + this.fullName())
+                }
+                return this;
+            }, 
+
+            setLang: function(lang){
+                this.language = lang;
+
+                this.validate(); 
+
+                return this;
+            }
+        }; 
+
+        //initiation of a Greetr object 
+        Greetr.init = function(firstName, lastName, language) {
+            var self = this; 
+            self.firstName = firstName || ''; //set default value as empty if argument isn't given
+            self.lastName = lastName || ''; //set default value as empty if argument isn't given
+            self.language = language || 'en'; //set default value as english if argument isn't given
+            
+        }
+        
+        //link new created Greetr objects with added methods. 
+        Greetr.init.prototype = Greetr.prototype; 
+
+        //align variables with shorthands
+        global.Greetr = global.G$ = Greetr; 
+
+    }(window, $));//pass global object and jQuery library (variable $ or jQuery) to this library 
+    ```
+
+### Adding jQuery supports and use "Greetr" library
+1. We add a new method in `Greetr.prototype` 
+    ```js
+    HTMLGreeting: function(selector, formal){
+        if (!$) {//check if jQuery is imported, so $ dolloar sign variable is not empty
+            throw 'jQuery not loaded'; 
+        } 
+
+        if (!selector) {//check if a selector to pass to jQuery is given 
+            throw 'Missing jQuery selector'; 
+        }
+
+        var msg; 
+        if(formal) { //use formal greeting function
+            msg = this.formalGreeting();
+        } else { //use regular greeting function
+            msg = this.greeting(); 
+        }
+
+        $(selector).html(msg); //jQuery DOM to modify the message on page 
+
+        return this; //make the method chainable 
+    }
+    ```
+1. Some libraries will start the code with a semi-column ";", as to prevent if there's any other library or source code imported to the same HTML forget to close a statement or expression. (Note that I made a mistake in the HTML file at the first time that I put the "h1" tag in the "div" tag section, so it is hidden after clicking the button.)
+    ```js
+    //gets a new object (the architecture allows us to not have to use the 'new' keyword here)
+    var g = G$('John', 'Doe'); 
+
+    //use our chainable methods
+    g.greet().setLang('es').greet(true).log();
+    
+    //add listener to the login button 
+    $('#login').on('click', function(){
+        //create a new 'Greetr' object (let's pretend we know the name from the login)
+        var loginGrtr = G$('John', 'Doe');
+
+        //hide the login on the screen 
+        $('#logindiv').hide(); 
+
+        //fire off an HTML greeting, passing the '#greeting' as the selector and the chosen language, and log the welcome as well 
+        loginGrtr.setLang($('#lang').val()).HTMLGreeting('#greeting', true).log(); 
+    });
+    ```
+### HTML file 
+    ```html 
+    <div id="logindiv">
+        <select id="lang">
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+        </select>
+        <input type="button" value="Login" id="login">
+    </div>
+    <h1 id="greeting"></h1>
+    <script src="jquery-3.5.1.js"></script>
+    <script src="Greetr.js"></script>
+    <script src="app.js"></script>
+    ```
