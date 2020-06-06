@@ -462,6 +462,7 @@ Dollar Sign`$`, Caret `^`, `re.DOTALL`, `re.IGNORECASE` and `re.I`
 1. Note that in this program we parse the data that is "**copied**" in the computer clipboard, which means that we must open a text or PDF file, select the area (texts), and use Ctrl C or mouse right click to copy it. (Just a regualr copy as word processing! The Python module `pyperclip` can read what's the current value in the computer's clipboard.) 
 1. We use `.join()` method to concatenate all the found emails and phones (as entities) into a large `String` which values separated by new line character `\n`. Note that we can change the separator of `.join()` method and use comma or tab character to make CSV or TSV file. 
 ```py
+#phoneAndEmail.py
 #! python3 
 import re, pyperclip
 
@@ -506,3 +507,91 @@ print(extractEmail)
 results = '\n'.join(allPhoneNumbers) + '\n' + '\n'.join(extractEmail) #use join() method to concatenate all phones and emails in a single String value that separate each entity with a new line character '\n'
 pyperclip.copy(results) # use Ctrl v or other methods to paste the results to word processing software or text editor
 ```
+
+# Files 
+### Filenames and absolute/relative file paths
+Module `os`, `os.path.join()`, `os.getcwd()`, `os.path.abspath()`, `os.path.isabs()`, `os.path.relpath(startPath, endPath)`, `os.path.dirname()`, `os.path.basename()`, `os.path.exists()`, `os.path.isfile()`, `os.path.isdir()`, `os.path.getsize()`, `os.listdir()`, `os.makedirs()`
+1. In Windoes OS, folders can contain folders of files. Each file has 2 attirbutes that is "**File name**" and "**File path**", which is usually on the top of the document manager program on PC. We can access the "root" folder, which is "C:\\" in Windows or "/" in Linux OS. Note that file separator on Windows is used a backslash "\", while Linux and MacOS uses a slash "/". Besides, backslashes can escape characters. To include backslash in a `String`, we have to use one backslash before another "\\\\" or use `raw String` as `r''`. 
+1. Though we can use `'\\'.join(['folder1', 'folder2', 'folder3','file.png'])` method to make a path, Python has a module `os` which has a method `os.path.join()` to work on. Besides, in Python IDLE, we can use `os.sep` after importing `os` module to check the separator character of the current running OS.  
+    ```py 
+    import os 
+    filePath = os.path.join('folder1', 'folder2', 'folder3','file.png') #this method takes multiple arguments rather than a list of file paths. 
+    #folder1/folder2/folder3/file.png
+    #this returns a path according to the OS runs the code. 
+    ```
+1. We can use `os.getcwd()` to get the location where the python program is running (current working directory, cwd). If we put in any filename, the program will assume the file is at the same directory where the program is working at (cwd). This is similar to `pwd` command in Bash terminal. 
+1. We can use `os.chdir()` to change the working path. It's similar to use `cd` command in both Windows and Linux for "**change directory**". The argument we give to the method should be the absolute path. Besides, this won't affect the cwd if we leave the program. 
+1. There are 2 types of file pathes, <ins>**absolute file path**</ins> and <ins>**relative file path**</ins>. Absolute path always starts with the root directory, while relative path starts from the current working direcotry (cwd). 
+1. We can use a single dot "." to represent the current folder, and double dots ".." stands for the parent folder of the current folder. Therefore, we can use "./" for current working directory in Linux for relative file path and "./childFolder/file.txt" to access a text file in the child dirctory of CWD. If we are going to other directories in the which is the same level as CWD, we can use double dots "../folder1/folder2/otherfile.txt". 
+1. There are several methods we can use on `os.path`. Note that we can test the methods without having the real files in the pointed directories. 
+    1. `os.path.abspath()` this method returns a `String` of the absolut file path of a given file name in the CWD. For example, we have a `file.txt` in CWD and `file2.png` in the other direcotry. 
+    1. `os.path.isabs()` can check if a given `String` of file path is an absolute file path and returnsa a boolean `True` or `False`. 
+    1. `os.path.relpath(endPath, startPath)` takes 2 arguments, each of which should be an absolute file path. The method returns the relative file path between the absolute path. The 1st argument is the end point, while the 2nd argument is the starting point.  
+    1. `os.path.dirname()` for the file path of the given absolute file path. The dir name is everything before the last slash of a path. 
+    1. `os.path.basename()` for the file name of the last directory on the given absolute file path. The base name follows the last slash in a path and is the same as the file name. 
+    `os.path.exists(absolute file path)` can check if a file is on the given abolsute path and returns a boolean `True` or `Flase`. 
+    1. `os.path.getsize()` returns the size of a file in <ins>**bytes**</ins>. 
+    1. `os.listdir()` returns a list of files and directories at a given path. Note that this method is on `os` directly without `.path`. Besides, we can use this with other methods that return a path, such as `os.path.getcwd()`. 
+    ```py 
+    #The pathes are mock up for samples 
+    import os 
+    print(os.getcwd()) #CWD is at C:\\Users\A\Desktop
+
+    #return the absolute file path of a file 
+    print(os.path.abspath('file.txt')) #C:\\Users\A\Desktop\file.txt 
+    print(os.path.abspath('../../folder1/file2.png')) #C:\\Users\folder1\file2.png
+    
+    #check if a file path is a absolute path (which the main purpose is to check if the root directory is correct)
+    print(os.path.isabs('c:\\Users\\A\\Desktop')) #True in Windows OS
+    print(os.path.isabs('/mnt/c/Users/')) #True in Windows Subsystem of Linux 
+
+    #return the relative file path between 2 given absolute file pathes 
+    print(os.path.relpath('c:\\Users\\A\\Desktop\\file.txt', 'c:\\folder1')) #..\Users\A\Desktop\file.txt 
+    print(os.path.relpath('/mnt/Users/', '/mnt/abc')) #../Users 
+
+    #return dirtory name 
+    print(os.path.dirname('c:\\Users\\A\\Desktop\\file.txt')) #C:\\Users\A\Desktop\
+    print(os.path.dirname('/mnt/Users/A/Desktop/file.txt')) #/mnt/Users/A/Desktop/
+
+    #return file name or the last diretory of the given absolute file path
+    print(os.path.basename('c:\\Users\\A\\Desktop\\file.txt')) #file.txt 
+    print(os.path.basename('c:\\Users\\A\\Desktop')) #Desktop
+    print(os.path.basename('/mnt/Users/A/Desktop/file.txt')) #file.txt 
+    print(os.path.basename('/mnt/Users/A/Desktop')) #Desktop
+
+    #check if a file exists or on the given path 
+    print(os.path.exists('c:\\Users\\A\\Desktop\\file.txt')) #False as this is a mock up 
+    print(os.path.exists('/mnt/Users/A/Desktop/file.txt')) #False as this is a mock up
+
+    #check if a given path is a file or directory
+    print(os.path.isfile('c:\\Users\\A\\Desktop\\file.txt')) #True 
+    print(os.path.isfile('c:\\Users\\A\\Desktop')) #False
+    print(os.path.isdir('/mnt/Users/A/Desktop/file.txt')) #False
+    print(os.path.isdir('/mnt/Users/A/Desktop')) #True
+
+    #get size of a file in bytes
+    print(os.path.getsize('c:\\Users\\A\\Desktop\\file.txt')) #True 
+    print(os.path.getsize('/mnt/Users/A/Desktop/file.txt')) #False
+
+    #get a list of files and direcotries at a given path 
+    print(os.listdir('c:\\Users\\A\\Desktop')) #All the files and folders on the Desktop
+    print(os.listdir('/mnt/Users/A/Desktop')) #All the files and folders on the Desktop
+    ```
+1. We can make a small program to check the size of all files in a folder with `os.listdir()` and `os.path.getsize()`. Note that this doesn't include the folders and their child direcotries and files inside. This only sums the size the files at CWD. 
+    ```py
+    import os 
+    totalSize = 0 #variable that takes the sum of size of all the files 
+    for file in os.listdir(os.getcwd()): #for loop to iterate through all the files in current directory
+        if not os.path.isfile(os.path.join(os.getcwd(), file)): #if the item is a folder or not a file, skip it 
+            continue 
+        totalSize += os.path.getsize(os.path.join(os.getcwd(), file)) # add up the size of files iterated and chcked 
+    print(totalSize)
+    ```
+1. `os.makedirs()` method can take both absolute and relative path as its argument and create a folder (directory) at the given path, which is very similar to `mkdir` command in both Windows commmand prompt and Bash terminal. 
+    ```py
+    #create a folder "test" in CWD
+    import os 
+    os.getcwd() #/mnt/c/Users/A/Desktop
+    os.makedirs(os.path.join(os.getcwd(),test)) #use "os.path.join" to create the abosulte path of CWD
+    os.path.isdir('mnt/c/Users/A/Desktop/test') #True 
+    ```
