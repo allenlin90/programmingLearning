@@ -707,4 +707,4 @@ module `os` and `shutil`, `os.unlink(file)`, `os.rmdir()`
             #os.unlink(filename) #comment out the deleting function/method 
             print(filename) #use print() function to check the file names if they are correct 
     ``` 
-1. Module `send2trash` has a function `send2trash.send2trash(file)`. This method is safer that it only sends the file to the recycle bin of the PC. 
+1. Module `send2trash` has a function `send2trash.send2trash(file)`. This method is safer that it only sends the file to the recycle bin of the PC. (This works in Windows if the python program runs in command prompt. However, I can't find the bin of WSL at the moment.)
