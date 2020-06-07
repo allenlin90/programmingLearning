@@ -665,3 +665,46 @@ Module `os`, `os.path.join()`, `os.getcwd()`, `os.path.abspath()`, `os.path.isab
     print(list(shelfFile.values()))
     # [['Mark', 'Roy', 'Dick', 'Bob'], ['Zophie', 'Pooka', 'Fat-tail', 'Cleo']]
     ```
+
+### Copying and moving files and folders 
+module `shutil` and `os`, `shutil.copy(file, path)`, `shutil.copytree(folderToCopy, duplicateFolder)`, `shutil.move(file, path)`, `os.makedirs(folderPath)` 
+1. We can use `shutil` (shell utilities) module to move files around. 
+    1.  `shutil.copy(file, path)` method which takes 2 arguments, 1 as the file to be copied and the other is the destination path where to have the copied file. Note that `shutil.copy()` method returns the file path of the copied file which is just a side effect. Besides, we can also give the file name for the 2nd argument of the file path to copy and rename the duplicate at the same time. However, it returns an error, if the directory of the path isn't created yet. Thus, we can use `os.makedirs(folderPath)` to create a directory. 
+    1. `shutil.copytree(folderToCopy, duplicateFolder)` is a method to copy a folder (directory). The first argument is the folder which to be copied, and the 2nd argument is the path where to paste the duplicate. This method is similar to `shutil.copy()` method that the folder name can be changed as well. 
+    1. `shtil.move(file, path)` is a method to move a file to a given directory. The first argument is the file that we want to move around, and the 2nd argument is the path where we want to move the file to. This method is very similar to `mv` command in Linux bash. Besides, both the Python method and bash command can rename the file in the same way. 
+    ```py
+    import shutil, os 
+    shutil.copy('file.txt', '../') #copy the file to the parent directory of CWD 
+
+    shutil.copy('file.txt', '../copiedfile.txt') #copy and renew the copied file at the parent directory of CWD  
+
+    os.makedirs('testFolder') #create a new directory 
+    shutil.copytree('testFolder', 'testFolder_Duplicate') #duplicate the direcotry and give a new name 
+
+    shutil.move('file.txt', 'testFolder') #move file.txt from CWD to ./testFolder
+    shutil.move('./testFolder/file.txt', './testFolder/file_rename.txt') #rename file.txt to file_rename.txt
+    ``` 
+
+### Deleting files 
+module `os` and `shutil`, `os.unlink(file)`, `os.rmdir()` 
+1. We can import module `os` and use `os.unlink(file)` to delete the given file. 
+1. `os.rmdir(folder)` is similar to `rmdir` command in Linux bash to remove an <ins>**empty**</ins> directory or directories. However, this method only takes one argument which is the folder path to be removed. To delete a not empty folder, we can use `shutil` module with its `shutil.rmtree(folder)` method to remove the directory. This delete method is similar to use `rm -rf` in Linux bash that the folder including its child folders and files will all be removed. 
+    ```py
+    import shutil, os 
+    text = open('test.txt', 'w') #overwrite the file test.txt or create one if it doesn't exist 
+    text.write('Hello World!\nNice to meet you\nHow are you today?') #update the given String to file.txt 
+    shutil.copy('test.txt', './test_rename.txt') #copy a file.txt and rename it as test_rename.txt 
+    os.makedirs('testFolder') #make a new empty directory testFolder/ 
+    shutil.move('test_rename.txt', './testFolder') #move the duplicate test_rename.txt to folder testFolder/
+    shutil.rmtree('testFolder') #remove the testFolder and folders and files in it 
+    ```
+1. To prevent the program really deletes all the files and contents, we can use "<ins>**DRY RUN**</ins>" which comment out the removing functions and methods and use `print()` to check the entities that will be removed by the program. 
+    ```py 
+    import os 
+    os.chdir('/mnt/c/Users/<Username>/Desktop') #change CWD to Desktop of the PC 
+    for filename in os.listdir(): #use for loop to iterate through the list of file names 
+        if filename.endswith('.txt'): #check if the file name is with .txt suffix 
+            #os.unlink(filename) #comment out the deleting function/method 
+            print(filename) #use print() function to check the file names if they are correct 
+    ``` 
+1. Module `send2trash` has a function `send2trash.send2trash(file)`. This method is safer that it only sends the file to the recycle bin of the PC. 

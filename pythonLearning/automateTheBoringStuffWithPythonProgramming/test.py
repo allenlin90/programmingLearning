@@ -1,11 +1,13 @@
-import shelve 
-shelfFile = shelve.open('mydata') #"selfFile" is an file object which is like a dictionary type value 
-shelfFile['cats'] = ['Zophie', 'Pooka', 'Fat-tail', 'Cleo'] #assign a new "key" to the object to have a list value 
-shelfFile['boys'] = ['Mark', 'Roy', 'Dick', 'Bob']
-shelfFile.close() 
+import shutil, os, send2trash
+# text = open('test.txt', 'w')
+# text.write('Hello World!\nHIIIIIIIIIIIIIII\nNOOOOOOOOOOO')
+# shutil.copy('test.txt', './test_rename.txt')
+# os.makedirs('testFolder')
+# shutil.move('test_rename.txt', './testFolder')
+# shutil.rmtree('testFolder')
 
-shelfFile = shelve.open('mydata') #read the stored data 
-print(shelfFile['cats']) #['Zophie', 'Pooka', 'Fat-tail', 'Cleo'] 
-print(list(shelfFile.keys()))
-print(list(shelfFile.values()))
-shelfFile.close() 
+# for filename in os.listdir(): 
+#     if filename.endswith('.txt'): 
+#         os.unlink(filename)
+
+send2trash.send2trash('test.txt') #send the file to recycling bin 
