@@ -1,7 +1,11 @@
-import os 
-totalSize = 0 
-for file in os.listdir(os.getcwd()): 
-    if not os.path.isfile(os.path.join(os.getcwd(), file)): 
-        continue 
-    totalSize += os.path.getsize(os.path.join(os.getcwd(), file))
-print(totalSize)
+import shelve 
+shelfFile = shelve.open('mydata') #"selfFile" is an file object which is like a dictionary type value 
+shelfFile['cats'] = ['Zophie', 'Pooka', 'Fat-tail', 'Cleo'] #assign a new "key" to the object to have a list value 
+shelfFile['boys'] = ['Mark', 'Roy', 'Dick', 'Bob']
+shelfFile.close() 
+
+shelfFile = shelve.open('mydata') #read the stored data 
+print(shelfFile['cats']) #['Zophie', 'Pooka', 'Fat-tail', 'Cleo'] 
+print(list(shelfFile.keys()))
+print(list(shelfFile.values()))
+shelfFile.close() 

@@ -535,47 +535,47 @@ Module `os`, `os.path.join()`, `os.getcwd()`, `os.path.abspath()`, `os.path.isab
     ```py 
     #The pathes are mock up for samples 
     import os 
-    print(os.getcwd()) #CWD is at C:\\Users\A\Desktop
+    print(os.getcwd()) #CWD is at C:\\Users\<Username>\Desktop
 
     #return the absolute file path of a file 
-    print(os.path.abspath('file.txt')) #C:\\Users\A\Desktop\file.txt 
+    print(os.path.abspath('file.txt')) #C:\\Users\<Username>\Desktop\file.txt 
     print(os.path.abspath('../../folder1/file2.png')) #C:\\Users\folder1\file2.png
     
     #check if a file path is a absolute path (which the main purpose is to check if the root directory is correct)
-    print(os.path.isabs('c:\\Users\\A\\Desktop')) #True in Windows OS
+    print(os.path.isabs('c:\\Users\\<Username>\\Desktop')) #True in Windows OS
     print(os.path.isabs('/mnt/c/Users/')) #True in Windows Subsystem of Linux 
 
     #return the relative file path between 2 given absolute file pathes 
-    print(os.path.relpath('c:\\Users\\A\\Desktop\\file.txt', 'c:\\folder1')) #..\Users\A\Desktop\file.txt 
+    print(os.path.relpath('c:\\Users\\<Username>\\Desktop\\file.txt', 'c:\\folder1')) #..\Users\<Username>\Desktop\file.txt 
     print(os.path.relpath('/mnt/Users/', '/mnt/abc')) #../Users 
 
     #return dirtory name 
-    print(os.path.dirname('c:\\Users\\A\\Desktop\\file.txt')) #C:\\Users\A\Desktop\
-    print(os.path.dirname('/mnt/Users/A/Desktop/file.txt')) #/mnt/Users/A/Desktop/
+    print(os.path.dirname('c:\\Users\\<Username>\\Desktop\\file.txt')) #C:\\Users\<Username>\Desktop\
+    print(os.path.dirname('/mnt/Users/<Username>/Desktop/file.txt')) #/mnt/Users/<Username>/Desktop/
 
     #return file name or the last diretory of the given absolute file path
-    print(os.path.basename('c:\\Users\\A\\Desktop\\file.txt')) #file.txt 
-    print(os.path.basename('c:\\Users\\A\\Desktop')) #Desktop
-    print(os.path.basename('/mnt/Users/A/Desktop/file.txt')) #file.txt 
-    print(os.path.basename('/mnt/Users/A/Desktop')) #Desktop
+    print(os.path.basename('c:\\Users\\<Username>\\Desktop\\file.txt')) #file.txt 
+    print(os.path.basename('c:\\Users\\<Username>\\Desktop')) #Desktop
+    print(os.path.basename('/mnt/Users/<Username>/Desktop/file.txt')) #file.txt 
+    print(os.path.basename('/mnt/Users/<Username>/Desktop')) #Desktop
 
     #check if a file exists or on the given path 
-    print(os.path.exists('c:\\Users\\A\\Desktop\\file.txt')) #False as this is a mock up 
-    print(os.path.exists('/mnt/Users/A/Desktop/file.txt')) #False as this is a mock up
+    print(os.path.exists('c:\\Users\\<Username>\\Desktop\\file.txt')) #False as this is a mock up 
+    print(os.path.exists('/mnt/Users/<Username>/Desktop/file.txt')) #False as this is a mock up
 
     #check if a given path is a file or directory
-    print(os.path.isfile('c:\\Users\\A\\Desktop\\file.txt')) #True 
-    print(os.path.isfile('c:\\Users\\A\\Desktop')) #False
-    print(os.path.isdir('/mnt/Users/A/Desktop/file.txt')) #False
-    print(os.path.isdir('/mnt/Users/A/Desktop')) #True
+    print(os.path.isfile('c:\\Users\\\\Desktop\\file.txt')) #True 
+    print(os.path.isfile('c:\\Users\\<Username>\\Desktop')) #False
+    print(os.path.isdir('/mnt/Users/<Username>/Desktop/file.txt')) #False
+    print(os.path.isdir('/mnt/Users/<Username>/Desktop')) #True
 
     #get size of a file in bytes
-    print(os.path.getsize('c:\\Users\\A\\Desktop\\file.txt')) #True 
-    print(os.path.getsize('/mnt/Users/A/Desktop/file.txt')) #False
+    print(os.path.getsize('c:\\Users\\<Username>\\Desktop\\file.txt')) #True 
+    print(os.path.getsize('/mnt/Users/<Username>/Desktop/file.txt')) #False
 
     #get a list of files and direcotries at a given path 
-    print(os.listdir('c:\\Users\\A\\Desktop')) #All the files and folders on the Desktop
-    print(os.listdir('/mnt/Users/A/Desktop')) #All the files and folders on the Desktop
+    print(os.listdir('c:\\Users\\<Username>\\Desktop')) #All the files and folders on the Desktop
+    print(os.listdir('/mnt/Users/<Username>/Desktop')) #All the files and folders on the Desktop
     ```
 1. We can make a small program to check the size of all files in a folder with `os.listdir()` and `os.path.getsize()`. Note that this doesn't include the folders and their child direcotries and files inside. This only sums the size the files at CWD. 
     ```py
@@ -591,7 +591,77 @@ Module `os`, `os.path.join()`, `os.getcwd()`, `os.path.abspath()`, `os.path.isab
     ```py
     #create a folder "test" in CWD
     import os 
-    os.getcwd() #/mnt/c/Users/A/Desktop
+    os.getcwd() #/mnt/c/Users/<Username>/Desktop
     os.makedirs(os.path.join(os.getcwd(),test)) #use "os.path.join" to create the abosulte path of CWD
-    os.path.isdir('mnt/c/Users/A/Desktop/test') #True 
+    os.path.isdir('mnt/c/Users/<Username>/Desktop/test') #True 
+    ```
+
+### Reading and writing plaintext files 
+`open(file path)`, `.read()`, `.close()`, `.readlines()`, `open(file path, 'w')`, `open(file path, 'a')`, module `shelve`, `shelve.open()`, `.keys()`, `.values()`  
+1. "Plaintext" files are usually with a suffix `.txt`. This kind of files includes only characters without color and other information. The scripsts of programming code are similar but with different suffix such as `.py` for Python and `.js` for JavaScript. 
+1. `open()` function takes an argument of the absolute path of a given file and returns a `file object`. For exampel, if we have a text file "test.txt" in the same directory, we can use `open.(test.txt)` to read the file in Python. Note that without any other argument, `open.()` function runs the file in "read mode" which means it only copies the content of the text file, which can be manipulate by the Python program later. For example, we set a variable `fileObj` to take the returned object. 
+    1. Use `.read()` to extract and return the information from a plain text file. The retrieved data also includes new line character `\n` if there's any. Besides, we can chain the methods to have the result in one line. Note that the new line character won't be printed with regular `print()` function, as it changes the line automatically when printing the `String` with new line character. 
+    1. After retrieving the data from a file, we can use `.close()` method to close the file. Note that this `.close()` is a method to use on a file object created by `open()`. Besides, we have to use `open()` to call the file if we want to read the file again. 
+    1. Besides `.read()` method, we can use `.readlines()` method which returns a list of `Strings` separated by new line character. 
+    ```py
+    fileObj = open('/mnt/c/Users/<Username>/Desktop/file.txt')
+    text = fileObj.read() #data is stored in "text" variable in Python program on PC memory
+    print(text) #text characters in file.txt
+
+    textCalled = open('/mnt/c/Users/<Username>/Desktop/file.txt').read() 
+    print(textCalled) #text characters in file.txt 
+
+    fileObj.close() #close reading the file 
+
+    textInLines = open('/mnt/c/Users/<Username>/Desktop/file.txt').readlines() 
+    print(textInLines) #a list of Strings separated by new line character
+    ```
+1. There are different modes we can apply on `open()` function for different purposes. 
+    1. We can run `open()` function in "**Write Mode**" to overwrite the whole contents of the file. Note that this can be risky that this "**Write Mode**" will wipe out the whole contents and replace with the new given data. We put a 2nd argument to trigger the "**Write Mode**", `open(file path, 'w')`. 
+        1. If the file doesn't exist at the given path, the program will create a new file with the given name. To give new data, we can use `.write()` method to overwrite the contents with the given argument. Note that `.write()` method returns how many characters that are written into the file. 
+        1. During a file open, if we have multiple statements with `.write()` method, all the contents will be written to the file before closing it. However, we have to add new line character by ourselves if we want to separate the data by line. 
+    1. Note that we can switch modes directly with `open(filePath, mode)` function without using `.close()` method to close the file. 
+    1. Besides "**Write Mode**", we can use "**Append mode**" which adds new contents to the end of the text file without overwrite or affect the original contents. We can pass the 2nd argument to run this mode, `open(file path, 'a')`. We can use `.write()` method to add contents to the text file. However, the new contents will follow and below the original contents. Thus, we can use this method to prevent overwriting the whle file. 
+    ```py
+    #open a file in different modes 
+    fileObj = open('/mnt/c/Users/<Username>/Desktop/file.txt') #open a file in read mode 
+    fileObj.close() #close the file 
+
+    fileObj = open('/mnt/c/Users/<Username>/Desktop/file.txt', 'w') #open a file in write mode 
+    print(fileObj.write('Nihao Ma?\n')) #this returns 10 as nine characters are given
+    # ".write()" method overwrites the data with given argument and returns the number of characters
+    print(fileObj.write('Nihao Ma?')) #inserted as the 2nd line in the file 
+    # there will be 2 lines as result of file.txt 
+
+    fileObj = open('/mnt/c/Users/<Username>/Desktop/file.txt', 'a') #open a file in append mode 
+    ```
+1. We can import module `shelve` and use `shelve.open()` method to store complex data types and structures in variables, such as `List` and `Dictionary` and other non-text type values in the file. 
+    1. Similar to regular `open()` function, `shelve.open()` returns a file object, which is vary similar to dictionary type value that we can access its keys and values. 
+    1. We can use `.close()` method to close a file opened with `shelve.open()` method. 
+    1. In the following example, we create a variable `cats` in "shefFile" object that stores a `List` of cat names. Therefore, other python program can also use `shelve` module to access the variables in the file. 
+    1. We can use `.keys()` method on the file object and convert the value into a `List`. 
+    ```py 
+    import shelve 
+    shelfFile = shelve.open('mydata') #create a file "mydata", as there's no file yet (this file has no suffix)
+    #"selfFile" is an file object which is like a dictionary type value 
+    shelfFile['cats'] = ['Zophie', 'Pooka', 'Fat-tail', 'Cleo'] #assign a new "key" to the object to have a list value 
+    shelfFile.close() 
+
+    shelfFile = shelve.open('mydata') #read the file with shelve module 
+    print(shelfFile['cats']) #['Zophie', 'Pooka', 'Fat-tail', 'Cleo']
+
+    #use ".keys()" method to check variables in the file object as its "keys"
+    print(list(shelfFile.keys())) #turn the value of keys of a shelve file object to a List 
+    #['cats']
+
+    #use ".values()" method to check all values that the shelve file object holds 
+    print(list(shelfFile.values())) #turn the value of values of a shelve file object to a List. Note this is a 2-dimension list as there only one variable in the file 
+    # [['Zophie', 'Pooka', 'Fat-tail', 'Cleo']]
+
+    #add another variable to the file 
+    shelfFile['boys'] = ['Mark', 'Roy', 'Dick', 'Bob']
+    print(list(shelfFile.keys()))
+    # ['boys', 'cats']
+    print(list(shelfFile.values()))
+    # [['Mark', 'Roy', 'Dick', 'Bob'], ['Zophie', 'Pooka', 'Fat-tail', 'Cleo']]
     ```
