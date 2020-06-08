@@ -708,3 +708,136 @@ module `os` and `shutil`, `os.unlink(file)`, `os.rmdir()`
             print(filename) #use print() function to check the file names if they are correct 
     ``` 
 1. Module `send2trash` has a function `send2trash.send2trash(file)`. This method is safer that it only sends the file to the recycle bin of the PC. (This works in Windows if the python program runs in command prompt. However, I can't find the bin of WSL at the moment.)
+
+### Walking a directory tree 
+Module `os`, `os.walk()`
+1. We can use `os.walk()` and pass a root path to check all the child folders and files at the given directory. The method returns 3 values in each iteration, 
+    1. "**folderName**" (which is the current folder that the method is looking at), 
+    1. "**subfolders**" (which is a `List` value that includes all its child directories), and
+    1. "**filenames**" (which is a `List` value that includes all the files in the current directory).
+1. Note that we can't access the data of the returned objectg of `os.walk()` directly without using loop to iterate through it. 
+1. We can use other functions or methods such as rename certain types of files with their suffix, delete files with `os.unlink()`, and moving a certain types of files to a specific directory with `shutil.move()`. 
+    ```py 
+    import os 
+    for folderName, subfolders, filenames in os.walk('/mnt/c/Users/<Username>/Desktop') 
+    # returns a String of the name of checked folder, a List of subfolders in the current directory, and a List of files in the folder 
+        print('The folder is ' + folderName)
+        print('The subfolders in ' + folderName + ' are: ' + str(subfolders))
+        print('The filenames in ' + folderName + ' are: ' + str(filenames))
+    ```
+
+# Debugging 
+### The raise and assert statements
+`raise Exception('Error Message')`, Module `traceback`, `traceback.format_exc()`
+#### raise Exception()
+1. We can use `raise Exception('ErrorMessage')` to cause an error when the code runs. Besides, we can pass a custom error message as `String` value for the issue. For example, in the following code `boxPrint(symbol, width, height)` function can take a character to print an empty box at given width and height. However, the functions doesn't work good if we pass duplicate characters to it, such as double asterisks " **\*\*** ". However, this is bug but doesn't cause an error and stops the program.  
+    ```py
+    def boxPrint(symbol, width, height):
+        print(symbol * width)
+        for i in range(heigh - 2): 
+            print(symbol + (' ' * (width - 2)) + symbol )
+        print(symbol * width)
+    #a function that prints an empty box with selected character such as asterisk '*' or hash '#'
+    ```
+1. We can add an `IF` statement to the code and use `raise Exception()` to stop the execution in certain circumstances. 
+    ```py
+    def boxPrint(symbol, width, height):
+        if len(symbol) != 1: 
+            raise Exception('"symbol" should be a string of length 1')
+            #return an error if symbol argument is more than 1 or less than 1 character 
+        if (width < 2) or (height < 2):
+            raise Exception('"width" and "height" must be greater than or equal to 2')
+            #return an error if width or height is less than 2
+        print(symbol * width)
+        for i in range(height - 2): 
+            print(symbol + (' ' * (width - 2)) + symbol )
+        print(symbol * width)
+    ```
+1. When hitting an error and having a traceback, we can import module `traceback` and use `traceback.format_exc()` to collect the error messsage. 
+    ```py
+    import traceback 
+    try: 
+        raise Exception('Error Message') #this trigers an error and code in exception runs
+    except: 
+        errorFile = open('error_log.txt', 'a') #use append mode to open the file
+        errorFile.write(traceback.format_exc()) #write the error message to the opened file 
+        errorFile.close() #close the file 
+        print('The traceback info was written to error_log.txt') 
+    ```
+#### Assertion 
+1. Besides `raise`, we can use `assert` which follows an expression that returns a boolean value, if the expression returns `False`, it returns the error message that follows the statement with a comma ",". 
+1. For example, if we have a program to control traffic light that the lights follow a "red" => "green" => "yellow" order to switch the lights and control traffic. However, one of the lights at the intersection must be "red", or the cars on both side will go and crash. 
+1. The error may not be obvious that it's a logic flaw rather than an error that crashes the program. Therefore by foreseeing the logical problems, we can have `assert conditionExpression, 'Error Message'` to stop the program. 
+1. Keyword `assert` follows an expression that returns a boolean `True` or `False`. It sends the error message given after comma "," on the same line if the condition returns `False`. 
+    ```py 
+    market_2nd = {'ns': 'green', 'ew': 'red'} #2 traffic lights at the intersection
+    def switchLights(intersection): 
+    for key in intersection.keys(): 
+        if intersection[key] == 'green': #turn light from green to yellow
+            intersection[key] = 'yellow'
+        elif intersection[key] == 'yellow': #turn light from yellow to red 
+            intersection[key] = 'red'
+        elif intersection[key] == 'red': #turn light from red to green 
+            intersection[key] = 'green'
+    assert 'red' in intersection.values(), 'Neither of the light is red ' + str(market_2nd)
+    # check if there's any "red" light at market_2nd dictionary. If not, send an assert error 
+    switchLights(market_2nd)
+    ```
+1. An error message when assert is trigerred. 
+    ```py 
+    #an error message if assert is trigerred
+    Traceback (most recent call last):
+    File "test.py", line 54, in <module>
+        switchLights(market_2nd)
+    File "test.py", line 52, in switchLights
+        assert 'red' in intersection.values(), 'Neither of the light is red ' + str(market_2nd)
+    AssertionError: Neither of the light is red {'ns': 'yello', 'ew': 'green'}
+    ```
+1. We can use both `raise Exception()` and `assert condition` accordingly. According to each of their features, `raise Exception()` is good at catch errors from user input, while `assert condition` is for expected logic flaw. However, there's no certain way of using them, and they are both useful as long as we can catch the error in advance. 
+
+### Logging 
+Module `logging`, `logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')`
+1. We put `logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')` which is the setup code for logging in Python. 
+1. For example, we can debug a buggy factorial program. 4! = 4 * 3 * 2 * 1 = 24. 
+    ```py
+    def factorial(n): 
+        total = 1
+        for i in range(n+1):
+            total *= i 
+        return total #it returns 0 as i starts from 0 
+    ```
+1. As the function returns `0` which is not correct, we can use `logging.debug()` after import `logging` module and as the initial setup. 
+    ```py
+    #use logging to debug 
+    logging.debug('Start of the program')
+    def factorial(n): 
+        logging.debug('Start of factorial(%s)' % (n))
+        total = 1
+        for i in range(n+1):
+            total *= i 
+            logging.debug('i is %s, total is %s' % (i, total))
+        logging.debug('Return value is %s' % (total))
+        return total #it returns 0 as i starts from 0 
+    logging.debug('End of the program')
+    ```
+1. `logging` message from `logging.debug()`. We found that `i` is `0` and `total` variable is also `0` as the variable multiply a zero. 
+    ```
+    2020-06-08 22:43:35,140 - DEBUG - Start of the program
+    2020-06-08 22:43:35,141 - DEBUG - Start of factorial(4)
+    2020-06-08 22:43:35,141 - DEBUG - i is 0, total is 0
+    2020-06-08 22:43:35,141 - DEBUG - i is 1, total is 0
+    2020-06-08 22:43:35,141 - DEBUG - i is 2, total is 0
+    2020-06-08 22:43:35,142 - DEBUG - i is 3, total is 0
+    2020-06-08 22:43:35,142 - DEBUG - i is 4, total is 0
+    2020-06-08 22:43:35,142 - DEBUG - Return value is 0
+    0
+    2020-06-08 22:43:35,142 - DEBUG - End of the program
+    ```
+1. Therefore, we can change the `range()` in the `for` loop to `range(1, n+1)` to fix the bug. 
+1. Though we can use the same trick with `print()` function to print out all the variables as logging, it's very easy to remove wrong `print()` if there's an one to print out the desirable result. Besides, we can use `logging.disable(logging.CRITICAL)` to turn off the debugger function. Note that the statement should be on the very top before all the `logging.debug()` functions. We can use hash tag "#" to comment out the statement to enable the debugger again as well. 
+1. In the module, there are Log levels from low to high. Each of them can be a method and returns the log message in different level. For example, we use `logging.disable(logging.CRITICAL)` to disable the module at `critical` level or lower. Therefore, the whole module in the code is disabled. By the feature, we can set the debuggers at different level and change the level as `logging.disable(logging.DEBUG)` to close only those in `debug` level. Note that the given level is from the level to all levels that is lower than it. 
+    1. `critical` is the highest. `logging.critical()`
+    1. `error` as `logging.error()`
+    1. `warning` as `logging.warning()`
+    1. `info` as `logging.info()`
+    1. `debug` is the lowest. `logging.debug()` 
