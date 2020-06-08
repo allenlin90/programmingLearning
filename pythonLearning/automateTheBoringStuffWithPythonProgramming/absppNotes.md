@@ -841,3 +841,8 @@ Module `logging`, `logging.basicConfig(level=logging.DEBUG, format='%(asctime)s 
     1. `warning` as `logging.warning()`
     1. `info` as `logging.info()`
     1. `debug` is the lowest. `logging.debug()` 
+1. We can pass another argument to `logging.basicConfig()` method as `filename='filePath'` to write the logs into the file. 
+    ```py 
+    import logging 
+    logging.basicConfig(filename='debugLogs.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    ```
