@@ -895,8 +895,15 @@ Module `logging`, `logging.basicConfig(level=logging.DEBUG, format='%(asctime)s 
 ### The webrowser module 
 Module `webbrowser` 
 1. We can import `webbrowser` and use `webbrowser.open('https://automatetheboringstuff.com')`. The function will open the webpage with the default browser of the computer. (Note that we can'
-t use the program to open in WSL (Windows subsystem for Linux) directly without setting the default browser for Linux. This function works if we use python to run in Windows command prompt.) 
+t use the program to open in <ins>**WSL**</ins> (Windows subsystem for Linux) directly without setting the default browser for Linux. This function works if we use python to run in <ins>**Windows command prompt**</ins>.)
     1. In WSL, we can run `cmd.exe` to invoke "Windows command prompt" and run the envrionment in bash. However, Python should also be installed on Windows to run the code with Python. 
-    1. We can set environment variables in WSL for the default browser. Check ubuntu document for setting up [Environment Variables](https://help.ubuntu.com/community/EnvironmentVariables). For example, we can set it as 
+    1. We can set environment variables in WSL for the default browser. Check ubuntu document for setting up [Environment Variables](https://help.ubuntu.com/community/EnvironmentVariables). For example, we can check this [post](https://stackoverflow.com/questions/52691835/wsl-ubuntu-how-to-open-localhost-in-browser-from-bash-terminal) on stackoverflow and change `wslview` with the following command. This will make Chrome as the default browser. 
+    ```bash
+    wslview -r $(wslpath -au 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe')
+    # You may change the path according to where you install Chrome browser 
     ```
-    BROWSER=chrome
+    1. This works when execute the Python code in WSL with `python3 file.py`. (Noted on 2020/06/10)
+    ```py 
+    import webbrowser 
+    webbrowser.open('https://automatetheboringstuff.com')
+    ``` 

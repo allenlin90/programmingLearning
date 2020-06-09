@@ -98,5 +98,5 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 # blahBlahBlah()
 
-#webbrowser.open('https://automatetheboringstuff.com') 
+webbrowser.open('https://automatetheboringstuff.com') 
 print(webbrowser._tryorder)
