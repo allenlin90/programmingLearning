@@ -1,4 +1,4 @@
-import shutil, os, send2trash, traceback, logging 
+import shutil, os, send2trash, traceback, logging, webbrowser
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 # text = open('test.txt', 'w')
 # text.write('Hello World!\nHIIIIIIIIIIIIIII\nNOOOOOOOOOOO')
@@ -54,15 +54,49 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 # switchLights(market_2nd)
 
-logging.debug('Start of the program')
-def factorial(n): 
-    logging.debug('Start of factorial(%s)' % (n))
-    total = 1
-    for i in range(1, n+1):
-        total *= i 
-        logging.debug('i is %s, total is %s' % (i, total))
-    logging.debug('Return value is %s' % (total))
-    return total #it returns 0 as i starts from 0 
+# logging.debug('Start of the program')
+# def factorial(n): 
+#     logging.debug('Start of factorial(%s)' % (n))
+#     total = 1
+#     for i in range(1, n+1):
+#         total *= i 
+#         logging.debug('i is %s, total is %s' % (i, total))
+#     logging.debug('Return value is %s' % (total))
+#     return total #it returns 0 as i starts from 0 
 
-print(factorial(4))
-logging.debug('End of the program')
+# print(factorial(4))
+# logging.debug('End of the program')
+
+#Using Python IDLE debugger 
+# print('Enter the first number to add:')
+# first = input()
+# print('Enter the second number to add:')
+# second = input()
+# print('Enter the third number to add:')
+# third = input()
+# print('The sum is ' + first + second + third)
+
+#use Step and Out in debugger
+# def blahBlahBlah():
+#     print('blah')
+#     print('blah')
+#     print('blah')
+#     moreBlah()
+#     print('blah')
+#     print('blah')
+#     print('blah')
+#     moreBlah()
+#     print('blah')
+#     print('blah')
+#     print('blah')
+#     print('blah')
+
+# def moreBlah():
+#     print('more blahs')
+#     print('more blahs')
+#     print('more blahs')
+
+# blahBlahBlah()
+
+#webbrowser.open('https://automatetheboringstuff.com') 
+print(webbrowser._tryorder)

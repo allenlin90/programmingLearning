@@ -144,3 +144,90 @@ welcome()
 # Code Quality 
 ### [Debugging in Chrome](https://javascript.info/debugging-chrome) 
 ### Code Styling 
+<img src="codeStyling.png">
+
+1. **Curly braces** 
+    1. In most JavaScript projects, curly braces `{}` are written in '**Egyptian**' style that the opening brace is on the same line as the corresponding keyword. 
+    1. We can omit curly braces follows an `IF` statement, if the `expression` or `statement` is short and can be presented in a single line. However, we shouldn't omit curly braces if the statement has multiple lines because JavaScript may add semicolumn automatically at the end of a line and cause error. Though we still can add curly braces if it's on the same line, it's easier to read without curly braces. 
+    1. After all, with curly braces, it's easier to know if there's a code block and allow the reader focus on different section easily. 
+1. **Line Length**
+    1. We can use backtick " \` " to divide a long `String` in multiple lines. 
+    1. In `IF` statement, we can separate the expression in different lines when using AND `&&` or OR `||`. 
+    ```js 
+    //a long String value in multiple lines 
+    let str = `ECMA International's TC39 is a group of JavaScript developers,
+    implementers, academics, and more, collaborating with the community
+    to maintain and evolve the definition of JavaScript. 
+    `; 
+
+    //if statement with multiple expressions 
+    if (
+        id === 123 &&
+        codeStatus === 200 &&
+        dataParsed //this is true if the variable is not null or undefined
+    ) {
+        function(){}
+        statements();
+    }
+    ```
+1. **Indents** 
+    1. JavaScript, unlike Python, is not space sensitive. We can use either 2 whitespace, 4 whitespaces (same as Python), or a tab (which is equal spacing as 4 whitespaces, but uses different spacing character. `\s` and `\t`). 
+    1. It's suggested to use <kbd>space</kbd> rather than <kbd>Tab</kbd>, as it's more flexible to change the spacing. 
+1. **Nesting levels** 
+    1. We can avoid having to many nesting levels which makes the code hard to read and debug. 
+    1. For example, if we have an `IF` statement in a `for` loop to run a code if an expression is `true`, we can use keyword `continue` to skip the code and use `!` to check the expression to avoid having another nested level. 
+    ```js 
+    //a nested level in for loop 
+    for (let i = 0; i < 10; i++) {
+        if (cond) {
+            statement(); 
+        }
+    }
+
+    //avoid having a nested code block 
+    for (let i = 0; i < 10; i++) {
+        if (!cond) continue; 
+        statement(); 
+    }
+    ```
+    1. Besides `continue`, we can use keyword `return` and return nothing for a condition if an `IF/ELSE` statement. 
+    ```js 
+    //an IF/ELSE statement 
+    function pow(x, n) {
+        if (n < 0) {
+            alert("Negative 'n' not supported");
+        } else {
+            let result = 1;
+
+            for (let i = 0; i < n; i++) {
+                result *= x;
+            }
+
+            return result;
+        }
+    }
+
+    //using return and without ELSE
+    function pow(x, n) {
+        if (n < 0) { //handle n < 0
+            alert("Negative 'n' not supported");
+            return; //stop and leave the function 
+        }
+
+        let result = 1;
+
+        for (let i = 0; i < n; i++) {
+            result *= x;
+        }
+
+        return result;
+    }
+    ```
+1. **Function placement** 
+    1. We can either declare function on the top or at the bottom. 
+    1. It's suggested to put the declaration at the bottom, as we can read the code and check the logic from the top. If the functions are named properly, we can even avoid what the functions do. 
+1. **Automated Linters**
+    1. We can use some extensions such as `linters` to check for pattern issues. 
+    1. At the time of learning, <ins>**ESLint**</ins> is the lastest and modern one. 
+
+### Comments 

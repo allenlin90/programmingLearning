@@ -846,3 +846,57 @@ Module `logging`, `logging.basicConfig(level=logging.DEBUG, format='%(asctime)s 
     import logging 
     logging.basicConfig(filename='debugLogs.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
     ```
+
+### Debugger in Python
+1. In Python IDLE shell, we can use "Debug" function to run the code line by line. The program will execute the next line only if the user allows. 
+1. Note that hotkey to restart the shell has changed from <kbd>F5</kbd> to <kbd>Ctrl + F6</kbd>. For example, we have a sum function that add the given numbers up. 
+    ```py
+    print('Enter the first number to add:')
+    first = input() #give 2 
+    print('Enter the second number to add:')
+    second = input() #give 5
+    print('Enter the third number to add:')
+    third = input() #give 3
+    print('The sum is ' + first + second + third)
+    #the result is 253 because the given numbers are acutally String 
+    ```
+1. We can click '`Over`' button to execute the program line by line. The variables in both local and global scope in the runtime. From the example above, we can check value of variables we get from each `input()` function and find that each of the variables is `String` type value which concatenates when using plus sign "`+`". 
+1. The '`Go`' button is like skipping the debuging function and execute the code. We can still check the variables in the global scope after execution. 
+1. **`Step` and `Out` button**
+    1. If we hav a function in the code, using `Over` in debugger doesn't go into the steps in of the function but just run the function and get the return value. 
+    1. We can use `Step` to get into the steps in the body code of the function. If we have other functions in the steps, we can use `Step` to get into the function further. 
+    1. If we want to leave from the steps in a function, we can click `Out` to execute the rest of the code and get the return value of the function. 
+    1. Besides, pre-built functions such as `print()` can also be stepped in. If we click `Step`, the program will open the IDLE code of the pre-built functions. We then can use `Out` to leave the function, as the functions are well maintained and debugged. 
+    ```py 
+    def blahBlahBlah():
+        print('blah')
+        print('blah')
+        print('blah')
+        moreBlah()
+        print('blah')
+        print('blah')
+        print('blah')
+        moreBlah()
+        print('blah')
+        print('blah')
+        print('blah')
+        print('blah')
+    
+    def moreBlah():
+        print('more blahs')
+        print('more blahs')
+        print('more blahs')
+
+    blahBlahBlah()
+    ```    
+1. We can set a '`breakpoint`' in the code without running through all steps from the first one. By setting the breakpoint, we can click `Go` button, and the code execution will be paused at the step at the breakpoint. We can do this by mouse clicking <kbd>right click</kbd> to set the breakpoint. The breakpoint will be highlighted in the editor. Therefore, we can save much time by skipping clicking '`Over`' to go through steps gradually. This is very inefficient when the code is large. 
+
+# Web Scraping 
+### The webrowser module 
+Module `webbrowser` 
+1. We can import `webbrowser` and use `webbrowser.open('https://automatetheboringstuff.com')`. The function will open the webpage with the default browser of the computer. (Note that we can'
+t use the program to open in WSL (Windows subsystem for Linux) directly without setting the default browser for Linux. This function works if we use python to run in Windows command prompt.) 
+    1. In WSL, we can run `cmd.exe` to invoke "Windows command prompt" and run the envrionment in bash. However, Python should also be installed on Windows to run the code with Python. 
+    1. We can set environment variables in WSL for the default browser. Check ubuntu document for setting up [Environment Variables](https://help.ubuntu.com/community/EnvironmentVariables). For example, we can set it as 
+    ```
+    BROWSER=chrome
