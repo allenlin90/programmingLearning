@@ -893,7 +893,7 @@ Module `logging`, `logging.basicConfig(level=logging.DEBUG, format='%(asctime)s 
 
 # Web Scraping 
 ### The webrowser module 
-Module `webbrowser` 
+Module `webbrowser`, `sys.argv`, Module `requests`
 1. We can import `webbrowser` and use `webbrowser.open('https://automatetheboringstuff.com')`. The function will open the webpage with the default browser of the computer. (Note that we can'
 t use the program to open in <ins>**WSL**</ins> (Windows subsystem for Linux) directly without setting the default browser for Linux. This function works if we use python to run in <ins>**Windows command prompt**</ins>.)
     1. In WSL, we can run `cmd.exe` to invoke "Windows command prompt" and run the envrionment in bash. However, Python should also be installed on Windows to run the code with Python. 
@@ -907,3 +907,54 @@ t use the program to open in <ins>**WSL**</ins> (Windows subsystem for Linux) di
     import webbrowser 
     webbrowser.open('https://automatetheboringstuff.com')
     ``` 
+1. In Windows OS, we can press <kbd>win + r</kbd> to have `run` function that we can pass the Python program with the `String` as the argument to pass into the program. For example, we can have a Python program that takes address as values and manipulate the passed data. In this case, we can pass `soi 26 Sukhumvit Bangkok` after the program. 
+    1. The passed data will be separated by whitespace. 
+    1. We can use `sys` module and `sys.argv` function to take the input. 
+    ```py 
+    import webbrowser, sys, pyperclip 
+    sys.argv # ['program.py', 'soi', '26', 'Sukhumvit', 'Bangkok']
+    # check if command line arguments were passed 
+    if len(sys.argv) > 1: 
+        # ignore the first item in the list, which is the program name and get the address 
+        address = ' '.join(sys.argv[1:])
+    else: 
+        # get data input from computer clipboard 
+        address = pyperclip.paste()
+    # https://www.google.com/maps/place/<ADDRESS>
+    webbrowser.open('https://www.google.com/maps/place/' + address) 
+    ```
+1. We can set up `.bat` batch file to store the environment variable and execute the program with short cut. Check [here](https://automatetheboringstuff.com/2e/appendixb/) for the instructions. Note that there's an at "`@`" sign before python. `%*` in the batch file means the program takes any thing behind the program when execute as arguments. Besides, we can set up environment variables of the OS for the shortcut. For example, we can put the file at `
+    ```batch
+    @python C:\Users\Username\Desktop\mapit.py %*
+    ```
+
+### Downloading from the Web using Requests module 
+Module `request`, `request.get('URL')`,`.raise_for_status()`, `.iter_content()`
+1. To download a file from URL, we can use `requests` module and `request.get('URL')` to download the file from the URL. This function returns a response object. For example, we can assign the response object a variable `res`. 
+1. We can use `res.status_code` to check the status if the data is returned. For example, if the status code is "200", it means the process is successful. If we get a "404", it means the file is <ins>**not found**</ins>. 
+1. In this example, the text file are all text and characters. We can use `.text` method to check the whole text retrieved from the file. 
+    ```py 
+    import requests 
+    # the play of romeo and juliet
+    res = requests.get('https://automatetheboringstuff.com/files/rj.txt')
+    # status code of returned value from server 
+    print(res.status_code) 
+    res.text # the String value of the whole text file 
+    print(len(res.text)) #178978 characters 
+    ``` 
+1. We can use `.raise_for_status()` method to have other instructions when we get an error from the server. Note that the method returns nothing if the request to the server is successful. This is useful to stop the programm immediately if there's an error. Besides, we can use this in `TRY/EXCEPT` statement to prevent the program from crashing. 
+    ```py 
+    import requests
+    badRes = requests.get('http://automatetheboringstuff.com/files/abcdefghijkl12345789') # request to a non-existing URL 
+    badRes.raise_for_status() # returns a traceback error and stop the program 
+    ``` 
+1. If we download a text file, we can use "**write-binary**" mode to create the file. Note that due to unicode issues, we can't write the text to a file directly as it may cause errors. We can also write the webpage to a file through `.iter_content()` method in a `for` loop. The method returns a chunk of `bytes` data type during each iteration. Note that the method returns how much bytes it writes to the file in each iteration as well. After the program runs, a new file `RomeoAndJuliet.txt` is created in the CWD. 
+    ```py 
+    import requests 
+    res = requests.get('https://automatetheboringstuff.com/files/rj.txt')
+    playFile = open('RomeoAndJuliet.txt', 'wb')
+    for chunk in res.iter_content(100000):
+        playFile.write(chunk) 
+    playFile.close()
+    ``` 
+1. We can check more information at [Requests](https://requests.readthedocs.io/en/master/)

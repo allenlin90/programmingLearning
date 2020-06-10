@@ -1,4 +1,4 @@
-import shutil, os, send2trash, traceback, logging, webbrowser
+import shutil, os, send2trash, traceback, logging, webbrowser, requests
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 # text = open('test.txt', 'w')
 # text.write('Hello World!\nHIIIIIIIIIIIIIII\nNOOOOOOOOOOO')
@@ -98,5 +98,11 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 # blahBlahBlah()
 
-webbrowser.open('https://automatetheboringstuff.com') 
-print(webbrowser._tryorder)
+#webbrowser.open('https://automatetheboringstuff.com') 
+res = requests.get('https://automatetheboringstuff.com/files/rj.txt')
+print(res.status_code)
+print(len(res.text))
+playFile = open('RomeoAndJuliet.txt', 'wb')
+for chunk in res.iter_content(100000):
+    playFile.write(chunk) 
+playFile.close() 
