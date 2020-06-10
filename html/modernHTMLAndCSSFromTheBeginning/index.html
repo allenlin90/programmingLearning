@@ -4,21 +4,50 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet"/>
     <link rel="stylesheet" href="style.css">
     <style>
         
     </style>
 </head>
 <body>
-    <div class="box">
-        <h3>Box One</h3>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed facere, vel aperiam accusantium quod earum eligendi fugit aliquam ad dolores!</p>
-    </div>
-    <br>
-    <div class="box">
-        <h3>Box Two</h3>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed facere, vel aperiam accusantium quod earum eligendi fugit aliquam ad dolores!</p>
-    </div>
+    <div id="container">
+        <div class="form-wrap">
+          <h1>Sign Up</h1>
+          <p>It's free and only takes a minute</p>
+          <form>
+            <div class="form-group">
+              <label for="first-name">First Name</label>
+              <input type="text" name="firstName" id="first-name" />
+            </div>
+            <div class="form-group">
+              <label for="last-name">Last Name</label>
+              <input type="text" name="lastName" id="last-name" />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email" />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" name="password" id="password" />
+            </div>
+            <div class="form-group">
+              <label for="password2">Confirm Password</label>
+              <input type="password" name="pasword2" id="password2" />
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
+            <p class="bottom-text">
+              By clicking the Sign Up button, you agree to our
+              <a href="#">Terms & Conditions</a> and
+              <a href="#">Privacy Policy</a>
+            </p>
+          </form>
+        </div>
+        <footer>
+          <p>Already have an account? <a href="#">Login Here</a></p>
+        </footer>
+      </div>
 </body>
 </html>
 

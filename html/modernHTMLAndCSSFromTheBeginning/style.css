@@ -1,16 +1,117 @@
 * {
-    margin: 0; 
+    box-sizing: border-box;
     padding: 0;
-    /* box-sizing: border-box; */
+    margin: 0;
+/* 
+-May want to add "border-box for "box-sizing so padding does not affect width
+-Reset margin and padding 
+*/
 }
 
-.box {
-    background: #f4f4f4; 
-    border: 2px #777 solid;
-    /* width: 500px;
-    height: 100px; */
+body {
+    background: #344a72;
+    font-family: 'Raleway';
+/* 
+    -Background color is #344a72
+*/
 }
 
-.box h3 {
-    padding-bottom: 10px;
+a {
+    text-decoration: none;
+/* 
+Underlined links are ugly :)
+*/
+}
+
+#container {
+    margin: 5% auto;
+    max-width: 50%;
+/* 
+-Remember, margin: auto on left and right will center a block element 
+-I would also set a "max-width" for responsiveness
+-May want to add some padding
+*/
+}
+
+.form-wrap {
+    background: #fff;
+    margin: auto;
+/* 
+    This is the white area around the form and heading, etc
+*/
+}
+
+.form-wrap h1,
+.form-wrap p {
+    text-align: center;
+/* 
+    May want to center these
+*/
+}
+
+.form-wrap .form-group {
+    margin: 3% 10%;
+/* 
+    Each label, input is wrapped in .form-group
+*/
+}
+
+.form-wrap .form-group label {
+    display: block;
+/* 
+    Label should be turned into a block element
+*/
+}
+
+.form-wrap .form-group input {
+    width: 100%;
+    padding: 2%;
+/* 
+    Inputs should reach accross the .form-wrap 100% and have some padding
+*/
+}
+
+.form-wrap button {
+    display: block;
+    background: #49c1a2;
+    width: 100%;
+    margin-top: 5%;
+    padding: 2%;
+    border-radius: 5px;
+    border: none;
+    color: #fff;
+/* 
+    Button should wrap accross 100% and display as block
+    Background color for button is #49c1a2
+*/
+}
+
+.form-wrap button:hover {
+    background: #37a08e;
+/* 
+    Hover background color for button is #37a08e
+*/
+}
+
+.form-wrap .bottom-text {
+    margin-bottom: 5% 0;
+/* 
+    Bottom text is smaller
+*/
+}
+
+footer {
+    text-align: center;
+    color: #fff;
+    margin: 1.5% auto;
+/* 
+Should be centered
+*/
+}
+
+footer a {
+    color: #49c1a2;
+/* 
+    Footer link color is #49c1a2
+*/
 }

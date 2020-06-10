@@ -539,3 +539,303 @@
     }
     ```
 1. **Margin** - Margin is the space out of the border of an element. It's the <span style="color:orange">orange</span> part of an element if we check it in the developer tools of Google Chrome browser. 
+
+### Float and Alignment 
+1. The design in the past (around 2000s) may still have webpage alignment on the left as article. However, modern designs have shifted the contents to the center of the page which can be fit to smaller screens such as mobiles. (Note that we have only pure text in this case.)
+1. **Alignment and container**
+    1. To center the elements, we can have a "**container**" element to wrap/group the elements. For example, we can use `<div class="container">` to wrap all element. We then use CSS and give property `margin: "auto"` which will center its child elements. Note that if we give only one value to `margin`, it applies to all 4 sides of the element. If we give 2 values, the 1st one is for top/bottom and the 2nd one is for left/right. 
+    1. Besides, if we give a value to property `width`, it will extend the contain at the fixed width regardless the resolution of the screen. This is poor design that mobile users may have to swipe as the contents are extended, or the contents are too narrow on a bigger screen. Therefore, we can use `max-width` to limit the width. If the screen is smaller, text message will be on the next line as applied `word wrapped`. 
+    1. For elements that contain text, we can use `text-align` property to set the alignment of the contents, such as `left`, `right`, `center`, and `justify`. Note that justify is similar to center but keeps each line of texts in the same width, so we don't see text shaped as pyramid or trapezoid. 
+1. **Float**
+    1. The purpose for `Float` is to align 2 blocks of element on the page, such as a side menu and the main contents. It "**floats**" the element above other contents and align to left or right. 
+    1. This is an old-fashion way to design the layout, as we can use "<ins>**flexbox**</ins>" and "<ins>**grid**</ins>" in modern browsers with HTML5 and CSS3. This approach is relatively hard to deal with responsive design for multiple screen sizes. 
+    <img src="htmlLayout.png">
+    1. We can set the width of floated elements with percentage, so the elements can be alinged on the same line. Besides, we can have the percetage not in 100% if we have 2 element and want to keep them separated. For example, one elements can have `width: 68%` and the other has `width: 30%`. 
+    <img src="floats.PNG">
+    1. However, as the elements are floated, the following element will be under the floated ones. Therefore, we can add another element with `clear` property and use `clear: both` to deny floating elements on both `left` and `right` on the element. 
+    ```html
+    <style>
+        #box-2 {
+            float: left;
+            width: 68%;
+        }
+    /*keep width within 100% to have space between elements*/
+        #box-3 {
+            float: right; 
+            width: 30%;
+        }
+        .clr {
+            clear: both;
+        }
+    </style>
+    <body>
+        <div id="box-2" class="box">
+            <h3>Heading</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed facere, vel aperiam accusantium quod earum eligendi fugit aliquam ad dolores!</p>
+        </div>
+        <div id="box-3" class="box">
+            <h3>Heading</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed facere, vel aperiam accusantium quod earum eligendi fugit aliquam ad dolores!</p>
+        </div> 
+        <!-- element that deny floating elements -->
+        <div class="clr"></div>
+        <div id="box-4" class="box">
+            <h3>Heading</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed facere, vel aperiam accusantium quod earum eligendi fugit aliquam ad dolores!</p>
+        </div>
+    </body>
+    ```
+
+### Link State and Button Styling
+1. We can style a `<link>` tag as a button. There several state such as `hover` when the mouse cursor is on the element that we can use "**pseudo selector**" to select it. 
+    ```css
+    /*change font size and color when mouse cursor hovers on*/
+    a:hover {
+        color: coral;
+        font-size: 20px;
+    }
+
+    a:visited {
+        color: red;
+    }
+
+    a:active {
+        color: green;
+    }
+    ```
+1. In convention, we can give a `class` to the elements that we'd make them buttons as `class="btn"`. We can use `cursor: pointer` to have the effect that the mouse cursor will become a pointer when its hover on the element. We can also use `pseudo selector` to change the style when the mouse cursor hover on the element. A convention design at the time is making the element darker. 
+    ```html 
+    <style>
+        .btn {
+            background: #4c6ca0;
+            color: #fff;
+            border: none; 
+            font-size: 16px; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .btn:hover {
+            color: #f4f4f4;
+            background: #446190;
+        }
+    </style> 
+    <body>
+        <br>
+        <a class="btn" href="#">My Link</a>
+        <br>
+        <br>
+        <button class="btn">My Button</button>
+    </body>
+    ```
+
+### Navigation Menu Styling 
+1. We create a "**side-menu**" with `<ul>` and `<li>` list and decorate them with CSS. 
+    ```css
+    /*change font*/
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    /*change the overall size of the menu*/
+    .side-menu {
+        list-style: none;
+        border: 1px #ddd solid;
+        border-radius: 10px;
+        width: 300px;
+        padding: 20px;
+    }
+    /*give border and space between each <li> element*/
+    .side-menu li {
+        font-size: 18px;
+        line-height: 2.4em;
+        border-bottom: dotted 1px #ddd;
+    }
+    /*use pseudo selector to remove border of the last element*/
+    .side-menu li:last-child {
+        border: none;
+    }
+    /*change color of text and remove underline feature of anchor tag*/
+    .side-menu li a {
+        color: #333; 
+        text-decoration: none;
+    }
+    /*change color to coral when the mouse cursor hover on the element*/
+    .side-menu li a:hover {
+        color: coral; 
+    }
+    ```
+1. Similar to side menu, we create <ins>**Navbar**</ins> with `<ul>` and `<li>` and use property `float:left` on the `<li>` items to make them all float on the top. However, this will break the background feature that makes background color disappear. 
+    1. We can use `overflow: auto` on the `<ul>` tag or its class to set it up. For each anchor tag `<a>` in the navbar, we can use property `display: block` which allows the elements dispaly as block elements which take the whole width. Note that the element with `display: block` must have padding that takes space. Otherwise, there's no effect on that. 
+    1. We then add on an effect when the mouse cursor hover on the element and changes its color. 
+    ```css 
+    .navbar {
+        list-style: none;
+        margin: 0;
+        padding: 0; 
+        background: #4c6ca0;
+        border-radius: 5px; 
+        overflow: auto; /*enable background color for float elements*/
+    }
+
+    .navbar li {
+        float: left;
+    }
+
+    .navbar li a {
+        display: block; /*allow elements take whole width as a block element and must work with padding*/
+        color: #fff;
+        text-decoration: none;
+        padding: 15px 20px; /*give each button-like anchor tags a certain size and works with property display: block*/
+    }
+
+    .navbar li a:hover {
+        background-color: #446190;
+        color: #f4f4f4;
+    }
+    ```
+
+# Inline, Block, and Inline-block Display 
+1. '`display`' property is very important in CSS as that it is used to implement "**flexbox**" and "**grid**". 
+1. We create a list with `<ul>` and `<li>` tag and use CSS selector to let all `<li>` tags have `display:inline` which makes all elements float and like `list-style: none` as they don't have bullet point symbols because `<li>` tags are **block elements**. Note that by using `dispaly` property, the bullet points will be removed.
+1. To center an image, we have to change its property with `display: block` as `<img>` tag is an inline element which can be centered with `margin: auto`. However, if we make the element as a block element, it can be centered with `margin: auto` property. 
+1. `inline` elements can't use `width`, `padding`, and `margin` properties. However, we can use `display: inline-block` to enable the feature as having the elements as blocks in a line. 
+1. However, though we can limite the width of an element by absolute value or percentage, the overall size of the element,including its padding and margin may execced the width of a line. To make the element in line-block and be responsive, we can use `box-sizing: border-box`. Thus, if we limit the width of an element, its padding and margin will be included as part of the width. 
+```html 
+<style>
+    li {
+        display: inline; 
+    }
+
+    li a {
+        padding-right: 20px;
+    }
+
+    img {
+        /* dispaly the image as block element */
+        display: block;
+        /* resize the picture */
+        width: 40%; 
+        /* center the image after being a block element */
+        margin: auto;
+    }
+
+    .box {
+        width: 32%;
+        /* makes elements as blocks in line */
+        display: inline-block;
+        /* allow elements include its own width, padding, and margin as its actual width rather than the own width */
+        box-sizing: border-box;
+        background: #f4f4f4; 
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+</style>
+<body>
+    <ul>
+        <li><a href="#">Techonology</a></li>
+        <li><a href="#">Business</a></li>
+        <li><a href="#">Fashion</a></li>
+    </ul>
+
+    <br><br>
+
+    <img src="./gear.png" alt="aGear">
+
+    <br><br>
+
+    <div class="box">
+        <h3>Heading</h3>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit quae repellendus dolore laborum corporis iure? Consequuntur, porro sint rem repellat non officia quisquam praesentium? Labore, at! Tenetur, aliquam aperiam! Placeat.</p>
+    </div>
+    <div class="box">
+        <h3>Heading</h3>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit quae repellendus dolore laborum corporis iure? Consequuntur, porro sint rem repellat non officia quisquam praesentium? Labore, at! Tenetur, aliquam aperiam! Placeat.</p>
+    </div>
+    <div class="box">
+        <h3>Heading</h3>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit quae repellendus dolore laborum corporis iure? Consequuntur, porro sint rem repellat non officia quisquam praesentium? Labore, at! Tenetur, aliquam aperiam! Placeat.</p>
+    </div>
+</body>
+```
+
+### Positioning 
+1. Each HTML element on the page has a property `position` and its value is `static` by default. This property is used to shift the element from it's original viewport (the original given position on the page) to another place. Note that the element is still affected by its padding and margin properties. 
+1. However, this property isn't as much as useful as it used to be because the screen size vary. 
+1. There are 5 position values we can use. 
+    1. `static` (default value)
+    1. `relative` is positioned relative to its normal position according to its original viewport on the page. 
+    1. `fixed` is positioned relative to the viewport, which means it always stays in the same place even if the page is scrolled. The top, right, bottom, and left properties are used to position the element. Note that it's position is still "relative" to the other HTML elements on the page.  
+    1. `absolute` is relative the parent element of the entity. Note that its parent element must have `positioin: relative` to enable `absolute`. In the example, if we don't have a `<div>` tag for the `li` tag that has `absolute` its parent element will be `<body>` tag. 
+    1. `sticky` is positioned based on the user's scroll position. This value is usually used on the Navbar to keep the entity on the top when users scroll down the page. For example, we can have `property: sticky` and give `top: 0` to keep the Navbar always on the top. 
+1. Besides, elements can be moved from it's current position with property `top`, `right`, `bottom`, and `left`. However, without changing `position` property from `static` to other values, we can't move the element with any of its positioning properties.
+1. If an element is covered (or behind) another element, we can use `z-index: 1` to pull the elemetn closer to the screen. Therefore, it will be on top of the other elements without having `z-index` property or which has lower value. The higher value does the element has on its `z-index`, the closer the element to the screen. Note that value of `z-index` can be negative.  
+```html 
+<style>
+.box {
+    width: 100px;
+    height: 100px;
+}
+
+.container {
+    position: relative; 
+    width: 500px;
+    height: 500px; 
+    background: #333;
+    z-index: 0;
+}
+
+#box-1 {
+    position: relative;
+    top: 50px;
+    left: 50px;
+    background: red;
+    z-index: 1;
+}
+
+#box-2 {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    background: yellow;
+}
+
+#box-3 {
+    position: absolute;
+    bottom: 100px;
+    right: 100px;
+    background: green;
+}
+
+#box-4 {
+    position: fixed;
+    background: blue;
+}
+
+#box-5 {
+    position: sticky;
+    top: 0;
+    background: orange;
+    z-index: -1;
+}
+</style>
+<body>
+    <div id="box-1" class="box"></div>
+    <div class="container">
+        <div id="box-2" class="box"></div>
+        <div id="box-3" class="box"></div>
+    </div>
+    <div id="box-4" class="box"></div>
+    <div id="box-5" class="box"></div>
+</body>
+```
+
+### Form style challeng and learning points 
+1. One main issue about design is that the color of text and content in the form should be different hue grey rather than pure black, which is too intensive. 
+1. In `<body>` tag, we can set `line-height: 1.8` to have some spaces between lines. 
+1. `<div class="form-wrap">` tag wraps all the elements including the button. We can add padding here to shrink the elements inside, especially the button. If we give the button `width` at 100%, we can use `padding` in its parent element to shrink it down. 
+1. For text in body, we can use <span style="color:#333">dark grey (#333)</span> color. 
+1. For `<label>` and `<input>` tags in each line, we can use `margin-top: 15px` to separate by giving space between each of them. Besides, for text and elements in a form, we can use <span style="color:#666"> grey (#666)</span> color. 
+1. Since `<label>` is inline tag, we can use `display: block` to make them take a whole line if the screen size is small. It will be on the same line with the input tag if the screen size is wide enough. 
+1. As the space has been limited with the form grouping element, we can strech the `width` of `<input>` tags to 100% and give some `padding: 10px` to enlarge the text input area. The border can be set in very a very <span style="color:#ddd"> grey (#ddd)</span> color.
+1. The overall problems and differences are mainly from how to set up `margin` and `padding` of the box model in a proper layout. 
+<img src="differenceStyleForm.PNG">
