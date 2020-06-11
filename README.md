@@ -10,7 +10,7 @@
 **<int>Materials</int>** 
 1. [Automate the Boring stuff with Python programming](https://automatetheboringstuff.com/)
 
-# HTML 
+# HTML5 and CSS3
 
 **<int>Materials</int>** 
 1. [Modern HTML & CSS From The Beginning (Including Sass)](https://www.udemy.com/course/modern-html-css-from-the-beginning/)

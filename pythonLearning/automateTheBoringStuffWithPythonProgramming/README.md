@@ -958,3 +958,108 @@ Module `request`, `request.get('URL')`,`.raise_for_status()`, `.iter_content()`
     playFile.close()
     ``` 
 1. We can check more information at [Requests](https://requests.readthedocs.io/en/master/)
+
+### Parse HTML with Beautiful Soup Module 
+Module `bs4` 
+1. We can use beautilful soup module `bs4` to parse HTML elements on a webpage. Note that we will use `requests` module to download the webpage as well. Besides, if we don't pass a 2nd argument to `bs4.BeautifulSoup()` method to indicate the parser, it will return a warning which doesn't crash the program. However, we can clarify that we will use `'html.parser'` which is the most famous function of beautiful soup module. 
+1. `bs4.BeautifulSoup()` method returns a bs4 object that we can use `.select()` method (which works as CSS selector) to parse the HTML file. `.select()` method retruns a list of matched element. For example, we can have `'a'` to select all anchor tags on the page. The elements in the list is the whole anchor tag elements, such as `<a href="https://automatetheboringstuff.com/">Home</a>`. 
+1. We can use `.text` method which parses and returns the value of the HTML element that works as `.text()` method in "**jQuery**". Besides, we can use `.strip()` String method to strip off the white space characters besides, the string. 
+1. The downloaded text can be parsed and manipulated with other modules such as **regular expressions** that we can check and filter out all the "phone numbers" and "emails" on the page. 
+    ```py 
+    import bs4, requests 
+    res = requests.get('https://www.amazon.com/Automate-Boring-Stuff-Python-Programming/dp/1593275994')
+    res.raise_for_status()
+    soup = bs4.BeautifulSoup(res.text, 'html.parser')
+    anchorTags = soup.select('a') # CSS selector syntax. For example, select all anchor tags
+    print(anchorTags[0]) #<a href="https://automatetheboringstuff.com/">Home</a>
+    print(anchorTags[0].text) # Home
+    ```
+1. We can build a program to parse the price on the webpage. However, this program doesn't work as Amazon website now doesn't allow it to be parsed with undetected browser, as it returns 503 Server Error, noted 2020/06/11. This idea and concept can be applied to other website and 
+    ```py 
+    import bs4, requests 
+
+    def getAmazonPrice(productURL): 
+        res = requests.get(productURL)
+        res.raise_for_status()
+
+        soup = BeautifulSoup(res.text, 'html.parser')
+        elems = soup.select('#newer-version > div > div > div.a-fixed-left-grid-col.a-col-right > span.a-size-base.a-color-price')
+        return elems[0].text.strip()
+
+    price = getAmazonPrice('https://www.amazon.com/Automate-Boring-Stuff-Python-Programming/dp/1593275994')
+    print('The price is ' + price)
+    ```
+1. We can check all the anchor tags on a webpage instead. 
+    ```py 
+    res = requests.get('https://automatetheboringstuff.com/')
+    res.raise_for_status()
+    soup = bs4.BeautifulSoup(res.text, 'html.parser')
+    links = soup.select('a') 
+    for link in links: 
+        print(link.text)
+    ``` 
+
+### Controlling browser with Selenium module 
+Module `selenium`, `webdriver.Chrome()`, `.get()`, `.find_elements_by_css_selector()`, `.click()`, `.send_keys()`, `.back()`, `.forward()`, `.refresh()`, `.quit()`
+1. This module works like DOM (Document Object Model) in JavaScript. 
+1. We can download `selenium` module and use `from selenium import webdriver` to use the module. Note that we need "**Firefox**" browser, as the module works based on this. Note that we can use "Chrome" as the browser as well, but we need Chrome's WebDriver. We can download the driver from [here](http://chromedriver.chromium.org/downloads). [reference](https://medium.com/@bob800530/selenium-1-%E9%96%8B%E5%95%9Fchrome%E7%80%8F%E8%A6%BD%E5%99%A8-21448980dff9) (in Chinese). We can check the browser version in setting > About Chrome. Note that chromedriver_win32.zip works for both 32-bit and 64-bit version. (Though it works without configure or additional files in the video lecture, Firefox needs a gechodriver to be opened.). Besides, we can't run the code in WSL directly. 
+1. After having the webdriver (which is an `.exe` file), we can pass `executable_path="/mnt/c/Users/<Username>/chromedriver.exe"` [reference](https://www.zhihu.com/question/289066826) (in Chinese). The program works on WSL. 
+    ```py 
+    from selenium import webdriver 
+    browser = webdriver.Chrome(executable_path="/mnt/c/Users/<username>/chromedriver.exe") 
+    ``` 
+1. We then can use `browser.get('URL')` to control the website to access a website. Besides, we can use other methods to manipulate the object. However, we have to use a selector to choose the element(s) and do events such as "**click**" or "**scroll**". We can check the selectors from [here](https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.remote.webdriver). 
+    1. Elements that use the CSS class **_name_**
+        1. `browser.find_element_by_class_name(name)`
+        1. `browser.finds_element_by_class_name(name)`
+    1. Elements that use the CSS  **_selector_**
+        1. `browser.find_element_by_class_selector(selector)`
+        1. `browser.find_elements_by_class_selector(selector)`
+    1. Elements with a matching  **_id_** attribute value 
+        1. `browser.find_element_by_id(id)`
+        1. `browser.find_elements_by_id(id)`
+    1. **`<a>`** tags that completely match the given **_text_** 
+        1. `browser.find_element_by_link_text(text)`
+        1. `browser.find_elements_by_link_text(text)`
+    1. **`<a>`** tags that contain the given **_text_** 
+        1. `browser.find_element_by_partial_link_text(text)`
+        1. `browser.find_elements_by_partial_link_text(text)`
+    1. Elements with a matching **_name_** attribute value such as `<input name="test">`
+        1. `browser.find_element_by_name_(name)`
+        1. `browser.find_elements_by_name_(name)`
+    1. Elements with a matching tag **_name_** which is case insensitive that both `<a>` and `<A>` is matched by 'a' and 'A'. 
+        1. `browser.find_element_by_tag_name_(name)`
+        1. `browser.find_elements_by_tag_name_(name)`
+    ```py 
+    from selenium import webdriver 
+    browser = webdriver.Chrome(executable_path="/mnt/c/Users/<username>/chromedriver.exe") 
+    
+    # visit automate the boring stuff website
+    browser.get('https://automatetheboringstuff.com/')
+
+    # find only one element 
+    element = browser.find_element_by_css_selector('body > div.main > div:nth-child(1) > ul:nth-child(20) > li:nth-child(1) > a')
+    # click on the element 
+    element.click() 
+
+    # find multiple matched elements 
+    elements = browser.find_elements_by_css_selector('p')
+    # print out numbers <p> tags found on the page 
+    print(len(elements))
+    ```
+1. We can use the methods to search a place on Google Maps. 
+    ```py
+    googleMaps = browser.get('https://www.google.com/maps/')
+    search = browser.find_element_by_css_selector('#searchboxinput')
+    search.send_keys('bangkok')
+    submit = browser.find_element_by_css_selector('#searchbox-searchbutton')
+    submit.click()
+    ```
+1. Other functions we can do on browser
+    1. `browser.back()` go to last page  
+    1. `browser.forward()` go to next page 
+    1. `browser.refresh()` referesh the page 
+    1. `browser.quit()` close the browser  
+
+# Excel, Word, and PDF documents 
+1. 
