@@ -839,3 +839,435 @@
 1. As the space has been limited with the form grouping element, we can strech the `width` of `<input>` tags to 100% and give some `padding: 10px` to enlarge the text input area. The border can be set in very a very <span style="color:#ddd"> grey (#ddd)</span> color.
 1. The overall problems and differences are mainly from how to set up `margin` and `padding` of the box model in a proper layout. 
 <img src="differenceStyleForm.PNG">
+
+### Visibility, Order, and Negative Margin 
+1. To hide an element, we can set its `display: none`. The element is still on the page but not shown. This is useful to design mobile version of page. Note that the element looks "**removed**" but still in the code. 
+1. We can use `visibility: hidden` to hide an element. However, this elemenet is like transparent and still occupy its space on the page but become invisible. This propery isn't often used as `display: none`. 
+1. Specificity of CSS selector has "<ins>**order**</ins>" of implement the given property. For example, a `class` selector is more specific than `element` selector such as a `<h1>` tag. The property in the more specific selector will override the other. 
+1. Note that if we use external CSS file but want specific style to override the others, we can put `!important` after a property in the selector, so it will be prioritized. HOwever, this is not recommended. 
+    ```html 
+    <style>
+        .hello {
+            color: red; 
+        }
+        h1 {
+            color: blue !important; 
+        } 
+        body {
+            color: green;
+        }
+    </style>
+    <body>
+        <!-- text is blue because of important flag in h1 selector -->
+        <h1 class="hello">Hello World!</h1>
+    </body>
+    ```
+1. We can use **negative** `margin` on the side. The element will be moved on the reverse way. However, this feature doesn't work on `padding`. 
+
+# Hotel Website
+1. This is a mockup website using only the techniques learnt in previous sections WITHOUT "flexbox" and "grid". Besides, this page is not responsive as well, as some of them elements are stacked when the screen becomes narrow. 
+1. For "design and ideas", we can check on the themes from "Bootstrap" to get inspiration. 
+1. The webpage is captured in 1920x1080 resolution on full screen of 13-inch monitor.
+
+### File structure and Navbar 
+<img src='hotelWebsiteIndex.PNG'>
+
+1. We have the landing page named as `index.html` as this will be the very first file that the program searches to render. We can have several other pages in CWD (current working directory). In the case, we have another two, `about.html` and `contact.html`. 
+1. We can use `<meta>` tag to have further metadata for search engine to parse and do SEO in the `<head>` tag. 
+    ```html 
+    <head>
+        <meta name="description" content="Welcome to the most extraodinary hotel in Phrom Phong Bangkok">
+        <meta name="keywords" content="hotel, bangkok hotel, vintage hotel">
+    </head>
+    ```
+1. We use `<link>` tag to import the CSS file `style.css`, which we create in a sub-folder "css". Besides, we have an initial set up for the page. 
+    ```css
+    /* Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Main Styling */
+    html, body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.7em;
+    }
+
+    a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    h1, h2, h3 {
+        padding-bottom: 20px;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+    ```
+1. **Navbar** - We can use `<nav>` to create a navbar. In this case, we also give an `id` to the entity. 
+    ```html
+    <style>
+    #navbar {
+        background-color: #333;
+        color: #fff; 
+        overflow: auto;
+    }
+
+    #navbar a {
+        color: #fff;
+    } 
+
+    #navbar h1 {
+        float: left; 
+        padding-top: 20px;
+    }
+
+    #navbar ul {
+        list-style: none;
+        float: right;
+    }
+
+    #navbar ul li {
+        float: left;
+    }
+
+    #navbar ul li a {
+        display: block;
+        padding: 20px;
+        text-align: center;
+    }
+
+    #navbar ul li a:hover,
+    #navbar ul li a.current {
+        background: #444;
+        color: #f7c08a;
+    }
+    </style>
+    <nav id="navbar">
+        <h1 class="logo"><a href="index.html">MST</a></h1>
+        <ul>
+            <li><a class="current" href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+    ```
+1. **Container** - Since the previous layout has the Navbar go all the way cross the width. However, the Logo `<h1>` will be departed far away from the other 3 links if the screen goes very wide. 
+    1. We can add a <ins>**container**</ins> to wrap the Navbar elements. Note that this container tag `<div class="container">` is in the `<nav>` tag. If we wrap the whole Navbar include the `<nav>` tag, the maximum width of the element will be limited when it excees and show the background color of the page (looks not good). 
+    1. The container is an utility that we can also use on other elements or sections. 
+    ```css 
+    /* Utility classes */ 
+    .container {
+        margin: auto; /* center the elements in the container*/
+        max-width: 1100px; /* limit the maximum width of the navbar but not limiting background color of the navbar */
+        overflow: auto; /* shows the background if the screen size doesn't fit. However, this feature doesn't have effect to page at this point. */
+        padding: 0 20px; /* give some space from edge to the elemetn */
+    }
+    ```
+
+### Showcase and Home Info
+1. We can put the main content right below the Navbar. Besides, we can put them in "**container**" as well, so when the browser stretched, it is limited on its width and stays center. Note that this part is also the header, which is the very first element that users see when visiting the page. 
+    ```html
+    <style>
+    .btn {
+        display: inline-block;
+        font-size: 18px; 
+        color: #fff;
+        background-color: #333;
+        padding: 13px 20px;
+        border: none;
+        cursor: pointer; 
+    }
+
+    .btn:hover {
+        background-color: #f7c08a;
+        color: #333;
+    }
+
+    /* Showcase */ 
+    #showcase {
+        background: url('../img/showcase.jpg') no-repeat center center/cover;
+        height: 600px;
+    }
+
+    #showcase .showcase-content {
+        color: #fff; 
+        text-align: center;
+        padding-top: 170px;
+    }
+
+    #showcase .showcase-content h1 {
+        font-size: 60px;
+        line-height: 1.2em;
+    }
+
+    #showcase .showcase-content p {
+        padding-bottom: 20px;
+        line-height: 1.7em;
+    }
+    </style>
+    <header>
+        <div id="showcase">
+            <div class="container">
+                <div class="showcase-content">
+                    <h1><span class="text-primary">Enjoy</span> Your Stay</h1>
+                    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti a soluta enim sunt, quod debitis!</p>
+                    <a class="btn" href="about.html">About Our Hotel</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    ```
+1. We then create the main show case under the main focusing element. This will have one image on the left which takes half the width, and content description. 
+1. However, this design still has problem that the button "Read More" disappears when the width is under 580px. If we take off `overflow: hidden`, the button will show at the very bottom but out of the dark background, as it exceeds the size of the container. Note that the height of the section is according to the given image height, as we set the height as 100% to the image. 
+1. We can reduce the text content to allow the content floats up. 
+    ```html 
+    <style>
+    /* Home Info */
+    #home-info {
+        height: 400px;
+    }
+
+    #home-info .info-img {
+        float: left; 
+        width: 50%;
+        background: url('../img/photo-1.jpg') no-repeat;
+        min-height: 100%;
+    } 
+
+    #home-info .info-content {
+        float: right; 
+        width: 50%; 
+        height: 100%; 
+        text-align: center;
+        padding: 50px 30px; 
+        overflow: hidden;
+    } 
+
+    #home-info .info-content p {
+        padding-bottom: 30px;
+    }
+    </style>
+    <section id="home-info" class="bg-dark">
+        <div class="info-img"></div>
+        <div class="info-content">
+            <h2><span class="text-primary">The History</span> Of Our Hotel</h2>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime molestias modi cupiditate inventore atque illo. Rerum animi, ipsum, repudiandae placeat maiores delectus quod deserunt quasi numquam voluptate maxime, culpa quia!</p>
+            <a href="about.html" class="btn btn-light">Read More</a>
+        </div>
+    </section>
+    ```
+
+### Features and Footer 
+1. **Hotel features** - We will add 3 blocks below the image and desciption contents and use "FontAwesome" for icons. We will have each block separate the space in the container and allocate them evenly on the line. We use a structure as `<section>` and to wrap the elements, `<div>`, `<i>`, `<h3>`, and `<p>`. 
+    1. We can import "FontAwesome" through CDN `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css` in a `<link>` tag. For Font awesome icons, we can give `class="fa-3x"` to triple the size of the icon. 
+    1. Since we have set in the initials that all the elements on the page is with `box-sizing: border-box`, marging and padding is included in the element's whole width and height. To allocate the tags evenly, we can set each of its width at "**33.3%**" for 3 items. Besides, we add `padding: 50px;` to have some space between them. 
+    1. We then set different class to each item to have different background. It looks more obvious in different blocks. 
+    ```html
+    <section class="features">
+        <div class="box">
+            <i class="fas fa-hotel fa-3x"></i>
+            <h3>Great Location</h3>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fugit, itaque?</p>
+        </div>
+        <div class="box">
+            <i class="fas fa-utensils fa-3x"></i>
+            <h3>Free Meals</h3>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fugit, itaque?</p>
+        </div>
+        <div class="box">
+            <i class="fas fa-dumbbell fa-3x"></i>
+            <h3>Fitness Room</h3>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fugit, itaque?</p>
+        </div>
+    </section>
+    ```
+1. **Footer** - We use `<footer>` tag. Note that the 3 elements above footer is "floated", so we have a `<div>` tag that use class which has property `clear: both;`. Therefore, the "floated" items are separated from the `<footer>` tag, and the footer area has its own space. 
+    ```html 
+    <div class="clr" style="clear: both"></div>
+    <footer id="main-footer">
+        <p>Hotel BK &copy; 2020, All Rights Reserved</p>
+    </footer>
+    ```
+
+### About Page 
+<img src='hotelWebsiteAbout.PNG'>
+
+1. **About Info.** - We can copy the layout from `index.html` and keep only `<header>` and `<footer>` tags. Note that in real deployment, the backend framework can keep the header and footer file in separated HTML and import to every page. 
+1. On "About" page, we havea `<section>` to put the main contents. In this case, we have 2 sections in blocks as "content" and "image". We can use `float: left` and `float: right` and set each of its `width: 50%` to divide the row into 2 sections. 
+1. An `<img>` tag is an inline element. Therefore, we can use `display: block` to make it a block element that can be centered with `margin: auto`. If the image is bigger than its container, we can set its width to 100% on the `<img>`, so it will be resize to fit the width of its container. 
+1. We add another class on `<h1>` tag and sets the class as utility that other elements can be used. 
+1. Note that this layout isn't good if the width of browser is narrow, as if the height of the image isn't tall enough and the "About" contents (text) is too much. 
+    ```html
+    <style>
+        /* Utility */
+        .l-heading {
+            font-size: 40px;
+        }
+
+        /* Padding */
+        .py-1 {padding: 10px 0;}
+        .py-2 {padding: 20px 0;}
+        .py-3 {padding: 30px 0;}
+
+        /* About Info */
+        #about-info .info-right {
+            float: right;
+            width: 50%;
+            min-height: 100%;
+        }
+
+        #about-info .info-right img {
+            display: block;
+            margin: auto;
+            width: 70%;
+            border-radius: 50%;
+        }
+
+        #about-info .info-left {
+            float: left;
+            width: 50%; 
+            min-height: 100%;
+        }
+    </style>
+    <section id="about-info" class="bg-light py-3">
+        <div class="container">
+            <div class="info-left">
+                <h1><span class="text-primary">About</span> Hotel BK</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio debitis nobis veritatis? Minus nostrum nobis itaque, sequi magnam fugiat velit laborum similique quasi! Quisquam ad culpa esse temporibus eius nesciunt.</p>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae dolor voluptates, blanditiis delectus obcaecati fuga maxime placeat deserunt sed necessitatibus!</p>
+            </div>
+            <div class="info-right">
+                <img src="./img/photo-2.jpg" alt="">
+            </div>
+        </div>
+    </section>
+    ```
+1. **Testimonials** - We can make certain elements in a section or block transparent and see through them with property `opacity` which is from 0 (total transparent) to 1 (solid). For images aligned with text, we can use `float: left` and the text will in `<p>` will be moved and wrap the `<image>`. To make a image as a circle, we can use `border-radius: 50%`. 
+    ```html 
+    <style>
+        /* Testimonials */
+        #testimonials {
+            height: 600px;
+            background: url('../img/test-bg.jpg');
+            padding-top: 40px;
+        }
+
+        #testimonials h2 {
+            color: #fff; 
+            text-align: center;
+            padding-bottom: 40px;
+        }
+
+        #testimonials .testimonial {
+            padding: 20px;
+            margin-bottom: 40px;
+            border-radius: 5px;
+            opacity: 0.9;
+        }
+
+        #testimonials .testimonial img {
+            width: 100px;
+            float: left;
+            margin-right: 20px;
+            border-radius: 50%;
+        }
+    </style>
+    <section id="testimonials">
+        <div class="container">
+            <h2 class="l-heading">What Our Guests Say</h2>
+            <div class="testimonial bg-primary">
+                <img src="./img/person-1.jpg" alt="Samantha">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto assumenda esse reiciendis explicabo odio maxime ea voluptate eum saepe. Aliquid, delectus. Veniam natus et porro quaerat qui maiores labore sunt iusto eligendi! Adipisci reiciendis et saepe! Impedit, excepturi. Adipisci, rerum.</p>
+            </div>
+
+            <div class="testimonial bg-primary">
+                <img src="./img/person-2.jpg" alt="Jen">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto assumenda esse reiciendis explicabo odio maxime ea voluptate eum saepe. Aliquid, delectus. Veniam natus et porro quaerat qui maiores labore sunt iusto eligendi! Adipisci reiciendis et saepe! Impedit, excepturi. Adipisci, rerum.</p>
+            </div>
+        </div>
+    </section>
+    ```
+
+### Contact Page 
+<img src='hotelWebsiteContact.PNG'>
+
+**Contact Page HTML** 
+```html
+<style>
+/* Contact Form */
+#contact-form .form-group {
+    margin-bottom: 20px; 
+}
+
+#contact-form label {
+    display: block; 
+    margin-bottom: 5px;
+}
+
+#contact-form input, 
+#contact-form textarea {
+    width: 100%; 
+    padding: 10px; 
+    border: 1px #ddd solid;
+}
+
+#contact-form textarea {
+    height: 200px; 
+}
+
+#contact-form input:focus, 
+#contact-form textarea:focus {
+    outline: none; 
+    border-color: #f7c08a
+}
+</style>
+
+<section id="contact-form" class="py-3">
+    <div class="container">
+        <h1 class="l-heading"><span class="text-primary">Contact</span> Us</h1>
+        <p>Please fill out the form below to contact us</p>
+        <form action="app.js">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email">
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea name="message" id="message"></textarea>
+            </div>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
+</section>
+
+<section id="contact-info" class="bg-dark">
+    <div class="container">
+        <div class="box">
+            <i class="fas fa-hotel fa-3x"></i>
+            <h3>Location</h3>
+            <p>Soi 26 Sukhumvit, Bangkok, Thailand</p>
+        </div>
+        <div class="box">
+            <i class="fas fa-phone fa-3x"></i>
+            <h3>Phone Number</h3>
+            <p>+66-12-345-7890</p>
+        </div>
+        <div class="box">
+            <i class="fas fa-envelope fa-3x"></i>
+            <h3>Email Address</h3>
+            <p>apple@gmail.com</p>
+        </div>
+    </div>
+</section>
+```
+
+# Intro to Responsive Layouts 
