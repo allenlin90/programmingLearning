@@ -1,117 +1,66 @@
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-/* 
--May want to add "border-box for "box-sizing so padding does not affect width
--Reset margin and padding 
-*/
-}
-
 body {
-    background: #344a72;
-    font-family: 'Raleway';
-/* 
-    -Background color is #344a72
-*/
-}
-
-a {
-    text-decoration: none;
-/* 
-Underlined links are ugly :)
-*/
-}
-
-#container {
-    margin: 5% auto;
-    max-width: 50%;
-/* 
--Remember, margin: auto on left and right will center a block element 
--I would also set a "max-width" for responsiveness
--May want to add some padding
-*/
-}
-
-.form-wrap {
-    background: #fff;
-    margin: auto;
-/* 
-    This is the white area around the form and heading, etc
-*/
-}
-
-.form-wrap h1,
-.form-wrap p {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: grey;
+    color: white;
     text-align: center;
-/* 
-    May want to center these
-*/
+    padding-top: 100px;
 }
 
-.form-wrap .form-group {
-    margin: 3% 10%;
-/* 
-    Each label, input is wrapped in .form-group
-*/
+h1 {
+    display: none;
 }
 
-.form-wrap .form-group label {
-    display: block;
-/* 
-    Label should be turned into a block element
-*/
+/* Smartphones */
+@media(max-width: 500px){
+    body {
+        background: red;
+    }
+
+    #smartphone h1 {
+        display: block;
+    }
 }
 
-.form-wrap .form-group input {
-    width: 100%;
-    padding: 2%;
-/* 
-    Inputs should reach accross the .form-wrap 100% and have some padding
-*/
+/* Tablets */
+@media(min-width: 501px) and (max-width: 768px){
+    body {
+        background: blue;
+    }
+
+    #tablet h1 {
+        display: block;
+    }
 }
 
-.form-wrap button {
-    display: block;
-    background: #49c1a2;
-    width: 100%;
-    margin-top: 5%;
-    padding: 2%;
-    border-radius: 5px;
-    border: none;
-    color: #fff;
-/* 
-    Button should wrap accross 100% and display as block
-    Background color for button is #49c1a2
-*/
+/* Normal */
+@media(min-width: 769px) and (max-width: 1200px){
+    body {
+        background: green;
+    }
+
+    #normal h1 {
+        display: block;
+    }
 }
 
-.form-wrap button:hover {
-    background: #37a08e;
-/* 
-    Hover background color for button is #37a08e
-*/
+/* Widescreen */
+@media(min-width: 1201px) {
+    body {
+        background: black;
+    }
+
+    #widescreen h1 {
+        display: block;
+    }
 }
 
-.form-wrap .bottom-text {
-    margin-bottom: 5% 0;
-/* 
-    Bottom text is smaller
-*/
-}
+/* Landscape */
+@media(max-height: 500px) {
+    body {
+        background: orange;
+    }
 
-footer {
-    text-align: center;
-    color: #fff;
-    margin: 1.5% auto;
-/* 
-Should be centered
-*/
-}
-
-footer a {
-    color: #49c1a2;
-/* 
-    Footer link color is #49c1a2
-*/
+    #landscape h1 {
+        display: block;
+    }
 }

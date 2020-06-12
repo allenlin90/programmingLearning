@@ -838,7 +838,7 @@
 1. Since `<label>` is inline tag, we can use `display: block` to make them take a whole line if the screen size is small. It will be on the same line with the input tag if the screen size is wide enough. 
 1. As the space has been limited with the form grouping element, we can strech the `width` of `<input>` tags to 100% and give some `padding: 10px` to enlarge the text input area. The border can be set in very a very <span style="color:#ddd"> grey (#ddd)</span> color.
 1. The overall problems and differences are mainly from how to set up `margin` and `padding` of the box model in a proper layout. 
-<img src="differenceStyleForm.PNG">
+<img src="./formStyling/differenceStyleForm.PNG">
 
 ### Visibility, Order, and Negative Margin 
 1. To hide an element, we can set its `display: none`. The element is still on the page but not shown. This is useful to design mobile version of page. Note that the element looks "**removed**" but still in the code. 
@@ -870,7 +870,7 @@
 1. The webpage is captured in 1920x1080 resolution on full screen of 13-inch monitor.
 
 ### File structure and Navbar 
-<img src='hotelWebsiteIndex.PNG'>
+<img src='./HotelWebsite/hotelWebsiteIndex.PNG'>
 
 1. We have the landing page named as `index.html` as this will be the very first file that the program searches to render. We can have several other pages in CWD (current working directory). In the case, we have another two, `about.html` and `contact.html`. 
 1. We can use `<meta>` tag to have further metadata for search engine to parse and do SEO in the `<head>` tag. 
@@ -1095,7 +1095,7 @@
     ```
 
 ### About Page 
-<img src='hotelWebsiteAbout.PNG'>
+<img src='./hotelWebsite/hotelWebsiteAbout.PNG'>
 
 1. **About Info.** - We can copy the layout from `index.html` and keep only `<header>` and `<footer>` tags. Note that in real deployment, the backend framework can keep the header and footer file in separated HTML and import to every page. 
 1. On "About" page, we havea `<section>` to put the main contents. In this case, we have 2 sections in blocks as "content" and "image". We can use `float: left` and `float: right` and set each of its `width: 50%` to divide the row into 2 sections. 
@@ -1194,7 +1194,7 @@
     ```
 
 ### Contact Page 
-<img src='hotelWebsiteContact.PNG'>
+<img src='./hotelWebsite/hotelWebsiteContact.PNG'>
 
 **Contact Page HTML** 
 ```html
@@ -1271,3 +1271,90 @@
 ```
 
 # Intro to Responsive Layouts 
+"**Responsive Design**" is to use HTML/CSS to make a website or app layout adapt to different screen sizes. 
+1. Set viewport/scale 
+1. Use fluid widths as oppose to fixed 
+1. Media queries - Different css styling for different screen sizes 
+1. Rem units over px
+1. Mobile first method 
+
+Note that we should have this tag `<meta name="viewport" content="width=device-width, initial-scale=1">` in the `<header>` to make the page responsive. Otherwise, the page will render the whole page in default, which can be very small to view on mobile devices if the design is based on PC screen. 
+
+### Starting with Media Queries 
+1. We can add `@meda` and set its `min-width` or `max-width` to be responsive. Note that the HTML must have a metadata tag to indicate the viewport. Otherwise the screen will render the whole page rather than being responsive. 
+1. However, a setting for larger screen will also be applied on smaller screens. To prevent this, we can use a range by having `min-width` and `max-width`, so the CSS features will be applied only on the given range. Note that the tablet width in convention is "**768px**". 
+    ```html
+    <!-- make the page responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- make the background red if the screen size is narrower than 500px -->
+    <style>
+        /* any CSS setting in this media query is for certain device size*/
+
+        /* Smartphones */
+        @media(max-width: 500px){
+            body {
+                background: red;
+            }
+
+            #smartphone h1 {
+                display: block;
+            }
+        }
+        
+        /* Tablets */
+        @media(min-width:501px) and (max-width: 768px){
+            body {
+                background: blue;
+            }
+
+            #smartphone h1 {
+                display: block;
+            }
+        }
+
+        /* Normal */
+        @media(min-width: 769px) and (max-width: 1200px){
+            body {
+                background: green;
+            }
+
+            #normal h1 {
+                display: block;
+            }
+        }
+
+        /* Widescreen */
+        @media(min-width: 1201px) {
+            body {
+                background: black;
+            }
+
+            #widescreen h1 {
+                display: block;
+            }
+        }
+
+        /* Landscape */
+        @media(max-height: 500px) {
+            body {
+                background: orange;
+            }
+
+            #landscape h1 {
+                display: block;
+            }
+        }
+    </style>
+    <body>
+        <div id="widescreen"><h1>WideScreen</h1></div>
+        <div id="normal"><h1>Normal</h1></div>
+        <div id="tablet"><h1>Tablet</h1></div>
+        <div id="smartphone"><h1>Smartphone</h1></div>
+        <div id="landscape"><h1>Landscape</h1></div>
+    </body>
+    ```
+1. We can also separate the CSS files and import them to the HTML. Besides, we can give a range to apply the style as well. We can set an attribute `media="screen and (max-width: 768px)"`, so the CSS will only be applied if the screen width is narrower than 768px. Note that this link tag should be below the main styling sheet. 
+    ```html 
+    <link rel="stylesheet" media="screen and (max-width: 768px)" href="css/mobile.css">
+    ```
