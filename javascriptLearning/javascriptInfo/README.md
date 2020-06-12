@@ -231,3 +231,93 @@ welcome()
     1. At the time of learning, <ins>**ESLint**</ins> is the lastest and modern one. 
 
 # Objects 
+### Object Basics
+1. An `Object` can be created with curly braces with an optional list of properties. A property is a key/value pair (similar to python dictionaries type data). `key` is a `String` which can also be called property name, while the `value` can be any types of data, such as a `String`, `Number`, `Array`, `Boolean`, `Object`. We can use dot notation to retrive the value of a property from an `Object`. 
+1. Keyword `delete` can remvoe a property from an `Object`. Note that `delete` returns a boolean value to indicate if a property is deleted. 
+1. We can use multiple words to name a property but the `String` should be quoted. Howveer the property with space in its name should be called with square brackets notation. Besides, to call a property by square brackets the `String` should be quoted as it can take a variable. 
+    ```js 
+    // create an object 
+    let obj = new Object(); 
+    let obj = {};
+
+    let user = {
+        name: 'John', //key is 'name' and value is 'John'
+        age: 30, //key is 'age' and value is '30'
+    }
+    console.log(user.name) //John
+    delete user.age; //true 
+    console.log(user) 
+    //{name: 'John'} 
+    let user = {
+        name: 'John',
+        age: 30,
+        'like birds': true, 
+    }
+    delete user['like birds'] //true
+    ``` 
+1. We can use square brackets to give new property in an declaration. The element in the square brackets can be a variable from its parent or global scope. However, if we put a quoted string in the declration, 
+    ```js 
+    let fruit = 'apple'; 
+    let bag = {
+        [fruit]: 5, //fruit in square brackets is a variable 
+        ['fruit']: 'This is "fruit" property',
+        veg: 'This is "veg" property',
+    };
+    console.log(bag.apple) //5 
+    console.log(bag)
+    // {apple: 5, fruit: 'This is "fruit" property', veg: 'This is "veg" property'}
+    ```
+1. If we use a function to create an `Object`, we can use a shorthand to assign both property and value at the same time. 
+    ```js 
+    function makeUser(name, age){
+        return {
+            name, 
+            age
+        }
+    }
+    let user = makeUser('John',  30);
+    console.log(user.name); //John
+    ```
+1. Property names (keys) of an `Object` should be a `String` or `Symbol`. Any other types will turned into `String` type value. This is actually how `Array` in JavaScript is made. JavaScript doesn't actually has `Array` type value but use `Objects` to mimic the attributes of `Array` in other programming language. Besides, properties (keys) in JavaScript `Object` is in order. If the property is a number, it will follow an ascending order. If the key is other data types, it will be ordered by its created time from old to new. Note that if the number has fractions or other symbols, it is not ordered as integer properties. 
+    ```js 
+    let obj = {
+        0: 'test',
+    }
+    obj[0] === obj['0'] // true
+    let arr = []; 
+    typeof(arr) //object
+    ```
+1. Keyword `in` can check if a property is in an `Object`. Though we can also check if a property exists with `=== undefined`, if the property exists and has value as `undefined`, we can't know exactly if the property exists. Nevertheless, in convention, we use `null` to make variable or property empty rather than giving `undefined`. Besides, we can use keyword `in` in `for` loop to loop through the properties of an `Object`. We can use `in` to check if an `Object` is empty. 
+    ```js 
+    let user = {
+        name: 'John',
+        age: 30,
+        country: 'TH',
+        loveCats: undefined,
+    }; 
+    'name' in user; // true
+    'language' in user; // false
+    'loveCats' in user // true 
+    user.loveCats === undefined // true 
+    user.loveCats === user.gender // true (loveCats is a property while gender is not)
+    for (let key in user) {
+        console.log(key);
+    }
+    
+    // check if a given object has any property
+    function isEmpty(obj){
+        for (let key in obj) {
+            return false; // key has value if there's any key
+        }
+        return true; // otherwise return true as its empty because for loop doesn't work
+    }
+    ``` 
+1. If we assign an `Object` to a variable, the variable doesn't copy the value of the `Object` but refer to the destination of the `Object` on computer memory. It means that if the `Object` is changed, all the variable assigned to it is changed. However, if the `Object` is assign with the same value rather than the variable, the variables are equal but not identical. 
+    ```js 
+    let obj1 = {}; 
+    let obj2 = obj1; 
+    let obj3 = {}; 
+    obj1 === obj2; // true 
+    obj1 == obj3 // false 
+    obj2 == obj3 // false 
+    ``` 

@@ -1,66 +1,44 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: grey;
-    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+    background: #333 url('https://source.unsplash.com/daily') no-repeat center center/cover;
+    color: #fff;
+    height: 100vh;
     text-align: center;
-    padding-top: 100px;
+    padding: 2rem;
+    padding-top: 15rem;
 }
 
-h1 {
-    display: none;
+header h1 {
+    font-size: 3rem;
 }
 
-/* Smartphones */
-@media(max-width: 500px){
-    body {
-        background: red;
-    }
-
-    #smartphone h1 {
-        display: block;
-    }
+header p {
+    margin: 1rem 0;
 }
 
-/* Tablets */
-@media(min-width: 501px) and (max-width: 768px){
-    body {
-        background: blue;
-    }
-
-    #tablet h1 {
-        display: block;
-    }
+.btn {
+    display: inline-block;
+    text-decoration: none;
+    background: #f4f4f4;
+    color: #333;
+    padding: 0.75rem 2rem; 
 }
 
-/* Normal */
-@media(min-width: 769px) and (max-width: 1200px){
-    body {
-        background: green;
-    }
-
-    #normal h1 {
-        display: block;
-    }
+section {
+    padding: 2rem;
 }
 
-/* Widescreen */
-@media(min-width: 1201px) {
-    body {
-        background: black;
-    }
-
-    #widescreen h1 {
-        display: block;
-    }
-}
-
-/* Landscape */
-@media(max-height: 500px) {
-    body {
-        background: orange;
-    }
-
-    #landscape h1 {
-        display: block;
+@media(max-height: 450px){
+    header {
+        padding-top: 5rem;
     }
 }

@@ -129,41 +129,43 @@ from selenium import webdriver
 # price = getAmazonPrice('https://www.amazon.com/Automate-Boring-Stuff-Python-Programming/dp/1593275994')
 # print('The price is ' + price)
 
-browser = webdriver.Chrome(executable_path="/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/chromedriver.exe") 
-# browser.get('https://automatetheboringstuff.com/')
+# browser = webdriver.Chrome(executable_path="/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/chromedriver.exe") 
+# # browser.get('https://automatetheboringstuff.com/')
 
-# # find only one element 
-# element = browser.find_element_by_css_selector('body > div.main > div:nth-child(1) > ul:nth-child(20) > li:nth-child(1) > a')
-# element.click() 
+# # # find only one element 
+# # element = browser.find_element_by_css_selector('body > div.main > div:nth-child(1) > ul:nth-child(20) > li:nth-child(1) > a')
+# # element.click() 
 
-# # find multiple matched elements 
-# elements = browser.find_elements_by_css_selector('p')
-# print(len(elements))
+# # # find multiple matched elements 
+# # elements = browser.find_elements_by_css_selector('p')
+# # print(len(elements))
 
 
-googleMaps = browser.get('http://gebweb.net/optimap/')
-search = browser.find_element_by_css_selector('#bulkButton')
-makeSendDC = '1669, 9 Phetchaburi Rd, Bang Kapi, Huai Khwang, Bangkok 10310'
-addresses = ['21/2 เลิศปัญญา ซอยราชวิถี 9 ถ.ราชวิถี เขตราชเทวี กทม. 10400', '270 แขวงทุ่งพญาไท โรงพยาบาลรามาธิบดี ตึกสิริกิตร์ ศูนย์ไอแมค ชั้น1 เขตราชเทวี กทม', '94/2.​ ถ.มหานคร ต.มหาพฤฒาราม อ.บางรัก.​ กทม']
-search.click()
-input = browser.find_element_by_css_selector('#dialogBulk > form > textarea')
-input.send_keys(makeSendDC + '\n')
-time.sleep(5)
-for address in addresses: 
-    input.send_keys(address + '\n') 
-    time.sleep(5)   
-time.sleep(2)
-addLocation = browser.find_element_by_css_selector('#dialogBulk > form > input')
-addLocation.submit()
+# googleMaps = browser.get('http://gebweb.net/optimap/')
+# search = browser.find_element_by_css_selector('#bulkButton')
+# makeSendDC = '1669, 9 Phetchaburi Rd, Bang Kapi, Huai Khwang, Bangkok 10310'
+# addresses = ['21/2 เลิศปัญญา ซอยราชวิถี 9 ถ.ราชวิถี เขตราชเทวี กทม. 10400', '270 แขวงทุ่งพญาไท โรงพยาบาลรามาธิบดี ตึกสิริกิตร์ ศูนย์ไอแมค ชั้น1 เขตราชเทวี กทม', '94/2.​ ถ.มหานคร ต.มหาพฤฒาราม อ.บางรัก.​ กทม']
+# search.click()
+# input = browser.find_element_by_css_selector('#dialogBulk > form > textarea')
+# input.send_keys(makeSendDC + '\n')
+# time.sleep(5)
+# for address in addresses: 
+#     input.send_keys(address + '\n') 
+#     time.sleep(5)   
+# time.sleep(2)
+# addLocation = browser.find_element_by_css_selector('#dialogBulk > form > input')
+# addLocation.submit()
 
-openCalculate = browser.find_element_by_css_selector('#calculateButton')
-time.sleep(2)
-openCalculate.click()
+# openCalculate = browser.find_element_by_css_selector('#calculateButton')
+# time.sleep(2)
+# openCalculate.click()
 
-avoidToll = browser.find_element_by_css_selector('#avoidTolls')
-time.sleep(2)
-avoidToll.click()
+# avoidToll = browser.find_element_by_css_selector('#avoidTolls')
+# time.sleep(2)
+# avoidToll.click()
 
-calculate = browser.find_element_by_css_selector('#dialogOptions > p:nth-child(4) > input:nth-child(2)')
-time.sleep(2)
-calculate.click()
+# calculate = browser.find_element_by_css_selector('#dialogOptions > p:nth-child(4) > input:nth-child(2)')
+# time.sleep(2)
+# calculate.click()
+
+

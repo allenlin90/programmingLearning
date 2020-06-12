@@ -1358,3 +1358,138 @@ Note that we should have this tag `<meta name="viewport" content="width=device-w
     ```html 
     <link rel="stylesheet" media="screen and (max-width: 768px)" href="css/mobile.css">
     ```
+
+### Em and Rem units 
+1. `em` unit is according to the parent (which has font-size value. If not, it goes upper until the root, which is the "root em", `rem`.)
+1. `<p>` font-size is set to "**1em**" by default which is the same size as its parent element (which is `16px`), while `<h3>` is set to "**1.17em**", which is `18.72px`. We can check this values from developer tool by selecting the element on the page and change to tab `Computed` to check the value(Note that `Style` is the CSS selector). 
+1. In the following example, if we give the `<div id="box-1">` tag font-size value, the value of child tags in the `<div>` tag, both `<h3>` and `<p>` is enlarged to `23.4px` and `30px`. However, the element in the other `<div>` tag is not affected. 
+1. If we set `padding: 1em` to `<p>`, it adds `30px` to each side of the element. 
+1. There's a problem with using `em` is that it always according to the parent element. If we have nested it will mutiple the size up. For example, we in the nested `<ul>` and `<li>` tags. If we select `<ul>` and set font-size to its parent element which is the other `<ul>`. For example, in the 3 layer `<ul>` tags and set `font-size: 1.2em`, the outer `<ul>` has font-size `24pz` because `#box-1` is set to `20px`. However, the inner also multiply 1.2 and becomes `28.8px`, and the 3rd one becomes `34.56px`. 
+1. The solution for that is to use `rem` which is according to the "root em" which font-size is `16px` by default. 
+    ```html 
+    <style>
+        #box-1 {
+            font-size: 20px;
+        }
+
+        #box-1 p {
+            font-size: 1.5em;
+            padding: 1em; 
+        }
+
+        #box-1 ul {
+            font-size: 1.2em; 
+        }
+    </style>
+    <body>
+        <div id="box-1">
+            <h3>Box One</h3>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nemo exercitationem itaque provident atque neque harum ducimus quia ratione quae ex.</p>
+            <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3
+                <ul>
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                </ul>
+            </li>
+            <li>4</li>
+            </ul>        
+        </div>
+        <div id="box-2">
+            <h3>Box Two</h3>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nemo exercitationem itaque provident atque neque harum ducimus quia ratione quae ex.</p>        
+        </div>
+    </body>
+    ``` 
+1. We can change the root font-size by selecting `<html>` tag and change its font-size. We can change `font-size` property to `10px` (or `62.5%`) which is easy to check the value as the `rem` we set is multiply by 10. 
+1. `rem` is also better if the user changes setting for the browser for bigger font-size in default. The contents become responsive to the setting and scale with the root value. The setting is at "Setting" > "Appearance" > "Font Size". 
+
+### Viewport Height (VH) and Viewport Width (VW)
+1. Viewport is the whole area in the browser that shows the webpage. Each of them has 100 units on each side, so the size is relative to the scale of the side, no matter how large or small the screen is. Note `vh` is used more often than `vw`. 
+1. For example, we want an element in the page to take the whole height of the viewport. By setting `height: 100%`, it only covers the height of its content. While usuing `height: 100vh`, it will take the height of the whole viewport from top to bottom. 
+1. We can use [Unsplash source](https://source.unsplash.com/) to have random image on the background. Note that in CSS selector, we can have both a color and an image url for property `background`, so the background will be the image on top of the given color. 
+    1. Without other setting, the photo will repeat if the screen size is larger than the image. Therefore, we give `no-repeat` to background as well. 
+    1. However, if the screen size is larger than the image, the background color will fill up the empty space. We can add `center center/cover` to make the background become responsive. 
+    ```css
+    header {
+        background: #333 url('https://source.unsplash.com/') no-repeat center center/cover;
+    }
+    ```
+1. We can make an anchor tag `<a>` looks like a button by the following CSS without Bootstrap. (There's no hover effect yet)
+    ```css
+    .btn {
+    display: inline-block;
+    text-decoration: none;
+    background: #f4f4f4;
+    color: #333;
+    padding: 0.75rem 2rem; 
+    }
+    ```
+1. Note that though we have `<header>` tag (or other element) that takes `100vh`, it only occupies the page in full height when the user access it. The rest of the contents will still be at the below. Taking `100vh` doesn't mean that the page is full and can't put anything. It's just a effect to show a full page (or just a landing page message) before the user start to browse or access other info and let the user focus on the item first. This feature also responds landscape of a mobile device.
+1. In the following example, the padding is too much when the screen becomes landscape as mobile device rotates. We can add an media query to change the `padding` from `15rem` to `5rem` if the height is less than `450px`. 
+    ```html 
+    <style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    header {
+        background: #333 url('https://source.unsplash.com/daily') no-repeat center center/cover;
+        color: #fff;
+        height: 100vh;
+        text-align: center;
+        padding: 2rem;
+        padding-top: 15rem;
+    }
+
+    header h1 {
+        font-size: 3rem;
+    }
+
+    header p {
+        margin: 1rem 0;
+    }
+
+    .btn {
+        display: inline-block;
+        text-decoration: none;
+        background: #f4f4f4;
+        color: #333;
+        padding: 0.75rem 2rem; 
+    }
+
+    section {
+        padding: 2rem;
+    }
+
+    /* change padding from 15rem to 5rem if height is less than 450px */
+    @media(max-height: 450px){
+        header {
+            padding-top: 5rem;
+        }
+    }
+    </style>
+    <body>
+        <header>
+            <h1>Welcome To Our Website</h1>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eius natus quasi similique sunt doloremque iure cum, veritatis dolorem itaque libero?</p>
+            <a href="#" class="btn">Find Out More</a>
+        </header>
+
+        <section>
+            <h3>About Our Company</h3>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. In ea reprehenderit eligendi a, similique ipsum eius explicabo autem minima commodi laudantium voluptates molestias vero voluptatum, fuga animi? Reprehenderit repellendus totam dolores architecto tempora voluptates aut beatae delectus repellat, vitae illum! Nostrum tenetur corrupti quis nesciunt accusantium quae nemo neque perspiciatis?</p>
+        </section>
+    </body>
+    ```
+
+### Making hotel website full responsive 
