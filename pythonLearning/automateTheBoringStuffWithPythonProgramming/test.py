@@ -1,4 +1,4 @@
-import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time
+import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl
 from selenium import webdriver 
 #logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 # text = open('test.txt', 'w')
@@ -168,4 +168,15 @@ from selenium import webdriver
 # time.sleep(2)
 # calculate.click()
 
+workbook = openpyxl.load_workbook('example.xlsx') # create a workbook object 
+sheet = workbook.get_sheet_by_name('Sheet1') # get a sheet from the workbook 
+workbook.get_sheet_names() # a method to return a list of sheet names 
+cell = sheet['A1'] # A1 cell in 'Sheet1'
+# print(cell.value) # a datetime object as the value in the Excel sheet is date and time in 'A1' cell 
+# print(str(cell.value)) # the value in the cell 
+# print(str(sheet['B1'].value)) # 'Apples', the value in cell 'B1'
+# print(str(sheet['C1'].value)) # '73', the value in cell 'C1'
+# print(sheet.cell(row=1, column=2) == sheet['B1']) # True
 
+for i in range(1, 8): 
+    print(i, sheet.cell(row=i, column=2).value)

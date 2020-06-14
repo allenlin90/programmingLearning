@@ -312,12 +312,68 @@ welcome()
         return true; // otherwise return true as its empty because for loop doesn't work
     }
     ``` 
-1. If we assign an `Object` to a variable, the variable doesn't copy the value of the `Object` but refer to the destination of the `Object` on computer memory. It means that if the `Object` is changed, all the variable assigned to it is changed. However, if the `Object` is assign with the same value rather than the variable, the variables are equal but not identical. 
+1. If we assign an `Object` to a variable, the variable doesn't copy the value of the `Object` but refer to the destination of the `Object` on computer memory. It means that if the `Object` is changed, all the variable assigned to it is changed. However, if the `Object` is assign with the same value rather than the variable, the variables are equal but not identical. However, if we assign `undefined` or `null` to one of the variables, the other object holds the same value. 
     ```js 
     let obj1 = {}; 
     let obj2 = obj1; 
     let obj3 = {}; 
     obj1 === obj2; // true 
-    obj1 == obj3 // false 
-    obj2 == obj3 // false 
+    obj1 == obj3; // false 
+    obj2 == obj3; // false 
+    obj1 = null; 
+    console.log(obj2) //{}
     ``` 
+
+### Symbol 
+1. `Object` property keys can be either `String` or `Symbol` type. Othher property names, such as numbers and boolean values will be transferred to `String`. `Symbols` are guaranteed to be unique. 2 `Symbols` that with the same description are not equal. `Symbol` is not `String` type and can't be converted into `String` directly. However, we can use `.toString()` method or `.description` (not a method) to check the description of a `Symbol`. 
+    ```js 
+    let id1 = Symbol('id');
+    let id2 = Symbol('id');
+    id1 == id2 // false 
+    console.log(id1.toString()) // Symbol(id) 
+    console.log(id1.description) // id
+    ```
+1. We can hide the property name if it's set up by `Symbol`. The only way to call and modify the value of the property is to call the variable that carries the `Symbol` as property. Besides, we can't get the variable that carries the `Symbol` by `for` `in` loop and `Object.keys(obj)` method because the property is "**hidden**". However, if we use `Object.assign()` method, the whole obj including symbols will be duplicated. 
+    ```js
+    let user = {
+        name: "John",
+        [id]: 123, 
+        [id1]: 456,
+        id: 'abc',
+    };
+
+    console.log(user); // { name: 'John', id: 'abc', [Symbol(id)]: 123, [Symbol(id)]: 456 }
+    console.log(user[id]); //123
+    console.log(user['id']); //abc 
+    console.log(Object.keys(user)); // ['name', 'id']
+    for (let key in user) {
+    console.log(key); 
+    } 
+    // name 
+    // id
+
+    let obj = {
+        [id]: 123, 
+    }; 
+
+    let obj1 = Object.assign({}, obj);
+    console.log(obj1); // { [Symbol(id)]: 123 }
+    console.log(obj == obj1); // false 
+    ```
+1. **Global symbols** - Though all `Symbols` are unique and different, We can use `Symbol.for(key)` to refer the same symbol value to variables. The `Symbols` created will be stored in `global symbol registry`.  This function will create a `Symbol` by the key it doesn't exist. If the key has been created, it will refer to the `Symbol` with the key. 
+    ```js 
+    let id = Symbol.for('id');
+    let idAgain = Symbol.for('id');
+    console.log(id === idAgain); // true 
+    ``` 
+1. At the opposite, we can use `Symbol.keyFor(sym)` method that takes a variable which has `Symbol` as value and return the `key` of the `Symbol`. Note that the `Symbol` must be in global scope or the method can't find the `Symbol` and returns `undefined` . 
+    ```js 
+    let sym = Symbol.for('name');
+    let sym2 = Symbol.for('id');
+
+    console.log(Symbol.keyFor(sym)); // name 
+    console.log(Symbol.keyFor(sym2)); // id
+    ```
+1. **Summary of `Symbol`** - `Symbol` is a primitive type for unique identifiers which is created with `Symbol()` with an optional description as the argument. Besides, they are always different values though we assign the same description. We can use "**global registry**" and `Symbol.for(key)` to have same-named symbols to be equal. 
+
+### Object methods, "this"

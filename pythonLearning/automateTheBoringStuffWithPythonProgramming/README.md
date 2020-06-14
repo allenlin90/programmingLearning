@@ -1062,4 +1062,25 @@ Module `selenium`, `webdriver.Chrome()`, `.get()`, `.find_elements_by_css_select
     1. `browser.quit()` close the browser  
 
 # Excel, Word, and PDF documents 
-1. 
+Module `openpyxl`, `openpyxl.load_workbook(filename)`, `get_sheet_names()`, `get_sheet_by_name()`
+1. We can use `openpyxl` module to open an `Excel` file. In the program, use `os.chdir(filepath)` to change the directory where the excel file is and create a workbook object (a Excel style sheet). 
+    1. Workbook is as a whole Excel file with `.xlsx` file extension. 
+    1. In a workbook, there's at least a "**sheet/worksheet**". 
+    1. Every worksheet has a table of "**columns**" and "**rows**" with "**cells**". 
+1. We can use `openpyxl.load_workbook()` to create a "**workbook object**" and use `.get_sheet_by_name()` method to acquire the data of a worksheet by giving the sheet's name. If we don't know the name, we can use `.get_sheet_names()` method to get a list of sheet names. 
+1. We can use square bracket notation as to access element in a `List` to access a "**cell**" in the worksheet, such as sheet['A1']. Besides giving a cell name, we can use `.cell()` method which takes `row` and `column` to refer to the cell in the sheet. For example, `sheet['B1']` is equal to `sheet.cell(row=1, column=2)`. Both notations are useful in different scenarios. We can use `for` loop to iterate through a range and get the values in the cells. 
+    ```py 
+    import openpyxl 
+
+    workbook = openpyxl.load_workbook('example.xlsx') # create a workbook object 
+    sheet = workbook.get_sheet_by_name('Sheet1') # get a sheet from the workbook 
+    workbook.get_sheet_names() # a method to return a list of sheet names 
+    cell = sheet['A1'] # A1 cell in 'Sheet1'
+    print(cell.value) # a datetime object as the value in the Excel sheet is date and time in 'A1' cell 
+    print(str(cell.value)) # the value in the cell 
+    print(str(sheet['B1'].value)) # 'Apples', the value in cell 'B1'
+    print(str(sheet['C1'].value)) # '73', the value in cell 'C1' 
+    print(sheet.cell(row=1, column=2) == sheet['B1']) # True
+    for i in range(1, 8): 
+        print(i, sheet.cell(row=i, column=2).value) # print values in column B from row 1 to 7
+    ```
