@@ -1,4 +1,4 @@
-import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl
+import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl, PyPDF2
 from selenium import webdriver 
 #logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 # text = open('test.txt', 'w')
@@ -168,15 +168,70 @@ from selenium import webdriver
 # time.sleep(2)
 # calculate.click()
 
-workbook = openpyxl.load_workbook('example.xlsx') # create a workbook object 
-sheet = workbook.get_sheet_by_name('Sheet1') # get a sheet from the workbook 
-workbook.get_sheet_names() # a method to return a list of sheet names 
-cell = sheet['A1'] # A1 cell in 'Sheet1'
+
+##############################################################################
+# Read a Excel workbook
+# workbook = openpyxl.load_workbook('example.xlsx') # create a workbook object 
+# sheet = workbook.get_sheet_by_name('Sheet1') # get a sheet from the workbook 
+# workbook.get_sheet_names() # a method to return a list of sheet names 
+# cell = sheet['A1'] # A1 cell in 'Sheet1'
 # print(cell.value) # a datetime object as the value in the Excel sheet is date and time in 'A1' cell 
 # print(str(cell.value)) # the value in the cell 
 # print(str(sheet['B1'].value)) # 'Apples', the value in cell 'B1'
 # print(str(sheet['C1'].value)) # '73', the value in cell 'C1'
 # print(sheet.cell(row=1, column=2) == sheet['B1']) # True
 
-for i in range(1, 8): 
-    print(i, sheet.cell(row=i, column=2).value)
+# for i in range(1, 8): 
+#     print(i, sheet.cell(row=i, column=2).value)
+
+
+##############################################################################
+# Create and edit Excel workbook
+# wb = openpyxl.Workbook()
+# print(wb.get_sheet_names())
+# sheet = wb.get_sheet_by_name('Sheet')
+# sheet['A1'].value
+# print(sheet['A1'].value == None)
+# sheet['A1'].value = 42
+# sheet['A2'].value = 'Hello'
+# sheet['A3'].value = '=1+1'
+
+# os.chdir('/mnt/c/Users/ht016/Desktop/')
+# wb.save('test.xlsx')
+# sheet2 = wb.create_sheet()
+# print(wb.get_sheet_names())
+# print(sheet2.title)
+# sheet2.title = 'My New Sheet Name'
+# wb.save('test2.xlsx')
+
+##############################################################################
+# Reading and editing PDFs
+pdfFile = open('meetingminutes.pdf', 'rb')
+reader = PyPDF2.PdfFileReader(pdfFile)
+print(reader.numPages) # return numbers of pages in the pdf file
+page = reader.getPage(0) # page object holds number of page which starts from 0 as the 1st page
+text = page.extractText() # return parsed text as Python String 
+for pageNum in range(reader.numPages):
+    print(reader.getPage(pageNum).extractText()) 
+
+# create 2 pdf file objects with reading binary mode 
+pdfFile1 = open('meetingminutes.pdf', 'rb')
+pdfFile2 = open('meetingminutes2.pdf', 'rb') 
+
+reader1 = PyPDF2.PdfFileReader(pdfFile1)
+reader2 = PyPDF2.PdfFileReader(pdfFile2)
+writer = PyPDF2.PdfFileWriter() # create a writer object which is blank pdf 
+for pageNum in range (reader1.numPages):
+    page = reader1.getPage(pageNum)
+    writer.addPage(page)
+
+for pageNum in range (reader2.numPages):
+    page = reader2.getPage(pageNum)
+    writer.addPage(page)
+
+os.chdir('/mnt/c/Users/ht016/Desktop')
+outputFile = open('combinedminutes.pdf', 'wb')
+writer.write(outputFile)
+outputFile.close()
+pdfFile1.close()
+pdfFile2.close()

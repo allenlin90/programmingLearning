@@ -1063,6 +1063,7 @@ Module `selenium`, `webdriver.Chrome()`, `.get()`, `.find_elements_by_css_select
 
 # Excel, Word, and PDF documents 
 Module `openpyxl`, `openpyxl.load_workbook(filename)`, `get_sheet_names()`, `get_sheet_by_name()`
+### Read Excel file 
 1. We can use `openpyxl` module to open an `Excel` file. In the program, use `os.chdir(filepath)` to change the directory where the excel file is and create a workbook object (a Excel style sheet). 
     1. Workbook is as a whole Excel file with `.xlsx` file extension. 
     1. In a workbook, there's at least a "**sheet/worksheet**". 
@@ -1084,3 +1085,70 @@ Module `openpyxl`, `openpyxl.load_workbook(filename)`, `get_sheet_names()`, `get
     for i in range(1, 8): 
         print(i, sheet.cell(row=i, column=2).value) # print values in column B from row 1 to 7
     ```
+### Edit and create an Excel spreadsheet
+1. We can use `openpyxl.Workbook()` method (captial W) to create an excel workbook object (which is stored in computer memory rather than a file in permanent storage yet). The workbook will have one sheet named as default "**Sheet**" (capital S). 
+1. With the "**sheet**" object, we can access the value of a given cell. Since the workbook is just created, it's empty. We can retrive or assign value to a cell with `.value()` method. The arugment is a `String`, `Float`, `Boolean` or `Integer`. We can pass Excel formula and function, expression, or equation with `String` value. 
+1. To keep the workbook permanently, we can use `wb.save()` method to save the file at CWD. We can use `os` module with `os.chdir` to change the current working directory. To keep file clean and safe, we can change the name to save evertime we've done modification with the same object. 
+1. We can use `.create_sheet()` method to create a new sheet in the workbook. Note that the order of spreadsheet starts from 0 as the order in programming language. Besies, we can use `.title` property to check the name of the spreadsheet or assign it a new name. 
+    ```py 
+    import openpyxl, os 
+    wb = openpyxl.Workbook() # create an excel workbook object 
+    print(wb.get_sheet_names()) 
+    sheet = wb.get_sheet_by_name('Sheet') # get the sheet object 
+    sheet['A1'].value # get value of a cell 
+    print(sheet['A1'].value == None) # the spreadsheet and cell are both empty
+    sheet['A1'].value = 42
+    sheet['A2'].value = 'Hello'
+    sheet['A3'].value = '=1+1' # pass an expression to the cell
+
+    os.chdir('/mnt/c/Users/<Username>/Desktop/') # change directory to Desktop 
+    wb.save('test.xlsx') # save the file as 'test.xlsx'
+    sheet2 = wb.create_sheet()
+    print(wb.get_sheet_names())
+    print(sheet2.title)
+    sheet2.title = 'My New Sheet Name' # change spreadsheet name of sheet2 
+    wb.save('test2.xlsx') # save file as test2.xlsx 
+    ```
+
+### Reading and editing PDFs 
+Module `PyPDF2`, `PyPDF2.PdfFileReader()`, `.numPages`, `.getPage()`, `.extractText()`
+1. We can use `PyPDF2` module (note that all characters besides 'y' are in captial letters) to manipulate PDF files. Since PDF files are binary files that can also include other media, such as images, the module can't open or parse some of the PDF files, of if the file is encrypted. 
+1. `PyPDF2` or other module can hardly editing and modifying the text-level of the document due to complexity of the binary file. However, we can manipualte the files on page-level, which means that we can re-order pages, delete some of the pages, or merge several PDF files into a single one. 
+1. We can use `PyPDF2.PdfFileReader()` to create a PDF file object and use `.numPages` which returns the number of pages of a PDF file. We can create a page object with `.getPage()` method which takes `Integer` as argument as the page of the file. Note that the page number starts from 0 as the 1st page. Besides, we can use `.extractText()`method to extract text values from a page object. By combining the methods, we can use a `for` loop to print out all text of the PDF file from the first to last page. 
+1. To merge 2 PDF files, we can use `PyPDF2.PdfFileWriter()` method to create an empty PDF file which is stored in working memory (rather than permanent storage), use `for` loop and `.addPage()` method to add pages to the blank PDF file. We then create an output object that is opened in "**binary write mode**" and save the PDF file in the working memory to the given PDF file and use `.close()` method to close the file. 
+1. 
+    ```py 
+    # Reading and editing PDFs
+    pdfFile = open('meetingminutes.pdf', 'rb')
+    reader = PyPDF2.PdfFileReader(pdfFile)
+    print(reader.numPages) # return numbers of pages in the pdf file
+    page = reader.getPage(0) # page object holds number of page which starts from 0 as the 1st page
+    text = page.extractText() # return parsed text as Python String 
+    for pageNum in range(reader.numPages):
+        print(reader.getPage(pageNum).extractText()) 
+
+    # create 2 pdf file objects with reading binary mode 
+    pdfFile1 = open('meetingminutes.pdf', 'rb')
+    pdfFile2 = open('meetingminutes2.pdf', 'rb') 
+
+    reader1 = PyPDF2.PdfFileReader(pdfFile1)
+    reader2 = PyPDF2.PdfFileReader(pdfFile2)
+    writer = PyPDF2.PdfFileWriter() # create a writer object which is blank pdf 
+    # iterates through all pages and assign to the blank PDF file
+    for pageNum in range (reader1.numPages): 
+        page = reader1.getPage(pageNum)
+        writer.addPage(page)
+
+    for pageNum in range (reader2.numPages):
+        page = reader2.getPage(pageNum)
+        writer.addPage(page)
+
+    os.chdir('/mnt/c/Users/ht016/Desktop') # change CWD
+    outputFile = open('combinedminutes.pdf', 'wb') # create a file in writing binary mode
+    writer.write(outputFile) # assign the PDF file to the output file and save to the current working directory 
+    outputFile.close()
+    pdfFile1.close()
+    pdfFile2.close()
+    ```
+
+### Reading and editing word documents 
