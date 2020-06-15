@@ -1493,3 +1493,267 @@ Note that we should have this tag `<meta name="viewport" content="width=device-w
     ```
 
 ### Making hotel website full responsive 
+1. As the `style.css` sheet is large, we can create another stylesheet and import to the file. We use a `<link>` tag with attribute `media`. For example, we set the width as 768px, `<link rel="stylesheet" media='screen and (max-width: 768px)' href="./css/mobile.css">`. During editing, we can open 2 scripts to compare in VS Code and edit at the same time. We modify the Navbar to make it stack on each other by cancelling the `float` property. The Navbar becomes responsive. We also stack up the home info and features. 
+    ```css
+    #navbar h1.logo {
+        float: none;
+        text-align: center; 
+    }
+
+    #navbar ul, #navbar ul li {
+        float: none;
+    }
+
+    #navbar ul li a {
+        padding: 5px;
+        border-bottom: #444 dotted 1px;
+    }
+
+    /* Showcase */ 
+    #showcase {
+        height: 100%;
+    }
+
+    #showcase .showcase-content {
+        padding-top: 70px;
+        padding-bottom: 30px;
+    }
+
+    /* Home Info */
+    #home-info .info-img {
+        display: none;
+    }
+
+    #home-info .info-content {
+        float: none; 
+        width: 100%; 
+    } 
+
+    /* Boxes */
+    .box {
+        float: none;
+        width: 100%;
+    }
+
+    /* About Info */
+    #about-info .info-right, #about-info .info-left {
+        float: none; 
+        width: 100%;
+    }
+
+    #about-info .info-right {
+        margin-top: 30px;
+    }
+
+    .l-heading {
+        text-align: center;
+    }
+
+    /* Contact */
+    #contact-info .box {
+        border-bottom: #444 dotted 1px;
+    }
+    ```
+
+# Into to Flexbox
+### Flexbox Basics 
+1. "Flexbox" is a modern layout mode in CSS3. `flex` is a value for `display` property. We can invoke it with CSS selector, `display: flex`. It means that the element with the property becomes a "**flex container**". All direct child elements are "flex items". There are several properties we can use for "**flex items**". 
+    1. `justify-content` is to align along the main axis (x-axis, horizontal).
+    1. `align-items` is to align items along the cross axis axis (y-axis, vertical).
+    1. `align-content` is to align when extra space in cross axis. 
+1. In a `<div>` tag, we can change the class property as the flexbox container and make its direct child elements flex items. We can change directions by `flex-direction` to `column` to align items as a vertical column or `column-reverse` to order the elements in a reverse order. Note that the default value is `flex-direction: row`. We can use `flex-wrap: wrap` to allow the elements change lines automatically if the screen width shrinks down. 
+    ```html
+    <style>
+        .flex-container {
+            display: flex; /* turn child elements to flex items */
+            flex-direction: column; /* change direction */
+            flex-wrap: wrap; /* push elements to the next row if the width shrinks down */
+            
+            /* Cross axis align */
+            align-items: center;
+            /* Main axis align */
+            justify-content: center;
+            height: 50vh; 
+        }
+
+        .item {
+            background: #f4f4f4;
+            border: #ccc solid 2px; 
+            margin: 10px;
+            padding: 10px;
+            text-align: center; 
+            border-radius: 10px;
+            width: 200px;
+        }
+    </style>
+    <body>
+        <div class="flex-container">
+            <div class="item item-1">
+                <h3>Item 1</h3>
+            </div>
+            <div class="item item-2">
+                <h3>Item 2</h3>
+            </div>
+            <div class="item item-3">
+                <h3>Item 3</h3>
+            </div>
+        </div>
+    </body>
+    ```
+1. There are other properties that can change the element size automatically. 
+    1. `flex-shrink: 0` will prevent the item shrinks down when the screen width reduce. 
+    1. `flex-grow: 1` will extend the element on its width to fill up the screen. 
+    1. We can set both these properties to all the elements which have the class, so they will extend evenly in the same row if the screen size changes. 
+1. `flex` property takes 3 values which is `grow`, `shrink`, and `basis`. If we give as `flex: 1 0 200px`, the elemenets applied will deployed evenly on the same row as `grow` property is `1`, without shrinking as being set to `0`, and have minimum width at `200px`. The property is set as `flex: 1 0 200px`. 
+1. However, we usually set `flex: 1` as convention to avoid conflicting to other styling such as media-queries. 
+1. The main use of "Flexbox" is to design the layout and arrange items in a given pattern by "**row**" or "**column**". 
+
+# EdgeLedger Website (Flexbox)
+### Overlay
+1. We can use `::before` selector to insert content before an element. In this case, we can make a filter-like overlay to reduce the hue of the background image and make it darker without using photoshop. Note that the parent element must have `position: relative`. 
+    ```css 
+    header {
+        position: relative; 
+    }
+
+    header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%; 
+        background-color: rgba(0,0,0,0.6);
+    }
+    ```
+    1. With filter 
+    <img style="width=20%" src="./edgeledgerWebsite/withOverlayFiler.PNG">
+    1. Without filter
+    <img style="width=20%" src="./edgeledgerWebsite/withoutOverlayFiler.PNG">
+
+1. However, the text in the middle is also behind the filter. We can adjust `z-index` property to move the element forward to the screen. Besides, we can use asterisk " **\*** " as the wildcard to select all elements in an element. 
+    ```css 
+    header * { /* all elements in header tag */
+        z-index: 10;
+    }
+    ```
+### Icons and Solutions section 
+1. If an image doesn't fit to a block which it is set to, we can use `object-fit: cover`, so the image will be fit to the block without distorting its resolution (though not in the center or whole image as we set up background image). 
+    ```css 
+    img {
+        width: 100%; 
+        height: 100%;
+        object-fit: cover; 
+    }
+    ``` 
+
+### Cases and Blog section
+1. `<header>` tag can not
+1. For the same layout but opposite pattern, we can use `flex-direction: row-reverse`. The elements on the same row will be listed on an reversed order (We can do the same thing if the elements are in a column). Note that for CSS selector we can specify the selector with multiple classes. For example, if a `<div>` tag has multiple classes, we can concatenate the classes with dot "." with NO space in between. 
+    ```css 
+    .flex-columns.flex-reverse .row {
+        flex-direction: row-reverse;
+    }
+    ``` 
+
+### Responsive Media Queries
+1. We add on mobile version with media query by `@media(max-width: 768px)` in this case. 
+1. With `flex-direction: column` we can easily change items in a row to be listed in a column. 
+
+### Navbar and Lightbox Effects
+1. We can have a class for the Navbar and make its background transparent when its on the very top of the page by `.navbar.top {background: transparent}`. 
+1. We can use JavaScript DOM to check an event that if the user scroll down the page. Besides, we can use `setTimeout()` function to return the navbar back to the page after a given period of time. 
+    ```js
+    const navbar = document.getElementById('navbar'); 
+    let scrolled = false; 
+
+    window.onscroll = function(){ //add event listener on global object "window"
+        if(window.pageYOffset > 100) { // if the page is scrolled down more than 100 px 
+            navbar.classList.remove('top'); // remove top class
+            if(!scrolled) { // hide the navbar 
+                    navbar.style.transform = 'translateY(-70px)'; 
+                    setTimeout(function(){
+                        navbar.style.transform = 'translateY(0px)'; 
+                    }, 200); 
+                    scrolled = true; 
+                }
+        } else {
+            navbar.classList.add('top'); //add top class to the element 
+            scrolled = false;
+        }
+    }
+    ```
+1. We can add an animation to make the navbar goes up smoothly. with property `transition: 0.5s`. So the navbar will scroll up smoothly in 0.5 second by animation.
+    ```css 
+    .navbar {
+        transition: 0.5s;
+    }
+    ``` 
+1. We can use a "**jQuery**" solution for smooth scrolling effect. With the effect, the page doesn't jump to the section when we click the link in the Navbar but rather move to the section smoothly. 
+    ```js 
+    // smooth scrolling 
+    $('#navbar a, .btn').on('click', function(e){
+        if (this.hash !== '') {
+            e.preventDefault();
+
+            const hash = this.hash; 
+
+            $('html, body').animate(
+                {
+                    scrollTop: $(hash).offset().top - 100, 
+                },
+                800
+            );
+        }
+    });
+    ``` 
+1. We use another library `lightbox`. We can go to [github](https://github.com/lokesh/lightbox2) and put the files from the library to our webpage directory and import the JavaScript and CSS file to the HTML file. 
+    1. `lightbox.min.css`
+    1. `lightbox.min.js`
+    1. Images - `close.png`, `loading.gif`, `next.png`, and `prev.png`
+1. We then put the image tags on the page into an anchor tag `<a>`. 
+    ```html 
+    <div class="row">
+        <div class="column">
+            <a href="./img/cases/cases1.jpg" data-lightbox="cases">
+                <img src="./img/cases/cases1.jpg" alt="">
+            </a>
+            <a href="./img/cases/cases2.jpg" data-lightbox="cases">
+                <img src="./img/cases/cases2.jpg" alt="">
+            </a>
+        </div>
+        <div class="column">
+            <a href="./img/cases/cases3.jpg" data-lightbox="cases">
+                <img src="./img/cases/cases3.jpg" alt="">
+            </a>
+            <a href="./img/cases/cases4.jpg" data-lightbox="cases">
+                <img src="./img/cases/cases4.jpg" alt="">
+            </a>
+        </div>
+        <div class="column">
+            <a href="./img/cases/cases5.jpg" data-lightbox="cases">
+                <img src="./img/cases/cases5.jpg" alt="">
+            </a>
+            <a href="./img/cases/cases6.jpg" data-lightbox="cases">
+                <img src="./img/cases/cases6.jpg" alt="">
+            </a>
+        </div>
+        <div class="column">
+            <a href="./img/cases/cases7.jpg" data-lightbox="cases">
+                <img src="./img/cases/cases7.jpg" alt="">
+            </a>
+            <a href="./img/cases/cases8.jpg" data-lightbox="cases">
+                <img src="./img/cases/cases8.jpg" alt="">
+            </a>
+        </div>
+    </div>
+    ```
+    1. Business cases
+    <img src="edgeledgerWebsite/cases.PNG">
+    1. Lightbox effect 
+    <img src="edgeledgerWebsite/casesLightbox.PNG">
+
+### Favicon 
+1. We can add a small icon on the page tab on the browser (where data of `<title>` tag shows). However, we have to convert the image (such as .PNG) into .ICO file. We can use "**dynamic drive favicon**" or [here](https://tools.dynamicdrive.com/favicon/) and convert the `favicon.png` file. We can put the converted `.ico` file in the root directory (with HTML files) and use the link given from the website to import the icon to the page. `<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">`
+
+# Website Deployment - Shared Host 
