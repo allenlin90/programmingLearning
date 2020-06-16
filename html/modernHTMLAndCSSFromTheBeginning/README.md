@@ -1757,3 +1757,72 @@ Note that we should have this tag `<meta name="viewport" content="width=device-w
 1. We can add a small icon on the page tab on the browser (where data of `<title>` tag shows). However, we have to convert the image (such as .PNG) into .ICO file. We can use "**dynamic drive favicon**" or [here](https://tools.dynamicdrive.com/favicon/) and convert the `favicon.png` file. We can put the converted `.ico` file in the root directory (with HTML files) and use the link given from the website to import the icon to the page. `<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">`
 
 # Website Deployment - Shared Host 
+
+### Types of Web Hosting
+1. **Shared Hosting** 
+    1. One account of many of a server. 
+    1. Cheapest (aside from free static hosting)
+    1. Used for small websites
+    1. Most include email, FTP, PHP, databases, software 
+    1. $3 to $15 per month
+    
+    Examples: Inmotion Hosting, Hosgator, Bluehost
+1. **VPS Hosting**
+    1. Your own virtualized server 
+    1. Can create multiple shared accounts
+    1. More access and privileges 
+    1. Everything shared hosting offers 
+    1. $20 to $100 per month 
+
+    Examples: Inmotion Hosting, Hosgator, Bluehost
+1. **Reseller Hosting**
+    1. Create and manage multiple shared accounts 
+    1. Can sell shared accounts to your own customers
+    1. Very similar to a VPS 
+    1. Usually comes with reseller software 
+
+    Examples: Inmotion Hosting, Hosgator
+1. **Dedicated Server** 
+    1. Your own actual server 
+    1. You rent out a physical machine 
+    1. Full access and privileges 
+    1. Harder to manage but very powerful 
+    1. $100 to $400 per month 
+
+    Examples: Inmotion Hosting, Hosgator, Bluehost
+1. **Cloud Hosting**
+    1. Used for web apps 
+    1. Multiple servers work together 
+    1. Very scalable and great for large apps 
+    1. Not for beginners / harder to manage
+    1. Pay as you go 
+
+    Examples: Digital Ocean, Linode, Vultr 
+1. **Static Hosting** 
+    1. Does not come with bells and whistles of managed hosting 
+    1. Upload static site via Git 
+    1. Great for static websites 
+    1. Free, but pay for extra features 
+
+    Examples: Netlify, Github Pages 
+
+### Upload your site through FTP 
+1. filezilla client can be used to transfer files through FTP to a server. 
+1. Port for FTP is 21 as default. 
+1. FTP is useful for small scale website, but for larger webapp and larger website, we can use others such as SSH and GIT to upload files, as FTP is slow and inefficient. 
+
+# More CSS Concepts - Advanced Selectors, Animation, and More 
+1. A greater than sign "**>**" means a direct child selector for the elements. 
+    1. `div p` is to select all `<p>` tags in `<div>` tags, though the `<p>` tag may be nested in other elements such as `<ul>`. 
+    1. `div > p` is to select all `<p>` tags that are direct child element (which is not nested in other elements). 
+1. A plus sign "**+**" is the element right aftera selected element. For example, `div + p` selects the `<p>` that is right after `<div>` tag in the HTML file (not nested nor any other elements in between). 
+1. We can use square bracket notation to select an element with certain attribute with specific value. 
+    ```html
+    <style>
+        div[class="container"] {
+            background: #333; 
+            color: #fff;
+            text-align: center; 
+        }
+    </style>
+    <div class="container">Hello</div>

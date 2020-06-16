@@ -335,6 +335,8 @@ welcome()
     ```
 1. We can hide the property name if it's set up by `Symbol`. The only way to call and modify the value of the property is to call the variable that carries the `Symbol` as property. Besides, we can't get the variable that carries the `Symbol` by `for` `in` loop and `Object.keys(obj)` method because the property is "**hidden**". However, if we use `Object.assign()` method, the whole obj including symbols will be duplicated. 
     ```js
+    let id = Symbol('id');
+    let id1 = Symbol('id');
     let user = {
         name: "John",
         [id]: 123, 
@@ -377,3 +379,30 @@ welcome()
 1. **Summary of `Symbol`** - `Symbol` is a primitive type for unique identifiers which is created with `Symbol()` with an optional description as the argument. Besides, they are always different values though we assign the same description. We can use "**global registry**" and `Symbol.for(key)` to have same-named symbols to be equal. 
 
 ### Object methods, "this"
+1. We can use either "function expression" or "function declaration" to add a method to an `Object`. 
+1. IF we want to call the and use the properties of the `Object` in a method of the `Object` itself, we can use keyword `this` to refer to the `Object`. `this` will refer to different `Object` according to how the method and `this` is called. It means that `this` is dynamic and knows which object it refers to when the code runs. This feature give is both pros and cons that the function using `this` can be reuse, but without pointing to a specific object, it may return wrong value. 
+1. Arrow functions have no `this`. These functions will refer to `Object` from its outer element. 
+1. In each method of an `Object`, we can `return this` to make the methods chainable. 
+    ```js 
+    let ladder = {
+        step: 0,
+        up() {
+            this.step++;
+            return this;
+        },
+        down() {
+            this.step--;
+            return this;
+        },
+        showStep: function() { // shows the current step
+            console.log( this.step );
+            return this;
+        }
+    };
+
+    ladder.up().up().down().up().down().showStep(); // 1 
+    ```
+
+### Object to primitive conversion 
+1. All objects are `true` in a boolean context. We can check with `Boolean({})` that it returns true. Therefore, an `Object` can only be converted to "**numeric**" or "**string**" type. The numeric conversion happens when we subtract objects or apply mathematical functions. We can use `Number(obj)` or `+obj` with a plus sign to convert an `Object` to a number. 
+1. As for the string conversion – it usually happens when we output an object like `console.log(obj)`. We can also pass an `Object` in square bracket notation as the property key of another `Object`. 
