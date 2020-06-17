@@ -1152,3 +1152,86 @@ Module `PyPDF2`, `PyPDF2.PdfFileReader()`, `.numPages`, `.getPage()`, `.extractT
     ```
 
 ### Reading and editing word documents 
+Module `docx` (download with python-docx), `docx.Document()`, `.paragraphs`, `.text`, `runs`, `.bold`, `.italic`, `.underline`, `.save()`, `add_paragraph()`, `add_run()`
+1. A `document` object created from `python-docx` module represents a whole word file. 
+1. There more objects in deeper layer, as `document` > `paragraph` > `run`. 
+1. `run` objects returns when the styel of the paragraph changes. It also has `.bold`, `.italic`, and `underline` which returns a boolean `True`, or `None` when the style is not found. 
+    ```py
+    import docx
+    # Reading and editing Word Documents
+    d = docx.Document('/mnt/c/Users/<Username>/Desktop/demo.docx')
+
+    paragraph = d.paragraphs # list of paragraphs objects from the document 
+
+    i = 1
+    for p in paragraph: # use .text method to parse value of the object
+        print(p.text) 
+        for s in p.runs: # use .runs method returns a list of run objects and to check if any style changes in paragraph
+            print(str(i)+ '. ' + s.text)
+            print(s.bold)
+            print(s.italic)
+            print(s.underline)
+            i += 1
+    ```
+1. We can use other `.text` method to change the content paragraph object and give different styles as well. After changing, we can use `d.save()` to save the change to the file or a new file. Besides, the paragraph object has a property `.style` that we can check or change its value. This `.style` method can be used on both `paragraph` and `run` object. 
+    ```py
+    import docx
+    # Reading and editing Word Documents
+    d = docx.Document('/mnt/c/Users/<Username>/Desktop/demo.docx')
+
+    paragraph = d.paragraphs # list of paragraphs objects from the document
+
+    print(paragraph[1].runs[4].text) # parse and return the text value of the run object
+    print(paragraph[1].runs[4].italic) # check if the run object is in "italic" style 
+
+    paragraph[1].runs[4].underline = True # change style of the run object
+    paragraph[1].runs[4].text = 'italic and underlined' # change text content 
+    print(paragraph[1].style) # change style of the paragraph object 
+    paragraph[1].style = 'Title' # change style from 'normal' to 'Title'
+
+    d.save('/mnt/c/Users/<Username>/Desktop/demo2.docx') # save a new file 
+    ```
+1. Similar to creating a new Excel file in computer memory, we can use `docx.Document()` and assign it to a variable, such as `d`. This represents an empty Word file. We then can use `.add_paragraph()` method. Besides, we can use `.add_run()` to add a new "run" in the same paragraph. 
+    ```py
+    d = docx.Document()
+    d.add_paragraph('Hello this is a paragraph.') # add new paragraph
+    d.add_paragraph('This is another paragraph.') # add a new paragraph
+
+    d.save('./demo3.docx')
+
+    d.paragraphs[0].add_run(' This is a new run.')
+    d.paragraphs[0].runs[1].bold = True 
+    d.save('./demo4.docx')
+    ```
+1. We can create a function to create all the paragraphs and text from a Word document. 
+    ```py
+    import docx 
+
+    def getText(filename):
+        doc = docx.Document(filename) 
+        fullText = []
+        for para in doc.paragraphs:
+            fullText.append(para.text)
+        return ('\n').join(fullText)
+
+    print(getText('./demo.docx'))
+    ```
+
+# Email
+### Sending Emails 
+Module `smtplib` 
+1. We can use "SMTP" (simple mail transfer protocol) to send email from other email services such as Google or other email service providers. We use `conn = smtplib.SMTP('smtp.gmail.com', port 587)` to create a connection object. Note that we can change the SMTP server to other address and the port may change according to the service provider. 
+1. We then use `conn.ehlo()` method to connect to server. Note that the method returns a status and "**byte**" type data which looks like `String` but starts with 'b' when typed as code. If the status code is 2xx, it means the connection is good. 
+1. If the connection is ready, we then use `conn.starttls()` to start "**TLS**" encrption, and use `conn.login(username, password)`. This method also returns a status code to show if the login process is successful. 
+1. If login is good, we can use `conn.sendmail(fromEmail, toEmail, emailBodyText)`. The `emailBodyText` follows a certain format as it also includes the header (subject) of the email. It starts with "Subject:" (capital S) with subject text and ends with 2 new line characters "`\n`" to finish the email subejct. We then can start the message body and finish the `String` value. This method returns a `Dictionary` value which includes all the email(s) that is failed to send. 
+1. After finishing sending email, we can use `conn.quit()` to stop the connection to SMTP server. 
+1. Note that by the time using Gmail, Google may stop you due to less secure app. We can change the setting at [here](https://myaccount.google.com/lesssecureapps) after login to your Google Account to allow less secure app access. 
+    ```py 
+    import smtplib
+    conn = smtplib.SMTP('smtp.gmail.com', 587) # create a connection object 
+    conn.ehlo() # to start connection to the server 
+    conn.starttls() # start TLS encryption (most modern email server requires this) 
+    conn.login('username@gmail.com', 'password') # login with username and password
+    conn.sendmail('username@gmail.com', 'username@gmail.com', "Subject: A test message from Python program \n\n Dear Allen, \nIf you've seen this email, it means the program runs well.\n\n\nRegards\n\nAllen")
+    conn.quit()
+    ```

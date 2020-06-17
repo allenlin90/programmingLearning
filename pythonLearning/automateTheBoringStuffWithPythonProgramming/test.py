@@ -1,4 +1,4 @@
-import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl, PyPDF2
+import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl, PyPDF2, docx, smtplib
 from selenium import webdriver 
 #logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 # text = open('test.txt', 'w')
@@ -206,32 +206,90 @@ from selenium import webdriver
 
 ##############################################################################
 # Reading and editing PDFs
-pdfFile = open('meetingminutes.pdf', 'rb')
-reader = PyPDF2.PdfFileReader(pdfFile)
-print(reader.numPages) # return numbers of pages in the pdf file
-page = reader.getPage(0) # page object holds number of page which starts from 0 as the 1st page
-text = page.extractText() # return parsed text as Python String 
-for pageNum in range(reader.numPages):
-    print(reader.getPage(pageNum).extractText()) 
+# pdfFile = open('meetingminutes.pdf', 'rb')
+# reader = PyPDF2.PdfFileReader(pdfFile)
+# print(reader.numPages) # return numbers of pages in the pdf file
+# page = reader.getPage(0) # page object holds number of page which starts from 0 as the 1st page
+# text = page.extractText() # return parsed text as Python String 
+# for pageNum in range(reader.numPages):
+#     print(reader.getPage(pageNum).extractText()) 
 
-# create 2 pdf file objects with reading binary mode 
-pdfFile1 = open('meetingminutes.pdf', 'rb')
-pdfFile2 = open('meetingminutes2.pdf', 'rb') 
+# # create 2 pdf file objects with reading binary mode 
+# pdfFile1 = open('meetingminutes.pdf', 'rb')
+# pdfFile2 = open('meetingminutes2.pdf', 'rb') 
 
-reader1 = PyPDF2.PdfFileReader(pdfFile1)
-reader2 = PyPDF2.PdfFileReader(pdfFile2)
-writer = PyPDF2.PdfFileWriter() # create a writer object which is blank pdf 
-for pageNum in range (reader1.numPages):
-    page = reader1.getPage(pageNum)
-    writer.addPage(page)
+# reader1 = PyPDF2.PdfFileReader(pdfFile1)
+# reader2 = PyPDF2.PdfFileReader(pdfFile2)
+# writer = PyPDF2.PdfFileWriter() # create a writer object which is blank pdf 
+# for pageNum in range (reader1.numPages):
+#     page = reader1.getPage(pageNum)
+#     writer.addPage(page)
 
-for pageNum in range (reader2.numPages):
-    page = reader2.getPage(pageNum)
-    writer.addPage(page)
+# for pageNum in range (reader2.numPages):
+#     page = reader2.getPage(pageNum)
+#     writer.addPage(page)
 
-os.chdir('/mnt/c/Users/ht016/Desktop')
-outputFile = open('combinedminutes.pdf', 'wb')
-writer.write(outputFile)
-outputFile.close()
-pdfFile1.close()
-pdfFile2.close()
+# os.chdir('/mnt/c/Users/ht016/Desktop')
+# outputFile = open('combinedminutes.pdf', 'wb')
+# writer.write(outputFile)
+# outputFile.close()
+# pdfFile1.close()
+# pdfFile2.close()
+
+
+##############################################################################
+# Reading and editing Word Documents
+# d = docx.Document('/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/demo.docx')
+
+# paragraph = d.paragraphs # list of paragraphs objects from the document 
+
+# i = 1
+# for p in paragraph: # use .text method to parse value of the object
+#     print(p.text) 
+#     for s in p.runs: # use .runs method returns a list of run objects and to check if any style changes in paragraph
+#         print(str(i)+ '. ' + s.text)
+#         print(s.bold)
+#         print(s.italic)
+#         print(s.underline)
+#         i += 1
+
+# print(paragraph[1].runs[4].text) # parse and return the text value of the run object
+# print(paragraph[1].runs[4].italic) # check if the run object is in "italic" style 
+
+# paragraph[1].runs[4].underline = True # change style of the run object
+# paragraph[1].runs[4].text = 'italic and underlined' # change text content 
+# print(paragraph[1].style) # change style of the paragraph object 
+# paragraph[1].style = 'Title' # change style from 'normal' to 'Title'
+
+# d.save('/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/demo2.docx')
+
+# d = docx.Document()
+# d.add_paragraph('Hello this is a paragraph.')
+# d.add_paragraph('This is another paragraph.')
+
+# d.save('./demo3.docx')
+
+# d.paragraphs[0].add_run(' This is a new run.')
+# d.paragraphs[0].runs[1].bold = True 
+# d.save('./demo4.docx')
+
+# def getText(filename):
+#     doc = docx.Document(filename) 
+#     fullText = []
+#     for para in doc.paragraphs:
+#         fullText.append(para.text)
+#     return ('\n').join(fullText)
+
+# print(getText('./demo.docx'))
+# text = getText('./demo.docx')
+# d = docx.Document()
+# d.add_paragraph(text)
+# d.save('./demo6.docx')
+
+##############################################################################
+conn = smtplib.SMTP('smtp.gmail.com', 587) # create a connection object 
+conn.ehlo() # to start connection to the server 
+conn.starttls()
+conn.login('username@gmail.com', 'password')
+conn.sendmail('username@gmail.com', 'username@gmail.com', "Subject: A test message from Python program \n\n Dear Allen, \nIf you've seen this email, it means the program runs well.\n\n\nRegards\n\nAllen")
+conn.quit()
