@@ -1812,6 +1812,7 @@ Note that we should have this tag `<meta name="viewport" content="width=device-w
 1. FTP is useful for small scale website, but for larger webapp and larger website, we can use others such as SSH and GIT to upload files, as FTP is slow and inefficient. 
 
 # More CSS Concepts - Advanced Selectors, Animation, and More 
+### Targeted Selectors 
 1. A greater than sign "**>**" means a direct child selector for the elements. 
     1. `div p` is to select all `<p>` tags in `<div>` tags, though the `<p>` tag may be nested in other elements such as `<ul>`. 
     1. `div > p` is to select all `<p>` tags that are direct child element (which is not nested in other elements). 
@@ -1826,3 +1827,102 @@ Note that we should have this tag `<meta name="viewport" content="width=device-w
         }
     </style>
     <div class="container">Hello</div>
+
+### [nth-child Pseudo Selector](https://www.w3schools.com/cssref/sel_nth-child.asp) 
+1. If we have a list of `<li>` tags, we can use pseudo selector `<element>:first-child` for the first matched element, `<element>:last-child` for the single last matched element, and `<element>:nth-child(expression)` to select multiple elements that match. 
+1. The expression for `:nth-child()` can be keyword `odd` and `even` which will select all the "**odd**" or "**even**" elements in the order of the list of matched elements. On the other hand, it can be in the format for `an+b` where `a` and `b` are non-zero values, and the child elements are split into groups of `a` elements, while `b` is the index that the selector starts. Note that the order of groups split by `a` starts from 1. 
+    1. If the expression was `2n+1`, the child elements would be split into groups of "**2**". Each element in the group is then given an index, starting at "**1**". The matched element in each group is bth index. In this example, that would be the first element. Therefore, `2n+1` works the same as selecting all the "odd" elements. 
+    1. If the expression was `3n+2`, the list items would be grouped into sets of 3 and the second item in each group would be matched.
+    ```css
+    li {
+        padding: 0.25rem; 
+        margin: 0.25rem;
+        list-style: none;
+    }
+
+    /* first-child */
+    li:first-child {
+        background: red;
+    }
+
+    /* last-child */
+    li:last-child {
+        background: red;
+    }
+
+    /* Position 3 */
+    li:nth-child(3) {
+        background: purple;
+    }
+
+    /* Every 3 */
+    li:nth-child(3n+0) {
+        background: orange;
+    }
+
+    /* Every 3 after 7 */
+    li:nth-child(3n+7) {
+        background: yellow;
+    }
+
+    /* Every odd */
+    li:nth-child(odd) {
+        background: #ccc;
+    }
+
+    /* Every even */
+    li:nth-child(even) {
+        background: #ddd;
+    }
+    ```
+
+### before & after pseudo selector
+1. We can use `before` and `after` to add a pattern to multiple selectors without having the element in the HTML file. For example, we can add an asterisk "*" to all `<label>` tags of `<input>` tags if the field is "**required**". Note that if we check the source code, we can't find the asterisk, as it's added by CSS. (We used this once in the EdgeLedger project to add the dark filter to make the image darker without photoshop)
+    ```html
+    <style>
+        .is-required:after {
+            content: '*';
+            color: red;
+            padding: 2px;
+        }
+    </style>
+    <body>
+        <label for="name" class="is-required">Name</label>
+        <input type="text" name="name" value="">
+    </body>
+    ```
+1. We can add a background image and set low `opacity` to make the image looks transparent. (Note that we must set an empty content with `content: ''`. Otherwise, we can't have a background.) Besides, we use `position: aboluste`, `top: 0`, and `left: 0` and set the `width` and `height` to make sure the image covers the whole page. As the image is still at the front of the contents, we can use `z-index: -1` to send it backward. 
+    ```html
+    <style>
+    header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 100vh;
+    }
+
+    header:before {
+        content: '';
+        background: url('https://source.unsplash.com/1600x900/?nature,water') no-repeat center center/cover;
+        opacity: 0.2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+    </style>
+    <body>
+        <header>
+            <h1>Hello World</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam, amet!</p>
+        </header>
+
+        <section>
+            <h3>Lorem, ipsum dolor.</h3>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus nisi quisquam voluptate distinctio cumque? Ut, asperiores voluptatem? Voluptatibus quos ratione harum, quibusdam, ipsum id laudantium perspiciatis praesentium nobis, minima assumenda!</p>
+        </section>
+    </body>

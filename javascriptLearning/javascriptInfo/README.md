@@ -406,3 +406,69 @@ welcome()
 ### Object to primitive conversion 
 1. All objects are `true` in a boolean context. We can check with `Boolean({})` that it returns true. Therefore, an `Object` can only be converted to "**numeric**" or "**string**" type. The numeric conversion happens when we subtract objects or apply mathematical functions. We can use `Number(obj)` or `+obj` with a plus sign to convert an `Object` to a number. 
 1. As for the string conversion – it usually happens when we output an object like `console.log(obj)`. We can also pass an `Object` in square bracket notation as the property key of another `Object`. 
+
+### Constructor and operator new
+1. Constructor functions technically are regular functions, while they have 2 conventions
+    1. They are named with capital letter first. 
+    1. They should be executed only with keyword `new`. 
+1. When a function is executed with `new`, it does the following steps:
+    1. A new empty object is created and assigned to `this`.
+    1. The function body executes. Usually it modifies `this`, adds new properties to it.
+    1. The value of this is returned.
+    ```js 
+    let user1 = new User('Jack'); 
+
+    function User(name) {
+        // this = {};  (implicitly)
+
+        // add properties to this
+        this.name = name;
+        this.isAdmin = false;
+
+        // return this;  (implicitly)
+    }
+    ```
+1. We can use `new.target` in a constructor. If we create an `Object` by this constructor function without `new`, it will use `new` keyword to create the `Object`. However, this is not often used, as it's better to have the keyword in the code to know that we've created a new `Object` by the constructor function. 
+    ```js 
+    function User(name) {
+        if (!new.target) { // if you run me without new
+            return new User(name); // ...I will add new for you
+        }
+
+        this.name = name;
+    }
+    ```
+1. In the constructor function, if we have a `return`, and it returns an `Object`, the constructor function will return the `Object`. If `return` doesn't return anything, it returns an `Object` with `this`. Note that usually constructor function doesn't have `return` statement. 
+    ```js 
+    function BigUser() {
+
+        this.name = "John";
+
+        return { name: "Godzilla" };  // <-- returns this object
+    }
+
+    console.log( new BigUser().name );  // Godzilla, got that object
+
+    function SmallUser() {
+
+        this.name = "John";
+
+        return; // <-- returns this
+    }
+
+    console.log( new SmallUser().name );  // John
+    ```
+1. Besides properties, we can add methods in constructor functions as well. 
+    ```js 
+    function User(name) {
+        this.name = name;
+
+        this.sayHi = function() {
+            alert( "My name is: " + this.name );
+        };
+    }
+
+    let john = new User("John");
+
+    john.sayHi(); // My name is: John
+    ```
