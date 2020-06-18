@@ -1,4 +1,4 @@
-import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl, PyPDF2, docx, smtplib
+import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl, PyPDF2, docx, smtplib, imapclient, pyzmail 
 from selenium import webdriver 
 #logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 # text = open('test.txt', 'w')
@@ -187,22 +187,22 @@ from selenium import webdriver
 
 ##############################################################################
 # Create and edit Excel workbook
-wb = openpyxl.Workbook()
-print(wb.get_sheet_names())
-sheet = wb.get_sheet_by_name('Sheet')
-sheet['A1'].value
-print(sheet['A1'].value == None)
-sheet['A1'].value = 42
-sheet['A2'].value = 'Hello'
-sheet['A3'].value = '=1+1'
+# wb = openpyxl.Workbook()
+# print(wb.get_sheet_names())
+# sheet = wb.get_sheet_by_name('Sheet')
+# sheet['A1'].value
+# print(sheet['A1'].value == None)
+# sheet['A1'].value = 42
+# sheet['A2'].value = 'Hello'
+# sheet['A3'].value = '=1+1'
 
-os.chdir('/mnt/c/Users/ht016/Desktop/')
-wb.save('test.xlsx')
-sheet2 = wb.create_sheet()
-print(wb.get_sheet_names())
-print(sheet2.title)
-sheet2.title = 'My New Sheet Name'
-wb.save('test2.xlsx')
+# os.chdir('/mnt/c/Users/ht016/Desktop/')
+# wb.save('test.xlsx')
+# sheet2 = wb.create_sheet()
+# print(wb.get_sheet_names())
+# print(sheet2.title)
+# sheet2.title = 'My New Sheet Name'
+# wb.save('test2.xlsx')
 
 ##############################################################################
 # Reading and editing PDFs
@@ -294,3 +294,34 @@ wb.save('test2.xlsx')
 # conn.login('email', 'password')
 # conn.sendmail('username@gmail.com', 'username@gmail.com', "Subject: A test message from Python program \n\n Dear Allen, \nIf you've seen this email, it means the program runs well.\n\n\nRegards\n\nYo")
 # conn.quit()
+
+##############################################################################
+# check email through imap
+# import imapclient
+conn = imapclient.IMAPClient('imap.gmail.com', ssl=True) # connect to IMAP server with SSL
+conn.login('username@gmail.com', 'password') # login to IMAP server
+conn.select_folder('INBOX', readonly=True)
+#UIDs = conn.search(['SINCE 17-Jun-2020']) # search all mails after 2020/06/17 
+UIDs = conn.search(['UNSEEN']) # search all mails after 2020/06/17 
+print(UIDs) # print out all the IDs found by search method 
+ID = input("What's the ID you want to search?") # get a ID 
+ID = int(ID)
+rawMessage = conn.fetch([ID], ['BODY[]', 'FLAGS']) # store the returned raw message 
+
+# import pyzmail # the module to parse the raw message
+message = pyzmail.PyzMessage.factory(rawMessage[ID][b'BODY[]']) # parse the email 
+print('Email Subject: ' + message.get_subject()) # subject of the email 
+print(message.get_addresses('from')) # sent from which email address  
+print(message.get_addresses('bcc')) # email address which bcc to
+print(message.text_part) # check if there's any text in the email body or it's made from HTML
+print(message.html_part) # check if there's any html in the email body (it could be None)
+
+print(message.text_part.get_payload().decode('UTF-8')) # retrieve the text body and use UTF-8 to decode 
+print('Charset: ' + message.text_part.charset)
+
+print(conn.list_folders()) # return a list of folders of the email account 
+conn.select_folder('INBOX', readonly=False) # direct to INBOX folder
+UIDs = conn.search(['ON 31-Aug-2019']) # search for emails that was sent on 2019/08/31
+print(UIDs) # print out the list of UIDs
+ID = input('Which email to delete?')
+conn.delete_messages([ID]) # delete an email in INBOX by given UID 

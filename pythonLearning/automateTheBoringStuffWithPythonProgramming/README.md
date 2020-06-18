@@ -1235,3 +1235,38 @@ Module `smtplib`
     conn.sendmail('username@gmail.com', 'username@gmail.com', "Subject: A test message from Python program \n\n Dear Allen, \nIf you've seen this email, it means the program runs well.\n\n\nRegards\n\nAllen")
     conn.quit()
     ```
+
+### Checking Email Inbox
+1. We can use IMAP, internet message access protocol, to access the emails from the service. 
+1. We can check IMAP cheat sheet for the commands without remembering all the methods. The parameters are mostly the same when using most of the time. We can check it [here](https://automatetheboringstuff.com/2e/chapter18/) 
+    ```py
+    # check email through imap
+    import imapclient 
+    conn = imapclient.IMAPClient('imap.gmail.com', ssl=True) # connect to IMAP server with SSL
+    conn.login('username@gmail.com', 'password') # login to IMAP server
+    conn.select_folder('INBOX', readonly=True)
+    #UIDs = conn.search(['SINCE 17-Jun-2020']) # search all mails after 2020/06/17 
+    UIDs = conn.search(['UNSEEN']) # search all mails after 2020/06/17 
+    print(UIDs) # print out all the IDs found by search method 
+    ID = input("What's the ID you want to search?") # get a ID 
+    ID = int(ID)
+    rawMessage = conn.fetch([ID], ['BODY[]', 'FLAGS']) # store the returned raw message 
+
+    import pyzmail # the module to parse the raw message
+    message = pyzmail.PyzMessage.factory(rawMessage[ID][b'BODY[]']) # parse the email 
+    print('Email Subject: ' + message.get_subject()) # subject of the email 
+    print(message.get_addresses('from')) # sent from which email address  
+    print(message.get_addresses('bcc')) # email address which bcc to
+    print(message.text_part) # check if there's any text in the email body or it's made from HTML
+    print(message.html_part) # check if there's any html in the email body (it could be None)
+
+    print(message.text_part.get_payload().decode('UTF-8')) # retrieve the text body and use UTF-8 to decode 
+    print('Charset: ' + message.text_part.charset)
+
+    print(conn.list_folders()) # return a list of folders of the email account 
+    conn.select_folder('INBOX', readonly=False) # direct to INBOX folder
+    UIDs = conn.search(['ON 31-Aug-2019']) # search for emails that was sent on 2019/08/31
+    print(UIDs) # print out the list of UIDs
+    ID = input('Which email to delete?')
+    conn.delete_messages([ID]) # delete an email in INBOX by given UID 
+    ```
