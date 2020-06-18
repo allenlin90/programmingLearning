@@ -1926,3 +1926,108 @@ Note that we should have this tag `<meta name="viewport" content="width=device-w
             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus nisi quisquam voluptate distinctio cumque? Ut, asperiores voluptatem? Voluptatibus quos ratione harum, quibusdam, ipsum id laudantium perspiciatis praesentium nobis, minima assumenda!</p>
         </section>
     </body>
+
+### Box shadows 
+The property adds shadow effect to the a block element.
+```css
+/* offset-x | offset-y | color */
+box-shadow: 10px 10px teal;
+/* offset-x | offset-y | blur-radius | color */
+box-shadow: 10px 10px 20px teal;
+/* Negative values */
+box-shadow: -5px -5px 20px teal;
+/* offset-x | offset-y | blur-radius | spread-radius | color */
+box-shadow: 3px 3px 10px 1px rgba(0,0,0,0.8);
+/* inset | offset-x | offset-y | color */
+box-shadow: inset -3px -3px teal; /* right and bottom */
+/* inset | offset-x | offset-y | color */
+box-shadow: inset 3px 3px teal; /* left and top */
+/* Multiple Shadows */
+box-shadow: 3px 3px teal, -3px -3px 10px olive;
+```
+<br>
+<img src="boxShadow.PNG">
+
+### Text shadows
+Similar to box-shadow, we can add shadow effects on text on the webpage. 
+```css
+h1.a {
+    /* h-shadow | v-shadow | color */
+    text-shadow: 0.2rem 0.2rem steelblue;
+}
+
+h1.b {
+    /* h-shadow | v-shadow | blur | color */
+    text-shadow: 0.4rem 0.3rem 0.7rem steelblue;
+}
+
+h1.c {
+    /* White Text */
+    color: #fff;
+    text-shadow: 0.2rem 0.2rem 1rem steelblue;
+}
+
+h1.d {
+    /* Negative Values */
+    text-shadow: -0.4rem -0.3rem 0.7rem steelblue;
+}
+```
+<br>
+<img src="textShadow.PNG">
+
+### CSS variables (Custom Properties)
+1. We can set up CSS variables by using 2 dashes "--". Besides, we need to set the scope to the variable. We can call the variable by using `var()` in a selector. 
+1. CSS variables give benefit that we can change only the variable such as width, style, or color. All the selectors using the variables will be changed at the same time. 
+1. With different scope, we can ensure the variable works on certain elements or sections without affecting. However, we can put the varibles in `:root{}` which is as the global variables. 
+    ```css
+    :root {
+        --max-width: 1100px;
+        --primary-color: #333;
+        --secondary-color: #ccc;
+        --light-color: #f4f4f4;
+    }
+
+    .box {
+        --box-1-width: 1;
+        --box-2-width: 2;
+    }
+
+    * {
+        margin: 0; 
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.4;
+        background: var(--light-color);
+    }
+
+    header {
+        background-color: var(--primary-color);
+        border-bottom: 5px var(--secondary-color) solid;
+        color: #fff;
+        text-align: center;
+    }
+
+    .container {
+        display: flex;
+        margin: auto;
+        max-width: var(--max-width);
+    }
+
+    .box {
+        background-color: var(--primary-color);
+        border-bottom: 5px var(--secondary-color);
+        color: #fff;
+        padding: 1rem;
+        margin: 1rem;
+    }
+
+    .box-1 {
+        flex: var(--box-1-width)
+    }
+    .box-2 {
+        flex: var(--box-2-width)
+    }
+    ```

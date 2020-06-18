@@ -230,8 +230,8 @@ welcome()
     1. We can use some extensions such as `linters` to check for pattern issues. 
     1. At the time of learning, <ins>**ESLint**</ins> is the lastest and modern one. 
 
-# Objects 
-### Object Basics
+# Objects Basics
+### Objects 
 1. An `Object` can be created with curly braces with an optional list of properties. A property is a key/value pair (similar to python dictionaries type data). `key` is a `String` which can also be called property name, while the `value` can be any types of data, such as a `String`, `Number`, `Array`, `Boolean`, `Object`. We can use dot notation to retrive the value of a property from an `Object`. 
 1. Keyword `delete` can remvoe a property from an `Object`. Note that `delete` returns a boolean value to indicate if a property is deleted. 
 1. We can use multiple words to name a property but the `String` should be quoted. Howveer the property with space in its name should be called with square brackets notation. Besides, to call a property by square brackets the `String` should be quoted as it can take a variable. 
@@ -407,6 +407,7 @@ welcome()
 1. All objects are `true` in a boolean context. We can check with `Boolean({})` that it returns true. Therefore, an `Object` can only be converted to "**numeric**" or "**string**" type. The numeric conversion happens when we subtract objects or apply mathematical functions. We can use `Number(obj)` or `+obj` with a plus sign to convert an `Object` to a number. 
 1. As for the string conversion – it usually happens when we output an object like `console.log(obj)`. We can also pass an `Object` in square bracket notation as the property key of another `Object`. 
 
+# Data types 
 ### Constructor and operator new
 1. Constructor functions technically are regular functions, while they have 2 conventions
     1. They are named with capital letter first. 
@@ -472,3 +473,28 @@ welcome()
 
     john.sayHi(); // My name is: John
     ```
+
+### Methods of primitives 
+1. `Primitives` are not `Objects`. A `Primitive` is a primitive type. There are 7 primitive types in JavaScript: 
+    1. `string`
+    1. `number`
+    1. `bigint`
+    1. `boolean`
+    1. `symbol`
+    1. `null`
+    1. `undefined` 
+1. An `Object`, on the other hand, can store multiple values as properties. An `Object` can even take a function as a value. 
+1. For different primitive values, there are several different kinds of methods that we can use of each of them, though some of the methods are similar. However, we have to understand that primitive values are just values which are considered to be simple, ligh-weighted, and can work as fast as possible. JavaScript allows us to access properties and methods of `string`, `number`, `boolean`, and `symbol` type value through "**object wrappers**". 
+    1. In JavaScript, we can also use function constructor such as `Number()`, `String()`, and `Boolean()` with keyword `new` to create `Objects` for primitive values. However, these values are `Object` rather than primitives and some problems occur such as `new Number(0)` is actually an `Object` and its boolean value is `true` which is totally different from a `0`. However, we can use the function without `new` keyword to turn primitive values to one another. 
+    1. Note that `null` and `undefined` type value has no "**object wrappers**". 
+    ```js 
+    let zero = new Number(0); 
+    if (zero) console.log("why 0 is true?");
+    4 === Number('4'); // true 
+    true === Boolean(' ') //true
+    '4' === String(4) // true
+    ```
+
+### Numbers 
+1. In modern JavaScript, there are 2 types of numbers. 
+    1. Regular numbers which we use most of the time. 
