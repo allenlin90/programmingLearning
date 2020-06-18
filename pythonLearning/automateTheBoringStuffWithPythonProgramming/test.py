@@ -187,22 +187,22 @@ from selenium import webdriver
 
 ##############################################################################
 # Create and edit Excel workbook
-# wb = openpyxl.Workbook()
-# print(wb.get_sheet_names())
-# sheet = wb.get_sheet_by_name('Sheet')
-# sheet['A1'].value
-# print(sheet['A1'].value == None)
-# sheet['A1'].value = 42
-# sheet['A2'].value = 'Hello'
-# sheet['A3'].value = '=1+1'
+wb = openpyxl.Workbook()
+print(wb.get_sheet_names())
+sheet = wb.get_sheet_by_name('Sheet')
+sheet['A1'].value
+print(sheet['A1'].value == None)
+sheet['A1'].value = 42
+sheet['A2'].value = 'Hello'
+sheet['A3'].value = '=1+1'
 
-# os.chdir('/mnt/c/Users/ht016/Desktop/')
-# wb.save('test.xlsx')
-# sheet2 = wb.create_sheet()
-# print(wb.get_sheet_names())
-# print(sheet2.title)
-# sheet2.title = 'My New Sheet Name'
-# wb.save('test2.xlsx')
+os.chdir('/mnt/c/Users/ht016/Desktop/')
+wb.save('test.xlsx')
+sheet2 = wb.create_sheet()
+print(wb.get_sheet_names())
+print(sheet2.title)
+sheet2.title = 'My New Sheet Name'
+wb.save('test2.xlsx')
 
 ##############################################################################
 # Reading and editing PDFs
@@ -287,9 +287,10 @@ from selenium import webdriver
 # d.save('./demo6.docx')
 
 ##############################################################################
-conn = smtplib.SMTP('smtp.gmail.com', 587) # create a connection object 
-conn.ehlo() # to start connection to the server 
-conn.starttls()
-conn.login('username@gmail.com', 'password')
-conn.sendmail('username@gmail.com', 'username@gmail.com', "Subject: A test message from Python program \n\n Dear Allen, \nIf you've seen this email, it means the program runs well.\n\n\nRegards\n\nAllen")
-conn.quit()
+# send mail through smtp
+# conn = smtplib.SMTP('smtp.gmail.com', 587) # create a connection object 
+# conn.ehlo() # to start connection to the server 
+# conn.starttls()
+# conn.login('email', 'password')
+# conn.sendmail('username@gmail.com', 'username@gmail.com', "Subject: A test message from Python program \n\n Dear Allen, \nIf you've seen this email, it means the program runs well.\n\n\nRegards\n\nYo")
+# conn.quit()
