@@ -1,4 +1,4 @@
-import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl, PyPDF2, docx, smtplib, imapclient, pyzmail 
+import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl, PyPDF2, docx, smtplib, imapclient, pyzmail, pyautogui
 from selenium import webdriver 
 #logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 # text = open('test.txt', 'w')
@@ -298,30 +298,39 @@ from selenium import webdriver
 ##############################################################################
 # check email through imap
 # import imapclient
-conn = imapclient.IMAPClient('imap.gmail.com', ssl=True) # connect to IMAP server with SSL
-conn.login('username@gmail.com', 'password') # login to IMAP server
-conn.select_folder('INBOX', readonly=True)
-#UIDs = conn.search(['SINCE 17-Jun-2020']) # search all mails after 2020/06/17 
-UIDs = conn.search(['UNSEEN']) # search all mails after 2020/06/17 
-print(UIDs) # print out all the IDs found by search method 
-ID = input("What's the ID you want to search?") # get a ID 
-ID = int(ID)
-rawMessage = conn.fetch([ID], ['BODY[]', 'FLAGS']) # store the returned raw message 
+# conn = imapclient.IMAPClient('imap.gmail.com', ssl=True) # connect to IMAP server with SSL
+# conn.login('username@gmail.com', 'password') # login to IMAP server
+# conn.select_folder('INBOX', readonly=True)
+# #UIDs = conn.search(['SINCE 17-Jun-2020']) # search all mails after 2020/06/17 
+# UIDs = conn.search(['UNSEEN']) # search all mails after 2020/06/17 
+# print(UIDs) # print out all the IDs found by search method 
+# ID = input("What's the ID you want to search?") # get a ID 
+# ID = int(ID)
+# rawMessage = conn.fetch([ID], ['BODY[]', 'FLAGS']) # store the returned raw message 
 
-# import pyzmail # the module to parse the raw message
-message = pyzmail.PyzMessage.factory(rawMessage[ID][b'BODY[]']) # parse the email 
-print('Email Subject: ' + message.get_subject()) # subject of the email 
-print(message.get_addresses('from')) # sent from which email address  
-print(message.get_addresses('bcc')) # email address which bcc to
-print(message.text_part) # check if there's any text in the email body or it's made from HTML
-print(message.html_part) # check if there's any html in the email body (it could be None)
+# # import pyzmail # the module to parse the raw message
+# message = pyzmail.PyzMessage.factory(rawMessage[ID][b'BODY[]']) # parse the email 
+# print('Email Subject: ' + message.get_subject()) # subject of the email 
+# print(message.get_addresses('from')) # sent from which email address  
+# print(message.get_addresses('bcc')) # email address which bcc to
+# print(message.text_part) # check if there's any text in the email body or it's made from HTML
+# print(message.html_part) # check if there's any html in the email body (it could be None)
 
-print(message.text_part.get_payload().decode('UTF-8')) # retrieve the text body and use UTF-8 to decode 
-print('Charset: ' + message.text_part.charset)
+# print(message.text_part.get_payload().decode('UTF-8')) # retrieve the text body and use UTF-8 to decode 
+# print('Charset: ' + message.text_part.charset)
 
-print(conn.list_folders()) # return a list of folders of the email account 
-conn.select_folder('INBOX', readonly=False) # direct to INBOX folder
-UIDs = conn.search(['ON 31-Aug-2019']) # search for emails that was sent on 2019/08/31
-print(UIDs) # print out the list of UIDs
-ID = input('Which email to delete?')
-conn.delete_messages([ID]) # delete an email in INBOX by given UID 
+# print(conn.list_folders()) # return a list of folders of the email account 
+# conn.select_folder('INBOX', readonly=False) # direct to INBOX folder
+# UIDs = conn.search(['ON 31-Aug-2019']) # search for emails that was sent on 2019/08/31
+# print(UIDs) # print out the list of UIDs
+# ID = input('Which email to delete?')
+# conn.delete_messages([ID]) # delete an email in INBOX by given UID 
+
+
+
+##############################################################################
+# GUI automation 
+print(pyautogui.size()) # print out size of the screen 
+width, height = pyautogui.size()
+print(width)
+print(height)

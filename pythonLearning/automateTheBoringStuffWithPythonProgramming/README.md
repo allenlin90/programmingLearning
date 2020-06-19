@@ -1237,6 +1237,7 @@ Module `smtplib`
     ```
 
 ### Checking Email Inbox
+Module `imapclient`, Module `pyzmail36`
 1. We can use IMAP, internet message access protocol, to access the emails from the service. 
 1. We can check IMAP cheat sheet for the commands without remembering all the methods. The parameters are mostly the same when using most of the time. We can check it [here](https://automatetheboringstuff.com/2e/chapter18/) 
     ```py
@@ -1270,3 +1271,15 @@ Module `smtplib`
     ID = input('Which email to delete?')
     conn.delete_messages([ID]) # delete an email in INBOX by given UID 
     ```
+
+### Controlling the mouse from Python
+Module `pyautogui`
+Note: Though the instruction works normal on Windows, it's not available to work in WSL. 
+1. We can control the mouse cursor by `pyautogui` module. The coordinate starts from (0, 0) which is the top left corner of the screen. We can use `pyautogui.size()` to check screen resolution or set them to variables. 
+    ```py 
+    import pyautogui 
+    pyautogui.size()
+    width, height = pyautogui.size()
+    print(width)
+    print(height)
+    ``` 
