@@ -25,4 +25,41 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 1. We can use `git reset --hard` to resume all the files from the last commit in the branch. 
 1. If we make something wrong with a file and wants the previous verion in the record before commit, we can use `git checkout master filename` which will turn the file '**filename**' back from the last commit. In the command 'master' is the [master] branch. Note that if we don't put the file name but only branch, this command will direct us to the given branch. 
 
+
+
 ## Day 5 - Understanding relationship between repository, working directory, objects, and index 
+### Understanding repository 
+1. We can use `git init` to initiate and start a repository in a directory. At the directory, GIT will create a `.git` folder which is the repository that keeps all the logs and records of the project we are going to develop. In the repository, we can create "**branches**" 
+1. "**objects**" are immutable, which usually have only additional data rather than deleteing or changing the contents. 
+1. "**index**" is a mutable file that records the data and contetns which are going to be submitted in the next commit. 
+
+### Objects 
+1. "objects" are special files that named by SHA1 hashing. When using git version control, all folders/directories and files will be separated into "directory" (tree objects) and "contentes" (blob objects). These objects can't stand alone without each other and are kept in "objects" folder under `.git` directory, as "object storage". 
+    1. "tree objects" are used to store what files and related "blob" files are kept in certain folder (directory). 
+    1. "blob objects" use the original contents of a file and name it with a "hash id" which is created by SHA1 hashing. 
+
+### Index 
+1. "**index**" is a temporary storage file which is usually named "index" under `.git` folder. This file is to record what files are "**staged**" and going to be submitted in the next "**commit**". This "**index**" is as the medium between "**object storage**" and "**working directory**". There are several commands to work with the index file. 
+    1. `git add` 
+    1. `git mv` 
+    1. `git rm` 
+    1. `git status`
+    1. `git commit`
+    1. `git ls-files`
+1. Note that "tree object" is similar to directory. Therefore, "working directory" sometimes is written as "working tree". 
+
+
+
+## Day 6 - Investigating Git file and object structure 
+### Object storage 
+1. All files and directory will be stored in "objects" directory under `.git`. All objects are named with a hash value which is created by SHA1 hashing according to the contents of the file. Git will use the first 2 letters of the hash value as the name for directory and the rest as the name for the file. There are 4 types of objects in "object storage". 
+    1. blob: the content of a file 
+    1. tree: the directory info and records. We can understand this as a snapshot of a directory.
+    1. commit: the record that which "tree objects" are in this "commit", timestamp, and activity logs.
+    1. tag: a container that keeps metadata related to "commit object". 
+1. GIT will create "blob" files for the submitted files in every commit. Therefore, we can resume files and their contents from different commit or branch. 
+1. All objects will be compress by "**zlib**" algorithm and uses "**delta compression**" algorithm to increase efficiency and save storage space. The algorithm will find similar blobs and check the difference between them and keep the difference in a "packfile", which is located at `.git` > objects > pack. 
+1. To check the contents in a blob file, we can use "**zlib**" to uncompress the file.
+
+<img src="gitObjects.png">
+
