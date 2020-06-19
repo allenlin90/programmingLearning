@@ -63,3 +63,6 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 <img src="gitObjects.png">
 
+
+
+## Day 7 - Investigating Git data structure and index structure 

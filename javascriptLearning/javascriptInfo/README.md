@@ -498,3 +498,86 @@ welcome()
 ### Numbers 
 1. In modern JavaScript, there are 2 types of numbers. 
     1. Regular numbers which we use most of the time. 
+    1. BigInt that can represent integer at any length between (-2^53) and 2^53. 
+1. To createa a variable with large number value, we can give zeros directly, such as creating 1 billion as `100000000`, or we can use `1e9` which means that there are 9 zeros after 1. 
+    ```js 
+    let billion = 1000000000; 
+    let bn = 1e9;
+    let ms = 1e-6; 
+
+    console.log(billion);
+    console.log(bn);
+    console.log(ms);
+    console.log((1/1000) === 1e-3); // true 
+    ```
+1. "**Hex**", "**Binary**", and "**Octal**" numbers are also available in JavaScript though less in use. 
+    1. Hexadecimal numbers are usually used for color, encode characters, and many other things. It counts from 0 to 'f' which are 16 digits in total. We can start a number value with `0x` and follows with digits. 
+    1. We can use `0b` for binary and `0o` for octal numbers. 
+1. For `Numbers`, we can use `num.toString(base)` method which returns a string representation of `num` in the numeral system with the given `base`. Note that the `base` can vary from "**2**" to "**36**". `base=36` system is usually used for shortening a long numeric identifier, such as for shortening URL. 
+    ```js 
+    let num = 255; 
+    console.log(num.toString(16)); // ff 
+    console.log(num.toString(2)); // 11111111 
+    ```
+1. To call a method on a number, we can use double dots ".." without assigning the number to a variable. For example, `16..toString(16)` which is `10` in hexadecimal system. 
+
+**Rounding**
+1. To round numbers, there are several commands
+    1. `Math.floor()` which rounds "**down**" all the decimals. For example, `Math.floor(3.1)` is `3`, and `Math.floor(-1.1)` is `-2`.
+    1. `Math.ceil()` which rounds "**up**" all the decimals. For example, `Math.ceil(3.1)` is `4`.
+    1. `Math.round()` which rounds to the "**nearest**" integer. For example, `Math.round(3.1)` is `3`, while `Math.round(3.5)` is `4`.
+    1. `Math.trunc()` which takes off anything after the decimal point without rounding. For example, `Math.trunc(3.1)` is `3`, and `Math.trunc(-1.1)` is `-1`. Note that this method is not available in "Internet Explorer" browser. 
+1. There are 2 ways to round the number to `n-th` digit after the decimal. We can use expression or `.toFixed()` method to get the number. Note that if the decimal part is shorter than requried, zeros are appended to the end.  
+    ```js 
+    let num = 1.23456;
+    // Multiply and divide 
+    console.log(Math.floor(num * 100) / 100); // 1.23456 -> 123.456 -> 123 -> 1.23
+    // use toFixed()
+    console.log(num.toFixed(2)); // 1.23
+    console.log(num.toFixed(4)); // 1.2346
+    let n = 1.23;
+    console.log(n.toFixed(4)); // 1.2300 
+    ```
+1. JavaScript, so as other programming languages, has the problem of "**imprecise calculations**". We can fix the problem with `.toFixed()` method that takes off the decimals.  
+    ```js 
+    console.log((0.1 + 0.2) == 0.3); // false 
+
+    // chop off the decimals 
+    let num = (0.1+0.2); 
+    console.log(Number(num.toFixed(2)) === 0.3); // true 
+    ```
+1. Tests: `isFinite` and `isNaN`. `Infinity` and `-Infinity` are special numeric value that is greater and less than anything, while `NaN` represents an error. 
+    1. `isNaN()` is a function that converts its argument to a number and tests it for being `NaN`. We can't use `=== NaN` directly because `NaN` is special that it's not enven equal to itself. 
+    ```js 
+    console.log(isNaN(NaN)); // true
+    console.log(isNaN('str')); // true
+    console.log(isNaN(NaN === NaN)); // false
+    ```
+    1. `isFinite()` is a function that converts its argument to a number and return `true` if it's regular number, not `NaN`/`Infinity`/`-Infinity`. Sometimes, `isFinite` is used to validate whether a string value is a regular number. 
+    ```js 
+    console.log(isFinite('15')); // true 
+    console.log(isFinite('str')); // false, because a special value: NaN 
+    console.log(isFinite(Infinity)); // false, because a specialvalue: Infinity
+    ```
+1. We can use `Object.is()` to compare to values. The function is similar to `===`. However, there are 2 special cases. 
+    ```js 
+    console.log(Object.is(NaN, NaN)); // true 
+    console.log(Object.is(0, -0)); // false 
+    console.log(Object.is('1', 1)); // false 
+    ```
+1. Though we can use `+` or `Number()` to convert a value to a number, if the value isn't pure digits, the conversion will fail. We can use `parseInt()` to get a "integer" and `parseFloat()` to get a "float" from a `String`. Note that `parseInt(str, radix)` function have the 2nd argument `radix` which is the base of numeric system. For example, we can check for "hexadecimal" and "octal" numbers. 
+    ```js 
+    console.log(parseInt('123rem')); // 123
+    console.log(parseInt('123.0')); // 123
+    console.log(parseFloat('123.456')); // 123.456 
+    console.log(parseFloat('123.456.42')); // 123.456 
+    console.log(parseInt('ff', 16)); // 255 
+    ```
+**Math** Object 
+1. `Math` is an internal `Object` that has several mathmetical functions. 
+1. `Math.random()` returns a fraction from 0 to 1 (not including 1). 
+1. `Math.max(a,b,c)` returns the maximum number from the given values. 
+1. `Math.min(a,b,c)` returns the minimum number from the given values. 
+1. `Math.pow(n, power)` returns `n` raised the given power. For example, `Math.pow(2,10)` is 1024. 
+
+Note: We should be very careful with the calculation by programming language due to "**impercision**" that makes the calculation incorrect. For example, in the exercise, `6.35.toFixed(1)` is `6.3` rather than rounded as `6.4`. We have to use multiplication `console.log(Math.round(6.35 * 10) / 10)` to make the number correct. 

@@ -1,5 +1,5 @@
-let str = "Hello";
+function random(min, max) {
+    return min + Math.random() * (max - min);
+}
 
-str.test = 5;
-
-console.log(str.test);
+console.log(random(1,4));
