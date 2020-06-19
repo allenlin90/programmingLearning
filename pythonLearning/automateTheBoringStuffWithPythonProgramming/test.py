@@ -1,336 +1,351 @@
 import shutil, os, send2trash, traceback, logging, webbrowser, requests, bs4, time, openpyxl, PyPDF2, docx, smtplib, imapclient, pyzmail, pyautogui
 from selenium import webdriver 
-#logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-# text = open('test.txt', 'w')
-# text.write('Hello World!\nHIIIIIIIIIIIIIII\nNOOOOOOOOOOO')
-# shutil.copy('test.txt', './test_rename.txt')
-# os.makedirs('testFolder')
-# shutil.move('test_rename.txt', './testFolder')
-# shutil.rmtree('testFolder')
+# #logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+# # text = open('test.txt', 'w')
+# # text.write('Hello World!\nHIIIIIIIIIIIIIII\nNOOOOOOOOOOO')
+# # shutil.copy('test.txt', './test_rename.txt')
+# # os.makedirs('testFolder')
+# # shutil.move('test_rename.txt', './testFolder')
+# # shutil.rmtree('testFolder')
 
-# for filename in os.listdir(): 
-#     if filename.endswith('.txt'): 
-#         os.unlink(filename)
+# # for filename in os.listdir(): 
+# #     if filename.endswith('.txt'): 
+# #         os.unlink(filename)
 
-# send2trash.send2trash('test.txt') #send the file to recycling bin 
+# # send2trash.send2trash('test.txt') #send the file to recycling bin 
 
-# for folderName, subfolders, filenames in os.walk('/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning'): 
-#     print('The folder is ' + folderName)
-#     print('The subfolders in ' + folderName + ' are: ' + str(subfolders))
-#     print('The filenames in ' + folderName + ' are: ' + str(filenames))
+# # for folderName, subfolders, filenames in os.walk('/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning'): 
+# #     print('The folder is ' + folderName)
+# #     print('The subfolders in ' + folderName + ' are: ' + str(subfolders))
+# #     print('The filenames in ' + folderName + ' are: ' + str(filenames))
 
-# def boxPrint(symbol, width, height):
-#         if len(symbol) != 1: 
-#             raise Exception('"symbol" should be a string of length 1')
-#         if (width < 2) or (height < 2):
-#             raise Exception('"width" and "height" must be greater than or equal to 2')
-#         print(symbol * width)
-#         for i in range(height - 2): 
-#             print(symbol + (' ' * (width - 2)) + symbol )
-#         print(symbol * width)
+# # def boxPrint(symbol, width, height):
+# #         if len(symbol) != 1: 
+# #             raise Exception('"symbol" should be a string of length 1')
+# #         if (width < 2) or (height < 2):
+# #             raise Exception('"width" and "height" must be greater than or equal to 2')
+# #         print(symbol * width)
+# #         for i in range(height - 2): 
+# #             print(symbol + (' ' * (width - 2)) + symbol )
+# #         print(symbol * width)
 
-# boxPrint('+', 2 ,2)
+# # boxPrint('+', 2 ,2)
 
-#raise Exception()
-# try: 
-#     raise Exception('Error Message')
-# except: 
-#     errorFile = open('error_log.txt', 'a')
-#     errorFile.write(traceback.format_exc())
-#     errorFile.close() 
-#     print('The traceback info was written to error_log.txt')
-# os.unlink('error_log.txt')
+# #raise Exception()
+# # try: 
+# #     raise Exception('Error Message')
+# # except: 
+# #     errorFile = open('error_log.txt', 'a')
+# #     errorFile.write(traceback.format_exc())
+# #     errorFile.close() 
+# #     print('The traceback info was written to error_log.txt')
+# # os.unlink('error_log.txt')
 
-# market_2nd = {'ns': 'green', 'ew': 'red'}
+# # market_2nd = {'ns': 'green', 'ew': 'red'}
 
-# def switchLights(intersection): 
-#     for key in intersection.keys(): 
-#         if intersection[key] == 'green': 
-#             intersection[key] = 'yello'
-#         elif intersection[key] == 'yellow': 
-#             intersection[key] = 'red'
-#         elif intersection[key] == 'red': 
-#             intersection[key] = 'green'
-#     assert 'red' in intersection.values(), 'Neither of the light is red ' + str(market_2nd)
+# # def switchLights(intersection): 
+# #     for key in intersection.keys(): 
+# #         if intersection[key] == 'green': 
+# #             intersection[key] = 'yello'
+# #         elif intersection[key] == 'yellow': 
+# #             intersection[key] = 'red'
+# #         elif intersection[key] == 'red': 
+# #             intersection[key] = 'green'
+# #     assert 'red' in intersection.values(), 'Neither of the light is red ' + str(market_2nd)
 
-# switchLights(market_2nd)
+# # switchLights(market_2nd)
 
-# logging.debug('Start of the program')
-# def factorial(n): 
-#     logging.debug('Start of factorial(%s)' % (n))
-#     total = 1
-#     for i in range(1, n+1):
-#         total *= i 
-#         logging.debug('i is %s, total is %s' % (i, total))
-#     logging.debug('Return value is %s' % (total))
-#     return total #it returns 0 as i starts from 0 
+# # logging.debug('Start of the program')
+# # def factorial(n): 
+# #     logging.debug('Start of factorial(%s)' % (n))
+# #     total = 1
+# #     for i in range(1, n+1):
+# #         total *= i 
+# #         logging.debug('i is %s, total is %s' % (i, total))
+# #     logging.debug('Return value is %s' % (total))
+# #     return total #it returns 0 as i starts from 0 
 
-# print(factorial(4))
-# logging.debug('End of the program')
+# # print(factorial(4))
+# # logging.debug('End of the program')
 
-#Using Python IDLE debugger 
-# print('Enter the first number to add:')
-# first = input()
-# print('Enter the second number to add:')
-# second = input()
-# print('Enter the third number to add:')
-# third = input()
-# print('The sum is ' + first + second + third)
+# #Using Python IDLE debugger 
+# # print('Enter the first number to add:')
+# # first = input()
+# # print('Enter the second number to add:')
+# # second = input()
+# # print('Enter the third number to add:')
+# # third = input()
+# # print('The sum is ' + first + second + third)
 
-#use Step and Out in debugger
-# def blahBlahBlah():
-#     print('blah')
-#     print('blah')
-#     print('blah')
-#     moreBlah()
-#     print('blah')
-#     print('blah')
-#     print('blah')
-#     moreBlah()
-#     print('blah')
-#     print('blah')
-#     print('blah')
-#     print('blah')
+# #use Step and Out in debugger
+# # def blahBlahBlah():
+# #     print('blah')
+# #     print('blah')
+# #     print('blah')
+# #     moreBlah()
+# #     print('blah')
+# #     print('blah')
+# #     print('blah')
+# #     moreBlah()
+# #     print('blah')
+# #     print('blah')
+# #     print('blah')
+# #     print('blah')
 
-# def moreBlah():
-#     print('more blahs')
-#     print('more blahs')
-#     print('more blahs')
+# # def moreBlah():
+# #     print('more blahs')
+# #     print('more blahs')
+# #     print('more blahs')
 
-# blahBlahBlah()
+# # blahBlahBlah()
 
-# webbrowser.open('https://automatetheboringstuff.com') 
+# # webbrowser.open('https://automatetheboringstuff.com') 
 
-# # download file from website 
-# res = requests.get('https://automatetheboringstuff.com/files/rj.txt')
-# print(res.status_code)
-# print(len(res.text))
-# playFile = open('RomeoAndJuliet.txt', 'wb')
-# for chunk in res.iter_content(100000):
-#     playFile.write(chunk) 
-# playFile.close() 
+# # # download file from website 
+# # res = requests.get('https://automatetheboringstuff.com/files/rj.txt')
+# # print(res.status_code)
+# # print(len(res.text))
+# # playFile = open('RomeoAndJuliet.txt', 'wb')
+# # for chunk in res.iter_content(100000):
+# #     playFile.write(chunk) 
+# # playFile.close() 
 
-# res = requests.get('https://automatetheboringstuff.com/')
-# res.raise_for_status()
-# soup = bs4.BeautifulSoup(res.text, 'html.parser')
-# links = soup.select('a') 
+# # res = requests.get('https://automatetheboringstuff.com/')
+# # res.raise_for_status()
+# # soup = bs4.BeautifulSoup(res.text, 'html.parser')
+# # links = soup.select('a') 
 
-# for e in elements: 
-#     print(e.text)
+# # for e in elements: 
+# #     print(e.text)
 
-# def getAmazonPrice(productURL): 
-#     res = requests.get(productURL)
-#     res.raise_for_status()
+# # def getAmazonPrice(productURL): 
+# #     res = requests.get(productURL)
+# #     res.raise_for_status()
 
-#     soup = BeautifulSoup(res.text, 'html.parser')
-#     elems = soup.select('#newer-version > div > div > div.a-fixed-left-grid-col.a-col-right > span.a-size-base.a-color-price')
-#     return elems[0].text.strip()
+# #     soup = BeautifulSoup(res.text, 'html.parser')
+# #     elems = soup.select('#newer-version > div > div > div.a-fixed-left-grid-col.a-col-right > span.a-size-base.a-color-price')
+# #     return elems[0].text.strip()
 
-# price = getAmazonPrice('https://www.amazon.com/Automate-Boring-Stuff-Python-Programming/dp/1593275994')
-# print('The price is ' + price)
+# # price = getAmazonPrice('https://www.amazon.com/Automate-Boring-Stuff-Python-Programming/dp/1593275994')
+# # print('The price is ' + price)
 
-# browser = webdriver.Chrome(executable_path="/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/chromedriver.exe") 
-# # browser.get('https://automatetheboringstuff.com/')
+# # browser = webdriver.Chrome(executable_path="/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/chromedriver.exe") 
+# # # browser.get('https://automatetheboringstuff.com/')
 
-# # # find only one element 
-# # element = browser.find_element_by_css_selector('body > div.main > div:nth-child(1) > ul:nth-child(20) > li:nth-child(1) > a')
-# # element.click() 
+# # # # find only one element 
+# # # element = browser.find_element_by_css_selector('body > div.main > div:nth-child(1) > ul:nth-child(20) > li:nth-child(1) > a')
+# # # element.click() 
 
-# # # find multiple matched elements 
-# # elements = browser.find_elements_by_css_selector('p')
-# # print(len(elements))
-
-
-# googleMaps = browser.get('http://gebweb.net/optimap/')
-# search = browser.find_element_by_css_selector('#bulkButton')
-# makeSendDC = '1669, 9 Phetchaburi Rd, Bang Kapi, Huai Khwang, Bangkok 10310'
-# addresses = ['21/2 เลิศปัญญา ซอยราชวิถี 9 ถ.ราชวิถี เขตราชเทวี กทม. 10400', '270 แขวงทุ่งพญาไท โรงพยาบาลรามาธิบดี ตึกสิริกิตร์ ศูนย์ไอแมค ชั้น1 เขตราชเทวี กทม', '94/2.​ ถ.มหานคร ต.มหาพฤฒาราม อ.บางรัก.​ กทม']
-# search.click()
-# input = browser.find_element_by_css_selector('#dialogBulk > form > textarea')
-# input.send_keys(makeSendDC + '\n')
-# time.sleep(5)
-# for address in addresses: 
-#     input.send_keys(address + '\n') 
-#     time.sleep(5)   
-# time.sleep(2)
-# addLocation = browser.find_element_by_css_selector('#dialogBulk > form > input')
-# addLocation.submit()
-
-# openCalculate = browser.find_element_by_css_selector('#calculateButton')
-# time.sleep(2)
-# openCalculate.click()
-
-# avoidToll = browser.find_element_by_css_selector('#avoidTolls')
-# time.sleep(2)
-# avoidToll.click()
-
-# calculate = browser.find_element_by_css_selector('#dialogOptions > p:nth-child(4) > input:nth-child(2)')
-# time.sleep(2)
-# calculate.click()
+# # # # find multiple matched elements 
+# # # elements = browser.find_elements_by_css_selector('p')
+# # # print(len(elements))
 
 
-##############################################################################
-# Read a Excel workbook
-# workbook = openpyxl.load_workbook('example.xlsx') # create a workbook object 
-# sheet = workbook.get_sheet_by_name('Sheet1') # get a sheet from the workbook 
-# workbook.get_sheet_names() # a method to return a list of sheet names 
-# cell = sheet['A1'] # A1 cell in 'Sheet1'
-# print(cell.value) # a datetime object as the value in the Excel sheet is date and time in 'A1' cell 
-# print(str(cell.value)) # the value in the cell 
-# print(str(sheet['B1'].value)) # 'Apples', the value in cell 'B1'
-# print(str(sheet['C1'].value)) # '73', the value in cell 'C1'
-# print(sheet.cell(row=1, column=2) == sheet['B1']) # True
+# # googleMaps = browser.get('http://gebweb.net/optimap/')
+# # search = browser.find_element_by_css_selector('#bulkButton')
+# # makeSendDC = '1669, 9 Phetchaburi Rd, Bang Kapi, Huai Khwang, Bangkok 10310'
+# # addresses = ['21/2 เลิศปัญญา ซอยราชวิถี 9 ถ.ราชวิถี เขตราชเทวี กทม. 10400', '270 แขวงทุ่งพญาไท โรงพยาบาลรามาธิบดี ตึกสิริกิตร์ ศูนย์ไอแมค ชั้น1 เขตราชเทวี กทม', '94/2.​ ถ.มหานคร ต.มหาพฤฒาราม อ.บางรัก.​ กทม']
+# # search.click()
+# # input = browser.find_element_by_css_selector('#dialogBulk > form > textarea')
+# # input.send_keys(makeSendDC + '\n')
+# # time.sleep(5)
+# # for address in addresses: 
+# #     input.send_keys(address + '\n') 
+# #     time.sleep(5)   
+# # time.sleep(2)
+# # addLocation = browser.find_element_by_css_selector('#dialogBulk > form > input')
+# # addLocation.submit()
 
-# for i in range(1, 8): 
-#     print(i, sheet.cell(row=i, column=2).value)
+# # openCalculate = browser.find_element_by_css_selector('#calculateButton')
+# # time.sleep(2)
+# # openCalculate.click()
 
+# # avoidToll = browser.find_element_by_css_selector('#avoidTolls')
+# # time.sleep(2)
+# # avoidToll.click()
 
-##############################################################################
-# Create and edit Excel workbook
-# wb = openpyxl.Workbook()
-# print(wb.get_sheet_names())
-# sheet = wb.get_sheet_by_name('Sheet')
-# sheet['A1'].value
-# print(sheet['A1'].value == None)
-# sheet['A1'].value = 42
-# sheet['A2'].value = 'Hello'
-# sheet['A3'].value = '=1+1'
-
-# os.chdir('/mnt/c/Users/ht016/Desktop/')
-# wb.save('test.xlsx')
-# sheet2 = wb.create_sheet()
-# print(wb.get_sheet_names())
-# print(sheet2.title)
-# sheet2.title = 'My New Sheet Name'
-# wb.save('test2.xlsx')
-
-##############################################################################
-# Reading and editing PDFs
-# pdfFile = open('meetingminutes.pdf', 'rb')
-# reader = PyPDF2.PdfFileReader(pdfFile)
-# print(reader.numPages) # return numbers of pages in the pdf file
-# page = reader.getPage(0) # page object holds number of page which starts from 0 as the 1st page
-# text = page.extractText() # return parsed text as Python String 
-# for pageNum in range(reader.numPages):
-#     print(reader.getPage(pageNum).extractText()) 
-
-# # create 2 pdf file objects with reading binary mode 
-# pdfFile1 = open('meetingminutes.pdf', 'rb')
-# pdfFile2 = open('meetingminutes2.pdf', 'rb') 
-
-# reader1 = PyPDF2.PdfFileReader(pdfFile1)
-# reader2 = PyPDF2.PdfFileReader(pdfFile2)
-# writer = PyPDF2.PdfFileWriter() # create a writer object which is blank pdf 
-# for pageNum in range (reader1.numPages):
-#     page = reader1.getPage(pageNum)
-#     writer.addPage(page)
-
-# for pageNum in range (reader2.numPages):
-#     page = reader2.getPage(pageNum)
-#     writer.addPage(page)
-
-# os.chdir('/mnt/c/Users/ht016/Desktop')
-# outputFile = open('combinedminutes.pdf', 'wb')
-# writer.write(outputFile)
-# outputFile.close()
-# pdfFile1.close()
-# pdfFile2.close()
+# # calculate = browser.find_element_by_css_selector('#dialogOptions > p:nth-child(4) > input:nth-child(2)')
+# # time.sleep(2)
+# # calculate.click()
 
 
-##############################################################################
-# Reading and editing Word Documents
-# d = docx.Document('/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/demo.docx')
+# ##############################################################################
+# # Read a Excel workbook
+# # workbook = openpyxl.load_workbook('example.xlsx') # create a workbook object 
+# # sheet = workbook.get_sheet_by_name('Sheet1') # get a sheet from the workbook 
+# # workbook.get_sheet_names() # a method to return a list of sheet names 
+# # cell = sheet['A1'] # A1 cell in 'Sheet1'
+# # print(cell.value) # a datetime object as the value in the Excel sheet is date and time in 'A1' cell 
+# # print(str(cell.value)) # the value in the cell 
+# # print(str(sheet['B1'].value)) # 'Apples', the value in cell 'B1'
+# # print(str(sheet['C1'].value)) # '73', the value in cell 'C1'
+# # print(sheet.cell(row=1, column=2) == sheet['B1']) # True
 
-# paragraph = d.paragraphs # list of paragraphs objects from the document 
-
-# i = 1
-# for p in paragraph: # use .text method to parse value of the object
-#     print(p.text) 
-#     for s in p.runs: # use .runs method returns a list of run objects and to check if any style changes in paragraph
-#         print(str(i)+ '. ' + s.text)
-#         print(s.bold)
-#         print(s.italic)
-#         print(s.underline)
-#         i += 1
-
-# print(paragraph[1].runs[4].text) # parse and return the text value of the run object
-# print(paragraph[1].runs[4].italic) # check if the run object is in "italic" style 
-
-# paragraph[1].runs[4].underline = True # change style of the run object
-# paragraph[1].runs[4].text = 'italic and underlined' # change text content 
-# print(paragraph[1].style) # change style of the paragraph object 
-# paragraph[1].style = 'Title' # change style from 'normal' to 'Title'
-
-# d.save('/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/demo2.docx')
-
-# d = docx.Document()
-# d.add_paragraph('Hello this is a paragraph.')
-# d.add_paragraph('This is another paragraph.')
-
-# d.save('./demo3.docx')
-
-# d.paragraphs[0].add_run(' This is a new run.')
-# d.paragraphs[0].runs[1].bold = True 
-# d.save('./demo4.docx')
-
-# def getText(filename):
-#     doc = docx.Document(filename) 
-#     fullText = []
-#     for para in doc.paragraphs:
-#         fullText.append(para.text)
-#     return ('\n').join(fullText)
-
-# print(getText('./demo.docx'))
-# text = getText('./demo.docx')
-# d = docx.Document()
-# d.add_paragraph(text)
-# d.save('./demo6.docx')
-
-##############################################################################
-# send mail through smtp
-# conn = smtplib.SMTP('smtp.gmail.com', 587) # create a connection object 
-# conn.ehlo() # to start connection to the server 
-# conn.starttls()
-# conn.login('email', 'password')
-# conn.sendmail('username@gmail.com', 'username@gmail.com', "Subject: A test message from Python program \n\n Dear Allen, \nIf you've seen this email, it means the program runs well.\n\n\nRegards\n\nYo")
-# conn.quit()
-
-##############################################################################
-# check email through imap
-# import imapclient
-# conn = imapclient.IMAPClient('imap.gmail.com', ssl=True) # connect to IMAP server with SSL
-# conn.login('username@gmail.com', 'password') # login to IMAP server
-# conn.select_folder('INBOX', readonly=True)
-# #UIDs = conn.search(['SINCE 17-Jun-2020']) # search all mails after 2020/06/17 
-# UIDs = conn.search(['UNSEEN']) # search all mails after 2020/06/17 
-# print(UIDs) # print out all the IDs found by search method 
-# ID = input("What's the ID you want to search?") # get a ID 
-# ID = int(ID)
-# rawMessage = conn.fetch([ID], ['BODY[]', 'FLAGS']) # store the returned raw message 
-
-# # import pyzmail # the module to parse the raw message
-# message = pyzmail.PyzMessage.factory(rawMessage[ID][b'BODY[]']) # parse the email 
-# print('Email Subject: ' + message.get_subject()) # subject of the email 
-# print(message.get_addresses('from')) # sent from which email address  
-# print(message.get_addresses('bcc')) # email address which bcc to
-# print(message.text_part) # check if there's any text in the email body or it's made from HTML
-# print(message.html_part) # check if there's any html in the email body (it could be None)
-
-# print(message.text_part.get_payload().decode('UTF-8')) # retrieve the text body and use UTF-8 to decode 
-# print('Charset: ' + message.text_part.charset)
-
-# print(conn.list_folders()) # return a list of folders of the email account 
-# conn.select_folder('INBOX', readonly=False) # direct to INBOX folder
-# UIDs = conn.search(['ON 31-Aug-2019']) # search for emails that was sent on 2019/08/31
-# print(UIDs) # print out the list of UIDs
-# ID = input('Which email to delete?')
-# conn.delete_messages([ID]) # delete an email in INBOX by given UID 
+# # for i in range(1, 8): 
+# #     print(i, sheet.cell(row=i, column=2).value)
 
 
+# ##############################################################################
+# # Create and edit Excel workbook
+# # wb = openpyxl.Workbook()
+# # print(wb.get_sheet_names())
+# # sheet = wb.get_sheet_by_name('Sheet')
+# # sheet['A1'].value
+# # print(sheet['A1'].value == None)
+# # sheet['A1'].value = 42
+# # sheet['A2'].value = 'Hello'
+# # sheet['A3'].value = '=1+1'
 
-##############################################################################
-# GUI automation 
-print(pyautogui.size()) # print out size of the screen 
-width, height = pyautogui.size()
-print(width)
-print(height)
+# # os.chdir('/mnt/c/Users/ht016/Desktop/')
+# # wb.save('test.xlsx')
+# # sheet2 = wb.create_sheet()
+# # print(wb.get_sheet_names())
+# # print(sheet2.title)
+# # sheet2.title = 'My New Sheet Name'
+# # wb.save('test2.xlsx')
+
+# ##############################################################################
+# # Reading and editing PDFs
+# # pdfFile = open('meetingminutes.pdf', 'rb')
+# # reader = PyPDF2.PdfFileReader(pdfFile)
+# # print(reader.numPages) # return numbers of pages in the pdf file
+# # page = reader.getPage(0) # page object holds number of page which starts from 0 as the 1st page
+# # text = page.extractText() # return parsed text as Python String 
+# # for pageNum in range(reader.numPages):
+# #     print(reader.getPage(pageNum).extractText()) 
+
+# # # create 2 pdf file objects with reading binary mode 
+# # pdfFile1 = open('meetingminutes.pdf', 'rb')
+# # pdfFile2 = open('meetingminutes2.pdf', 'rb') 
+
+# # reader1 = PyPDF2.PdfFileReader(pdfFile1)
+# # reader2 = PyPDF2.PdfFileReader(pdfFile2)
+# # writer = PyPDF2.PdfFileWriter() # create a writer object which is blank pdf 
+# # for pageNum in range (reader1.numPages):
+# #     page = reader1.getPage(pageNum)
+# #     writer.addPage(page)
+
+# # for pageNum in range (reader2.numPages):
+# #     page = reader2.getPage(pageNum)
+# #     writer.addPage(page)
+
+# # os.chdir('/mnt/c/Users/ht016/Desktop')
+# # outputFile = open('combinedminutes.pdf', 'wb')
+# # writer.write(outputFile)
+# # outputFile.close()
+# # pdfFile1.close()
+# # pdfFile2.close()
+
+
+# ##############################################################################
+# # Reading and editing Word Documents
+# # d = docx.Document('/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/demo.docx')
+
+# # paragraph = d.paragraphs # list of paragraphs objects from the document 
+
+# # i = 1
+# # for p in paragraph: # use .text method to parse value of the object
+# #     print(p.text) 
+# #     for s in p.runs: # use .runs method returns a list of run objects and to check if any style changes in paragraph
+# #         print(str(i)+ '. ' + s.text)
+# #         print(s.bold)
+# #         print(s.italic)
+# #         print(s.underline)
+# #         i += 1
+
+# # print(paragraph[1].runs[4].text) # parse and return the text value of the run object
+# # print(paragraph[1].runs[4].italic) # check if the run object is in "italic" style 
+
+# # paragraph[1].runs[4].underline = True # change style of the run object
+# # paragraph[1].runs[4].text = 'italic and underlined' # change text content 
+# # print(paragraph[1].style) # change style of the paragraph object 
+# # paragraph[1].style = 'Title' # change style from 'normal' to 'Title'
+
+# # d.save('/mnt/c/Users/ht016/Desktop/programmingLearning/pythonLearning/automateTheBoringStuffWithPythonProgramming/demo2.docx')
+
+# # d = docx.Document()
+# # d.add_paragraph('Hello this is a paragraph.')
+# # d.add_paragraph('This is another paragraph.')
+
+# # d.save('./demo3.docx')
+
+# # d.paragraphs[0].add_run(' This is a new run.')
+# # d.paragraphs[0].runs[1].bold = True 
+# # d.save('./demo4.docx')
+
+# # def getText(filename):
+# #     doc = docx.Document(filename) 
+# #     fullText = []
+# #     for para in doc.paragraphs:
+# #         fullText.append(para.text)
+# #     return ('\n').join(fullText)
+
+# # print(getText('./demo.docx'))
+# # text = getText('./demo.docx')
+# # d = docx.Document()
+# # d.add_paragraph(text)
+# # d.save('./demo6.docx')
+
+# ##############################################################################
+# # send mail through smtp
+# # conn = smtplib.SMTP('smtp.gmail.com', 587) # create a connection object 
+# # conn.ehlo() # to start connection to the server 
+# # conn.starttls()
+# # conn.login('email', 'password')
+# # conn.sendmail('username@gmail.com', 'username@gmail.com', "Subject: A test message from Python program \n\n Dear Allen, \nIf you've seen this email, it means the program runs well.\n\n\nRegards\n\nYo")
+# # conn.quit()
+
+# ##############################################################################
+# # check email through imap
+# # import imapclient
+# # conn = imapclient.IMAPClient('imap.gmail.com', ssl=True) # connect to IMAP server with SSL
+# # conn.login('username@gmail.com', 'password') # login to IMAP server
+# # conn.select_folder('INBOX', readonly=True)
+# # #UIDs = conn.search(['SINCE 17-Jun-2020']) # search all mails after 2020/06/17 
+# # UIDs = conn.search(['UNSEEN']) # search all mails after 2020/06/17 
+# # print(UIDs) # print out all the IDs found by search method 
+# # ID = input("What's the ID you want to search?") # get a ID 
+# # ID = int(ID)
+# # rawMessage = conn.fetch([ID], ['BODY[]', 'FLAGS']) # store the returned raw message 
+
+# # # import pyzmail # the module to parse the raw message
+# # message = pyzmail.PyzMessage.factory(rawMessage[ID][b'BODY[]']) # parse the email 
+# # print('Email Subject: ' + message.get_subject()) # subject of the email 
+# # print(message.get_addresses('from')) # sent from which email address  
+# # print(message.get_addresses('bcc')) # email address which bcc to
+# # print(message.text_part) # check if there's any text in the email body or it's made from HTML
+# # print(message.html_part) # check if there's any html in the email body (it could be None)
+
+# # print(message.text_part.get_payload().decode('UTF-8')) # retrieve the text body and use UTF-8 to decode 
+# # print('Charset: ' + message.text_part.charset)
+
+# # print(conn.list_folders()) # return a list of folders of the email account 
+# # conn.select_folder('INBOX', readonly=False) # direct to INBOX folder
+# # UIDs = conn.search(['ON 31-Aug-2019']) # search for emails that was sent on 2019/08/31
+# # print(UIDs) # print out the list of UIDs
+# # ID = input('Which email to delete?')
+# # conn.delete_messages([ID]) # delete an email in INBOX by given UID 
+
+
+
+# ##############################################################################
+# # # GUI automation 
+# # print(pyautogui.size()) # print out size of the screen 
+# # width, height = pyautogui.size()
+# # print(width)
+# # print(height)
+# # print(pyautogui.position())
+
+# # pyautogui.moveTo(10,10) # move mouse cursor to (10, 10) on the screen 
+
+# # pyautogui.moveTo(1081, 1265, duration=0.5)
+# # pyautogui.click()
+# # pyautogui.moveTo(582, 481, duration=0.5)
+# # pyautogui.typewrite('Hello World!', interval=0.2)
+# # pyautogui.typewrite(['a', 'b', 'left', 'left', 'X', 'Y'], interval=0.2)
+
+# pyautogui.hotkey('win', 'q')
+# pyautogui.typewrite('cmd')
+# pyautogui.press('enter')
+
+print(pyautogui.locateOnScreen('c:\\Users\\ht016\\Desktop\\calckey7.PNG'))

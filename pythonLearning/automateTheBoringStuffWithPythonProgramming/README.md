@@ -1273,13 +1273,60 @@ Module `imapclient`, Module `pyzmail36`
     ```
 
 ### Controlling the mouse from Python
-Module `pyautogui`
+Module `pyautogui`, `.size()`, `.moveTo()`, `.moveRel()`, `.click()`, `.doubleClick()`, `.positio()`, `.displayMousePosition()`
 Note: Though the instruction works normal on Windows, it's not available to work in WSL. 
 1. We can control the mouse cursor by `pyautogui` module. The coordinate starts from (0, 0) which is the top left corner of the screen. We can use `pyautogui.size()` to check screen resolution or set them to variables. 
     ```py 
     import pyautogui 
-    pyautogui.size()
-    width, height = pyautogui.size()
+    print(pyautogui.size()) # print size of the computer monitor
+    width, height = pyautogui.size() 
     print(width)
     print(height)
+    print(pyautogui.position()) # print location of mouse cursor on the screen
     ``` 
+1. We can use `pyautogui.moveTo(x, y)` to a given coordination on (x, y) on the screen. We can given duration as an argument, so the mouse cursor will be moved from the current location to the given location at the duration of time. `pyautogui.moveTo(x, y, duration=1.5)`. Note that the unit for duration is in second. 
+1. Besides absolute position, we can move the mouse cursor move to location where related to its current location by using `pyautogui.moveRel(x, y)`. The method is similar to `.moveTo()` and takes an argument `duration` as well. Note that if we'd like to move the cursor up, we have to give negative value for y-offset. 
+1. We can use `pyautogui.click(x, y)` and `pyautogui.doubleClick(x, y)` for mouse click at a given position. Note that we can use `pyautogui.position()` to check the location of the object that we want the mouse cursor to click or double click. In addition, if we don't pass any arguments, the mouse cursor will just click at where it is. 
+1. We may lose control when using this automation module, as by the time we can't do anything else as the Python program controls the mouse. However, we can move the mouse cursor during the pause of execution to the top left corner. The module will detect the position during the pause and stop the program. 
+1. We can use `pyautogui.displayMousePosition()` to open a small program in terminal or command prompt to display to position in x and y coordinate and the color on the screen. Note that this function is better to run in terminal or command prompt rather than Python IDLE. 
+
+### Controlling the keyboard from Python 
+Module `pyautogui`
+1. We can use the same module as controlling mouse by Python. We can use `pyautogui.typewrite(keys)` method and give the words that we want the program to type. For example, we can let the program type in a text editor. This method also takes an arugment `interval` which unit is in seconds that will gradually type in the given contents. 
+1. We can give key command in sequence by passing a `List` to the method. The program will pass the key one by one rather than typing a `String`. Besides, we can use `pyautogui.KEYBOARD_KEYS` to check all the keys on the keyboard which we can pass to the program. In addition, we can use `pyautogui.press(key)` to press a single key by the method. 
+1. For keyboard shortcuts such as <kbd>Ctrl + o</kbd> or <kbd>Ctrl + Alt + Del</kbd>, we can use `pyautogui.hotkey('ctrl','o')`. 
+    ```py
+    # control the mouse to click text editor and type in some contents 
+    pyautogui.moveTo(1081, 1265, duration=2)
+    pyautogui.click()
+    pyautogui.moveTo(582, 481, duration=2)
+    pyautogui.typewrite('Hello World!', interval=1)
+
+    # pass a sequence of key commands in a list 
+    pyautogui.moveTo(0, 0, duration=2)
+    pyautogui.typewrite(['a', 'b', 'left', 'left', 'X', 'Y'], interval=1)
+
+    # check all the available keys 
+    pyautogui.KEYBOARD_KEYS
+
+    # press a single key on keyboard 
+    pyautogui.press('win')
+
+    # press key(s) by sequence without releasing 
+    pyautogui.hotkey('ctrl', 'alt', 'deletetype')
+    ```
+
+### Screenshots and Image Recognition 
+Module `pyautogui` 
+1. We can use `pyautogui.screenshot()` which method takes a screen shot of the computer and store it as a "**pillow image object**". Note that this pillow image module is part of "pyautogui" module but not mentioned in the course. We can check for more information at [here](https://automatetheboringstuff.com/2e/chapter19/). 
+1. We can give a filename with path to let the method save the screenshot at a given location. For example, we can store the screenshot image at desktop by `pyautogui.screenshot('C:\\Users\\\<username>\\Desktop\\screenshot.PNG')
+1. To locate a location by searching image, we can corp part of the screen and keep it as image. We then use `pyautogui.locateOnScreen(filepath)` to search for the location on the screen. The method returns 4 values which is x and y coordinate from the top-left corner of the object with "width" and "height". For example, we can corp the key "7" of calculator and store it as 'calc7key.png' on desktop. We can use `pyautogui.locateCenterOnScreen(filepath)` to get the coordinate of the center of the image on screen. 
+    ```py 
+    import pyautogui 
+    pyautogui.locateOnScreen('C:\\Users\\<username>\\Desktop\\screenshot.PNG')
+    # return (x, y, width, height)
+    pyautogui.locateCenterOnScreen('C:\\Users\\<username>\\Desktop\\screenshot.PNG')
+    # return (x , y) which is the center of the image 
+    ```
+1. After we get the coordinate, we can use other commands such as `pyautogui.moveTo((x, y), duration=1)` and `pyautogui.click()`, or use `pyautogui.click(x, y)` directly. Note that the image crop must be perfect match for ever pixal. The calculator we use is slightly transparent, so we have to be very careful for it background color when corp the screenshot. 
+1. This image recognition is very useful such as automation the process to play some games or other repetitive tasks. 
