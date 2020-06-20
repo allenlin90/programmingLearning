@@ -2033,4 +2033,101 @@ h1.d {
     ```
 
 ### keyframe Animation 1
-1. 
+1. CSS animation is to animate an element by changing its style properties with CSS. For example, we can create an element as an object and changing it's width in a given timeframe. 1
+1. There are several properties we can set up with the animation. 
+    1. `animation-name` is a variable-like setting which we can use `@keyframe` to select and give instructions. 
+    1. `animation-duration` is how long the animation finishes through each iteration. The unit is in seconds. 
+    1. `animation-iteration-count` is how many times the animation iterates. The default number is one. We can set it as `inifinit`, so the animation will keep repeating. 
+    1. `animation-fill-mode`, if we set this property as `forwards` the element will stay at its last styling. For example, if we stretch the width of an element from 200px to 600px. The element will return back to 200px after animation ends. However, by changing this "fill-mode" to `forwards`, the element will stay at 600px. 
+    1. `animattion-delay` takes either duration in seconds or milliseconds that after the page loads, the animation will start after delay duration ends. 
+    1. `animation-direction` has default as `alternate`. We can change its value to `alternate-reverse`, so the animation will start from its ultimate setting reversely from the end to beginning. 
+    1. `animation-timing-function` can be set as `ease-in`, `ease-out`, or `ease-in-out`. 
+        1. The animation will start slow and go fast at the end in `ease-in`. 
+        1. The animation will start fast but end slowly in `ease-out`. 
+        1. The animation will be slow at start and the end but go fast in between. 
+    ```html 
+    <style>
+        body {
+        background:#333; 
+    }
+
+    .box {
+        background: white;
+        width: 200px;
+        height: 200px;
+        position: relative; 
+        animation-name: animate1;
+        animation-duration: 2s; 
+        animation-fill-mode: forwards;
+        animation-iteration-count: infinite;
+        animation-delay: 1000ms;
+        animation-timing-function: ease-in-out;
+    }
+
+    @keyframes animate1 {
+        from {
+            width: 200px; /* we can skip this as the width of the element has been 200px */
+            top: 0; 
+        }
+        to {
+            width: 600px;
+            background-color: red; 
+            top: 300px; /* move the element from top to down by 300px */
+        }
+    }
+    </style>
+    <body>
+        <div class="box"></div>
+    </body>
+    ```
+1. Note that without `from` and change the position, the element will just be "teleported" from its original position to the location in "to". 
+1. We can even give the values for the properties for `animation` in one line. We can check the sequence of values at [here](https://www.w3schools.com/cssref/css3_pr_animation.asp) 
+
+### keyframe Animation 2
+1. Besides giving absolute position using "from" and "to", we can use percentage which stands for the timeframe of the animation. For example, we give duration as `animation-duration: 5s` and turn the square into a circle through an iteration when loop in a square route. 
+```css
+body {
+    background:#333; 
+}
+
+.box {
+    background: white;
+    width: 200px;
+    height: 200px;
+    position: relative;
+    animation-direction: alternate ;
+    animation: animate1 5s forwards ease-in-out;
+    top:0; 
+    left: 0;
+}
+
+@keyframes animate1 {
+    25% {
+        top: 0;
+        left: 300px;
+        background: red; 
+        border-radius: 50% 0 0 0;
+    }
+
+    50% {
+        top: 300px; 
+        left: 300px;
+        background: green; 
+        border-radius: 50% 50% 0 0;
+    }
+
+    75% {
+        top: 300px; 
+        left: 0;
+        background: blue; 
+        border-radius: 50% 50% 50% 0;
+    }
+
+    100% {
+        top: 0; 
+        left: 0;
+        background: white; 
+        border-radius: 50% 50% 50% 50%;
+    }
+}
+```
