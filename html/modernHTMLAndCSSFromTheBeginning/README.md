@@ -2131,3 +2131,35 @@ body {
     }
 }
 ```
+
+# Mini projects with Keyframes, Transitions, etc. 
+1. Presentation Website 
+1. Hamburger Menu 
+1. Knowledge Timeline 
+
+### Presentation Website 
+1. A slide-like presentation website which we can use instead of powerpoint. 
+1. All the contents are on the same page, but can only view different pages by clicking buttons rather than scrolling the webpage. 
+1. We can use `overflow: hidden` to take scroll bar out if the elements is out of the brwoser viewport range. Besides, we can use `height: 100vh` to make the element covers the whole viewport according to the size of the device. Therefore, we can make all contents on the same page, while users can't access other part of the page. 
+1. In this project, we can set CSS variables on the very top, so we can change the properties easily such as the background color of each section (page) without accessing or modifying the other details. 
+1. We use `transition: all 0.3s ease-in` on the buttons to create animation on "hover" event. The buttons can change their color when the mouse curosr hovers on with a delay at 0.3 second. Besides, since create 2 buttons "prev" and "next" on the page, we can make different styling on each of them. 
+1. We can use `transform: translateX()` and `transform: translateY()` to make text fly in animation. For example, we can give the elements with 
+1. We can apply "**smooth scrolling**" animation from jQuery when the user click the buttons to go previous or next page. We can change the speed of scrolling by the 2nd argument of `.animate()` method which unit is in millisecond. `.hash` is to check the element has a hash "#" or not, which is the anchor tag that is with "#" to direct to a section with ID. 
+    ```js 
+    // Smooth Scrolling from jQuery 
+    $('.btn').on('click', function(event){
+        if (this.hash !== '') {
+            event.preventDefault();
+            const hash = this.hash;
+            $('html, body').animate(
+                {
+                    scrollTop: $(hash).offset().top
+                },
+                800
+            );
+        }
+    });
+    ```
+
+### Hamburger Menu Overlay 
+1. 

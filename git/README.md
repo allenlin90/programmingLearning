@@ -65,4 +65,32 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 
-## Day 7 - Investigating Git data structure and index structure 
+## Day 7 - Investigating Git data structure - index structure 
+`git status`, `git add`, `git commit`, `git status`, `git rm`, `git mv`
+1. In short, index is used to record "what files will be submitted to the next commit". 
+1. "Index" has several alias and similar names, such as the followings. Besides, `git diff --cached` and `git diff --staged` are the same. 
+    1. "Cache" 
+    1. "Directory cache" 
+    1. "Current directory cache" 
+    1. "Staging area" is the space that waiting to be committed. 
+    1. "Staged files" are the files that waiting to be committed. 
+
+    <img src="gitFileStatusLifecycle.png">
+
+    1. "untracked" files are the files that are "not tracked" and not added to git repository. 
+    1. "unmodified" files are added at the first time in the repository or file content is the same as the "HEAD" content in the repository (which means the file is not changed in any way).
+    1. "modified" files are edited or changed and its "HEAD" content is not the same as it in the repository. 
+    1. "staged" files are files waited to be committed. These files will be stored in the repository in the next git commit. 
+1. We can use `git status` to check the changes and difference between indexed and latest files. There are 3 main categories. 
+    1. "Changes to be committed", the files in this category are indexed, the file is the latest version, and will be committed in the next `git commit`. 
+    1. "Changes not staged for commit", the files are changed but not added to be committed. Therefore, the latest version of the file will not be committed in the next `git commit`. 
+    1. "Untracked files" means that the files are not indexed nor added to be tracked. Therefore, the files won't be stored in the git repository. 
+1. `git add` is to add the changes of current working directory to the indexed files. 
+1. `git rm filename` can remove the file **BOTH** in the "working directory" and the "git repository". Note that we can use `git rm --cached filename` to remove the file from the "git repository" but keep the file in the "working directory". 
+1. `git mv` is simialr to `mv` in terminal command to either move or change the name of a file. 
+1. `git commit` will check the difference between indexed and added files and submit the difference as a commit object to store in the repository. 
+
+
+
+## Day 8 - Branch basics and usage 
+1. 
