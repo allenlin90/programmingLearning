@@ -6,20 +6,21 @@
 **Methods**
 1. Methods are properties that hold function values. A method needs to work on the object it was called. A binding "**this**" in its body automatically points at the object that it was called on. 
 1. "**this**" can be considered as an extra parameter that is passed in a different way. We can use `.call()` method for function values to pass in an object or other values as the first argument to the funciton. 
-1. Each function has its own `this` binding, which value depends on the way it is called, which means the keyword `this` will be limited to a function scope. If there's an inner or callback function, as the scope changes, the referral object will be changed. However, Arrow functions are different as that they don't have their own `this` binding as it is an expression. (Note that expression returns value(s), while statement is an action). Besides, we can't define a method in arrow function, as it can't be invoked as the `this` in there will be bound to the wrong object. Arrow functions shine best with anything that requires `this` to be bound to the context, and not the function itself.
-```
-function normalize() {
-  console.log(this.coords.map(n => n / this.length));
-}
-normalize.call({coords: [0, 2, 3], length: 5});
-// → [0, 0.4, 0.6]
-//If the argument to amp using function keyword, the code wouldn't work.
-```
+1. Each function has its own `this` binding, which value depends on the way it is called, which means the keyword `this` will be limited to a function scope. If there's an inner or callback function, as the scope changes, the referral object will be changed. 
+1. However, "**Arrow functions**" are different as that they don't have their own `this` binding, as it is an expression. (Note that expression returns value(s), while statement is an action). Besides, we can't define a method in arrow function, as it can't be invoked as the `this` in there will be bound to the wrong object. Arrow functions shine best with anything that requires `this` to be bound to the context, and not the function itself.
+    ```js
+    function normalize() {
+    console.log(this.coords.map(n => n / this.length));
+    }
+    normalize.call({coords: [0, 2, 3], length: 5});
+    // → [0, 0.4, 0.6]
+    //If the argument to amp using function keyword, the code wouldn't work.
+    ```
 
 **Prototypes**
-1. Most objects in JavaScript have a property `prototyp` to set up their properties. When an object gets a request for a property that it does not have, its prototype will be searched for the property, then the prototype’s prototype, and so on.
+1. `Objects` in JavaScript have a property `prototype` to set up their properties. When an object gets a request for a property that it does not have, its prototype will be searched for the property, then the prototype’s prototype, and so on.
 1. We can use Object.getPrototypeOf(**_`obj`_**) to return the prototype of an object. The prototype relations of JavaScript objects form a tree-shaped structure, and at the root of this structure sits `Object.prototype`. It provides a few methods that show up in all objects. 
-    ```
+    ```js
     console.log(Object.getPrototypeOf({}) ==
                 Object.prototype);
     // → true
@@ -27,7 +28,7 @@ normalize.call({coords: [0, 2, 3], length: 5});
     // → null
     ```
 1. Many objects don’t directly have `Object.prototype` as their prototype but instead have another object that provides a different set of default properties. Functions derive from `Function.prototype`, and arrays derive from `Array.prototype`. The prototpye object will itself have a prototype as `Object.prototype` which is kept in `_proto_` property. `Array.prototype._proto_ == Object.prototype //true`
-    ```
+    ```js
     console.log(Object.getPrototypeOf(Math.max) ==
                 Function.prototype);
     // → true
@@ -38,23 +39,23 @@ normalize.call({coords: [0, 2, 3], length: 5});
 1. We can use `Object.create` to create an object with a specific prototype. The passed property values are stored in the hidden property `_proto_` which has an inner `_proto_` which is an Object.prototype. 
 1. We can assign a variable with an object. A property like speak(line) in an object expression is a shorthand way of defining a method. It creates a property called speak and gives it a function as its value. 
 1. We use `Object.create` to create an object inherit the prototype properties which is hidden in `__proto__`. Note that the object created with the function will still be empty as it is only assigned with the hidden properties from the prototype. Besides, as the new created object is still an **object** type of value, it also inherits the properties of Object.prototype. 
-```
-let protoRabbit = {
-  speak(line) {
+    ```js
+    let protoRabbit = {
+    speak(line) {
     console.log(`The ${this.type} rabbit says '${line}'`);
-  }
-};
-let killerRabbit = Object.create(protoRabbit); 
-//killerRabbit is still an empty object. 
-killerRabbit.type = "killer";
-killerRabbit.speak("SKREEEE!");
-// → The killer rabbit says 'SKREEEE!'
+    }
+    };
+    let killerRabbit = Object.create(protoRabbit); 
+    //killerRabbit is still an empty object. 
+    killerRabbit.type = "killer";
+    killerRabbit.speak("SKREEEE!");
+    // → The killer rabbit says 'SKREEEE!'
 
-killerRabbit.__proto__ == protoRabbit 
-//true 
-killerRabbit.__proto__.__proto__ == Object.prototype
-//true 
-```
+    killerRabbit.__proto__ == protoRabbit 
+    //true 
+    killerRabbit.__proto__.__proto__ == Object.prototype
+    //true 
+    ```
 
 **Classes** 
 1. JavaScript prototype system can be understood as the object-oriented concept **_class_** (which feature is available in Python that we can also define our own classes). A **_class_** defines the shape of a type of object. An objecte created under the **_class_** is called an **__instance__** of the class. 
@@ -65,43 +66,42 @@ killerRabbit.__proto__.__proto__ == Object.prototype
     1. returned at the end of the function. 
 1. Constructor funcitons (actually all functions) have a property "**prototype**" whose value is an object with property "constructor". This "constructor" property has a value which is the constructor function itself. 
 1. By convention, the names of constructors are capitalized so they can be easily distinguished from other functions. Note that constructors are functions, and all function values have a property "prototype". An object created with keyword `new` with a constructor with inherit the prototype property from the constructor. If there's `this` keyword in the constructor function, it will point to the newly created object directly. 
-```
-//A constructor function 
-function makeRabbit(type) {
-  let rabbit = Object.create(protoRabbit);
-  rabbit.type = type;
-  return rabbit;
-}
+    ```js
+    //A constructor function 
+    function makeRabbit(type) {
+    let rabbit = Object.create(protoRabbit);
+    rabbit.type = type;
+    return rabbit;
+    }
 
-function Rabbit(type) {
-  this.type = type;
-}
-Rabbit.prototype.speak = function(line) {
-  console.log(`The ${this.type} rabbit says '${line}'`);
-};
+    function Rabbit(type) {
+    this.type = type;
+    }
+    Rabbit.prototype.speak = function(line) {
+    console.log(`The ${this.type} rabbit says '${line}'`);
+    };
 
-let weirdRabbit = new Rabbit("weird");
+    let weirdRabbit = new Rabbit("weird");
 
-console.log(Object.getPrototypeOf(Rabbit) ==
-            Function.prototype);
-// → true
-console.log(Object.getPrototypeOf(weirdRabbit) ==
-            Rabbit.prototype);
-// → true
+    console.log(Object.getPrototypeOf(Rabbit) ==
+                Function.prototype);
+    // → true
+    console.log(Object.getPrototypeOf(weirdRabbit) ==
+                Rabbit.prototype);
+    // → true
 
-```
+    ```
 
 **Class notation**
 1. Before ES6, classes in JavaScript can only be created by constructor functions with their property "**prototype**". A new keyword `class` is introduced in ES6 in year 2015. 
 1. With the `class` declaration, we can define a constructor (which is a property of `prototype` property in a function value and we can use `this` to create properties of the instance in the class) and a set of methods in the same object (Note that a class is still an object). Besides, the number of methods in the set can be as many as we want or just 0. 
 1. Class declarations currently allow only methods (properties that hold functions) to be added to the prototype, as because though we can use `this` we have to use `.bind()` or referrals to the correct object. Otherwise, `this` may refer to the parent object which is usually the **_global_** object according to the environment. 
 1. Similar to `function`, `class` can be used both in statements and expressions. When it is used in an expression, it doesn't define a binding (variable) but just produce the constructor as a value. Besides, we can omit the `class` name similar to `function` as for one-time use. 
-
-```
-let object = new class { getWord() { return "hello"; } };
-console.log(object.getWord());
-// → hello
-```
+    ```js
+    let object = new class { getWord() { return "hello"; } };
+    console.log(object.getWord());
+    // → hello
+    ```
 
 **Overriding derived properties** 
 
