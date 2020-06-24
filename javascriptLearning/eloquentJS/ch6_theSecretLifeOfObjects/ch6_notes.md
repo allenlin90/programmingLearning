@@ -117,38 +117,86 @@
     1. `.has()` method checks if the object has a certain "key" (property) as the given argument and returns boolean `true` or `false`. 
 1. We can use `Object.keys(obj)` which takes an object as argument and return an **array** which has all the keys (properties) of the object. 
 1. Besides keyword `in` (which is used in an expression), `.hasOwnProperty()` is a method that takes a string as an argument to check if the string value matches any name of object's property and returns a boolean value. 
-
-```
-console.log("x" in {x: 1}); //true 
-console.log({x: 1}.hasOwnProperty("x")); //true 
-```
+    ```js 
+    console.log("x" in {x: 1}); //true 
+    console.log({x: 1}.hasOwnProperty("x")); //true 
+    ```
 
 **Polymorphism** 
-The main idea is that a sub class can inherit properties from its parent but "mutate" some of them. Tough it may look very different from its parent, it is still the same type as its parent class. The idea is like a car is a vehicle, but not all vehicle are cars (airplne and ship are also vehicles). 
-(Don't understand the topic yet...Skipped...)
+The main idea is that a sub class can inherit properties from its parent but "**mutate**" some of them. Tough it may look very different from its parent, it is still the same type as its parent class. The idea is like a car is a vehicle, but not all vehicle are cars (airplne and ship are also vehicles). Besides, we can change some of the derived methods to return useful information of the `Object`.
 
 **Symbols** 
 1. If we use a String as the name of property, we may override the inherited one. However, we can not only use Strings as name for property but also `Symbols`. 
 1. `Symbols` are values created with the Symbol function. Unlike strings, newly created symbols are unique which means that we cannot create the same symbol twice. We can pass a string value to a `Symbol`, so when the Symbbol turned into a String, the String value also shows. Though it would be easier to recognize, it has no meaning beyond as multiple symbols can have the same name. 
 1. We use square brackets notation after an object to call a property which is named with symbol value. 
-```
-const toStringSymbol = Symbol("toString");
-Array.prototype[toStringSymbol] = function() {
-  return `${this.length} cm of blue yarn`;
-};
+    ```js
+    const toStringSymbol = Symbol("toString");
+    Array.prototype[toStringSymbol] = function() {
+        return `${this.length} cm of blue yarn`;
+    };
 
-console.log([1, 2].toString());
-// → 1,2
-console.log([1, 2][toStringSymbol]());
-// → 2 cm of blue yarn
+    console.log([1, 2].toString());
+    // → 1,2
+    console.log([1, 2][toStringSymbol]());
+    // → 2 cm of blue yarn
 
-let stringObject = {
-  [toStringSymbol]() { return "a jute rope"; }
-};
-console.log(stringObject[toStringSymbol]());
-// → a jute rope
-```
+    let stringObject = {
+        [toStringSymbol]() { return "a jute rope"; }
+    };
+    console.log(stringObject[toStringSymbol]());
+    // → a jute rope
+    ```
 
 **The iterator interface** 
 1. Objects are expected to be **_iterable_** when given to FOR/OF loop. It has a method named the `Symbol.iterator` (a symbol value is stored as a property of the `Symbol` function). When it is called, the method should return an object that provides a second interface, **_iterator_**, which has a `next` method that returns the next result. That result should be an object with a `value` property, which holds the next value, and a `done` property, which is true when there is no more result. Otherwise, `done` should be `false`. 
 1. Note that `next`, `value`, and `done` property names are plain strings, not symbols. Only `Symbol.iterator` is an actual symbol. 
+(Don't understand the topic yet...Skipped...)
+
+**Getters, setters, and statics**
+1. We can use `get` keyword to run a method in an `Object` without calling the method itself by parenthesis. Besides, the method can not be called directly as well. This can be useful to return a dynamic result rather than a static value. For example, we can set up `Object.keys(this)` in this "getter" method to get a dynamic array of properties of the `Object`. Therefore, in the following example, if someone checks the object's "size" property, it calls the method and return a random number. 
+    ```js
+    let varyingSize = {
+        get size() {
+        return Math.floor(Math.random() * 100);
+        }, 
+        get keys() {
+        return Object.keys(this); 
+        },
+        a: 1,
+    };
+
+    console.log(varyingSize.size); // a random number returned by the method 
+    console.log(varyingSize.keys); // ['size', 'keys', 'a'] 
+    ```
+1. Besides `get`, we can use `set` to set the value returned from the method to another properyt of the `Object`. In the following example, we can create a "Temperature" `Object` by giving degrees in "**celcius**" or "**fahrenheit**". If we set the temperature by giving a temperature in fahrenheit, the object will convert it to degree in celcius by the given formula. With keyword `static`, we can create the `Object` by giving a temperature in fahrenheit. 
+    ```js 
+    class Temperature {
+        constructor(celsius) {
+        this.celsius = celsius;
+        }
+        get fahrenheit() {
+        return this.celsius * 1.8 + 32;
+        }
+        set fahrenheit(value) {
+        this.celsius = (value - 32) / 1.8;
+        }
+    
+        static fromFahrenheit(value) {
+        return new Temperature((value - 32) / 1.8);
+        }
+    }
+    
+    let temp = new Temperature(22);
+    console.log(temp.fahrenheit);
+    // → 71.6
+    temp.fahrenheit = 86;
+    console.log(temp.celsius);
+    // → 30
+    ```
+
+**Inheritance**
+1. We can build a new class which inherits some of the properties from an existing class by using `class newClass extends oldClass {}`. 
+(Don't understand the topic yet...Skipped...)
+
+**The `instanceof` Operator**
+1. We can use keyword `instanceof` to check if an `Object` is an instance of a "**class**" by giving the `Object` and the `Constructor`. 

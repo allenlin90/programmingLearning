@@ -1,27 +1,40 @@
-class Rabbit {
-    constructor(type) {
-        this.type = type; 
+class Matrix {
+    constructor(width, height, element = (x, y) => undefined) {
+      this.width = width;
+      this.height = height;
+      this.content = [];
+  
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          this.content[y * width + x] = element(x, y);
+        }
+      }
     }
-    speak(line){
-        console.log(`The ${this.type} rabbit says '${line}'`); 
+  
+    get(x, y) {
+      return this.content[y * this.width + x];
     }
-}
+    set(x, y, value) {
+      this.content[y * this.width + x] = value;
+    }
+  }
 
-let killerRabbit = new Rabbit('killer');
-let blackRabbit = new Rabbit('black');
-
-Rabbit.prototype.eat = function(food){
-    console.log(`The ${this.type} rabbit eats '${food}'`);
-};
-Rabbit.prototype.eyeColor = function(color){
-    this.eyeColor = color;
-};
-
-blackRabbit.eyeColor('black'); 
-
-blackRabbit.speak('dark');
-killerRabbit.eat('pudding');
-console.log(blackRabbit);
-
-// let object = new class { getWord() { return "hello"; } };
-// console.log(object);
+  class SymmetricMatrix extends Matrix {
+    constructor(size, element = (x, y) => undefined) {
+      super(size, size, (x, y) => {
+        if (x < y) return element(y, x);
+        else return element(x, y);
+      });
+    }
+  
+    set(x, y, value) {
+      super.set(x, y, value);
+      if (x != y) {
+        super.set(y, x, value);
+      }
+    }
+  }
+  
+  let matrix = new SymmetricMatrix(5, (x, y) => `${x},${y}`);
+  console.log(matrix.get(2, 3));
+  // → 3,2
