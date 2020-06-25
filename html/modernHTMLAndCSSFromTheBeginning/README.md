@@ -870,7 +870,7 @@
 1. The webpage is captured in 1920x1080 resolution on full screen of 13-inch monitor.
 
 ### File structure and Navbar 
-<img src='./HotelWebsite/hotelWebsiteIndex.PNG'>
+<img src='./hotelWebsite/hotelWebsiteIndex.PNG'>
 
 1. We have the landing page named as `index.html` as this will be the very first file that the program searches to render. We can have several other pages in CWD (current working directory). In the case, we have another two, `about.html` and `contact.html`. 
 1. We can use `<meta>` tag to have further metadata for search engine to parse and do SEO in the `<head>` tag. 
@@ -2162,4 +2162,52 @@ body {
     ```
 
 ### Hamburger Menu Overlay 
-1. 
+1. We create a "hamburger" sign for menu list and put it on the top corner. It will filter the background, show a list of links we can access on the page and turn the "hamburger" sign into a "X", and all the elements appear and fade with animated effect. Besides, this feature is responsive to all screen sizes. (We can use this feature in the other projects as well). The structure of html is relatively simple, and we will use CSS to achieve it. Note that the following code is only the hamburger menu. 
+    ```html
+    <body>
+        <div class="menu-wrap">
+            <input type="checkbox" class="toggler" name="" id="">
+            <div class="hamburger"><div></div></div>
+            <div class="menu">
+                <div>
+                    <div>
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Services</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    ```
+1. We create CSS variable in the "root" and have an "overlay" color setup which is the filter-like whole screen cover. 
+1. We can use `box-sizing: border-box` property to limit the size of block elements. With the property, all padding and maring will be limited to its given width and height. 
+1. If we use `margin: auto` and give `padding` to a block element, all its child elements will be kept in the middle as be "**centered**". 
+1. Since we'd like to add an overlay to the whole screen, we give the main block element `height: 100vh` to cover the whole page. Besides, we set its `position: relative` because the "overlay" filter should be set as `position: absolute`. Remember that to set an element as "**absolute**" its parent element should be "**relative**". 
+1. Since we've added the background color with transparency by "rgba", we can add the background image to the section but "before" with the followings. As it's "background" image, we can set negative value to `z-index` property to send the element back. Note that by `css selector:before`, we don't actually create an element but use only CSS features to create the effect. 
+    ```css
+    #IDSelector:before {
+        content: '';
+        background: url('showcase.jpg') no-repeat center center/cover; 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        z-index: -1; 
+    }
+1. We'd like to keep all the elements in the section be on the middle of the column and the elements in the middle of the `<header>` tag. If we'd using `flexbox` module to do it, we have to ensure the child elements has the same height as its parent. For example, we give the `<header>` tag `height: 100vh`. Therefore, we should make the `<div>` tag has `height: 100%`. 
+1. Note that if we set `height: 100vh` on the `<div>` tag directly, the "**flexbox**" module also works as what we want. 
+1. We can use `transition: all 1s ease-in-out` for the `btn:hover` animation when mouse hover on the anchor tag that has `class="btn"`. 
+    ```html
+    <header id="showcase">
+        <div class="container showcase-container">
+            <h1>Welcome</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora natus laborum, dolorem labore omnis similique dolore quam. Repellat, doloribus hic!</p>
+            <a href="#" class="btn">Read More</a>
+        </div>
+    </header>
+    ```
