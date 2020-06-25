@@ -2,7 +2,7 @@
 Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in the future. 
 
 ## Day 4 - Common commands 
-### Stagin files
+### Staging files
 1. After using `git init` to start a repository, we can use `git add .` to add all the files including hidden ones in the repository. Note that dot "." is a wild-card that matches all the possible files. After adding, we can check with `git status` for the conditions and check if there's any file that hasn't been added. 
 1. The added files are "**staged**" which means the files are ready to "**commit**". We can cancel it if by `git reset`. 
 1. We can add part of the files or a single certain files with `git add directory/filename`, so the command will stage only the given directory or file. Other commands such as using asterisk. For example, `git add .*` means to add any directory or files that starts with a dot ".". This is useful when we are trying to add all the hidden folders (folders start with dot is hidden in Linux). 
@@ -31,7 +31,7 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 ### Understanding repository 
 1. We can use `git init` to initiate and start a repository in a directory. At the directory, GIT will create a `.git` folder which is the repository that keeps all the logs and records of the project we are going to develop. In the repository, we can create "**branches**" 
 1. "**objects**" are immutable, which usually have only additional data rather than deleteing or changing the contents. 
-1. "**index**" is a mutable file that records the data and contetns which are going to be submitted in the next commit. 
+1. "**index**" is a mutable file that records the data and contents which are going to be submitted in the next commit. 
 
 ### Objects 
 1. "objects" are special files that named by SHA1 hashing. When using git version control, all folders/directories and files will be separated into "directory" (tree objects) and "contentes" (blob objects). These objects can't stand alone without each other and are kept in "objects" folder under `.git` directory, as "object storage". 
@@ -107,9 +107,11 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 1. If we use `git commit` on an old commit, the new created commit can't be tracked. Therefore, we should create a branch based on the commit which we switch to by using `git branch [newBranchName]`. Then we should use `git checkout [newBranchName]` to switch to the new branch. Note that we can use `git branch -b [newBranchName]` to create and switch to the new branch at the same time. 
 1. We then can use "SourceTree", "Fork" or other GUI git tools to visualize the working trees. 
 
+
+
 ## Day 9 Difference between files and versions 
 1. We can use `git diff id1 id2` to check the difference between 2 commits. We use the following instructions to test by creating 2 text files "a.txt" and "b.txt" and commit twice with different contents in the text files. 
-    ```
+    ```shell
     mkdir git-demo
     cd git-demo
     git init
@@ -152,3 +154,6 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     -2
     +4 ^M
     ```
+1. When we use `git diff`, git is comparing the "**tree**" object. Before using `git add .`, we can use this command to check what we have changed or updated in this commit. Note that if the all the changed files are added (indexed and staged), there will be no returned message after typing `git diff`. 
+1. `git diff HEAD` will check the difference of files between current "**working directory**" (which would not be staged  or commit yet) and "HEAD" (which is the latest verions of the current branch that hasn't been commit yet). Therefore, the returned info will be the same if files "staged (indexed)" and in current "working directory" are the same (it means that we have indexed all the changed files). The information given by `git diff HEAD` and `git diff --cached` should be the same. 
+1. We can use `git diff --cached` (same as `git diff --staged` and `git diff --cached HEAD`) command to check what we have done by this commit without giving any commit ID. Besides, we can use `git diff commitID1 commitID2` to check difference between 2 commits. 
