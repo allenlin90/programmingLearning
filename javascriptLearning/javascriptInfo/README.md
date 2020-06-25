@@ -581,3 +581,89 @@ welcome()
 1. `Math.pow(n, power)` returns `n` raised the given power. For example, `Math.pow(2,10)` is 1024. 
 
 Note: We should be very careful with the calculation by programming language due to "**impercision**" that makes the calculation incorrect. For example, in the exercise, `6.35.toFixed(1)` is `6.3` rather than rounded as `6.4`. We have to use multiplication `console.log(Math.round(6.35 * 10) / 10)` to make the number correct. 
+
+### Strings 
+1. In JavaScript the textual data is stored as `Strings`. There is no separate type for a single character, such as "char" type in C language, while "string" is an array of chars. 
+1. The internal format for strings is always UTF-16, it is not tied to the page encoding, which could be "UTF-8" or other types. 
+
+**Quotes**
+1. `Strings` can be enclosed within either single quotes ('), double quotes ("), and backticks (`). Note that singel and double quotes are essentially the same. We can use one another in the String as part of the value. 
+    ```js 
+    console.log("I'm Allen");
+    ```
+1. Backticks, on the other hand, allow us to embed any expression into the string with `${expression}`. Besides, it can allow a string to span multiple lines, which is similar to triple quotes in Python. Backticks also can be used for "template function" with syntax ``func`string` ``.
+
+**Special characters** 
+1. We can create multiline strings with single and double quotes with "newline character" `\n`. If we use backticks to make a multilline string, it's the same as using "newline character" to create a `String` with single or double quotes. There are several other special characters such as `\r` (this isn't used alone and should be used with \r\n to represent a line break in Windows text files), `\t` for a tab. Note that all special characters start with a backslash `\`, which is also called "**escape character**". 
+    1. `\xXX` is for unicode characters with given hexadecimal unicode `XX`. For example, `\x7A` is the same as `z`. 
+    1. `\uXXXX` is a unicode symbol with the hex code `XXXX` in UTF-16 encoding, for instance `\u00A9` is a unicode for the copyright symbol `©`. It must be exactly 4 hex digits. 
+    1. `\u{X...XXXXXX}` A unicode symbol with the given UTF-32 encoding (from 1 to 6 hex characters). Some rare characters are encoded with two unicode symbols, taking 4 bytes. This way we can insert long codes.
+    ```js 
+    let str1 = "Hello\nWorld"; 
+    let str2 = `Hello
+    World`; 
+
+    console.log(str1 == str2); // true 
+
+    console.log('I\'m Allen'); // escape single quote with backslash 
+
+    console.log("\u00A9"); // ©
+    console.log("\u{20331}"); // 佫, a rare Chinese hieroglyph (long unicode)
+    console.log("\u{1F60D}"); // 😍, a smiling face symbol (another long unicode)
+    ```
+
+**String length** 
+1. We can use `.length` to check a `String` value length. Note that `\n` is a single character. Besides, `.length` is a numeric property which is not a function. When calling `.length` we don't put parenthesis. 
+
+**Accessing characters**
+1. We can pass a position (index) to either square bracket notation `[]`  or `.charAt()` method to get a character at the given position. Note that the 1st character of the sequnece starts from zero position. Besides, square brackets return `undefined`, while `.charAt()` method returns an empty string when there's no character found. 
+1. Similar to `Array`, we can use `for (of)` to loop through each character of a `String`. 
+
+**Strings are immutable**
+1. Strings can't be changed in JavaScript. It is impossible to change a character. The usual workaround is to create a whole new string and assign it to the variable instead of the old one. 
+    ```js 
+    let str = 'Hi'; 
+    str[0] = 'h'; // error
+    console.log(str[0]); // H
+
+    str = 'h' + str[1]; 
+    console.log(str); // hi
+    ```
+
+**Changing the case**
+1. We can use `.toLowerCase()` method and `toUpperCase()` method to change the case. Note that the methods return a new value without modifying the `String` value. To keep the value, we can assign it to a variable. 
+
+**Searching for substring**
+1. `.indexOf()` method takes 2 arguments. The 1st one is the substring we want to find from the `String` value, and the 2nd one is the position to start the search. The method returns the position of the character in the `String`. If the character isn't found, it returns `-1`. Besides, we can use a `while` loop with a counter to check character in the string. The loop keeps iterating until the substring isn't found in the `String` and it `break`. 
+    ```js 
+    let str = 'Widget with id'; 
+    console.log(str.indexOf('Widget')); // 0
+    console.log(str.indexOf('id', 2)); // 12
+
+    let str = 'As sly as a fox, as strong as an ox';
+    let target = 'as'; // let's look for it
+    let pos = 0;
+    while (true) {
+        let foundPos = str.indexOf(target, pos);
+        if (foundPos == -1) break; // stop iteration if substring isn't found
+        console.log( `Found at ${foundPos}` );
+        pos = foundPos + 1; // continue the search from the next position
+    }
+
+    pos = 0; //reset counter
+    while ((pos = str.indexOf(target, pos + 1)) != -1) {
+        console.log(pos);
+    }
+    // Found at 7
+    // Found at 17
+    // Found at 27
+    ``` 
+
+**The bitwise NOT trick**
+1. This is a very old trick that usually exists in old code. If a number starts with a tilde `~`, the number will be converted to a 32-bit integer (its decimal part will be removed if exists) and reserves all bits in its binary representation. It means for 32-bit integers `~n` equals `-(n+1)`. Therefore, `~n` can only be zero when `n == -1`. We can use this trick to work on `IF` statement. 
+    ```js 
+    let str = 'Widget'; 
+    if (~str.indexOf('Widget')) {
+        console.log('Found it!'); // Found it! 
+    }
+    ```
