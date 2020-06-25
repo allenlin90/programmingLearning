@@ -660,10 +660,16 @@ Note: We should be very careful with the calculation by programming language due
     ``` 
 
 **The bitwise NOT trick**
-1. This is a very old trick that usually exists in old code. If a number starts with a tilde `~`, the number will be converted to a 32-bit integer (its decimal part will be removed if exists) and reserves all bits in its binary representation. It means for 32-bit integers `~n` equals `-(n+1)`. Therefore, `~n` can only be zero when `n == -1`. We can use this trick to work on `IF` statement. 
+1. This is a very old trick that usually exists in old code. If a number starts with a tilde `~`, the number will be converted to a 32-bit integer (its decimal part will be removed if exists) and reserves all bits in its binary representation. It means for 32-bit integers `~n` equals `-(n+1)`. Therefore, `~n` can only be zero when `n == -1`. We can use this trick to work on `IF` statement. However, this trick is mostly not used, as modern JavaScript introduces other useful methods, such as `.include()`. 
     ```js 
     let str = 'Widget'; 
     if (~str.indexOf('Widget')) {
         console.log('Found it!'); // Found it! 
     }
     ```
+
+**includes, startsWith, endsWith**
+1. We can use `.includes()`, `.startsWith()`, and `.endsWith()` methods to check if a substring is in the `String` value. `.includes()` method takes 2 arguments, which is the substring and the starting position. All methods return a boolean value `true` or `false`. 
+    ```js 
+    let str = 'Widget with id'; 
+    console.log(str.includes('Widget'))
