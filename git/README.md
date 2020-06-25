@@ -157,3 +157,8 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 1. When we use `git diff`, git is comparing the "**tree**" object. Before using `git add .`, we can use this command to check what we have changed or updated in this commit. Note that if the all the changed files are added (indexed and staged), there will be no returned message after typing `git diff`. 
 1. `git diff HEAD` will check the difference of files between current "**working directory**" (which would not be staged  or commit yet) and "HEAD" (which is the latest verions of the current branch that hasn't been commit yet). Therefore, the returned info will be the same if files "staged (indexed)" and in current "working directory" are the same (it means that we have indexed all the changed files). The information given by `git diff HEAD` and `git diff --cached` should be the same. 
 1. We can use `git diff --cached` (same as `git diff --staged` and `git diff --cached HEAD`) command to check what we have done by this commit without giving any commit ID. Besides, we can use `git diff commitID1 commitID2` to check difference between 2 commits. 
+
+
+
+## Day 10 - Understanding the absolute name of git object 
+1. 
