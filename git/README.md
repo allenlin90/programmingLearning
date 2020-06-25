@@ -108,3 +108,47 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 1. We then can use "SourceTree", "Fork" or other GUI git tools to visualize the working trees. 
 
 ## Day 9 Difference between files and versions 
+1. We can use `git diff id1 id2` to check the difference between 2 commits. We use the following instructions to test by creating 2 text files "a.txt" and "b.txt" and commit twice with different contents in the text files. 
+    ```
+    mkdir git-demo
+    cd git-demo
+    git init
+
+    echo 1 > a.txt
+    echo 2 > b.txt
+    git add .
+    git commit -m "Initial commit"
+
+    echo 3 > a.txt
+    echo 4 > b.txt
+    git add .
+    git commit -m "Update a.txt and b.txt to 3 and 4"
+    ```
+1. We can use `git log` to check the commits and use `git diff id1 id2` to check the difference. 
+    1. The first line `diff --git` indicates that which file is being compared. 
+    1. The 2nd line starting with "index" is the "Header Line" which could have many lines. The "ids" behind is the id of "blob objects" in the object storage. The last "**100644**" is the type of git. 
+    ```
+    0100000000000000 (040000): Directory
+    1000000110100100 (100644): Regular non-executable file
+    1000000110110100 (100664): Regular non-executable group-writeable file
+    1000000111101101 (100755): Regular executable file
+    1010000000000000 (120000): Symbolic link
+    1110000000000000 (160000): Gitlink
+    ```
+    1. In the following line, it indicates files with minus (-) is the old one, while the one with plus (+) is the new one. 
+    ```
+    diff --git a/a.txt b/a.txt
+    index f413f6b..ba86cc4 100644
+    --- a/a.txt
+    +++ b/a.txt
+    @@ -1 +1 @@
+    -1
+    +3 ^M
+    diff --git a/b.txt b/b.txt
+    index 33f8ad8..0254308 100644
+    --- a/b.txt
+    +++ b/b.txt
+    @@ -1 +1 @@
+    -2
+    +4 ^M
+    ```
