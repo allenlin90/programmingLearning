@@ -161,4 +161,65 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 ## Day 10 - Understanding the absolute name of git object 
-1. 
+1. During version control through git, every version created is a "**commit**" object. Besides, we would create many branches during the development process and make the "**commit graph**" relatively complicated. Therefore, it's critical to understand how to "**identify different versions**" and "**promptly locate the desirable version to extract data**". 
+1. Every object created in git system has an "**id**" hashed through "**SHA1**". This "**id**" is the absolute name of the object. If we can access this "id", we can easily access to the data of the version. For example, we can use `git log` to check commits in records. After getting the "**id**", we can use `git cat-file -p commitid` to check the details of the commit. We can use the same method to check with `treeid` and `blobid`. 
+1. Though the hashed ID is very long (**40** characters), we can access the commit version by giving id no less than 4 characters. Therefore, it means that the ID will be valid by giving `4` to `40` characters. 
+    ```bash 
+    git log # list of commits 
+    # For example, we take an ID b3f971a8616cb86354d039b4d9ba77f61dd9dc43
+    git cat-file -p b3f9 # details of commit ID 
+    # tree 85a8903c341d862f133f82357bebccb64fb43038
+    # parent d56f227f3b577073eff4d1d774bcda45fe015452
+    git cat-file -p 85a8 # access the tree ID 
+    # 100644 blob d5c06a97e645b56180c4354dbdf2401e6e9cf6a6    README.md
+    # 040000 tree bf3403acd9683388ae157db1b9ace2f8679d5588    git
+    # 040000 tree 6915c791d51b408cd2623ad0ca3ef710c397d9ef    html
+    # 040000 tree d034306398a3fd59b0d3e93afcf7d62d41f06370    javascriptLearning
+    # 040000 tree ef7cba0add134d642bcbab47e986ed4c3655413c    linuxOs
+    # 040000 tree e54d4f671279f3ed9f435a608dcb2cb6f830554b    pythonLearning
+    ```
+1. When checking the records, we can use `git log --pretty=oneline` to keep the records short. By this command, terminal will return only the commit ID and the message left for the commit. 
+1. We can make the records even shorter with `git log --pretty=oneline --abbrev-commit`, as the command will return only the first 7 characters of the ID. 
+
+
+
+## Day 11 - Git object reference 
+`git branch`, `git log --pretty=oneline`, `git log --oneline`, `git cat-file -p [ref or object_id]`, `git update-ref`, `git symbolic-ref`, `git show-ref`
+1. In git, "**reference**" is an "**index**" which refers to an object besides the "absolute name" (the 40-character ID). For example, we can use `HEAD` to refer to the latest commit in the branch which we are at. Besides, when we use `git branch [brachName]` to create a branch, the "branchName" is the reference. We can find that `git cat-file -p commitid` and `git cat-file -p branchName` return the same results. All the followings return the same results by giving branchName with aligned ID. 
+    1. `git cat-file -p commitID`
+    1. `git cat-file -p refs/heads/branchName`
+    1. `git cat-file -p heads/branchName`
+    1. `git cat-file -p branchName`
+1. A branch is a commit object which has its own SHA1 hashed ID. We can check the latest commit ID in `.git/refs/heads/master`, which file includes only 1 ID which is the ID of latest commit. Note that if there are other branches, these branches will have folders under `.git/refs/heads` directory. There are 3 main directory in `.git/refs`. 
+    1. `heads` has the commits in local repository. 
+    1. `remotes` has the commits on the remote repository such as GitHub. 
+    1. `tags` 
+    
+    Linux or OSX bash terminal 
+    ```bash 
+    cat .git/refs/heads/master # latest commit id
+    ```
+    Windows command prompt 
+    ```bat
+    type .git\refs\heads\master rem latest commit id 
+    ```
+1. Note that when we use git commands with shorthands ("**reference**", such as "**branchName**"), git will search with the following pathes for the file. If it finds, it will return the result. 
+    1. `.git/reference`
+    1. `.git/refs/reference`
+    1. `.git/refs/tag/reference;tagName`
+    1. `.git/refs/heads/reference;localbranchName`
+    1. `.git/refs/remotes/reference`
+    1. `.git/refs/remotes/reference;remotebranchName/HEAD`
+1. In git tools, there are several reference will be set in default. 
+    1. `HEAD` will always refer to the latest commit of the branch. 
+    1. `ORIG_HEAD` is the commit right before the latest one, which is the commit right before the current `HEAD`. 
+    1. `FETCH_HEAD` may use `git fetch` to extract objects in the remote repository. This reference keeps the IDs of HEAD from remote repository. 
+    1. `MERGE_HEAD` keeps the IDs of merged commits. 
+1. We can use `git update-ref reference commitid` to create a reference name such as `branchName` for a ID. Therefore, we can use the reference to access or refer to the object rather than using the id. Note that this function is available for all the git objects, such as `tree`, `parent`, and `blob`. Besides, we can use `git show-ref` to check all the references. 
+    ```bash 
+    git log --pretty=oneline 
+    git update-ref featureUpdate commitid 
+    git cat-file -p commitid # check details of a commit object by its ID 
+    git cat-file -p featureUpdate # check details of a commit object by its reference name 
+    git update-ref -d featureUpdate # delete the reference (not the branch itself)
+    ``` 
