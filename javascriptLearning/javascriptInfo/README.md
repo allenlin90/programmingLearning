@@ -672,4 +672,60 @@ Note: We should be very careful with the calculation by programming language due
 1. We can use `.includes()`, `.startsWith()`, and `.endsWith()` methods to check if a substring is in the `String` value. `.includes()` method takes 2 arguments, which is the substring and the starting position. All methods return a boolean value `true` or `false`. 
     ```js 
     let str = 'Widget with id'; 
-    console.log(str.includes('Widget'))
+    console.log(str.includes('Widget')); // true 
+    console.log(str.startsWith('Widget')); // true 
+    console.log(str.endsWith('Widget')); // false 
+    ```
+
+**Get a substring**
+1. We can use either `.substring()`, `.substr()`, or `.slice()` to get substring from a `String`. 
+1. `.slice()` takes 2 arguments, the first one is the starting position, while the 2nd is the ending (but not included) position. If we give only 1 argument, the method returns a substring from the given starting position till the end. 
+1. Besides, we can give negative values to let the method starts reversely. Note that since `-0` is considered the same as `0`, the negavtive value starts from `-1` to count the sequence reversely. 
+    ```js 
+    let str = 'stringify'; 
+    console.log(str.slice(0, 5)); // strin
+    console.log(str.slice(0, 1)); // s
+    console.log(str.slice(2)); // ringify
+    console.log(str.slice(-4, -1)) // gif
+    ``` 
+1. `.substring()` method is similar to `.slice()` method, as it returns a substring between the given positions. However, it can take starting and ending position reversely. Besides, `.substring()` method doesn't work as `.slice()` as to take negative values to work reversely. 
+    ```js 
+    let str = 'stringify'; 
+    console.log(str.substring(2, 6)) // ring
+    console.log(str.substring(6, 2)) // ring
+    ```
+1. `.substr()` method takes 2 arguments which is the starting position and length of the substring. This allows the user to specify the desireable "**length**" after the given position.
+1. Overall, since `.slice()` is more flexible and takes negative arguments and is shorter, it's worthy to remember and use solely with this method over the others. 
+
+**Comparing strings**
+1. We know that strings are compared character-by-character in alphabetical order according to "ASCII" or modern "UNICODE" for encoding. In JavaScript, all strings are encoded using "**UTF-16**". It means that each character has a corresponding numeric code. There are special methods that allow to get the character for the code and back. We can use `.codePointAt()` method to check the code of a character. 
+1. We can use this method on `String` class `Object` (simialr as using `Object.keys()` or other built-in object related methods). 
+    ```js 
+    // check code for the character at position '0' 
+    console.log('z'.codePointAt(0)); // 122
+    console.log('Z'.codePointAt(0)); // 90
+    
+    // create a character with method 
+    console.log(String.codePointAt(90)); // Z
+
+    // 90 is 5a in hexadecimal system
+    console.log('\u005a'); // Z
+
+    let str = '';
+    for (let i = 0; i <= 220; i++) {
+        str += String.fromCodePoint(i);
+    }
+    console.log(str); // all characters starting from capital A
+    ```
+1. Most modern browsers support ECMA-402 which allows to compare characters in different language. We can use `str1.localCompare(str2)`. 
+    1. If `str1` is greater than `str2`, the method returns a "**positive**" number. 
+    1. If `str1` is less than `str2`, the method returns a "**negative**" number. 
+    1. If `str1` is the same as `str2`, the method returns `0`. 
+    ```js 
+    console.log('Österreich'.localeCompare('Zealand')); // -1
+    ```
+
+**Internals, Unicode**
+1. This part is not used by me at the moment. Therefore, this section is skipped and would be reviewed in the future. The part is mainly about how JavaScript and Unicode handling characters from different languages or emojis. Mostly these special characters are used 2-byte codes, which, however, can have only up to 65,536 combinations ("256 * 256" from "16\*16 \* 16\*16"). 
+
+### Arrays 

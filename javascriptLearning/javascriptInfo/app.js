@@ -1,13 +1,10 @@
-let str = 'As sly as a fox, as strong as an ox';
-let target = 'as'; // let's look for it
-let pos = 0;
-while (true) {
-    let foundPos = str.indexOf(target, pos);
-    if (foundPos == -1) break; // stop iteration if substring isn't found
-    console.log( `Found at ${foundPos}` );
-    pos = foundPos + 1; // continue the search from the next position
+function extractCurrencyValue(str) {
+    let val = '';
+    for (let num of str) {
+        if (Number(num) && num !== ''|| num === '0') {
+            val += num;
+        }
+    }
+    return Number(val); 
 }
-pos = 0;
-while ((pos = str.indexOf(target, pos + 1)) != -1) {
-    console.log(pos);
-}
+console.log(extractCurrencyValue('$120') === 120 ); // true
