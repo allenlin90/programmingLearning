@@ -9,6 +9,7 @@
 
 **<int>Materials</int>** 
 1. [Automate the Boring stuff with Python programming](https://automatetheboringstuff.com/)
+1. [Python for Everybody](https://www.py4e.com/)
 
 # HTML5 and CSS3
 
