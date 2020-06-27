@@ -2162,6 +2162,8 @@ body {
     ```
 
 ### Hamburger Menu Overlay 
+**Styling in style.css**
+1. This part is about the basic html and CSS building <ins>**before**</ins> applying the overlaying menu which is "**floating**" on the page. 
 1. We create a "hamburger" sign for menu list and put it on the top corner. It will filter the background, show a list of links we can access on the page and turn the "hamburger" sign into a "X", and all the elements appear and fade with animated effect. Besides, this feature is responsive to all screen sizes. (We can use this feature in the other projects as well). The structure of html is relatively simple, and we will use CSS to achieve it. Note that the following code is only the hamburger menu. 
     ```html
     <body>
@@ -2211,3 +2213,81 @@ body {
         </div>
     </header>
     ```
+
+**Styling in menu.css - Creating the Hamburger**
+1. This part is to build the menu and its animation when the user click the button on top left corner which shows a menu that "**floats**" on the webpage. 
+1. The `<input type="checkbox">` is the state of the menu (whether to expand or not). The feature and animation is made from the `<div class="hamburger">`. The hamgurber menue is made by giving a background color to `<div>` tag with a very thin height and weight. Note that the hamburger menu and the list of links are in separated `<div>` tags. Besides, we create the hamburger menu on the empty `<div>` tag. We then use pseudo selector ("before" and "after" to create the line before and after. The final hamburger menu looks like "☰". In this case, we set it up with the followings: 
+    Hamgurger Menu structure 
+    ```html
+    <div class="hamburger"><div></div></div>
+    ```
+    CSS decoration 
+    ```css 
+    .menu-wrap .hamburger {
+        position: absolute;
+        top: 0; 
+        left: 0;
+        z-index: 1;
+        width: 60px;
+        height: 60px;
+        padding: 1rem;
+        background: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Hamburger Line */
+    .menu-wrap .hamburger > div {
+        position: relative; 
+        flex: none; 
+        width: 100%; 
+        height: 2px;
+        background: #fff; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .menu-wrap .hamburger > div::before, 
+    .menu-wrap .hamburger > div::after {
+        content: '';
+        position: absolute;
+        z-index: 1;
+        top: -10px;
+        width: 100%;
+        height: 2px;
+        background: inherit;
+    } 
+
+    .menu-wrap .hamburger > div::after {
+        top: 10px;
+    }
+    ```
+
+**Styling in menu.css - Animating the Hamburger Lines**
+1. In this case, we'd like the hamgurger lines "☰" animate when the checkbox state is changed (such as being clicked). We can use plus "+" sign in CSS selector which means the `<div>` tag right after then "**checked**" element will perform the given property. 
+    ```css
+    /* Toggler Animation */
+    .menu-wrap .toggler:checked + .hamburger > div {
+        transform: rotate(135deg);
+    }
+
+    /* Turns lines into X */
+    .menu-wrap .toggler:checked + .hamburger > div:before, 
+    .menu-wrap .toggler:checked + .hamburger > div:after {
+        top: 0;
+        transform: rotate(90deg);
+    }
+    ```
+1. We can then put `transition: all 0.4s ease` to create a rotation animation when the style changes on the object. Note that this "**transition**" is added to `.menu-wrap .hamburger > div` which is the div tag that creates the hamgurger lines. Therefore, when we click on the menu, the menu rotates. 
+
+**Styling in menu.css - Menu Overlay**
+1. We can use `transform: scale(0)` to hide the list of menu when the page loads. 
+1. We use a tilde "~" to select the list of menu `<div class="menu">` tag. This tilde sign means to select the following element if the its precede element is in the same parent. Note that the first given element doesn't have to be immediately preceded in HTML. In this case, we'd like to select the menu list when the checkbox is "**checked**".
+    ```css 
+    .menu-wrap .toggler:checked ~ .menu
+    ```
+1. The critical concept here is to understand the "**layers**" of elements and "**how to select an element if the other element is in certain state**". These settings are similar to do in jQuery and programming that we can preset the properties and styles in different states and switch between them. Besides, we can use CSS animation to perform the animation during transition from one styling to another. 
+
+<img src="./hamburgerMenuOverlay/hamgurgerMenuAnimation.gif">
