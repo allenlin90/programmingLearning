@@ -236,7 +236,7 @@
     1. `<main>` is usually the main body and content of the page. However, we can skip this tag and use `<section>` directly. 
     1. `<section>` is similar to `<div>` tag to use to separate elements into section or group elements. 
     1. `<article>` is used for textful elements such as showing part of a blog post rather than using `<p>` tag. 
-    1. `<aside>` is the tag to hold elemetns aside the main contents such as advertisemetns or other trivial functions on the page. 
+    1. `<aside>` is the tag to hold elements aside the main contents such as advertisements or other trivial functions on the page. 
 ```html
 <head>
     <meta charset="UTF-8">
@@ -587,7 +587,7 @@
     ```
 
 ### Link State and Button Styling
-1. We can style a `<link>` tag as a button. There several state such as `hover` when the mouse cursor is on the element that we can use "**pseudo selector**" to select it. 
+1. We can style a `<a>` tag as a button. There several state such as `hover` when the mouse cursor is on the element that we can use "**pseudo selector**" to select it. 
     ```css
     /*change font size and color when mouse cursor hovers on*/
     a:hover {
@@ -768,7 +768,7 @@
     1. `absolute` is relative the parent element of the entity. Note that its parent element must have `positioin: relative` to enable `absolute`. In the example, if we don't have a `<div>` tag for the `li` tag that has `absolute` its parent element will be `<body>` tag. 
     1. `sticky` is positioned based on the user's scroll position. This value is usually used on the Navbar to keep the entity on the top when users scroll down the page. For example, we can have `property: sticky` and give `top: 0` to keep the Navbar always on the top. 
 1. Besides, elements can be moved from it's current position with property `top`, `right`, `bottom`, and `left`. However, without changing `position` property from `static` to other values, we can't move the element with any of its positioning properties.
-1. If an element is covered (or behind) another element, we can use `z-index: 1` to pull the elemetn closer to the screen. Therefore, it will be on top of the other elements without having `z-index` property or which has lower value. The higher value does the element has on its `z-index`, the closer the element to the screen. Note that value of `z-index` can be negative.  
+1. If an element is covered (or behind) another element, we can use `z-index: 1` to pull the element closer to the screen. Therefore, it will be on top of the other elements without having `z-index` property or which has lower value. The higher value does the element has on its `z-index`, the closer the element to the screen. Note that value of `z-index` can be negative.  
 ```html 
 <style>
 .box {
@@ -965,7 +965,7 @@
         margin: auto; /* center the elements in the container*/
         max-width: 1100px; /* limit the maximum width of the navbar but not limiting background color of the navbar */
         overflow: auto; /* shows the background if the screen size doesn't fit. However, this feature doesn't have effect to page at this point. */
-        padding: 0 20px; /* give some space from edge to the elemetn */
+        padding: 0 20px; /* give some space from edge to the element */
     }
     ```
 
