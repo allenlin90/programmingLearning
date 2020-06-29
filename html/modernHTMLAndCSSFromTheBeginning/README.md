@@ -2291,3 +2291,152 @@ body {
 1. The critical concept here is to understand the "**layers**" of elements and "**how to select an element if the other element is in certain state**". These settings are similar to do in jQuery and programming that we can preset the properties and styles in different states and switch between them. Besides, we can use CSS animation to perform the animation during transition from one styling to another. 
 
 <img src="./hamburgerMenuOverlay/hamgurgerMenuAnimation.gif">
+
+### Knowledge Timeline 
+1. This project uses some JavaScript to locate where the location of the user is. It's not available to locate without JavaScript.
+1. Part 1 - HTML and Base CSS
+    1. The main structure of this part is a `<header>` as a banner and `<section>` as the main timeline. 
+    1. Each item in the `<section>` (as the elements in timeline) is listed with unordered list and wrapped with `<div>`
+    ```html
+    <li>
+        <div>
+            <h3><i class="fas fa-chevron-right"></i>Year: Title</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur officia ducimus eaque harum fugiat a? Nesciunt quaerat odit voluptatibus in.</p>
+        </div>
+    </li>
+    ```
+    1. If we have a block element such as `<div>`, we can center it by giving `margin: 0 auto`. Note that we can use `text-align:center` to center its child elements of the block element because the `auto` is to give margin space automatically to let the element which has `margin: 0 auto` stay at the center of its parent container. 
+    1. We can use this feature on a "**container**" which has other elements inside. Therefore, we can ensure the block of elements will be at the center and we can arrange its child elements in different styles. 
+1. Part 2 - Boxes and Arrows 
+    1.  We can use pseudo selector to create shapes before or after an element. For example, we can get a sqaure by giving width and square in the same value and use `border-radius` to turn the shape into a round shape. 
+    1. Note that its parent element (which is selected by `:before` or `:after`) should have `position: relative` because this shape can be put with `position: absolute` to and `left` or `right` to be separated from the element. 
+    ```css
+    /* Dots */
+    #timeline ul li:after {
+        content: '';
+        position: absolute;
+        left: 50%; 
+        bottom: 0%;
+        width: 25px; 
+        height: 25px;
+        background: var(--secondary-color);
+        transform: translateX(-50%);
+        border-radius: 50%;
+        transition: background 0.5s ease-in-out;
+    }
+    ```
+    1. We create an element "**before**" the `<div>` tag and give it border for the effect to create an arrow-like shape that attaches to the text area. Note that we give it `bottom: 5px` to let the arrow on the same line as the dot on the timeline. 
+    ```css
+    /* Arrows Base */
+    #timeline div:before {
+        content: '';
+        position: absolute;
+        bottom: 5px; 
+        width: 0;
+        height: 0;
+        border-style: solid;
+    }
+
+    /* Right Side Arrows */
+    #timeline ul li:nth-child(odd) div:before {
+        left: -15px;
+        border-width: 8px 16px 8px 0;
+        border-color: transparent var(--secondary-color) transparent transparent;
+    }
+
+    /* Left Side Arrows */
+    #timeline ul li:nth-child(even) div:before {
+        right: -15px;
+        border-width: 8px 0px 8px 16px;
+        border-color: transparent transparent transparent var(--secondary-color);
+    }
+    ```
+    <img src="./knowledgeTimeline/boxesAndArrows.PNG">
+1. Part 3 - Responsive media queries 
+    1. At this point, though the maximum width is at `1100px`, the page is not responsive if the screen is small, and the user can't see all the contents. 
+    1. Note that the position of the elements require some time to test and check if the layout is ok. We can't get the value directly. 
+    1. We add "**media quries**" to change the "width" of text box sizes and location. The white bar for timeline in the middle will be at the left when the screen become smaller. Note that the bar is at middle as its width is only `6px` and used `margin: 0 auto` to be places at the middle. If we change it to `margin-left: 20px`, the white bar will be only 20px away from the viewport on the left. 
+    1. For `width` and `height`, we can use `calc()` for dynamic size. For example, we use `calc(100vw - 90px)`. In this case, so the `<div>` tags will be responsive to the screen size (viewport width) and always be 90px shorter than the full viewport width (this can be `80vw` or other value to be responsive as well). 
+    ```css
+    @media(max-width: 900px) {
+        #timeline ul li div {
+            width: 250px;
+        }
+
+        #timeline ul li:nth-child(even) div {
+            left: -284px;
+        }
+    }
+
+    /* make the white timeline bar from middle to the left*/ 
+    @media(max-width: 600px) {
+        #timeline ul li {
+            margin-left: 20px;
+        }
+
+        /* Make the width responsive */
+        #timeline ul li div {
+            width: calc(100vw - 90px);
+        }
+
+        #timeline ul li:nth-child(even) div {
+            left: 40px;
+        }
+
+        /* Change the direction of arrow */ 
+        #timeline ul li:nth-child(even) div:before {
+            left: -15px;
+            border-width: 8px 16px 8px 0;
+            border-color: transparent var(--secondary-color) transparent transparent;
+        }
+    }
+    ```    
+    <img src="./knowledgeTimeline/boxesAndArrows_widthUnder600px.PNG">
+
+1. Part 4 - Scroll in Animation 
+    1. We use JavaScript to add event listener for events as "page load", "resize", and "scroll". This JavaScript code is to add a class "**show**" to `<li>` tag when the user scrolls to the elements. We then make all `<div>` tags in the `<li>` tags to have `visibility: hidden` and `opacity: 0` to make all the elements disappear and shows when "**show**" class is added. 
+    ```js 
+    const items = document.querySelectorAll('#timeline li');
+
+    const isInViewport = el => {
+        const rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 && 
+            rect.left >= 0 && 
+            rect.bottom <= 
+                (window.innerHeight || 
+                document.documentElement.clientHeight) && 
+            rect.right <= (window.innerWidth ||
+            document.documentElement.clientWidth)
+        );
+    };
+
+    const run = () => 
+        items.forEach(item => {
+            if (isInViewport(item)) {
+                item.classList.add('show');
+            }
+        });
+
+    // Events 
+    window.addEventListener('load', run); 
+    window.addEventListener('resize', run); 
+    window.addEventListener('scroll', run); 
+    ```
+    1. We give both "odd" `<div>` tags with `transform: translate(200px, 0)` and "even" `<div>` tags with and `transform: translate(200px, 0)` as the initial position. Note that we don't use its position properties, as we have set it for its relative location on the page. Therefore, we use a different property "**transform**" to move the entities and animate the effects. 
+    1. In class "**show**", we move the `<div>` tags back to `transform: translate(0, 0)` and change visibility and opacity back to visible states, so the element will be back on the webpage. 
+    ```css 
+    /* Show Boxes */
+    #timeline ul li.show div {
+        transform: none;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    #timeline ul li.show:after {
+        background: var(--secondary-color);
+    }
+    ```
+    <img src="./knowledgeTimeline/knowledgeTimeline.gif">
+
+### Quick dropdown menu 
