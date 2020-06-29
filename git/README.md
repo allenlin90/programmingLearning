@@ -183,9 +183,9 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 
-## Day 11 - Git object reference 
+## Day 11 - Git object reference and symbols
 `git branch`, `git log --pretty=oneline`, `git log --oneline`, `git cat-file -p [ref or object_id]`, `git update-ref`, `git symbolic-ref`, `git show-ref`
-1. In git, "**reference**" is an "**index**" which refers to an object besides the "absolute name" (the 40-character ID). For example, we can use `HEAD` to refer to the latest commit in the branch which we are at. Besides, when we use `git branch [brachName]` to create a branch, the "branchName" is the reference. We can find that `git cat-file -p commitid` and `git cat-file -p branchName` return the same results. All the followings return the same results by giving branchName with aligned ID. 
+1. In git, "**reference**" is an "**index**" which refers to an object besides the "absolute name" (the 40-character ID). For example, we can use `HEAD` (a symbol reference)to refer to the latest commit in the branch which we are at. Besides, when we use `git branch [brachName]` to create a branch, the "branchName" is the reference. We can find that `git cat-file -p commitid` and `git cat-file -p branchName` return the same results. All the followings return the same results by giving branchName with aligned ID. 
     1. `git cat-file -p commitID`
     1. `git cat-file -p refs/heads/branchName`
     1. `git cat-file -p heads/branchName`
@@ -223,3 +223,31 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     git cat-file -p featureUpdate # check details of a commit object by its reference name 
     git update-ref -d featureUpdate # delete the reference (not the branch itself)
     ``` 
+
+
+
+## Day 12 - Relative name of Git objects 
+`git log`, `git cat-file -p [object_id]`, `git rev-parse`
+1. Reviewing that each version is a "**commit**" object submitted. Every commit object has an "**absolute name**" (which is the ID that is hashed with SHA1 and has 40 characters). This relative name notation is to allow users to find a commit object by its relative path and location to other commit objects. 
+
+### Relative name notation 
+1. There are 2 important characters caret "`^`" and tilde "`~`". 
+1. A tilde "`~`" is to refer to the previous version of the commit object. For example, `HEAD~` or `HEAD~1` means the previous one single parent commit object of the current branch. If we give 2 tildes or `2`, such as `HEAD~~` or `HEAD~2`, it find 2 versions before the latest one. 
+1. Note that in a repository which has no branch and is never merged, `^1` is the same as `~1` which means the previous versoin. However, these 2 are different in repositories that have branches or used to be merged. 
+
+### Connections between commit objects 
+1. In regular Git repositories, there's only a "**root commit object**" in default, which is the very first commit that is submitted after `git init`. Besides, branches can only be created after the first commit is submitted. Therefore, except the "**root commit object**", every commit object must have at least `1` "**parent commit object**". 
+1. A commit object may have "**more than 1**" parent commit objects because its parent commit object could be from a merged branch. The commit object created after merge will have multiple parent commit objects. 
+
+### Difference between caret ^ and tilde ~ 
+1. A tilde `~` means the previous one single parent commit object. 
+1. A caret `^` means to select which of the parent commit objects if there are multiple ones. 
+1. For example, we have a reference name `c` of a commit object that has 3 parent commit objects. 
+
+    <img src="gitRelativeNames.png">
+
+1. Note that if a commit object has only 1 single parent commit object, we can't use `HEAD^2` because the commit has only one sigle parent commit object which makes the command `HEAD^2` points to nothing. 
+
+### `git rev-parse` commands
+1. Though this command `git rev-parse` aren't often use, these commands can get the absolute name (ID) by the given reference name, such as "master" and "HEAD". 
+1. We can use `git rev-parse HEAD` to get the 40-character ID of the latest commit. 
