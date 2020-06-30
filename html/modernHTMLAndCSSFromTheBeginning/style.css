@@ -7,7 +7,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-section::before {
+header::before {
     content: ''; 
     position: absolute;
     top: 0;
@@ -17,11 +17,11 @@ section::before {
     background: rgba(0,0,0,0.6);
 }
 
-section * {
+header * {
     z-index: 5;
 }
 
-div {
+header div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -55,4 +55,34 @@ a {
 a:hover {
     background: #333;
     color: #fff;
+}
+
+section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+}
+
+section div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+section div:first-child {
+    background: #333;
+    color: #fff;
+}
+
+section div:nth-child(2){
+    background: coral;
+    color :#fff;
+    grid-column: 2 / span 3;
+}
+
+section div p {
+    display: block;
+    padding: 1rem;
+    text-align: left;
 }
