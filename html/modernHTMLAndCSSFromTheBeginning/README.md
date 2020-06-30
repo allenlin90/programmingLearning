@@ -1555,7 +1555,7 @@ Note that we should have this tag `<meta name="viewport" content="width=device-w
     }
     ```
 
-# Into to Flexbox
+# Intro to Flexbox
 ### Flexbox Basics 
 1. "Flexbox" is a modern layout mode in CSS3. `flex` is a value for `display` property. We can invoke it with CSS selector, `display: flex`. It means that the element with the property becomes a "**flex container**". All direct child elements are "flex items". There are several properties we can use for "**flex items**". 
     1. `justify-content` is to align along the main axis (x-axis, horizontal).
@@ -2440,3 +2440,243 @@ body {
     <img src="./knowledgeTimeline/knowledgeTimeline.gif">
 
 ### Quick dropdown menu 
+1. The dropdown menu is like a navbar and is responsive, as if the screen size becomes narrow, the navbar changes from "**row**" to "**column**". The following is the structure of the HTML file. 
+    ```html
+    <nav id="navbar">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li>Services <i class="fas fa-angle-down"></i>
+                <ul>
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">Website Design</a></li>
+                    <li><a href="#">Mobile Development</a></li>
+                    <li><a href="#">SEO</a></li>
+                </ul>
+            </li>
+            <li>Blog <i class="fas fa-angle-down"></i>
+                <ul>
+                    <li><a href="#">HTML</a> <span>22 Posts</span></li>
+                    <li><a href="#">CSS</a> <span>16 Posts</span></li>
+                    <li><a href="#">JavaScript</a> <span>10 Posts</span></li>
+                    <li><a href="#">Python</a> <span>13 Posts</span></li>
+                    <li><a href="#">PHP</a> <span>10 Posts</span></li>
+                    <li><a href="#">Design</a> <span>21 Posts</span></li>
+                </ul>
+            </li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+    ```
+1. The followings are the CSS styling that we've learnt in the previous modules. 
+    1. The posts in the blog section is made with `float: right` as in the `<li>` tag, we have only `<a>` and `<span>` tag. Note that the parent tag `<ul>` of its wrapper `<li>` tags have fixed width `width: 200px`. Note that these `<li>` should have `display: block` or each of them only takes the width of contents. 
+    1. The dropdown list has many nested `<ul>` and `<li>` tags, we should be careful when using the selector and check the event (:hover). 
+    1. Note that this design has an issue that the dropdown menu only shows when the mouse cursor hovers on. The `#navbar ul li ul` are selected to have `display: none` in regular condition. 
+
+    <img src="./dropdownMenu/dropdownmenu_large.gif">
+
+    ```css 
+    :root {
+        --primary-color: coral;
+        --secondary-color: chocolate;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html, 
+    body {
+        background: #f4f4f4;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #navbar ul {
+        list-style: none;
+    }
+
+    #navbar ul li {
+        color: #333;
+        display: inline-block;
+        padding: 1rem;
+        position: relative;
+    }
+
+    #navbar ul li a {
+        color: #333; 
+        text-decoration: none;
+    }
+
+    /* Hide nested ul by default */
+    #navbar ul li ul {
+        display: none;
+    }
+
+    #navbar ul li:hover {
+        cursor: pointer;
+        background: var(--primary-color);
+        color: #fff;
+    }
+
+    #navbar ul li:hover a {
+        color: #fff;
+    }
+
+    /* Nested dropdown show */
+    #navbar ul li:hover ul {
+        display: block;
+        position: absolute;
+        left: 0;
+        width: 200px;
+        margin-top: 1rem;
+    }
+
+    #navbar ul li:hover ul li {
+        display: block;
+        background: #e7e7e7;
+    }
+
+    #navbar ul li:hover ul li a {
+        color: #333;
+    }
+
+    #navbar ul li:hover ul li:hover {
+        background: #e0e0e0;
+        color: inherit;
+    }
+
+    #navbar ul li:hover ul li span {
+        float: right;
+        color: #fff; 
+        background: var(--primary-color);
+        padding: 0.2rem 0.5rem;
+        text-align: center; 
+        font-size: 0.8rem;
+        border-radius: 5px;
+    }
+
+    #navbar ul li:hover ul li:hover span {
+        background: var(--secondary-color);
+    }
+
+    #showcase {
+        display: flex; 
+        flex-direction: column;
+        height: 300px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 2rem;
+        background: var(--primary-color);
+    }
+
+    #showcase h1 {
+        color: #fff;
+        font-size: 4rem;
+    }
+
+    @media(max-width: 600px){
+        #navbar ul li {
+            display: block;
+        }
+
+        #navbar ul li:hover ul {
+            width: 100%;
+            position: relative;
+        }
+    }
+    ```
+
+    <img src="./dropdownMenu/dropdownmenu_narrow.gif">
+
+# CSS Grid 
+### What is CSS Grid? 
+1. CSS Grid is the "Grid layout system for CSS which is similar to "flexbox" (more powerful but a bit more difficult) and capable of two-dimensional layouts. 
+1. `align-items` and `justify-content` are also available in CSS Grid. 
+1. We can use `display: grid` to start a grid structure. All the child elements in this wrapper which has the property are "**grid items**". 
+**Difference between Flexbox and Grid**
+1. "**Flexbox**" is one-dimensional, which means the contents can be managed only in a "**row**" or a "**column**".
+1. "**Grid**" is two-dimensional that we can give a grid element span on its "**rows**" and "**columns**" to cover a certain area in the grid rather than being aligned by flexbox. 
+1. These 2 systems are used for different purposes. For example, "**Flexbox**" is useful for simple alignment such as a dropdown menu, and items in the menu. On the other hand, "**grid**" can be used for outter elements or grid-like layouts. 
+
+## Grid Basics 
+### Grid Columns 
+1. We give the outter element, the "container", `display: grid`. Note that this doesn't make effect as `display: flex`. We then create the number of columns we want by using `grid-template-columns: 200px 200px 200px`. In this case, we create 3 columns in the grid system, and each of the block has a width at `200px`. 
+1. If there are more than 3 items, the 4th item will be put on the 2nd row, so as the 7th will be on the 3rd row and so on. 
+1. If we give `auto` as the width of columns, the items will be streched and fill up the width of the screen. In the case above, if we all give 3 column width as `auto`, they will be separated evenly on the row. For example, we have 6 elements in the "**grid**", and it creates a 2*3 table with CSS styling. 
+1. Besides, giving numbers of width to the property, we can have `grid-template-columns: repeat(3, auto)`. `repeat()` takes 2 arguments, which is the number of columns of a row and the width of each column. Besides, absolute value `px` and `auto`, fractions `fr` are another often used units to create the size. Note that `repeat(3, 1fr)` and `repeat(3, auto)` create the same effect. 
+    ```html
+    <style>
+        .grid {
+            display: grid;
+            /*grid-template-columns: auto auto auto; */
+            /* grid-template-columns: repeat(3, auto); */
+            grid-template-columns: 1fr 2fr 4fr;
+        }
+
+        .item {
+            padding: 3rem;
+            border: #ccc 1px solid;
+            background: #f4f4f4;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <body>
+        <div class="grid">
+            <div class="item">Item 1</div>
+            <div class="item">Item 2</div>
+            <div class="item">Item 3</div>
+            <div class="item">Item 4</div>
+            <div class="item">Item 5</div>
+            <div class="item">Item 6</div>
+        </div>
+    </body>
+    ```
+
+    <img src="./grid/cssgrid.PNG">
+1. We can add gaps between the elements in the grid with `grid-gap: 1rem`, so the elements will be separated as grid box. The gap between the elements will always be the given size regardless of large the screen is. 
+    <img src="./grid/cssgridGap.PNG">
+
+1. By Grid system, it's much easier to separate the layout and columns into desirable scales without testing the width with different values. 
+
+### Grid Rows 
+1. Similar to columns, we can set up the "**height**" of elements in a column with `grid-template-rows: 1fr 2fr 3fr`. Note that as we have 6 items in total from the template but set only 3 values, the property will only affect to the first 3 items in the column, while the rest (on the row below) have the original width. 
+1. We can use `grid-auto-rows: 3fr` to set the rest of the items that aren't selected to the same given height. 
+1. Besides, since `grid` is two-dimensional, we can use both `grid-template-columns` and `grid-template-rows` for the wrapper. 
+    ```css 
+    .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: 1fr 2fr 3fr;
+            grid-auto-rows: 3fr;
+        }
+    ```
+
+    <img src="./grid/cssgridRowsColumns.PNG">
+
+### Spanning Columns and Rows 
+1. We can make certain "cell" (element) in the grid span over other elements. For example, we have a grid of 15 items, and would like to have "Item 1" expand to cover from "Item 1" to "Item 7" in below. 
+    <img src="./grid/cssgridSpan.PNG">
+1. After creating the grid, we can specify the property of an element by using `grid-column-start`, `grid-column-end`, `grid-row-start`, `grid-row-end` to expand the element. 
+    ```css 
+    /* regular way */
+    .item:first-child {
+        grid-column-start: 1;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 3;
+    }
+    ```
+1. On the other hand, we can use the shorthand as other CSS properties to make the code shorter. 
+    ```css
+    /* shorthand. Works the same as the above */
+    .item:first-child {
+        grid-column: 1 / span 3;
+        grid-row: 1 / span 2;
+    }
+    ``` 
+    <img src="./grid/cssgridSpan1.PNG">
