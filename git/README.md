@@ -251,3 +251,29 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 ### `git rev-parse` commands
 1. Though this command `git rev-parse` aren't often use, these commands can get the absolute name (ID) by the given reference name, such as "master" and "HEAD". 
 1. We can use `git rev-parse HEAD` to get the 40-character ID of the latest commit. 
+
+
+
+## Day 13 - Git stash and change index 
+`git stash`, `git stash -u`, `git stash save`, `git stash save -u`, `git stash list`, `git stash pop`, `git stash apply`, `git stash pop "stash@{id}"`, `git stash apply "stash@{id}"`, `git stash drop "stash@{id}"`, `git stash clear`
+1. During development, we may have urgent tasks or must switch to different projects accordingly. In this condition, we can use "**stash**" to temporarily store those unfinished (not ready to commit) tasks. By this case, we can use `git stash` or `git stash save` (which "save" command can be omitted) to create a "**temporary version**" of the current progress, which version is a special commit that is similar to "cache" (stored temporarily but not in storage). 
+1. During development, files can be in "**new created**", "**modified**", and "**deleted**" and be "**tracked/staged**" or "**untracked/unstaged**". For example, when editing this git learning note, if we don't use `git add README.md` to stage the modified file, this file will be listed as "**not staged**" when we use `git status` command (which means the file was committed and is differnt from the records in the repository). If we create a new file in the working directory, `git status` will list the new file as "untracked files". 
+1. Create a `stash`
+    1. There are 2 commands `git stash` and `git stash -u`
+        1. `git stash` will pack create a temporary commit that has only the files and contents that are "**tracked**" (indexed). 
+        1. `git stash -u` (similar to `git add .` to add all the unstaged(modified)/untracked files). 
+    1. Note that the working directory will then resume back to the latest version in `HEAD` and all the modification and deleted files will be resumed, and new files will be removed. 
+    1. After creating the "**stash**", the commit object is created similar to other commit but with a reference `stash` (similar to `HEAD` as a symbol reference to the commit). The commit is stored in `.git/refs/stash`. 
+    1. We can use `git cat-file -p stash` to check the contents of the object. This stash commit object has 3 parent commits which are 
+        1. The original `HEAD` commit (the latest version that is resumed to the current working directory).
+        1. The files and contents which are "tracked" (indexed). 
+        1. The files and contents which are "untracked" (not indexed). 
+    1. Therefore, when we use `git stash -u` the commit is created and creates 2 another branches from the original `HEAD` commit. The 1st is the commit that includes all the files and contents which are "**tracked**" (indexed). The 2nd one is the commit that includes all the fiels and contents which are "**untracked**" (not indexed).
+    1. When saving a stash, we can add message directly behind the commnad such as `git stash save -u this is a test message`. Note that we don't need to use `-m` flag or use quotes but simply type the message. Therefore, when we use `git stash list` we can check what stash we stored and description of each. 
+1. Resume the `stash`
+    1. We can have several "stash" files. However, we should prevent to have too many of them or avoid doing it. 
+    1. We can use `git stash pop` to resume the latest version of stash and resume it to current working directory. Note that by using this command, the "popped" version (which commit is resumed to working directory) will be removed. To keep this stash, we should use `git stash apply`. 
+    1. After checking stored stashes by `git stash list`, we can use `git stash apply "stash@{n}"` (n is the number of the stash stored in the list. Similar to array, it counts from 0). Note that if we have multiple stashed, other stashes will still be kept in the list. 
+1. Delete `stash` 
+    1. We can use `git stash drop "stash@{n}"` (n is the number of the stash stored in the list. When we use `git stash list`, it returns a list of stored stash in orders.) This command is used to delete a certain stash object. 
+    1. To clean all the stashes, we can use `git stash clear`. 
