@@ -728,4 +728,182 @@ Note: We should be very careful with the calculation by programming language due
 **Internals, Unicode**
 1. This part is not used by me at the moment. Therefore, this section is skipped and would be reviewed in the future. The part is mainly about how JavaScript and Unicode handling characters from different languages or emojis. Mostly these special characters are used 2-byte codes, which, however, can have only up to 65,536 combinations ("256 * 256" from "16\*16 \* 16\*16"). 
 
+
+
 ### Arrays 
+**Decalartion**
+1. An `Array` in JavaScript can be declared by creating an `Array` "Object" or with square brackets notation. 
+    ```js 
+    let arr = new Array(); 
+    let arr = [];
+    ```
+1. We can use square brackets notation to add, edit, or remove an element in an `Array`. 
+1. To count the length, we can check `.length` property of the `Array`. 
+1. An `Array` can store any type of value as its element, such as primitive values, `Object`, and functions. 
+    ```js 
+    let arr = ['Apple', {name: 'John'}, true, function(){console.log('hello')}];
+    
+    console.log(arr[1].name);
+
+    arr[3]();
+    ```
+1. Similar to object, elements in an `Array` are separated by comma. Besides, we can comman on the last element before closing. 
+
+**Methods pop/push, shift/unshift**
+1. A "**queue**" (first in first out) is one of the most common uses of an array. For example, we can use `.push()` to append an element to the very end of an `Array` or `.shift()` to remove the element at `arr[0]` which is the very beginning of the `Array` and advance the queue, so the 2nd element becomes the 1st one. 
+1. Note that these methods modify the `Array` without returning the `Array` itself. For example, `.push()` method returns the length of the `Array` after adding the new element. Therefore, if we'd like to have the array, we have to assign the array itself to other variables. However, `Arrays` are mutable which means that if the array is modified, the variable pointing to the same array will also change. 
+    ```js 
+    let arr = [1,2,3,4,5,6]; 
+    let list = arr; 
+    console.log(arr.push(7)); // 7
+    let array = arr.push(8); 
+    console.log(array); // 8
+    console.log(list); // [1,2,3,4,5,6,7,8]
+    ```
+1. JavaScript `Array` also supports "**stack**" (last in first out, as dining trays at canteen). We can use `.push()` to add an element at the very end, and `.pop()` to take off the very last element of an `Array`. Note that `.push()` method works as using square bracket notation of `arr[arr.length]`, as we can pass expression to square bracket notation. 
+1. `.unshift()` and `.push()` methods takes more than 1 argument to add to an `Array`. 
+
+**Internals**
+1. `Array` in JavaScript is a special kind of `Object`, where it uses square brackets to access a property and follows `Object` syntax. In other programming languages, `Array` are data structure that store its elements in a continuous chunk of computer memories with high execution efficiency. However, since `Arrays` are `Objects` in JavaScript, we can also add an element over the `Array` length or a property with dot or square bracket notation. 
+    ```js 
+    typeof []; // 'object'
+
+    let arr = [1,2,3,4,5]; 
+    let obj = {
+        0: 1, 
+        1: 2, 
+        2: 3, 
+        3: 4, 
+        4: 5, 
+    };
+    arr[0] === obj[0] // true 
+    arr.test = 100;
+    console.log(arr) // [1,2,3,4,5,test:100]
+    ```
+1. Though with the features, `Array` are mostly used to handle ordered data. 
+
+**Performance**
+1. Methods `push/pop` run fast, while `shift/unshift` are slow because of the tasks behind the scenes when calling the methods. 
+1. When calling `.shift()`, the program not only remove the first element but also renumber all the rest elements in the `Array` and change the property `length`. Therefore, if there are many element in an `Array`, it takes more memory to work when calling `.shift()` or `.unshift()` method. 
+1. On the other hand, `.pop()` and `.push()` only add/remove the last element and update property `length`. 
+
+**Loops**
+1. Besides using `for` loop with counters, we can use `for of` keyword to call each element in an `Array`. Technically, `Arrays` are `Objects` in JavaScript. We can use square bracket notation with `for in` to loop through the elements as well. 
+1. However, it's not good to use `for in` to loop through elements of an `Array` as it may call some prototype methods which we don't want. 
+    ```js 
+    let fruits = ['Apple', 'Oragne', 'Pear'];
+    for (let i = 0; i < arr.length; i++) {
+        console.log(fruits[i]);
+    }
+
+    for (let fruit of fruits) {
+        console.log(fruit);
+    }
+
+    for (let key in fruits) {
+        console.log(fruits[key]);
+    }
+    ```
+
+**About length property**
+1. `.length` property will be updated automatically when we modify an `Array`. However, it doesn't represent the number of elements in an `Array`, but the last index number plus 1. For example, if we have an `Array` that has only one element but with a very large index number. The `.length` of the `Array` is large as well. 
+1. As a property of an `Object`, we can modify `.length` property of an `Array` directly to cut off the elements. However, the process can't be recovered. Though we may add the length back, the elements still are gone. Therefore, we can empty an `Array` with `arr.length = 0`. 
+1. Since we can modify `.length` directly, we can add length to an `Array`. The empty slots will be assigned with `undefined`. 
+    ```js 
+    let arr = [];
+    arr[123] = 'abc';
+    console.log(arr.length) // 124 
+
+    let array = [1,2,3,4,5]; 
+    array.length = 2; 
+    console.log(array) // [1,2] 
+    array.length = 0;
+    console.log(array) // [] 
+    ```
+
+**Multidimensional arrays**
+1. We can save arrays in another array to create multidimensional arrays. 
+    ```js 
+    let matrix = [
+        [1,2,3],
+        [4,5,6],
+        [7,8,9],
+    ]
+
+    console.log(matrix[1][1]) // 5
+    ```
+
+**toString**
+1. If we use `.toString()` method on an `Array`, the elements of the `Array` are concatenated but separated with comma. `Arrays` have no `Symbol.toPrimitive` nor `valueOf` and has only `toString()` method. Therefore, `[]` becomes an empty `String`. 
+    ```js 
+    let arr = [1,2,3]; 
+    console.log(String(arr) === '1,2,3'; // true 
+
+    console.log([]+1); // 1 
+    console.log([1]+1); // 11 
+    console.log([1,2]+1); // 1,21 
+    ``` 
+
+**Exercise** 
+1. One of the exercises in this section is the "[A maximal subarray](https://en.wikipedia.org/wiki/Maximum_subarray_problem)". The following is the first approach which use nested `for` loop to create `Arrays` and calculate the results. However, this method has O(n^2). Besides, the code has several redudant parts. For example, we can calculate the sum result in the very first nested for loops without having the 2nd set. 
+    ```js 
+    let numArr = [1, -2, 3, 4, -9, 6]; 
+
+    console.log(getMaxSubSum(numArr));
+    console.log(getMaxSubSum([-1, 2, 3, -9])); //5
+    console.log(getMaxSubSum([2, -1, 2, 3, -9])); // 6 
+    console.log(getMaxSubSum([-1, 2, 3, -9, 11])); // 11
+    console.log(getMaxSubSum([-2, -1, 1, 2])); // 3
+    console.log(getMaxSubSum([100, -9, 2, -3, 5])); // 100
+    console.log(getMaxSubSum([1, 2, 3])); // 6
+
+    function getMaxSubSum(arr) {
+        let number = 0; 
+        let numbers = [];
+        for (let i = 0; i < arr.length; i++) {
+            let list = [];
+            for (let j = i; j < arr.length; j++) {
+                list.push(arr[j]);
+            }
+            numbers.push(list); 
+        }
+        // return numbers;
+        let empty = [];
+        numbers.forEach(function(ele){
+            let num = 0;
+            ele.forEach(function(element){
+                num += element;
+                empty.push(num);
+            })
+        })
+        // return empty;
+        for (let e of empty) {
+            if (e > number) {
+                number = e;
+            }
+        }
+        return number; 
+    }
+    ```
+1. A better solution is to have 2 variables to "remember" the numbers and use `Math.max()` function to keep the larger number as the result. The algorithm is optimized and has `O(n)` as time complexity. 
+    ```js 
+    function getMaxSubSum(arr) {
+    let maxSum = 0;
+    let partialSum = 0;
+
+    for (let item of arr) { // for each item of arr
+        partialSum += item; // add it to partialSum
+        maxSum = Math.max(maxSum, partialSum); // remember the maximum
+        if (partialSum < 0) partialSum = 0; // zero if negative
+    }
+
+    return maxSum;
+    }
+
+    console.log(getMaxSubSum([-1, 2, 3, -9]) ); // 5
+    console.log(getMaxSubSum([-1, 2, 3, -9, 11]) ); // 11
+    console.log(getMaxSubSum([-2, -1, 1, 2]) ); // 3
+    console.log(getMaxSubSum([100, -9, 2, -3, 5]) ); // 100
+    console.log(getMaxSubSum([1, 2, 3]) ); // 6
+    console.log(getMaxSubSum([-1, -2, -3]) ); // 0
+    ```
