@@ -696,10 +696,10 @@
 
 # Inline, Block, and Inline-block Display 
 1. '`display`' property is very important in CSS as that it is used to implement "**flexbox**" and "**grid**". 
-1. We create a list with `<ul>` and `<li>` tag and use CSS selector to let all `<li>` tags have `display:inline` which makes all elements float and like `list-style: none` as they don't have bullet point symbols because `<li>` tags are **block elements**. Note that by using `dispaly` property, the bullet points will be removed.
-1. To center an image, we have to change its property with `display: block` as `<img>` tag is an inline element which can be centered with `margin: auto`. However, if we make the element as a block element, it can be centered with `margin: auto` property. 
+1. We create a list with `<ul>` and `<li>` tag and use CSS selector to let all `<li>` tags have `display:inline` which makes all elements float and like `list-style: none` as they don't have bullet point symbols because `<li>` tags are **block elements**. Note that by using `display` property, the bullet points will be removed.
+1. To center an image, we have to change its property with `display: block` as `<img>` tag is an inline element which can't be centered with `margin: auto`. However, if we make the element as a block element, it can be centered with `margin: auto` property. 
 1. `inline` elements can't use `width`, `padding`, and `margin` properties. However, we can use `display: inline-block` to enable the feature as having the elements as blocks in a line. 
-1. However, though we can limite the width of an element by absolute value or percentage, the overall size of the element,including its padding and margin may execced the width of a line. To make the element in line-block and be responsive, we can use `box-sizing: border-box`. Thus, if we limit the width of an element, its padding and margin will be included as part of the width. 
+1. However, though we can limit the width of an element by absolute value or percentage, the overall size of the element,including its padding and margin may execced the width of a line. To make the element in line-block and be responsive, we can use `box-sizing: border-box`. Thus, if we limit the width of an element, its padding and margin will be included as part of the width. 
 ```html 
 <style>
     li {
