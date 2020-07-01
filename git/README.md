@@ -353,4 +353,4 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 
-## Day 15 - Tags, Tagging the important events during version control  
+## Day 15 - Tags, Tagging the important events during version control 
