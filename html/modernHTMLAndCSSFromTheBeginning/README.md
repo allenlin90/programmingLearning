@@ -2680,3 +2680,154 @@ body {
     }
     ``` 
     <img src="./grid/cssgridSpan1.PNG">
+
+### Auto-Fit & Minmax 
+1. We can set up the wrapper tag with `grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))`. It means that when the browser width is resized to its minimum at 300px, the "grid elements" will be stacked up by `1fr` and becomes a column. When the browser width is wide enough, the elements will be queued in a row instead. 
+1. This feature would be useful for certain contents, but not all. For example, if we have a grid of photos, this is helpful for the responsive design for the image gallery grid. 
+    ```css
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));    
+    }
+    ```
+    <img src="./grid/minmax.gif">
+
+### Grid Template Area 
+1. This is to use property `grid-template-areas` to set up the template. 
+1. We set up the layout as "**rows**" in different lines with the "tags". However, this only works if we set up the "tags" in their own classes with property `grid-area` as a variable. 
+
+    ```html
+    <style>
+        .container {
+            display: grid;
+            grid-template-areas: 
+                'header header header'
+                'content content sidebar'
+                'box-1 box-2 box-2'
+                'box-3 box-3 box-3'
+                'footer footer footer';
+            grid-gap: 1rem;
+        }
+
+        .header {
+            grid-area: header;
+            text-align: center;
+        }
+
+        .content {
+            grid-area: content;
+        }
+
+        .sidebar {
+            grid-area: sidebar;
+        }
+
+        .box-1 {grid-area: box-1;}
+        .box-2 {grid-area: box-2;}
+        .box-3 {grid-area: box-3;}
+
+        .footer {
+            grid-area: footer;
+            text-align: center;
+        }
+
+        .header,
+        .content,
+        .sidebar,
+        .box-1,
+        .box-2,
+        .box-3,
+        .footer {
+            border: 1px #ccc solid;
+            padding: 0.5rem;
+        }
+    </style>
+    <body>
+        <div class="container">
+            <header class="header">
+                <h1>My Website</h1>
+            </header>
+            <section class="content">
+                <h3>Welcome To My Site</h3>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni iusto nesciunt voluptas atque porro repellendus quia? Praesentium veritatis quas corporis, in enim, tenetur dolorem voluptatum labore exercitationem ut perferendis asperiores?</p>
+            </section>
+            <aside class="sidebar">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li>Some Company</li>
+                    <li>Soi 26 Sukhumvit</li>
+                    <li>apple@gmail.com</li>
+                    <li>999-999-9999</li>
+                </ul>
+            </aside>
+            <div class="box-1">
+                <h3>Heading</h3>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi placeat necessitatibus unde veritatis suscipit. Libero voluptatem earum mollitia dignissimos cumque.</p>
+            </div>
+            <div class="box-2">
+                <h3>Heading</h3>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi placeat necessitatibus unde veritatis suscipit. Libero voluptatem earum mollitia dignissimos cumque.</p>
+            </div>
+            <div class="box-3">
+                <h3>Heading</h3>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi placeat necessitatibus unde veritatis suscipit. Libero voluptatem earum mollitia dignissimos cumque.</p>
+            </div>
+            <footer class="footer"><p>Coptyright &copy; 2020</p></footer>
+        </div>
+    </body>
+    ```
+
+    <img src="./grid/gridAreaTemplate.PNG">
+
+### Media queries & the Grid
+1. We can just use media queries to specify the layout in different screen width. 
+    ```css 
+    /* Wide Screen with 4 columns*/
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 1rem;
+    }
+
+    /* Tablet with 2 columns */
+    @media(max-width: 768px) {
+        .grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* Smart Phone with 1 column */
+    @media(max-width: 500px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    ```
+1. We can use media queries with property `grid-area-template` as well. 
+    ```css 
+    .container {
+        display: grid;
+        grid-template-areas: 
+            'header header header'
+            'content content sidebar'
+            'box-1 box-2 box-2'
+            'box-3 box-3 box-3'
+            'footer footer footer';
+        grid-gap: 1rem;
+    }
+
+    @media(max-width: 500px) {
+        .container {
+            grid-template-areas: 
+            'header'
+            'content'
+            'sidebar'
+            'box-1'
+            'box-2'
+            'box-3'
+            'footer';
+        }
+    }
+    ```
+
+# BewsGrid Website 
