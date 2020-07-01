@@ -907,3 +907,50 @@ Note: We should be very careful with the calculation by programming language due
     console.log(getMaxSubSum([1, 2, 3]) ); // 6
     console.log(getMaxSubSum([-1, -2, -3]) ); // 0
     ```
+
+### Array Methods 
+**Methods that modifies**
+1. Since `Array` is an `Object` in JavaScript, we can use keyword `delete` to delete an element of an `Array`. However, though we delete an element from the `Array`, the `length` property of `Array` is still the same, as the method doesn't affect to `length` property. 
+1. We can use `.splice()` (which is like a swiss army knife that can "insert", "remove", and "replace" elements. The syntax is as `arr.splice(index[, deleteCount, elem1, ..., elemN])`. The method starts from `index`, removes `deleteCount` elements, inserts `elem1, ..., elemN`, and return the `Array` of removed elements. (This method is similar to other methods that it doesn't return the modified `Array` itself.)
+1. We can also use `.splice()` method to insert elements without any removals by setting `deleteCount` to 0 and giving the position to insert the elements. 
+    ```js 
+    let arr = ['I', 'study', 'JavaScript', 'right', 'now'];
+    let removed = arr.splice(0,2); 
+    console.log(arr) // ['I', 'study'] which is the list of removed elements
+
+    arr.splice(2, 0, 'complex', 'language'); 
+    console.log(arr) // ['JavaScript', 'right', 'complex', 'language', 'now']
+    ```
+1. We can give negative indexes as the starting position of an `Array`, which will be counted reversely by the end. Note that if we want to add to the end of the `Array`, we can sue `.push()` method. In other programming language, such as Python, negative 1 `-1` starts to count from the last element of the list reversely. Besides, `.push()`, we can use `.concat()` method to extend an `Array`. 
+    ```js 
+    let arr = [1,2,5];
+    arr.splice(-1, 0, 3, 4); 
+    console.log(arr) //[1,2,3,4,5]
+    ```
+
+**Methods that return a new Array**
+1. `.slice()` is another method that returns a new `Array` copying the items from `start` to `end` (not including). Both `start` and `end` can be negative. If we don't give any argument, the method will return a copy of `Array`. Note that since `Array` is mutable and we can use the method to make a copy to another variable to store the same `Array` value without affecting to one another by regular variable assignment. 
+    ```js
+    let arr = ['t', 'e', 's', 't']; 
+    console.log(arr.slice(1,3)) // ['e','s'] (copy from 1 to 3)
+    console.log(arr.slice(-2)) // ['s', 't'] (copy from -2 till the end)
+    console.log(arr.slice()) // ['t', 'e', 's', 't'] (a copy of array)
+    ```
+1. `.concat()` method takes `Array` as arguments and returns a new `Array` that concate the first `Array` with the given ones. Note that `.concat()` method also takes arguments other than `Array`. It works as `.push()` method that it adds the given arguments as elements at behind of the `Array`. If we give an `Object` as argument, the `Object` value will become an element of the `Array`. 
+    ```js 
+    let arr = [1,2]; 
+    console.log(arr.concat([3,4])); // [1,2,3,4]
+    console.log(arr.concat([3,4], [5,6])); // [1,2,3,4,5,6]
+    ```
+1. If an array-like object has a special `Symbol.isConcatSpreadable` property, the object will be treated as an array by `.concat()` method and the elements of the `Object` will be added to the array.   
+    ```js 
+    let arr = [1,2];
+    let arrayLike = {
+        0: 'something', 
+        1: 'else',
+        [Symbol.isConcatSpreadable]: true, 
+        length: 2,
+    }; 
+    console.log(arr.concat(arrayLike)); // [1,2,'something','else'] 
+    ```
+1. 
