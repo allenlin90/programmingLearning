@@ -277,3 +277,80 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 1. Delete `stash` 
     1. We can use `git stash drop "stash@{n}"` (n is the number of the stash stored in the list. When we use `git stash list`, it returns a list of stored stash in orders.) This command is used to delete a certain stash object. 
     1. To clean all the stashes, we can use `git stash clear`. 
+
+
+
+## Day 14 - Git for Windows 
+1. These setting and configurations would be an one-time event though it may take some time for setup. However, it can save a lot of time during development in the future. 
+1. We can use `git config --list` to list all the options of git settings in a terminal. 
+1. There are 3 layers we can configure the settings, `system`, `user`, and `local` 
+    1. **System** - System level configuration `git config --list --system`
+        1. By adding `--system`, we can get the options to configure in system level `git config --list --system`. 
+        1. All the configurations and settings will be stored in `C:\Program Files (x86)\Git\etc\gitconfig` in default. However, if Windows OS is above "**Windows Vista**" (such as 7, 8, or 10), the directory is under the user. 
+        1. This part is skipped and would be revisited after learning more about OS in the future. 
+    1. **Global** - User level configuration `git config --list --global`
+        1. We can use `git config --list --global` to list the settings. 
+        1. Usually, we will configure `user.name` and `user.email` in this level. 
+    1. **Local** - Repository level configuration `git config --list --local`
+        1. These configurations can be called by `git config --list --local` and are stored in the local repository. 
+1. When working on Git, Git will take commands of the priorities as the followings
+    1. Local (Repository, Highest)
+    1. Global (User)
+    1. System (System level, Lowest)
+1. Therefore, if we configure a setting in system level and global level, the ultimately configuration to be applied will be the one in global level. 
+
+### Configurations 
+1. We can get the list of configurations in different level by the following commands. 
+    1. All levels - `git config --list`
+    1. System level - `git config --list --system`
+    1. User level - `git config --list --global`
+    1. Local level - `git config --list --local`
+1. "**Get**" the value of a configuration by `git config [config_section.config_name]`. 
+    1. For example, `git config user.name` and `git config user.email`. 
+1. "**Edit**" configure the value of a setting with `git config [config_section.config_name] [config_value]`. 
+    1. For example, `git config user.name "Allen Lin"` and `git config user.email "apple@gmail.com"`. 
+1. "**Delete**" a setting with `git config --unset --system [config_section.config_name]`. 
+
+### Frequent used configurations
+**Alias settings**
+1. We can set up some "shorthands" for frequent used Git commands such as the followings. 
+    ```shell 
+    git config --global alias.co   checkout
+    git config --global alias.ci   commit
+    git config --global alias.st   status
+    git config --global alias.sts  "status -s"
+    git config --global alias.br   branch
+    git config --global alias.re   remote
+    git config --global alias.di   diff
+    git config --global alias.type "cat-file -t"
+    git config --global alias.dump "cat-file -p"
+    git config --global alias.lo   "log --oneline"
+    git config --global alias.ll "log --pretty=format:'%h %ad | %s%d [%Cgreen%an%Creset]' --graph --date=short"
+    git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset %ad |%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset [%Cgreen%an%Creset]' --abbrev-commit --date=short"
+    ```
+1. Therefore, we can type `git st` which is the shorthand of `git status`. 
+
+**Change default text editor**
+1. When using `git commit`, Git will open "**Vim**" (or **Nano**) text editor in default, if the command is without `-m` flag. We can use `git config --global core.editor` to check current text editor and change the editor by giving the path. For example, we can change to notepad++ (or sublime) with `git config --global core.editor "\"C:\Program Files (x86)\Notepad++\notepad++.exe\""`.
+
+**Access configuration file**
+1. We can use the default text editor to edit the files directly by giving `--edit` flag. 
+    1. `git config --edit --system`
+    1. `git config --edit --global`
+    1. `git config --edit --local`
+
+**Auto correction**
+1. We may have typos or wrong spelling in CLI. Therefore, we can open `git config --global help.autocorrect 1` for auto correction without typing the command again. For example, Git can fix `git statsu` to `git status` automatically. 
+
+**Message colors**
+1. Though this configuration is opened by default, we can switch in on/off by `git config --system color.ui auto`. Note that this is in system level. 
+
+**Custom commit message**
+1. We can create a boilerplate for critical information when we submit a "**commit**" to prevent forgetting to insert some critical information or metadata. 
+1. We should create a text file at a preferable path. For example, `C:\git-commit-template.txt`. 
+1. We then use `git config --local commit.template [filepath]` (such as `git config --local commit.template "C:\git-commit-template.txt"`). Therefore, everytime we use `git commmit`, the terminal will return a template for us to insert for the info of the commit. 
+1. Note that we configure the boilerplate in the local level because it may vary for different projects. However, we can use `--global` in user level. 
+
+
+
+## Day 15 - Tags, Tagging the important events during version control  
