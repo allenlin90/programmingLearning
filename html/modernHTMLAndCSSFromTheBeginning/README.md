@@ -2830,4 +2830,19 @@ body {
     }
     ```
 
-# BewsGrid Website 
+# NewsGrid Website 
+1. It's an UI designed for new webpages. The website has a featured news on the landing page and is responsive to tablet and mobile-size screen. We have 3 pages, which is the main landing page, about page, and article pages. 
+1. To organize the files, we create 1 "img" folder and "css" to keep images and CSS files separately in the root directory. 
+
+### Setup and Favicon
+1. This section is mainly working creating the HTML structure of the navbar on the top of the webpage without CSS. 
+1. We separate CSS files into regular (large screen) and mobile version. When we import the CSS in HTML file, we can specify the use of each. For example, in the `<link>` tag, we can add `media="screen and (max-width: 768px)"`. Besides, the mobile version should be under the link of regular version. Therefore, the CSS for mobile version only take effect when the screen width is under 768px. 
+1. We can use online service to create a "**favicon**" which has `.ico` as suffix. Besides, the file should be put at the root directory with HTML file rather than in the "**img**" folder. The converting website will generate the `<link>` as well. For example, `<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">`. Note that we should check the file path in `href` property to ensure the icon shows on the webpage tab correctly. 
+1. We can add attribute `target="_blank"` to `<a>` tag to create a new tab when users clicking on it `<a target="_blank" href="https://www.youtube.com/">`
+
+### Core styles, variables, and navbar 
+1. We narrow down the logo by giving it `180px`, change color of social media icons to grey color (#777), and the color of the buttons. 
+1. We can use `justify-self: center` to set the way of a block element alignment in its container. This property works on the element "**itself**" directly. (Note that `justify-content` works on the child elements of a container). 
+    <img src="./newsGridWeb/navbar.PNG">
+
+### Showcase with overlay and button styles 
