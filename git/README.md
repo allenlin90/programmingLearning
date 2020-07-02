@@ -354,3 +354,28 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 ## Day 15 - Tags, Tagging the important events during version control 
+1. During development, we may have some critical version that we'd like to keep an eye on or note as "important" such as milestone or change on direction. We can use `Tag` to highlight the versions to give an alias or an easy-to-remember name of a specific version (commit object). Tags in Git has 2 types
+    1. **Lightweight Tag** - We have mentioned "**lightweight**" tag in Day 11, which is the alias of a commit object as a reference name. 
+    1. **Annotated Tag** - This is a Git object which is stored in Git object storage (similar to `blob`, `tree`, and `commit` object). Besides, we can store message to it as a commit object. 
+1. There's only trivial difference between 2 types of reference in usage. The main difference between 2 types of tags is that the "**lightweight**" one is like a temporary reference. The "**Annotated Tag**" is a permanent object that is stored in the object storage and can store message as other Git objects. 
+1. However, when we use `git tag` to list out all the tags, we can't identify if the tag is a "**lightweight**" tag or an "**annotated**" tag. 
+
+### Using lightweight tag 
+1. `git tag` to list all the tag objects. 
+1. `git tag [tagname]` to create a lightweight tag. 
+1. `git tag [tagname] -d` to delete a lightweight tag. 
+1. We can check "**contents**" of the tag by `git cat-file -p [tagname]`. 
+1. We can check the "**object type**" of the tag by `git cat-file -t [tagname]`. 
+1. Note that lightweight tag **IS NOT** a Git object. We can notice that by checking the object type. 
+
+### Using annotated tag 
+1. We can put `-a` when create a tag by using `git tag -a [tagname]` to create a "**tag object**". We then can use `-m` to put message when create the object at the same time, `git tag [tagname] -a -m "message"`. 
+1. We can make any types of Git object to a "**tag**" object, such as `blob`, `tree`, and `commit`.
+1. We will get "**tag**" type when checking the object type with `git cat-file -t [tagname]`. 
+1. Note that we should give the object ID to create a tag object to refere to a certain object. Without object ID, it will use the version in "**HEAD**" by default. 
+    1. `git tag [tagname]` creates a tag object of the version in HEAD by default. 
+    1. We can give an object ID `git tag [tagname] [object_id]` to create a tag object for a specific Git object. 
+
+
+
+## Day 16 - Using Git reflog to track modifications
