@@ -378,4 +378,40 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 
-## Day 16 - Using Git reflog to track modifications
+## Day 16 - Using Git reflog to track modifications 
+1. These records are similar to the activity logs. Modifying or editing the `reflog` records doesn't affect to the files and repository and its contents. 
+1. We can access the `HEAD` file in `.git/logs/HEAD`. This file records all the commits submitted. We can use `git reflog` to check the file in terminal as well. Note that `git reflog` returns a commit list that starts from the latest commit. However, if we check the `HEAD` file, the commit starts from the first commit. Note that these commits are only the records in the current branch. Besides, from `git reflog` command, we can notice that every commit has a number of order. For example, `HEAD@{0}` is the latest version of the branch. 
+1. If we make mistakes or the files go wrong during `git merge` or `git pull`, we can use the reference `HEAD@{0}` to recover the change. Note that all the changes will be recorded, including the hard recovery. For example, if we accidentally commit a change as `wrong commit`, we can use `git reset "HEAD@{1}" --hard` to turn the version back to the version before `wrong commit`. Besides, the change was still recorded, so we can use `git reset "HEAD@{1}" --hard` again to return to `wrong commit` again. 
+1. `git reflog` not only list out all the changes and commits but also switch between brancehs. There are several events will be records in `reflog`. Besides, every `branch` and `stash` have thier own `reflog`. All these records are kept in `.git/logs/refs/`. 
+    1. `commit`
+    1. `checkout`
+    1. `pull`
+    1. `push`
+    1. `merge`
+    1. `reset`
+    1. `clone`
+    1. `branch`
+    1. `rebase` 
+    1. `stash`
+
+### Show records of a certain branch 
+1. We can put branch name behind in the command to show only the records of the branch, such as `git reflog master`. 
+
+### Show details of a version 
+1. We can get the abstract of each version with `git reflog`. In addition, we can use `git log -g` to get the complete information of commits in a version. 
+
+### Delete records 
+1. `reflog` only records the activity logs of changes and modifications of the repository. Any change to this records doesn't affect to the repository itself. We can ue ` git reflog delete ref@{specifier}` to delete certain records. For example, we can delete the latest change `git reflog delete HEAD@{0}`. 
+1. Note that `reflog` isn't synchronized to remote repository by default and stored locally. 
+
+### Setup expiration time of records 
+1. During development, the records is being kept. Git, by default, keeps the records in `reflog` for 90 days. If some of the commits aren't in branches, the records will be kept only 30 days. For example, we create a new branch and submit some commits. Though we delete the branch, the commit objects are stil kept in the object storage but can not be accessed through `git log`. These commit objects are "**unreachable**". However, we can set up the expire duration. For example, we keep the files without expiring. 
+    1. Avoid deleting the records
+        1. `git config --global gc.reflogExpire "never"`
+        1. `git config --global gc.reflogExpireUnreachable "never"`
+    1. Keep records for only 7 days 
+        1. git config --global gc.reflogExpire "7 days"
+        1. git config --global gc.reflogExpireUnreachable "7 days" 
+
+### Clear all records 
+1. We can use `git reflog expire --expire=now --all` to delete the records and use `git gc` to refresh and clear those unreachable entities.  
