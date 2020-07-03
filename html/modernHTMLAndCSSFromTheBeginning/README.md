@@ -2843,6 +2843,83 @@ body {
 ### Core styles, variables, and navbar 
 1. We narrow down the logo by giving it `180px`, change color of social media icons to grey color (#777), and the color of the buttons. 
 1. We can use `justify-self: center` to set the way of a block element alignment in its container. This property works on the element "**itself**" directly. (Note that `justify-content` works on the child elements of a container). 
+1. We use the `position: sticky` to keep the navbar stay on the top above every other elements on the page. Besides, we give `z-index: 2` to ensure it's visible over other elements. 
+    ```css 
+    #main-nav {
+        background: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+    ```
     <img src="./newsGridWeb/navbar.PNG">
 
 ### Showcase with overlay and button styles 
+1. We have a `<header>` tag which contains several boxes inside. When we create a backgroudn with an image, we can use psuedo selector `::before` with empty `content: ''`. Note that the element that creates with the background must have `position: relative`, as we will set the image with `position: absolute`, `top: 0`, and `left: 0`. 
+    ```css 
+    #showcase {
+        color: #fff;
+        background: #333;
+        padding: 2rem;
+        position: relative;
+    }
+
+    #showcase:before {
+        content: '';
+        background: url('../img/featured.jpg') no-repeat center center/cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.4;
+    }
+    ```
+1. We can make all the button class `.btn:hover` to have `opacity: 0.9`. Therefore, no matter what color the button is, there's an effect when mouse cursor hovers on the button. 
+1. We create a `btn-block` class (which is similar in Bootstrap for buttons) that makes the button streched to the width of its container. 
+    ```css 
+    .btn:hover {
+        opacity: 0.9;
+    }
+
+    .btn-block {
+        display: block;
+        width: 100%; 
+        text-align: center;
+    }
+    ```
+1. We create a `<div>` with "**container**" class and wrap all the contents of each section on the webpage. Therefore, contents of each section will have the same `width` and `padding` and will be centered as its `margin: auto`. 
+    ```css 
+    .container {
+        max-width: var(--max-width);
+        margin: auto;
+        padding: 0 2rem;
+        overflow: hidden;
+    }
+    ```
+    <img src="./newsGridWeb/showcaseWithOverlayAndButtonStyle.PNG">
+
+
+### Home articles grid 
+1. In the section, we can use `<section>` tag for the part on the webpage, besides, we put all elements in the `<div class="container">` which has some padding on the edges. Besides, we can put the contents in the container with class `card`, which in bootstrap is used for text contents. 
+1. In this section, we also set up the utilities to ensure text color in certain background is styled. 
+1. By the structure of HTML, we use asterisk `*` selector to choose the "**articles**" with spanned width, so only the first and last item can cross 2 columns. 
+    ```css 
+    #home-articles .articles-container > *:first-child, 
+    #home-articles .articles-container > *:last-child {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 1rem; 
+        align-items: center;
+        grid-column: 1 / span 2;
+    }
+
+    #home-articles .articles-container > *:last-child {
+        grid-column: 2 / span 2;
+    }
+    ```
+    <img src="./newsGridWeb/articlesGrid.PNG">
+
+### Footer with grid 
+1. We create the footer section on the homepage, which uses "Grid" and has 4 columns on the 4 rows while the last row has a single item span accross the whole row. 
+    <img src="./newsGridWeb/footer.PNG">
