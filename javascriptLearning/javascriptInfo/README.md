@@ -697,7 +697,7 @@ Note: We should be very careful with the calculation by programming language due
 1. `.substr()` method takes 2 arguments which is the starting position and length of the substring. This allows the user to specify the desireable "**length**" after the given position.
 1. Overall, since `.slice()` is more flexible and takes negative arguments and is shorter, it's worthy to remember and use solely with this method over the others. 
 
-**Comparing strings**
+**Comparing strings** (#compareString)
 1. We know that strings are compared character-by-character in alphabetical order according to "ASCII" or modern "UNICODE" for encoding. In JavaScript, all strings are encoded using "**UTF-16**". It means that each character has a corresponding numeric code. There are special methods that allow to get the character for the code and back. We can use `.codePointAt()` method to check the code of a character. 
 1. We can use this method on `String` class `Object` (simialr as using `Object.keys()` or other built-in object related methods). 
     ```js 
@@ -953,4 +953,414 @@ Note: We should be very careful with the calculation by programming language due
     }; 
     console.log(arr.concat(arrayLike)); // [1,2,'something','else'] 
     ```
-1. 
+
+**forEach**
+1. `.forEach()` method takes a function as argument to allow every element in the `Array` runs the function. The syntax of the function is `function(item, index, array)`, which "**item**" is the element in the `Array` in every iteration, "**index**" is the position of the element in the `Array`, and "**array**" is the `Array` it self. 
+    ```js 
+    ["Bilbo", "Gandalf", "Nazgul"].forEach((item, index, array) => {
+        console.log(`${item} is at index ${index} in ${array}`);
+    });
+    // Bilbo is at index 0 in Bilbo,Gandalf,Nazgul
+    // Gandalf is at index 1 in Bilbo,Gandalf,Nazgul
+    // Nazgul is at index 2 in Bilbo,Gandalf,Nazgul
+    ```
+
+**Searching in array** 
+1. `.indexOf()`, `.lastIndexOf()`, and `.includes()` have the same syntax and work essentially the same as their `String` counterparts. 
+    1. `arr.indexOf(item, from)` – looks for item starting from index from, and returns "**the index**" where it was found, otherwise `-1`.
+    1. `arr.lastIndexOf(item, from)` – works the same as `.indexOf()`, but looks for from right to left.
+    1. `arr.includes(item, from)` – looks for item starting from index from, returns a boolean `true` if found. 
+1. These methods use `===` comparison, so it does a strict match to find a boolean `false` is in the `Array` rather than `0` or empty string `''`. 
+1. Note that `.indexOf()` and `.lastIndexOf()` can't return `NaN` in an `Array` though it exists. Both methods will return `-1` as not found. However, `.includes()` method can correctly handle the value 
+    ```js 
+    let arr = [1, 0, false]; 
+    console.log(arr.indexOf(0)); // 1
+    console.log(arr.indexOf(false)); // 2
+    console.log(arr.indexOf(null)); // -1
+
+    console.log(arr.includes(1)); // true 
+
+    arr = [NaN]; 
+    console.log(arr.indexOf(NaN)); // -1 
+    console.log(arr.includes(NaN)); // true  
+    ```
+
+**find and findIndex**
+1. If we have an array of objects, we can use `.find()` method to check if any of the objects matches a specific condition. If the method returns `true`, the search (iteration) stops and the `item` (which is the `Object`) is returned. If there's nothing found, the method returns `undefined`. Though `.find()` method takes a function that can have `index` and `array` as parameter, these arugments are seldom passed and used. 
+1. `.findIndex()` is similar to `.find()`. However, `.findIndex()` returns the index of the matched `Object` element rather than the `Object` itself. 
+    ```js 
+    let users = [
+        {id: 1, name: 'John'},
+        {id: 2, name: 'Pete'},
+        {id: 3, name: 'Mary'},
+    ]; 
+    let user = users.find(item => item.id == 1);
+    console.log(user.name); // John
+    ``` 
+
+**filter**
+1. `.filter()` is similar to `.find()`. However, unlike `.find()` that returns only the first matched element, `.filter()` returns an `Array` of all matched elements. 
+    ```js 
+    let users = [
+        {id: 1, name: 'John'},
+        {id: 2, name: 'Pete'},
+        {id: 3, name: 'Mary'},
+    ]; 
+    let someUsers = users.filter(item => item.id < 3); 
+    console.log(someUsers.length) // 2
+    ``` 
+
+**Transform an array**
+1. `.map()` method takes a function as its argument and call the function to work on each of the elements and returns an `Array` of the result. 
+    ```js 
+    let lengths = ['Bilbo', 'Gandalf', 'Nazgul'].map(item => item.length); 
+    console.log(lengths); // [5, 7, 6]
+    ``` 
+1. `.sort()` method sorts the `Array` it works on, change the `Array`'s elements order, and return the sorted `Array`. Note that the method modify the `Array` and return the sorted `Array` (both arrays are the same). However, the elements are sorted as `Strings` by default. In addition, we can pass a function to `.sort()` method to sort the elements of the array on preference. 
+1. To sort the array with ascending order, we can pass a function that returns positive number of an expression. On the other hand, if the function returns a negative number, the order will be descending. 
+    ```js 
+    let arr = [1, -2, 15, 2, 0, 8]; 
+    arr.sort(function(a, b) {
+        return a - b;
+    });
+
+    console.log(arr); // [ -2, 0, 1, 2, 8, 15 ]
+
+    arr.sort(function(a, b) {
+        return b - a;
+    });
+
+    console.log(arr); // [ 15, 8, 2, 1, 0, -2 ]
+    ```
+1. On the other hand, if we'd like to compare and sort `Strings`, we'd use `str.localeCompare()` method to sort the letters. We can refer to the section of `Strings`. 
+
+**Reverse**
+1. `.reverse()` method reverses the order of element in an `Array`. 
+    ```js 
+    let arr = [1,2,3,4,5]; 
+    arr.reverse(); 
+    console.log(arr); // [ 5, 4, 3, 2, 1 ]
+    ```
+
+**Split and Join**
+1. `.split()` method take a delimiter `delim` that separate the given `String` and return an `Array` of separated elements. Note that this method take a 2nd argument to limit the array length, though it's rarely used. Besides, if we pass an empty `String`, the method will separate every character in the in the `String`, including whitespace. 
+    ```js 
+    let names = 'Bilbo, Gandalf, Nazgul';
+    let arr = names.split(', ');
+    console.log(arr); // ['Bilbo', 'Gandalf', 'Nazgul']
+
+    for (let name of arr) {
+        console.log( `A message to ${name}.` ); // A message to Bilbo  (and other names)
+    }
+        
+    // A message to Bilbo.
+    // A message to Gandalf.
+    // A message to Nazgul.
+
+    let list = 'Bilbo, Gandalf, Nazgul, Saruman';
+    let arr = names.split(', ', 2); 
+    console.log(arr); // ['Bilbo', 'Gandalf']
+    ```
+1. `.join()` is contrast to `.split()` that it concatenate elements from an `Array` into a single `String`. Besides, we can pass a delimiter to in between the elements. Note that this method returns a `String` rather than modify the `Array`. 
+    ```js 
+    let arr = ['Bilbo', 'Gandalf', 'Nazgul'];
+    let str = arr.join(';'); // glue the array into a string using ;
+    console.log( str ); // Bilbo;Gandalf;Nazgul
+    ```
+
+**reduce/reduceRight**
+1. Besides `.forEach()`, `for`, `for..of`, and `map` methods to loop iterate through `Array`, we can use `.reduce()` method to calculate a single value by manipulating through an `Array`. The syntax is as the followings `let value = arr.reduce(function(accumulator, item, index, array){...}, [initial])`. 
+    1. `accumulator` is the result of manipulation from the last iteration. Its value will be `initial` in the first iteration if the argument is given. 
+    1. `item` is the current array element. 
+    1. `index` is its position. 
+    1. `array` is the `Array` itself. 
+1. `initial` value is an optional argument to pass into the function. If we don't give the argument, the method will use the first element of the `Array` as the `initial`. Note that this can break the program, as using `.reduce()` method of an empty `Array` will cause error. Besides, the method will have one fewer iterations because the 1st element is not manipulated.  
+    ```js 
+    let arr = [1,2,3,4,5]; 
+    let counter = 0; 
+    let result = arr.reduce(function(sum, current) {
+        counter++;
+        return sum + current; 
+    }); 
+    console.log(counter); // 4 
+    console.log(result); // 15 
+
+    counter = 0; 
+    result = arr.reduce(function(sum, current) {
+        counter++;
+        return sum + current; 
+    }, 0); 
+    console.log(counter); 
+    console.log(result); // 15 
+
+    let giveSix = arr.reduce((sum, current) => sum + current, 6); 
+    // console.log(giveSix); // 15 
+
+    let empty = []; 
+    let res = empty.reduce((sum, current) => sum + current, 0); 
+    // console.log(res);
+    ```
+1. `.reduceRight()` method works exactly the same as `.reduce()`, while it work from right to left. 
+
+**Array.isArray**
+1. Since `Array` in JavaScript is built from `Object`, we can't use `typeof` to check the type directly. Therefore, we can use `Array.isArray(arr)` to check if `arr` is an `Array` in JavaScript. This method returns `true` if the variable is an `Array`.
+    ```js 
+    console.log(Array.isArray([])); // true 
+    console.log(Array.isArray({})); // false 
+    ```
+
+**Most methods support "thisArg"**
+1. Almost all array methods that call functions, such as `.find()`, `.filter()`, and `.map()`, accept an optional additional parameter `thisArg` (which is passed as the last argument). The value of `thisArg` parameter becomes `this` for the function. 
+1. For example, in the example below, if we don't pass `army` object to the method, `army.canJoin` becomes a standalone function which has no `this` to refer to, as `this` is `undefined`. However, we can use `users.filter(user => army.canJoin(user))` which does the same as passing the object. 
+    ```js 
+    let army = {
+        minAge: 18, 
+        maxAge: 27, 
+        canJoin(user) {
+            return user.age >= this.minAge && user.age < this.maxAge; 
+        }
+    }; 
+
+    let users = [
+        {age: 16},
+        {age: 20},
+        {age: 23},
+        {age: 30},
+    ]
+
+    let soldiers = users.filter(army.canJoin, army); 
+    console.log(soldiers.length); // 2
+    console.log(soldiers[0].age); // 20
+
+    let soldiers2 = users.filter(user => army.canJoin(user)); 
+    console.log(soldiers2.length); // 2
+    console.log(soldiers2[0].age); // 20
+    ```
+
+#### Exercise 1 - Translate border-left-width to borderLeftwidth 
+1. Write the function camelize(str) that changes dash-separated words like “my-short-string” into camel-cased “myShortString”.
+1. First approach. This approach doesn't work, as it also takes the first text to change the first letter to uppercase. Besides, if the input `String` starts with a dash sign "-", the method `.toUpperCase()` returns an error because the method can't work on emtpy `String`. 
+    ```js 
+    function camelize(str) {
+        let list = str.split('-'); 
+        let arr = [];
+        let arr = list.map(function(item){
+            return item[0].toUpperCase() + item.slice(1); 
+        });
+        let string = arr.join('');
+        return string; 
+    }
+    ```
+1. Solution 
+    ```js 
+    function camelize(str) {
+        let list = str.split('-'); 
+        let arr = [];
+        for (let i = 1; i < list.length; i++) {
+            let text = list[i][0].toUpperCase() + list[i].slice(1);
+            arr.push(text); 
+        }
+        arr.unshift(list[0]); 
+        let string = arr.join('');
+        return string; 
+    }
+    ```
+1. Answer 
+    ```js 
+    function camelize(str) {
+        return str.split('-').map((word, index) => index == 0 ? word : word[0].toUpperCase() + word.slice(1)).join('');
+    }
+    ```
+
+#### Exercise 2 - Filter range
+1. Write a function filterRange(arr, a, b) that gets an array arr, looks for elements between a and b in it and returns an array of them. The function should not modify the array. It should return the new array.
+1. First approach. `.filter()` takes a function and push the element to a new `Array` if the function returns `true` when iterates the element. 
+    ```js 
+    function filterRange(arr, a, b) {
+        let list = []; 
+        arr.forEach(function(e){
+            if (e >= a && e <= b) {
+                list.push(e); 
+            }
+        });
+        return list; 
+    }
+    let arr = [5, 3, 8, 1];
+    let filtered = filterRange(arr, 1, 4);
+    ```
+1. Solution
+    ```js 
+    // long version
+    function filterRange(arr, a, b) {
+        let list = arr.filter(function(e){
+            if (e >= a && e <= b) return true; 
+        }); 
+        return list; 
+    }
+
+    // shorthad 
+    function filterRange(arr, a, b) {
+        return arr.filter(item => (a <= item && item <= b)); 
+    }
+    ```
+
+#### Exercise 3 - Sort in decreasing order 
+1. Sort elements of an `Array` to decreasing order. 
+1. First approach. `.sort()` method takes a function and check adjacent elements one by one. If the function returns positive nubmer, the `Array` will be sorted in "**descending**" order. If the function returns negative, the `Array` will be sorted in "**ascending**" order. 
+    ```js 
+    let arr = [5, 2, 1, -10, 8];
+    arr.sort((a, b) => ((a-b) < 0) ? 1 : -1 );
+    console.log(arr) // [ 8, 5, 2, 1, -10 ]
+    ``` 
+1. Solution 
+    ```js 
+    let arr = [5, 2, 1, -10, 8];
+    arr.sort((a, b) => b - a);
+    console.log(arr) // [ 8, 5, 2, 1, -10 ]
+    ```
+
+### Exercise 4 - Copy and sort array 
+1. We'd like to get a copy of `Array` sorted without modifying the `Array`. 
+1. First approach. `.slice()` return a copy of `Array` by giving starting and ending position. If there's no start/end point given, the method returns a copy of the whole `Array`. `.sort()` method is similar that it also returns a sorted `Array` by comparing `Strings`. However, from the notes, it'd be better to use `.localCompare` to ensure the letters are compared correctly if there's special characters, such as letters from the other language. 
+    ```js 
+    function copySorted(arr){
+        let list = arr.slice(); 
+        list.sort(function(a, b){
+            return a.localeCompare(b);
+        });
+        return list; 
+    }
+    ```
+1. Solution 
+    ```js 
+    function copySorted(arr) {
+       return arr.slice().sort();
+    }
+    ```
+
+### Exercise 5 - Create an extendable calculator 
+1. First, implement the method calculate(str) that takes a string like "1 + 2" in the format “NUMBER operator NUMBER” (space-delimited) and returns the result. Should understand plus + and minus -. 
+1. First approach. When solving this problem, we should be careful about the data structure. The first approach is an deadend for the following solution because it's not extendable. The first approach was going to use `.call()` method which is not the right direction. The solution uses very basic features of `Objects`. Besides, the value of a key/value pair in `Object` can be any thing, even an expression. 
+    ```js 
+    function Calculator(){
+        this.calculate = function(exp){
+            let arr = exp.split(' '); 
+            // return arr;
+            if (arr[1] == '+') return +arr[0] + +arr[2]; 
+            if (arr[1] == '-') return +arr[0] - +arr[2]; 
+        }
+    }
+    ```
+1. Solution 
+    ```js 
+    function Calculator(){
+        this.methods = {
+            '-': (a,b) => a - b,
+            '+': (a,b) => a + b,
+        }; 
+
+        this.calculate = function(exp){
+            let arr = exp.split(' '); 
+            a = +arr[0];
+            op = arr[1];
+            b = +arr[2];
+
+            if (!this.methods[op] || isNaN(a) || isNaN(b)) {
+                return NaN;
+            }
+
+            return this.methods[op](a, b);
+        }; 
+
+        this.addMethod = function(name, func) {
+            this.methods[name] = func;
+        };
+    }
+    ```
+
+### Exercise 6 - Map to names  
+1. You have an array of user objects, each one has user.name. Write the code that converts it into an array of names.
+    ```js 
+    let john = { name: "John", age: 25 };
+    let pete = { name: "Pete", age: 30 };
+    let mary = { name: "Mary", age: 28 };
+    let users = [ john, pete, mary ];
+
+    let names // your code 
+    console.log(names); // ['John', 'Pete', 'Mary']
+    ```
+1. First approach. 
+    ```js 
+    let names = users.map(function(e){
+        return e.name;
+    })
+    ```
+1. Solution 
+    ```js 
+    let names = users.map(item => item.name); 
+    ```
+
+### Exercise 7 - Map to objects 
+1. You have an array of `user` objects, each one has `name`, `surname` and `id`. Write the code to create another array from it, of objects with `id` and `fullName`, where `fullName` is generated from `name` and `surname`.
+    ```js 
+    let john = { name: "John", surname: "Smith", id: 1 };
+    let pete = { name: "Pete", surname: "Hunt", id: 2 };
+    let mary = { name: "Mary", surname: "Key", id: 3 };
+    let users = [ john, pete, mary ];
+    let usersMapped // your code 
+    /*
+    usersMapped = [
+        { fullName: "John Smith", id: 1 },
+        { fullName: "Pete Hunt", id: 2 },
+        { fullName: "Mary Key", id: 3 }
+    ]
+    */
+    console.log(usersMapped[0].id) // 1
+    console.log(usersMapped[0].fullName) // John Smith
+    ```
+1. First approach 
+    ```js 
+    let usersMapped = users.map(function(e){
+        let obj = {}; 
+        obj.fullName = e.name + ' ' + e.surname;
+        obj.id = e.id;
+        return obj;
+    });
+    ``` 
+1. Solution. Note that for arrow function notation, we need additional parenthesis to return the expression value. 
+    ```js 
+    let usersMapped = users.map(user => ({
+        fullName: `${user.name} ${user.surname}`,
+        id: user.id
+    }));
+    ```
+
+### Exercise 8 - Sort users by age 
+1. Write the function sortByAge(users) that gets an array of objects with the age property and sorts them by age.
+    ```js 
+    let john = { name: "John", age: 25 };
+    let pete = { name: "Pete", age: 30 };
+    let mary = { name: "Mary", age: 28 };
+
+    let arr = [ pete, john, mary ];
+
+    sortByAge(arr);
+
+    // now: [john, mary, pete]
+    alert(arr[0].name); // John
+    alert(arr[1].name); // Mary
+    alert(arr[2].name); // Pete
+    ```
+1. First approach. `.sort()` method returns a new sorted `Array`. Note that `.sort()` takes a function that check adjacent elements of a given `Array` and sort the elements in ascending/descending orders according to the relationship between 2 compared elements. 
+    ```js 
+    function sortByAge(users) {
+        users.sort(function(a, b){
+            if(a.age > b.age) return 1; 
+            return -1;
+        });
+    }
+    ```
+1. Solution 
+    ```js 
+    function sortByAge(users){users.sort((a, b) => (a.age > b.age) ? 1 : -1)};
+    ```
