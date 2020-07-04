@@ -1,23 +1,18 @@
-let users = [
-        {id: 'john', name: "John Smith", age: 20},
-        {id: 'ann', name: "Ann Smith", age: 24},
-        {id: 'pete', name: "Pete Peterson", age: 31},
-    ];
+let str = 'abcde'; 
+let arr = Array.from(str); 
 
-let usersById = groupById(users);
+console.log(arr); // [ 'a', 'b', 'c', 'd', 'e' ]
 
-console.log(usersById);
-
-// function groupById(users) {
-//     return users.reduce(function(acc, item){
-//         acc[item.id] = item;
-//         return acc;
-//     }, {})
-// }
-
-function groupById(users){
-    return users.reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-    }, {})
+let text = 'abcde'; 
+let array = []; 
+for (let char of text) {
+    array.push(char); 
 }
+console.log(array); // [ 'a', 'b', 'c', 'd', 'e' ]
+let counter = 0; 
+for (let i = 0; i < arr.length; i++){
+    if (arr[i] === array[i]) {
+        counter++;
+    }
+}
+console.log(counter === 5); // 5

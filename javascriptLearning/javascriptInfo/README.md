@@ -1219,7 +1219,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(arr) // [ 8, 5, 2, 1, -10 ]
     ```
 
-### Exercise 4 - Copy and sort array 
+#### Exercise 4 - Copy and sort array 
 1. We'd like to get a copy of `Array` sorted without modifying the `Array`. 
 1. Attemptive solution. `.slice()` return a copy of `Array` by giving starting and ending position. If there's no start/end point given, the method returns a copy of the whole `Array`. `.sort()` method is similar that it also returns a sorted `Array` by comparing `Strings`. However, from the notes, it'd be better to use `.localCompare` to ensure the letters are compared correctly if there's special characters, such as letters from the other language. 
     ```js 
@@ -1238,7 +1238,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### Exercise 5 - Create an extendable calculator 
+#### Exercise 5 - Create an extendable calculator 
 1. First, implement the method calculate(str) that takes a string like "1 + 2" in the format “NUMBER operator NUMBER” (space-delimited) and returns the result. Should understand plus + and minus -. 
 1. Attemptive solution. When solving this problem, we should be careful about the data structure. The Attemptive solution is an deadend for the following solution because it's not extendable. The Attemptive solution was going to use `.call()` method which is not the right direction. The solution uses very basic features of `Objects`. Besides, the value of a key/value pair in `Object` can be any thing, even an expression. 
     ```js 
@@ -1278,7 +1278,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### Exercise 6 - Map to names  
+#### Exercise 6 - Map to names  
 1. You have an array of user objects, each one has user.name. Write the code that converts it into an array of names.
     ```js 
     let john = { name: "John", age: 25 };
@@ -1300,7 +1300,7 @@ Note: We should be very careful with the calculation by programming language due
     let names = users.map(item => item.name); 
     ```
 
-### Exercise 7 - Map to objects 
+#### Exercise 7 - Map to objects 
 1. You have an array of `user` objects, each one has `name`, `surname` and `id`. Write the code to create another array from it, of objects with `id` and `fullName`, where `fullName` is generated from `name` and `surname`.
     ```js 
     let john = { name: "John", surname: "Smith", id: 1 };
@@ -1335,7 +1335,7 @@ Note: We should be very careful with the calculation by programming language due
     }));
     ```
 
-### Exercise 8 - Sort users by age 
+#### Exercise 8 - Sort users by age 
 1. Write the function sortByAge(users) that gets an array of objects with the age property and sorts them by age.
     ```js 
     let john = { name: "John", age: 25 };
@@ -1365,7 +1365,7 @@ Note: We should be very careful with the calculation by programming language due
     function sortByAge(users){users.sort((a, b) => (a.age > b.age) ? 1 : -1)};
     ```
 
-### Exercise 9 - Shuffle an array
+#### Exercise 9 - Shuffle an array
 1. Write the function shuffle(array) that shuffles (randomly reorders) elements of the array. Multiple runs of shuffle may lead to different orders of elements. All element orders should have an equal probability.
     ```js 
     let arr = [1, 2, 3];
@@ -1417,7 +1417,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### Exercise 10 - Get average age 
+#### Exercise 10 - Get average age 
 1. Write the function getAverageAge(users) that gets an array of objects with property age and returns the average age. The formula for the average is `(age1 + age2 + ... + ageN) / N`.
     ```js 
     let john = { name: "John", age: 25 };
@@ -1450,7 +1450,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### Exercise 11 - Filter unique array members
+#### Exercise 11 - Filter unique array members
 1. Let `arr` be an array. Create a function `unique(arr)` that should return an array with unique items of `arr`. 
     ```js 
     let strings = ["Hare", "Krishna", "Hare", "Krishna",
@@ -1483,7 +1483,7 @@ Note: We should be very careful with the calculation by programming language due
         return result;
     }
 
-### Exercise 11 - Create keyed object from array 
+#### Exercise 12 - Create keyed object from array 
 1. Let’s say we received an array of users in the form `{id:..., name:..., age... }`. Create a function `groupById(arr)` that creates an object from it, with `id` as the key, and array items as values and use `.reduce()` method to solve the problem. 
     ```js 
     let users = [
@@ -1533,4 +1533,176 @@ Note: We should be very careful with the calculation by programming language due
             return obj;
         }, {})
     }
+    ```
+
+### Iterables 
+1. "Iterable" object is the concept for `Objects` which can be iterated through `for of` loop. Not only `Arrays` but many other built-in objects are iterable, such as `String`. 
+
+**Symbol.iterator**
+1. We can add a method `Symbol.iterator` which is special built-in symbol to make an `Object` be iterable. This `symbol.iterator` method should return a "**iterator**" (which is an `Object` with method `next()`) to make `for of` loop works on the `Ojbect` that is returned by `next()` method. The result returned by `next()` method should be an `Object` which structure is `{done: Boolean, value: any}`. When `done=true`, it means iterations are over or the `value` will be the next value. 
+1. For example, we can make the `range` and iterate through 1 to 5. 
+    ```js 
+    let range = {
+        from: 1, 
+        to: 5,
+    }; 
+
+    // 1. call to for..of initially calls this
+    range[Symbol.iterator] = function() {
+        // ...it returns the iterator object:
+        // 2. Onward, for..of works only with this iterator, asking it for next values
+        return {
+            current: this.from,
+            last: this.to,
+
+            // 3. next() is called on each iteration by the for..of loop
+            next() {
+                // 4. it should return the value as an object {done:.., value :...}
+                if (this.current <= this.last) {
+                    return { done: false, value: this.current++ };
+                } else {
+                    return { done: true };
+                }
+            }
+        };
+    };
+
+    // now it works!
+    for (let num of range) {
+        console.log(num); // 1, then 2, 3, 4, 5
+    }
+    ```
+1. In the example above, we know that the object `range` doesn't have `next()` method itself and use `range[Symbol.iterator]()` to create another `Object` (which is the "iterator" and its `next()` method will return the value). Therefore, technically, the "**iterator**" and the `Object` which is iterated are different `Objects`. Nevertheless, we can merge them make `range` `Object` to work as "**iterator**". 
+    ```js 
+    let range = {
+        from: 1,
+        to: 5,
+
+        [Symbol.iterator]() {
+            this.current = this.from;
+            return this;
+        },
+
+        next() {
+            if (this.current <= this.to) {
+            return { done: false, value: this.current++ };
+            } else {
+            return { done: true };
+            }
+        }
+    };
+    ```
+1. If we set `range.to = Infinity`, `range` `Object` will generate infinite sequence of pseudorandom numbers. Though `for of` will iterate endlessly, we can use `break` to stop the iterations.
+
+**String is iterable**
+1. Arrays and strings are most widely used built-in iterables. `for of` loop will go through every character of a `String` value. This also works with surrogate pairs. 
+    ```js 
+    let str = '𝒳😂';
+    for (let char of str) {
+        console.log( char ); // 𝒳, and then 😂
+    }
+    ```
+
+**Calling an iterator explicitly**
+1. We’ll iterate over a string in exactly the same way as `for..of`, but with direct calls. This code creates a string iterator and gets values from it "**manually**". That is rarely needed, but gives us more control over the process than `for..of`. For instance, we can split the iteration process: iterate a bit, then stop, do something else, and then resume later.
+    ```js 
+    let str = "Hello";
+
+    // does the same as
+    // for (let char of str) alert(char);
+
+    let iterator = str[Symbol.iterator]();
+
+    while (true) {
+        let result = iterator.next();
+        if (result.done) break;
+        console.log(result.value); // outputs characters one by one
+    }
+    ```
+
+**Iterables and array-like**
+1. `Iterables` are objects that implement the `SYmbol.iterator` method
+1. `Array-like` are objects that have indexes and `length` property which makes the object look like arrays. 
+1. For instance, `Strings` are both "**iterable**" (`for..of` works on them) and "**array-like**" (they have numeric indexes and length).
+1. Both `iterables` and `array-likes` are usually not arrays, they don’t have `push`, `pop` method etc. That’s rather inconvenient if we have such an object and want to work with it as with an array.
+
+**Array.from**
+1. For **iterables** and **array-like** `Objects`, we can use `Array.from(obj)` method to create an `Array` which takes properties of the `obj`. `Array.from` at the line `(*)` takes the object, examines it for being an **iterable** or **array-like**, then makes a new array and copies all items to it.
+    ```js 
+    // works on array-like object 
+    let arrayLike = {
+        0: "Hello",
+        1: "World",
+        length: 2
+    };
+
+    let arr = Array.from(arrayLike); // (*)
+    console.log(arr.pop()); // World (method works)
+    console.log(arr); // ['Hello']
+
+    // works on iterables
+    let range = {
+        from: 1,
+        to: 5,
+
+        [Symbol.iterator]() {
+            this.current = this.from;
+            return this;
+        },
+
+        next() {
+            if (this.current <= this.to) {
+            return { done: false, value: this.current++ };
+            } else {
+            return { done: true };
+            }
+        }
+    };
+
+    let arr = Array.from(range); 
+    console.log(arr); // [1, 2, 3, 4, 5]
+    ```
+1. `Array.from()` method take another 2 arguments which is `mapFn` and `thisArg`. `mapFn` is a function that can be applied to all the elements before they are pushed to the new `Array`. We can also use the method to turn a `String` into an `Array`. 
+    ```js 
+    let range = {
+        from: 1,
+        to: 5,
+
+        [Symbol.iterator]() {
+            this.current = this.from;
+            return this;
+        },
+
+        next() {
+            if (this.current <= this.to) {
+            return { done: false, value: this.current++ };
+            } else {
+            return { done: true };
+            }
+        }
+    };
+    let arr = Array.from(range, num => num * num); 
+    console.log(arr) // [1, 4, 9, 16, 25]
+    
+
+    let str = 'abcde'; 
+    let arr = Array.from(str); 
+
+    console.log(arr); // [ 'a', 'b', 'c', 'd', 'e' ]
+
+    let text = 'abcde'; 
+    let array = []; 
+    for (let char of text) {
+        array.push(char); 
+    }
+    console.log(array); // [ 'a', 'b', 'c', 'd', 'e' ]
+
+    // check if 2 arrays are identical
+    let counter = 0; 
+    for (let i = 0; i < arr.length; i++){
+        if (arr[i] === array[i]) {
+            counter++;
+        }
+    }
+    console.log(counter === 5); // true 
     ```
