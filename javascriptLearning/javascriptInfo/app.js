@@ -1,18 +1,15 @@
-// function sortByAge(users) 
-//     users.sort(function(a, b){
-//         if(a.age > b.age) return 1; 
-//         return -1;
-//     });
-// }
-function sortByAge(users){users.sort((a, b) => (a.age > b.age) ? 1 : -1)};
-let john = { name: "John", age: 25 };
-let pete = { name: "Pete", age: 30 };
-let mary = { name: "Mary", age: 28 };
+function unique(arr){
+    let list = [] 
+    for (let e of arr) {
+        if (!list.includes(e)) {
+            list.push(e); 
+        }
+    }
+    return list;
+}
 
-let arr = [ pete, john, mary ];
+let strings = ["Hare", "Krishna", "Hare", "Krishna",
+  "Krishna", "Krishna", "Hare", "Hare", ":-O"
+];
 
-sortByAge(arr);
-
-console.log(arr[0].name); // John
-console.log(arr[1].name); // Mary
-console.log(arr[2].name); // Pete
+console.log(unique(strings)); // Hare, Krishna, :-O

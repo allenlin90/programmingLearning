@@ -1139,7 +1139,7 @@ Note: We should be very careful with the calculation by programming language due
 
 #### Exercise 1 - Translate border-left-width to borderLeftwidth 
 1. Write the function camelize(str) that changes dash-separated words like “my-short-string” into camel-cased “myShortString”.
-1. First approach. This approach doesn't work, as it also takes the first text to change the first letter to uppercase. Besides, if the input `String` starts with a dash sign "-", the method `.toUpperCase()` returns an error because the method can't work on emtpy `String`. 
+1. Attemptive solution. This approach doesn't work, as it also takes the first text to change the first letter to uppercase. Besides, if the input `String` starts with a dash sign "-", the method `.toUpperCase()` returns an error because the method can't work on emtpy `String`. 
     ```js 
     function camelize(str) {
         let list = str.split('-'); 
@@ -1174,7 +1174,7 @@ Note: We should be very careful with the calculation by programming language due
 
 #### Exercise 2 - Filter range
 1. Write a function filterRange(arr, a, b) that gets an array arr, looks for elements between a and b in it and returns an array of them. The function should not modify the array. It should return the new array.
-1. First approach. `.filter()` takes a function and push the element to a new `Array` if the function returns `true` when iterates the element. 
+1. Attemptive solution. `.filter()` takes a function and push the element to a new `Array` if the function returns `true` when iterates the element. 
     ```js 
     function filterRange(arr, a, b) {
         let list = []; 
@@ -1206,7 +1206,7 @@ Note: We should be very careful with the calculation by programming language due
 
 #### Exercise 3 - Sort in decreasing order 
 1. Sort elements of an `Array` to decreasing order. 
-1. First approach. `.sort()` method takes a function and check adjacent elements one by one. If the function returns positive nubmer, the `Array` will be sorted in "**descending**" order. If the function returns negative, the `Array` will be sorted in "**ascending**" order. 
+1. Attemptive solution. `.sort()` method takes a function and check adjacent elements one by one. If the function returns positive nubmer, the `Array` will be sorted in "**descending**" order. If the function returns negative, the `Array` will be sorted in "**ascending**" order. 
     ```js 
     let arr = [5, 2, 1, -10, 8];
     arr.sort((a, b) => ((a-b) < 0) ? 1 : -1 );
@@ -1221,7 +1221,7 @@ Note: We should be very careful with the calculation by programming language due
 
 ### Exercise 4 - Copy and sort array 
 1. We'd like to get a copy of `Array` sorted without modifying the `Array`. 
-1. First approach. `.slice()` return a copy of `Array` by giving starting and ending position. If there's no start/end point given, the method returns a copy of the whole `Array`. `.sort()` method is similar that it also returns a sorted `Array` by comparing `Strings`. However, from the notes, it'd be better to use `.localCompare` to ensure the letters are compared correctly if there's special characters, such as letters from the other language. 
+1. Attemptive solution. `.slice()` return a copy of `Array` by giving starting and ending position. If there's no start/end point given, the method returns a copy of the whole `Array`. `.sort()` method is similar that it also returns a sorted `Array` by comparing `Strings`. However, from the notes, it'd be better to use `.localCompare` to ensure the letters are compared correctly if there's special characters, such as letters from the other language. 
     ```js 
     function copySorted(arr){
         let list = arr.slice(); 
@@ -1240,7 +1240,7 @@ Note: We should be very careful with the calculation by programming language due
 
 ### Exercise 5 - Create an extendable calculator 
 1. First, implement the method calculate(str) that takes a string like "1 + 2" in the format “NUMBER operator NUMBER” (space-delimited) and returns the result. Should understand plus + and minus -. 
-1. First approach. When solving this problem, we should be careful about the data structure. The first approach is an deadend for the following solution because it's not extendable. The first approach was going to use `.call()` method which is not the right direction. The solution uses very basic features of `Objects`. Besides, the value of a key/value pair in `Object` can be any thing, even an expression. 
+1. Attemptive solution. When solving this problem, we should be careful about the data structure. The Attemptive solution is an deadend for the following solution because it's not extendable. The Attemptive solution was going to use `.call()` method which is not the right direction. The solution uses very basic features of `Objects`. Besides, the value of a key/value pair in `Object` can be any thing, even an expression. 
     ```js 
     function Calculator(){
         this.calculate = function(exp){
@@ -1289,7 +1289,7 @@ Note: We should be very careful with the calculation by programming language due
     let names // your code 
     console.log(names); // ['John', 'Pete', 'Mary']
     ```
-1. First approach. 
+1. Attemptive solution. 
     ```js 
     let names = users.map(function(e){
         return e.name;
@@ -1318,7 +1318,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(usersMapped[0].id) // 1
     console.log(usersMapped[0].fullName) // John Smith
     ```
-1. First approach 
+1. Attemptive solution 
     ```js 
     let usersMapped = users.map(function(e){
         let obj = {}; 
@@ -1351,7 +1351,7 @@ Note: We should be very careful with the calculation by programming language due
     alert(arr[1].name); // Mary
     alert(arr[2].name); // Pete
     ```
-1. First approach. `.sort()` method returns a new sorted `Array`. Note that `.sort()` takes a function that check adjacent elements of a given `Array` and sort the elements in ascending/descending orders according to the relationship between 2 compared elements. 
+1. Attemptive solution. `.sort()` method returns a new sorted `Array`. Note that `.sort()` takes a function that check adjacent elements of a given `Array` and sort the elements in ascending/descending orders according to the relationship between 2 compared elements. 
     ```js 
     function sortByAge(users) {
         users.sort(function(a, b){
@@ -1364,3 +1364,121 @@ Note: We should be very careful with the calculation by programming language due
     ```js 
     function sortByAge(users){users.sort((a, b) => (a.age > b.age) ? 1 : -1)};
     ```
+
+### Exercise 9 - Shuffle an array
+1. Write the function shuffle(array) that shuffles (randomly reorders) elements of the array. Multiple runs of shuffle may lead to different orders of elements. All element orders should have an equal probability.
+    ```js 
+    let arr = [1, 2, 3];
+
+    shuffle(arr);
+    // arr = [3, 2, 1]
+
+    shuffle(arr);
+    // arr = [2, 1, 3]
+
+    shuffle(arr);
+    // arr = [3, 1, 2]
+    // ...
+    ```
+1. Attemptive solution. The main idea is to use `Math.random()` to randomly generate a positive/negative number for `.sort()` method to reorder the array. Note that we can skip the variable that keeps the returned `Array` because `.sort()` not only return a sorted `Array` but modified the given `Array`. 
+    ```js 
+    function shuffle(array){
+        let list = array.sort(function(){
+            let num = Math.floor(Math.random() * (2) -1);
+            return num;
+        }); 
+        return list; 
+    }
+
+    // Reference for generate a random number between given min and max 
+    function generateRandom(min, max){
+        return Math.floor(Math.random() * (max - min) + min); 
+    }
+    ```
+1. Solution. The regular method to use `.sort()` isn't good enough, as we don't know exactly how the algorithm works according to its runtime (JavaScript engine). Therefore, we can use `Fisher-Yates shuffle`. The idea is to walk the array in the reverse order and swap each element with a random one before it. 
+    ```js 
+    // Bias shuffle 
+    function shuffle(array) {
+        array.sort(() => Math.random() - 0.5);
+    }
+
+    // Fisher-Yates shuffle
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+
+            // swap elements array[i] and array[j]
+            // we use "destructuring assignment" syntax to achieve that
+            // you'll find more details about that syntax in later chapters
+            // same can be written as:
+            // let t = array[i]; array[i] = array[j]; array[j] = t
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    ```
+
+### Exercise 10 - Get average age 
+1. Write the function getAverageAge(users) that gets an array of objects with property age and returns the average age. The formula for the average is `(age1 + age2 + ... + ageN) / N`.
+    ```js 
+    let john = { name: "John", age: 25 };
+    let pete = { name: "Pete", age: 30 };
+    let mary = { name: "Mary", age: 29 };
+
+    let arr = [ john, pete, mary ];
+
+    console.log( getAverageAge(arr) ); // (25 + 30 + 29) / 3 = 28
+    ```
+1. Attemptive solution. The main idea is to learn how to use `.reduce()` method. 
+    ```js 
+    // Long version
+    function getAverageAge(users) {
+        let total = users.reduce(function(acc, e){
+            return (acc + e.age);
+        }, 0)
+        return (total/users.length); 
+    }
+
+    // Short version
+    function getAverageAge(users) {
+        return (users.reduce((acc, item) => acc + item.age, 0)/users.length);
+    }
+    ```
+1. Solution 
+    ```js 
+    function getAverageAge(users) {
+        return users.reduce((prev, user) => prev + user.age, 0) / users.length;
+    }
+    ```
+
+### Exercise 11 - Filter unique array members
+1. Let `arr` be an array. Create a function `unique(arr)` that should return an array with unique items of `arr`. 
+    ```js 
+    let strings = ["Hare", "Krishna", "Hare", "Krishna",
+        "Krishna", "Krishna", "Hare", "Hare", ":-O"
+    ];
+
+    console.log( unique(strings) ); // Hare, Krishna, :-O
+    ```
+1. Attemptive solution. The idea is to check if an element has appeared or not. 
+    ```js 
+    function unique(arr){
+        let list = [] 
+        for (let e of arr) {
+            if (!list.includes(e)) {
+                list.push(e); 
+            }
+        }
+        return list;
+    }
+    ```
+1. Solution 
+    ```js 
+    function unique(arr) {
+        let result = [];
+        for (let str of arr) {
+            if (!result.includes(str)) {
+            result.push(str);
+            }
+        }
+        return result;
+    }
