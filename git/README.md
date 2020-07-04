@@ -415,3 +415,36 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 ### Clear all records 
 1. We can use `git reflog expire --expire=now --all` to delete the records and use `git gc` to refresh and clear those unreachable entities.  
+
+
+
+## Day 15 - Merge basics and how to use 
+1. Git is a DVCS (distributed version control system) that users will keep working "**branch**" and "**merge**" during development. 
+
+### Merge Basics
+1. During development, we can separate the branches upon requirements. For example, the main and stable version is on `,master` branch, and we can open a `bugfix` branch to work on bug fixing or `feature` for new functions. After finishing fixing bugs, we can "**merge**" `bugfix` brnach to `master` branch. 
+1. Note thate when merging in Git, we can only merge the objects in the same repository, as all the objects are related to each other. Therefore, we can't merge a branch from a repository to one another. 
+1. During merge, if the lines in the same file of different branches are different, Git will merge them into a single file. However, when the content on the same line is different as a "**conflict**", Git will ask the user to review and solve the issue. The conflict files will be tagged as "**unmerged**". We can check it from `git status` as well. 
+1. Before merging branch, we should be careful with the status 
+    1. Which `branch` are we at? (For example, `master` or `feature`)
+    1. Ensure the working directory is "**clean**" that all files are indexed and commited. 
+    1. Use `git merge [branchName]` to integrate `[branchName]` to current branch. 
+    1. We can use `git log` to check records. A new version will be created after branches are merged. 
+1. After merging, we can use `git branch -d [branchName]` to delete a branch that is not used in the future. However, with lowercase `-d`, we can only delete branches that are merged to others. Otherwise, we shall use capital `-D` to delete a branch, `git branch -D [branchName]`. 
+
+### Recover deleted branches
+1. If we accidentally delete a branch, we can use `git reflog` to find the latest object ID of a branch and execute `git branch [branchName] [objectID]` to recover the branch. 
+
+### Merge with conflicts 
+1. If there's conflicts between files during merge, we will get a notice for the issue. Besides, we can also check the status with `git status`. 
+1. We can use `git diff` to check what's the difference between conflict files. Git will show the contents of the file in "<" less than sign, ">" greater than sign, and equal sign "=". 
+
+### Solve the conflicts 
+1. The easiest way to solve the problem is to index all the modified files and submit a new commit. (This is a very bad solution.)
+1. After wrong merging, we can use `git reset --hard ORIG_HEAD` to resume to the previous version, so that we can merge the conflict again. 
+1. If there's many files get conflicts during merge, we can use git status to check the "**filepath**" and use `git diff [filepath]` to check difference between the file. 
+1. We can use "**SourceTree**", "**fork**", or other Git GUI to resolve the conflicts. After fixing the problems, we can stag the files and commit the version. Note that using GUI to resolve conflicts is much easier than work in CLI. 
+
+
+
+## Day 18 - Reset and Amend records 
