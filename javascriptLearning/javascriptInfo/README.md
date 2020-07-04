@@ -1471,7 +1471,7 @@ Note: We should be very careful with the calculation by programming language due
         return list;
     }
     ```
-1. Solution 
+1. Solution. This is only a solution for small array set as its time complexity is O(n), as it has to go through all the elements in the `Array`. If we use another `for` loop in iteration, it will use O(n^2) time solve the problem. The optimal solution will be introduced in a later section "Map and Set". 
     ```js 
     function unique(arr) {
         let result = [];
@@ -1482,3 +1482,55 @@ Note: We should be very careful with the calculation by programming language due
         }
         return result;
     }
+
+### Exercise 11 - Create keyed object from array 
+1. Let’s say we received an array of users in the form `{id:..., name:..., age... }`. Create a function `groupById(arr)` that creates an object from it, with `id` as the key, and array items as values and use `.reduce()` method to solve the problem. 
+    ```js 
+    let users = [
+        {id: 'john', name: "John Smith", age: 20},
+        {id: 'ann', name: "Ann Smith", age: 24},
+        {id: 'pete', name: "Pete Peterson", age: 31},
+    ];
+
+    let usersById = groupById(users);
+
+    /*
+    // after the call we should have:
+
+    usersById = {
+    john: {id: 'john', name: "John Smith", age: 20},
+    ann: {id: 'ann', name: "Ann Smith", age: 24},
+    pete: {id: 'pete', name: "Pete Peterson", age: 31},
+    }
+    */
+    ```
+1. Attemptive solution. The main idea is to assign a property to the `Object` and assign the whole object as value ot the property. The other critical feature here is that we can use square brackets which takes expression to assign a property to an `Object`. Besides, since the square brackets take expression, we can skip getting the property from an `Object` and assign to a variable. 
+    ```js 
+    // without using reduce method 
+    function groupById(users) {
+        let obj = {};
+        users.forEach(function(e){
+            let id = e.id; // we can actual put e.id in the square brackets directly to shortern the code 
+            obj[id] = e;
+        });
+        return obj;
+    }
+
+    // using reduce 
+    function groupById(users) {
+        return users.reduce(function(acc, item){
+            let id = item.id
+            acc[id] = item;
+            return acc;
+        }, {})
+    }
+    ```
+1. Solution
+    ```js 
+    function groupById(array) {
+        return array.reduce((obj, value) => {
+            obj[value.id] = value;
+            return obj;
+        }, {})
+    }
+    ```
