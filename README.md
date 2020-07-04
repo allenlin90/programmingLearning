@@ -4,6 +4,7 @@
 1. [Eloquent JavaScript](https://eloquentjavascript.net/) 3rd edition 
 1. [JavaScript.Info](https://javascript.info/) 
 1. [JavaScript: Understanding the Weird Parts](https://www.udemy.com/course/understand-javascript/)
+1. [The Complete JavaScript Course 2020: Build Real Projects!](https://www.udemy.com/course/the-complete-javascript-course/)
 
 # Python Learning 
 
