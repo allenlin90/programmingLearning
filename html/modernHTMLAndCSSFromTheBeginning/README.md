@@ -2852,6 +2852,7 @@ body {
         z-index: 2;
     }
     ```
+1. We can design a "**current**" class on the buttons in the navbar, so users can have a visualized hint that which are they browsing. For example, this website has mainly 2 pages "**home**" and "**about**". We can hightlight the button in red to let users know where they are. 
     <img src="./newsGridWeb/navbar.PNG">
 
 ### Showcase with overlay and button styles 
@@ -2923,3 +2924,38 @@ body {
 ### Footer with grid 
 1. We create the footer section on the homepage, which uses "Grid" and has 4 columns on the 4 rows while the last row has a single item span accross the whole row. 
     <img src="./newsGridWeb/footer.PNG">
+
+### About Page and Page container 
+1. We can store the header navbar and footer as boilerplates. When developing in backend or frontend frameworks, this boilerplate features are usually included in the framework already. 
+1. In CSS, we can separate those items will be used in most of the templates as "**utilities**". In this case, we create a article grid pattern. 
+1. In this case, we created a grid that has "**main content**" and a "**side column**". In the "**Grid**", we can use asterisk selector to select the 1st child `*:first-child` and give `grid-row: 1 / span 3`, so the first item on the left will extend accross the page and has triple the height of the element aside. Therefore, the number of span gives us the layout of how many items we can align on the side column. For example, if we change span to 2, we can put 2 items aside in the layout as a pattern. 
+    ```css 
+    /* Inner page container */
+    .page-container {
+        display: grid;
+        grid-template-columns: 5fr 2fr;
+        margin: 2rem 0; 
+        grid-gap: 1.5rem;
+    }
+
+    .page-container > *:first-child {
+        grid-row: 1 / span 3;
+    }
+    ```
+    <img src="./newsGridWeb/aboutPage.png">
+
+### Article Page
+1. The main concept of design and layout is that we can plan for the pattern of the website and preserve some of the designs, such as colors and detailed layout into classes (this lecture uses pattern similar to bootstrap). Therefore, we can call the patterns and layout by giving classes directly. 
+1. Here introduced to use `<small>` tag which is used for meta data, such as author info., bio, and when is the article created. This tag will make its content smaller, and is a semantic tag in HTML 5. 
+1. The other idea through out the course is that each section is wrapped with specific container with "**id**", so we can locate them easily and integrate all the styling in one CSS file. 
+1. We can use "**grid**" system for larger or overall layout, while use "**flexbox**" for inner contents such as contents that is a single column or row. In this case, we use `display: flex` and `justify-contents: space-between` to separate the child elements in `meta data`, such as author name and created time. 
+1. Note that in this case, there are only 2 main elements in `<div class="meta">`, as we use `<small>` tag to wrap the icon and text together. Note that in the lecture, the instructor used `#article .category .category-ent` to select the `<div>` tag which is created for category tags on the page. After inspecting, this element has little margin at bottom, and we add `margin-top: 0.4rem`, so the element in centered in the container. However, we can work on that by taking off the margin aroudn the element. This will effect to the overall size of the `meta` container, as its content shrinks down (margin is removed). 
+    ```html
+    <div class="meta">
+        <small>
+            <i class="fas fa-user"></i> Written By John Doe January 12, 2020
+        </small>
+        <div class="category category-ent">Entertainment</div>
+    </div>
+    ```
+    <img src="./newsGridWeb/articlePage.png">
