@@ -47,4 +47,8 @@ GAME RULES:
 1. We can use `document.querySelector('element').classList.toggle('class')` to turn on/off (add/remove) a class to an element. This method will add the class to element that doesn't have it or remove the class if the element has it. 
 
 ### Implementing "Hold" function and the DRY principle 
+1. If a section of code can be used in different part or event, we can make it as a "**function**" to be called accordingly and reduce repetitive code. 
+1. In this secion, we focus on changing the record of accumulated points of rolling dice and let the DOM selector edit HTML elements accordingly. 
+
+### Creating a Game Initialization Function
 1. 
