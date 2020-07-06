@@ -45,3 +45,6 @@ GAME RULES:
 ### Updating scores and changing the active player 
 1. In this section, we will use ternary operator `?`, so we can have one-line succinct code rather than using `IF/ELSE`, and use DOM to toggle HTML classes. 
 1. We can use `document.querySelector('element').classList.toggle('class')` to turn on/off (add/remove) a class to an element. This method will add the class to element that doesn't have it or remove the class if the element has it. 
+
+### Implementing "Hold" function and the DRY principle 
+1. 
