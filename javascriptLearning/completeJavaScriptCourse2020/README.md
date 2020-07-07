@@ -51,4 +51,9 @@ GAME RULES:
 1. In this secion, we focus on changing the record of accumulated points of rolling dice and let the DOM selector edit HTML elements accordingly. 
 
 ### Creating a Game Initialization Function
-1. 
+1. The part is to create a function to initilize the game to the initial state, such as reseting scores and player state. 
+1. By using DRY concept, we can have a section of code used in different part part of the program or be called according to events. 
+
+### State Variables 
+1. A state variable is to tell the user the condition of the system. In this case, we set this variable to prevent the game keeping going after one of the player wins. Therefore, we can use the state to know if the game is playing or not. 
+1. In this game, the state control is relatively simple that there are only "playing" or "not playing" state for the game. Therefore, we can set up a single variable that holds `true` or `false` to indicate the state of the program. Besides, we can use this variable to be the indicator that whether some of the functions should be working by using `IF` statement. 
