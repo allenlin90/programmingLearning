@@ -448,3 +448,42 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 ## Day 18 - Reset and Amend records 
+`git reset --hard "HEAD^"`, `git reset --soft "HEAD^"`, `git reset --hard ORIG_HEAD`, `git commit --amend`
+1. One of the most valuable benefit from Git control is to trace back certain version to find the source or root cause of a "**bug**". 
+    1. Create and commit a version when building a function, so every functions can be tracked separately. 
+    1. Don't accumulate many changes and development and then commit at once. 
+    1. Fix and update functions and commit the versions in logical orders, so that the versions are easier to track. 
+1. Git allows users to edit the records and activity logs. Therefore, developers can review, summarize, and edit the repository before they share or publish it. There are several details to be concerned. 
+    1. A repository may have several branches (the default one is the `master`)
+    1. We can share the least Git object is a `branch`.
+    1. We can freely change and update all versions on a branch if the branch is not published or shared to others. 
+    1. DO NOT edit or change the records of shared branch or repository. 
+1. We have prepare the repository for practice with commands below. 
+    ```shell 
+    mkdir git-reset-demo
+    cd git-resst-demo 
+    git init
+
+    echo. > a.txt
+    git add . 
+    git commit -m "Initial commit (a.txt created)"
+
+    echo 1 > a.txt
+    git add .
+    git commit -m "Update a.txt!" 
+
+    echo 1 > b.txt 
+    git add . 
+    git commit -m "Add b.txt!" 
+    ```
+
+### Delete the most recent version 
+1. We can use `git reset --hard "HEAD^"` to delete the `HEAD` version. Therefore, we've change the current version to one previous version, and the latest version is removed from `git log`. However, we still can check the commit object with its object ID. 
+
+### Remove the latest version but keep the changes 
+1. From the last practice, though we delete the latest version, we can use `git reset --hard ORIG_HEAD` to recover the deleted version. 
+1. Besides, we can use `git reset --soft "HEAD^"` to remove the latest commit but keep the changes. This scenario is useful when we found that the latest version has other issues or hasn't been completed. After changing, we can commit and create another version once again with latest update.
+
+### Re-submit the latest version 
+1. If we find some files aren't added or the comment is wrong, we can use `git commit --amend` to edit and update the latest version. The command will added all the files which were staged and commit to the latest version and ask the user to submit the comment again. 
+1. For example, we add another file to the repository and use `git commit --amend`. Git will open the default text editor and ask the users to submit the comment again. We can find that the comment is the same as that of the last commit. After saving and quit from the text editor, we can check the status with `git status` and `git log` again. In this case, we can find that the commit object has been changed. 
