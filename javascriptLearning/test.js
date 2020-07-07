@@ -35,10 +35,10 @@ for (let i = 0; i < 12; i++) {
     b2g.push(data[i+12]); 
     g2g.push(data[i+24]); 
     cb2b.push(data[i+36]); 
-    cb2b = cb2b.slice(0,6); 
     cb2g.push(data[i+42]); 
-    cb2g = cb2g.slice(0,6);
 }
+cb2b = cb2b.slice(0,6); 
+cb2g = cb2g.slice(0,6);
 let arr = [];
 arr.push(b2b, b2g, g2g, cb2b, cb2g); 
 // console.log(arr);
@@ -47,13 +47,15 @@ let obj = table.size.reduce(function(prev, item, index){
     return prev;
 }, {})
 let price = {};
-// for (let e of table.area) {}
-let list = [];
+for (let j = 0; j < table.area.length; j++) {
+    let list = [];
     for (let i = 0; i < arr.length; i++) {
     list.push(table.size.reduce(function(prev, item, index){
             prev[item] = arr[i][index];
             return prev;
         }, {}))
-    }   
+    }
+    price[table.area[j]] = list[j]; 
+}   
 
-console.log(list);
+console.log(price);
