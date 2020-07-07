@@ -2959,3 +2959,13 @@ body {
     </div>
     ```
     <img src="./newsGridWeb/articlePage.png">
+
+### Responsive media queries (Mobile version)
+1. We'd like to have the article grid "Editor Picks" stay in one column when the browser is narrow, as in mobile device. In this case, we've set up "**mobile.css**" for styling and has a media query at `768px`. 
+    1. Hide the social icons (facebook, twitter, etc.) 
+    1. Use `justify-self: center` to center the logo and navigation butotns. Note that the property affects its child elements and the container itself. (However, we can use other methods such as turning the `container` in the navbar to becomes a flexbox. This method takes much more lines of code and adjustment to the elements.)
+    1. When we use `box-sizing: border-box` to the page, the padding adde to the inner elements will cause the elements smaller because the padding size is taken into account the size of the element. 
+1. We then fix the location of the contents in showcase and make the footer section responsive. 
+    1. We've spanning the elements into several columns in the regular mode. 
+    1. In this case to change the layout, we have to change `grid-column` back to 1 rather only changing the `grid-template-column` because that doesn't affect to spanning of elements. 
+    1. Note that we have the same header and footer section code in every page. Therefore, the modification on the CSS (which is also shared with other pages) can affect to all the pages as well. 
