@@ -2992,3 +2992,7 @@ body {
 ### Custom Domain name 
 1. After purchasing a domain from DNS hosting providers, we can configure the on both Netlify and DNS provider to link the URLs and IP together. 
 1. This may be revisited in real practice when needed in the future. 
+
+
+
+# Learning Sass 
