@@ -2969,3 +2969,26 @@ body {
     1. We've spanning the elements into several columns in the regular mode. 
     1. In this case to change the layout, we have to change `grid-column` back to 1 rather only changing the `grid-template-column` because that doesn't affect to spanning of elements. 
     1. Note that we have the same header and footer section code in every page. Therefore, the modification on the CSS (which is also shared with other pages) can affect to all the pages as well. 
+
+
+
+# Website Deployment with Netlify 
+1. Install Git and sign up for Github and Netlify (which can be singed up with Github account). 
+1. Initiate a Git repository with `git init`
+1. Push the repository to Github. 
+1. After deploying to Netlify, the host will create a random URL for us (similar to Heroku). We can go buying a domain name, such as from "Name Cheap". 
+
+### Netlify Deployment and Form Submission
+1. Every time we commit a new version and push to the Github repository, the website will be updated automatically. 
+1. Netlify can deal with form submission easily and return the list of emails or contacts on its dashboard. We can read the documentation [here](https://docs.netlify.com/forms/setup/#html-forms) to set it up. Basically, we can just add up `method` attribute with `POST`, `data-netlify="true"` and give a `name` attribute. After deploying, Netlify will add another `<input>` tag itself to receive the data. 
+    ```html 
+    <form name ="contact" method="POST" data-netlify="true">
+        <input type="email" name="email" placeholder="Enter Email...">
+        <input type="submit" value="Subscribe" class="btn btn-primary">
+    </form>
+    ```
+1. We can check from the NewsGrid deployment from the website and note that we've added an email subscribtion in the "footer" section on the webpage. We can download the email list as CSV from Netlify directly as well. 
+
+### Custom Domain name 
+1. After purchasing a domain from DNS hosting providers, we can configure the on both Netlify and DNS provider to link the URLs and IP together. 
+1. This may be revisited in real practice when needed in the future. 
