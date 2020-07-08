@@ -529,4 +529,10 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     1. Use Git GUI and select a correct version.
 1. After solving the conflict, Git will open the text editor and allow us to record what happned to the conflict and the files. 
 1. We then can check the whole process and records with `git log`. 
-1. 
+
+### Use `git revert` without commit the version
+1. If `git revert` works, Git will create a new commit object. If we'd like to keep the change without commit, we can put `-n` flag which means "don't automatically commit". The command is as `git revert -n [commit id]`. 
+1. Therefore, the current repository is revert to the given version. If we check `git status`, we can find that the repository is reverted. By checking `git log`, we can find that the current commit we're at is still the same. After that we have 2 choice
+    1. `git revert --continue` to finish all the manipulation and commit the version. 
+    1. `git revert --abort` to abandom the current recovery. This will make all the files recover back to what they are before `git revert`. Files are removed or modified will be resumed. 
+1. Note that after using `git revert -n [commit id]`, we can't use `git commit` to create a new version. 
