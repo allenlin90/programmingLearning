@@ -1,61 +1,206 @@
-let table = {
-    area: [
-    'Bangkok to Bangkok', 
-    'Bangkok to Greater Bangkok', 
-    'Greater Bangkok to Greater Bangkok', 
-    'Temp. control Bangkok to Bangkok', 
-    'Temp. control Bangkok to Greater Bangkok', 
-    'Temp. control Greater Bangkok to Greater Bangkok', 
-    ], 
-    size: [
-    'Poly M', 
-    'Poly L',
-    'S40', 
-    'S50',
-    'S60',
-    'S80',
-    'S100',
-    'S120',
-    'S140',
-    'S160',
-    'S800',
-    'S200',
-    ],
-  };
-
-let data = [40.0, 55.0, 55.0, 75.0, 75.0, 85.0, 149.0, 199.0, 299.0, 399.0, 399.0, 399.0, 80.0, 90.0, 100.0, 110.0, 130.0, 160.0, 220.0, 260.0, 340.0, 430.0, 480.0, 520.0, 110.0, 120.0, 130.0, 140.0, 160.0, 190.0, 250.0, 290.0, 370.0, 460.0, 510.0, 550.0, 95.0, 125.0, 145.0, 180.0, 220.0, 280.0, 145.0, 175.0, 195.0, 230.0, 270.0, 330.0];
-
-let b2b = [];
-let b2g = [];
-let g2g = [];
-let cb2b = [];
-let cb2g = []; 
-for (let i = 0; i < 12; i++) {   
-    b2b.push(data[i]);     
-    b2g.push(data[i+12]); 
-    g2g.push(data[i+24]); 
-    cb2b.push(data[i+36]); 
-    cb2g.push(data[i+42]); 
+// let john = {
+//     name: 'John', 
+//     yearOfBirth: 1990, 
+//     job: 'teacher',
+// };
+/*
+let Person = function(name, yearOfBirth, job) {
+    this.name = name;
+    this.yearOfBirth = yearOfBirth;
+    this.job = job;
 }
-cb2b = cb2b.slice(0,6); 
-cb2g = cb2g.slice(0,6);
-let arr = [];
-arr.push(b2b, b2g, g2g, cb2b, cb2g); 
-// console.log(arr);
-let obj = table.size.reduce(function(prev, item, index){
-    prev[item] = b2b[index];
-    return prev;
-}, {})
-let price = {};
-for (let j = 0; j < table.area.length; j++) {
-    let list = [];
-    for (let i = 0; i < arr.length; i++) {
-    list.push(table.size.reduce(function(prev, item, index){
-            prev[item] = arr[i][index];
-            return prev;
-        }, {}))
-    }
-    price[table.area[j]] = list[j]; 
-}   
 
-console.log(price);
+Person.prototype.calculateAge = function(){
+    console.log(2020 - this.yearOfBirth); 
+}
+
+Person.prototype.lastName = 'Smith';
+
+let john = new Person('John', 1990, 'teacher'); 
+let jane = new Person('Jane', 1969, 'designer');
+let mark = new Person('Mark', 1948, 'retired'); 
+
+john.calculateAge();
+jane.calculateAge();
+mark.calculateAge();
+
+console.log(john.lastName);
+console.log(jane.lastName);
+console.log(mark.lastName);
+*/
+
+/*
+// Object.create
+let personProto = {
+    calculateAge: function() {
+        console.log(2020 - this.yearOfBirth); 
+    },
+}
+
+let john = Object.create(personProto); 
+john.name = 'John'; 
+john.yearOfBirth = 1990;
+john.job = 'teacher';
+
+let jane = Object.create(personProto, {
+    name: {value: 'Jane'},
+    yearOfBirth: {value: 1969},
+    job: { value: 'designer'},
+})
+*/
+
+/*
+// Primitives vs objects 
+// Primitives
+let a = 23; 
+let b = a; 
+a = 46; 
+console.log(a); // 46 
+console.log(b); // 23
+
+// Objects 
+let obj1 = {
+    name: 'John',
+    age: 26,
+}
+
+let obj2 = obj1; 
+obj1.age = 30;
+console.log(obj1.age); // 30 
+console.log(obj2.age); // 30 
+
+let age = 27; 
+let obj = {
+    name: 'Jonas', 
+    city: 'Lisbon',
+};
+
+// Functions
+function change(a, b) {
+    a = 30;
+    b.city = 'San Francisco';
+}
+
+change(age, obj); 
+console.log(age); 
+console.log(obj.city); 
+*/
+
+
+/*
+let years = [1990, 1965, 1937, 2005, 1998]; 
+
+function arrayCalc(arr, fn) {
+    let arrRes = [];
+    for (let i = 0; i < arr.length; i++) {
+        arrRes.push(fn(arr[i]));
+    }
+    return arrRes;
+}
+
+function calculateAge(el) {
+    return 2020 - el;
+}
+
+function isFullAge(el) {
+    return el >= 18;
+}
+
+function maxHeartRate(el) {
+    if (el >= 18 && el <= 81) {
+        return Math.round(206.9 - (0.67 * el));
+    } else {
+        return -1; 
+    }
+}
+
+
+let ages = arrayCalc(years, calculateAge);
+let fullAges = arrayCalc(ages, isFullAge);
+let rates = arrayCalc(ages, maxHeartRate)
+console.log(ages);
+console.log(fullAges);
+console.log(rates);
+*/
+
+
+/*
+function interviewQuestion(job) {
+    if (job === 'designer') {
+        return function (name) {
+            console.log(name + ', can you please explain what UX design is?')
+        }
+    } else if (job === 'teacher') {
+        return function (name) {
+            console.log('What subject do you teach, ' + name + '?');
+        }
+    } else {
+        return function (name) {
+            console.log('Hello ' + name + ', what do you do?')
+        }
+    }
+}
+
+let teacherQuestion = interviewQuestion('teacher'); 
+teacherQuestion('John'); 
+
+let designerQuestion = interviewQuestion('designer'); 
+designerQuestion('John');
+
+interviewQuestion('teacher')('John');
+*/
+
+
+/*
+function game() {
+    let score = Math.random() * 10; 
+    console.log(score >= 5); 
+}
+game(); 
+
+(function(){
+        let score = Math.random() * 10; 
+        console.log(score >= 5);
+})(); 
+
+
+(function(goodLuck){
+        let score = Math.random() * 10; 
+        console.log(score >= 5 - goodLuck);
+})(5); 
+*/
+/*
+function retirement(retirementAge) {
+    let a = ' years left until retirement.';
+    return function(yearOfBirth) {
+        let age = 2020 - yearOfBirth;
+        console.log((retirementAge - age) + a);
+    }
+}
+
+let retirementUS = retirement(66); 
+let retirementGermany = retirement(65); 
+let retirementIceland = retirement(67); 
+
+retirementUS(1990);
+retirementGermany(1990);
+retirementIceland(1990);
+// retirement(66)(1990);
+*/
+
+
+function interviewQuestion(job) {
+    if (job === 'designer') {
+        return function (name) {
+            console.log(name + ', can you please explain what UX design is?')
+        }
+    } else if (job === 'teacher') {
+        return function (name) {
+            console.log('What subject do you teach, ' + name + '?');
+        }
+    } else {
+        return function (name) {
+            console.log('Hello ' + name + ', what do you do?')
+        }
+    }
+}
