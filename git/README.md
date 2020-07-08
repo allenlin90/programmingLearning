@@ -447,7 +447,7 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 
-## Day 18 - Reset and Amend records 
+## Day 18 - Reset and Amend records Part 1
 `git reset --hard "HEAD^"`, `git reset --soft "HEAD^"`, `git reset --hard ORIG_HEAD`, `git commit --amend`
 1. One of the most valuable benefit from Git control is to trace back certain version to find the source or root cause of a "**bug**". 
     1. Create and commit a version when building a function, so every functions can be tracked separately. 
@@ -487,3 +487,46 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 ### Re-submit the latest version 
 1. If we find some files aren't added or the comment is wrong, we can use `git commit --amend` to edit and update the latest version. The command will added all the files which were staged and commit to the latest version and ask the user to submit the comment again. 
 1. For example, we add another file to the repository and use `git commit --amend`. Git will open the default text editor and ask the users to submit the comment again. We can find that the comment is the same as that of the last commit. After saving and quit from the text editor, we can check the status with `git status` and `git log` again. In this case, we can find that the commit object has been changed. 
+
+
+
+# Day 19 - Set up `.gitignore` 
+1. During development, some documents or files, such as chaches or test files, doesn't need to be stored by Git control. 
+1. In Git, we can have list of ignored files in `.gitignore`. The files listed will not added during `git add`. However, this is only for "**untracked files**". Those has been "**staged**" won't be affected. 
+1. The list of ignored files is only a file which name is `.gitignore` and at the root directory of the repository by default. 
+
+
+# Day 20 - [Reset and Amend records Part 2](https://github.com/allenlin90/Learn-Git-in-30-days/blob/master/zh-tw/20.md)
+1. During development, we may find that some of the previous versions are incorrect that cause the bugs of current version.
+1. We have prepare the repository for practice with commands below. 
+    ```shell 
+    mkdir git-reset-demo
+    cd git-resst-demo 
+    git init
+
+    echo. > a.txt
+    git add . 
+    git commit -m "Initial commit (a.txt created)"
+
+    echo 1 > a.txt
+    git add .
+    git commit -m "Update a.txt!" 
+
+    echo 1 > b.txt 
+    git add . 
+    git commit -m "Add b.txt!" 
+    ```
+1. In this case, we can see that we have 3 commit object after we type `git log`. If we'd like to correct the previous version without resuming back to the 1st version, we can use `git revert`
+
+### Using `git revert`
+1. If we found a version has some issues, we can use `git log` to get the object ID and use `git show [commit id]` to check its details. 
+1. Note that before using `git revert`, check with `git status` and ensure the working directory is clean. Besides, we can use `git stash` to keep the current progress if the commit hasn't been completed. 
+1. If we use `git revert [commit id]`, the commit object will be recoverd back to its previous version, and another new commit will be placed. We can use `git show [commit id]` to check the latest commit object for its details. Besides, during `revert`, git will open the text editor for us to leave comment. By default, it will indicate that the files "**Revert**" and note that which version does this file recover from. 
+
+### Failed `git revert`
+1. `git revert` is actually a "**merge**" process. If we have change/update the file after a "**revert**" from another version, we can't revert the same version directly. The reasons are that the latest version is different from the last "**revert**". Therefore, we can either use the methods in Day 17: 
+    1. Manually edit "**a.txt**" and remove the conflict tag and keep the correct contents. 
+    1. Use Git GUI and select a correct version.
+1. After solving the conflict, Git will open the text editor and allow us to record what happned to the conflict and the files. 
+1. We then can check the whole process and records with `git log`. 
+1. 
