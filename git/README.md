@@ -536,3 +536,16 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     1. `git revert --continue` to finish all the manipulation and commit the version. 
     1. `git revert --abort` to abandom the current recovery. This will make all the files recover back to what they are before `git revert`. Files are removed or modified will be resumed. 
 1. Note that after using `git revert -n [commit id]`, we can't use `git commit` to create a new version. 
+
+# Day 21 - Reset and Amend records Part 3
+`git cherry-pick [commit id]`, `git cherry-pick [commit id] -x`, `git cherry-pick [commit id] -e`, `git cherry-pick [commit id] -n`
+1. During development, we may find a that a branch of the versions would be abandomed, but some of the commits can be kept. In this case, we can use `git cherry-pick` to maually keep some of the commits. 
+1. Note that when using `git cherry-pick`, there should not have any staged files. 
+
+### Using `git cherry-pick`
+1. `git cherry-pick` is very similar to `git revert` and apply it to the latest version of the current branch. This method uses "**merge**" the version. For example, we can use `git cherry-pick [commit id]`. After merging, a new commit will be built on the current branch. 
+1. Note that the merged version will use the metadata (**time stamp** and **author**) of the version itself, which could be confused at the first place. Besides, in `git log`, it doesn't mention that the version merged by `git cherry-pick`. 
+1. We can add flags on the command to work on useful information when merging. 
+    1. `git cherry-pick [commit id] -x` will add info. that the merge is from cherry-pick command. However, we have to make sure that the version merged is also in the remote repository, or it may be confusing for other developers. 
+    1. By using `git cherry-pick [commit id] -e`, we can edit the comment before commit. 
+    1. With `git cherry-pick [commit id] -n`, the version won't be committed. We can work on other changes and use `git commit` to create our own version. 
