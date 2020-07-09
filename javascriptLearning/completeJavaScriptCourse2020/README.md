@@ -233,4 +233,161 @@ GAME RULES:
     retirementUS(1990);
     retirementGermany(1990);
     retirementIceland(1990);
+
+    let score = 10;
+    function display(){
+        let score = 0;
+        let addUp = function(){
+        return score++;
+        };
+        return addUp;
+    }
+
+    let finalScore = display();
+    console.log(finalScore()); // 0
+    console.log(finalScore()); // 1
+    console.log(score); // 10
+    ```
+
+### Bind, Call, and Apply 
+1. With `.bind()`, `.call()`, and `.apply()` method can borrow methods from other `Objects` to work on an `Object`. 
+    1. `.call(obj, arguments...)` takes an `Object` as argument and call the method immediately. 
+    1. `.apply(obj, Arr[])` is similar to `.call()` that it calls the method immediately, but it takes arguments to pass to the method as `Array` 
+    1. `.bind(obj, arguments...)` creates a function that we can keep as a function value and call it at other places. 
+    ```js 
+    let john = {
+        name: 'John', 
+        age: 26,
+        job: 'teacher',
+        presentation: function(style, timeOfDay) {
+            if (style === 'formal') {
+                console.log('Good ' + timeOfDay + ', Ladies and gentlemen! I\'m ' + this.name + ', I\'m a ' + this.job + ' and I\'m ' + this.age + ' years old.'); 
+            } else if (style === 'friendly') {
+                console.log('Hey! What\'s up? I\'m ' + this.name + ', I\'m a ' + this.job + ' and I\'m ' + this.age + ' years old. Have a nice ' + timeOfDay + '.')
+            }
+        }
+    };
+
+    let emily = {
+        name: 'Emily', 
+        age: 35, 
+        job: 'designer',
+    };
+
+    john.presentation('formal', 'morning');
+
+    john.presentation.call(emily, 'friendly', 'afternoon');
+    john.presentation.apply(emily, ['friendly', 'afternoon']);
+    let johnFriendly = john.presentation.bind(john, 'friendly');
+    johnFriendly('morning'); 
+    johnFriendly('night'); 
+
+    let emilyFormal = john.presentation.bind(emily, 'formal'); 
+    emilyFormal('afternoon'); 
+    ```
+1. We can use `.bind()` method to create a new function with a preset argument. For example, if we have a function `fn(arg1, arg2)` that takes 2 arguments, we can use `fn.bind(this, preset)` to create another function that takes the "**preset**" argument. Thereofre, the new function takes only `arg2`. Note that the keyword `this` here represents the function object itself. 
+    ```js 
+    let years = [1990, 1965, 1937, 2005, 1998]; 
+
+    function arrayCalc(arr, fn) {
+        let arrRes = [];
+        for (let i = 0; i < arr.length; i++) {
+            arrRes.push(fn(arr[i]));
+        }
+        return arrRes;
+    }
+
+    function calculateAge(el) {
+        return 2020 - el;
+    }
+
+    function isFullAge(limit, el) {
+        return el >= limit;
+    }
+
+    let ages = arrayCalc(years, calculateAge);
+
+    let fullJapan = arrayCalc(ages, isFullAge.bind(this, 20));
+
+    console.log(ages);
+    console.log(fullJapan);
+    ```
+
+### Coding Challenge 7 
+1. Build a function constructor called Question to describe a question. A question should include: 
+    1. question itself
+    1. the answers from which the player can choose the correct one (choose an adequate data structure here, array, object, etc.)
+    1. correct answer (I would use a number for this)
+1. Create a couple of questions using the constructor 
+1. Store them all inside an array 
+1. Select one random question and log it on the console, together with the possible answers (each question should have a number) (Hint: write a method for the **Question** objects for this task). 
+1. Use the 'prompt' function to ask the user for the correct answer. The user should input the number of the correct answer such as you displayed it on Task 4. 
+1. Check if the answer is correct and print to the console whether the answer is correct or not (Hint: wirte another method for this). 
+1. Suppose this code would be a plugin for other programmers to use in their code. So make sure that all your code is private and doesn't interfere with other programmers code (Hint: we learned a special technique to do exactly that). 
+
+
+**Expert Level** 
+
+8. After you display the result, display the next random question, so that the game never ends (Hint: write a function for this and call it right after displaying the result)
+1. Be careful: after Task 8, the game literally never ends. So include the option to quit the game if the user writes 'exit' instead of the answer. In this case, DON'T call the function from task 8. 
+1. Track the user's score to make the game more fun! So each time an answer is correct, add 1 point to the score (Hint: I'm going to use the power of closures for this, but you don't have to just do this)
+1. Display the score in the console. Use yet another method for this. 
+
+### Solutions - Basics
+1. Note that data collect from `prompt()` method is a `String`. We can use plus sign `+`, `Number()`, or `parseInt()` to turn a `String` value into a `Number`. 
+1. We use "**IIFE**" to wrap the values and variables into a function, so it won't affect to the variables outside the scope, and can't be accessed as well. 
+    ```js 
+    (function() {
+        function Question(question, answers, correct) {
+            this.question = question; 
+            this.answers = answers; 
+            this.correct = correct; 
+        }
+
+        Question.prototype.displayQuestion = function() {
+            console.log(this.question);
+
+            for (var i = 0; i < this.answers.length; i++) {
+                console.log(i + ': ' + this.answers[i]); 
+            }
+        }
+
+        Question.prototype.checkAnswer = function(ans) {
+            if (ans === this.correct) {
+                console.log('Correct answer!');
+            } else {
+                console.log('Wrong answer. Try again:)')
+            }
+        }
+
+        let q1 = new Question('Is JavaScript the coolest programming language in the world?', ['Yes', 'No'], 0);
+
+        let q2 = new Question('What is the name of this course\'s teacher?', ['John', 'Michael', 'Jonas'], 2);
+
+        let q3 = new Question('What does best describe coding?', ['Boring', 'Hard', 'Fun', 'Tediuous'], 2); 
+
+        let questions = [q1, q2, q3]; 
+
+        let n = Math.floor(Math.random() * questions.length); 
+
+        questions[n].displayQuestion(); 
+
+        let answer = +prompt('Please select the correct answer.');
+
+        questions[n].checkAnswer(answer);
+    })();
+    ``` 
+
+### Solutions - Expert
+1. We use a closure here to record the score if the user give a correct answer. The variable `sc` can't be accessed not modified from the outside. Therefore, we can ensure the score is correct and can't be "**hacked**". 
+    ```js 
+    function score() {
+        let sc = 0;
+        return function (correct) {
+            if (correct) {
+                sc++;
+            }
+            return sc;
+        }
+    }
     ```
