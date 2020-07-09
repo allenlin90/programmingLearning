@@ -2996,3 +2996,116 @@ body {
 
 
 # Learning Sass 
+1. Sass stands for "**Syntactically Awesome StyleSheets**", is a CSS "**Preprocessor/Precompiler**", can enhance the functionality of CSS, turns CSS as programming language, and allows users to work on CSS in a much more efficient way. Besides, there are other preprocessors such as "**Less**" and "**Stylus**". 
+1. Sass uses `.scss` or `.sass` file extensions (suffix).
+1. Browsers does not read Sass, which must be compiled to normal CSS files to be able to work. There are several compilers available such as noSass and "**Koala**". Besides, there's extension available in VSCode. 
+1. Sass has features such as `variables`, `conditionals`, `nesting`, `inheritance`, `partials/imports`, `operators and calculations`, `function and mixins`, and `color functions` that makes it working similar as programming langugage. 
+1. `.scss` is usually preferred over `.sass` as it uses the same syntax as regular CSS. 
+
+### Environment setup with Node-Sass
+1. We install "**Node.js**" and "**npm**" and use `npm init -y` (-y flag is used to let the `init` process setup with default info.) and setup the `package.json`. 
+1. After initiation, we can use `npm install node-sass` to install the package. Besides, we need to change the `scripts` property to `{"sass": "node-sass -w scss/ -o dist/css/ --recursive"}`. 
+1. After installing `node-sass`, we can create `scss` (to keep `.scss` files) and `dist` (to keep compiled `.css` files) folder in the root directory. Before coding in the `main.scss` file, we should run `npm run sass` in the terminal. After we finish coding and save the `main.scss` file, it will be compiled automatically by the package, and the compiled `.css` file will be kept in `dist` direcotry and named `main.css`. 
+1. We can use <kbd>Ctrl + c</kbd> to stop the compiling process. 
+
+    **SCSS code** in `./scss/main.scss`
+    ```scss 
+    $color: red; 
+    body {
+        background: $color;
+    }
+    ```
+    **CSS code** in `./dist/css/main.css`
+    ```css 
+    body {
+        background: red; }
+    ```
+1. There's GUI app named "**Koala**" which can work on compiling the `.scss` file. However, it's not necessary, as we can just run `npm run sass` in the terminal for the process directly. 
+
+### Variabls and Partials 
+1. We can create a parital file, such as separating the variables from the main Sass file. The name of the parital should start with a **underscore** "_" to indicate that the file is not required to be compiled. 
+1. On the very top of the main file, we can use `@import [filename]` to import the partial into the main file. Note that the filename should not have the underscore. Each line of code in Sass should end with semi-column ";" which is similar to JavaScript. 
+
+    **main.scss**
+    ```scss 
+    @import 'variables';
+
+    * {
+        margin: 0; 
+        padding: 0; 
+    }
+
+    body {
+        background: $light-color;
+        color: $dark-color;
+        font-family: $font-stack;
+        line-height: 1.5;
+    }
+    ```
+
+    **_variables.scss**
+    ```scss
+    $primary-color: steelblue;
+    $secondary-color: skyblue;
+    $light-color: #f4f4f4;
+    $dark-color: #333; 
+    $font-stack: Arial, Helvetica, sans-serif;
+    ```
+
+### Nesting and Structuring
+1. In regular CSS, we have to indicate the selector from parent to child element for specificity. In Sass, however, we can have the element selector nested in its parent properties. For example, we can select `<h1>` tag in the `<header>` tag. Therefore, only the `<h1>` tag in the `<header>` tag will be selected. We can follow the HTML structure for SCSS file as well. 
+1. We can use ampersand "**&**" to replicate the selector when it's nested, and it also works on psuedo selector. For example, we can select all anchor tags `<a>` and have `&:hover` nested, so we can styling the `<a>` tag itself and when the mouse cursor hovers on. Besides, we can set up class names with similar patterns such as `btn btn-primary` and `btn btn-danger`, so these classes can be selected in the same selector. 
+    ```scss 
+    header {
+        background: $dark-color; 
+        color: $light-color;
+        padding: 1rem;
+
+        h1 {
+            text-align: center;
+        }
+    }
+
+    a {
+        color: #333;
+        &:hover {
+            color: coral;
+        }
+    }
+
+    .btn {
+        &-primary {
+            color: white;
+        }
+        &-danger {
+            color: yellow;
+        }
+    }
+    ```
+
+### Inheritance and Contrast 
+1. We can set up a variable like set of properties which name starts with percentage "**%**". In the other selector, we can use `@extend %variable` to use the preset properties. Besides, we still can use other properties to override the preset ones. 
+    ```scss 
+    %btn-shared {
+        display: inline-block;
+        padding: 0.7rem 2rem;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        margin-top: 1rem;
+    }
+
+    .btn {
+        &-light {
+            @extend %btn-shared;
+            background: $light-color;
+            color: #333;
+        }
+
+        &-dark {
+            @extend %btn-shared;
+            background: $dark-color;
+            color: #fff;
+        }
+    }
+    ```
