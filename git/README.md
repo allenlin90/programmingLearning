@@ -537,6 +537,9 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     1. `git revert --abort` to abandom the current recovery. This will make all the files recover back to what they are before `git revert`. Files are removed or modified will be resumed. 
 1. Note that after using `git revert -n [commit id]`, we can't use `git commit` to create a new version. 
 
+
+
+
 # Day 21 - Reset and Amend records Part 3
 `git cherry-pick [commit id]`, `git cherry-pick [commit id] -x`, `git cherry-pick [commit id] -e`, `git cherry-pick [commit id] -n`
 1. During development, we may find a that a branch of the versions would be abandomed, but some of the commits can be kept. In this case, we can use `git cherry-pick` to maually keep some of the commits. 
@@ -549,3 +552,19 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     1. `git cherry-pick [commit id] -x` will add info. that the merge is from cherry-pick command. However, we have to make sure that the version merged is also in the remote repository, or it may be confusing for other developers. 
     1. By using `git cherry-pick [commit id] -e`, we can edit the comment before commit. 
     1. With `git cherry-pick [commit id] -n`, the version won't be committed. We can work on other changes and use `git commit` to create our own version. 
+
+
+
+# Day 22 - Reset and Amend records Part 4 (Rebase) 
+1. `Rebase` is to use other version as the base of the current branch. 
+1. When using `git rebase`, we have ensure the working tree is clean, and there's no files staged (added), or the command can't be proceeded. 
+1. Besides, if the branch is downloaded from a remote repository, we can't use rebase to edit the records, or the version can't be pushed back to the remote repository. 
+1. For example, if we are on `branch1` and use `git rebase master`, Git will apply all commits from `master` branch and apply the versions of `branch1` on top of the version from `master`. Therefore, the development records will become a straight line without any branch. We can have a obvious visualized look from a GUI. 
+1. Though the branch seems to disappear, there are still branches `branch1` and `master` in the repository. 
+1. After rebasing, we can merge the branches in 2 ways. 
+    1. Use regular `git merge [branchName]` and trigers Git Fast-forward 
+        * We can switch back to `master` branch (note that we were on `branch1` and `git rebase master`) and use `git merge branch1`. Thus, Git will apply the `HEAD` from `branch1` to the `HEAD` of `master`. 
+        * If we check from GUI, the graph will look like a straight line. 
+    1. Use `--no-ff` parameter and stop Git Fast-forward
+        * We can switch back to `master` branch and use `git merge branch1 --no-ff`. Therefore, Git will create a branch for `branch1` and merge it back to `master`. If we check from GUI, we can see `branch1` leaves `master` branch and be merged back to `HEAD` of `master`. 
+1. After merging, we can delete `branch1` with `git branch -d branch1`
