@@ -3109,3 +3109,60 @@ body {
         }
     }
     ```
+
+### Functions, Mixins and More
+1. A "**Function**" is a process that must return a result. A "**Mixin**" is like a value of variable which should be involved, such as color and other values for properties. 
+1. In Sass, the functions and keywords starts with at sign "**@**". 
+1. This feature is helpful that we can set up the text color to related to the background by its lightness. For example, if the lightness of the background is more than 50%, we can return a dark color for text and vice versa. Therefore, CSS can be dynamic and change accordingly. 
+1. In the example below, the `color` property for text will change according to `background` color. Besides, we `rotate` the buttons when the mouse cursor hovers on it. 
+    ```scss
+    // Set Text Color 
+    @function set-text-color($color) {
+        @if(lightness($color) > 50) {
+            @return #000;
+        } @else {
+            @return #fff;
+        }
+    }
+
+    // Transform mixin 
+    @mixin transform($property) {
+        --webkit-transform: $property;
+        -ms-transform: $property;
+        transform: $property;
+    }
+
+    @import 'functions';
+
+    header {
+        background: $dark-color; 
+        color: set-text-color($dark-color);
+        padding: 1rem;
+
+        h1 {
+            text-align: center;
+        }
+    }
+
+    .btn {
+        &-light {
+            @extend %btn-shared;
+            background: $light-color;
+            color: set-text-color($light-color);
+
+            &:hover {
+                @include transform(rotate(20deg));
+            }
+        }
+
+        &-dark {
+            @extend %btn-shared;
+            background: $dark-color;
+            color: set-text-color($dark-color);
+
+            &:hover {
+                @include transform(rotate(-20deg));
+            }
+        }
+    }
+    ```
