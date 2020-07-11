@@ -537,6 +537,9 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     1. `git revert --abort` to abandom the current recovery. This will make all the files recover back to what they are before `git revert`. Files are removed or modified will be resumed. 
 1. Note that after using `git revert -n [commit id]`, we can't use `git commit` to create a new version. 
 
+
+
+
 # Day 21 - Reset and Amend records Part 3
 `git cherry-pick [commit id]`, `git cherry-pick [commit id] -x`, `git cherry-pick [commit id] -e`, `git cherry-pick [commit id] -n`
 1. During development, we may find a that a branch of the versions would be abandomed, but some of the commits can be kept. In this case, we can use `git cherry-pick` to maually keep some of the commits. 
@@ -549,3 +552,66 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     1. `git cherry-pick [commit id] -x` will add info. that the merge is from cherry-pick command. However, we have to make sure that the version merged is also in the remote repository, or it may be confusing for other developers. 
     1. By using `git cherry-pick [commit id] -e`, we can edit the comment before commit. 
     1. With `git cherry-pick [commit id] -n`, the version won't be committed. We can work on other changes and use `git commit` to create our own version. 
+
+
+
+# Day 22 - Reset and Amend records Part 4 (Rebase) 
+1. `Rebase` is to use other version as the base of the current branch. 
+1. When using `git rebase`, we have ensure the working tree is clean, and there's no files staged (added), or the command can't be proceeded. 
+1. Besides, if the branch is downloaded from a remote repository, we can't use rebase to edit the records, or the version can't be pushed back to the remote repository. 
+1. For example, if we are on `branch1` and use `git rebase master`, Git will apply all commits from `master` branch and apply the versions of `branch1` on top of the version from `master`. Therefore, the development records will become a straight line without any branch. We can have a obvious visualized look from a GUI. 
+1. Though the branch seems to disappear, there are still branches `branch1` and `master` in the repository. 
+1. After rebasing, we can merge the branches in 2 ways. 
+    1. Use regular `git merge [branchName]` and trigers Git Fast-forward 
+        * We can switch back to `master` branch (note that we were on `branch1` and `git rebase master`) and use `git merge branch1`. Thus, Git will apply the `HEAD` from `branch1` to the `HEAD` of `master`. 
+        * If we check from GUI, the graph will look like a straight line. 
+    1. Use `--no-ff` parameter and stop Git Fast-forward
+        * We can switch back to `master` branch and use `git merge branch1 --no-ff`. Therefore, Git will create a branch for `branch1` and merge it back to `master`. If we check from GUI, we can see `branch1` leaves `master` branch and be merged back to `HEAD` of `master`. 
+1. After merging, we can delete `branch1` with `git branch -d branch1`
+
+
+
+# Day 23 - Reset and Amend records Part 5 (Rebase part 2) 
+`git rebase -i [commitID]`, `git commit --amend`
+1. "**Rebase**" can apply the root commit version for branches in a repository. After "**rebasing**", the starting point of a branch will be changed. Besides this feature, `rebase` can edit a commit version on a branch such as the followings 
+    1. Change order of commits 
+    2. Edit message of a commit 
+    3. Add a new commmit in the log records
+    4. Edit a commit object 
+    5. Break down a commit object
+    6. Archive a commit and keep its message 
+    7. Archive a commit but ignore its message 
+    8. Delete a commit object 
+1. Change order of commits 
+    1. We can copy the "**SHA**" of a commit object (its full SHA1 hashed ID). This can be either checked with `git log` or in GUI. We then use `git rebase [commitID] -i` to start the process. 
+    1. The message in the text editor are 3 parts 
+        1. `pick` (the very first phrase in a line) is the "**command**" which we can check other commands in the comments below in the same file. 
+        1. `commitID` is the ID of the object. 
+        1. Message of the commit version 
+    1. We can change the order of the commit versions in the text editor. After finishing editing and saving the file, Git will start to "**rebase**" and follow the order we given in the text editor. 
+    1. Note that after "**rebase**", all the commit objects are changed. However, we can check the old ones with `git reflog`. 
+1. Edit message of a commit
+    1. We use the same command `git rebase [commitID] -i` to start the process.
+    1. Change the command from `pick` to `reword` at the line which commit message that we want to change. DO NOT change in this file directly!
+    1. After saving and closing the file, Git will open the text editor again to allow use edit the message of the commit version which we use `reword` command. 
+    1. Note that the edited commit object is a new one.
+1. Add a new commmit in the log records
+    1. We use the same command `git rebase [commitID] -i` to start the process.
+    1. Change the command from `pick` to `edit` at the line which commit message that we want to change. 
+    1. After closing the file, Git will start to "**rebase**" and stop at the commit version which we give `edit` command. 
+    1. We then create/edit/delete files (be careful not to affect to other versions to avoid conflicts), use `git add .` (staging), and `git commit -m "Message"` to create a new commit. 
+    1. Use `git rebase --continue` to finish the rebasing process. 
+1. Edit a commit object 
+    1. This process is similar to "add a new commit version". However, after giving `edit` command in the text editor, we use `git commit --amend` and start to modify the commit object. 
+    1. After finish, we use the same process to stage `git add [fileName]` and submit the commit `git commit -m "Message"`, and use `git rebase --continue`. 
+1. Break down a commit object
+    1. This process is similar to "add a new commit version". 
+    1. We remove the version that we want to breakdown in the text editor and save the file. 
+    1. We use `git commit --amend` and start to modify the files. 
+    1. Use `git add [fileNames]` and `git commit -m "Message"` to create a new version and continue rebasing. 
+1. Archive a commit and keep its message 
+    1. In the text editing process, we can change command from `pick` to `squash`, so the version (including its commit message) that takes the command will be merged to the previous version. 
+1. Archive a commit but ignore its message 
+    1. This process is similar to the previous one to merge the message. However, we use `fixup` here, and the process will merge the versions without the message. 
+1. Delete a commit object 
+    1. This process is easy that we can just delete the `pick` command of the versions that we don't want to keep in during rebasing. 

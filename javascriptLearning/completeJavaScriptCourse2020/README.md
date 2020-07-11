@@ -391,3 +391,503 @@ GAME RULES:
         }
     }
     ```
+
+
+
+# The Budget App Project 
+1. The project is to create a dashboard that allows users to 
+    1. Add "**income**" of the month 
+    1. Add "**Expense**" of the month
+    1. Check summary of income 
+    1. Check summary of expense
+    1. List the items of incomes 
+    1. List the items of expenses 
+1. In this project, we focus on the JavaScript part of the project only. HTML and CSS styling are given. 
+1. One goal to achieve here is to learn how to plan and structure the plan to develop a program. 
+ 
+### Project planning and architecture: Step 1
+1. To-do list 
+    1. Add event handler 
+    1. Get input values 
+    1. Add the new item to our data structure 
+    1. Add teh new item to the UI 
+    1. Calculate budget 
+    1. Update the UI
+1. Structuring code with modules 
+    1. Important aspect of any robust application's architecture. 
+    1. Keep the units of code for a project both cleanly separated and organized. 
+    1. Encapsulate some data into privacy and expose other data publicily. 
+1. In this project, we mainly separate the code into 3 modules. From the To-do list, we can separate the tasks into these modules. 
+    1. UI Module 
+        1. Get input values 
+        1. Add the new item to the UI
+        1. Update the UI
+    1. Data Module
+        1. Add the new item to our data structure 
+        1. Calculate budget 
+    1. Controller Module
+        1. Add event handler 
+    
+### Implementing the Module Pattern
+1. Learning Objects 
+    1. Learn how to use module pattern 
+    1. Understand more about private and public data, encapsulation and separation of concerns. 
+1. We learn to encapsulate the functions, methods, variables, and data as to prevent injection or being overwritten by other code. To encapsulate the code, we use concepts of "**IIFEs**" and "**Closure**". 
+1. In this case, we set up a variable as the controller module which value is an `IIFE`. By the feature of "closure", we can't access variable `x` and function expression `add` directly from the outsite. As `budgetController` is an `IIFE`, it return the an `Object` which has method `publicTest` that we can use. Therefore, we can use call the `add` function only from `publicTest` method. 
+1. Note that "IIFE" syntax is `let var = (function(arg...){code...})()` that a function is wrapped by parenthesis and put a pair of parenthesis to call the function immediately. 
+    ```js 
+    let budgetController = (function(){
+        let x = 23; 
+        let add = function(a) {
+            return x + a; 
+        }
+        return {
+            publicTest: function(b) {
+                return add(b);
+            }
+        }
+    })();
+
+    console.log(budgetController.publicTest(5)); // 28
+    ```
+1. By applying the concept, we can create another variable with "**IIFE**" to separate the modules for different functions. Note that these modules are independent and doesn't affect to each other. "**Separation concerns**" is that each module should focus on working only 1 thing by itself. 
+1. We can set up another module to manipulate and connect the modules with thier public "**API**". For example, from the code above, `budgetController` can return an `Object` which has method `publicTest` to use the inner `add` function. We can set up another module "controller" that connect to `publicTest` to use the module. 
+    ```js 
+    let controller = (function(budgetCtrl){
+        let z = budgetCtrl.publicTest(5);
+        return {
+            anotherPublic: function() {
+                return z;
+            }
+        }
+    })(budgetController);
+
+    console.log(controller.anotherPublic());
+
+### Setting up first event listener 
+1. Learning Objects 
+    1. Set up event listeners for keypress events 
+    1. Use event object 
+1. Besides hitting the button to add a new item of the budget, we can allow users to press <kbd>Enter</kbd> key to add the new item as well. Therefore, we add an event listener for key press. In this case, the <kbd>Enter</kbd> key can be trigerred anywhere on the webpage because there's no other element to work as input. Therefore, we can put hte event listener on the global `document` object directly without selecting a specific element. 
+1. We add the event listener with `keypress` (check other events [here](https://developer.mozilla.org/en-US/docs/Web/Events)) and use a callback function to react to the event. We can pass the function an argument which will automatically capture the event object. We can check with its property to setup event handling function only certain keys. In this case, the event listener should only react to <kbd>Enter</kbd> key. 
+1. Since the function can be used to react to both "**click**" and "**keypress**" events, we can create another function which can be called by different event listener without duplicate the code directly. 
+    ```js 
+    // Global App controller 
+    let controller = (function(budgetCtrl, UICtrl){
+
+        let ctrlAddItem = function() {
+            // 1. Get the filled input data 
+
+            // 2. Add the item to the budget controller 
+
+            // 3. Add the item to the UI
+
+            // 4. Calculate the budget 
+            
+            // 5. Display the budget on the UI 
+
+        }
+
+        document.querySelector('.add__btn').addEventListener('click', ctrlAddItem); 
+
+        document.addEventListener('keypress', function(event){
+            if (event.keyCode === 13 || event.which === 13) {
+                ctrlAddItem();
+            }
+        });
+
+    })(budgetController, UIController);
+    ```
+
+### Reading input data 
+1. Learning Objects: Read data from different HTML input types. 
+1. The same concepts of using closure and IIFEs are used here. We can set up the `UIController` to get the input from the webpage. Therefore, it returns an `Object` that contains the input from the user which we can manipulate it in the `controller` function. 
+1. Since we could change the "class" name applied to HTML elements, we can store the names as `Strings` in an `Object`. Therefore, every time when we update the HTML structure, we can only edit the `Object` which holds the class names for selectors without editing the whole code which may cause serious bug. 
+1. Besides, we can pass the `DOMstrings` object in the as a property in the returned `Object` from `UIcontroller`. Therefore, in the controller module, we can use `UICtrl.getDOMstrings` to get the values without duplicate the works. 
+    ```js 
+    // UI controller 
+    let UIController = (function(){
+        let DOMstrings = {
+            inputType: '.add__type',
+            inputDescription: '.add__description',
+            inputValue: '.add__value',
+            inputBtn: '.add__btn',
+        };
+
+        return {
+            getInput: function(){
+                return {
+                    type: document.querySelector(DOMstrings.inputType).value, // Will be either inc or exp
+                    description: document.querySelector(DOMstrings.inputDescription).value,
+                    value: document.querySelector(DOMstrings.inputValue).value,
+                };
+            }, 
+
+            getDOMstrings: function(){
+                return DOMstrings;
+            }
+        };
+
+    })();
+    ```
+
+### Creating an initialization function
+1. In the `controller` function, we create an `init` function which can be called by its API. The `controller` function that returns an `Object` which has a method for outside to call the function. Therefore, without this initiation, the event listeners aren't applied. 
+    ```js 
+    // Global App controller 
+    let controller = (function(budgetCtrl, UICtrl){
+
+        let setupEventListeners = function(){
+            let DOM = UICtrl.getDOMstrings();
+
+            document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem); 
+
+            document.addEventListener('keypress', function(event){
+                if (event.keyCode === 13 || event.which === 13) {
+                    ctrlAddItem();
+                }
+            });
+        };
+
+        let ctrlAddItem = function() {
+            // 1. Get the filled input data 
+            let input = UICtrl.getInput();
+            // 2. Add the item to the budget controller 
+
+            // 3. Add the item to the UI
+
+            // 4. Calculate the budget 
+            
+            // 5. Display the budget on the UI 
+
+        }
+
+        return {
+            init: function(){
+                console.log('Application has started.');
+                setupEventListeners();
+            }, 
+        }
+
+    })(budgetController, UIController);
+
+    controller.init();
+    ```
+
+### Creating income and expense function constructors
+1. Learning Objects 
+    1. Choose function constructors that meet our application's needs. 
+    1. Set up a proper data structure for budget controller. 
+1. When would like to create multiple `Objects`, we can use function constructors to make prototypes (as the blueprint). Therefore, in the budget controller, we set up the function constructors for both "**expense**" and "**income**". 
+    ```js 
+    // Budget controller
+    let budgetController = (function(){
+        function Expense (id, description, value){
+            this.id = id;
+            this.description = description;
+            this.value = value;
+        };
+
+        function Income (id, description, value) {
+            this.id = id;
+            this.description = description;
+            this.value = value;
+        };
+
+        
+        let allExpenses = [];
+        let allIncomes = [];
+        let totalExpenses = 0; 
+        
+        let data = {
+            allItems: {
+                exp: [],
+                inc: [],
+            },
+            totals: {
+                exp: 0,
+                inc: 0,
+            }
+        }
+
+    })();
+    ```
+
+### Adding a new item to budget controller 
+1. Learning Objects 
+    1. Avoid conflicts in the data structure. 
+    1. Understand how and why to pass data from one module to another. 
+1. After adding some data (either income or expense from the input from, we can start to check and manipulate the data based on the previous section (which we've created the data structure). Each item will have an ID property that is started from 0. 
+1. The program, at this point, starts with 
+    1. `init()` function from `controller` module, which adds listeners to HTML elements on the webpage. 
+    1. In the listeners, there's a function from `UIController` that takes the input from the user which parse and extract the value input. 
+    1. After getting the values, it passed to the function which is called from `budgetController` module to create an `ID` for the item and store in the variable in the "**closure**" which can be accessed and edited directly from the outside. 
+    ```js 
+    // Budget controller
+    let budgetController = (function(){
+        function Expense (id, description, value){
+            this.id = id;
+            this.description = description;
+            this.value = value;
+        };
+
+        function Income (id, description, value) {
+            this.id = id;
+            this.description = description;
+            this.value = value;
+        };
+
+
+        let allExpenses = [];
+        let allIncomes = [];
+        let totalExpenses = 0; 
+        
+        let data = {
+            allItems: {
+                exp: [],
+                inc: [],
+            },
+            totals: {
+                exp: 0,
+                inc: 0,
+            }
+        };
+
+        return {
+            addItem: function(type, des, val){
+                let newItem, ID;
+
+                // Create new ID
+                if (data.allItems[type].length > 0) {
+                    ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+                } else {
+                    ID = 0;
+                }
+
+                // Create new item based on 'inc' or 'exp' type
+                if (type === 'exp') {
+                    newItem = new Expense(ID, des, val); 
+                } else if (type === 'inc'){
+                    newItem = new Income(ID, des, val); 
+                }
+
+                // Push it into our data structure 
+                data.allItems[type].push(newItem); 
+
+                // Return the new element
+                return newItem;
+            }, 
+
+        };
+
+    })();
+    ```
+1. Note that all this data are only in the backend can be checked only on the console, as we haven't use the data to update the HTML elements. 
+
+### Adding a new item to the UI
+1. Learning Objects 
+    1. A technique for adding big chunks of HTML into the DOM. 
+    1. Replace parts of `Strings`.
+    1. Do DOM manipulation using the `insertAdjacentHTML` method. 
+1. We create another function in `UIController` which works on the DOM manipulation to change the HTML elements. In this case, we keep the predefined HTML elements as `Strings`. We then change the value that we'd like to be updated from DOM. 
+    ```html 
+    <div class="item clearfix" id="expense-0">
+        <div class="item__description">Car Rental</div>
+        <div class="right clearfix">
+            <div class="item__value">500</div>
+            <div class="item__percentage">21%</div>
+            <div class="item__delete">
+                <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+            </div>
+        </div>
+    </div>
+    ```
+1. The lecturer uses regualr strings with placeholders (such as %id%, %description%, and %value%), which are similar to the syntax in `express` framework when handling `.ejs` files. 
+1. However, these placeholders can be named in any other way which is easy for JavaScript `.replace()` method to check and replace with the other given values. Besides, we can use backticks "\`" with variable holder `${}` as well. The structure would be different from each of the methods. The other benefit from backtick "\`" is that we can have multi-line `String` value and input variables into the `String` directly. However, this feature isn't supported by some of the browsers. 
+1. We then insert the HTML `String` by DOM. In this case, we use `.insertAdjacentElement()` method with `'beforeend'` as its argument to append the new items into the list of income/expense statement. In this project, income and expense statements are separated into a 2 column table as the layout. Therefore, we should insert the new HTML in the `<div>` tag which takes 2 sections (as columns) of the statements. Besides, the new items should be added as the last row of the column. 
+1. We can check more info. about `.inserAdjacentElement()` method [here](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentElement). 
+    ```js 
+    let DOMstrings = {
+        inputType: '.add__type',
+        inputDescription: '.add__description',
+        inputValue: '.add__value',
+        inputBtn: '.add__btn',
+        incomeContainer: '.income__list',
+        expensesContainer: '.expenses__list',
+    };
+
+    addListItem: function(obj, type){
+        // Create HTML string with placeholder text 
+        let html, newHtml; 
+
+        if(type === 'inc') { 
+            element = DOMstrings.incomeContainer;
+            html = 
+            `<div class="item clearfix" id="income-%id%">
+                <div class="item__description">%description%</div>
+                <div class="right clearfix">
+                    <div class="item__value">%value%</div>
+                    <div class="item__delete">
+                        <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                    </div>
+                </div>
+            </div>`;
+        } else if (type === 'exp') {
+            element = DOMstrings.expensesContainer;
+            html = 
+            `<div class="item clearfix" id="expense-%id%">
+                <div class="item__description">%description%</div>
+                <div class="right clearfix">
+                    <div class="item__value">%value%</div>
+                    <div class="item__percentage">21%</div>
+                    <div class="item__delete">
+                        <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // Replace the placeholder text with some actual data 
+        newHtml = html.replace('%id', obj.id);
+        newHtml = newHtml.replace('%description%', obj.description); 
+        newHtml = newHtml.replace('%value%', obj.value); 
+
+        // Insert the HTML into the DOM 
+        document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+        
+    }
+    ```
+
+### Clearing our input fields 
+1. Learning Objects 
+    1. Clear HTML fields 
+    1. Use querySelectorAll
+    1. Convert a list to an array
+    1. A better way to loop over an array then for loop `.forEach()`
+1. In the public returned `Object`, we add a method `clearFields` to clear the input tags. 
+1. By using DOM, `.querySelectorAll()` method returns a "**list**" which is an array-like data but an `Object`. We can then use a trick to turn the "**list**" into an array. `.slice()` method works on `Array` values. We can use `Array.prototype.slice()` to turn the "**list**" object into an `Array`. This is very useful, as we can manipulate the list of elements directly. However, we can also use `querySelector()` to deal with each of the elements one by one. 
+1. After cleaning the input, we can use `.focus()` method to turn the focus back to the description input on the webpage to provide a better UX. 
+    ```js 
+    clearFields: function(){
+        let fields, fieldsArr;
+
+        fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
+        
+        fieldsArr = Array.prototype.slice.call(fields);
+
+        fieldsArr.forEach(function(item, index, array){
+            item.value = '';
+        });
+
+        fieldsArr[0].focus();
+
+    },
+    ```
+
+### Updating the budget: Controller 
+1. Learning Objects 
+    1. Convert field inputs to numbers 
+    1. Prevent false inputs 
+1. Note that until this point, we collect value with `document.querySelector(DOMstrings.inputValue).value` which collects the data as `String`. We can use `parseFloat()`, `Number()`, or plus sign `+` to turn the value into a `Number`, so that we can operate the number. 
+    1. However, both plus sign and `Number()` aren't a good solution as it will turn empty string `""` or `null` into number `0`, while the other 2 methods will turn empty `String` into `0`. 
+    1. We can't use `parseInt()` function here because the input may have decimals. `parseInt()` function will take off the decimals of the `String` value. 
+1. Besides, the input form still takes empty inputs, as we haven't set up the conditions for the listeners to handle the conditions. 
+1. We can check and ensure both "**description**" and "**value**" are given. If the number of value is in the incorrect syntax or pattern, `parseFloat()` will turn it into a `NaN` value, which we can check by `isNaN()` function if an `IF` statement. Therefore, we update the `CtrlAddItem` function in the `controller` module. 
+1. Note that in the lecture, `input.description` is checked if it is equal to empty `String`. However, we can put the variable there directly without any operator because an empty `String` is falsy that `Booelan("")` is `false`. 
+1. Besides, we should also check the value is greater than 0, as income/expense should be lower than 0 by its part. 
+1. At this point `udpateBudget` function hasn't been created. 
+    ```js 
+    let updateBudget = function(){        
+        // 1. Calculate the budget 
+
+        // 2. Return the budget 
+        
+        // 3. Display the budget on the UI 
+
+    };
+
+    let ctrlAddItem = function() {
+        let input, newItem;
+        // 1. Get the filled input data 
+        input = UICtrl.getInput();
+
+        if (input.description && !isNaN(input.value) && input.value > 0){
+            // 2. Add the item to the budget controller 
+            newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+
+            // 3. Add the item to the UI
+            UIController.addListItem(newItem, input.type);
+
+            // 4. Clear the fields
+            UIController.clearFields();
+
+            // 5. Calculate and update budget
+            updateBudget();
+        }
+    }
+    ```
+
+### Update the budget: Budget Controller 
+1. Learning Objects 
+    1. Understand how and why create simple, reusable functions with only one purpose.
+    1. Sum all elements of an array using the `.forEach()` method. 
+1. In `budgetController`, we set up the calculate for the income and expense from the data stored in the `data` object. 
+    ```js 
+    let calculateTotal = function(type){
+        let sum = 0; 
+        data.allItems[type].forEach(function(item){
+            sum += item.value; 
+        });
+        data.totals[type] = sum;
+    };
+    ```
+1. Besides, the `data.percentage` calculation isn't correct, as if we have expense first without income, expense will be divided by 0, which JavaScript will return an `Infinity`. Therefore, we can fix the problem. We can use `IF` statement to avoid the operation when the `data.totals.inc` is equal or less than 0. 
+    ```js 
+    calculateBudget: function(){
+        // Calculate total income and expenses 
+        calculateTotal('exp');
+        calculateTotal('inc');
+
+        // Calculate the budget: income - expenses 
+        data.budget = data.totals.inc - data.totals.exp;
+
+        // Calculate the percentage of income that we spent 
+        if (data.totals.inc > 0) {
+            data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100); 
+        } else {
+            data.percentage = -1;
+        }
+    }
+    ```
+
+### Updating the budget: UI Controller 
+1. Learning Objects: Practice DOM manipulation by updating the budget and total values. 
+1. In `UIController`, we create the DOM manipulation to change the text contents of the HTML elements. However, the `obj.percentage` returns `-1` when the income is 0. Therefore, we can have another `IF` statement to deal with the conditions. We can set the condition as if `obj.percentage` is greater than `0`, so it includes both 0 and negative numbers such as `-1`. This is why we set the percentage as `-1` when the income is 0. 
+    ```js 
+    displayBudget: function(obj){
+        document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+        document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
+        document.querySelector(DOMstrings.expensesLabel).textContent = obj.totalExp;
+        document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage;
+        if(obj.percentage > 0) {
+            document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage + '%';
+        } else {
+            document.querySelector(DOMstrings.percentageLabel).textContent = '---';
+        }
+    }
+    ```
+1. Besides, we have some default value set up in the HTML file for the number. We can update the `init()` function to reset the numbers to 0 when the page loads. 
+    ```js 
+    return {
+        init: function(){
+            console.log('Application has started.');
+            UICtrl.displayBudget({
+                budget: 0,
+                totalInc: 0,
+                totalExp: 0,
+                percentage: -1,
+            });
+            setupEventListeners();
+        }, 
+    }
+    ```
