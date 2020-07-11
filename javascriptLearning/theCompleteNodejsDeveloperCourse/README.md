@@ -10,3 +10,7 @@
     1. `process` process object that we can work with Node.js itself. For example, we type `process.exit()` to leave Node.js from the terminal. 
 1. Node.js is useful as it has **non-blocking** I/O. It means that during the code is running on the backend with functions for other purposes, we can still manipulate the environment to work on something else. 
 1. `requrie()` is a very important and often used function in Node.js that it allows Node.js to retrieve code for functions from files in the OS. 
+
+
+
+# Node.js Module System (Notes App)
