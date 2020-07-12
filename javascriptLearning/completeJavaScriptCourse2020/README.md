@@ -410,7 +410,7 @@ GAME RULES:
     1. Add event handler 
     1. Get input values 
     1. Add the new item to our data structure 
-    1. Add teh new item to the UI 
+    1. Add the new item to the UI 
     1. Calculate budget 
     1. Update the UI
 1. Structuring code with modules 
@@ -889,5 +889,166 @@ GAME RULES:
             });
             setupEventListeners();
         }, 
+    }
+    ```
+
+### Summary of Step 1
+<img src="budgetAppStructure1.png">
+
+
+
+### Project planning and architecture: Step 2
+1. The main target here is to enable the "**delete**" button and the aligned manipulations with the event. 
+1. To-do list 
+    1. Add event handler 
+    1. Delete the item from our data structure
+    1. Delete the item to the UI 
+    1. Re-calculate budget 
+    1. Update the UI
+
+### Event delegation
+1. "**Event Bubbling**" - For example, when a button on the webpage is "**clicked**", its parent elements (which holds the button element until `HTML` tag) will also be triggered with the event. 
+1. By this feature, we can put the event listener on the parent element and wait for the event bubbles up. This is called "**event delegation**". 
+1. This feature is useful in some scenarios, such as 
+    1. When we have an element with lots of child elements that we are interested in. Therefore, we don't need to add event listeners to each of them one by one. 
+    1. When we want an event handler attached to an element that is not yet in the DOM when the page is loaded. For example, a submit button element is only added after filling up an input form. We can put the listener on its parent rather than the new button itself, so the button element will still work, though the element doesn't exist when the page loads. 
+
+### Setting up the delete event listener using event delegation
+1. Learning Objects
+    1. Use event delegation in practice 
+    1. Use IDs in HTML to connect the UI with data model
+    1. Use the parentNode property for DOM traversing 
+1. In this case, we have both `income` and `expense` section on the webpage. The direct element that is the parent element of both sections is the `<div class="container clearfix">` tag. Therefore, we can add an event listener here and wait for the "**click**" event bubbles up. 
+1. By the structure of the JS file, we can add the class name into the object for elements in `UIController` model. 
+1. We can check with the callback function with its event argument by `event.target` to know which element trigers the event. If we add an item to the list and click the preset "**delete**" button, we can get `<i class="ion-ios-close-outline"></i>` printed in the console.
+1. Therefore, we can set up the callback function to check and delete element(s) we want only when certain elements get the event. For example, the "**delete**" function only works when the `<i>` tag is "**clicked**". Thus, we can set the event listener in advance and be able to catch the event working on certain element. 
+1. We then use DOM traversing to move between parent/child elements in the target object. 
+1. For DOM object, we can check `.parentNode` property to find the direct parent element of the element we select.
+    ```js 
+    let ctrlDeleteItem = function(event) {
+        let itemID, splitID, type, ID;
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+        if(itemID) {
+            // id of the element will be either in pattern as inc-1 or exp-1
+            splitID = itemID.split('-');
+            type = splitID[0];
+            ID = splitID[1]; // note that this is a string
+            // 1. Delete the item from the data structure          
+            // 2. Delete the item from the UI
+            // 3. Update and show the new budget 
+        }
+    };
+    ```
+
+### Deleting an item from the budget controller 
+1. Learning Objects 
+    1. Another method to loop over an `Array`: `.map()`.
+    1. Remove elements from an array using the `.splice()` method. 
+1. In the lecture, we uses `.map()` array method to copy an array. Though `.slice()` method without any argument can return a duplicate array as well, the items in the data structure are actually `Objects` that we should access to their `id` property. We then can use `.indexOf()` to find the position of a certain value in the `Array`. Note that `.indexOf()` method returns `-1` if the element is not found in the array.
+1. Therefore, we can use an `IF` statement to check if the index we get is not equal to `-1` and use `.splice()` method to delete an element from the array. Note that when we passing values between variables, we should be careful with its primitive types. 
+    ```js 
+    // Budget controller 
+    deleteItem: function(type, id){
+        let ids, index;
+        ids = data.allItems[type].map(function(item){
+            return item.id;
+        });
+
+        index = ids.indexOf(id); 
+
+        if (index !== -1) {
+            data.allItems[type].splice(index, 1);
+        }
+    }
+    ```
+
+### Deleting an item from the UI
+1. Learning Object: Remove an element from the DOM
+1. In DOM, we can only use `.removeChild()` method to delete an element. Therefore, we have to select the parent element of the element we want to delete and pass the selected element again. We can save the parent element object in a variable first as well. 
+    ```js 
+    // UI controller 
+    deleteListItem: function(selectorID){
+        let el;
+        el = document.getElementById(selectorID); 
+        el.parentNode.removeChild(el);
+    }
+    ```
+### Summary of Step 2
+<img src="budgetAppStructure2.png">
+
+
+
+### Project planning and architecture: Step 3
+1. The main target here is to update the percentage of an expense item of total income. 
+1. To-do list 
+    1. Calculate percentage
+    1. Update percentages in UI
+    1. Display the current month and year
+    1. Number formatting
+    1. Improve input field UX
+
+### Updating the percentages: Controller 
+1. Learning Object: Reinforce concepts and techniques we have learnt so far. 
+1. This task is simple that we just add the function and execute it in other function sets, such as run the function after we add or delete an item. 
+
+### Updating the percentages: Budget Controller 
+1. Learning Object: Make the budget controller interact with the `Expense` prototype. 
+1. We update the function constructor of `Expense` by giving a new property `percentage`. This property is set to be default at `-1`. We then create 2 methods that can be called on each expense object. Therefore, the percentage will be calculated everytime a new item (either income or expense) is added. 
+    ```js 
+    // Budget controller 
+    function Expense (id, description, value){
+        this.id = id;
+        this.description = description;
+        this.value = value;
+        this.percentage = -1; 
+    };
+
+    Expense.prototype.calcPercentage = function(totalIncome){
+        if (totalIncome > 0) {
+            this.percentage = Math.round((this.value / totalIncome) * 100);
+        } else {
+            this.percentage = -1; 
+        }
+    };
+
+    Expense.prototype.getPercentages = function(){
+        return this.percentage;
+    };
+
+    // Returned public object
+    calculatePercentages: function(){
+        data.allItems.exp.forEach(function(item){
+            item.calcPercentage(data.totals.inc);
+        });
+    },
+
+    getPercentages: function(){
+        let allPerc = data.allItems.exp.map(function(item){
+            return item.getPercentages();
+        });
+        return allPerc; 
+    },
+    ```
+
+### Updating the percentages: UI Controller 
+1. Learning Object: Create own `.forEach()` method but for `nodeLists` instead of arrays. 
+1. Since there may be multiple items in the list and should all be updated, we can use `.querySelectorAll()` method to parse and update all the contents of percentage at the same time. In this case, we make a customized `forEach()` function which can loop through a DOM "**list**". Note that though a `list` object is not an array, it still has `length` property. 
+    ```js 
+    displayPercentages: function(percentages){
+        let fields = document.querySelectorAll(DOMstrings.expensesPercLabel); 
+        console.log(fields);
+        let nodeListForEach = function(list, callback){
+            for (let i = 0; i < list.length; i++) {
+                callback(list[i], i);
+            }
+        };
+
+        nodeListForEach(fields, function(item, index){
+            if (percentages[index] > 0){
+                item.textContent = percentages[index] + '%';
+            } else {
+                item.textContent = '---';
+            }
+        });
     }
     ```
