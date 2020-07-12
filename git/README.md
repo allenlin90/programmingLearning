@@ -615,3 +615,21 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
     1. This process is similar to the previous one to merge the message. However, we use `fixup` here, and the process will merge the versions without the message. 
 1. Delete a commit object 
     1. This process is easy that we can just delete the `pick` command of the versions that we don't want to keep in during rebasing. 
+
+
+
+# Day 24 - Use Github as remote repository (Basics)
+1. We can follow the instructions on Github to create an empty repository and use the git commands to connect the local repository with the remote one. We have several ways to connect local and remote repository. 
+    1. Create an "**empty**" repository on Github, use git clone to get the repository, add the files and create a new commit, and push the version to Github. 
+    1. Create an "**empty**" repository on Github and use git command to push the version to Github directly. 
+    1. Create a repository with "**initial commit**", use git clone to get the repository, add the files and create a new commit, and push the version to Github.
+    1. Create a repository with "**initial commit**" and use git command to push the version to Github directly. 
+### Get an empty remote repository on Github, create the version, and push 
+1. This is the easiest way since we don't have local repository yet. We can use `git clone` to download the repository directly. 
+1. Since the empty repository is totally empty that there's no even the master branch, we can use `git push -u` to upload the local file to Github. Note that `git push -u` is actually `git push -u origin master` in this case. 
+1. We can also create a remote repository with initial commit, create the version, and push.
+1. If we have an initial commit (only master branch is created without any other file), we can use `git push` directly which is the same as `git push origin master` in the case. 
+
+### Upload local repository to Github as a project (repository)
+1. If we have had a local repository, we can create an empty repository on Github and use `git remote add origin [githublink.git]` to link to the remote one on Github. However, we can push a repository to Github directly because the local and remote repository will have conflict. 
+1. We can use `git pull origin master` or `git fetch` and `git merge origin/master` to resolve the conflict and merge 2 repositories. However, after `Git 2.9.0`, it doesn' allow merge for branches which don't have the same origin by default. We then can use `--allow-unrelated-histories` to proceed. The full command is `git pull origin master --allow-unrelated-histories`. 
