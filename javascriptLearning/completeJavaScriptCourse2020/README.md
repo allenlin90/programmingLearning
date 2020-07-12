@@ -1052,3 +1052,69 @@ GAME RULES:
         });
     }
     ```
+
+### Formatting budget numbers: String manipulation
+1. Learning Object: Use different String methods to manipulate strings. 
+1. There are 3 patterns for the numbers in the App
+    1. All numbers are will 2 decimals. 
+    1. Income (positive) numbers have a plus sign "+" at the beginning, while expenses (negative) numbers have a minus "-" sign. 
+    1. A comma separator is given when every thousand unit (triple zeros).
+1. This part mainly manipulates the data in `UIController` as here manage the data that creates the "view" to users. 
+    ```js
+    let formatNumber = function(num, type){
+        let numSplit, int, dec;
+        // + or - before number 
+        // exactly 2 decimal points 
+        // comma separating the thousands
+        num = Math.abs(num);
+        num = num.toFixed(2);
+        numSplit = num.split('.');
+
+        int = numSplit[0];
+        
+        if (int.length > 3) {
+            int = int.substr(0, (int.length - 3)) + ',' + int.substr((int.length - 3), int.length);
+        }
+        
+        dec = numSplit[1];
+      
+        return (type === 'exp' ? sign = '-' : sign = '+') + ' ' + int + '.' + dec;
+    };
+    ```
+
+### Displaying the current month and year
+1. Learning Object: Get the current date by using the Date object constructor 
+1. Since `.getMonth()` method returns a zero based number, we can create an `Array` which includes all months and be called by the result from `.getMonth()` as the index. 
+    ```js 
+    displayMonth: function(){
+        let now, year, month, months; 
+        now = new Date(); 
+        months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        month = now.getMonth();
+        year = now.getFullYear();
+        document.querySelector(DOMstrings.dateLabel).textContent = months[month] + ' ' + year;
+    }
+    ```
+
+### Finishing touches: Improving the UX 
+1. Learning Objects: How and when to use '**change**' events. 
+1. We will change the color of inputs in the form when it is focus and according to whether it's an "**income**" or "**expense**" by checking whether the sign in the beginning is a '+' or '-' sign. 
+1. In the UI controller, we can use `.classList` property and `.toggle()` method on DOM object to turn on/off a given CSS class (which is '**red-focus**' in this case). 
+1. Besides, this function can be added to "controller" model in the `init` method which should be done when the page is loaded in the beginning. 
+    ```js 
+    // UI controller 
+    changedType: function(){
+            let fields = document.querySelectorAll(
+                DOMstrings.inputType + ',' +
+                DOMstrings.inputDescription + ',' +
+                DOMstrings.inputValue);
+
+            nodeListForEach(fields, function(item){
+                item.classList.toggle('red-focus');
+            });
+        }
+    ```
+1. Final Structure 
+<img src="budgetAppStructure_final.png">
+
