@@ -1118,3 +1118,416 @@ GAME RULES:
 1. Final Structure 
 <img src="budgetAppStructure_final.png">
 
+
+
+# ES6/ES2015 JavaScript
+1. The new version of JavaScript works on modern browsers but may not be available on old version, such as IE 9 or under. Besides, there's only new features and syntax different that most of the old usage and functions are still available. In this section, we will check the new versoin in the following topics. 
+    1. Variable Declarations with `let` and `const`. 
+    1. Blocks and IIFEs
+    1. `Strings`
+    1. Arrow Functions
+    1. Destructuring 
+    1. `Arrays`
+    1. The Spread Operator 
+    1. Rest and Default Parameters 
+    1. Maps 
+    1. Classes and subclasses 
+
+### Variable declarations with `let` and `const`
+### Blocks and IIFEs
+1. When we declare a variable with keyword `const`, the variable is immutable that we can't change the value of the variable. 
+1. The main difference between ES5 `var` and ES6 variable declaration `let and const` is that `var` is function scoped, and `let and const` are block scoped, which means that a variable declared by `var` can be accesses anywhere in the function. For `let and const` the scope is only limited to the curly braces `{}` where the variables are at. 
+1. Therefore, if ES5 and previous version, we can use IIFEs with `(function(){})()` to call an anonymous function immediately and limited accessibility for variables declared by `var`. 
+
+### Strings in ES6 / ES2015
+1. In ES6, we can use backticks "\`" and dollar sign with curly braces `${}` to make multi-line strings and pass variables directly in `${}`. 
+
+### Arrow functions: Basics
+1. In ES5, we can only use keyword `function` to use a function in JavaScript. However, Since ES6, we can use a shorthand "**arrow function**" notation. We can use arrow function notation for IIFEs or anonymous functions. 
+1. For example, we'd like to return a `'hi'` string. 
+    ```js 
+    let name = 'Allen';
+    () => 'hi' + name; 
+
+    let text = 'hi';
+    text => text + name; 
+
+    text => {
+        text = 'Hello';
+        return text + name;
+    }
+    ```
+
+### Arrow functions: Lexical `this` keyword
+1. In ES5, if we would like to add an event listener to an element, keyword `this` may refer to the wrong `Object` (usually global object). We have 2 ways for the solution by either save the `this` object first or use `.bind()` method. 
+    ```js 
+    // Use .bind() method 
+    var box5 = {
+        color: 'green',
+        position: 1,
+        clickMe: function(){
+            document.querySelector('.green').addEventListener('click', (function(){
+                var str = 'This is box number ' + this.position + ' and it is ' + this.color; 
+                alert(str);
+            }).bind(box5));
+        },
+    }
+
+    // Save this out of function scope first 
+    var box5 = {
+        color: 'green',
+        position: 1,
+        clickMe: function(){
+            var self = this; 
+            document.querySelector('.green').addEventListener('click', (function(){
+                var str = 'This is box number ' + self.position + ' and it is ' + self.color; 
+                alert(str);
+            }).bind(box5));
+        },
+    }
+    ```
+1. Arrow functions, on the other hand, have no problems with the function scoping issue that the `this` keyword in the callback function will refer to the `Object` which takes the method as the outside world. 
+    ```js 
+    let box7 = {
+        color: 'green',
+        position: 1,
+        clickMe: function(){ 
+            document.querySelector('.green').addEventListener('click', () => {
+                let str = 'This is box number ' + this.position + ' and it is ' + this.color; 
+                alert(str);
+            })
+        },
+    }
+    ```
+1. However, we usually use arrow functions as the argument for callback functions, as its lexical `this` keyword is now refer to the global object. 
+1. The same with the previous example, if we'd like to use constructor function to create a prototype, the `this` in the callback function may refer to the wrong object. With the same solution, we can either create a variable to hold the `this` object out of the function scope or use `.bind()` method to create a function that use the correct `Object`. 
+    ```js 
+    // Constructor function 
+    function Person(name) {
+        this.name = name; 
+    }
+
+    Person.prototype.myFriends5 = function(friends){
+        var self = this; 
+        var arr = friends.map(function(el){
+            return self.name + ' is friends with ' + el;
+        });
+
+        console.log(arr);
+    };
+
+    var friends = ['Bob', 'Jane', 'Mark'];
+
+    new Person('John').myFriends5(friends);
+    // ["John is friends with Bob", "John is friends with Jane", "John is friends with Mark"]
+    ```
+1. We can also use arrow function notation and refer to `this` directly. 
+    ```js 
+    Person.prototype.myFriends5 = function(friends){
+        let arr = friends.map((el) => this.name + ' is friends with ' + el);
+
+        console.log(arr);
+    };
+
+    let friends = ['Bob', 'Jane', 'Mark'];
+
+    new Person('John').myFriends5(friends);
+    ```
+
+### Destructuring 
+1. We can use `Array` and `Objects` to create variables in the other way as the followings. 
+    ```js 
+    const [name, age] = ['John', 26]; 
+    console.log(name, age);
+
+    const obj = {
+        firstName: 'John',
+        lastName: 'Smith',
+    };
+    const {firstName, lastName} = obj;
+    console.log(firstName, lastName); 
+    const {firstName: a, lastName:b} = obj;
+    console.log(a, b); 
+
+    function calcAgeRetirement(year) {
+        const age = new Date().getFullYear() - year;
+        return [age, 65 - age];
+    }
+
+    const[age, retirement] = calcAgeRetirement(1990); 
+    console.log(age);
+    console.log(retirement);
+    ```
+
+### Arrays in ES6/ES2015
+1. In ES5, we can use `Array.prototype.slice.call(DOMList)` to turn an DOM list into a JavaScript `Array`. In ES6, we can use `Array.from(DOMList)` to create an `Array` from the DOM list directly. 
+    ```js 
+    const boxes = document.querySelectorAll('.box');
+
+    // ES5 
+    var boxesArr5 = Array.prototype.slice.call(boxes);
+
+    boxesArr5.forEach(function(item){
+        item.style.backgroundColor = 'dodgerblue';
+    });
+    
+    // ES6
+    Array.from(boxes).forEach( item => item.style.backgroundColor = 'dodgerblue');
+    ```
+1. We can use `for of` loop instead of regular `for` loop with a counter. Therefore, we can create a variable that changes to the element of the loop during each iteration. 
+    ```js 
+    const boxes = document.querySelectorAll('.box');
+
+    let boxesArr6 = Array.from(boxes);
+    boxesArr6.forEach( item => item.style.backgroundColor = 'dodgerblue');
+
+    // ES5     
+    for (var i = 0; i < boxesArr5.length; i++) {
+        if (boxesArr5[i].className === 'box blue') {
+            continue;
+        }
+        boxesArr5[i].textContent = 'I changed to blue';
+    }    
+
+    // ES6 
+    for (const item of boxesArr6) {
+        if (item.className === 'box blue') {
+            continue;
+        }        
+        item.textContent = 'I changed to blue';
+    }
+    ```
+1. If we'd like to find an element which is fit to certain conditions, we can use the following functions.
+1. In ES6, we can use `.findIndex()` and `.find()` method (both of which takes a callback function) to get the index of the value of elements in an `Array`. 
+    ```js 
+    // ES5 
+    var ages = [12, 17, 8, 21, 14, 11]; 
+
+    var full = ages.map(function(item){
+        return item >= 18
+    });
+    console.log(full);
+    console.log(full.indexOf(true));
+    console.log(ages[full.indexOf(true)]);
+
+    // ES6 
+    console.log(ages.findIndex( item => item >= 18)); 
+    console.log(ages.find( item => item >= 18)); 
+    ```
+
+(This solution is useful but not mentioned in the lecture)
+1. If we'd like to check all the position (index) of elements in an `Array`, we can use `.reduce()` method to do so. For example, we'd like to check which number is greater than or equal to 10 in an `Array`. For example, we'd like to add an asterisk right after the element which is greater than or equal to 10. 
+    ```js 
+    let arr = [8, 10, 123, 55, 12, 1, 3, 13]; 
+
+    let filterArr = arr.reduce(function(prev, cur, index){
+        if (cur >= 10) {
+            prev.push(index);
+        }
+        return prev;
+    }, []);
+
+    function addAsterisk(arr1, arr2){
+        let i = 0; 
+        for (let num of arr2) {
+            arr1.splice([num + 1 + i], 0, '*');
+            i++;
+        }
+        return arr1;
+    }
+
+    console.log(addAsterisk(arr, filterArr));
+    // [8, 10, "*", 123, "*", 55, "*", 12, "*", 1, 3, 13, "*"]
+    ```
+
+### The spread operator 
+1. Triple dots `...` is the spread operator which can takes all the elements out from an `Array` and pass it to a function as arguments. 
+1. In ES5, we can use `.apply(null, array)` to pass elements of an `Array` to a function. 
+1. In ES6, we can use spread operator, so the elements will be given to a function as arguments one by one. Besides, it can be used to duplicate an `Array` with identical elements (similar to using `.slice()` method). 
+1. It can be used to "**join**" 2 arrays into a single array without using `.push()` method to add up elements by loop. 
+1. Besides, spread operators can also work on "**array-like**" objects such as DOM list. Therefore, besides `Array.from(DOMList)`, we can also use `let arr = [...DOMList]` to turn a DOM list into an `Array`. 
+    ```js 
+    function addFourAges (a,b,c,d) {
+        return a + b + c + d;
+    }
+
+    var sum1 = addFourAges(18, 30, 12, 21);
+    // console.log(sum1);
+
+    // ES5
+    var ages = [18, 30, 12, 21]; 
+    var sum2 = addFourAges.apply(null, ages);
+    console.log(sum2);
+
+    // ES6 
+    const max3 = addFourAges(...ages); 
+    console.log(max3);
+
+    let ages1 = ages.slice();
+    let ages2 = [...ages];
+    console.log(ages1);
+    // [18, 30, 12, 21]
+    console.log(ages2);
+    // [18, 30, 12, 21]
+
+    let familySmith = ['John', 'Jane', 'Mark'];
+    let familyMiller = ['Mary', 'Bob', 'Ann'];
+    let bigFamily = [...familySmith, 'Lily', ...familyMiller];
+    console.log(bigFamily);
+    // ["John", "Jane", "Mark", "Lily", "Mary", "Bob", "Ann"]
+
+
+    const h = document.querySelector('h1'); 
+    const boxes = document.querySelectorAll('.box'); 
+
+    let all = [h, ...boxes];
+    all.forEach( e => e.style.color = '#333');
+    ```
+
+### Rest parameters 
+1. "**Rest parameters**" is similar to "**spread operators**" that using triple dots. 
+1. In a function, we can use keyword `arguments` to represent an "**array-like**" object that holds all the arguments passed to the function. With spread operator, we can turn them into a real `Array`. 
+1. We can pass the rest parameters notation, as the parameters in a function declaration. Thus, the function will create a variable which is an `Array` of the arguments that are passed to the function. 
+1. Note that in practice, the rest parameters notation will be put as the last argument in a function declaration to avoid issues, as the function may not know which is the end of the arguments to create the `Array`. 
+    ```js 
+    // ES5 
+    function isFullAge5() {
+        var argsArr = Array.prototype.slice.call(arguments); 
+
+        argsArr.forEach(function(item){
+            console.log((2020 - item) >= 18); 
+        })
+    }
+
+    isFullAge5(1990, 1999, 1965);
+    isFullAge5(1990, 1999, 1965, 2016, 1987);
+
+    // ES6 
+    function isFullAge6(...years){
+        years.forEach(item => console.log((2020 - item) >= 18));
+    }
+
+    isFullAge6(1990, 1999, 1965, 2016, 1987);
+    ```
+1. If we'd like to give arguments that should not be included in the `Array`, we can use the following syntax. 
+1. In ES5, we can simply pass 1 to `.slice()` method to cut off the very first argument in the array. 
+1. In ES6, the argument and "rest parameters" notation can be separated directly by giving distinctive arguments. 
+    ```js 
+    // ES5 
+    function isFullAge5(limit) {
+        var argsArr = Array.prototype.slice.call(arguments, 1); 
+
+        argsArr.forEach(function(item){
+            console.log((new Date()).getFullYear() >= limit); 
+        })
+    }
+
+    isFullAge5(21, 1990, 1999, 1965);
+    isFullAge5(21, 1990, 1999, 1965, 2016, 1987);
+
+    // ES6 
+    function isFullAge6(limit, ...years){
+        years.forEach(item => console.log((new Date()).getFullYear() >= limit));
+    }
+
+    isFullAge6(21, 1990, 1999, 1965, 2016, 1987);
+    ```
+
+### Default parameters 
+1. We can predefine the value of variables or properties of a function by giving condition in the function constructor to work on prototypes.
+1. In a function declaration, the paramters without given value when being called, the parameters will be assigned with `undefined` value. Therefore, in ES5, we can use the feature to give default values to parameters if they are not given when called. 
+1. In ES6, we can give parameters a default value when setting up the parameters. 
+    ```js 
+    // ES5 
+    function SmithPerson(firstName, yearOfBirth, lastName, nationality) {
+        lastName === undefined ? lastName = 'Smith' : lastName = lastName;
+        nationality === undefined ? nationality = 'american' : nationality = nationality;
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.yearOfBirth = yearOfBirth;
+        this.nationality = nationality;
+    }
+
+    var john = new SmithPerson('John', 1990);
+    var emily = new SmithPerson('Emily', 1983, 'Diaz', 'spanish');
+
+
+    // ES6 
+    function SmithPerson(firstName, yearOfBirth, lastName = 'Smith', nationality = 'american') {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.yearOfBirth = yearOfBirth;
+        this.nationality = nationality;
+    }
+
+    let john = new SmithPerson('John', 1990);
+    let emily = new SmithPerson('Emily', 1983, 'Diaz', 'spanish');
+    ```
+
+### Maps 
+1. `Objects` in JavaScript are usually used as "**hash maps**" as key/value pairs. However, `Objects` takes only `String` values as its property names. 
+1. `Maps` which are introduced in ES6 can take any type of value as the "**key**" of the key/value pair. We can even use another `function` or `Object` as a key.
+1. We can use several methods on a `Map` object. 
+    1. `.set(key, value)` takes 2 arguments to set the key/value pair. 
+    1. `.get(key)` returns the value of the given `key`. 
+    1. `.size` returns the number of keys of the `Map` object. 
+    1. `.has(key)` checks if the given `key` is in the `Map` object and returns boolean `true` or `false`. 
+    1. `.delete(key)` removes the given key/value pair from the `Map` object. 
+    1. `.clear()` removes ALL the elements of the `Map` object. 
+1. For example, we can use `IF` statement to delete a `key` if it exists. 
+    ```js 
+    const question = new Map();
+
+    question.set('question', 'What is the official name of the latest major JavaScript version?'); 
+    question.set(1, 'ES5');
+    question.set(2, 'ES6');
+    question.set(3, 'ES2015');
+    question.set(4, 'ES7');
+    question.set('correct', 3); 
+    question.set(true, 'Correct answer :D');
+    question.set(false, 'Wrong, please try again!');
+
+    console.log(question.get('question'));
+    console.log(question.size);
+
+    if (question.has(4)) {        
+        console.log('Answer 4 is here');
+    }
+    ``` 
+1. We can use `.forEach()` method can also works on a `Map` object. Note that this method takes a callback function that takes 2 arguments which are value and key (value first). 
+1. We can also use `for of` loop with `Map` objects. The variable will hold the pair and turn them into an `Array` with 2 elements, which `array[0]` is the `key`, and `array[1]` is the `value`.
+1. If we'd like to have both `key` and `value` from the `Map` object to be iterated, we can use "**destructuring**" feature with `.entries()` method, which returns all the key value pairs of the `Map` objects. This method is similar to using `.forEach()` method. 
+1. Besides, since `Map` object takes any type of value as its key, we can use the feature to check with condition and return the value only when the key is certain type of value. 
+    ```js 
+    question.forEach((value, key) => console.log(`This is '${key}', and it's set to '${value}'`));
+
+    let count = 0;
+    for (let pair of question) {
+        console.log(count + '.');
+        console.log('Key is ' + pair[0]);
+        console.log('Value is ' + pair[1]);
+        count++
+    }
+
+    // Turn the Map object into a regular object
+    let obj = {};
+    for (let [key, value] of question.entries()) {
+        obj[key] = value; 
+    }
+
+    // Return only the key whose type is number
+    for (let [key, value] of question.entries()) {
+        if (typeof(key) === 'number') {
+            console.log(`Answer ${key}: ${value}`);
+        }
+    }
+    ```
+1. We can also use the features to take input from users, such as using `prompt()` function. Besides, since `Map` object can use any type of value as its key, we can use it as operators and get the value of the pair which key is the boolean `true. 
+    ```js 
+    // collect answer from user and turn the string collected by prompt function into number
+    const ans = parseInt(prompt('Write the correct answer'));
+
+    // print the result either it's true or false 
+    console.log(question.get(ans === question.get('correct')));
+    ```
