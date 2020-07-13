@@ -1531,3 +1531,123 @@ GAME RULES:
     // print the result either it's true or false 
     console.log(question.get(ans === question.get('correct')));
     ```
+
+### Classes 
+1. Keyword `class` in JavaScript is only the "**syntactic sugar**" that is easier to read and write. However, it works and functions exactly the same as using function constructor and with `.prototype` property to add methods to create a "**type**" of `Objects`. 
+1. We can also add `static` function which WILL NOT inherit by the instances of the class, but we can call it from the Prototype object. 
+    ```js 
+    // ES5 
+    function Person5 (name, yearOfBirth, job){
+        this.name = name;
+        this.yearOfBirth = yearOfBirth;
+        this.job = job;
+    }
+
+    Person5.prototype.calculateAge = function(){
+        var age = new Date().getFullYear() - this.yearOfBirth;
+        console.log(age);
+    }
+
+    var john5 = new Person5('John', 1990, 'teacher');
+
+
+    // ES6 
+    class Person6 {
+        constructor (name, yearOfBirth, job) {
+            this.name = name;
+            this.yearOfBirth = yearOfBirth;
+            this.job = job;
+        }
+
+        calculateAge(){
+            let age = new Date().getFullYear - this.yearOfBirth;
+            console.log(age);
+        }
+
+        static greeting(){
+            console.log('Hey there!');
+        }
+    }
+
+    const john6 = new Person6('John', 1990, 'teacher');
+    Person6.greeting(); // Hey there
+    ```
+
+### Classes with subclasses
+1. To create a subclass from a prototype as extensions, we can create another constructor function and have the same parameters with additional ones. We then use `.call(this, ...parameters)` with additional properties. Recalling that keyword `new` creates an empty `Object` when it is called and `this` in the new constructor function refers to the new empty `Object`, while we can use `.call()` method to refer the original prototype. 
+1. After that we connect `.prototype` property by `Object.create()` to ensure the properties share the same methods on the prototype. However, we use the function `Object.create()` is to duplicate the methods rather than linking them. Therefore, modifying methods on the `.prototype` of the new subclass will not affect to its superclass. Note that this has can only be made after we duplicate the methods from `.property` of its superset. 
+    ```js 
+    // ES5 
+    function Person5 (name, yearOfBirth, job){
+        this.name = name;
+        this.yearOfBirth = yearOfBirth;
+        this.job = job;
+    }
+
+    Person5.prototype.calculateAge = function(){
+        var age = new Date().getFullYear() - this.yearOfBirth;
+        console.log(age);
+    }
+
+    var john5 = new Person5('John', 1990, 'teacher');
+
+    var Athlete5 = function(name, yearOfBirth, job, olympicGames, medals) {
+        Person5.call(this, name, yearOfBirth, job); 
+        this.olympicGames = olympicGames;
+        this.medals = medals;
+    }
+
+    Athlete5.prototype = Object.create(Person5.prototype);
+
+    Athlete5.prototype.wonMedal = function(){
+        this.medals++;
+        console.log(this.medals);
+    }
+
+    var johnAthlete5 = new Athlete5('John', 1990, 'swimmer', 3, 10);
+
+    johnAthlete5.calculateAge() // 30
+    johnAthlete5.wonMedal() // 11
+    ```
+1. In ES6, have extension from a superclass is much easier than in its previous versions. We can simply create another class with `class` keyword and use `extends` to inherit the properties and methods from the superclass. In the `constructor`, we put the same parameters and additional for extensions and use keyword `super` to indicate that which parameters are from the superset. 
+1. We don't need to connect the `.prototype` property to inherit the methods and can create new methods as creating a method in a "**class**" directly. 
+    ```js 
+    class Person6 {
+        constructor (name, yearOfBirth, job) {
+            this.name = name;
+            this.yearOfBirth = yearOfBirth;
+            this.job = job;
+        }
+
+        calculateAge(){
+            let age = new Date().getFullYear() - this.yearOfBirth;
+            console.log(age);
+        }
+
+        static greeting(){
+            console.log('Hey there!');
+        }
+    }
+
+    const john6 = new Person6('John', 1990, 'teacher');
+
+    class Athlete6 extends Person6 {
+        constructor (name, yearOfBirth, job, olympicGames, medals) {
+            super (name, yearOfBirth, job);
+            this.olympicGames = olympicGames;
+            this.medals = medals;
+        }; 
+
+        wonMedal(){
+            this.medals++;
+            console.log(this.medals);
+        }
+    }
+
+    const johnAthlete6 = new Athlete6('John', 1990, 'swimmer', 3, 10);
+
+    johnAthlete6.wonMedal();
+    johnAthlete6.calculateAge();
+    ```
+
+### Coding Challenge 8
