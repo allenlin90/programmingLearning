@@ -5,9 +5,109 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="#" rel="stylesheet">
+        <style>
+            body {
+                background: #8a8a8a;
+                color: #333;
+                margin: 0; 
+                padding: 0;
+                box-sizing: border-box;
+            } 
+            .container {
+                display:flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin: 2rem 2rem;
+            }
+            .forms {
+                width: 80%;
+                border-radius: 1rem;
+                background: #fff;
+                margin: 1rem;
+                display: flex; 
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .forms div {
+                margin: 1rem 0;
+            }
+            label {
+                display: block;
+                margin: 0.2rem 0;
+            }
+            input {
+                width: 50vw;
+            }
+            section div {
+                display: flex;
+                justify-content: center;
+            }
+            .table{
+                width: 80%;
+            }
+            table {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            tr {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+            }
+            th, td {
+                text-align: center;
+            }
+        </style>
     </head>
     <body>
-    
+        <div class="container">
+            <div class="forms">
+                <div>
+                    <label for="">Name</label>
+                    <input type="text" name="" value="">
+                </div>
+                <div>
+                    <label for="">Select Date</label>
+                    <input type="date" name="" value="">
+                </div>
+                <div>
+                    <label for="">Select Time</label>
+                    <input type="time" name="" value="">
+                </div>
+            </div>
+            <section class="forms">
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Driver</th>
+                                <th>Passenger</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2020/07/11</td>
+                                <td>Chai</td>
+                                <td>Joe</td>
+                            </tr>
+                            <tr>
+                                <td>2020/07/11</td>
+                                <td>Chai</td>
+                                <td>Joe</td>
+                            </tr>
+                            <tr>
+                                <td>2020/07/11</td>
+                                <td>Chai</td>
+                                <td>Joe</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
     <script src="test.js"></script>
     </body>
 </html>
