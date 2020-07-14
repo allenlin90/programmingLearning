@@ -1,7 +1,9 @@
-const fs = require('fs');
+const validator = require('validator');
+const chalk = require('chalk');
+const getNotes = require('./notes.js');
+const log = console.log;
 
-let notes = 'notes.txt';
-
-fs.writeFileSync(notes, 'This file was created by Node.js!'); 
-
-fs.appendFileSync(notes, '\nThis line is appended!');
+const msg = getNotes();
+log(getNotes());
+log(chalk.red('Error!'));
+log(chalk.inverse.bold.yellow('hi'));
