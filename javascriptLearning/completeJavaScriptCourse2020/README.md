@@ -1651,3 +1651,121 @@ GAME RULES:
     ```
 
 ### Coding Challenge 8
+1. Suppose that you're working in a small town administration, and you're in charge of two town elements. 
+    1. Parks
+    1. Streets
+1. It's a very small town, so right now there are only 3 parks and 4 streets. All parks and streets have a name and a build year.
+1. At an end-of-year meeting, your boss wants a final report with the following: 
+    1. Tree density of each park in the town (formula: nubmer of trees/park area)
+    1. Average age of each town's park (formula: sum of all ages/number of parks)
+    1. The name of the park that has more than 1,000 trees 
+    1. Total and average length of the town's streets
+    1. Size classification of all streets: tiny/small/normal/big/huge. If the size is unknown, the default is normal. 
+1. All the report data should be printed to the console.
+1. Hint: Use some of the ES6 features: classes, subclasses, template strings, default parameters, maps, arrow functions, destructuring, etc. 
+
+### Coding Challenge 8 (Solution)
+1. Create a superclass for both elements, which has 2 properties in common that are "**name**" and "**buildYear**"
+1. We then use `extends` keyword to have subclass from the superclass. 
+1. In the "**Street**" subclass, we can use `Map` object to set up the classification from `tiny` to `huge` with numbers. 
+    ```js 
+    classifyStreet() {
+        const classification = new Map();
+        classification.set(1, 'tiny');
+        classification.set(2, 'small');
+        classification.set(3, 'normal');
+        classification.set(4, 'big');
+        classification.set(5, 'hug');
+    }
+    ```
+1. Besides, we can use default parameter in the class function constructor to give the "**size**" as `3`, which is the key of "**normal**" in the `Map` object. 
+1. We then use `new` keyword with function constructors to create new objects in an `Array` to store the entities. 
+1. We can use `.map()` and `.reduce()` methods on `Array` to work on the elements. 
+    ```js
+    class Element {
+        constructor(name, buildYear) {
+            this.name = name;
+            this.buildYear = buildYear;
+        }
+    }
+
+    class Park extends Element{
+        constructor (name, buildYear, area, numTrees) {
+            super (name, buildYear)
+            this.area = area; //km^2
+            this.numTrees = numTrees; 
+        }
+
+        treeDensity() {
+            const density = this.numTrees / this.area;
+            console.log(`${this.name} has a tree density of ${density.toFixed(2)} trees per square km.`);
+        }
+    }
+
+    class Street extends Element {
+        constructor (name, buildYear, length, size = 3) {
+            super (name, buildYear)
+            this.length = length;
+            this.size = size;
+        }
+        
+        classifyStreet() {
+            const classification = new Map();
+            classification.set(1, 'tiny');
+            classification.set(2, 'small');
+            classification.set(3, 'normal');
+            classification.set(4, 'big');
+            classification.set(5, 'hug');
+            console.log(`${this.name}, built in ${this.buildYear}, is a ${classification.get(this.size)} street.`);
+        }
+    }
+
+    const allParks = [
+        new Park('Green Park', 1987, 0.2, 215),
+        new Park('National Park', 1894, 2.9, 3541),
+        new Park('Oak Park', 1953, 0.4, 1949),
+    ]
+
+    const allStreets = [
+        new Street('Ocean Avenue', 1999, 1.1, 4), 
+        new Street('Evergreem Street', 2008, 2.7, 2), 
+        new Street('4th Street', 2015, 0.8), 
+        new Street('Sunset Boulevard', 1982, 2.5, 5), 
+    ]
+
+    function calc(arr) {
+        const sum = arr.reduce(function(prev, cur, index){
+            return prev + cur;
+        }, 0);
+        return [sum, (sum / arr.length)]; 
+    }
+
+    function reportParks(p) {
+        console.log('------Parks report------');
+        // Density 
+        p.forEach( el => el.treeDensity()); 
+
+        // Average age 
+        const ages = p.map(el => new Date().getFullYear() - el.buildYear);
+        const [totalAge, avgAge] = calc(ages);
+        console.log(`Our ${p.length} parks have an average of ${avgAge.toFixed(2)} years.`)
+
+        // Which park has more than 1000 trees 
+        const i = p.map(el => el.numTrees).findIndex(el => el >= 1000);
+        console.log(`${p[i].name} has more than 1000 trees.`);
+    }
+
+    function reportStreets(s) {
+        console.log('------Streets report------');
+
+        // Total and average length of the town's streets
+        const [totalLength, avgLength] = calc(s.map(el => el.length));
+        console.log(`Our ${s.length} streets have a total length of ${totalLength.toFixed(2)} km, with an average of ${avgLength.toFixed(2)} km.`)
+
+        // Classify sizes
+        s.forEach(el => el.classifyStreet());
+    }
+
+    reportParks(allParks);
+    reportStreets(allStreets);
+    ```
