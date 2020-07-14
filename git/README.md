@@ -633,3 +633,42 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 ### Upload local repository to Github as a project (repository)
 1. If we have had a local repository, we can create an empty repository on Github and use `git remote add origin [githublink.git]` to link to the remote one on Github. However, we can push a repository to Github directly because the local and remote repository will have conflict. 
 1. We can use `git pull origin master` or `git fetch` and `git merge origin/master` to resolve the conflict and merge 2 repositories. However, after `Git 2.9.0`, it doesn' allow merge for branches which don't have the same origin by default. We then can use `--allow-unrelated-histories` to proceed. The full command is `git pull origin master --allow-unrelated-histories`. 
+
+
+
+# Day 25 - Using Github as remote repository (Concepts)
+1. Use `git clone` to duplicate a remote repository and create a local one. 
+1. Use `git pull` to download the latest version on remote repository and merge `origin/master` on remote to local `master` branch. It's actually 2 commands
+    1. `git fetch`
+    1. `git merge origin/master`
+1. Use `git push` to upload the local repository to the remote one. 
+1. Use `git fetch` to download the latest version on a remote repository without merging to local one. 
+1. Use `git ls-remote` to show the reference of the remote repository, including branches and tags on the remote repository. 
+### Concepts of tracking branches
+1. We may have 4 types of ranches with local and remote repository. 
+    1. Remote tracked branches which are usually not able to manipulate. 
+    1. Local tracked branches are those fetched from the remote repository that has all the branches. 
+    1. Local branches are local branches (such as "**topic branch**" and "**development branch**") that aren't pushed to remote repository. 
+
+### Registering remote repository
+1. We can use `git remote` command to add a remote repository manually. 
+1. Use `git remote -v` to check registered remote repository. 
+1. We can add several remote repository to local repository though they are not directly related. The default name of the remote path is `origin`, while we can set up by adding the name when adding the remote repository. For example, `git remote add jquery https://github.com/jquery/jquery.git`. Therefore, we can use `git fetch jquery` to download data from remote repository of jquery and use the file locally without merging to the local repo. 
+1. All the setting info. of remote repository are stored in `.git/config` file. 
+
+### respec
+1. A refspec `+refs/heads/*:refs/remotes/origin/*` has 4 parts 
+    1. `+` means when transferring data, Git doesn't use safety confirmation. 
+    1. `refs/heads/*` means a "remote branch" on a "remote repository". The asterisk `*` means all the paths under `refs/heads/`. 
+    1. The column `:` is used to separate the origin and destination branch. 
+    1. `refs/remotes/origin/*` means a local branch on the local repository. The asterisk `*` means all the paths under `refs/remotes/origin`.
+1. These `refspec` affect to `git fetch` and `git push` command to remote repository. 
+1. We can use `git ls-remote` or `git ls-remote origin` to check all the branches on the remote repository. Besides, if we change **refspec** of `fetch` to `fetch = +refs/heads/master:refs/remotes/origin/master`, Git will fetch only the `master` branch to local repository in `.git/config`. Besides, we can have several lines in the file to indicate which branch we'd like to download. 
+
+### Relationship between local and remote repository 
+1. If we have linked multiple remote repository to local, we have to set up the default path or branch to deal with `git push`. Otherwise, we must give the full path name such as `git push origin [branchName]` to upload the version. 
+1. We can use `--set-upstream` to set up the branch into `.git/config`. Therefore, we can use `git push` to push the setup branch as default. 
+
+
+
+# Day 26 - Managing a remote repository by multiple members 
