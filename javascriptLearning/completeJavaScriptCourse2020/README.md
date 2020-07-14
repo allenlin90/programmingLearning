@@ -1769,3 +1769,257 @@ GAME RULES:
     reportParks(allParks);
     reportStreets(allStreets);
     ```
+
+
+
+# Asynchronous JavaScript: Promise, Async/Await and AJAX
+1. A regualr **synchronous** code is that the engine reading the script and execute it in a top-down order. 
+1. An example for asynchronous JavaScript is to use `setTimeout()` function which takes 2 arguments, a "**callback function**" and "**duration**" in milli-seconds. Therefore, in the following code, the function `second` will print the text to console after 2 seconds. 
+1. Note that though `second` function is executed before `first` function with `setTimeout` function
+    ```js
+    const second = () => {
+        setTimeout(() => {
+            console.log('Async Hey there');
+        }, 2000);
+    }
+
+    const first = () => {
+        console.log('Hey there');
+        second();
+        console.log('The end');
+    }
+
+    first();
+    ```
+
+### Understanding Synchronous JavaScript: The event loop
+1. The engine allows asynchronous functions to run in the "**background**".
+1. We pass in callback functions that run once the function has finished its work. 
+1. It allows the code to proceed without blocking. 
+1. In JavaScript engine, there are mainly 3 parts to execute the code. 
+    1. Execution stack 
+    1. Web APIs
+    1. Message Queue
+1. When the program starts, the engine will execute the code and put the execution context in the execution stack. 
+1. `setTimeout()` is similar to DOM methods that is actually WEB APIs, and the funciton calls will be put into the "**message queue**". Therefore, the execution stacks can keep going. 
+1. Note that tasks in "**execution stack**" is a stack (first in last out), and "**message queue**" is a queue (first in first out).
+1. Tasks in "**message queue**" are pushed back to "**execution stack**" as `event loop`. 
+
+### The Old Way: Asychronous JavaScript with Callbacks
+1. `setTimeout()` function takes 3 arguments
+    1. Callback function to be called after the duration of time. 
+    1. Duration in milliseconds when the callback function should be executed. 
+    1. Argument to be passed to the callback function. 
+1. We put the fetch process (which request data from server) in callback functions to ensure they will be proceeded one after another. However, the nested structure is not easy to read and manage. 
+1. This has a nickname "**callback hell**" because callback functions are kept nested in other callback function. 
+1. In ES6, we can use `promises` to replace this type of function. 
+    ```js 
+    function getRecipe(){
+        setTimeout(function() {
+            const recipeID = [523, 883, 432, 974];
+            console.log(recipeID);
+
+            setTimeout((id)=> {
+                const recipe = {
+                    title: 'Fresh tomato pasta',
+                    publisher: 'Jonas',
+                };
+                console.log(`${id}: ${recipe.title}`);
+
+                setTimeout( publisher => {
+                    const recipe = {
+                        title: 'Italian Pizza', 
+                        publisher: 'Jonas',
+                    };
+                    console.log(recipe);
+                }, 1500, recipe);
+
+            }, 1000, recipeID[2]);
+
+        }, 1500);
+    }
+    getRecipe();
+    ```
+
+### From Callback Hell to Promises
+1. A `promise` is an `Object` that keeps track about whether a certain event has happened already or not. 
+1. It determines what happens after the event has happened.
+1. It implements the concept of a future value that we're expecting.
+1. A `promise` has different states 
+    1. pending
+    1. settled/resolved 
+    1. fulfilled 
+    1. rejected 
+1. We have a variable and use `new` keyword to create a `promise` object. The object takes 2 arguments which is the `resolve` function and `reject` function. The `resolve` function works as if the process of getting data from the server works, while `reject` function works if the process fails. 
+1. We then use `.then()` and `.catch()` method to handled the data sent back from the server. Each of the methods takea a callback function with an argument which is the `Object` of return data, so we can handle both scenarios. 
+1. Note that since `setTimeout()` never fails, there's only resolve function in the example. 
+    ```js 
+    const getIDs = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve([523, 883, 432, 974]);
+        }, 1500);
+    });
+
+    getIDs
+    .then((IDs) => {
+        console.log(IDs);
+    })
+    .catch(error => {
+        console.log('Error!');
+    });
+    ```
+1. In `promise` object, we can use `return` in `.then()` method chain to work on the the return data in flow. 
+    ```js 
+    const getIDs = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve([523, 883, 432, 974]);
+        }, 1500);
+    });
+
+    const getRecipe = recID => {
+        return new Promise((resolve, reject) => {
+            setTimeout(ID => {
+                const recipe = {
+                    title: 'Fresh tomato pasta',
+                    publisher: 'Jonas',
+                };
+                resolve(`${ID}: ${recipe.title}`);
+            }, 1500, recID);
+        })
+    };
+
+    const getRelated = publisher => {
+        return new Promise((resolve, reject) => {
+            setTimeout(pub => {
+                const recipe = {
+                    title: 'Italian Pizza',
+                    publisher: 'Jonas',
+                };
+                resolve(`${recipe.publisher}: ${recipe.title}`);
+            }, 1500, publisher);
+        }); 
+    };
+
+    getIDs
+    .then((IDs) => {
+        console.log(IDs);
+        return getRecipe(IDs[2]);
+    })
+    .then(recipe => {
+        console.log(recipe);
+        return getRelated(recipe.publisher);
+    })
+    .then(recipe => {
+        console.log(recipe);
+    })
+    .catch(error => {
+        console.log('Error!');
+    });
+    ```
+
+### From Promise to Async/Await
+1. Though `promise` has made the tasks easier to manage, it's still complicated to work on. Therefore, new syntax `async` and `await` are introduced in ES8/ES2017. 
+1. Based on `promise` objects, we can use keyword `async` to create a "**asynchronous function**" and use `await` to get the `promise` object. Therefore, the execution context will wait the functions called with `await` to be finished before it goes further. 
+1. Note that `await` keyword can only work in `async` function. 
+1. Besides, `async` functions actually works on the background. In the following case, the variable get the returned value only shows `Promise {<pending>}` as the `async` function hasn't finished. 
+    ```js 
+    async function getRecipeAW() {
+        const IDs = await getIDs;
+        console.log(IDs);
+        const recipe = await getRecipe(IDs[2]);
+        console.log(recipe);
+        const related = await getRelated(recipe.publisher);
+        console.log(related);
+
+        return recipe;
+    }
+
+    const rec = getRecipeAW();
+    console.log(rec); // Promise {<pending>}
+    ```
+1. Recalling that an `async` function actually returns a `promise` object. Therefore, we can use `.then()` method directly with a callback function to handle the returned data. 
+    ```js 
+    async function getRecipeAW() {
+        const IDs = await getIDs;
+        console.log(IDs);
+        const recipe = await getRecipe(IDs[2]);
+        console.log(recipe);
+        const related = await getRelated(recipe.publisher);
+        console.log(related);
+
+        return recipe;
+    }
+    getRecipeAW().then(result => console.log(`${result} is the best ever`));
+    ```
+
+### AJAX and APIs
+1. AJAX stands for "**Asynchronous JavaScript and XML**" 
+1. We can use a JavaScript app on the browser to request data from the server and handle the data asynchronously on the background, so the user can use the App without reload the page. 
+1. API stands for "**Application Programming Interface**"
+1. API is part of the remote server service that it can be own API or 3rd party APIs, such as from Google Maps, Youtube video, and movies data. 
+
+### Making AJAX calls with Fetch and Promises
+1. We can use `fetch()` function to request data from a server. However, this has an issue fo fetching data from different domain, as the engine blocks the event with CORS policy to protect the data. However, we can use [crossorigin.me](https://corsproxy.github.io/) to solve the problem. 
+1. It's very simple that we just add `https://crossorigin.me/` at the front of the URL given to `fetch()` function. (Note that at the time when learning this course. The original link didn't work. The URL has changed to "https://cors-anywhere.herokuapp.com/"). Therefore, we can use  https://cors-anywhere.herokuapp.com/`[URL to fetch]`. 
+1. Note that this fetch process is relatively slow that it may take more than 10 seconds to return the result. 
+1. `fetch()` function returns a `promise` object. Therefore, we can use `.then()` and `.catch()` on the result of the function directly. 
+    ```js 
+    function getWeather(woeid) {        
+        fetch(`https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}/`)
+        .then( result => {
+            console.log(result); 
+            return result.json();
+        })
+        .then( data => {
+            // console.log(data);
+            const today = data.consolidated_weather[0];
+            console.log(`Temperatures in ${data.title} stay between ${today.min_temp} and ${today.max_temp}`);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+    getWeather(2487956); //San Francisco 
+    getWeather(44418); // London 
+    getWeather(121231278931); // Example for .catch() method 
+    ```
+
+### Making AJAX Calls with Fetch and Async/Await
+1. We can use `try` and `catch` which are JavaScript function to handle errors. This is similar to `try` and `except` in Python. So the code will not stop executing though it gets an error. 
+1. Note that `async` functions return `promise` object, so we can use `.then()` and `.catch()` method to manipulate it asynchronously. 
+    ```js 
+    function getWeather(woeid) {        
+        fetch(`https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}/`)
+        .then( result => {
+            // console.log(result); 
+            return result.json();
+        })
+        .then( data => {
+            // console.log(data);
+            const today = data.consolidated_weather[0];
+            console.log(`Temperatures today in ${data.title} stay between ${today.min_temp} and ${today.max_temp}`);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+    getWeather(2487956); //San Francisco 
+    getWeather(44418); // London 
+    
+    async function getWeatherAW(woeid) {
+        try {
+            const result = await fetch(`https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}/`); 
+            const data = await result.json();
+            const tomorrow = data.consolidated_weather[1];
+            console.log(`Temperatures tomorrow in ${data.title} stay between ${tomorrow.min_temp} and ${tomorrow.max_temp}`);
+            return data;
+        } catch(error) {
+            console.log(error);
+        }
+    }
+    getWeatherAW(2487956);
+    getWeatherAW(44418).then((data)=>{
+        let dataLondon = data;
+        console.log(dataLondon);
+    });
+    ```
