@@ -87,3 +87,194 @@ Module `fs`, `requrie()`
 1. The lecture noticed how to solve the problem if we run `nodemon -v` in PowerShell in Windows. 
 1. After installing we can use `nodemon app.js` instead of `node app.js`. 
 1. We install version `1.18.5` in this case. 
+
+
+
+# File System and Command Line Args (Note App)
+### Getting input from users
+1. We can use `process.argv` (which argv stands for argument vector) to catch the argument passed in the command line with `node app.js`. This method returns an `Array` of 3 elements. Note that the `Array` can be longer if we pass mroe than one argument. 
+    1. The path of the executable `node` in the OS system.
+    1. The path of the script where it is in the OS system. 
+    1. The arugment passed when execute the script. 
+    1. Other arguments passed in through execution. 
+    1. Commands in a shell 
+    ```shell 
+    node app.js Allen 
+    ```
+    1. JavaScript code 
+    ```js 
+    // app.js 
+    console.log(`My name is ${process.argv[2]}.`); 
+    // My name is Allen. 
+    ```
+1. We can use this feature to allow user to put command when execute the program. 
+    1. Command in shell 
+    ```shell 
+    node app.js add
+    node app.js remove
+    ```
+    1. JavaScript code 
+    ```js 
+    const chalk = require('chalk');
+    const getNotes = require('./notes.js');
+
+    const command = process.argv[2]; 
+
+    console.log(process.argv); 
+
+    if (command === 'add') {
+        console.log('Adding note!');
+    } else if (command === 'remove') {
+        console.log('Removing note!');
+    }
+    ```
+
+### Argument Parsing with Yargs: Part 1
+1. Module [`Yargs`](https://www.npmjs.com/package/yargs) helps building interactive command line tools, by parsing arguments and generating an elegant user interface. Therefore, we don't need to write the `String` parser all by ourselves. 
+1. `yargs` turn the argumetns with certain patterns into properties of its `Object`. Therefore, we can access the argument in an easier way. 
+    1. Commands in shell 
+    ```shell
+    node app.js add --title="Things to buy"
+    ```
+    1. JavaScript code 
+    ```js 
+    const yargs = require('yargs');
+    console.log(yargs.argv);
+    // { _: [ 'add' ], title: 'Things to buy', '$0': 'app.js' }
+    ```
+1. `yargs` module has a default function `--help` which we can check what commands are available of the JS App. 
+1. We then can use `.command()` method to set up the commands. We can also change the version of the program when users checks it. `.command()` method takes an `Object` as argument which contains `command` (with a `String` value), `describe` (with a `String` value), and `handler` (a method). 
+    ```js 
+    // Customize yargs 
+    yargs.version('1.1.0');
+
+    // Create add command 
+    yargs.command({
+        command: 'add', 
+        describe: 'Add a new note',
+        handler: function() {
+            console.log('Adding a new note!');
+        },
+    });
+
+    // Create remove command 
+    yargs.command({
+        command: 'remove', 
+        describe: 'Remove a note',
+        handler: function() {
+            console.log('Removing the note!');
+        },
+    });
+
+    // Create list command 
+    yargs.command({
+        command: 'list',
+        describe: 'List all the notes!',
+        handler: function(){
+            console.log('Listing the note!');
+        }
+    });
+
+    // Create read command
+    yargs.command({
+        command: 'read', 
+        describe: 'Read only mode',
+        handler: function(){
+            console.log('You can read the notes only!');
+        }
+    });
+    ```
+1. If we type `node app.js --help`, it shows all the commands that we have set up. 
+    ```shell
+    app.js [command]
+
+    Commands:
+    app.js add     Add a new note
+    app.js remove  Remove a note
+    app.js list    List all the notes!
+    app.js read    Read only mode
+
+    Options:
+    --help     Show help                                                 [boolean]
+    --version  Show version number                                       [boolean]
+    ```
+
+### Argument Parsing with Yargs: Part 2
+1. We can set up `builder` property (whose value is an `object`) in each command to allow the user to configure each command. For example, in `add` command, we add a builder that includes `title`. Besides, we can add `demandOPtion` property in the builder object to indicate if the input is required (default is `false`). Therefore, if a user doesn't give the input correctly, the program returns an error message that the input is missing. 
+1. Besides, since the command can take any type of value as argument, it doesn't return error though we pass an empty title to the case, and it holds the value as a boolean `true` which means the `--title` is given. However, this is not what we want. 
+1. We can have a 3rd property in `builder` that is `type`. We can set it up as `string`, so even the input is an empty `String`, the module doesn't hold a boolean `true` for the case. 
+    1. JavaScript code 
+    ```js 
+    // Create add command 
+    yargs.command({
+        command: 'add', 
+        describe: 'Add a new note',
+        builder: {
+            title: {
+                describe: 'Note title',
+                demandOption: true,
+                type: 'string',
+            },
+        }, 
+        handler: function(argv) {
+            console.log('Adding a new note!', argv);
+        },
+    });
+    ```
+    1. Commands in shell 
+    ```shell 
+    node app.js add --title="Shopping list"
+    # Adding a new note! { _: [ 'add' ], title: 'Shopping list', '$0': 'app.js' }
+
+    node app.js add --title="Shopping list" # without type property in builder
+    # Adding a new note! { _: [ 'add' ], title: true, '$0': 'app.js' }
+
+    node app.js add --title="Shopping list" # set type as 'string' in builder
+    # Adding a new note! { _: [ 'add' ], title: '', '$0': 'app.js' }
+    ```
+1. If we don't use `console.log(yargs.argv)` in the code, the module will assume that the modules isn't used, so the commands won't work. To prevent such condition, we can simply put `yargs.argv` anywhere in the code or call `yargs.parse()` method, so the code can work normally. 
+    1. JavaScript code 
+    ```js 
+    yargs.command({
+        command: 'add', 
+        describe: 'Add a new note',
+        builder: {
+            title: {
+                describe: 'Note title',
+                demandOption: true,
+                type: 'string',
+            },
+            body: {
+                describe: 'Note contents',
+                demandOption: true,
+                type: 'string',
+            }, 
+        }, 
+        handler: function(argv) {
+            console.log(`Title: ${argv.title}`);
+            console.log(`Body: ${argv.body}`);
+        },
+    });
+    ```
+    1. Commands in shell 
+    ```shell 
+    # Use add command without arguments 
+    node app.js add
+
+    # Returned from the command 
+    Add a new note
+
+    Options:
+    --help     Show help                                                 [boolean]
+    --version  Show version number                                       [boolean]
+    --title    Note title                                      [string] [required]
+    --body     Note contents                                   [string] [required]
+
+    Missing required arguments: title, body
+
+    # Use add command with proper arguments 
+    node app.js --title="This is the title" --body="This is content of the note" 
+    # Returned from the command 
+    Title: This is the title
+    Body: This is content of the note
+    ```
