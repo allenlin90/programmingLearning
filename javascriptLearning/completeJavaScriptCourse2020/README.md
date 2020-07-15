@@ -2023,3 +2023,139 @@ GAME RULES:
         console.log(dataLondon);
     });
     ```
+
+
+# Modern JavaScript: Using ES6, NPM, Babel and Webpack
+### Project Overview
+1. A search platform that users can search for food recipes.
+1. Link the front-end page to an API to all data. 
+1. We can use local cache to store the data, so the user can keep the input and data for a while. 
+
+### An Overview of Modern JavaScript
+**3rd-party packages**
+1. Node.js 
+1. npm 
+1. npm packages
+    1. ES6/ESNext 
+        1. **Babel** (Transform ES6 and new version to ES5)
+    1. ES6 Modules 
+        1. **webpack** (bundle all modules)
+
+<img src="./modernJSOverview.png">
+
+### A Brief introduction to the command line 
+This section is skipped, as I've learnt it from other materials. 
+
+### Installing Node.js and NPM 
+This section is skipped, as I've learnt it from other materials. 
+
+### Configuring Webpack
+1. We create a `webpack.config.js` file in the root directory of the website. In the file, we simply use `module.exports = {}` to export an `Object` with our configurations. 
+    ```js
+    module.exports = {}
+    ```
+1. We then import `path` package to use. The following is a standard pattern of a webpack `Object`. The `output` part is where we will generate the new file at and has a standard name `bundle.js`. 
+1. Besides, webpack has different mode for compression efficiency. In this case, as we are still developing the program. We can use `mode: 'development'`. 
+    ```js 
+    // webpack.config.js in root directory
+    const path = require('path');
+
+    module.exports = {
+        entry: './src/js/index.js',
+        output: {
+            path: path.resolve(__dirname, 'dist/js'),
+            filename: 'bundle.js',
+        }, 
+        mode: 'development',
+    }
+    ```
+1. In a JavaScript file, we can use it as a module by `export default [value/variable/function]` to export the selected value, variable, or function. Note that `process.exports` is a method can be used in Node.js only. 
+1. In the other file, we can use `import var from '[filePath]'` to import the JavaScript module. Note that this syntax only works with console in browser, while doesn't work on Node.js. 
+    ```js 
+    // test.js
+    console.log('Imported module');
+    export default 23; 
+
+    // index.js 
+    import x from './test';
+    console.log(x); // 23
+    ```
+1. We then install npm packages `webpacke` and `webpack-cli`. We then use `npm run dev` to start packing. 
+1. We then can import the `bundle.js` into a HTML file and check in the console to see if it works. 
+1. In `package.json`, we can change the `script` property for different use. For example, we've change `"scripts"` property from `"test"` to `"dev"`, so when we run `npm run dev`, npm knows that we'd like to pack the files. We can have another property as "**build**", so when we type `npm run build`, webpack will compress and bundle the files in production mode which compress the files much smaller. 
+    ```json 
+    {
+        "name": "forkify",
+        "version": "1.0.0",
+        "description": "",
+        "main": "webpack.config.js",
+        "scripts": {
+            "dev": "webpack --mode development", // update from "test" to "dev"
+            "build": "webpacke --mode production"
+        },
+        "author": "",
+        "license": "ISC",
+        "devDependencies": { // install both webpack and webpack-cli
+            "webpack": "^4.43.0", 
+            "webpack-cli": "^3.3.12"
+        }
+    }
+    ```
+1. By this configuration, we can take `mode: 'development'` in the last line in `webpack.config.js`. 
+
+### The Webpack Dev Server
+1. In the root directory, we usually separate code into to direcotries `src` (source) is for development purpose, while `dist` (distribution) is for production (shipped to clients).
+1. We then change the code in `webpack.config.js` to add the contents when the live-server is on. `devServer` with an `Object` with `contentBase: 'filePath'`. 
+    ```js
+    const path = require('path');
+
+    module.exports = {
+        entry: './src/js/index.js',
+        output: {
+            path: path.resolve(__dirname, 'dist/js'),
+            filename: 'bundle.js',
+        }, 
+        devServer: {
+            contentBase: './dist'
+        },
+    };
+    ```
+1. In `package.json`, we change add `start` in the "**script**". Therefore, we can run `npm run start` to start a local server which is similar to HTTP server and update automatically everytime we make a change and save the file. 
+    ```json
+    "scripts": {
+        "dev": "webpack --mode development",
+        "build": "webpacke --mode production", 
+        "start": "webpack-dev-server --mode development --open"
+    }
+    ```
+1. This "**Dev Server**" simulates a real HTTP server locally on the machine. 
+1. However, it is not working as the live server still takes the source code from compressed `bundle.js`. We can change the file path in `webpack.config.js`. Therefore, live server will use the source code which we are manipulating rather than from the compressed version. 
+1. Note that even we delete the `bundle.js` the live server can still work.
+    ```js 
+    const path = require('path');
+
+    module.exports = {
+        entry: './src/js/index.js',
+        output: {
+            path: path.resolve(__dirname, 'dist'), // change from dist/js to dist only 
+            filename: 'js/bundle.js', // add js/before bundle.js
+        }, 
+        devServer: {
+            contentBase: './dist'
+        },
+    };
+1. We can use webpack and import the JavaScript file to the HTML file automatically with npm package `html-webpack-plugin`. After downloading the package through npm, we can use `require()` function to import this package in `webpack.config.js`. We add a new property `plugins` which takes value in `Array`, and we create an `Object` by passing another `Object` as argument. 
+    1. `filename` is the file which we'd like to create in the `dist` directory. This files hasn't existed or can be overwritten with a new file. 
+    1. `template` is from the source code and we give the from the `src` directory. 
+    ```js 
+    plugins: [
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: './src/index.html'
+        }), 
+    ],
+    ```
+1. We then can use `npm run start` again and will see the live server opens the HTML file generated from the source code and has assigned with `<script>` tag that has a `src` attribute with `js/bundle.js`. Note that though this file is generated from the source code, the rendered version isn't actually stored in the `dist` directory. 
+1. If we use `npm run dev`, a new HTML file generated from the template source code will be generated in the `dist` directory. 
+
+### Babel 
