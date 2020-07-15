@@ -672,3 +672,17 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 # Day 26 - Managing a remote repository by multiple members 
+### Create a remote repository for a team of multiple members 
+1. We assume that everyone in the team shares only a single remote repository, so we can use `git clone` to duplicate the repository locally. 
+1. In this case, we assume there are only 2 members (`user1` and `user2`) sharing the same remote repository, and there's a commit version in the remote repository already. 
+    1. If `user1` has submitted a commit and pushed it to the remote repository, `user2` will get 2 branches as `master` and `origin/master`. However, `user2`'s `origin/master` hasn't been updated to the latest version, and this person doesn't know `user1` has updated it. 
+    1. In this scenraio, if `user2` hasn't updated his local repository, he can't submit and push local version to the remote repository. 
+1. To solve the issue, `user2` should use `git fetch` to download the latest version from the remote repository. Besides, we can use `git pull` directly, as it will merge the version and merge the fetched remote `origin/master` with local `master`. 
+1. Thus, we can merge the local version and the remote version which is just fetched into a new version and push back to remote repository again. 
+### Summary 
+1. Through the process, we may still see some conflicts. If we can't solve the issues, we can use `git reset --hard HEAD` to recover the version back to the previous version. 
+1. If we regret the merge and would like to dispose the changes, we can use `git reset --hard ORIG_HEAD` to recover the version back before it's merged. 
+
+
+
+# Day 27 - Control versions through branches in the same remote repository. 
