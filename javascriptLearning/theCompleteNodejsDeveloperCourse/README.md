@@ -278,3 +278,203 @@ Module `fs`, `requrie()`
     Title: This is the title
     Body: This is content of the note
     ```
+
+### Storing Data with JSON
+`fs.writeFileSync()`, `fs.readFileSync()`,`JSON.stringify()`, `JSON.parse()`
+1. We can use preset functions in JavaScript to turn an `Object` into JSON by `JSON.stringify(JSObject)` and parse a JSON file by `JSON.parse(JSONfile)`. 
+1. We then can use `fs` module and `fs.writeFileSync(fileName, variable)` method to create a JSON file locally. 
+1. We can use `fs.readFileSync(filePath)` to read a file from the OS system. The returned data is actually binary data. Therefore, we can use `.toString()` to turn the binary data into its regular JSON format. However, since its a JSON data, we can also use `JSON.parse()` to read the data directly. 
+    ```js 
+    const fs = require('fs');
+    const book = {
+        title: 'Ego is the Enemy',
+        author: 'Ryan Holiday',
+    }
+
+    const bookJSON = JSON.stringify(book);
+    fs.writeFileSync('1-json.json', bookJSON);
+
+    const dataBuffer = fs.readFileSync('1-json.json');
+    console.log(JSON.parse(dataBuffer)); // {"title":"Ego is the Enemy","author":"Ryan Holiday"}
+    console.log(JSON.parse(dataBuffer.toString())); // {"title":"Ego is the Enemy","author":"Ryan Holiday"}
+    
+    const dataJSON = dataBuffer.toString();
+    const data = JSON.parse(dataJSON);
+    console.log(data.title); //'Ego is the Enemy'
+    ```
+
+### Adding a Note
+1. To export multiple variables or functions from a file, we can use `module.exports = {}` to export an `Object` rather than a single variable. 
+1. If we don't have to JSON file to read and write, Node.js will return an error for the issue. Thus, we can use `try` and `catch` blocks to deal with it. When there's no such file avaiable, we just let the program return an empty `Array` as there's no data and prevent overwriting the other data. 
+1. Note that JSON file is default in an `Array` while its elements are `Objects`. Therefore, without very first array on the outside, the JSON files doesn't work. 
+    ```js 
+    const loadNotes = function() {
+        try {
+            const dataBuffer = fs.readFileSync('notes.json');
+            const dataJSON = dataBuffer.toString();
+            return JSON.parse(dataJSON);
+        } catch (err){
+            return [];
+        }
+    }
+    ```
+1. We can add some code to check if a title is used in the note. We use `.filter()` array method here and check if the returned `Array` from the method has any element. If so, it means the given title has been used. 
+    ```js 
+    const addNote = function(title, body) {
+        const notes = loadNotes();
+
+        const duplicateNotes = notes.filter(function(note){
+            return note.title === title;
+        }); 
+
+        if (duplicateNotes.length === 0) {  
+            notes.push({
+                title: title,
+                body: body,
+            });
+            saveNotes(notes);
+            console.log('New ntoe added');
+        } else {
+            console.log('Note title taken!');
+        }
+    }
+    ```
+
+### Removing a note
+1. In this case, we have several tasks 
+    1. Setup the remove command to take a requried "--title" option in terminal when use the App. 
+    1. Create and export a removeNote function from notes.js
+    1. Call removeNote in remove command handler
+    1. Have removeNote log the title of the note to be removed 
+    1. Test your work using: node app.js remove --title="givenTitle" 
+1. In `app.js`, we can add `builder` property to indicate the use of parameters for remove command. 
+    ```js 
+    yargs.command({
+        command: 'remove', 
+        describe: 'Remove a note',
+        builder: {
+            title: 'Note title', 
+            demandOption: true, 
+            type: 'string',
+        },
+        handler: function(argv) {
+            notes.removeNotes(argv.title);
+        },
+    });
+    ```
+1. For the function in `notes.js`, I firstly write the code in this way. 
+    ```js 
+    const removeNote = function(title) {
+        const notes = loadNotes();
+        
+        const index = notes.map((note, index) => {
+            if(note.title === title){
+                return index;
+            }
+            return false; 
+        });
+
+        if (index.length !== 0) {
+            console.log(notes[index[0]].title + ' is removed!');
+            notes.splice(index[0], 1);
+        } else {
+            console.log('No such title!');
+        }
+        saveNotes(notes);
+    }
+    ```
+1. The solution given in the lecture is much more succinct and simple. Array `.filter()` method is used to check if the item in the array fits to certain condition. 
+1. We use `chalk` module to print a prompt in the terminal to the user for the status. 
+    ```js
+    const removeNote = function(title) {
+        const notes = loadNotes();
+        
+        const notesToKeep = notes.filter(function(note){
+            return note.title !== title;
+        }); 
+
+        if (notes.length > notesToKeep.length) {
+            console.log(chalk.green.inverse(`Note "${title}" is removed!`));
+            saveNotes(notesToKeep); 
+        } else {
+            console.log(chalk.red.inverse(`Note "${title}" is not found!`));
+        }
+    }
+    ```
+
+### ES6 Aside: Arrow Functions and Refactoring to use Arrow Functions
+1. We can replace some one-line function with arrow function notation as shorthand. 
+1. To use arrow function notation, we should be careful with the scope of the function at where it is. 
+
+### Listing Notes
+1. This is similar to other function while this part is relatively easy. We just add the following code in `notes.js` and export to be used in `app.js` in the handler to add "list" command. Therefore, we can give `node app.js list` to use the function. 
+    ```js 
+    const listNotes = () => {
+        const notes = loadNotes();
+        console.log(chalk.inverse('Listing the note!'));
+        notes.forEach( note => {
+            console.log(chalk.blue.inverse(note.title));
+            console.log(chalk.yellow.inverse(note.body), '\n');
+        });
+    }
+    ```
+
+### Reading a note
+1. We rewrite the function of "**add**" in `notes.js` with array function `.find()` instead for `.filter()` to improve efficiency. The purpose is only to check if the given title has been in the array we are trying to find. However, `.filter()` method won't stop and will iterate through all the elements in the `Array`. If we have a huge dataset, this will dramatically reduce the efficiency. Therefore, we can use `.find()` method that the method will return the very first match of the element in the array. Since we don't have duplicate titles in this program, we can change to use `.find()` method to improve efficiency. 
+1. Similar to other functions, we can set up the commands in `app.js`.
+    ```js 
+    // app.js 
+    yargs.command({
+        command: 'read', 
+        describe: 'Read only mode',
+        builder: {
+            title: {
+                describe: 'Note title',
+                demandOption: true,
+                type: 'string',
+            }
+        },
+        handler(argv) {
+            notes.readNote(argv.title);
+        }
+    });
+
+    // notes.js 
+    const readNote = function(title) {
+        const notes = loadNotes();
+        const note = notes.find(note => note.title === title);
+        if (note) {
+            console.log(`Reading Title: '${chalk.inverse(note.title)}'`);
+            console.log(`${note.body}`);
+        } else {
+            console.log(chalk.red.inverse(`'${title}' is not found!`));
+        }
+    }
+    ```
+
+# Debugging Node.js 
+1. There are basically 2 types of erros
+    1. Error thrown back to the console. 
+    1. Logical errors that don't crash the app but malfunciton. 
+
+### Debugging Node.js (Notes App)
+1. Debuggers `console.log()`, `debugger`
+    1. Use `console.log()` to debug by printing out certain variables or test function in terminal directly. 
+    1. Use `debugger` keyword, so the engine will stop the code at the point where we put the `debugger` in the script. Besides, we need to put another command `inspect` to make debugger works. 
+        1. In Mac or Linux OS, we can use `node inspect app.js add [title] [body]` for the command. 
+        1. In Windows OS, if we get a `Timeout` error in `comand prompt` or `PowerShell`, we can use `-brk` in the command as `node --inspect-brk app.js add [title] [body]`. 
+    1. Note that we don't give any command to terminal at this point and will switch to Chrome browser. 
+    1. Open Chrome browser and type `chrome://inspect/` in the search bar. We will get the option as "Remote Target". Note that this also works with WSL, tested on 2020/07/15. Besides, we can check with "**Configure**" in "**Devices**" section on the top. For example, `localhost: 9229` and `127.0.0.1:9229`. 
+    1. We then click "**inspect**" in the "**Remote Target**". Chrome will open another console for us to run debugger. 
+    1. We can use the navigator panel on the left to add the folder to this debugger console (though it's not neccessary).
+    <img src="./chromeDebugger.png">
+    1. After inspecting the program, we can type `restart` in terminal to resume the debugger in Chrome again. 
+    1. If we've finished and would like to quit, we can type <kbd>Ctrl + c</kbd> twice to leave node in the terminal.
+    1. We can use the function to look into the variables by a closer look to identify the possisble issues when there's any problem with the program.  
+ 
+### Error Messages
+1. Usually the very first line of the error message returns the critical info. that which part of the code is wrong. It also returns the line of the code in the file for programmers easier to locate. 
+
+
+
+# Asynchronous Node.js (Weather App)
