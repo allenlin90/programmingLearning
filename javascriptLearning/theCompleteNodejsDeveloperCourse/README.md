@@ -617,4 +617,45 @@ Module `fs`, `requrie()`
 
 1. When there's an error, only the `error` argument of the callback function will have value. If can set up conditions to avoid crashing the program and return an useful message to users for better UX.
 1. However, not only the `error` argument can return error, also the `response` from the server can be an error message as well. For example, we give wrong coordinate or other parameters as well, such as invalid token or address string.
-1.
+1. In this case, we also check the `response.body` if its length is 0 which means there's no data returned from the API.
+
+```js
+request({ url: geocodeURL[0], json: true }, function (error, response) {
+  if (error) {
+    console.log("Unable to connect to Mapbox");
+  } else if (response.body.features.length === 0) {
+    console.log("No location match");
+  } else {
+    const coord = response.body.features[0].center;
+    console.log(
+      `Coordinate of ${response.body.features[0].text} is Longitude: ${coord[0]}, Latitude: ${coord[1]}`
+    );
+  }
+});
+```
+
+### Callback Function
+
+1. We tried to use `setTimeout()` function to simulate asynchronous functions. In this case, without using callback function, the function will be executed synchronously without waiting the return from the callback thus cause error. This is similar to put request for server and wait for its response, while regular synchornous part is non-blocking and executing without waiting for the data returned from the server. Therefore, we can use callback function which is a synchronous function that the function must wait for the data returned from the server to execute further of its tasks.
+
+```js
+// Goal: Mess around with the callback pattern
+//
+// 1. Define an add function that accepts the correct arguments
+// 2. Use setTimeout to simulate a 2 second delay
+// 3. After 2 seconds are up, call the callback function with the sum
+// 4. Test your work!
+
+add(1, 4, (sum) => {
+  console.log(sum); // Should print: 5
+});
+
+function add(num1, num2, callback) {
+  setTimeout(function () {
+    let sum = num1 + num2;
+    callback(sum);
+  }, 2000);
+}
+```
+
+### Callback Abstraction
