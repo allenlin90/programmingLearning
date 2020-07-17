@@ -3617,106 +3617,451 @@ body {
 
 ### Header and Main Nav
 
-1. We can use a VSCode extension `prettier` and open `format on save` setting in the settings, so the pattern will be structures by the extension every time we save the code.
-1. The header structure is as the followings. However, in this case, I chagned the `<img>` tag with `<p>` tag and use styling for own name "AM".
+1.  We can use a VSCode extension `prettier` and open `format on save` setting in the settings, so the pattern will be structures by the extension every time we save the code.
+1.  The header structure is as the followings. However, in this case, I chagned the `<img>` tag with `<p>` tag and use styling for own name "AM".
+    ```html
+    <header id="header-home">
+      <div class="container">
+        <nav id="main-nav">
+          <img src="img/logo.png" alt="My Portfolio" id="logo" />
+          <ul>
+            <li><a href="index.html" class="current"></a>Home</li>
+            <li><a href="about.html"></a>About</li>
+            <li><a href="work.html"></a>Work</li>
+            <li><a href="contact.html"></a>Contact</li>
+          </ul>
+        </nav>
+        <div class="header-content">
+          <h1>
+            I am Allen The
+            <span
+              class="txt-type"
+              data-wait="3000"
+              data-words='["Front-end Develop", "Operations Manager", "Business Analyst"]'
+            ></span>
+          </h1>
+          <p class="lead">
+            I specialize in front-end development, service operations, and
+            business analysis
+          </p>
+          <a href="work.html" class="btn-light">View My Work</a>
+        </div>
+      </div>
+    </header>
+    ```
+1.  Note that in the `<h1>` tag, we set up a `<span>` tag which makes JavaScript easier to target and has attributes of `data-wait="milli-seconds"` and `data-words='["item1", "item2"...]'`. However, this part isn't introduced in the lecture and we can check it at [Pure JavaScript Type Writer Effect](https://youtu.be/POX3dT-pB4E).
+1.  We set up utilities in a separate file `utilities.scss` and use `@import` to import the files to `main.scss`. In utilities, we create elements styling that will be shared will all elements, such as the `container` and `btn`. We use `overflow: hidden` here to prevent the element extend out of the scope.
+    ```scss
+    .container {
+      max-width: $website-width;
+      padding: 0 1.5rem;
+      margin: auto;
+      overflow: hidden;
+    }
+    ```
+1.  In the `<nav>` tag, we use the following styles for the navigation bar on the top.
+
+    1. We use `display: flex` to create a flexbox, while use `justify-content: space-between`, so the `<img>` and `<ul>` will be separated in between.
+    1. However, a list created by `<ul>` and `<li>` will be in a top-down column. We can use `display: flex` to create a flexbox row again. Note that row is default.
+    1. We can decorate the `<a>` tags. I made a mistake here that I put the text actually in the `<li>` tags rather than in the anchor tags, so the styling can be applied on the element.
+
+    ```scss
+    #main-nav {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 1rem;
+
+      ul {
+        display: flex;
+      }
+
+      li {
+        padding: 1rem 1.5rem;
+      }
+
+      a {
+        text-decoration: none;
+        color: #fff;
+        text-transform: uppercase;
+        border-bottom: 3px transparent solid;
+        padding-bottom: 0.5rem;
+        transition: border-color 0.5;
+
+        &:hover {
+          border-color: $medium-color;
+        }
+
+        &.current {
+          border-color: $main-color;
+        }
+      }
+    }
+    ```
+
+1.  In `#header` selecotr, I added the overlay filter learnt from the "edgeledger project (I changed the background image as well). However, the overlay filter kept covering the elements in `.header-content`. The solution is to ensure all the elements has a `position` property by referring the solution on [fix z-index](https://www.freecodecamp.org/news/4-reasons-your-z-index-isnt-working-and-how-to-fix-it-coder-coder-6bc05f103e6c/). The items in the same stack have their own priority of the stack. Usually the later the high, so the elements in the below should stack upon the elements in the upper code. However, if any element has `position` as property, the priority changes and become higher than others in the same stack. Therefore, we can just add `position: relative` to all items in `#header-home` tag with `#header-home *` selector and give not only high `z-index` but `position` property.
+
+    ```scss
+    #header {
+      &-home * {
+        z-index: 10;
+        position: relative;
+      }
+
+      &-home::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+    }
+    ```
+
+    <img src="./portfolio_website/header.PNG">
+
+1.  We create a `<section>` below `<header>` in the main page and create a block for specials with icons. In this part, we use `display: grid` for `<div class="specials">` to separate each block evenly in a row. For a single row, we can also use `display: flex` with flexbox instead of grid system.
+
+    1. SCSS
+
+    ```scss
+    // Home Section A
+    &-a {
+      .specials {
+        margin-top: 3rem;
+        display: grid;
+        grid-gap: 1rem;
+        grid-template-columns: repeat(4, 1fr);
+
+        .fas {
+          color: $main-color;
+          padding-bottom: 0.4rem;
+        }
+      }
+    }
+    ```
+
+    1. HTML structure
+
+    ```html
+    <!-- Section A -->
+    <section id="home-a" class="text-center py-2">
+      <div class="container">
+        <h2 class="section-title">I Specialize In</h2>
+        <div class="bottom-line"></div>
+        <p class="lead">
+          Service Operations Expert as well as creating modules, algorithms, and
+          automation for operating system and consulting business optimization.
+        </p>
+        <div class="specials">
+          <div>
+            <i class="fas fa-file-alt fa-2x"></i>
+            <h3>Concepting</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci,
+              laudantium qui? At odit dolore modi aliquam dolorum corrupti
+              consequatur repellendus?
+            </p>
+          </div>
+          <div>
+            <i class="fas fa-desktop fa-2x"></i>
+            <h3>Modules</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci,
+              laudantium qui? At odit dolore modi aliquam dolorum corrupti
+              consequatur repellendus?
+            </p>
+          </div>
+          <div>
+            <i class="fas fa-object-ungroup fa-2x"></i>
+            <h3>Business Optimization</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci,
+              laudantium qui? At odit dolore modi aliquam dolorum corrupti
+              consequatur repellendus?
+            </p>
+          </div>
+          <div>
+            <i class="fas fa-thumbs-up fa-2x"></i>
+            <h3>Interaction</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci,
+              laudantium qui? At odit dolore modi aliquam dolorum corrupti
+              consequatur repellendus?
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    ```
+
+1.  After Section A, we have section B and some icons with relatively simple structure. Besides, we don't use container here. A point here is to make the background color of each blog differently. Since we don't use a container here, all the blocks and elements will be extended and cover the whole width of the screen rather than limited to `1280px` as those in the container.
+
+    1. SCSS
+
+    ```scss
+    // Home Section B
+    &-b {
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+
+        li {
+          line-height: 2;
+
+          &.stats-title {
+            font-size: 1.5rem;
+          }
+
+          &.stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+          }
+        }
+
+        div {
+          padding: 3rem 0;
+
+          &:nth-child(odd) {
+            background: $light-color;
+          }
+          &:nth-child(even) {
+            background: $medium-color;
+          }
+        }
+      }
+    }
+    ```
+
+    1. HTML structure
+
+    ```html
+    <section id="home-b" class="text-center py-2">
+      <div class="stats">
+        <div>
+          <ul>
+            <li><i class="fas fa-users fa-3x"></i></li>
+            <li class="stats-title">Clients</li>
+            <li class="stats-number">100</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li><i class="fas fa-award fa-3x"></i></li>
+            <li class="stats-title">Awards</li>
+            <li class="stats-number">100</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li><i class="fas fa-hourglass-start fa-3x"></i></li>
+            <li class="stats-title">Hours Worked</li>
+            <li class="stats-number">3500</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li><i class="fas fa-code-branch fa-3x"></i></li>
+            <li class="stats-title">Projects Completed</li>
+            <li class="stats-number">135</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    ```
+
+    <img src="sectionsAfterHeader.png">
+
+### Process Section and Footer
+
+1. We use an empty `<div>` tag after `<h2>` tag to create a yellow bottom line as filling the block with limited space. We put this in `utilities` file, as this is used in several sections.
+   ```scss
+   .bottom-line {
+     height: 2px;
+     width: 3rem;
+     background: $main-color;
+     display: block;
+     margin: 0 auto 1rem auto;
+   }
+   ```
+1. We use hover event on the elements and enlarge the elements and change color when mouse cursor hovers on. Besides, we can use `transition` to animate the effects. Besides, we update in `_config` for the functions to change text color automatically.
+1. `_config`
+
+```scss
+// Set text color
+@function set-text-color($color) {
+  @if (lightness($color) > 50) {
+    @return #000;
+  } @else {
+    @return #fff;
+  }
+}
+```
+
+1. `main.scss`
+
+   ```scss
+   &-c {
+     .process {
+       display: grid;
+       grid-template-columns: repeat(4, 1fr);
+       grid-gap: 1.5rem;
+       text-align: center;
+
+       // process-step
+       &-step {
+         position: absolute;
+         top: 0;
+         right: 0;
+         font-size: 28px;
+         background: $main-color;
+         color: set-text-color($main-color);
+         border-radius: 50%;
+         height: 15px;
+         width: 15px;
+         line-height: 15px;
+         padding: 1rem;
+         transition: all 1s;
+       }
+
+       // process-icon
+       &-icon {
+         border-radius: 50%;
+         background: $dark-color;
+         color: set-text-color($dark-color);
+         padding: 2rem;
+         width: 70px;
+         height: 70px;
+         line-height: 70px;
+         text-align: center;
+         position: relative;
+         transition: all 1s;
+
+         &:hover {
+           background: $main-color;
+           width: 90px;
+           height: 90px;
+           line-height: 90px;
+
+           .process-step {
+             background: $dark-color;
+             color: set-text-color($dark-color);
+           }
+         }
+       }
+     }
+   }
+   ```
+
+1. HTML structure
+
    ```html
-   <header id="header-home">
+   <!-- Section C: Process -->
+   <section id="home-c" class="text-center py-2">
      <div class="container">
-       <nav id="main-nav">
-         <img src="img/logo.png" alt="My Portfolio" id="logo" />
-         <ul>
-           <li><a href="index.html" class="current"></a>Home</li>
-           <li><a href="about.html"></a>About</li>
-           <li><a href="work.html"></a>Work</li>
-           <li><a href="contact.html"></a>Contact</li>
-         </ul>
-       </nav>
-       <div class="header-content">
-         <h1>
-           I am Allen The
-           <span
-             class="txt-type"
-             data-wait="3000"
-             data-words='["Front-end Develop", "Operations Manager", "Business Analyst"]'
-           ></span>
-         </h1>
-         <p class="lead">
-           I specialize in front-end development, service operations, and
-           business analysis
-         </p>
-         <a href="work.html" class="btn-light">View My Work</a>
+       <h2 class="section-title">
+         My Creative Process
+       </h2>
+       <div class="bottom-line"></div>
+       <p class="lead">
+         Through years of efforts, projects are successful, and companies are
+         benefited from expertise and insightful knowledge
+       </p>
+       <div class="process">
+         <div>
+           <i class="fas fa-file-alt fa-4x process-icon my-2">
+             <div class="process-step">1</div>
+           </i>
+           <h3>Discuss The Project</h3>
+           <p>
+             Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
+             suscipit repellendus adipisci excepturi! Ipsum, velit!
+           </p>
+         </div>
+         <div>
+           <i class="fas fa-desktop fa-4x process-icon my-2">
+             <div class="process-step">2</div>
+           </i>
+           <h3>Brainstorming & Concept</h3>
+           <p>
+             Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
+             suscipit repellendus adipisci excepturi! Ipsum, velit!
+           </p>
+         </div>
+         <div>
+           <i class="fas fa-object-ungroup fa-4x process-icon my-2">
+             <div class="process-step">3</div>
+           </i>
+           <h3>Service Optimization</h3>
+           <p>
+             Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
+             suscipit repellendus adipisci excepturi! Ipsum, velit!
+           </p>
+         </div>
+         <div>
+           <i class="fas fa-thumbs-up fa-4x process-icon my-2">
+             <div class="process-step">4</div>
+           </i>
+           <h3>Interaction</h3>
+           <p>
+             Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
+             suscipit repellendus adipisci excepturi! Ipsum, velit!
+           </p>
+         </div>
        </div>
      </div>
-   </header>
+   </section>
    ```
-1. Note that in the `<h1>` tag, we set up a `<span>` tag which makes JavaScript easier to target and has attributes of `data-wait="milli-seconds"` and `data-words='["item1", "item2"...]'`. However, this part isn't introduced in the lecture and we can check it at [Pure JavaScript Type Writer Effect](https://youtu.be/POX3dT-pB4E).
-1. We set up utilities in a separate file `utilities.scss` and use `@import` to import the files to `main.scss`. In utilities, we create elements styling that will be shared will all elements, such as the `container` and `btn`. We use `overflow: hidden` here to prevent the element extend out of the scope.
-   ```scss
-   .container {
-     max-width: $website-width;
-     padding: 0 1.5rem;
-     margin: auto;
-     overflow: hidden;
-   }
+
+1. We create footer HTML structure
+   ```html
+   <!-- Footer -->
+   <footer id="main-footer">
+     <div class="footer-content container">
+       <p>Copyright &copy; 2020. All Rights Reserved</p>
+       <div class="social">
+         <i class="fab fa-twitter"></i>
+         <i class="fab fa-facebook"></i>
+         <i class="fab fa-instagram"></i>
+         <i class="fab fa-linkedin"></i>
+       </div>
+     </div>
+   </footer>
    ```
-1. In the `<nav>` tag, we use the following styles for the navigation bar on the top.
-
-   1. We use `display: flex` to create a flexbox, while use `justify-content: space-between`, so the `<img>` and `<ul>` will be separated in between.
-   1. However, a list created by `<ul>` and `<li>` will be in a top-down column. We can use `display: flex` to create a flexbox row again. Note that row is default.
-   1. We can decorate the `<a>` tags. I made a mistake here that I put the text actually in the `<li>` tags rather than in the anchor tags, so the styling can be applied on the element.
+1. Footer SCSS
 
    ```scss
-   #main-nav {
-     display: flex;
-     justify-content: space-between;
-     padding-top: 1rem;
+   // Footer
+   #main-footer {
+     background: $dark-color;
+     color: #fff;
+     height: 5rem;
 
-     ul {
+     .footer-content {
        display: flex;
-     }
+       justify-content: space-between;
+       height: 5rem;
+       align-items: center;
 
-     li {
-       padding: 1rem 1.5rem;
-     }
+       .social .fab {
+         margin-right: 1rem;
+         border: 2px #fff solid;
+         border-radius: 50%;
+         height: 20px;
+         width: 20px;
+         line-height: 20px;
+         text-align: center;
+         padding: 0.5rem;
 
-     a {
-       text-decoration: none;
-       color: #fff;
-       text-transform: uppercase;
-       border-bottom: 3px transparent solid;
-       padding-bottom: 0.5rem;
-       transition: border-color 0.5;
-
-       &:hover {
-         border-color: $medium-color;
-       }
-
-       &.current {
-         border-color: $main-color;
+         &:hover {
+           background: $main-color;
+         }
        }
      }
    }
    ```
 
-1. In `#header` selecotr, I added the overlay filter learnt from the "edgeledger project (I changed the background image as well). However, the overlay filter kept covering the elements in `.header-content`. The solution is to ensure all the elements has a `position` property by referring the solution on [fix z-index](https://www.freecodecamp.org/news/4-reasons-your-z-index-isnt-working-and-how-to-fix-it-coder-coder-6bc05f103e6c/). The items in the same stack have their own priority of the stack. Usually the later the high, so the elements in the below should stack upon the elements in the upper code. However, if any element has `position` as property, the priority changes and become higher than others in the same stack. Therefore, we can just add `position: relative` to all items in `#header-home` tag with `#header-home *` selector and give not only high `z-index` but `position` property.
+   <img src="processSectionAndFooter.gif">
 
-   ```scss
-   #header {
-     &-home * {
-       z-index: 10;
-       position: relative;
-     }
-
-     &-home::before {
-       content: "";
-       position: absolute;
-       top: 0;
-       left: 0;
-       width: 100%;
-       height: 100%;
-       background-color: rgba(0, 0, 0, 0.6);
-     }
-   }
-   ```
-
-   <img src="./portfolio_website/header.PNG">
+### About Page Info Section
