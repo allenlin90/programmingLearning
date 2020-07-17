@@ -2,7 +2,7 @@ const request = require("request");
 
 function forecast(long, lat, callback) {
   const url = `http://api.weatherstack.com/current?access_key=//&query=${lat},${long}`;
-
+  // find access token from weather stack
   request({ url, json: true }, function (error, { body }) {
     const data = body.current;
     if (error) {

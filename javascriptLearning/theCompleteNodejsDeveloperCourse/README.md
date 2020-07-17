@@ -918,3 +918,129 @@ module.exports = forecast;
 
    request.end();
    ```
+
+# Web Servers (Weather App)
+
+### Hello Express!
+
+1. "**Express**" is a JavaScript library that allows developers to use Node.js to run a web server.
+1. To initiate the server, we should use `require()` to import the package and call the `Object` to start using `express` library.
+   ```js
+   const express = require("express");
+   const app = express();
+   ```
+1. We can use `.get()` method with a callback function to render and respond to the request from a user. In the callback function, `req` (request) and `res` (response) are 2 arguments named in convention for the purpose. This part is also about routing and navigation for users visiting the website.
+1. We need to use `.listen()` method on a certain port to allow the server react to requests. This depends on the environment where we deploy the application. For local development purpose, we usually put the port at `3000`. Besides, we can print the message to let the IT (server maintainence) knows what's going on.
+
+   ```js
+   const express = require("express");
+   const app = express();
+
+   // this is the homepage
+   app.get("", function (req, res) {
+     res.send("Hello express!");
+   });
+
+   // listener
+   app.listen(3000, function () {
+     console.log("Server has started on port 3000");
+   });
+   ```
+
+1. After starting the server, we can use browser and type `localhost:3000` to visit the server we just started.
+
+### Serving up HTML and JSON
+
+1. We can return not only `Strings` through `res.send()` to render on user's side but also return an `Array` or `Object`, `express` will automatically turn the data into a JSON file. For example, we can return HTML text or an `Array` or `Object` when users visit certain route.
+
+   ```js
+   app.get("", function (req, res) {
+     res.send("<h1>Hello</h1>");
+   });
+
+   app.get("/help", function (req, res) {
+     res.send([
+       {
+         name: "Allen",
+         age: 30,
+       },
+       { name: "Mai", age: 26 },
+     ]);
+   });
+
+   app.get("/about", function (req, res) {
+     res.send('<h1 style="font-size: 100px">About Us</h1>');
+   });
+
+   app.get("/weather", function (req, res) {
+     res.send({
+       forecast: "Partly Cloudy",
+       location: "Thailand",
+     });
+   });
+   ```
+
+### Serving up Static Assest
+
+1. This is mainly used to create a simple, static website. However, use "**Github Page**" or "**Netlify**" is much easier that we can just push the files to Github and connect them to be shown on the page.
+1. Though we can return HTML text through `res.send()` method in `app.get()` directly, this is not good for maintenance and management when the website is large and has lots of HTML elements.
+1. Therefore, we can create another directory `public` (in convention) for the assets to keep the front-end files, such as HTML, CSS, and images. We then create `index.html` here, as the framework will use this file as the main HTML file.
+1. After creating the file, we have to link and allow node to access the HTML file correct and return as the server side, However, we can't use "**relative path**" here but use "**absolute path**" of the machine instead.
+1. We can use `console.log(__dirname)` and `console.log(__filename)` to check where the file we are executing at. By calling the variables, Node.js will return the absolute path of the directory which contains the `app.js` file we execute with the filename. (This can also be done by checking the "explorer" in VS Code by mouse right click on the file. We can either copy the relative or absolute path of a file.)
+1. Since we will traversing between the directories on the server, we can use Node.js `path` package to work in out. In this case, we will use `path.join()` method to create a customize path.
+   ```js
+   console.log(__dirname === path.join(__dirname));
+   // true
+   ```
+1. Since `app.js` is in the `src` folder, while `public` is in the parallel in root directory, we can use `../` to traverse back and get into `public` folder. However, this will make the root route invalid. Therefore, when users visit the website, the server only renders the static HTML file, while other routes can still work normally.
+
+   ```js
+   const path = require("path");
+   const express = require("express");
+   const app = express();
+   const publicDirectoryPath = path.join(__dirname, "../public");
+
+   app.use(express.static(publicDirectoryPath));
+
+   // this route will not work
+   app.get("", (req, res) => {
+     res.send("<h1>This is the homepage</h1>");
+   });
+   ```
+
+1. We can put other HTML files in the same directory as `index.html`, so users can type in the file name directly to access those pages from the root path.
+
+### Serving up CSS, JS, Images, and More
+
+1. In this case, we create a folder `css` and create `styles.css` for stylings for all the HTML files in the public page. Note that we should also use `<link>` tag to enable the styling to all HTML files.
+1. Create `js` in the `public` folder and have another `app.js` to work with front-end programming. For this, we need to use `<script>` tag to apply this JavaScript code on the client side.
+1. Create `img` in `public` folder and put the images in this directory.
+
+### Dynamic Pages with Templating
+
+1. We can use template engine to reuse the code that is used on every page, such as the header and footer. We can use `handlebars` package to work on any platform that we can use JavaScript.
+1. However, we will use `hbs` which is another package that is powered by `handlebars` and easier to use.
+1. After installing `npm install hbs`, we can use `app.set()` in the main `app.js`, so `express` knows which template engine we installed. The method takes 2 arguments as key/value pair. The first is the "**setting name**" and the "**value of setting**". In this case, we set it up as `app.set("view engine", "hbs")`. Note that `view engine` should be in the same case exactly. Thus, the `handlebars` module is ready.
+1. The template should be place in `views` directory which is in the root folder. We then create a new file `index.hbs` and copy all the contents from `index.html` in `public` folder. Note that until this point, the home page is missing and we must set up the route in the main `app.js`. Besides, as we are return a whole file, we use `.render()` method rather than `.send()`. This is similar to use `ejs` system in express.
+   ```js
+   app.get("", function (req, res) {
+     res.render("index");
+   });
+   ```
+1. Besides, we can pass values through node to the template to create dynamic templating. `app.render()` can take a 2nd argument which is an `Object` that contains the value which we want to pass to the template.
+   ```js
+   app.get("", function (req, res) {
+     res.render("index", {
+       title: "Weather App",
+       name: "Allen",
+     });
+   });
+   ```
+1. In the `hbs` file, we can use double curly braces `{{ value }}` to take the values that passed from the `Node.js`. Therefore, we can see the page use the contents provided from `app.js`.
+
+   ```html
+   <body>
+     <h1>{{title}}</h1>
+     <script src="js/app.js"></script>
+   </body>
+   ```
