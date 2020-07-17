@@ -1,0 +1,15 @@
+{
+  "name": "modernHTMLAndCSSFromTheBeginning",
+  "version": "1.0.0",
+  "description": "1. We have `<meta>` tags to declare the HTML file that it is responsive to the device, as the content attribute is set up to `content=\"width=device-width, initial-scale=1.0\"`. Besides, there are several meta data we can put in the `<head>` tag for search engine to parse, such as \"discription\" and \"keyword\".     ```html     <head>         <meta charset=\"UTF-8\">         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">         <title>Document</title>     </head>     ```",
+  "main": "index.js",
+  "scripts": {
+    "sass": "node-sass -w scss/ -o dist/css/ --recursive" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-sass": "^4.14.1"
+  }
+}
