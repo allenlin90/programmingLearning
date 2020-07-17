@@ -14,7 +14,7 @@
 
 # Node.js Module System (Notes App)
 
-Module `fs`, `requrie()`
+Module `fs`, `require()`
 
 1. This section is focusing on using [`file system`](https://nodejs.org/api/fs.html) module, which can be imported with `require()` function and allow user to manipulate the files in the OS. In this case, we use `.writeFileSync()`. There's asynchornous method `.writeFile()` which will be introduced in the later sections.
 1. After importing the module to use, we can use `.writeFileSync()` method on the object. The method takes 2 arguments, which is the file name with suffix and its contents. The following code will creat a new text file in the same directory with the 2nd argument as the content.
@@ -659,3 +659,262 @@ function add(num1, num2, callback) {
 ```
 
 ### Callback Abstraction
+
+1. Though we can easily modularize the each request into functions, nested code isn't a preferable way to read and maintain.
+1. URL takes "white space" and other none english characters as with specail forms. Therefore, when we pass the values to the URL, we need to use `encodeURIComponent()` function to convert the code. For example, a question mark `?` will be truned into `%3F`.
+
+```js
+const geocode = function (address, callback) {
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+    address
+  )}.json?access_token=pk.eyJ1IjoiYWxsZW5saW45MCIsImEiOiJja2NvZGE3Y3QwM3JuMzBxaTV6Ym81eWV2In0.7nYUE26c5bCIpZFkOxPIpA&limit=1`;
+
+  request({ url: url, json: true }, function (error, response) {
+    if (error) {
+      callback("Unable to connect to location services", undefined);
+    } else if (response.body.features.length === 0) {
+      callback("Unable to find location. Try another search", undefined);
+    } else {
+      callback(undefined, {
+        longitude: response.body.features[0].center[0],
+        latitude: response.body.features[0].center[1],
+        location: response.body.features[0].place_name,
+      });
+    }
+  });
+};
+
+geocode("Bangkok", (error, data) => {
+  console.log("Error", error);
+  console.log("Data", data);
+});
+```
+
+### Callback Abstraction Challenge
+
+1. We use the similar concept to write the code for `forecast` function by callback abstraction.
+
+```js
+function forecast(long, lat, callback) {
+  const url = `http://api.weatherstack.com/current?access_key=[yourAPIKey]&query=${lat},${long}`;
+
+  request({ url: url, json: true }, function (error, response) {
+    const data = response.body.current;
+    if (error) {
+      callback("Unable to connect to weather service!", undefined);
+    } else if (response.body.error) {
+      callback("Unable to find the location", undefined);
+    } else {
+      callback(
+        undefined,
+        `${response.body.location.name}: ${data.weather_descriptions[0]}. It is currently ${data.temperature} degrees out. It feels like ${data.feelslike} degrees out.`
+      );
+    }
+  });
+}
+
+module.exports = forecast;
+```
+
+### Callback Chaining
+
+1. To ensure the function execute only after the data is returned from the server, we have to put it into its own function scope. If we keep the function separately, the function will be executed in regular synchronous context and will only get `undefined` data, as it doesn't wait for the data sent back.
+1. We can use `process.argv[2]` or `process.argv.slice(2)` to get all the arguments as an `Array`. Therefore, users can pass argument(s) for locations to search upon request. For example, we can search for `Bangkok`
+
+   1. Command in shell
+
+   ```shell
+   node app.js "Chiang Mai"
+   ```
+
+   1. JavaScript code
+
+   ```js
+   const request = require("request");
+   const geocode = require("./utils/geocode");
+   const forecast = require("./utils/forecast");
+
+   const address = process.argv[2];
+
+   geocode(address, (error, data) => {
+     if (address === undefined) {
+       console.log(`Please provide a location!`);
+     } else {
+       if (error) {
+         return console.log(error);
+       }
+       forecast(data.longitude, data.latitude, (error, forecastData) => {
+         if (error) {
+           return console.log(error);
+         }
+         console.log(data.location);
+         console.log(forecastData);
+         // console.log("Error:", error);
+         // console.log("Data:", data);
+       });
+     }
+   });
+   ```
+
+### ES6 Aside: Object Property shorthand and destructuring
+
+1. We can use the syntac shorthand to assign a variable and its value as the property of an `Object` directly.
+
+   ```js
+   // Object property shorthand
+   const name = "Allen";
+   const userAge = 30;
+
+   const user = {
+     name, // assign both variable name and value as property and value
+     age: userAge,
+     location: "Bangkok",
+   };
+
+   console.log(user);
+   // { name: 'Allen', age: 30, location: 'Bangkok' }
+   ```
+
+1. We can also create variables from properties and their values from an `Object`. Therefore, instead of assigning variabls and extract values from the `Object` one by one, we can create the variables in an easier way. However, if we assign a variable that is not in the `Object`, the variable will have a value `undefined`.
+1. We can assign the property with a new variable as well. Besides, if the property is not in the `Object`, we can assign with value an create the varible directly as well.
+
+   ```js
+   // Object destructuring
+   const product = {
+     label: "Red notebook",
+     price: 3,
+     stock: 201,
+     salePrice: undefined,
+   };
+
+   // const label = product.label;
+   // const stock = product.stock;
+
+   const { label: productLabel, stock, rating = 5, score } = product; // assign label to productLabel
+   console.log(productLabel, stock);
+   console.log(score); // undefined
+   console.log(rating); // 5
+   ```
+
+1. We can use destructuring feature to get an `Object` as argument and create variables in the function scope directly.
+
+   ```js
+   const product = {
+     label: "Red notebook",
+     price: 3,
+     stock: 201,
+     salePrice: undefined,
+   };
+   const transaction = (type, { label, stock }) => {
+     console.log(type, label, stock);
+   };
+
+   transaction("order", product);
+   ```
+
+### Destructuring and Property Shorthand Challenge
+
+1. This is only a styling and new syntax of writing the code. However, we can choose whether to apply or change to work in this way, as this can also make the code very confusing.
+1. In `app.js`, we know `data` argument passed in the anonymous callback function is an `Object`. Besides, we are going to use its properties in the following code. Therefore, we can sue destructuring concept to turn its properties into variables that we can use in the following code. Note that we should use a default value (with an empty `Object`) to prevent program crashes if the input isn't correct.
+
+   ```js
+   geocode(address, (error, { latitude, longitude, location } = {}) => {
+     if (address === undefined) {
+       console.log(`Please provide a location!`);
+     } else {
+       if (error) {
+         return console.log(error);
+       }
+       forecast(longitude, latitude, (error, forecastData) => {
+         if (error) {
+           return console.log(error);
+         }
+         console.log(location);
+         console.log(forecastData);
+       });
+     }
+   });
+   ```
+
+1. In `forecast.js`, `url` that passed to `request` function has the same property name and value, so we can use the shorthand to have only one there. `response` is an `Object` that carries all the data return from the server, and `body` is the main property we access and retrieve data. Therefore, we can use `{body}` to create a variable that is the same as `response.body` to use in the scope.
+
+   ```js
+   function forecast(long, lat, callback) {
+     const url = `http://api.weatherstack.com/current?access_key=08d4f0c107bfb486eafb2bc98d318866&query=${lat},${long}`;
+
+     request({ url, json: true }, function (error, { body }) {
+       const data = body.current;
+       if (error) {
+         callback("Unable to connect to weather service!", undefined);
+       } else if (body.error) {
+         callback("Unable to find the location", undefined);
+       } else {
+         callback(
+           undefined,
+           `${body.location.name}: ${data.weather_descriptions[0]}. It is currently ${data.temperature} degrees out. It feels like ${data.feelslike} degrees out.`
+         );
+       }
+     });
+   }
+   ```
+
+1. In `geocode.js`, we can change `url` property and value as in `forecast.js`.
+
+   ```js
+   const geocode = function (address, callback) {
+     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+       address
+     )}.json?access_token=pk.eyJ1IjoiYWxsZW5saW45MCIsImEiOiJja2NvZGE3Y3QwM3JuMzBxaTV6Ym81eWV2In0.7nYUE26c5bCIpZFkOxPIpA&limit=1`;
+
+     request({ url, json: true }, function (error, { body }) {
+       if (error) {
+         callback("Unable to connect to location services", undefined);
+       } else if (body.features.length === 0) {
+         callback("Unable to find location. Try another search", undefined);
+       } else {
+         const { center: center, place_name: location } = body.features[0];
+         callback(undefined, {
+           longitude: center[0],
+           latitude: center[1],
+           location,
+         });
+       }
+     });
+   };
+   ```
+
+### Bonus: HTTP requests without a library
+
+1. Though we can make HTTP request thourgh `yargs` and `request` npm package, we can also use default funciton in JavaScript engine to make a HTTP request.
+1. However, this method is not used in the following lecture but rather an introduction to the function.
+1. We can check the modules in Node.js WebAPI. In this case, we will `HTTPS` as the websites we visit are using HTTPS.However, the Weather Stack API uses regular `HTTP` protocol.
+
+   1. [HTTP request](https://nodejs.org/dist/latest-v14.x/docs/api/http.html)
+   1. [HTTPS request](https://nodejs.org/dist/latest-v14.x/docs/api/https.html)
+
+1. The module works in a low-level layer that we have to give more code to work on a single request. This is how npm package `request` can help us handle the complexity. Note that `http` object has a method `.on` which is similar to adding listener on the front-end for DOM.
+
+   ```js
+   const http = require("http");
+
+   const url = `http://api.weatherstack.com/current?access_key=[yourAPIKey]&query=40,-75`;
+
+   const request = http.request(url, (response) => {
+     let data = "";
+     response.on("data", (chunk) => {
+       data = data + chunk.toString();
+     });
+
+     response.on("end", () => {
+       const body = JSON.parse(data); // response body
+       console.log(body);
+     });
+   });
+
+   // Error handler
+   request.on("error", function (error) {
+     console.log("An error", error);
+   });
+
+   request.end();
+   ```
