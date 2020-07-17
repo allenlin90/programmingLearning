@@ -1,6 +1,7 @@
 const http = require("http");
 
 const url = `http://api.weatherstack.com/current?access_key=//&query=40,-75`;
+// Get access token from weather stack dashboard
 
 const request = http.request(url, (response) => {
   let data = "";
