@@ -1044,3 +1044,100 @@ module.exports = forecast;
      <script src="js/app.js"></script>
    </body>
    ```
+
+### Customizing the Views Directory
+
+1. We can customize how handle bars are set up, so the `hbs` files can be used as template for the HTML structure with "**partials**" such as **header** and **footer**. We can change the location and name of the directory which stores the `hbs` files.
+1. If we change the name of "**views**" directory to something else, `express` can't render the pages correctly, as it can't find the "**views**" directory. However, we can set up a new path for `express` to look up. In `app.js` we add a new path pointing to the new directory which is changed from `views` to `templates` with `path.join()` and pass it to `express` through `app.set()`.
+1. We can check more information at [express](http://expressjs.com/en/4x/api.html#app.set) for `app.set()`.
+1. Besides, we can also check for `res.render()` as the callback function in `app.get()` at [here](http://expressjs.com/en/4x/api.html#res.render).
+
+   ```js
+   // new directory keeps templates and partials
+   const viewsPath = path.join(__dirname, "../templates");
+
+   // change default directory from "views" to "templates"
+   app.set("views", viewsPath);
+   ```
+
+### Advanced Templating
+
+1. We modify the "templates" directory in the root directory again and add 2 more folders "**views**" which keeps the backbone HTML pages of each route and "**partials**" for the sharing elements. Besides, we need to import `hbs` module in `app.js` and update the path pointing to views and partials.
+
+   ```js
+   const path = require("path");
+   const hbs = require("hbs");
+   const viewsPath = path.join(__dirname, "../templates/views");
+   const partialsPath = path.join(__dirname, "../templates/partials");
+
+   hbs.registerPartials(partialsPath);
+   ```
+
+1. We can create a new `header.hbs` partial in `partials` folder. Then use double curly braces to import the template into the HTML file as other values. But we have to put a greater than sign `>` before the file name. Besides, we don't need to specify the suffix `.hbs`.
+
+```html
+<body>
+  {{>header}}
+</body>
+```
+
+1. However, since `nodemon` package only listen to changes on `app.js` when we run the program. Any other changes that related to file may not be caught and we have to restart the process again.
+1. However, we can use `-e` (stands for extension) flag when execute `nodemon`, so the command becomes `nodemon src/app.js -e js,hbs` and `nodemon` will also listen and catch to any changes of both `app.js` and `hbs` files. Note that we must be at the root directory and execute `app.js` with `nodemon src/app.js -e js,jbs` to make it owrk.
+1. In `app.js`, we then can pass values to `header.hbs` to allow the page render dynamic rather than static contents. We then can change the `<h1>` tag in `header.hbs` to `<h1>{{title}}</h1>`, so every page will have its own title. For example, we can also add `<a>` tags for navigation between pages.
+
+   1. `header.hbs`
+
+   ```html
+   <h1>{{title}}</h1>
+
+   <div>
+     <a href="/">Weather</a>
+     <a href="/about">About</a>
+     <a href="/help">Help</a>
+   </div>
+   ```
+
+   1. `footer.hbs`
+
+   ```html
+   <footer>
+     Created by {{name}}
+   </footer>
+   ```
+
+  <img src="expressDirectoryWithHBS.png">
+
+### 404 Pages
+
+1. This can be a custom page when a user give the URL that is not existing in our domain or routes. For example, when we try to access with `localhost:3000/me` which is not a valid route, the server will return a message that by `express` that `cannot GET /me` which means the file doesn't exist.
+1. We can set another route with `app.get()` method with the wildcard character asterisk `*` which stands for all the routes that is not given above. Note that this must the route set in the last before `app.listen()`. Otherwise, it will capture all the other routes as wildcard takes all.
+
+   ```js
+   app.get("*", function (req, res) {
+     res.send("Page 404");
+   });
+   ```
+
+1. Besides, not only for the overall command route that we can use wildcard to catch up but the sub-directories of certain categories. For example, we have some articles under the `help` page. When users access the directory, we know that they are trying to find something for "**help**". Therefore, we can use the wildcard character and render customized message for this specific condition. This concept can be used in the other categories as well.
+
+   ```js
+   app.get("/help/*", function (req, res) {
+     res.render("404", {
+       title: "404",
+       error: "help article not found.",
+       name: "Allen",
+     });
+   });
+
+   app.get("*", function (req, res) {
+     res.render("404", {
+       title: "404",
+       error: "This page doesn't exist.",
+       name: "Allen",
+     });
+   });
+   ```
+
+### Styling the Application: Part 1
+
+1. This part is mainly about styling and front-end decorations of the App.
