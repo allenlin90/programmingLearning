@@ -1138,6 +1138,60 @@ module.exports = forecast;
    });
    ```
 
-### Styling the Application: Part 1
+### Styling the Application: Part 1 and Part 2
 
-1. This part is mainly about styling and front-end decorations of the App.
+1. This part is mainly about styling and front-end decorations of the App. I merged the note and skip explanantion of how CSS works.
+1. This part uses `flex-grow: 1` on the `<div>` tag, which can make the element "**grow**" and takes much space as it needs. In this case, it means that the element should take over all the whitespace left in between the page, as other elements have no such property and have their own fixed space.
+1. We can use a PNG image file and import it as `icon` with `<link>` tag in `<head>` tag in the HTML file. This works similar to favicon that gives a small icon on the tab on the browser when opening the webpage.
+    1. HTML 
+    ```html
+    <head>
+      <link rel="icon" href="/img/weather.png" />
+    </head>
+    ```
+
+    1. CSS
+
+    ```css
+    body {
+      color: #333;
+      font-family: arial;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .main-content {
+      flex-grow: 1;
+    }
+
+    footer {
+      color: #888;
+      border-top: 1px solid #eee;
+      margin-top: 1rem;
+      padding: 1rem 0;
+    }
+
+    header {
+      margin-top: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    header a {
+      color: #888;
+      margin-right: 1rem;
+      text-decoration: none;
+    }
+
+    .protrait {
+      width: 250px;
+    }
+    ```
