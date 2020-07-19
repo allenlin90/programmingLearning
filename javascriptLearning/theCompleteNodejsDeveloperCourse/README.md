@@ -1243,3 +1243,181 @@ module.exports = forecast;
      });
    });
    ```
+1. We integarte the `geocode.js` and `forecast.js` into the code to connect the API and react to the input from user.
+
+   ```js
+   const geocode = require("./utils/geocode");
+   const forecast = require("./utils/forecast");
+
+   app.get("/weather", function (req, res) {
+     if (!req.query.address) {
+       return res.send({
+         error: "You msut provide a valid address",
+       });
+     }
+     const address = req.query.address;
+     geocode(address, function (error, { latitude, longitude, location } = {}) {
+       if (error) {
+         return res.send({
+           geocodeError: `${error}`,
+         });
+       }
+       forecast(longitude, latitude, (error, forecastData) => {
+         if (error) {
+           return res.send({
+             forecastError: `${error}`,
+           });
+         }
+         return res.send({
+           forecast: forecastData,
+           address: address,
+           location: location,
+         });
+       });
+     });
+   });
+   ```
+
+### ES6 Aside: Default Function Parameters
+
+1.  We can set up default value for the parameters if they are not given when called. Besides, the default value can be any type, from primitive to functions, arrays, or object.
+
+    ```js
+    const greeter = function (name = "user", age) {
+      console.log("Hello " + name);
+    };
+
+    greeter("Allen"); // Hello Allen
+    greeter(); // Hello user
+    ```
+
+1.  Therefore, in the `app.js` we can set the default value for destructured `Object` variables with an empty `Object` to prevent the program crashes when the argument isn't given correctly. In the example, we give a default value for the parameter in callback function with an `Object`. Therefore, though user doesn't provide the `address`, the callback function will get an empty object rather than causing the program crashes.
+    ```js
+    geocode(address, function (error, { latitude, longitude, location } = {}) {
+      if (error) {
+        return res.send({ geocodeError: `${error}` });
+      }
+      forecast(longitude, latitude, (error, forecastData) => {
+        if (error) {
+          return res.send({ forecastError: `${error}` });
+        }
+        return res.send({
+          forecast: forecastData,
+          address: address,
+          location: location,
+        });
+      });
+    });
+    ```
+
+### Browser HTTP Requests with Fetch
+
+1. We have been using npm `request` package and backend program to call the API and return data to user. In this seciton, we will work on front-end part and call the API to get data directly without backend program. In this case, we work on `app.js` which is in `js` in `public` folder that is bond with `index.hbs`. Note that this works on the front-end part direclty without Node.js and `express` framework. Besides, this front-end code uses `fetch()` function which is a WebAPI available in modern browsers. The function is not available on Node.js, so we use `request` or other packge for the job.
+1. We can put the following code in the client side JavaScript and fetch to collect the returned info. from API call in the other route as returning a JSON data.
+   ```js
+   fetch("http://localhost:3000/weather?address=boston").then(function (
+     response
+   ) {
+     response.json().then(function (data) {
+       if (data.error) {
+         return console.log(data.error.info);
+       }
+       console.log(data.location);
+       console.log(data.forecast);
+     });
+   });
+   ```
+
+### Creating a Search Form
+
+1. This part is creating the form element in `index.hbs` to allow user insert data and interact with the weather stack API from the back-end. We create a `<form>` tag in `index.hbs`.
+
+   ```html
+   <form action="">
+     <input type="text" placeholder="Location" />
+     <button>Search</button>
+   </form>
+   ```
+
+1. In front-end JavaScript, `app.js`, we add DOM and event listener to interact with the elements. Note that when we `submit` a form with data, the browser will send it as a HTTP action such as `GET` or `POST` which is an attribute given in the `<form>` tag and refresh the page. This is default feature of `submit` event to a `<form>`. Note that data (user input) in the `<input>` tag will also be cleared out.
+1. However, we can have a parameter `event` or `e` in convention with `preventDefault()` method to prevent the page being refreshed and clear the input.
+
+   ```js
+   const weatherForm = document.querySelector("form");
+   const search = document.querySelector("input");
+
+   weatherForm.addEventListener("submit", function (event) {
+     event.preventDefault();
+     const location = search.value;
+     if (!location) {
+       return console.log(`You didn't give a valid address!`);
+     }
+     fetch(`http://localhost:3000/weather?address=${location}`).then(function (
+       response
+     ) {
+       response.json().then(function (data) {
+         if (data.error) {
+           return console.log(data.error.info);
+         }
+         console.log(data.location);
+         console.log(data.forecast);
+       });
+     });
+   });
+   ```
+
+### Wiring up the User interface
+
+1. In this case, we use DOM with `.textContent()` method to render the data send back from the API and show on the HTML elements. Besides, we can change the content to `loading` right before the async function or `fetch()` function.
+
+   ```js
+   console.log("Client side JavaScript file is loaded!");
+
+   const weatherForm = document.querySelector("form");
+   const search = document.querySelector("input");
+   const messageOne = document.querySelector("#message-1");
+   const messageTwo = document.querySelector("#message-2");
+
+   weatherForm.addEventListener("submit", function (event) {
+     event.preventDefault();
+
+     const location = search.value;
+
+     if (!location) {
+       return console.log(`You didn't give a valid address!`);
+     }
+
+     messageOne.textContent = "Loading...";
+     messageTwo.textContent = "";
+
+     fetch(`http://localhost:3000/weather?address=${location}`).then(function (
+       response
+     ) {
+       response.json().then(function (data) {
+         if (data.geocodeError) {
+           messageOne.textContent = data.geocodeError;
+         } else {
+           messageOne.textContent = data.location;
+           messageTwo.textContent = data.forecast;
+         }
+       });
+     });
+   });
+   ```
+
+1. We also put some decoration on the page.
+
+   ```css
+   input {
+     border: 1px solid #ccc;
+     padding: 0.5rem;
+   }
+
+   button {
+     cursor: pointer;
+     border: 1px solid #888;
+     background: #888;
+     color: #fff;
+     padding: 0.5rem;
+   }
+   ```
