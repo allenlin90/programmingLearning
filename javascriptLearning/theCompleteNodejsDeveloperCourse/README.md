@@ -1421,3 +1421,5 @@ module.exports = forecast;
      padding: 0.5rem;
    }
    ```
+
+    <img src="weatherApp.gif">
