@@ -1500,3 +1500,7 @@ module.exports = forecast;
    1. `script` property in `package.json` to `"start": "npm run src/app.js"`
    1. Port value with `process.env.PORT` in `app.js`.
    1. The URL for `fetch()` API to parse of the front-end code.
+1. When setting up Heroku, we have added the remote repository as well. We can check with `git remote`, and there should be 2 remote repo 
+    1. Github
+    1. Heroku
+1. We then use `git push heroku master` to upload the files and code to Heroku. Then we can access from the URL which just given after we use `heroku create`. 
