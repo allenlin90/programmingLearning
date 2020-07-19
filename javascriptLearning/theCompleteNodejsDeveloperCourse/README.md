@@ -1467,3 +1467,36 @@ module.exports = forecast;
    ```shell
    Identity added: /c/Users/ht016/.ssh/id_rsa (your@email.com)
    ```
+
+### Pushing code to Github
+
+1. The regular process of pushing code from local to remote is skipped, as the concept is similar and I've learnt in the other courses.
+1. This course is special that it introduces SSH settings. On Github, we can go to setting > SSH and GPG keys.
+1. In Git Bash, we can use `cat ~/.ssh/id_rsa.pub` to check the contents of `id_rsa.pub` and upload it to Github.
+1. After adding the public key to Github, we can use `ssh -T git@github.com` (T is captial!) to check if it's working. Note that the command must be given in Git Bash rather than in WSL, as it's not working. This process is mainly to test if the connection is working.
+1. If the process succeed, it will return a welcom message with the user email on Github.
+1. Note that though SSH is useful for one time setup, we still can use HTTP protocol and login with username and password in terminal directly when we'd like to authenticate the machine and pull/push the data to and from the repository.
+
+### Deploying Node.js to Heroku
+
+1. In Heroku, adding the public key is relatively simple that we can just type `heroku add:key` in command line. Note that in this case, we use Windows command prompt (or PowerShell), as we can't install Heroku CLI in WSL. Heroku CLI will check the folder and find the available public key(s) it self. After that we type `yes` and allow Heroku CLI upload the public key.
+1. We then change directory to the weather app root folder and use `heroku create [appName]`. Note that this app name must be unique accross the platform. In the case, we can use something like `username-weather-app`. If we don't provide a name, Heroku will generate one for us which would be confusing. I had the other project didn't set up the name, and Heroku creates a zen-feeling project name. If the name is taken, it will return in the termianl as well.
+   ```shell
+   Creating ⬢ allen-weather-application... !
+   !    Name allen-weather-application is already taken
+   ```
+1. In this case, I get a project name as "**peaceful-reef**". Heroku will then return 2 URLs,
+   1. 1st is the URL to access the app as a user.
+   1. 2nd is the remote repository which we push the code to.
+   ```shell
+   Creating app... done, ⬢ peaceful-reef-31804
+   https://peaceful-reef-31804.herokuapp.com/ | https://git.heroku.com/peaceful-reef-31804.git
+   ```
+1. After the initial setup and before we push the code to Heroku, we should check the `package.json` to ensure Heroku knows the environment config that we used to develop and execute the app.
+1. In `package.json`, we can check `scripts` property that there's a `test` property by default. We then change the line to `"start": "node src/app.js"` to let Heroku knows how to execute the code. We can test this with `npm run start`. This is similar to use Sass CLI compiler package and other npm package in the terminal.
+1. We need to change the port value of `app.listen()` in `app.js`. `3000` is for the local port and Heroku has its own setting. Therefore, we can use `process.env.PORT` which (PORT are all capital) to get the port value from its environment variable on Heroku. Note that we can use logical OR `||` for the port value, as we still can use the same code for local development. If the environment variable is not given, the code will use `3000` instead. Therefore, we don't need to keep changing the port value according to environment.
+1. Besides, the main `app.js` for Node.js to execute, we should change the front-end `app.js`, as it will fetch the data as well. This part is relatively simple that we just remove the `https://localhost:3000/` and leave only the weather path and parameters. This is the relative path that HTML will find the files accordingly.
+1. In summary, there are 3 parts required to update
+   1. `script` property in `package.json` to `"start": "npm run src/app.js"`
+   1. Port value with `process.env.PORT` in `app.js`.
+   1. The URL for `fetch()` API to parse of the front-end code.
