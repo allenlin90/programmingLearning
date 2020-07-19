@@ -1423,3 +1423,47 @@ module.exports = forecast;
    ```
 
     <img src="weatherApp.gif">
+
+# Application Deployment
+
+1. We will use the following tools
+   1. Git
+   1. Github
+   1. Heroku
+
+### Joining Github and Heroku
+
+1. This section is about introducing the platform and registration.
+1. We can use `heroku cli` to work with heroku in terminal. Check [here](https://devcenter.heroku.com/articles/heroku-cli). However, this is not available with Ubuntu in WSL. Therefore, we will use Windows version instead.
+1. After installing, if Windows an error message about setting up path, we can set the environment ourselves with <kbd>win + q</kbd> and search for `Edit the system environment variables` and check system variabls in the global scope and find the property `path` and edit the path with `C:\Program Files\heroku\bin` with default filepath. This path is pointing to the cmd file in the directory.
+1. We then can follow the instructions to set up and use Heroku CLI. We firstly use `heroku login` which will open the browser and allow the user to login in a web-based GUI.
+1. After loggin in, we can use `heroku auth:whoami` to check login status.
+
+### Version control with Git, Exploring Git, and Integrating Git
+
+1. This section is introducing and explaining why Git is useful and scenarios for version control.
+1. A hint here is to ensure that Windows users must install `Git Bash` when installing Git.
+1. There 4 stages in Git version control flow
+   1. Untracked files
+   1. Unstaged Changes
+   1. Staged Changes
+   1. Commits
+1. We can use `git add .` to add all the files in the repository which are either `untracked` or `unstaged` to `staged`.
+1. After stagging, we can use `git commit -m 'message'` to make a commit version.
+
+### Setting up SSH Keys
+
+1. `SSH` stands for "**Secure Shell**" which allows machines talk to other machines in a secure way.
+1. As we have to use windows command prompt to access heroku, I didn't use WSL to generate SSH. We can use `Git Bash` which takes similar bash commands in Windows OS. Besides, we have to ensure that we are on the root directory of the program.
+1. We firstly check if we have generated any SSH in the OS by `ls -a -l ~/.ssh`. This means in the root folder of the machine should there be a "**hidden**" (similar to .git) `.ssh` folder. If there's nothing we can generate a new one
+1. In this course, we use `ssh-keygen -t rsa -b 4096 -C "your@email.com"`
+   1. `ssh-keygen` is the command to generate the key.
+   1. `-t rsa -b 4096` is the flag and to mention the algorithm we use (`rsa`) with `4096` bits `-b`
+   1. `-C` note that this flag must be in uppercase to make comment to the SSH key. In this case, we use the email we login to the services.
+1. After the command, the program will ask us for 3 questions, we can just keep clicking <kbd>enter</kbd> and skip it.
+1. After the process, we can check with `ls -a -l ~/.ssh` and see a new SSH is generated. There will be 2 files, `id_rsa` (which is a secret file that we DO NOT share to anyone and kept locally on the machine.) and `id_rsa.pub` (which is a public file that we will share on Github and heroku).
+1. We then use `eval $(ssh-agent -s)"` in Git Bash. Note that if we use MacOS or Linux, we should wrap the `$()` with double qoutes as `eval "$(ssh-agent -s)"`. We will get a `Agent pid xxxx` where `xxxx` is a series of number.
+1. After getting the `Agent pid`, we use `ssh-add ~/.ssh/id_rsa` (Note that if we use MacOS, we should use flag `-K` where K is uppercase, as `ssh-add -K ~/.ssh/id_rsa`. However, **DO NOT** use `-K` on Git bash on **Windows or Linux**.). After the command, the terminal should return the following status that the identity is added.
+   ```shell
+   Identity added: /c/Users/ht016/.ssh/id_rsa (your@email.com)
+   ```
