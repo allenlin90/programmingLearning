@@ -1143,55 +1143,103 @@ module.exports = forecast;
 1. This part is mainly about styling and front-end decorations of the App. I merged the note and skip explanantion of how CSS works.
 1. This part uses `flex-grow: 1` on the `<div>` tag, which can make the element "**grow**" and takes much space as it needs. In this case, it means that the element should take over all the whitespace left in between the page, as other elements have no such property and have their own fixed space.
 1. We can use a PNG image file and import it as `icon` with `<link>` tag in `<head>` tag in the HTML file. This works similar to favicon that gives a small icon on the tab on the browser when opening the webpage.
-    1. HTML 
-    ```html
-    <head>
-      <link rel="icon" href="/img/weather.png" />
-    </head>
-    ```
 
-    1. CSS
+   1. HTML
 
-    ```css
-    body {
-      color: #333;
-      font-family: arial;
-      max-width: 650px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+   ```html
+   <head>
+     <link rel="icon" href="/img/weather.png" />
+   </head>
+   ```
 
-    .main-content {
-      flex-grow: 1;
-    }
+   1. CSS
 
-    footer {
-      color: #888;
-      border-top: 1px solid #eee;
-      margin-top: 1rem;
-      padding: 1rem 0;
-    }
+   ```css
+   body {
+     color: #333;
+     font-family: arial;
+     max-width: 650px;
+     margin: 0 auto;
+     padding: 0 1rem;
+     display: flex;
+     flex-direction: column;
+     min-height: 100vh;
+   }
 
-    header {
-      margin-top: 1rem;
-      margin-bottom: 3rem;
-    }
+   .main-content {
+     flex-grow: 1;
+   }
 
-    h1 {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-    }
+   footer {
+     color: #888;
+     border-top: 1px solid #eee;
+     margin-top: 1rem;
+     padding: 1rem 0;
+   }
 
-    header a {
-      color: #888;
-      margin-right: 1rem;
-      text-decoration: none;
-    }
+   header {
+     margin-top: 1rem;
+     margin-bottom: 3rem;
+   }
 
-    .protrait {
-      width: 250px;
-    }
-    ```
+   h1 {
+     font-size: 4rem;
+     margin-bottom: 1rem;
+   }
+
+   header a {
+     color: #888;
+     margin-right: 1rem;
+     text-decoration: none;
+   }
+
+   .protrait {
+     width: 250px;
+   }
+   ```
+
+# Accessing API from Browser
+
+### The Query String
+
+1. The target of this section is to allow users use UI in browser to access data from the API rather than typing in the command line directly.
+1. We will update the route for the following code. Rather than returning back a mock up JOSN data, we will call the API and return the data according to user input.
+   ```js
+   app.get("/weather", (req, res) => {
+     res.send({
+       forecast: "Killer Sun",
+       location: "Central Bangkok",
+     });
+   });
+   ```
+1. We create another endpoint (`products` is for testing purpose) for users to access the server and return JSON data. (In this case, I duplicate the folder to separate the projects. The new one is called `accessAPI`). Besides, when user access the endpoint, they can give additional parameters on the URL in `key/value` pair. For example, users can access this with `localhost:3000/products?search=games` to search for "**games**".In addition, user can give additional parameters by concatenate the arguments with ampersand `&`, such as `localhost:3000/products?search=games&rating=5`.
+1. The passed paramters lies in the `req` parameter in the call back function on its `query` property. In this case, as we passed `?search=games&rating=5`, `req.query` returns an `Object` with the key/value pairs.
+
+   ```js
+   app.get("/products", (req, res) => {
+     console.log(req.query); // print the parameters given in URL.
+     // { search: 'games', rating: '5' }
+     res.send({
+       products: [],
+     });
+   });
+   ```
+
+1. During development, we may accidently respond to the client multiple times which is not allowed by HTTP protocol. Therefore, if we see an error message as `Cannot set headers after they are sent to the client`, it means we try to respond to client more than one time. For this case, we can either
+   1. Use `return` to stop the process at the point. This is the usual solution for the case.
+   1. Put the code in `else` statement to prevent executing.
+1. With the similar concept, we update the `weather route` with the strucutre to catch error and return a JSON according to user input.
+   ```js
+   app.get("/weather", function (req, res) {
+     if (!req.query.address) {
+       return res.send({
+         error: "You msut provide a valid address",
+       });
+     }
+     res.send({
+       forecast: "It's partly couldy.",
+       address: `${req.query.address}`,
+       location: "Thailand",
+     });
+   });
+   ```
