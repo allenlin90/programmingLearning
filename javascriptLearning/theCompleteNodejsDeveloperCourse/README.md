@@ -1479,7 +1479,7 @@ module.exports = forecast;
 
 ### Deploying Node.js to Heroku
 
-1. In Heroku, adding the public key is relatively simple that we can just type `heroku add:key` in command line. Note that in this case, we use Windows command prompt (or PowerShell), as we can't install Heroku CLI in WSL. Heroku CLI will check the folder and find the available public key(s) it self. After that we type `yes` and allow Heroku CLI upload the public key.
+1. In Heroku, adding the public key is relatively simple that we can just type `heroku key:add` in command line. Note that in this case, we use Windows command prompt (or PowerShell), as we can't install Heroku CLI in WSL. Heroku CLI will check the folder and find the available public key(s) it self. After that we type `yes` and allow Heroku CLI upload the public key.
 1. We then change directory to the weather app root folder and use `heroku create [appName]`. Note that this app name must be unique accross the platform. In the case, we can use something like `username-weather-app`. If we don't provide a name, Heroku will generate one for us which would be confusing. I had the other project didn't set up the name, and Heroku creates a zen-feeling project name. If the name is taken, it will return in the termianl as well.
    ```shell
    Creating ⬢ allen-weather-application... !
@@ -1500,7 +1500,41 @@ module.exports = forecast;
    1. `script` property in `package.json` to `"start": "npm run src/app.js"`
    1. Port value with `process.env.PORT` in `app.js`.
    1. The URL for `fetch()` API to parse of the front-end code.
-1. When setting up Heroku, we have added the remote repository as well. We can check with `git remote`, and there should be 2 remote repo 
-    1. Github
-    1. Heroku
-1. We then use `git push heroku master` to upload the files and code to Heroku. Then we can access from the URL which just given after we use `heroku create`. 
+1. When setting up Heroku, we have added the remote repository as well. We can check with `git remote`, and there should be 2 remote repo
+   1. Github
+   1. Heroku
+1. We then use `git push heroku master` to upload the files and code to Heroku. Then we can access from the URL which just given after we use `heroku create`.
+
+### New Feature Deployment Workflow
+
+1. The process is similar and easier after first config with Github and Heroku.
+1. We can use regular Git workflow to staged and commit the version and push the version to both Heroku and Github.
+
+### Avoiding Global Modules
+
+1. In `package.json`, we can create a `dev` property in `scripts` and have the execution command, such as `nodemon src/app.js -e js,hbs`. Therefore, we can use the shorthand `npm run dev` to run the execution command easily.
+1. For example, we install `nodemon` package globally, but other developers may not know which package has to be installed. Besides, we can't use `nodemon` package with local package installation. Therefore, we can use npm `scripts` to run the command we prefer.
+1. When installing `nodemon` we can use `npm i nodemon --save-dev`, so `nodemon` will be installed as `devDependencies`. We can then use `npm run dev` as we setup to run the code we prefer locally. Besides, this will not affect to the production version, as it is separated from `npm run start`.
+   ```json
+   {
+     "name": "web-server",
+     "version": "1.0.0",
+     "description": "",
+     "main": "index.js",
+     "scripts": {
+       "start": "node src/app.js",
+       "dev": "nodemon src/app.js -e js,hbs"
+     },
+     "keywords": [],
+     "author": "",
+     "license": "ISC",
+     "dependencies": {
+       "express": "^4.16.4",
+       "hbs": "^4.0.1",
+       "request": "^2.88.2"
+     },
+     "devDependencies": {
+       "nodemon": "^2.0.4"
+     }
+   }
+   ```
