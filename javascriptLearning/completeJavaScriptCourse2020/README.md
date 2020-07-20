@@ -2439,3 +2439,9 @@ npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env
       1. `babel-preset-env`
    1. Setup `.babelrc` and indicate what files that we want to convert to ES5.
    1. Install and include `babel-polyfill` to be able to convert some features which don't exist in ES5.
+
+### Planning our Project Architecture with MVC
+
+1. MVC stands for `Model`, `Controller`, and `View`.
+1. Though we've used the concept in the budetApp with IFFEs and closure, we can use `module` which is a new feature in ES6 to implement to concept in an easier way.
+1. For a certain function in the web app, we can separate it into 2 parts, model and view, and get them integrated with the controller module.
