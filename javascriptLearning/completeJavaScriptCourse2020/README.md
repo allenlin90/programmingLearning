@@ -2445,3 +2445,4 @@ npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env
 1. MVC stands for `Model`, `Controller`, and `View`.
 1. Though we've used the concept in the budetApp with IFFEs and closure, we can use `module` which is a new feature in ES6 to implement to concept in an easier way.
 1. For a certain function in the web app, we can separate it into 2 parts, model and view, and get them integrated with the controller module.
+   <img src="mvcRecipeApp.png">
