@@ -2447,6 +2447,9 @@ npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env
 1. For a certain function in the web app, we can separate it into 2 parts, model and view, and get them integrated with the controller module.
    <img src="mvcRecipeApp.png">
 
+[ES6 modules](#how-ES6-module-works)
+<a href="#how-ES6-module-works">How does ES6 module works</a>
+
 ### How ES6 module works
 
 1. Learning objectives
