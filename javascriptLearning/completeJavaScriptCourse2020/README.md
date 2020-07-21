@@ -2538,3 +2538,432 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    getResults("tomato pasta"); // this is not working
    getResults("sweet potato"); // this is supported
    ```
+
+### Building the Search Model
+
+1. Learning Object: Build a simple data model using ES6 classes.
+1. In `Search.js`, we build the class `Search` with an async function to call data from the API. We then `import` the class to the controller `index.js` and make a call.
+
+   1. `Search.js`
+
+   ```js
+   // Search.js
+   import axios from "axios";
+
+   export default class Search {
+     constructor(query) {
+       this.query = query;
+     }
+
+     async getResults() {
+       try {
+         const result = await axios(
+           `https://forkify-api.herokuapp.com/search?q=${this.query}`
+         );
+         this.result = result.data.recipes;
+         console.log(this.result);
+       } catch (error) {
+         alert(error);
+       }
+     }
+   }
+   ```
+
+   1. `index.js` This will print the queried result on the browser console.
+
+   ```js
+   import Search from "./models/Search";
+
+   const search = new Search("pizza");
+   console.log(search);
+   ```
+
+### Building the Search Controller
+
+1. Learning Object:
+   1. The concept of application state
+   1. A simple way of implementing state
+1. As the application keeps retrieving data from the server and API, we can create an `Object` to check all the "**states**" of the app in different parts. Therefore, we can check the "**state**" of the app at any given moment. For example, `redux` which is a popular library usually used with `react` framework. However, we use a simple `Object` to store the data, as this project is relatively easy.
+1. In this app, we have 4 main states. All the data of the states in be kept in a single `Object` variable `state` in the controller.
+
+   1. `Search` contains the data of query term and result of the query.
+   1. Current `Recipe`
+   1. Shopping `List`
+   1. `Liked` Recipes
+
+1. We add an event listener to the search bar in the HTML (which is a `<form>` tag that has event `submit`). Usually event listener will be added in the controller model which is `index.js` in this case. Besides, every time we submit a form, the page will refresh. To prevent the feature, we can add `event.preventDefault()` in the callback function.
+
+   ```js
+   import Search from "./models/Search";
+
+   /** Global state of the app
+    * - Search object
+    * - Current recipe object
+    * - Shopping list object
+    * - Liked Recipes
+    */
+   const state = {};
+
+   const controlSearch = async function () {
+     // 1) Get query from view
+     const query = "pizza"; //1000
+
+     if (query) {
+       // 2) New search object and add to state
+       state.search = new Search(query);
+
+       // 3) Prepare UI for results
+
+       // 4) Search for recipes
+       await state.search.getResults();
+
+       // 5) render results on UI
+       console.log(state.search.result);
+     }
+   };
+
+   document
+     .querySelector(".search")
+     .addEventListener("submit", function (event) {
+       event.preventDefault(); // prevent refreshing page after submitting the form
+       controlSearch();
+     });
+   ```
+
+### Building the Search View - Part 1
+
+1. Learning Objects
+   1. Advanced DOM manipulation techniques
+   1. Use ES6 template strings to render entire HTML components
+   1. Create loading spinner
+1. Create a separated DOM selector (`base.js`) and pass data to controller model.
+   1. As we will have multiple DOM element selector, we separate the DOM selectors in a separated JS file in views called `base.js` and export the selectors as properties of an `Object`.
+   ```js
+   export const elements = {
+     searchForm: document.querySelector(".search"),
+     searchInput: document.querySelector(".search__field"),
+   };
+   ```
+   1. We can `import` the `Object` from `base.js` to both `searchView.js` and `index.js`. Note that as `base.js` export an `Object` we should use destructor to import the variable.
+   ```js
+   import { elements } from "./base";
+   ```
+   1. We then can import the selector which checkes the value in the input text bar from `searchViews.js`. Since this only a regular DOM selector, we don't need to use `await` to parse the value.
+   ```js
+   import * as searchView from "./views/searchViews";
+   ```
+1. Render received data to on the page through DOM.
+
+   1. In this case, we have had a template with `<ul>` tags that can take `<li>` takes as items in the list. We will use `searchViews.js` to render the received data sent from the API on the HTML page.
+   1. In this HTML page, we have 3 sections (`<div>` tags) after `<header>`
+
+      1. Result list
+      1. Recipe list
+      1. Shopping list
+
+      <img src="forkify.png">
+
+1. According to the HTML template, each `<li>` item is in the following structure. We then udpate `searchViews.js` to with `.forEach()` to iterate through the data `Array` and parse the `Objects`. We update the selector in `base.js` and use `.insertAdjacentHTML()` method to the `<ul>` tag. We can check documentation of the [method](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML). Note that in `.forEach()` we can use pass the callback function directly with out any argument, as we usually use an anonymous function that it would be confusing at the first place.
+1. After rendering the query result according to the input, we can clear the input out and get ready for the next search with `elements.searchInput.value = ""`.
+1. Besides input, we should clear the results of the previous query before the page render the new result. Otherwise, the result section will be a huge long list of every query of the user session.
+
+   1. `base.js`
+
+   ```js
+   // base.js
+   // select the <ul> tag
+   searchResultList: document.querySelector(".results__list");
+   ```
+
+   1. `searchViews.js`
+
+   ```js
+   // searchViews.js
+   import { elements } from "./base";
+
+   export const getInput = function () {
+     return elements.searchInput.value;
+   };
+
+   // clear the results of previous query
+   export const clearResults = function () {
+     elements.searchResultList.innerHTML = "";
+   };
+
+   // clear the input text bar
+   export const clearInput = function () {
+     elements.searchInput.value = "";
+   };
+
+   const renderRecipe = function (recipe) {
+     const markup = `
+        <li>
+            <a class="results__link" href="#${recipe.recipe_id}">
+                <figure class="results__fig">
+                    <img src="${recipe.image_url}" alt="${recipe.title}">
+                </figure>
+                <div class="results__data">
+                    <h4 class="results__name">${recipe.title}</h4>
+                    <p class="results__author">${recipe.publisher}</p>
+                </div>
+            </a>
+        </li>
+        `;
+     // add the html before the end of <ul> tag
+     elements.searchResultList.insertAdjacentHTML("beforeend", markup);
+   };
+
+   export const renderResults = function (recipes) {
+     recipes.forEach(renderRecipe);
+   };
+   ```
+
+   1. `index.js`
+
+   ```js
+   import Search from "./models/Search";
+   import * as searchView from "./views/searchViews";
+   import { elements } from "./views/base";
+   /** Global state of the app
+    * - Search object
+    * - Current recipe object
+    * - Shopping list object
+    * - Liked Recipes
+    */
+   const state = {};
+
+   const controlSearch = async function () {
+     // 1) Get query from view
+     // const query = "pizza"; //TODO
+     const query = searchView.getInput();
+     console.log(query);
+
+     if (query) {
+       // 2) New search object and add to state
+       state.search = new Search(query);
+
+       // 3) Prepare UI for results
+       searchView.clearInput();
+       searchView.clearResults();
+
+       // 4) Search for recipes
+       await state.search.getResults();
+
+       // 5) render results on UI
+       searchView.renderResults(state.search.result);
+     }
+   };
+
+   elements.searchForm.addEventListener("submit", (e) => {
+     e.preventDefault();
+     controlSearch();
+   });
+   ```
+
+### Building the Search View - Part 2
+
+1. The main target is to reduce the title of returned title of recipe if it's longer than 1 line. For example, when we search for "pizza", some recipes (such as `BALSAMIC STRAWBERRY AND CHICKEN PIZZA WITH SWEET ONIONS AND SMOKED BACON CLOSET COOKING`) have very long title.
+1. In `searchView.js`, we updat a function `limitRecipeTitle` which is closed and limited to use only in `searchViews.js`.
+1. This simple algorithm works on `String` to check if the overall `String` is longer than 17 characters (including whitespace) by default. We can pass other value such as 12 and have detector that if the user screen is shorter than certain width. This algorithm will return a phrase that characters won't be more than 17 characters in total.
+
+   ```js
+   // limit title words to be rendered in the list
+   const limitRecipeTitle = function (title, limit = 17) {
+     const newTitle = [];
+     if (title.length > limit) {
+       title.split(" ").reduce(function (acc, cur) {
+         if (acc + cur.length <= limit) {
+           newTitle.push(cur);
+         }
+         return acc + cur.length;
+       }, 0);
+
+       // return the result
+       return `${newTitle.join(" ")} ...`;
+     }
+     return title;
+   };
+   ```
+
+### Rendering an AJAX Loading Spinner
+
+1. This loading spinner is an animation to notice the user when the `async` functions is working. In this case, this animaiton should be placed in both query result list and recipe list. This is using svg icons with CSS animation.
+1. Since this code will be used in other sections, we will put in `base.js` to be shared. Besides, we add a new selector in the `elements` object.
+
+   ```js
+   // base.js
+   export const elements = {
+     searchResult: document.querySelector(".results"),
+   };
+
+   export const renderLoader = function (parent) {
+     const loader = `
+           <div class="loader">
+               <svg>
+                   <use href="img/icons.svg#icon-cw"></use>
+               </svg>
+           </div>
+       `;
+     parent.insertAdjacentHTML("afterbegin", loader);
+   };
+   ```
+
+   1. CSS
+
+   ```css
+   .loader {
+     margin: 5rem auto;
+     text-align: center;
+   }
+   .loader svg {
+     height: 5.5rem;
+     width: 5.5rem;
+     fill: #f59a83;
+     transform-origin: 44% 50%;
+     animation: rotate 1.5s infinite linear;
+   }
+
+   @keyframes rotate {
+     0% {
+       transform: rotate(0);
+     }
+     100% {
+       transform: rotate(360deg);
+     }
+   }
+   ```
+
+    <img src="loaderspinner.gif">
+
+1. We have to take the loader icon off once the data is returned. We create a new funciton to check if loader exist. However, we can't use the selector directly, as at the time the loader may not be created. Therefore, we create another `Object` to store the class name. If DOM checks that the loader icon exist, we use `obj.parentElement.removeChild(obj)` to remove the element.
+
+   ```js
+   // base.js
+   export const elementStrings = {
+     loader: "loader",
+   };
+
+   export const clearLoader = function () {
+     const loader = document.querySelector(`.${elementStrings.loader}`);
+     if (loader) {
+       loader.parentElement.removeChild(loader);
+     }
+   };
+   ```
+
+1. We then update and call the function in the controller in `index.js`
+   ```js
+   import { elements, renderLoader, clearLoader } from "./views/base";
+   // call the function right before the controller render the result list to the section
+   clearLoader();
+   ```
+
+### Implementing Search Results Pagination
+
+1. Learning Objects
+   1. Use the `.closest` method for easier event handling
+   1. How and why to use `data-*` attributes in HTML5.
+1. The target to acieve in this section is to separate the results into "**different pages**" if the items from the result is more than certain number, such as 10 or 15. Therefore, in this case, the search result won't be a long list that affects user experience.
+1. In `searchViews.js`, we update the `renderResults` function with 2 more parameters.
+   1. `page` is the page to show.
+   1. `resultPerPage` is the number of items shown in a page.
+1. We use `.slice()` method to chop off part of the `Array` of recipe `Objects`. In the function, we can set up 2 variables `start` and `end` as the arguments for `.slice()` method.
+1. In `createButton()` function, we return the HTML `<button>` tag with attribute `data-goto` which can allow JavaScript to parse and to know which page should it render. Therefore, rather than parsing the value from the element such as the number of page, we can check the attribute and go to the correct page.
+
+   ```js
+   // type: 'prev' or 'next'
+   const createButton = function (page, type) {
+     return `
+       <button class="btn-inline results__btn--${type}" data-goto=${
+       type === "prev" ? page - 1 : page + 1
+     }>
+           <svg class="search__icon">
+               <use href="img/icons.svg#icon-triangle-${
+                 type === "prev" ? "left" : "right"
+               }"></use>
+           </svg>
+           <span>Page ${type === "prev" ? page - 1 : page + 1}</span>
+       </button>
+     `;
+   };
+
+   // check and show next, prev, or both buttons on the page
+   const renderButtons = function (page, numResults, resultPerPage) {
+     // use Math.ceil() to ensure that we will have enough pages to render the list
+     // If we have 45 items and show 10 items in a page, we should have 5 pages in total
+     const pages = Math.ceil(numResults / resultPerPage);
+
+     // create a "button" variable that is mutable
+     let button;
+     if (page === 1 && pages > 1) {
+       // Only button to go to next page, as the user is on the first page
+       button = createButton(page, "next");
+     } else if (page < pages) {
+       // Both buttons
+       button = `
+           ${createButton(page, "prev")}
+           ${createButton(page, "next")}
+           `;
+     } else if (page === pages && pages > 1) {
+       // Only button to go to prev page, as the user is on the last page
+       button = createButton(page, "prev");
+     }
+
+     elements.searchResultPages.insertAdjacentHTML("afterbegin", button);
+   };
+
+   export const renderResults = function (
+     recipes,
+     page = 1,
+     resultPerPage = 10
+   ) {
+     // render results of current page
+     const start = (page - 1) * resultPerPage;
+     const end = page * resultPerPage;
+
+     recipes.slice(start, end).forEach(renderRecipe);
+
+     // render pagination buttons
+     renderButtons(page, recipes.length, resultPerPage);
+   };
+   ```
+
+1. We then add an event listeners in the controller `index.js`. However, as the buttons are generated dynamically, we can't add event listener on the element directly. We use event delegation (event bubbling) to catch the event, as we will put the new button in a container `<div class="results__pages">`.
+1. However, as the button(s) doesn't exist in the beginning, and a button is built up by `span`, `svg`, `use` elements. We can try and check with the following code in `index.js`. We will see different results every time we try to click on the button. Note that we can change the default page rendering function `renderResults` to 2 in `searchViews.js` to show both buttons to test.
+   ```js
+   elements.searchResultPages.addEventListener("click", function (event) {
+     console.log(event.target);
+   });
+   ```
+1. Therefore, we can use [`.closet()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/closest) method to get a given element in the DOM node. The method will traverse the DOM of the selector from root to the ultime ancestor (which usually is the `<html>` tag) and return the element that matches at the nearest. If the button is found, it will have a DOM object. Otherwise, the variable will have `null`.
+1. We then can check with `.dataset.go` property of the button object. It will return the number of the page we should "**go to**". Note that the value here is a `Strign`, so we should use `parseInt()` function to turn into a number.
+   ```js
+   elements.searchResultPages.addEventListener("click", function (event) {
+     const btn = event.target.closest(".btn-inline");
+     console.log(btn);
+     /*
+       <button class="btn-inline results__btn--prev" data-goto="1">
+         <svg class="search__icon">
+             <use href="img/icons.svg#icon-triangle-left"></use>
+         </svg>
+         <span>Page 1</span>
+       </button>
+     */
+     if (btn) {
+       const goToPage = parseInt(btn.dataset.goto);
+       console.log(goToPage); // page 1
+     }
+   });
+   ```
+1. After all, we call `renderResults()` method from `searchView.js` to change the result. Besides, we need to clear results of the previous page we visit. However, we keep adding new buttons to the page, so in `searchVeiws.js`, we should add `elements.searchResultPages.innerHTML = ""` in `clearResults()` function which not only clear the item list but the buttons.
+   ```js
+   elements.searchResultPages.addEventListener("click", function (event) {
+     const btn = event.target.closest(".btn-inline");
+     if (btn) {
+       const goToPage = parseInt(btn.dataset.goto);
+       searchView.clearResults(); // clear the results of the other page and the buttons
+       searchView.renderResults(state.search.result, goToPage);
+       // console.log(goToPage);
+     }
+   });
+   ```

@@ -1,16 +1,49 @@
-import axios from "axios";
+import Search from "./models/Search";
+import * as searchView from "./views/searchViews";
+import { elements, renderLoader, clearLoader } from "./views/base";
+/** Global state of the app
+ * - Search object
+ * - Current recipe object
+ * - Shopping list object
+ * - Liked Recipes
+ */
+const state = {};
 
-async function getResults(query) {
-  try {
-    const result = await axios(
-      `https://forkify-api.herokuapp.com/search?q=${query}`
-    );
-    const recipes = result.data.recipes;
-    console.log(recipes);
-  } catch (error) {
-    alert(error);
+const controlSearch = async function () {
+  // 1) Get query from view
+  // const query = "pizza"; //TODO
+  const query = searchView.getInput();
+  console.log(query);
+
+  if (query) {
+    // 2) New search object and add to state
+    state.search = new Search(query);
+
+    // 3) Prepare UI for results
+    searchView.clearInput();
+    searchView.clearResults();
+    renderLoader(elements.searchResult);
+
+    // 4) Search for recipes
+    await state.search.getResults();
+
+    // 5) render results on UI
+    clearLoader();
+    searchView.renderResults(state.search.result);
   }
-}
+};
 
-getResults("pizza");
-getResults(encodeURIComponent("sweet potato"));
+elements.searchForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  controlSearch();
+});
+
+elements.searchResultPages.addEventListener("click", function (event) {
+  const btn = event.target.closest(".btn-inline");
+  if (btn) {
+    const goToPage = parseInt(btn.dataset.goto);
+    searchView.clearResults();
+    searchView.renderResults(state.search.result, goToPage);
+    // console.log(goToPage);
+  }
+});
