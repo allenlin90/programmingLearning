@@ -4065,3 +4065,881 @@ body {
    <img src="processSectionAndFooter.gif">
 
 ### About Page Info Section
+
+1. The main feature here is to use `grid-template-areas` that we can set elements with the span we want. Then we set up the child elements with property grid-area with the name we given in the `grid-template-areas`.
+
+   ```css
+   .selector {
+     display: grid;
+     grid-template-areas:
+       "element1 element2 element2"
+       "element3 element3 element4";
+     grid-gap: 1rem;
+   }
+
+   #element1 {
+     grid-area: element1;
+   }
+   #element2 {
+     grid-area: element2;
+   }
+   #element3 {
+     grid-area: element3;
+   }
+   #element4 {
+     grid-area: element4;
+   }
+   ```
+
+1. HTML
+   ```html
+   <section id="about-a" class="text-center py-3">
+     <div class="container">
+       <h2 class="section-title">About Me</h2>
+       <div class="bottom-line"></div>
+       <p class="lead">
+         Let me tell you a little about myself and what I do...
+       </p>
+       <div class="about-info">
+         <img src="img/aboutMe.png" alt="" class="bio-image" />
+         <div class="bio bg-light">
+           <h4>Your project is in safe hands</h4>
+           <p>
+             Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium
+             id dolor suscipit soluta cupiditate ad quas minus quasi atque
+             natus, ab odit voluptatum, inventore aut nemo ullam dicta molestiae
+             quisquam.
+           </p>
+         </div>
+         <div class="award-1">
+           <i class="fas fa-award fa-3x"></i>
+           <h3>Award One</h3>
+           <p>
+             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magnam,
+             impedit!
+           </p>
+         </div>
+         <div class="award-2">
+           <i class="fas fa-award fa-3x"></i>
+           <h3>Award One</h3>
+           <p>
+             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magnam,
+             impedit!
+           </p>
+         </div>
+         <div class="award-3">
+           <i class="fas fa-award fa-3x"></i>
+           <h3>Award One</h3>
+           <p>
+             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magnam,
+             impedit!
+           </p>
+         </div>
+       </div>
+     </div>
+   </section>
+   ```
+1. SCSS
+
+   ```scss
+   // Backgrounds in utilities.scss
+   .bg {
+     &-main {
+       background: $main-color;
+       color: set-text-color($main-color);
+     }
+     &-dark {
+       background: $dark-color;
+       color: set-text-color($dark-color);
+     }
+     &-light {
+       background: $light-color;
+       color: set-text-color($light-color);
+     }
+     &-medium {
+       background: $medium-color;
+       color: set-text-color($medium-color);
+     }
+   }
+
+   .lead {
+     font-size: 1.3rem;
+     margin-bottom: 2rem;
+   }
+
+   .text-center {
+     text-align: center;
+   }
+
+   // About Sections in main.scss
+   #about {
+     &-a {
+       .about-info {
+         display: grid;
+         grid-template-areas:
+           "bioimage bio bio"
+           "aw1 aw2 aw3";
+         grid-gap: 1.2rem;
+       }
+
+       // Grid Area
+       .bio-image {
+         grid-area: bioimage;
+       }
+
+       .bio {
+         grid-area: bio;
+         border-left: 3px solid $main-color;
+         padding: 0.8rem;
+       }
+
+       .award-1 {
+         grid-area: aw1;
+       }
+
+       .award-2 {
+         grid-area: aw2;
+       }
+
+       .award-3 {
+         grid-area: aw3;
+       }
+
+       .award-1 .fas,
+       .award-2 .fas,
+       .award-3 .fas {
+         color: $main-color;
+         margin: 1rem;
+       }
+     }
+   }
+   ```
+
+   <img src="portfolioAbout.png">
+
+### About Page Logos and Testimonials
+
+1. The feature of this section is to use a pair of nested `<div>` tags to create a progress bar. We give the nested `<div>` tag inline width, as we set them all to 100% by default with CSS. We fill up the container with grey color `#ccc`. The inner `<div>` tag, we give the `$main-color` which is `#ffbc00`.
+1. HTML
+   ```html
+   <!-- SectionB: Progress Bars -->
+   <section id="about-b" class="bg-dark py-3">
+     <div class="container">
+       <h2 class="sectoin-title">Technical Skills</h2>
+       <div class="bottom-line"></div>
+       <h4>Service Operations:</h4>
+       <div class="progress">
+         <div style="width: 90%;"></div>
+       </div>
+       <h4>Business Optimization:</h4>
+       <div class="progress">
+         <div style="width: 70%;"></div>
+       </div>
+       <h4>Automation:</h4>
+       <div class="progress">
+         <div style="width: 90%;"></div>
+       </div>
+       <h4>Algorithms:</h4>
+       <div class="progress">
+         <div style="width: 60%;"></div>
+       </div>
+       <h4>JavaScript:</h4>
+       <div class="progress">
+         <div style="width: 80%;"></div>
+       </div>
+       <h4>HTML and CSS:</h4>
+       <div class="progress">
+         <div style="width: 70%;"></div>
+       </div>
+       <h4>Git:</h4>
+       <div class="progress">
+         <div style="width: 80%;"></div>
+       </div>
+     </div>
+   </section>
+   ```
+1. SCSS
+
+   ```scss
+   // About B
+   &-b {
+    .progress {
+      overflow: hidden;
+      height: 20px;
+      background-color: $medium-color;
+      border-radius: 5px;
+      margin-bottom: 0.3rem;
+      div {
+        height: 100%;
+        color: #fff;
+        text-align: center;
+        background: $main-color;
+      }
+    }
+   ```
+
+   <img src="portfolioAboutProgress.png">
+
+1. Testimonial
+1. HTML
+
+   ```html
+   <!-- Section C: Logos -->
+   <section id="about-c" class="py-4 bg-light">
+     <div class="container">
+       <div class="about-logos">
+         <img src="img/about-logos/logo-envato.png" alt="" />
+         <img src="img/about-logos/logo-wordpress.png" alt="" />
+         <img src="img/about-logos/logo-woocommerce.png" alt="" />
+         <img src="img/about-logos/logo-magento.png" alt="" />
+       </div>
+     </div>
+   </section>
+
+   <!-- Section D -->
+   <section id="about-d" class="py-4">
+     <div class="container">
+       <h2 class="section-title">Testimonials</h2>
+       <div class="bottom-line"></div>
+       <p class="lead text-center">Take a look what my clients say</p>
+       <div class="testimonials">
+         <div>
+           <p>
+             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti
+             sint amet, adipisci minima doloribus id ipsum architecto cupiditate
+             corrupti doloremque?
+           </p>
+           <ul>
+             <li><img src="img/testimonials/person1.jpg" alt="" /></li>
+             <li>Same Smith, New York</li>
+           </ul>
+         </div>
+         <div>
+           <p>
+             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti
+             sint amet, adipisci minima doloribus id ipsum architecto cupiditate
+             corrupti doloremque?
+           </p>
+           <ul>
+             <li><img src="img/testimonials/person2.jpg" alt="" /></li>
+             <li>John Doe, Michigan</li>
+           </ul>
+         </div>
+         <div>
+           <p>
+             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti
+             sint amet, adipisci minima doloribus id ipsum architecto cupiditate
+             corrupti doloremque?
+           </p>
+           <ul>
+             <li><img src="img/testimonials/person3.jpg" alt="" /></li>
+             <li>Jill Johnson, Bangkok</li>
+           </ul>
+         </div>
+         <div>
+           <p>
+             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti
+             sint amet, adipisci minima doloribus id ipsum architecto cupiditate
+             corrupti doloremque?
+           </p>
+           <ul>
+             <li><img src="img/testimonials/person4.jpg" alt="" /></li>
+             <li>Jane Doe, Taipei</li>
+           </ul>
+         </div>
+       </div>
+     </div>
+   </section>
+   ```
+
+1. SCSS
+
+   ```scss
+   // About C
+   &-c {
+     .about-logos {
+       display: grid;
+       grid-template-columns: repeat(4, 1fr);
+       grid-gap: 2rem;
+
+       img {
+         width: 70%;
+       }
+     }
+   }
+
+   // About D
+   &-d {
+     .testimonials {
+       display: grid;
+       grid-template-columns: repeat(4, 1fr);
+       grid-gap: 0.5rem;
+     }
+
+     ul {
+       list-style: none;
+       margin-top: 1rem;
+       display: flex;
+       align-items: center;
+     }
+
+     p {
+       border: 1px solid $medium-color;
+       border-radius: 5px;
+       padding: 0.5rem;
+     }
+
+     img {
+       width: 50px;
+       height: 50px;
+       border-radius: 50%;
+       margin-right: 0.5rem;
+     }
+   }
+   ```
+
+    <img src="portfolioAboutLogoAndTestimonials.png">
+
+### Work Gallery with Transitions
+
+1. The feature we are going to create here is the "**hover**" effect when mouse cursor point on an image, it will show an overlay effect on the object.
+1. We create another `work.html` in the `dist` folder. In this page, we have 9 items to put in the grid. Besides, we add `box-shadow` to the grid. In addition, don't forget to import the `_item_grid.scss` to `main.scss`.
+   ```scss
+   .items {
+     display: grid;
+     grid-template-columns: repeat(3, 1fr);
+     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
+   }
+   ```
+1. HTML
+
+   ```html
+   <!-- Section A: Gallery -->
+   <section id="work-a" class="text-center py-3">
+     <div class="container">
+       <h2 class="section-title">My Work</h2>
+       <div class="bottom-line"></div>
+       <p class="lead">Check out some of my projects</p>
+       <div class="items">
+           <!-- Item 1 -->
+           <div class="item">
+               <div class="item-image">
+               <img src="img/items/item1.png" alt="" />
+               </div>
+               <div class="item-text">
+                   <div class="item-text-wrap">
+                       <p class="item-text-category">Design</p>
+                       <h2 class="item-text-title">Great Gradients</h2>
+                   </div>
+               </div>
+           </div>
+           <!-- End Item 1 -->
+           </div>
+       </div>
+     </div>
+   </section>
+   ```
+
+    <img src="portfolioWorkGrid.png">
+
+1. After `.items` (we have `items` and `item` classes), we set the element as `position: relative`, as its inner objects will use `position: absolute`. We then use `transform: scale(2) translateX(-75%) translateY(-75%) rotate(-28deg)` to create the overlay. Besides, we use `transition: transform 3s cubic-bezier(0.2, 1, 0.3, 1)` to create the effect.
+1. Usually, we use `ease-in` and `ease-out` to animate the effect. By using [`Cubic Bezier`](https://cubic-bezier.com/), we can control the speed of the animation directly.
+
+   ```scss
+   .item {
+     position: relative;
+     background: $main-color;
+     overflow: hidden;
+
+     &::after {
+       content: "";
+       position: absolute;
+       display: block;
+       background: inherit;
+       opacity: 0.9;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       transform: scale(2) translateX(-75%) translateY(-75%) rotate(-28deg);
+       transition: transform 3s cubic-bezier(0.2, 1, 0.3, 1);
+     }
+
+     // Bring in main color overlay
+     &:hover:after {
+       transform: scale(2) translateX(0) translateY(0) rotate(-28deg);
+     }
+   }
+   ```
+
+1. For each item, we add the following CSS effect (which is very complex)
+
+   ```scss
+   .item {
+     position: relative;
+     background: $main-color;
+     overflow: hidden;
+
+     &::after {
+       content: "";
+       position: absolute;
+       display: block;
+       background: inherit;
+       opacity: 0.9;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       transform: scale(2) translateX(-75%) translateY(-75%) rotate(-28deg);
+       transition: transform 3s cubic-bezier(0.2, 1, 0.3, 1);
+     }
+
+     // Bring in main color overlay
+     &:hover:after {
+       transform: scale(2) translateX(0) translateY(0) rotate(-28deg);
+     }
+
+     // Scale image on hover
+     &:hover &-image {
+       transform: scale(1.2);
+     }
+
+     // Bring in text on hover
+     &:hover &-text {
+       opacity: 1;
+       transform: translateY(0);
+     }
+
+     &-image {
+       height: auto;
+       transform: translateZ(0);
+       display: block;
+       transition: transform 750ms cubic-bezier(0.2, 1, 0.3, 1);
+     }
+
+     &-image:before {
+       content: "";
+       display: block;
+       padding-top: 75%;
+       overflow: hidden;
+     }
+
+     &-image img {
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       line-height: 0;
+     }
+
+     &-text {
+       position: absolute;
+       top: 0;
+       left: 0;
+       bottom: 0;
+       right: 0;
+       opacity: 0;
+       text-align: center;
+       z-index: 1;
+       color: #fff;
+       transform: translateY(-20%);
+       transition: opacity 500ms cubic-bezier(0.2, 1, 0.3, 1) transform 500ms cubic-bezier(
+           0.2,
+           1,
+           0.3,
+           1
+         );
+       transition-delay: 300ms;
+     }
+
+     &-text-wrap {
+       position: absolute;
+       width: 100%;
+       top: 50%;
+       transform: translateY(-50%);
+     }
+
+     &-text-title {
+       font-size: 2rem;
+       padding: 0 1rem;
+       margin-top: 5px;
+     }
+
+     &-text-category {
+       text-transform: uppercase;
+       font-size: 1.2rem;
+       opacity: 0.7;
+       margin: 0;
+     }
+   }
+   ```
+
+     <img src="portfolioWorkGrid.gif">
+
+### Contact Page
+
+1. HTML
+
+   ```html
+   <!-- Section A: Contact Form -->
+   <section id="contact-a" class="text-center py-3">
+     <div class="container">
+       <h2 class="section-title">Contact Me</h2>
+       <div class="bottom-line"></div>
+       <p class="lead">Here is how you can reach me</p>
+       <form>
+         <div class="text-fields">
+           <input
+             type="text"
+             class="text-input name-input"
+             placeholder="Name"
+           />
+           <input
+             type="text"
+             class="text-input subject-input"
+             placeholder="Subject"
+           />
+           <input
+             type="email"
+             class="text-input email-input"
+             placeholder="Email Address"
+           />
+           <input
+             type="text"
+             class="text-input phone-input"
+             placeholder="Phone Number"
+           />
+           <textarea
+             class="text-input message-input"
+             placeholder="Enter Message"
+           ></textarea>
+         </div>
+         <button class="btn-dark" type="submit">Submit</button>
+       </form>
+     </div>
+   </section>
+
+   <!-- Section B: Contact Info -->
+   <section id="contact-b" class="py-3 bg-dark">
+     <div class="container">
+       <div class="contact-info">
+         <div>
+           <i class="fas fa-envelope fa-2x"></i>
+           <h3>Email</h3>
+           <p>center@airportels.asia</p>
+         </div>
+         <div>
+           <i class="fas fa-phone fa-2x"></i>
+           <h3>Phone</h3>
+           <p>+6663-216-6699</p>
+         </div>
+         <div>
+           <i class="fas fa-address-card fa-2x"></i>
+           <h3>Address</h3>
+           <p>32/4, soi 26 Sukhumvit, Klongtoei, Bangkok, Thailand 10110</p>
+         </div>
+       </div>
+     </div>
+   </section>
+
+   <!-- Section C: Tagline -->
+   <section id="contact-c" class="bg-main py-4">
+     <div class="container">
+       <h1>Let's Start Your Next Project</h1>
+     </div>
+   </section>
+   ```
+
+1. SCSS
+
+   ```scss
+   // Contact Page
+   #contact {
+     &-a {
+       .text-fields {
+         display: grid;
+         grid-template-areas:
+           "name email"
+           "subject phone"
+           "message message";
+         grid-gap: 1.2rem;
+         margin-bottom: 1.2rem;
+
+         // Grid Areas
+         .name-input {
+           grid-area: name;
+         }
+         .subject-input {
+           grid-area: subject;
+         }
+         .email-input {
+           grid-area: email;
+         }
+         .phone-input {
+           grid-area: phone;
+         }
+         .message-input {
+           grid-area: message;
+           height: 100px;
+         }
+
+         .text-input {
+           padding: 0.5rem 1rem;
+         }
+       }
+
+       button[type="submit"] {
+         width: 50%;
+       }
+     }
+
+     &-b {
+       .contact-info {
+         display: grid;
+         grid-template-columns: repeat(3, 1fr);
+         text-align: center;
+       }
+     }
+
+     &-c {
+       h1 {
+         text-align: center;
+         font-size: 4rem;
+       }
+     }
+   }
+   ```
+
+   <img src="portfolioContact.png">
+
+### Responsive Media Queries
+
+1. As the page is not responsive, we will add media queries to scss. However, we'd like the files separated to manage them easily. We create `_media.scss` in `scss` folder and use `@import '_media` at the bottom of `main.scss`.
+1. A hint here's that we should consider the landscape mode of smartphones, such as ipohne X, and smaller phones, such as iphone 5/SE.
+
+   ```scss
+   // Tablets and Smaller
+   @media (max-width: 800px) {
+     #header-home {
+       height: 30rem;
+
+       .header-content {
+         padding-top: 5rem;
+       }
+     }
+   }
+
+   // Smartphones
+   @media (max-width: 500px) {
+     #main-nav {
+       flex-direction: column;
+       align-items: center;
+
+       li {
+         padding: 1rem;
+       }
+     }
+
+     #header {
+       &-home {
+         height: 10rem;
+         border-bottom: 3px solid $main-color;
+         background-position: 20% 30%;
+
+         .header-content {
+           display: none;
+         }
+       }
+
+       &-inner {
+         height: 10rem;
+       }
+     }
+
+     // Stack Grid Columns
+     #home-a .specials,
+     #home-b .stats,
+     #home-c .process,
+     #about-d .testimonials,
+     #contact-b .contact-info,
+     .items {
+       grid-template-columns: 1fr;
+     }
+
+     // Home
+     #home {
+       &-a {
+         .specials div {
+           border-bottom: 1px $light-color solid;
+           padding-bottom: 1rem;
+
+           &:last-child {
+             border: none;
+             padding-bottom: 0;
+           }
+         }
+       }
+
+       &-b {
+         .stats div {
+           padding: 2rem 0 1rem 0;
+         }
+       }
+     }
+
+     // About
+     #about {
+       &-a {
+         .about-info {
+           grid-template-areas:
+             "bioimage"
+             "bio"
+             "aw1"
+             "aw2"
+             "aw3";
+         }
+       }
+
+       &-c {
+         display: none;
+       }
+     }
+
+     // Contact
+     #contact {
+       &-a {
+         .text-fields {
+           grid-template-areas:
+             "name"
+             "subject"
+             "email"
+             "phone"
+             "message";
+         }
+       }
+
+       &-b {
+         div {
+           margin-bottom: 1rem;
+           padding-bottom: 1rem;
+           border-bottom: 1px #555 solid;
+
+           &:last-child {
+             border: none;
+             margin-bottom: 0;
+             padding-bottom: 0;
+           }
+         }
+       }
+
+       &-c {
+         h1 {
+           font-size: 2rem;
+         }
+       }
+     }
+
+     // Footer
+     #main-footer {
+       height: 7rem;
+
+       .footer-content {
+         flex-direction: column;
+         padding: 1rem;
+         height: 5rem;
+       }
+     }
+   }
+
+   // Landscape
+   @media (max-height: 580px) {
+     #header-home {
+       .header-content {
+         padding-top: 3rem;
+       }
+     }
+   }
+
+   @media (max-height: 320px) {
+     #header-home {
+       .header-content {
+         h1 {
+           font-size: 2rem;
+         }
+       }
+     }
+   }
+   ```
+
+1) Tablet
+
+   <img src="portfolioTablet.PNG">
+
+1) Mobile
+
+   <img src="portfolioMobileiphoneX.PNG">
+
+1) Landscape
+
+   1. iPhoneX
+
+      <img src="portfolioLandsacpeiphoneX.PNG">
+
+   1. iPhone5/SE
+
+      <img src="portfolioLandsacpeiphoneSE.PNG">
+
+### Deploy and Contact Form with Spam Filter
+
+1. In the `<form>` tag in `contact.html`, we add 2 attributes. Besides, we add `name` attribute in each input.
+1. We can add `recaptcha` on the form to prevent spams sending to our email. We can check documentation [here](https://docs.netlify.com/forms/spam-filters/#netlify-provided-recaptcha-2).
+1. To enable the feature, we change attribute in `<form>` tag to `data-netlify-recaptcha="true"`
+
+   ```html
+   <!-- Section A: Contact Form -->
+   <section id="contact-a" class="text-center py-3">
+     <div class="container">
+       <h2 class="section-title">Contact Me</h2>
+       <div class="bottom-line"></div>
+       <p class="lead">Here is how you can reach me</p>
+       <form method="POST" data-netlify-recaptcha="true">
+         <div class="text-fields">
+           <input
+             type="text"
+             class="text-input name-input"
+             placeholder="Name"
+             name="name"
+           />
+           <input
+             type="text"
+             class="text-input subject-input"
+             placeholder="Subject"
+             name="subject"
+           />
+           <input
+             type="email"
+             class="text-input email-input"
+             placeholder="Email Address"
+             name="email"
+           />
+           <input
+             type="text"
+             class="text-input phone-input"
+             placeholder="Phone Number"
+             name="phone"
+           />
+           <textarea
+             class="text-input message-input"
+             placeholder="Enter Message"
+             name="message"
+           ></textarea>
+         </div>
+         <div class="my-2">
+           <div data-netlify-recaptcha="true"></div>
+         </div>
+         <button class="btn-dark" type="submit">Submit</button>
+       </form>
+     </div>
+   </section>
+   ```
