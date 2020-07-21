@@ -2967,3 +2967,115 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
      }
    });
    ```
+
+### Building the Recipe Model - Part 1
+
+1. Since we are going to use the same API endpoint, keys, and proxy if needed throughout the models, we can create another model for configuration. We create a new model `config.js` and put it in the same folder as `index.js`. However, we should never store any sensitive data on client side.
+1. We then create our Recipe data model in `Recipe.js`. The `Object` is created based on the API response.
+
+   ```js
+   import axios from "axios";
+
+   export default class Recipe {
+     constructor(id) {
+       this.id = id;
+     }
+
+     async getRecipe() {
+       try {
+         const result = await axios(
+           `https://forkify-api.herokuapp.com/api/get?rId=${this.id}`
+         );
+         const recipe = result.data.recipe;
+         this.title = recipe.title;
+         this.author = recipe.publisher;
+         this.image = recipe.image_url;
+         this.url = recipe.source_url;
+         this.ingredients = recipe.ingredients;
+       } catch (error) {
+         console.log(error);
+         alert("Something went wrong :(");
+       }
+     }
+
+     calcTime() {
+       // Assuming that we need 15 mins for each 3 ingredients
+       const numIngredients = this.ingredients.length;
+       const periods = Math.ceil(numIngredients / 3);
+       this.time = period * 15;
+     }
+
+     calcServing() {
+       this.serving = 4;
+     }
+   }
+   ```
+
+1. We the have the code in `index.js` to test the function.
+   ```js
+   // Recipe Controller
+   const result = new Recipe(47746);
+   result.getRecipe();
+   console.log(result);
+   ```
+
+### Building the Recipe Controller
+
+1. Learning Objects
+   1. Read data from the Page URL
+   1. Respond to the hashchange event
+   1. Add the same event listener to multiple events
+1. There's a type of event in JavaScript is called `hash change` which is when the URL changes and direct to different tags on the same page. For example,
+   1. URL: `http://localhost:8080/#47746`
+   1. URL: `http://localhost:8080/#46956`
+1. We can add an event listener in the global object in the browser, which is the `window` object. We can check `window.location` which will return the whole URL on the search bar. If we access `hash` property, we will get the value of the hashtag on the URL. Note that this `location` property return some useful information such as `hash`, `host`, `origin`, `port`, and `href`.
+
+   ```js
+   const controlRecipe = function () {
+     const id = window.location.hash;
+     console.log(id);
+   };
+
+   window.addEventListener("hashchange", controlRecipe);
+   ```
+
+    <img src="forkifyRecipeData.png">
+
+1. We add the Recipe controller in `index.js`. We use the same `state` to gather all the data we received into a single `Object` that is easier to manage and control. Besides, we use `try` and `catch` to work on `await` function as it could fail and cause the whole program crashes. In this stage, we can try to change the ID in the URL to see the data rendered in browser console. However, such feature isn't useful and we'd like to check if there's any `id` given when page is loaded. For example, a user may bookmark the URL with an ID attached. Without the checking event, the program wouldn't render the desirable data.
+1. We get back to the Search section and add on `try` and `catch` for `await` function.
+1. We can put all the events we want to add on certain DOM object and use `.forEach()` array method to add them on the same DOM object.
+
+   ```js
+   // Recipe Controller
+   const controlRecipe = async function () {
+     // Get the ID from URL
+     const id = window.location.hash.replace("#", "");
+     console.log(id);
+
+     if (id) {
+       // Prepare UI for changes
+
+       // Create new recipe object
+       state.recipe = new Recipe(id);
+
+       try {
+         // Get recipe data
+         await state.recipe.getRecipe();
+
+         // Calculate servings and time
+         state.recipe.calcTime();
+         state.recipe.calcServings();
+
+         // Render recipe
+         console.log(state.recipe);
+       } catch (error) {
+         alert("Error processing recipe!");
+       }
+     }
+   };
+
+   // add multiple event listener on the same DOM object
+   ["hashchange", "load"].forEach(function (event) {
+     window.addEventListener(event, controlRecipe);
+   });
+   ```
