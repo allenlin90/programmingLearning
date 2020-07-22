@@ -10,7 +10,8 @@ const formatCount = function (count) {
     // count = 2.5 --> 2 1/2
     // count = 0.5 --> 1/2
     // separate digits before and after the dot '.'
-    const [int, dec] = count
+    const newCount = Math.round(count * 10000) / 10000;
+    const [int, dec] = newCount
       .toString()
       .split(".")
       .map(function (item) {
@@ -18,17 +19,17 @@ const formatCount = function (count) {
       });
 
     // return the number directly if there's no decimal
-    if (!dec) return count;
+    if (!dec) return newCount;
 
     if (int === 0) {
-      const fr = new Fraction(count);
+      const fr = new Fraction(newCount);
       return `${fr.numerator}/${fr.denominator}`;
     } else {
-      const fr = new Fraction(count - int);
+      const fr = new Fraction(newCount - int);
       return `${int} ${fr.numerator}/${fr.denominator}`;
     }
   }
-  return "?"; // if the number 'count' doesn't exist
+  return "?"; // if the number 'newCount' doesn't exist
 };
 
 const createIngredients = function (ingredient) {

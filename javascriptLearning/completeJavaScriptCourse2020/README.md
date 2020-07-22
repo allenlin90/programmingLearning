@@ -3854,3 +3854,86 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    ```
 
 ### Implementing Persistent Data with Local Storage
+
+1. Learning Objectives
+   1. Use the localStorage API
+   1. Set, Get, and Delete items from local storage
+1. `localStorage` is a gobal variable that is attached on `window` object. Besides, the data will be stored locally that though the page is reloaded, the data stored in the variable won't be removed. We can use its methods to set, retireve, or remove the data. Note that it takes key/value pair and the type of data can only be `String` which is similar to `JSON`.
+   1. localStorage.setItem(`strKey`, `strVal`)
+   1. localStorage.getItem(`strKey`, `strVal`)
+   1. localStorage.removeItem(`strKey`, `strVal`)
+1. In this case, we can keep the data in `likes` stored locally. In `Like` data model, we push the like data into an `Array`. Therefore, every time we add or remove data to the `Array`, we can also keep and store them in `localStorage`.
+1. In `Like.js`, we can add another method to turn the `Object` into JSON, which is a long `String` that can be added to `localStorage`. Besides keeping the data in `localStorage`, the program should be able to retrieve data from `localStorage` as well.
+
+   ```js
+   class Like {
+     constructor() {
+       this.likes = [];
+     }
+
+     addLike(id, title, author, img) {
+       const like = { id, title, author, img };
+       this.likes.push(like);
+
+       // Persist data in localStorage
+       this.persistData();
+       return like;
+     }
+
+     removeLike(id) {
+       const index = this.likes.findIndex(function (item) {
+         return item.id === id;
+       });
+       this.likes.splice(index, 1);
+
+       // Persist data in localStorage
+       this.persistData();
+     }
+
+     persistData() {
+       localStorage.setItem("like", JSON.stringify(this.likes));
+     }
+
+     readStorage() {
+       const storage = JSON.parse(localStorage.getItem("likes"));
+
+       // check if localStorage has stored data and restore likes from it
+       if (storage) this.likes = storage;
+     }
+   }
+   ```
+
+1. We then update `index.js` to ensure that everyone time the page load up, the program will look up if there's any data stored in localStorage first before it proceeds.
+
+   ```js
+   // Restore liked recipes on page load
+   window.addEventListener("load", function (event) {
+     state.likes = new Likes();
+
+     // Restore Likes
+     state.likes.readStorage();
+
+     // Toggle like menu button
+     likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+     // Render the existing likes
+     state.likes.likes.forEach((like) => likesView.renderLike(like));
+   });
+   ```
+
+### Wrapping up: Final Considerations
+
+1. There's a bug from the fractional package that some nubmers are not rounded and has very long digits, such as 100 divded by 3 will get 33.3333...
+1. We therefore get back to fix the issue in `recipeView.js` to round up the numbers before `fractional` package deals with it. In this case, we just multiply the result from `Math.round()` which is an integer by ten thousand and divide it by ten thousand again.
+   ```js
+   const newCount = Math.round(count * 10000) / 10000;
+   ```
+1. We then get back to check `index.js` and take out all unnecessary `console.log` and variables expose to global scope, attached to `window` for testing purpose.
+1. After all the process are ready, we can run `npm run build` to create the production version of the program. The whole JavaScript file will be compressed into `bundle.js` in one-line.
+1. There are futher topics we can work on to improve the program.
+   1. Implement button to delete all shopping list items
+   1. Implement functionality to manually add items to shopping list
+   1. Save shopping list data in local storage
+   1. Improve the ingredients parsing algorithm
+   1. Come up with an algorithm for calculating the amount of servings
+   1. Improve error handling
