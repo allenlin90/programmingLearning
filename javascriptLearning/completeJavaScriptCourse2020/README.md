@@ -3521,3 +3521,169 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    1. How and Why to create unique IDs using external package
    1. Difference between `Array.slice` and `Array.splice`
    1. More uses cases for `Array.findIndex` and `Array.find`
+1. In `model` directory, we create the data structure for shopping list as `List.js` and set up and new class `List`.
+
+   1. For each item (ingredients) of the recipe, we should assign them an ID. However, as the IDs are dynamic and not consistent to be used systematically, we can use a npm package `uniquid` to assign an unique ID for a certain ingredient.
+   1. To delete an element from an `Array`, we can use `.splice()` method that it takes the index for the position of the element to remove as the 1st argument, and number of elements to remove as the 2nd argument. Note that this method modify the orignal `Array` it works on directly. Besides, we can use `.findIndex()` method to get the index of the item we'd like to remove.
+   1. After all, we can use `.find()` method to locate the element in the array and update its `count` attribute.
+
+   ```js
+   import uniqid from "uniqid";
+
+   export default class List {
+     constructor() {
+       this.items = [];
+     }
+
+     additem(count, unit, ingredient) {
+       const item = {
+         id: uniqid(), // use uniqid library to create an unique id
+         count,
+         unit,
+         ingredient,
+       };
+       this.items.push(item);
+     }
+
+     deleteItem(id) {
+       const index = this.items.findIndex(function (item) {
+         return item.id === id;
+       });
+       // [2,4,8].splice(1,2) --> return [4, 8], original array will be [2]
+       // [2,4,8].slice(1,2) --> return [4], original array will be [2, 4, 8]
+       this.items.splice(index, 1);
+     }
+
+     updateCount(id, newCount) {
+       this.items.find(function (item) {
+         return item.id === id;
+       }).count = newCount;
+     }
+   }
+   ```
+
+1. To test the function, we can create a variable in the global scope and assign it to `window`, which is the global object.
+
+### Building the Shopping List View
+
+1. We create `listView.js` in `views` directory.
+1. We use `data-*` attribute in the HTML tag here as to ease the process to locate the correct element on the page. As the event is going to bubble up and elements are sharing classes, the easier way to find a certain element is to search for its unique ID. However, by using `id` directly may have issue that CSS styling may use the same id to work on (though not usual), we can use `data` attribute.
+
+   ```js
+   import { elements } from "./base";
+
+   export const renderItem = function (item) {
+     const markup = `
+       <li class="shopping__item" data-itemid=${item.id}>
+           <div class="shopping__count">
+               <input type="number" value="${item.count}" step="${item.count}" class="shopping__count-value">
+               <p>${item.unit}</p>
+           </div>
+           <p class="shopping__description">${item.ingredient}</p>
+           <button class="shopping__delete btn-tiny">
+               <svg>
+                   <use href="img/icons.svg#icon-circle-with-cross"></use>
+               </svg>
+           </button>
+       </li>
+       `;
+     elements.shopping.insertAdjacentElement("beforeend", markup);
+   };
+
+   export const deleteItem = function (id) {
+     const item = document.querySelector(`[data-itemid="${id}"]`);
+     item.parentElement.removeChild(item);
+   };
+   ```
+
+### Building the Shopping List Controller
+
+1. In `index.js`, we update the controller to add items in the shopping list and create a `list` in the `state` object if the list hasn't been created.
+
+   ```js
+   // List Controller
+   const controlList = function () {
+     // Create a new list IF there is none yet
+     if (!state.list) {
+       state.list = new List();
+     }
+
+     // Add each ingredient to the list and UI
+     state.recipe.ingredients.forEach(function (e) {
+       const item = state.list.addItem(e.count, e.unit, e.ingredient);
+       listView.renderItem(item);
+     });
+   };
+   ```
+
+1. Besides, we add a class in the HTML rendered on the recipe section, which is in `recipeView.js`, and we need to update the listener on event for the button at the bottom of the recipe section.
+
+   1. `index.js`
+
+   ```js
+   // Handling recipe button clicks
+   elements.recipe.addEventListener("click", function (event) {
+     if (event.target.matches(".btn-decrease, .btn-decrease *")) {
+       // decrease button is clicked
+       if (state.recipe.servings > 1) {
+         state.recipe.updateServings("dec");
+         recipeView.updateServingsIngredients(state.recipe);
+       }
+     } else if (event.target.matches(".btn-increase, .btn-increase *")) {
+       // increase button is clicked
+       state.recipe.updateServings("inc");
+       recipeView.updateServingsIngredients(state.recipe);
+     } else if (
+       event.target.matches(".recipe__btn--add, .recipe__btn--add *")
+     ) {
+       controlList();
+     }
+   });
+   ```
+
+   1. `recipeView.js`
+
+   ```js
+   // recipeView.js
+   `<div class="recipe__ingredients">
+       <ul class="recipe__ingredient-list">
+           ${recipe.ingredients.map(createIngredients).join("")}
+       </ul>
+   
+       <button class="btn-small recipe__btn recipe__btn--add">
+           <svg class="search__icon">
+               <use href="img/icons.svg#icon-shopping-cart"></use>
+           </svg>
+           <span>Add to shopping list</span>
+       </button>
+   </div>`;
+   ```
+
+1. We add another delete event handler in `index.js`. We can limit the minimum value to update to `state` as 0, as the number of ingredients should not be negative. Besides, we can give `min` attribute to `<input>` tag to have the minimum at 0.
+
+   ```js
+   // Handle delete and update list item events
+   elements.shopping.addEventListener("click", function (event) {
+     const id = event.target.closest(".shopping__item").dataset.itemid;
+
+     // Handle the delete button
+     if (event.target.matches(".shopping__delete, .shopping__delete *")) {
+       // Delete from state
+       state.list.deleteItem(id);
+
+       // Delete from UI
+       listView.deleteItem(id);
+
+       // Handle the count update
+     } else if (e.target.matches(".shopping__count-value")) {
+       const val = parseInt(e.target.value);
+       if (val > 0) {
+         state.list.updateCount(id, val);
+       }
+     }
+   });
+   ```
+
+### Building the Likes Model
+
+1.
