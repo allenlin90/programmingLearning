@@ -10,6 +10,16 @@ export const clearResults = function () {
   elements.searchResultPages.innerHTML = "";
 };
 
+export const highlightSelected = function (id) {
+  const resultsArr = Array.from(document.querySelectorAll(".results__link"));
+  resultsArr.forEach(function (item) {
+    item.classList.remove("results__link--active");
+  });
+  document
+    .querySelector(`a[href="#${id}"]`)
+    .classList.add("results__link--active");
+};
+
 // clear the input text bar
 export const clearInput = function () {
   elements.searchInput.value = "";

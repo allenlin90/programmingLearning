@@ -3079,3 +3079,445 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
      window.addEventListener(event, controlRecipe);
    });
    ```
+
+### Building the Recipe Model - Part 2
+
+1. Learning Objects
+   1. Use array methods like `.map()`, `.slice()`, `.findIndex()`, `.includes()`
+   1. How and why to use `eval()`
+1. The target is to list out the required ingredients according to the food recipe with number of servings (which default is `4` when we set up in `Recipe.js` data model). The list of ingredients will be rendered in the "**Recipe**" section on the page and can be added to the "**Shopping List**" on the right. Besides, the number and portion of ingredients can be adjusted according to number of servings.
+1. The first step is to unify the units used in the recipe, such as "**teaspoon(s)**" in `Recipe.js`.
+1. We create an algorithm to replace the long unit name to a shorter version. In this case, we create 2 arrays that has the same length and has both long and short version of a unit aligned. There are 3 steps to accomplish the task
+
+   1. Uniform units. We then use `.forEach()` method to iterate through and use `.replace()` method and `index` to substitute the unit.
+
+   ```js
+   const unitsLong = [
+     "tabelspoon",
+     "tablespoons",
+     "ounce",
+     "ounces",
+     "teaspoon",
+     "teaspoons",
+     "cups",
+     "pounds",
+   ];
+   console.log(unitsLong.length); // 7
+   const unitsShort = [
+     "tbsp",
+     "tbsps",
+     "oz",
+     "oz",
+     "tsp",
+     "tsp",
+     "cup",
+     "pound",
+   ];
+   console.log(unitsShort.length); // 7
+   unitsLong.forEach(function (unit, index) {
+     ingredients = ingredients.replace(unit, unitsShort[i]);
+   });
+   ```
+
+   1. Remove parenthesis. In this case, we use regular expression to parse the `String` and remove the parenthesis in between. Note that we should return a whitespae `' '` rather than empty `String` `''`, or the text will be concatenate to each other.
+
+   ```js
+   ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
+   ```
+
+   1. Parse ingredients into count, unit, and ingredient. In this case, we use split to separate each terms of the ingredient into an `Array` and use `.findIndex()` method which takes a callback function to find the index of the first match in the given condition. Note that `.findIndex()` method returns `-1` if no element is found in the `Array`.
+
+      ```js
+      const arrIngredients = ingredient.split(" ");
+      const unitIndex = arrIngredients.findIndex(function (ele) {
+        return unitsShort.includes(ele);
+      });
+
+      if (unitIndex > -1) {
+        // manipulate the string in different conditions
+      }
+      ```
+
+1. In this case, we use `eval()` function which is to allow JavaScript to parse a `String` of math operations and execute it as expression to get the value. For example,
+   ```js
+   let str = "10 / 4";
+   let num = eval(str);
+   console.log(num); // 2.5
+   ```
+1. The method to parse the recipe in `Recipe.js`.
+
+   ```js
+     parseIngredients() {
+       const unitsLong = [
+         "tablespoon",
+         "tablespoons",
+         "ounces",
+         "ounce",
+         "teaspoons",
+         "teaspoon",
+         "cups",
+         "pounds",
+       ];
+       const unitsShort = [
+         "tbsp",
+         "tbsps",
+         "oz",
+         "oz",
+         "tsp",
+         "tsp",
+         "cup",
+         "pound",
+       ];
+       const newIngredients = this.ingredients.map(function (item) {
+         // 1) Uniform units
+         let ingredient = item.toLowerCase();
+         unitsLong.forEach(function (unit, index) {
+           ingredient = ingredient.replace(unit, unitsShort[index]);
+         });
+
+         // 2) Remove parenthesis
+         ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
+
+         // 3) Parse ingredients into count, unit and ingredient
+         const arrIngredients = ingredient.split(" ");
+         const unitIndex = arrIngredients.findIndex(function (ele) {
+           return unitsShort.includes(ele);
+         });
+
+         let objIngredient;
+         if (unitIndex > -1) {
+           // There is a unit as the result is not -1
+           // E.g. 4 1/2 cups, arrCount is [4, 1/2] --> eval('4+1/2') --> 4.5
+           // E.g. 4 cups, arrCount is [4]
+           const arrCount = arrIngredients.slice(0, unitIndex);
+
+           let count;
+           if (arrCount.length === 1) {
+             count = eval(arrIngredients[0].replace("-", "+"));
+           } else {
+             count = eval(arrIngredients.slice(0, unitIndex).join("+"));
+           }
+
+           objIngredient = {
+             count,
+             unit: arrIngredients[unitIndex],
+             ingredient: arrIngredients.slice(unitIndex + 1).join(" "),
+           };
+         } else if (parseInt(arrIngredients[0])) {
+           // There is no unit, but 1st element is number, such as 1 red onion
+           objIngredient = {
+             count: parseInt(arrIngredients[0]),
+             unit: "",
+             ingredient: arrIngredients.slice(1).join(" "),
+           };
+         } else if (unitIndex === -1) {
+           // There is no unit and no number in 1st position
+           objIngredient = {
+             count: 1,
+             unit: "",
+             ingredient, // create a property with value of 'ingredient' in the scope directly by ES6 syntax
+           };
+         }
+
+         return objIngredient;
+       });
+       this.ingredients = newIngredients;
+     }
+   ```
+
+### Building the Recipe View - Part 1
+
+1. We create a new view model `recipeViews.js` in `views` directory. As we get multiple ingredients and each of them should be listed as a group HTML elements (according to template). We can use multi-line `String` as backtick notation `${}` can take not only a varible but an expression. We use `${recipe.ingredients.map(createIngredients).join("")}` in the HTML strings and use `.map()` method to create a manipulated `Array`, then use `.join()` method to concatenate the text as a large piece of message.
+
+   ```js
+   // recipeViews.js
+   import { elements } from "./base";
+
+   export const clearRecipe = function () {
+     elements.recipe.innerHTML = "";
+   };
+
+   const createIngredients = function (ingredient) {
+     return `
+           <li class="recipe__item">
+               <svg class="recipe__icon">
+                   <use href="img/icons.svg#icon-check"></use>
+               </svg>
+               <div class="recipe__count">${ingredient.count}</div>
+               <div class="recipe__ingredient">
+                   <span class="recipe__unit">${ingredient.unit}</span>
+                   ${ingredient.ingredient}
+               </div>
+           </li>
+       `;
+   };
+
+   export const renderRecipe = function (recipe) {
+     const markup = `
+           <figure class="recipe__fig">
+               <img src="${recipe.image}" alt="${
+       recipe.title
+     }" class="recipe__img">
+               <h1 class="recipe__title">
+                   <span>${recipe.title}</span>
+               </h1>
+           </figure>
+           <div class="recipe__details">
+               <div class="recipe__info">
+                   <svg class="recipe__info-icon">
+                       <use href="img/icons.svg#icon-stopwatch"></use>
+                   </svg>
+                   <span class="recipe__info-data recipe__info-data--minutes">${
+                     recipe.time
+                   }</span>
+                   <span class="recipe__info-text"> minutes</span>
+               </div>
+               <div class="recipe__info">
+                   <svg class="recipe__info-icon">
+                       <use href="img/icons.svg#icon-man"></use>
+                   </svg>
+                   <span class="recipe__info-data recipe__info-data--people">${
+                     recipe.servings
+                   }</span>
+                   <span class="recipe__info-text"> servings</span>
+   
+                   <div class="recipe__info-buttons">
+                       <button class="btn-tiny">
+                           <svg>
+                               <use href="img/icons.svg#icon-circle-with-minus"></use>
+                           </svg>
+                       </button>
+                       <button class="btn-tiny">
+                           <svg>
+                               <use href="img/icons.svg#icon-circle-with-plus"></use>
+                           </svg>
+                       </button>
+                   </div>
+   
+               </div>
+               <button class="recipe__love">
+                   <svg class="header__likes">
+                       <use href="img/icons.svg#icon-heart-outlined"></use>
+                   </svg>
+               </button>
+           </div>  
+   
+            <div class="recipe__ingredients">
+                <ul class="recipe__ingredient-list">
+                    ${recipe.ingredients.map(createIngredients).join("")}
+                </ul>
+   
+                <button class="btn-small recipe__btn">
+                    <svg class="search__icon">
+                        <use href="img/icons.svg#icon-shopping-cart"></use>
+                    </svg>
+                    <span>Add to shopping list</span>
+                </button>
+            </div>
+   
+            <div class="recipe__directions">
+                <h2 class="heading-2">How to cook it</h2>
+                <p class="recipe__directions-text">
+                    This recipe was carefully designed and tested by
+                    <span class="recipe__by">${
+                      recipe.author
+                    }</span>. Please check out directions at their website.
+                </p>
+                <a class="btn-small recipe__btn" href="${
+                  recipe.url
+                }" target="_blank">
+                    <span>Directions</span>
+                    <svg class="search__icon">
+                        <use href="img/icons.svg#icon-triangle-right"></use>
+                    </svg>
+   
+                </a>
+            </div>
+        `;
+     // render HTML on the page according to received data
+     elements.recipe.insertAdjacentHTML("afterbegin", markup);
+   };
+   ```
+
+1. Similar concept to search view, we should clear out the section of the HTML contents on the page and prepare the loader spinner before async function return the data.
+
+   ```js
+   // Recipe Controller
+   const controlRecipe = async function () {
+     // Get the ID from URL
+     const id = window.location.hash.replace("#", "");
+     // console.log(id);
+
+     if (id) {
+       // Prepare UI for changes
+       recipeView.clearRecipe();
+       renderLoader(elements.recipe);
+
+       // Create new recipe object
+       state.recipe = new Recipe(id);
+
+       // Testing to get a global variable directly
+       // window.r = state.recipe;
+
+       try {
+         // Get recipe data
+         await state.recipe.getRecipe();
+         console.log(state.recipe);
+         state.recipe.parseIngredients();
+
+         // Calculate servings and time
+         state.recipe.calcTime();
+         state.recipe.calcServings();
+
+         // Render recipe
+         clearLoader();
+         recipeView.renderRecipe(state.recipe);
+       } catch (error) {
+         alert("Error processing recipe!");
+       }
+     }
+   };
+   ```
+
+   <img src="forkifyRecipeView.gif">
+
+### Building the Recipe View - Part 2
+
+1. Since we have some fractions of ingredients such as '1.5 cup of milk', we can use a npm package `fractional` to turn the string into text. For example, `1.5` can be `1 1/2` one and a half, and `2.25` can be `2 1/4` 2 and one quarter.
+
+   ```js
+   // recipeViews.js
+   import { Fraction } from "fractional";
+
+   const formatCount = function (count) {
+     if (count) {
+       // count = 2.5 --> 2 1/2
+       // count = 0.5 --> 1/2
+       // separate digits before and after the dot '.'
+       const [int, dec] = count
+         .toString()
+         .split(".")
+         .map(function (item) {
+           return parseInt(item);
+         });
+
+       // return the number directly if there's no decimal
+       if (!dec) return count;
+
+       if (int === 0) {
+         const fr = new Fraction(count);
+         return `${fr.numerator}/${fr.denominator}`;
+       } else {
+         const fr = new Fraction(count - int);
+         return `${int} ${fr.numerator}/${fr.denominator}`;
+       }
+     }
+     return "?"; // if the number 'count' doesn't exist
+   };
+   ```
+
+1. We'd like the selected item in the search result list be highlighted when the user click an item. Thus, we export another function in `searchView.js`.
+   ```js
+   export const highlightSelected = function (id) {
+     const resultsArr = Array.from(document.querySelectorAll(".results__link"));
+     resultsArr.forEach(function (item) {
+       item.classList.remove("results__link--active");
+     });
+     document
+       .querySelector(`a[href="#${id}"]`)
+       .classList.add("results__link--active");
+   };
+   ```
+1. We then add the method in `index.js` in the recipe controller, as this method should only be trigerred when a item is selected and the recipe is going to render in the recipe section.
+   ```js
+   // highlight selected search item
+   if (state.search) {
+     searchView.highlightSelected(id);
+   }
+   ```
+
+### Update Recipe Servings
+
+1. Learning Object: Another way of implementing event delegation `.matches`
+1. The target here is to update the number of required ingredients in the recipe when the user changes the number of "**servings**".
+1. We update a method `updateServings()` in `Recipe.js`. We can let the event when user clicking the "plus" or "minus" button on the page returns a value such as `inc` for increase or `dec` for decrease. Therefore, the function can either add or subtract the number of servings accordingly. Besides, we need to update the count of the number of an ingredient as well.
+
+   1. During development, the lecturer uses arrow function in `updateServings()`, while I didn't notice that it caused an issue.
+   1. One solution is to use `.bind()` method to create another funtion to pass back.
+   1. The other solution is to create another variable to hold the `this` `Object`.
+
+   ```js
+   updateServings(type) {
+     // let that = this; // this variable "that" will hold the correct "this" in the scope
+     // Servings
+     const newServings = type === "dec" ? this.servings - 1 : this.servings + 1;
+
+     // Ingredients
+     this.ingredients.forEach(function (item) {
+       item.count *= newServings / this.servings; // this "this" is in a inner function. We can use '.bind()' method or create another variable to hold 'this' in the outter scope, or use arrow function notation
+     }.bind(this));
+
+     this.servings = newServings;
+   }
+   ```
+
+1. Since the buttons to add or subtract "servings" are only added after the recipe data is selected and called, we have to use `delegation` in DOM to handle the event. In this case, we can't use `.closest` method, as the condition is not suitable.
+
+   1. Therefore, we use `.matches()` method to check multiple items with given arguments. Besides, we can use asterisk in case that there's child elements in the element we selected.
+   1. However, though servings can be big as possible, it can't be lower than 1 or negative, as the recipe has to be made to serve at least a portion for 1 person.
+
+   ```js
+   // Handling recipe button clicks
+   elements.recipe.addEventListener("click", function (event) {
+     if (event.target.matches(".btn-decrease, .btn-decrease *")) {
+       // decrease button is clicked
+       if (state.recipe.servings > 1) {
+         state.recipe.updateServings("dec");
+       }
+     } else if (event.target.matches(".btn-increase, .btn-increase *")) {
+       // increase button is clicked
+       state.recipe.updateServings("inc");
+     }
+     console.log(state.recipe);
+   });
+   ```
+
+1. In `recipeView.js`, we update the button elements we are going to render on the page with `btn-decrease` and `btn-increase`.
+   ```html
+   <div class="recipe__info-buttons">
+     <button class="btn-tiny btn-decrease">
+       <svg>
+         <use href="img/icons.svg#icon-circle-with-minus"></use>
+       </svg>
+     </button>
+     <button class="btn-tiny btn-increase">
+       <svg>
+         <use href="img/icons.svg#icon-circle-with-plus"></use>
+       </svg>
+     </button>
+   </div>
+   ```
+1. In `recipeView.js`, we export another function and call it in the controller `index.js`.
+
+   ```js
+   export const updateServingsIngredients = function (recipe) {
+     // update servings
+     document.querySelector(".recipe__info-data--people").textContent =
+       recipe.servings;
+
+     // update ingredients
+     const countElements = Array.from(
+       document.querySelectorAll(".recipe__count")
+     );
+     countElements.forEach(function (e, i) {
+       e.textContent = formatCount(recipe.ingredients[i].count);
+     });
+   };
+   ```
+
+### Building the Shopping List Model
+
+1. Learning Objects
+   1. How and Why to create unique IDs using external package
+   1. Difference between `Array.slice` and `Array.splice`
+   1. More uses cases for `Array.findIndex` and `Array.find`
