@@ -3684,6 +3684,173 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    });
    ```
 
+   <img src="forkifyListView.gif">
+
 ### Building the Likes Model
 
-1.
+1. The target to achieve here is to add a item of the query result to the "liked" list on the top, so user can navigate back to the item easily. This model is very similar to `List.js`. However, since they are in different structure and for different purpose, we don't make a subclass of them.
+
+   ```js
+   export default class Likes {
+     constructor() {
+       this.likes = [];
+     }
+
+     addLike(id, title, author, img) {
+       const like = { id, title, author, img };
+       this.likes.push(like);
+       return like;
+     }
+
+     deleteLike(id) {
+       const index = this.likes.findIndex(function (item) {
+         return item.id === id;
+       });
+       this.likes.splice(index, 1);
+     }
+
+     // We'd like to get a boolean true or false here to know if we will add class to the liked icon to indicate that the user has "liked" the recipe.
+     isLiked(id) {
+       return (
+         this.likes.findIndex(function (item) {
+           return item.id === id;
+         }) !== -1
+       );
+     }
+
+     getNumLikes() {
+       return this.likes.length;
+     }
+   }
+   ```
+
+### Building the Likes Controller
+
+1. We try with the event handler and print the result on the console to check if they are working.
+
+   ```js
+   /*
+   Like Controller 
+   */
+   const controlLike = function () {
+     if (!state.likes) state.likes = new Likes();
+     const currentID = state.recipe.id;
+
+     // User has not yet liked current recipe
+     if (!state.likes.isLiked(currentID)) {
+       // Add like to the state
+       const newLike = state.likes.addLike(
+         currentID,
+         state.recipe.title,
+         state.recipe.author,
+         state.recipe.image
+       );
+
+       // Toggle the like button
+
+       // Add like to UI list
+       console.log(state.likes);
+
+       // User has liked current recipe
+     } else {
+       // Remove like to the state
+       state.likes.deleteLike(currentID);
+
+       // Toggle the like button
+
+       // Remove like from UI list
+       console.log(state.likes);
+     }
+   };
+   ```
+
+### Building the Likes View
+
+1. `likesView.js`
+
+   ```js
+   // likesView.js
+   import { elements } from "./base";
+   import { limitRecipeTitle } from "./searchView";
+
+   export const toggleLikeBtn = (isLiked) => {
+     const iconString = isLiked ? "icon-heart" : "icon-heart-outlined";
+     document
+       .querySelector(".recipe__love use")
+       .setAttribute("href", `img/icons.svg#${iconString}`);
+   };
+
+   export const toggleLikeMenu = function (numLikes) {
+     elements.likesMenu.style.visibility = numLikes > 0 ? "visible" : "hidden";
+   };
+
+   export const renderLike = function (like) {
+     const markup = `
+       <li>
+           <a class="likes__link" href="#${like.id}">
+               <figure class="likes__fig">
+                   <img src="${like.img}" alt="${like.title}">
+               </figure>
+               <div class="likes__data">
+                   <h4 class="likes__name">${limitRecipeTitle(like.title)}</h4>
+                   <p class="likes__author">${like.author}</p>
+               </div>
+           </a>
+       </li>
+       `;
+     elements.likesList.insertAdjacentHTML("beforeend", markup);
+   };
+
+   export const deleteLike = function (id) {
+     const el = document.querySelector(`.likes__link[href="#${id}"]`)
+       .parentElement;
+     if (el) el.parentElement.removeChild(el);
+   };
+   ```
+
+1. `index.js`
+
+   ```js
+   /*
+   Like Controller 
+   */
+   // Testing purpose to check if it's working
+   state.likes = new Likes();
+   likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+   const controlLike = function () {
+     if (!state.likes) state.likes = new Likes();
+     const currentID = state.recipe.id;
+
+     // User has not yet liked current recipe
+     if (!state.likes.isLiked(currentID)) {
+       // Add like to the state
+       const newLike = state.likes.addLike(
+         currentID,
+         state.recipe.title,
+         state.recipe.author,
+         state.recipe.image
+       );
+
+       // Toggle the like button
+       likesView.toggleLikeBtn(true);
+
+       // Add like to UI list
+       likesView.renderLike(newLike);
+
+       // User has liked current recipe
+     } else {
+       // Remove like to the state
+       state.likes.deleteLike(currentID);
+
+       // Toggle the like button
+       likesView.toggleLikeBtn(false);
+
+       // Remove like from UI list
+       likesView.deleteLike(currentID);
+     }
+     likesView.toggleLikeMenu(state.likes.getNumLikes());
+   };
+   ```
+
+### Implementing Persistent Data with Local Storage

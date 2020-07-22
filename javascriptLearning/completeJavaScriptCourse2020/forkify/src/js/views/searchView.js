@@ -16,7 +16,7 @@ export const highlightSelected = function (id) {
     item.classList.remove("results__link--active");
   });
   document
-    .querySelector(`a[href="#${id}"]`)
+    .querySelector(`.results__link[href="#${id}"]`)
     .classList.add("results__link--active");
 };
 
@@ -26,7 +26,7 @@ export const clearInput = function () {
 };
 
 // limit title words to be rendered in the list
-const limitRecipeTitle = function (title, limit = 17) {
+export const limitRecipeTitle = function (title, limit = 17) {
   const newTitle = [];
   if (title.length > limit) {
     title.split(" ").reduce(function (acc, cur) {
