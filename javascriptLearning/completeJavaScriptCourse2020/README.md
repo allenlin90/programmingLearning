@@ -3944,4 +3944,249 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
 
 ### Laptop Store Project - Part 1
 
+#### Setup server
+
+1. Node.js allow us to access files in the system which browser can't perform such tasks. For example, we can read a JSON file stored locally.
+1. We can use `fs` module which is prebuilt package installed with Node.js
+   ```js
+   const fs = require("fs");
+   ```
+1. To find the path a local JSON file, we can use `fs.readFileSync()` method and specify the file path. We can use `__dirname` which Node.js will check if local OS to find where the JS script file is (usually at the root directory) and go further to access the local file.
+1. To read a JSON file, we can either specify the encoded method such as `utf-8` or use `.toString()` method to turn the object into regular JavaScript `String` and use `JSON.parse()` function to retrieve the data
+
+   ```js
+   const fs = require("fs");
+   const file = fs.readFileSync(`${__dirname}/data/data.json`, `utf-8`);
+   const str = fs.readFileSync(`${__dirname}/data/data.json`).toString();
+
+   console.log(file == str); // true `file` and `str` are strings in JSON
+
+   // JSON object after parsing
+   JSON.parse(file);
+   JSON.parse(str);
+   ```
+
+1. We can use `http` package with `http.createServer()` to start a local server. This is similar to `app.get()` in `express` framework that it takes a callback function with 2 arguments `req` (request from user) and `res` (response from the server app).
+1. After creating the object, we use `.listen()` method to start the server and allow it to wait for request. The method takes 3 arguments
+
+   1. Port to access - Node.js uses port `1337` (express use `3000` for local host).
+   1. Local IP address - `127.0.0.1` is the standard IP address for localhost on each computer.
+   1. Callback Function - This can return a message in the server console to note for the status.
+
+   ```js
+   const http = require("http");
+
+   const server = http.createServer(function (req, res) {
+     console.log("Someone did access the server");
+   });
+
+   server.listen(1337, "127.0.0.1", function () {
+     console.log("Listening for requests now");
+   });
+   ```
+
+1. For the browser to render the message correctly, we should send both the `header` info (usually the meta-data in `<head>` tag in HTML file and the body content (which is the HTML file itself). We can use method on the server response `res`.
+   1. `res.writeHead()` method takes 2 arguments, 1st the status code returned. For example, `200` means everything is ok. The 2nd is the meta-data which should be passed as an `Object`.
+   1. Use `res.end()` (not `.send()`!) to send the HTML text back to the browser. This method is similar to `res.send()` in `express` framework.
+   ```js
+   const server = http.createServer(function (req, res) {
+     res.writeHead(200, {
+       "content-type": "text/html",
+     });
+     res.end("<h1>This is the title</h1><p>This is the body</p>");
+     console.log("Someone did access the server");
+   });
+   ```
+1. We then can check the condition in `Network` tab in developer console in the browser.
+1. Note that until this point, we haven't set up routing, so any path on the URL goes only to the homepage.
+
+#### Set up URL (Routing)
+
+1. We can use prebuilt package `url` in Node.js for routing.
+   in the callback funtion of `http.createServer()`, we can access `req` which is the request sent from the client browser. We can get the route of the user currently access to by checking `req.url`. For example, if we type `localhost:1337/testroute`, we will get `/testroute` printed in the console.
+1. We can use `url` package to check the input from the user. This data and status will be useful with `IF` statement to render the correct content to the user. Note that the route must start with a slash `/`.
+1. Besides, we can set the default path for homepage if the `pathName` variable is empty. This empty route is not really empty but has a slash `/` as well.
+
+   ```js
+   const server = http.createServer(function (req, res) {
+     // get url path without using `url` package
+     console.log(req.url); // /thisroute
+
+     // use `url` package
+     const pathName = url.parse(req.url, true).pathname;
+     console.log(pathName); // /thisroute
+
+     // use `if` statement to render correct info.
+     if (pathName === "/products" || pathName === "/") {
+       res.writeHead(200, { "content-type": "text/html" });
+       res.end(`<h1>This is the title</h1><p>This is the body</p>`);
+       console.log("Someone did access the server");
+     } else if (pathName === "/laptop") {
+       res.writeHead(200, { "content-type": "text/html" });
+       res.end(`This is a laptop page!`);
+     } else {
+       res.writeHead(404, { "content-type": "text/html" });
+       res.end(`URL was not found on the server!`);
+     }
+   });
+   ```
+
+#### Retrieve paremeters from the URL
+
+1. As we can find `url` can find the path that users access, the other main function we want to get benefited from is to parse the parameters passed in the URL.
+1. We can check the paremeter input on URL on `url.parse(req.url, true).query` this is the value we pass in the URL that after question mark `?`. For example, the parameter of `localhost:1337/?id=1` is `{'id': '1'}`.
+1. Besides, we can use ampersand `&` to concatenate the parameters in the URL and pas multiple parameters. For example, in `localhost:1337/?id=1&date=today`, we have 2 parameters `{'id': '1', 'date': 'today'}`.
+   <img src="passParameterURL.png">
+1. In this case, each `id` represents a product on the webiste. Since we have only 4 products in this case, we can set up the condition that the `id` shouldn't be greater than the `length` of the JSON file we get.
+
+   ```js
+   const fs = require("fs");
+   const http = require("http");
+   const url = require("url");
+
+   const file = fs.readFileSync(`${__dirname}/data/data.json`, `utf-8`);
+
+   // another method to read JSON
+   // const str = fs.readFileSync(`${__dirname}/data/data.json`).toString();
+
+   const laptopData = JSON.parse(file);
+
+   const server = http.createServer(function (req, res) {
+     // get path on URL
+     const pathName = url.parse(req.url, true).pathname;
+
+     // get parameter(s) passed in the URL after question mark '?'
+     const query = url.parse(req.url, true).query;
+     const id = url.parse(req.url, true).query.id;
+
+     if (pathName === "/products" || pathName === "/") {
+       res.writeHead(200, { "content-type": "text/html" });
+       res.end(
+         `<h1>This is the product page</h1><p>This is the product list</p>`
+       );
+       console.log("Someone did access the server");
+     } else if (pathName === "/laptop" && id < laptopData.length) {
+       res.writeHead(200, { "content-type": "text/html" });
+       res.end(`This is a laptop page for laptop ${id}`);
+     } else {
+       res.writeHead(404, { "content-type": "text/html" });
+       res.end(`URL was not found on the server!`);
+     }
+   });
+
+   server.listen(1337, "127.0.0.1", function () {
+     console.log("Listening for requests now");
+   });
+   ```
+
 ### Laptop Store Project - Part 2
+
+#### Create HTML templates
+
+1. In this section, we focus on visualize the webpage with Node.js without `express` framework.
+1. For each page with similar contents, we can create `templates` and change only the content on the page, so we can reuse the code in an efficient way.
+1. In this case, we create a new folder `templates` and copy the HTML files to it. We then change the data that is mutable to placeholders. The placeholder can be according to the framework or library we use, or we can create with special characters that the developers wouldn't accidentaly access it. For example, we can make a placeholder for `price` as `{%PRICE%}`. In this project, we change several data such as `product name`, `price`, `description`, specs of the laptop, and `image URL`.
+   1. `./templates/template-laptop.html`
+   1. `./templates/template-overview.html`
+
+#### Set up page and route to render the contents
+
+`index.js`
+
+1. As Node.js and JavaScript runs only on a single thread, the program will stuck when it's trying to retrieve data from the other API and all users will be affected by the issue. Therefore, when we render the content, we can use `async` functions which is also available in Node.js with `fs.readFile()`, which is an `async` method to retrieve local file (note that there's `fs.readFileSync()` for regular function which runs synchronously).
+1. We separate this function with `async` mainly because users on the site may access different product by calling the ids. Since we don't want the retriving process affect to the overall performance of the program, we use `async` for this user request. However, the very first JSON file can be read with regular synchronous function, as it's an one-time event and it is required for the other tasks on the program.
+1. In `index.js`,we update the `/laptop` route and use async method `fs.readFile()` to render the HTML page. Besides, we use regular expression in `.replace()` method to search for the placeholder we put with the data we parsed from the JSON file.
+
+   ```js
+   // index.js
+   else if (pathName === "/laptop" && id < laptopData.length) {
+     res.writeHead(200, { "content-type": "text/html" });
+
+     fs.readFile(
+       `${__dirname}/templates/template-laptop.html`,
+       `utf-8`,
+       function (err, data) {
+         const laptop = laptopData[id];
+         let output = data.replace(/{%PRODUCTNAME%}/g, laptop.productName);
+         output = output.replace(/{%IMAGE%}/g, laptop.image);
+         output = output.replace(/{%PRICE%}/g, laptop.price);
+         output = output.replace(/{%SCREEN%}/g, laptop.screen);
+         output = output.replace(/{%CPU%}/g, laptop.cpu);
+         output = output.replace(/{%STORAGE%}/g, laptop.storage);
+         output = output.replace(/{%RAM%}/g, laptop.ram);
+         output = output.replace(/{%DESCRIPTION%}/g, laptop.description);
+         res.end(output);
+       }
+     );
+   }
+   ```
+
+#### Create the cards on the overview page accordingly
+
+1. In `template-overview.html`, we should render as many products in "**card**" (HTML elements we defined) according to the JSON file. For example, we use the following `<figure>` tag to show a "card" of product on the overview page. Therefore, we create another template to hold a "card" element, so later we can use the template to iterate and render all products to the overview page. Besides, we can put a single placeholder `{%CARDS%}` in `overview.html`.
+
+   1. Card template `template-card.html`
+
+   ```html
+   <figure class="card">
+     <div class="card__hero">
+       <img src="/{%IMAGE%}" alt="{%PRODUCTNAME%}" class="card__img" />
+     </div>
+     <h2 class="card__name">{%PRODUCTNAME%}</h2>
+     <p class="card__detail"><span class="emoji-left">🖥</span> {%SCREEN%}</p>
+     <p class="card__detail"><span class="emoji-left">🧮</span> {%CPU%}</p>
+     <div class="card__footer">
+       <p class="card__price">${%PRICE%}</p>
+       <a href="laptop?id={%ID%}" class="card__link"
+         >Check it out <span class="emoji-right">👉</span></a
+       >
+     </div>
+   </figure>
+   ```
+
+1. In `index.js`, as we are going to use the similar code for the product details rendered according to `ID`, we can wrap the code as a function, so we can reuse it easily.
+   ```js
+   function replaceTemplate(originalHTML, laptop) {
+     let output = originalHTML.replace(/{%PRODUCTNAME%}/g, laptop.productName);
+     output = output.replace(/{%IMAGE%}/g, laptop.image);
+     output = output.replace(/{%PRICE%}/g, laptop.price);
+     output = output.replace(/{%SCREEN%}/g, laptop.screen);
+     output = output.replace(/{%CPU%}/g, laptop.cpu);
+     output = output.replace(/{%STORAGE%}/g, laptop.storage);
+     output = output.replace(/{%RAM%}/g, laptop.ram);
+     output = output.replace(/{%DESCRIPTION%}/g, laptop.description);
+     output = output.replace(/{%ID%}/g, laptop.id);
+     return output;
+   }
+   ```
+1. We then update the contents for the homepage.
+   ```js
+   // product overview
+   if (pathName === "/products" || pathName === "/") {
+     res.writeHead(200, { "content-type": "text/html" });
+
+     fs.readFile(`${__dirname}/templates/template-overview.html`,`utf-8`,(err, data) => {
+         let overviewOutput = data;
+
+         fs.readFile(`${__dirname}/templates/template-card.html`,`utf-8`,(err, data) => {
+             const cardsOutput = laptopData.map((item) => replaceTemplate(data, item)).join("");
+             overviewOutput = overviewOutput.replace("{%CARD%}", cardsOutput);
+
+             res.end(overviewOutput);
+           });
+       });
+   }
+   ```
+1. Note that not only the HTML files that we "request" to the server but also the images as well. Not like FTP protocol, we can't access the file with the path from the URL. As to Node.js server, it's like a request in route. Since haven't set up the response to the route at this point, the server return nothing to the requests to images. In this case, since we have multiple image and it is not DRY if we have to make update response to each of them. Therefore, we can use a general route to respond to all the requests for images on the server. 
+1. We use regualr expression and `.test()` method to check if the request contains image. `.test()` method returns boolean `true` or `false` for the case. Therefore, if the request is a request for image, we can use async function `fs.readFile()` to render the image. Note that in `express` framework, the process is much easier that some of these low-level tasks can be avoided. 
+    ```js 
+    // index.js 
+    // images
+    else if ((/\.(jpg|jpeg|png|gif)$/i).test(pathName)) {
+      fs.readFile(`${__dirname}/data/img/${pathName}`, (err, data) => {
+        res.writeHead(200, { 'content-type': 'image/jpg' });
+        res.end(data);
+      });
+    }
+    ```
+    <img src="laptopStoreOverview.gif">
