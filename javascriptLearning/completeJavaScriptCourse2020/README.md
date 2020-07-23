@@ -3937,3 +3937,11 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    1. Improve the ingredients parsing algorithm
    1. Come up with an algorithm for calculating the amount of servings
    1. Improve error handling
+
+# Laptop Store Project
+
+1. This is an introduction about the use of `Node.js` and how to use it to render a webpage dynamically.
+
+### Laptop Store Project - Part 1
+
+### Laptop Store Project - Part 2
