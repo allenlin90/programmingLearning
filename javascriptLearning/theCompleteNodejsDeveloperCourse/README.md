@@ -1,3 +1,6 @@
+Start learning on 2020/07/11
+Finished on 
+
 # The Complete Node.js Developer Course
 
 # Installing and exploring Node.js
