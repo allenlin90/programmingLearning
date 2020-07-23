@@ -11,6 +11,8 @@
 
 Note: I started learning the course since 2020/07/04. Some of the basic parts are skipped because I've learnt from other courses and modules. These skipped sections would be checked and reviewed in the future.
 
+Update: Finished course on 2020/07/23
+
 1. JavaScript Basics
 1. How JavaScript works behind the Scenes
 
