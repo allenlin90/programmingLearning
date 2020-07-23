@@ -1,3 +1,8 @@
+Notes: 
+1. Started course on 2020/06/08 
+1. Finished course on 2020/07/23
+1. During the weeks, I was working on other project and learning JavaScript. 
+
 # HTML Basics
 
 ### Meta tags and search engines
