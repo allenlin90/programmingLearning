@@ -1862,3 +1862,34 @@ doWorkCallback(function (error, result) {
         });
     });
     ```
+
+### Deleting Documents 
+1. Similar to update methods, we can use `.deleteOne()` or `.deleteMany()` to operate delete command. Note that `.remove()` method is dreprecated as `.update()` method. Besidse, methods of `delete` operations are similar to those of `read` operations, as we only need to provide an `Object` of `filters` to locate the instance and operate them. 
+    ```js     
+    const { MongoClient, ObjectID } = require('mongodb');
+
+    const connectionURL = 'mongodb://127.0.0.1:27017';
+    const databaseName = 'task-manager';
+
+    MongoClient.connect(connectionURL, { useNewUrlParser: true, }, function (error, client) {
+        if (error) { return console.log('Unable to connect to database', error); }
+
+        const db = client.db(databaseName);
+
+        // db.collection('users').deleteMany({
+        //     age: 30,
+        // }).then(result => {
+        //     console.log(result.deletedCount);
+        // }).catch(error => {
+        //     console.log('Error', error)
+        // });
+
+        db.collection('tasks').deleteOne({
+            _id: new ObjectID('5f1a86d8aa88ef02fd1b5d56'),
+        }).then(result => {
+            console.log('Success', result.deletedCount);
+        }).catch(error => {
+            console.log('Error', error)
+        })
+    });
+    ```
