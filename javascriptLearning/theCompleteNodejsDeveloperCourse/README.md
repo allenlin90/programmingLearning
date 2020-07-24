@@ -1550,4 +1550,315 @@ module.exports = forecast;
     <img src="diffDB.png">
 
 ### Installing MongoDB on Mac and Linux
-1. 
+1. We can follow the instructions as the followings to install MongoDB in WSL. Though it mentions that MongoDB is not available on WSL, we still can install and use it locally. 
+    1. Import the public key used by the package management system
+    ```shell
+    wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
+    ```
+    1. Check the version of Ubuntu installed on WSL and create a list file for MongoDB. Note that the command is different for Unbuntu 18.04 (Bionic) and 16.04 (Xenial).
+    ```shell 
+    # check verions 
+    cat /etc/issue
+    # Ubuntu 18.04.4 LTS \n \l
+
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+    ```
+    1. Reload package database 
+    ```shell
+    sudo apt-get update
+    ```
+    1. Install the MongoDB packages 
+    ```shell 
+    sudo apt-get install -y mongodb-org
+    ```
+    1. Add the `data/db` directories. Note that we must get back to home directory with `cd ~` and it's better to check with `pwd` to ensure we are on the correct path. The `-p` flag means that if the parent directory `data` doesn't exist, just create it. 
+    ```shell
+    cd ~
+    pwd #/home/<user>/
+
+    #create a directory for database 
+    sudo mkdir -p data/db
+    ```
+    1. Start `mongod` in WSL Ubuntu. Note that we can't share the database between WSL and Windes and must separate each of them. Thus, we use `--dbpath` to the directory we just created. If it goes well, we can open another terminal and run `mongo` to start using database in WSL. Besides, we can set a shortcut alias as `alias mongod="sudo mongod --dbpath ~/data/db"`. Otherwise, the default `mongod` will point to the path of db folder in Windows OS which can't be used in WSL.
+    ```shell
+    sudo mongod --dbpath ~/data/db
+
+    #set up shortcut 
+    alias mongod="sudo mongod --dbpath ~/data/db"
+    ```
+    1. If everything works, `mongod` should return `[initandlisten] waiting for connections on port 27017`.
+
+    1. [Install MongoDB with WSL for Windows](https://github.com/michaeltreat/Windows-Subsystem-For-Linux-Setup-Guide/blob/master/readmes/installs/MongoDB.md)
+    1. [MongoDB Official](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+
+### Installing Database GUI viewer
+1. We can use the GUI from Robo which was "**Robomongo**" for the GUI control (this is simialr to php MySQLAdmin). 
+1. Download the protable version from [Robo 3T](https://robomongo.org/download). 
+1. Though WSL and Win10 can't share the same database directory, both of them use localhost `127.0.0.1` on port `27017`, so we can just access each of them with the same connection config. 
+    <img src="robo3tshell.png">
+1. We can type in `db.version()` to and click the green play button on the top to check the version of MongoDB installed on the machine. 
+1. MongoDB uses commands as OOP in JavaScript. Besides, it's data structure is refered to JSON, so it's relatively easy to understand. 
+1. We can use <kbd>Ctrl + r</kbd> to refresh the page with latest data in the database or colleciton. 
+
+### Connecting and Inserting Documents via Node.js
+1. We can check the documentation of Mongodb commands and API methods at [here](http://mongodb.github.io/node-mongodb-native/3.1/api/). We check on version 3.1 in this case. 
+1. We need to use a npm package `mongodb` for the project. (The instructor use version 3.1.10, but npm noticed that there's a risky issue, so I update it to the latest version.) Besides, we learnt how to use another package `mongoose` in web development bootcamp as another ODM (Object Data Mapper). 
+1. We create a `mongodb.js` and import `mongodb` package to use the FS file to manipulate with the database. There several steps to configure and get ready to use the database. 
+    1. Import `mongodb` npm package 
+    1. Create a `MongoClient` which is generated from `.MongoClent` property and use `.connect()` method to connect. 
+    1. `.connect()` method takes 3 parameters
+        1. The `path` of the database we connect to. We can use MongoAtlas to connect to a remote one in the future. However, we should be very careful about security issues for remote connections.  
+        1. An `options object` to allow `useNewUrlParse: true`, so the engine will use new URL parser. However, this could be changed in the future, as by the time running this code, Node.js returns that the "current server discovery and monitoring engine is deprecated". 
+        1. A `callback function` that we can put CRUD commands to the database. 
+    1. In the callback function, we can set up a simple error handler, and use the 2nd argument of the callback function to access to database in MongoDB. In the database, we can access to different `collections` which are similar to `tables` in regular SQL database. 
+    1. For example, after accessing a collection, we can use `.insertOne()` method to create a new instance in the collection. 
+    1. Note that `.insertOne()` is actually an `async` function that we should use callback function to check if the process completes correctly. 
+    ```js 
+    // CRUD create read update delete
+    const mongodb = require('mongodb');
+    const MongoClient = mongodb.MongoClient
+
+    const connectionURL = 'mongodb://127.0.0.1:27017';
+    const databaseName = 'task-manager';
+
+    MongoClient.connect(connectionURL, { useNewUrlParser: true, }, function (error, client) {
+        if (error) { return console.log('Unable to connect to database', error); }
+
+        const db = client.db(databaseName);
+
+        db.collection('users').insertOne({
+            name: 'Allen',
+            Age: 30,
+        });
+    });
+    ```
+
+### Inserting Documents (Create Data)
+1. From the last section, we can give a callback function to `.insertOne()` method as it's actually an `async` function, so we can handle and check the process if it runs correctly. We can use check on the [API documentation](http://mongodb.github.io/node-mongodb-native/3.1/api/Collection.html#~insertOneWriteOpResult) of MongoDB to learn what are the methods and arguments stand for. 
+1. After learning inserting only 1 data at the time, we can look up `.insertMany()` to create multiple data in the database at the same time. According to the [documentation](http://mongodb.github.io/node-mongodb-native/3.1/api/Collection.html#insertMany), the first argument that `.insertMany()` takes is an `Array`. 
+    ```js 
+    // CRUD create read update delete
+    const mongodb = require('mongodb');
+    const MongoClient = mongodb.MongoClient
+
+    const connectionURL = 'mongodb://127.0.0.1:27017';
+    const databaseName = 'task-manager';
+
+    MongoClient.connect(connectionURL, { useNewUrlParser: true, }, function (error, client) {
+        if (error) { return console.log('Unable to connect to database', error); }
+
+        const db = client.db(databaseName);
+
+        // db.collection('users').insertOne({
+        //     name: 'Allen',
+        //     age: 30,
+        // }, function (error, result) {
+        //     if (error) return console.log('Unable to insert user');
+
+        //     console.log(result.ops);
+        // });
+
+        // db.collection('users').insertMany([
+        //     {
+        //         name: 'Jane',
+        //         age: 25,
+        //     },
+        //     {
+        //         name: 'John',
+        //         age: 40,
+        //     },
+        // ], function (error, result) {
+        //     if (error) return console.log(`Can't insert multiple data`, error);
+
+        //     console.log(result.ops);
+        // })
+
+        db.collection('tasks').insertMany([
+            {
+                description: 'Buy groceries',
+                completed: false,
+            },
+            {
+                description: 'Do house works',
+                completed: true,
+            },
+            {
+                description: 'Wash the car',
+                completed: false,
+            },
+        ], (error, result) => {
+            if (error) return console.log(`Can't insert many data to "tasks" colleciton`, error);
+            console.log(result.ops);
+        })
+    });
+    ```
+
+### The Object ID
+1. Each instance in the data collection will have a unique ID. In SQL data, each records has an incrementing ID that starts from 1. However, in MongoDB, it uses GUID, which stands for global unique ID. Such feature allows MongoDB being scalable. As the IDs are unique, objects won't have ID collisions when querying for data. For example, we have `user` collection in 2 collections with the same ID. The instance will have collision when the engine tries to retrieve data. Note that this `GUID` is created by `mongodb` npm package rather than the database engine itself. 
+1. We can check [here](https://docs.mongodb.com/manual/reference/method/ObjectId/) for documentation about how a GUID is generated. Besides, we can rewrite the code with deconstructor to import and create a variable for `Object` methods directly. 
+    ```js     
+    const { MongoClient, ObjectID } = require('mongodb');
+    // the same as the followings
+    // const mongodb = require('mongodb');
+    // const MongoClient = mongodb.MongoClient;
+    // const ObjectID = mongodb.ObjectID;
+    ```
+1. The `ObjectID` is a class that we can generate new GUID from this method. Besides, it has it's own method that allow us to check with its timestamp (when the `id` is created). Besides, though Mongodb will generate the GUID automatically for the new instances by default, we still can give the value when generating an instance. This part is essential for understanding what's going on when using ID to query data in the database. 
+    ```js
+    const { MongoClient, ObjectID } = require('mongodb');
+    const id = new ObjectID();
+    console.log(id);
+    console.log(id.id.length); // 12 
+    console.log(id.toHexString()); //the same as the result from id
+    console.log(id.toHexString().length); // 24
+    console.log(id.getTimestamp()); 
+    ```
+
+### Querying Documents (Read Data)
+1. We are going to explore `.find()` and `.findOne()` method in this section. 
+    1. We can use `.find()` method to create filter-like query to parse and let the database return those data fit to our given conditions, such as if `age` is greater than `25`. 
+    1. By using `.findOne()`, we can fetch a single data from the database. 
+1. When using query methods such as `.findOne()`, the program returns `null` rather than an error if the data isn't found from the database. Besides, if there are more than one data match the condition(s), and we use `.findOne()` method, only the very first data that matches the conditions will be returned. The method takes 2 arguments to query 
+    1. `Object` with fields to search  
+    1. `Callback` function to handle the result. 
+1. If we use the GUID string to search for the result directly, we can't find the match as in different type of format. In robo 3T, we can see that the GUID is wrapped with `ObjectID('<GUID>')`, as it's easier for programmer to check what's the value. Therefore, if we'd like to query a data by its GUID, we should use `new ObjectID(<GUID>)` and pass the string. 
+    ```js
+    const { MongoClient, ObjectID } = require('mongodb');
+    MongoClient.connect(connectionURL, { useNewUrlParser: true, }, function (error, client) {
+      if (error) { return console.log('Unable to connect to database', error); }
+
+      const db = client.db(databaseName);
+
+      db.collection('users').findOne({ _id: '5f1a9cf642b7cf037c6ca2d2', }, function (error, user) {
+          if (error) return console.log('Unable to fetch');
+          console.log(user); // null 
+      });
+
+      db.collection('users').findOne({ _id: new ObjectID('5f1a9cf642b7cf037c6ca2d2'), }, function (error, user) {
+          if (error) return console.log('Unable to fetch');
+          console.log(user); // {_id: '5f1a9cf642b7cf037c6ca2d2', name: 'Allen', age: 30}
+      });
+    });
+    ```
+1. `.find()` method is a different story, as it takes an argument as `Object` of query fields and returns a curosr pointing to the data in the database rather than the data itself. Therefore, we can use the cursor to work on other features, such as limit the number of returned result, number of total data in the collection that match the given conditions. We can check the properties and methods of a [cursor](http://mongodb.github.io/node-mongodb-native/3.1/api/Cursor.html). There's an useful method, which is `.toArray()` that turns the dataset into an `Array`.
+    ```js
+    // CRUD create read update delete
+    const { MongoClient, ObjectID } = require('mongodb');
+
+    const connectionURL = 'mongodb://127.0.0.1:27017';
+    const databaseName = 'task-manager';
+
+    MongoClient.connect(connectionURL, { useNewUrlParser: true, }, function (error, client) {
+        if (error) { return console.log('Unable to connect to database', error); }
+
+        const db = client.db(databaseName);    
+
+        db.collection('tasks').findOne({ _id: new ObjectID('5f1a86d8aa88ef02fd1b5d56') }, (error, data) => {
+            console.log(data);
+        });
+
+        db.collection('tasks').find({ completed: false, }).toArray((error, tasks) => {
+            tasks.forEach((task) => {
+                console.log(task.description);
+            });
+        });
+    });
+    ```
+
+### Promises 
+1. When working with MongoDB methods, they are actually `async` functions that based on `Promises`. 
+1. `Promises` are `Objects` that we can call `.then()` or `.catch()` method to handle the result returned from a `async` function. This turns out to be more manageable, as the sequence for error and result handler are critical by using callback functions, and that can be very confusing when the layers increase. 
+1. A `Promise` takes 2 function `resolve` and `reject`. By the result of the `async` function only one of them can be trigerred. 
+```js 
+// Async Promises
+const doWorkPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        reject('Things went wrong'); // trigerred
+        reject('Error wrong'); // doesn't work 
+        resolve([7, 4, 1]); // doesn't work 
+    }, 2000);
+});
+
+doWorkPromise.then((result) => {
+    console.log('Success', result);
+}).catch((error) => {
+    console.log('Error', error);
+})
+
+// Async Callback
+const doWorkCallback = function (callback) {
+    setTimeout(function () {
+        // callback('This is my error!', undefined); // result and error 
+        callback(undefined, [1, 4, 7]); // error and result
+    }, 2000)
+}
+
+// sequence of passing error and result is critical and can be confusing
+doWorkCallback(function (error, result) {
+    if (error) {
+        return console.log(error);
+    }
+    console.log(result);
+})
+```
+
+### Updating Document 
+1. Similar to `.find()` method, we can use `.updateOne()` or `.updateMany()` to update the data in a collection. Note that there's a method `.update()` that is deprecated and will be removed in the future. 
+1. [`.updateOne()`](http://mongodb.github.io/node-mongodb-native/3.1/api/Collection.html#updateOne) takes 2 main arguments `filter` and `update`. The method can `options` and a `callback` function in addtion, while we don't use them in this case. Note that if the `callback` is not passed to the method, the method will return a `Promise`. 
+    1. `filter` is to locate the data that we want to manipulate. 
+    1. `update` is the data that we want to update to the entity selected by the `filter`. However, we can't pass the the new data to this `Object` as changing the value of the properties. We have to use [`update operators`](https://docs.mongodb.com/manual/reference/operator/update/), such as `$set`. 
+        1. These `update operators` start with a dollar sign `$`. In practice, `$set` and `$inc` (increment) are the frequently used operators.
+        1. By using the operator, we can have explicit operations on the fields without affecting other fields of the instance. For example, if the instance we are going to modify has 2 fields `name` and `age`, with the operators the fields which we don't select will not be affected. As regular `Object` the properties will be removed if we don't assign the same property/value pair back to the `Object`. 
+    ```js 
+    const { MongoClient, ObjectID } = require('mongodb');
+
+    const connectionURL = 'mongodb://127.0.0.1:27017';
+    const databaseName = 'task-manager';
+
+    MongoClient.connect(connectionURL, { useNewUrlParser: true, }, function (error, client) {
+        if (error) { return console.log('Unable to connect to database', error); }
+
+        const db = client.db(databaseName);
+
+        db.collection('users').updateOne({
+            _id: new ObjectID('5f1a806aa0f165023b9fa356')
+        }, {
+            $set: {
+                name: 'Mike',
+            },
+            $inc: {
+                age: 1,
+            },
+        }).then((result) => {
+            console.log(result);
+        }).catch((error) => {
+            console.log(error)
+        });
+    });
+    ```
+1. We tried to use `.updateMany()` method in the callenge. The deadly mistake is that I forgot to change the name of `collection` that we are going to modify. (We were modifying `tasks` collection for the case). This method works similar to `.updateOne()`, while `.updateMany()` modifies all the instances that matches the given condition in the `filter` all at once. 
+1. Note that in the `.then()` method we try to return the result, but it's a large `Obejct` that contains too much info. for the case. Therefore, we only retrive the `.modifiedCount` property to check how many instances are modified. 
+    ```js 
+    const { MongoClient, ObjectID } = require('mongodb');
+
+    const connectionURL = 'mongodb://127.0.0.1:27017';
+    const databaseName = 'task-manager';
+
+    MongoClient.connect(connectionURL, { useNewUrlParser: true, }, function (error, client) {
+        if (error) { return console.log('Unable to connect to database', error); }
+
+        const db = client.db(databaseName);
+
+        db.collection('tasks').updateMany({
+            completed: false,
+        }, {
+            $set: {
+                completed: true,
+            },
+        }).then((result) => {
+            console.log('Sucess', result.modifiedContent);
+        }).catch((error) => {
+            console.log('Error', error)
+        });
+    });
+    ```
