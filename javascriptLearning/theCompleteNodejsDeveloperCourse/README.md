@@ -1541,3 +1541,13 @@ module.exports = forecast;
      }
    }
    ```
+
+# MongoDB and Promises (Task App)
+### MongoDB and NoSQL database 
+1. The main difference between SQL and NoSQL database is that SQL is database is more like a "table" (taking Excel or Google Sheet for example) which has several elements 
+    1. Column (field) - The trait or feature that the instance should have in SQL, this can only has value or be `null` ("empty") that the instance in the same table should have exactly the same columns. However, for NoSQL database, the instances may have different number of fields in the same "**collection**" 
+    1. Row (Document) - This is an instance in the table. In SQL, a row stands for an instance that it must has its columns fill up (either has value or be empty that has `null`). While NoSQL is more than JSON data that each instances be stored in `Arrays` or `Object` 
+    <img src="diffDB.png">
+
+### Installing MongoDB on Mac and Linux
+1. 
