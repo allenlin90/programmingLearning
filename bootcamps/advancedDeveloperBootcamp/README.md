@@ -86,3 +86,48 @@ Note:
         // Implemented by the caller of forEach 
     }
     ```
+1. Define our own `forEach()` function 
+    ```js 
+    function forEach(array, callback) {
+        for (let i = 0; i < array.length; i++) {
+            callback(array[i], i, array);
+        }
+    }
+    ```
+
+### findIndex 
+1. Objectives
+    1. Describe and use the `.findIndex()` method
+    1. Implement `.findIndex()` in practice
+1. `.findIndex()` returns the index of the first element in the `Array` for which the callback returns a truthy value. `-1` is returned if the callback never returns a truthy value. `.find()`, `.findIndex()`, and `.filter()` use similar syntax to find either an element that fits the filter or the position of which in an `Array`. 
+    ```js 
+    function findIndex(array, callback) {
+        // finIndex code to be implemented 
+    }
+
+    function callback(curElement, curIndex, array) {
+        // callback implemented by caller of function
+    }
+    ```
+1. A common mistake developers made in the callback function is forget to `return` the result from the callback function. We try to create the `.findIndex()` method as a function by our own. 
+    ```js 
+    function findIndex(arr, callback) {
+        for (let i = 0; i < arr.length; i++) {
+            if(callback(arr[i], i, arr)){
+                return i;
+            }
+        }
+        return -1; 
+    }
+    ```
+
+### The Stack and The Heap
+1. Objectives
+    1. Describe what a "stack" is 
+    1. Describe stack frame
+    1. Describe the Heap 
+1. "**stack**" is an ordered data structure, keeps track of function invocations, is part of the JavaScript runtime (which we don't access directly). 
+    1. Whenever a function is invoked, the details of the invocation (execution context) are saved on the top of the stack (pushed to the top).
+    1. Whenever a function returns, the information about the invocation is taken off the top of the stack (popped off of the top).
+    1. In summary, stack is an ordered set of stack frames. Most recently invoked function is on the top of the stack. The bottom of the stack is the first function invoekd. The stack is processed from the top to bottom. 
+1. "**Heap**" is an area in memory where the data is stored. 
