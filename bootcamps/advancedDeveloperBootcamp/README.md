@@ -131,3 +131,123 @@ Note:
     1. Whenever a function returns, the information about the invocation is taken off the top of the stack (popped off of the top).
     1. In summary, stack is an ordered set of stack frames. Most recently invoked function is on the top of the stack. The bottom of the stack is the first function invoekd. The stack is processed from the top to bottom. 
 1. "**Heap**" is an area in memory where the data is stored. 
+
+### setTimeout and setInterval
+1. Objectives - Use `setTimeout()` and `setInterval()
+1. `setTimeout()` is a function that asynchronously invokes a callback after a delay of milliseconds.
+    ```js
+    let timerId = setTimeout(function () {
+        console.log('This function runs in 30 seconds');
+    }, 3000);
+
+    setTimeout(() => {
+        console.log('Canceling the first setTimeout', timerId);
+        clearTimeout(timerId);
+    })
+    ```
+1. `setInterval()` is a function that continually invokes a callback after every x milliseconds, where x is provided to `setInterval()`
+    ```js 
+    let num = 0;
+    let intervalId = setInterval(function () {
+        num++;
+        console.log(num);
+        if (num === 20) {
+            clearInterval(intervalId);
+        }
+    }, 200);
+    ```
+
+### The Event Loop and the Queue
+1. Objectives 
+    1. Define event loop and the queue
+    1. Describe how the event loop and the queue work with the stack 
+    1. Define JavaScript as a single threaded langugage
+1. **Queue** is an ordered list of functions waiting to be placed on the stack. Functions in the queue are processed on a first in, first out basis (FIFO).
+1. **Event Loop** is a functionality in JavaScript runtime that checks the queue when the stack is empty. If the stack is empty, the front of the queue is placed in the stack. 
+1. JavaScript is single threaded, which means that code execution is linear. Code that is running cannot be interrupted by something else going on in the program. 
+
+### Promise Basics
+1. Objectives 
+    1. Define a promise 
+    1. Add a `.then()` callback to a promise 
+    1. Add a `.catch()` callback to a promise 
+    1. Wrap a setTimeout call in a promise 
+1. **Promise** is an `Object` that represents a task that will be completed in the future. 
+    ```js 
+    let p1 = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            let randomInt = Math.floor(Math.random() * 10);
+            resolve(randomInt);
+        }, 4000)
+    });
+
+    p1.then(result => {
+        console.log('Success', result);
+    }).catch(error => {
+        console.log('Error', error);
+    })
+    ```
+
+### Promise Chaining
+1. Objectives 
+    1. Describe the disadvantages of using nested callbacks
+    1. Return a promise from a `.then()` callback function
+    1. Use a promise to make asynchronous code seem sequential 
+1. Nest Async Callbacks. For example, we'd like to print number from 1 to 3 in an ascending order. 
+1. Disadvantages of nested callbacks
+    1. The code is hard to read
+    1. Logic is difficult to reason about
+    1. The code is not modular
+    ```js 
+    let counter = 0;
+    setTimeout(() => {
+        counter++;
+        console.log('Counter: ', counter); // 1 
+        setTimeout(() => {
+            counter++;
+            console.log('Counter: ', counter); // 2 
+            setTimeout(() => {
+                counter++;
+                console.log('Counter: ', counter); // 3
+            }, 3000);
+        }, 2000);
+    }, 1000)
+    ```
+1. We can use **Promise Chaining** to rewrite the callback chain above.
+    ```js 
+    let counter = 0;
+    function incCounter() {
+        counter++;
+        console.log('Counter: ', counter);
+    }
+
+    function runLater(callback, timeInMs) {
+        let p = new Promise(function (resolve, reject) {
+            setTimeout(function () {
+                let res = callback();
+                resolve(res);
+            }, timeInMs);
+        });
+        return p;
+    }
+
+    runLater(incCounter, 1000).then(function () {
+        return runLater(incCounter, 2000);
+    }).then(function () {
+        return runLater(incCounter, 3000);
+    }).then(function () {
+
+    })
+    ```
+1. In practice, though it's useful to understand how promises work (resolve, reject), we will often use promises returned to us as values, such as retrievling data from database API. 
+
+
+# AJAX Part 1: XHR and Fetch
+### Intro to AJAX
+1. 
+
+
+# AJAX Part 2: jQuery and Axios
+
+
+# Testing with Jasmine
