@@ -244,8 +244,22 @@ Note:
 
 # AJAX Part 1: XHR and Fetch
 ### Intro to AJAX
-1. 
+1. AJAX stands for `Asynchronous` `JavaScript` and `XML`. 
+1. AJAX is not a library, not a framework, and not a technology. 
+1. AJAX is an approach and concept. Back in 2005, people use the followings to build websites. From the developers at the time, they noticed that all these pieces are here for us to make web apps that can update without refreshing. 
+    1. HTML
+    1. CSS
+    1. JavaScript
+    1. The DOM
+    1. XMLHTTP Requests
+1. With AJAX, websites can send and request data from a server in the background without disturbing the current page. This concept of website building introduces mordern single page apps. 
+1. We can use the following tools (and more) to make requests with JavaScript 
+    1. XMLHTTP request
+    1. The `fetch` API
+    1. 3rd Praty Libraries: jQuery, Axios, etc. 
 
+### What's the deal with JSON and XML
+1. Both JSON and XML are data formats 
 
 # AJAX Part 2: jQuery and Axios
 
