@@ -259,7 +259,100 @@ Note:
     1. 3rd Praty Libraries: jQuery, Axios, etc. 
 
 ### What's the deal with JSON and XML
-1. Both JSON and XML are data formats 
+1. Both JSON and XML are data formats.
+1. API's don't respond with HTML but pure data, not structure. The efficient data type are formats like JSON and XML. 
+1. `XML` stands for "Extended Markup Language" and is syntacticly similar to HTML, but it doesn't not describe presentation like HTML does. 
+1. `JSON` stands for "JavaScript Object Notation" and looks exactly like JavaScript objects. 
+
+### Making the First Request with XMLHTTPRequest
+1. We can create a `XMLHttpRequest()` connection, use `.open()` method which takes a type of `HTTP request` and the `endpoint` of the API, and use `.send()` method to make the request. We then can check on `.readuState` of the connection condition. 
+1. According to [MDN](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState), a XML HTTP request has different states from 0 to 4. We can use `.onreadystatechange` and assign a function to check the condition of the state. If the request has `.readyState` at 4 and `.status` at `200`, it means the connection is good the API endpoint has returned the data. 
+1. Library such as `jQuery` and `axios` are built based on these methods. 
+1. Note that the request is only available to enpoint that allows the connection or if the request send the API key as well. 
+    ```js
+    let XHR = new XMLHttpRequest();
+
+    // XHR.readyState can be 0 to 4
+    XHR.onreadystatechange = function () {
+        if (XHR.readyState == 4) {
+            if (XHR.status == 200) {
+                // print out the data if it gets 
+                console.log(XHR.responseText);
+            } else {
+                // error handler
+                console.log('There was a problem!');
+            }
+        }
+    };
+    // An API endpoint on Github that returns zen quote 
+    XHR.open("GET", 'https://api.github.com/zen');
+    XHR.send();
+    ```
+
+### AJAX workflow: Building the Random Image App
+1. We can check on some websites such as Pininterst or Facebook main page. Every time we (as the user) scroll the page down to the button, the progarm will make further request to its server and render contents and makes the page never ends. 
+1. We can check the async function working in the developer console with the `Network` tab. Every time we scroll to let the page render new contents, a `XHR` is made for the task. 
+    <img src="pinterestAJAX.gif">
+1. We firstly create a very simple webpage for the infrastructure to enable the JS to work and interact with DOM. 
+    ```html 
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <title>Test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="#" rel="stylesheet">
+        <style>
+            img {
+                height: 200px;
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button {
+                margin: 20px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>Welcome To Random Dog Pictures</h1>
+            <img src="" alt="" id="photo">
+            <button id="btn">Get Random Dog!</button>
+        </div>
+        <script src="test.js"></script>
+    </body>
+    </html>
+    ```
+1. We use [`dog ceo`](https://dog.ceo/api/breeds/image/random) API endpoint to get an image URL to show on the HTML file. `https://dog.ceo/api/breeds/image/random`.
+1. As the endpoint respond a JSON file, we need to use `JSON.parse()` to parse the string and turn it into a regular JavaScript object. We then can use DOM to modify the `src` attribute of an `<img>` tag. 
+    ```js 
+    let btn = document.querySelector('#btn');
+    let img = document.querySelector('#photo');
+
+    //listen for clicks
+    btn.addEventListener('click', function () {
+        //make the request 
+        let XHR = new XMLHttpRequest();
+
+        XHR.onreadystatechange = function () {
+            if (XHR.readyState == 4 && XHR.status == 200) {
+                let url = JSON.parse(XHR.responseText).message;
+                img.src = url;
+            }
+        }
+
+        XHR.open('GET', 'https://dog.ceo/api/breeds/image/random');
+        XHR.send();
+    });
+    ```
+    <img src="xmlhttprequest.gif">
 
 # AJAX Part 2: jQuery and Axios
 
