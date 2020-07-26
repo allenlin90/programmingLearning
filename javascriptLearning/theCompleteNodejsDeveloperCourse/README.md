@@ -1893,3 +1893,188 @@ doWorkCallback(function (error, result) {
         })
     });
     ```
+
+# REST APIs and Mongoose (Task App)
+### Setting up Mongoose 
+1. `mongoose` package not only allow us to work on CRUD commands but also "**schema**" for data set. 
+  1. Schema - some of the properties of fields are required for certain type of data or instances and the data type should be `string` or `boolean`. 
+  1. Authorization - data created by a user can only be modified by the user. 
+1. We can check the package at [`https://mongoosejs.com/`](https://mongoosejs.com/)
+1. To write data through `mongoose` to MongoDB, we should create a model first (which is similar to a class or prototype) that the instances created by the model will follow certain rules or properties. 
+1. The package follows similar configuration as `mongodb`, while we create a new database as we use different package and the schemata of each are different. Besides, we put the database name right after the port in `.connect()` method. 
+    ```js 
+    const mongoose = require('mongoose');
+    mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
+        useNewUrlParse: true,
+        useCreateIndex: true,
+    });
+
+    // create a model 
+    const User = mongoose.model('User', {
+        name: {
+            type: String,
+        },
+        age: {
+            type: Number,
+        },
+    });
+
+    // create an instance
+    const me = new User({ name: 'Allen', age: `Mike`, });
+
+    // save the instance created by the model 
+    me.save().then(() => {
+        console.log(me);
+    }).catch(error => {
+        console.log(error);
+    })
+    ```
+
+### Creating a Mongoose Model
+1. In this challenge, we tried to create a `task` model that has 2 properties, which are `description` in `String` and `completed` in `Boolean`.  I tried to created 3 tasks and save those to the database. To avoid repeat the code, I saved all of them into an `Array` and use `.forEach()` method to complete the task. This will creat a new collection in MongoDB that is separated from `users`. Note that when we create the model, we can give a singular noun and `mongoose` package will turn the noun into plural by itself. 
+    ```js 
+    const mongoose = require('mongoose');
+
+    mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+    });
+
+    const Task = mongoose.model('task', {
+        description: {
+            type: String,
+        },
+        completed: {
+            type: Boolean,
+        },
+    })
+
+    const task1 = new Task({ description: 'Make house work', completed: false });
+    const task2 = new Task({ description: 'Do laundry', completed: false });
+    const task3 = new Task({ description: 'Paint the wall in pink', completed: true });
+
+    let arr = [task1, task2, task3];
+    arr.forEach(task => {
+        task.save().then(() => {
+            console.log(task);
+        }).catch(error => {
+            console.log(error);
+        })
+    });
+    ```
+
+### Data Validation and Sanitization: Part 1
+1. Data validation is to ensure data input follows certain conditions, such as check if a person is adult if the age is greater than 18-year-old.
+1. Sanitization is to ensure data input follows certain format. For example, a process to trim of the whitespace before and after an input data. 
+1. We can check the [validation](https://mongoosejs.com/docs/validation.html) part in Mongoose documation. For example, we can give a `required` property and set it `true` - ([Reference](https://mongoosejs.com/docs/validation.html#built-in-validators)). 
+1. `mongoose` built-in validators have only limited options, such as the length a `String` with `min` and `max`. On the other hand, we can set up custom validators by ourselves. For example, validating emails, phone numbers, etc. 
+1. In `mongoose` models, we can pass a function as a method directly to create the schema. 
+    ```js 
+    // create a model 
+    const User = mongoose.model('User', {
+        name: {
+            type: String,
+            required: true, // required data input
+        },
+        age: {
+            type: Number,
+            validate(value) { // custom validator 
+                if (value < 0) {
+                    throw new Error('Age must be a positive number');
+                }
+            }
+        },
+    });
+
+    // create an instance
+    const me = new User({
+        name: 'Mike', // required input 
+        age: -1, // not pass 
+    });
+
+    // save the instance created by the model 
+    me.save().then(() => {
+        console.log(me);
+    }).catch(error => {
+        console.log(error);
+    })
+    ```
+1. Since we can validate data with custom functions, we can also use well-defined and verified npm packages for validating jobs. These pacakges are tested and cover most of the cases, some extreme ones, and edge cases. This is also a better choice to prevent injection for security issues. For example, we can use npm `validator` package. 
+1. `validator` package is useful to validate some types of user input. We can check its [documation](https://www.npmjs.com/package/validator#validators) for further info.
+    1. credit card 
+    1. postcode
+    1. and more
+1. For `mongoose` models, we have `schemaTypes` to set up which we can refer to the [documentations](https://mongoosejs.com/docs/schematypes.html#schematype-options). Besides `required` and `validate` which we have introduced above, we can set up a `default` value for the field as well. In addition, we have sanitization options for certain data types. For example, we can convert all letters to lowercase or uppercase for `String` values or to trim the input. 
+  ```js 
+  const mongoose = require('mongoose');
+  const validator = require('validator');
+
+  const User = mongoose.model('User', {
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+        validate(value) {
+            if (!validator.isEmail(value)) {
+                throw new Error('Email is invalid');
+            }
+        },
+    },
+    age: {
+        type: Number,
+        default: 0,
+        validate(value) {
+            if (value < 0) {
+                throw new Error('Age must be a positive number');
+            }
+        }
+    },
+  });
+  ```
+
+### Data Validation and Sanitization: Part 2
+1. In this challenge, we update the model schema for `User` and `Task` dataset. 
+  1. `User`. We can use `.includes()` and `.toLowerCase()` method to check the input `String`. 
+    1. `password` is a required input 
+    1. Must be more than 7 characters
+    1. The input should be trimmed
+    1. The input should not have `password`
+  1. `Task`
+    1. `description` is a required input 
+    1. The input should be trimmed
+    1. `completed` property is `false` by default if it's not given 
+  ```js 
+  const User = mongoose.model('User', {
+  password: {
+      type: String,
+      require: true,
+      minlength: 7,
+      trim: true,
+      validate(value) {
+        if (value.toLowerCase().includes('password')) {
+          throw new Error(`password can't contain "password"!`)
+        }
+      },
+    },
+  });
+
+  const Task = mongoose.model('task', {
+    description: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    completed: {
+        type: Boolean,
+        default: false,
+    },
+  })
+  ```
+
+### Structuring a REST API
