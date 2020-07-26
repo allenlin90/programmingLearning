@@ -1,5 +1,7 @@
 let btn = document.querySelector('#btn');
-let img = document.querySelector('#photo');
+let priceDis = document.querySelector('#price');
+const currency = 'USD';
+const url = 'https://api.coindesk.com/v1/bpi/currentprice.json';
 
 //listen for clicks
 btn.addEventListener('click', function () {
@@ -8,11 +10,23 @@ btn.addEventListener('click', function () {
 
     XHR.onreadystatechange = function () {
         if (XHR.readyState == 4 && XHR.status == 200) {
-            let url = JSON.parse(XHR.responseText).message;
-            img.src = url;
+            let data = JSON.parse(XHR.responseText);
+            let price = data.bpi[currency].rate;
+            priceDis.textContent = price;
+        } else {
+            alert("Something went wrong")
         }
     }
 
-    XHR.open('GET', 'https://dog.ceo/api/breeds/image/random');
+    XHR.open('GET', url);
     XHR.send();
 })
+
+fetch(url).then(function (data) {
+    console.log(data);
+    console.log('status code was: ' + data.status);
+    return data.json();
+}).then(data => {
+    console.log(data);
+    console.log(data.bpi.USD.rate);
+});

@@ -354,6 +354,71 @@ Note:
     ```
     <img src="xmlhttprequest.gif">
 
+### Bitcoin Price Exercise
+1. We call an API to get the latest price info. from [coindesk](https://www.coindesk.com/). Its API endpoint is `https://api.coindesk.com/v1/bpi/currentprice.json`. After getting the data, we parse it and use DOM to put the data on the webpage when the user click the button to refresh. 
+    ```js
+    let btn = document.querySelector('#btn');
+    let priceDis = document.querySelector('#price');
+    const currency = 'USD';
+
+    //listen for clicks
+    btn.addEventListener('click', function () {
+        //make the request 
+        let XHR = new XMLHttpRequest();
+
+        XHR.onreadystatechange = function () {
+            if (XHR.readyState == 4 && XHR.status == 200) {
+                let data = JSON.parse(XHR.responseText);
+                let price = data.bpi[currency].rate;
+                priceDis.textContent = price;
+            } else {
+                alert("Something went wrong")
+            }
+        }
+
+        const url = 'https://api.coindesk.com/v1/bpi/currentprice.json';
+        XHR.open('GET', url);
+        XHR.send();
+    })
+    ```
+### Fetch Introduction 
+1. Problems with XHR 
+    1. Ugly, Bulky syntax 
+    1. It's 16 years old and designed for different design concept and environment
+    1. No Streaming 
+1. `fetch()` API is a newer function to work on the same job. These 2 functions work in a different way that `fetch()` can work through streaming and check the data and stop the process if the purpose is done along the way, while `XHR` must retrieve all the data before it starts to work. The concept is similar to streaming on video media platform such as YouTube that users can start to watch the video before the whole video file is downloaded locally. Besids, assuming that we have huge data center or a "fetch" of data can be billions of items, while we only need a single one from the dataset. It's really unnecessary and inefficient to download the whole set and start to parse it. 
+1. `fetch()` API returns a `promoise` that we can work only that much easier than using `XHR`, as `promise` can take `.then()` and `.catch()` method to handle the returned data and error handling. After getting the response from the API, we can use `.json()` method to work on the response and turn it into the JSON file that we can work on. 
+    ```js
+    const url = 'https://api.coindesk.com/v1/bpi/currentprice.json';
+
+    fetch(url).then(function (data) {
+        console.log(data);
+        console.log('status code was: ' + data.status);
+        return data.json();
+    }).then(data => {
+        console.log(data);
+        console.log(data.bpi.USD.rate);
+    });
+    ```
+
+### Fetch options
+1. `fetch()` API function can not only take an URL as argument but an `option Object` as configurations. The default HTTP method is `"GET"`, while we can change it to `"POST"`. We can use this function to send JSON file to the API endpoint. In the following example, we try to send a JSON that has a `name` and `login` property to the API endpoint. We can check this on the `network` tab in developer console of a browser such as `Chrome`. 
+1. We can check the documentation of `fetch()` API options [here](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch) 
+    ```js 
+    fetch(url, {
+        method: "POST", 
+        body: JSON.stringify({
+            name: 'blue',
+            login: 'bluecat',
+        })
+    })
+    .then(data => {
+        // do something
+    })
+    .catch(error => {
+        // handle error
+    })
+
 # AJAX Part 2: jQuery and Axios
 
 
