@@ -419,6 +419,189 @@ Note:
         // handle error
     })
 
+### Fetch error handling
+1. `.catch()` only handles `request` and other problems such as internet or connection issues. However, if the API endpoint returns a valid data (though an error message), the promise will still work on the `resolve` callback function. Therefore, we can put an error handling in `.then()` method for the returned content itself.
+1. We can separate the error handling function to make the code succinct. 
+    ```js     
+    fetch(url)
+    .then(handleErrors)
+    .then(request => {
+        console.log('Everything is Fine!');
+        console.log(request);
+    })
+    .catch(error => {
+        console.log('There is a problem!', error);
+    })
+
+    function handleErrors (request) {
+        if(!request.ok) {
+            throw Error(request.status);
+        }
+        return request;
+    }
+    ```
+### Fetch Random User Profile
+1. The API endpoint is `https://randomuser.me/api/`
+1. HTML
+    ```html
+    <h1 class="title"> Random User Generator</h1>
+    <div class="user-profile">
+        <img id="avatar" src="https://pbs.twimg.com/profile_images/743138182607175680/ZJzktgBk_400x400.jpg" />
+        <div id="fullname">Jon Snow</div>
+        <div id="username">
+            kingofnorth
+        </div>
+        <div class="description">
+            <div>Email: <span id="email">jon@hotmail.com</span></div>
+            <div>City: <span id="city">Winterfell</span></div>
+        </div>
+        <div class="footer">
+            <button id="btn">Next User!</button>
+        </div>
+    </div>
+    ```
+1. CSS
+    ```css
+    /* CSS design originally by @jofpin, tweaked by Colt Steele */
+    @import url(https://fonts.googleapis.com/css?family=Raleway|Varela+Round|Coda);
+
+    body {
+        background: #ecf0f1;
+        padding: 2.23em;
+    }
+
+    .title {
+        color: #2c3e50;
+        font-family: "Coda", sans-serif;
+        text-align: center;
+    }
+
+    .user-profile {
+        margin: auto;
+        width: 27em;
+        height: 11em;
+        background: #fff;
+        border-radius: .3em;
+    }
+
+    .user-profile #fullname {
+        margin: auto;
+        margin-top: -4.40em;
+        margin-left: 5.80em;
+        color: #16a085;
+        font-size: 1.53em;
+        font-family: "Coda", sans-serif;
+        font-weight: bold;
+    }
+
+    #username {
+        margin: auto;
+        display: inline-block;
+        margin-left: 10.43em;
+        color: #3498db;
+        font-size: .87em;
+        font-family: "varela round", sans-serif;
+    }
+
+    .user-profile>.description {
+        margin: auto;
+        margin-top: 1.35em;
+        margin-right: 3em;
+        width: 18em;
+        color: #7f8c8d;
+        font-size: .87em;
+        font-family: "varela round", sans-serif;
+    }
+
+    .user-profile>img#avatar {
+        padding: .7em;
+        margin-left: .3em;
+        margin-top: .3em;
+        height: 6.23em;
+        width: 6.23em;
+        border-radius: 18em;
+    }
+
+
+    .footer {
+        margin: 2em auto;
+        height: 3.70em;
+        background: #16a085;
+        text-align: center;
+        border-radius: 0 0 .3em .3em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background 0.1s;
+    }
+
+    button {
+        color: white;
+        font-family: "Coda", sans-serif;
+        text-align: center;
+        font-size: 20px;
+        background: none;
+        outline: none;
+        border: 0;
+    }
+
+    button:hover {
+        cursor: pointer;
+    }
+
+    .footer:hover {
+        background: #1abc9c;
+    }
+    ```
+1. JavaScript
+    ```js
+    const btn = document.querySelector('#btn');
+    const url = 'https://randomuser.me/api/';
+
+    const selectors = {
+        fullname: '#fullname',
+        username: '#username',
+        email: '#email',
+        city: '#city',
+        img: '#avatar',
+    }
+
+    btn.addEventListener('click', () => {
+        fetch(url)
+            .then(errorHandler)
+            .then(data => {
+                const result = data.results[0];
+                const firstName = result.name.first;
+                const lastName = result.name.last;
+                const username = result.login.username
+                const email = result.email;
+                const city = result.location.city;
+                const img = result.picture.medium;
+                console.log(result)
+                // fullname
+                document.querySelector(selectors.fullname).textContent = `${firstName} ${lastName}`;
+                // username
+                document.querySelector(selectors.username).textContent = `${username}`;
+                // email
+                document.querySelector(selectors.email).textContent = `${email}`;
+                // city
+                document.querySelector(selectors.city).textContent = `${city}`;
+                // image
+                document.querySelector(selectors.img).src = `${img}`;
+
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    });
+
+    function errorHandler(request) {
+        if (!request.status) {
+            throw Error('Something went wrong');
+        }
+        return request.json();
+    }
+    ```
 # AJAX Part 2: jQuery and Axios
 
 
