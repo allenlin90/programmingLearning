@@ -31,7 +31,7 @@ GAME RULES:
 - BUT, if the player rolls a 1, all his ROUND score gets lost. After that, it's the next player's turn
 - The player can choose to 'Hold', which means that his ROUND score gets added to his GLBAL score. After that, it's the next player's turn
 - The first player to reach 100 points on GLOBAL score wins the game
-  <img src="./pigGame/pigGame.png">
+  <img src="./pigGame/pigGame.PNG">
 
 ### First DOM Access and Manipulation
 
@@ -974,7 +974,7 @@ GAME RULES:
 
 ### Summary of Step 1
 
-<img src="budgetAppStructure1.png">
+<img src="budgetAppStructure1.PNG">
 
 ### Project planning and architecture: Step 2
 
@@ -1061,7 +1061,7 @@ GAME RULES:
 
 ### Summary of Step 2
 
-<img src="budgetAppStructure2.png">
+<img src="budgetAppStructure2.PNG">
 
 ### Project planning and architecture: Step 3
 
@@ -1219,7 +1219,7 @@ GAME RULES:
    ```
 
 1. Final Structure
-   <img src="budgetAppStructure_final.png">
+   <img src="budgetAppStructure_final.PNG">
 
 # ES6/ES2015 JavaScript
 
@@ -2334,7 +2334,7 @@ This section is skipped, as I've learnt it from other materials.
      }
    }
    ```
-1. By this configuration, we can take `mode: 'development'` in the last line in `webpack.config.js`.
+1. By this configuration, we can take `mode: 'development'` off in the last line in `webpack.config.js`.
 
 ### The Webpack Dev Server
 
@@ -2445,9 +2445,9 @@ npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env
 ### Planning our Project Architecture with MVC
 
 1. MVC stands for `Model`, `Controller`, and `View`.
-1. Though we've used the concept in the budetApp with IFFEs and closure, we can use `module` which is a new feature in ES6 to implement to concept in an easier way.
+1. Though we've used the concept in the budgetApp with IFFEs and closure, we can use `module` which is a new feature in ES6 to implement to concept in an easier way.
 1. For a certain function in the web app, we can separate it into 2 parts, model and view, and get them integrated with the controller module.
-   <img src="mvcRecipeApp.png">
+   <img src="mvcRecipeApp.PNG">
 
 ### How ES6 module works
 
@@ -2663,7 +2663,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
       1. Recipe list
       1. Shopping list
 
-      <img src="forkify.png">
+      <img src="forkify.PNG">
 
 1. According to the HTML template, each `<li>` item is in the following structure. We then udpate `searchViews.js` to with `.forEach()` to iterate through the data `Array` and parse the `Objects`. We update the selector in `base.js` and use `.insertAdjacentHTML()` method to the `<ul>` tag. We can check documentation of the [method](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML). Note that in `.forEach()` we can use pass the callback function directly with out any argument, as we usually use an anonymous function that it would be confusing at the first place.
 1. After rendering the query result according to the input, we can clear the input out and get ready for the next search with `elements.searchInput.value = ""`.
@@ -3041,7 +3041,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    window.addEventListener("hashchange", controlRecipe);
    ```
 
-    <img src="forkifyRecipeData.png">
+    <img src="forkifyRecipeData.PNG">
 
 1. We add the Recipe controller in `index.js`. We use the same `state` to gather all the data we received into a single `Object` that is easier to manage and control. Besides, we use `try` and `catch` to work on `await` function as it could fail and cause the whole program crashes. In this stage, we can try to change the ID in the URL to see the data rendered in browser console. However, such feature isn't useful and we'd like to check if there's any `id` given when page is loaded. For example, a user may bookmark the URL with an ID attached. Without the checking event, the program wouldn't render the desirable data.
 1. We get back to the Search section and add on `try` and `catch` for `await` function.
@@ -4038,7 +4038,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
 1. As we can find `url` can find the path that users access, the other main function we want to get benefited from is to parse the parameters passed in the URL.
 1. We can check the paremeter input on URL on `url.parse(req.url, true).query` this is the value we pass in the URL that after question mark `?`. For example, the parameter of `localhost:1337/?id=1` is `{'id': '1'}`.
 1. Besides, we can use ampersand `&` to concatenate the parameters in the URL and pas multiple parameters. For example, in `localhost:1337/?id=1&date=today`, we have 2 parameters `{'id': '1', 'date': 'today'}`.
-   <img src="passParameterURL.png">
+   <img src="passParameterURL.PNG">
 1. In this case, each `id` represents a product on the webiste. Since we have only 4 products in this case, we can set up the condition that the `id` shouldn't be greater than the `length` of the JSON file we get.
 
    ```js
