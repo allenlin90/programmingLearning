@@ -543,6 +543,8 @@ Note:
         background: none;
         outline: none;
         border: 0;
+        width: 100%;
+        height: 100%;
     }
 
     button:hover {
@@ -602,6 +604,9 @@ Note:
         return request.json();
     }
     ```
+### Problems with Fetch API
+1. Internet Explorer doesn't support `fecth()` function. 
+
 # AJAX Part 2: jQuery and Axios
 
 
