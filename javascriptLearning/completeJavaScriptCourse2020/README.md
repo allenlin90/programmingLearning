@@ -2266,7 +2266,7 @@ GAME RULES:
    1. ES6 Modules
       1. **webpack** (bundle all modules)
 
-<img src="./modernJSOverview.png">
+<img src="./modernJSOverview.PNG">
 
 ### A Brief introduction to the command line
 
@@ -2312,10 +2312,10 @@ This section is skipped, as I've learnt it from other materials.
    console.log(x); // 23
    ```
 
-1. We then install npm packages `webpacke` and `webpack-cli`. We then use `npm run dev` to start packing.
+1. We then install npm packages `webpack` and `webpack-cli`. We then use `npm run dev` to start packing.
 1. We then can import the `bundle.js` into a HTML file and check in the console to see if it works.
 1. In `package.json`, we can change the `script` property for different use. For example, we've change `"scripts"` property from `"test"` to `"dev"`, so when we run `npm run dev`, npm knows that we'd like to pack the files. We can have another property as "**build**", so when we type `npm run build`, webpack will compress and bundle the files in production mode which compress the files much smaller.
-   ```json
+   ```js
    {
      "name": "forkify",
      "version": "1.0.0",
@@ -2323,7 +2323,7 @@ This section is skipped, as I've learnt it from other materials.
      "main": "webpack.config.js",
      "scripts": {
        "dev": "webpack --mode development", // update from "test" to "dev"
-       "build": "webpacke --mode production"
+       "build": "webpack --mode production"
      },
      "author": "",
      "license": "ISC",
