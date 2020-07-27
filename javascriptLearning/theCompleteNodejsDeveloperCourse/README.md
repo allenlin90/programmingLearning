@@ -2749,3 +2749,19 @@ doWorkCallback(function (error, result) {
       console.log(`Server has started on port: ${port}`);
   });
   ```
+
+# API Authentication and Security (Task App)
+### Securely Storing Passwords: Part 1
+### Securely Storing Passwords: Part 2
+### Logging in Users
+### JSON Web Tokens
+### Generating Authentication Tokens
+### Express Middleware
+### Accepting Authentication Tokens
+### Advanced Postman
+### Logging out
+### Hiding Private Data 
+### Authenticating User Endpoints 
+### The User/Task Relationship
+### Authenticating Task Endpoints
+### Cascade Delete Tasks 
