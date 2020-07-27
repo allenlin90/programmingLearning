@@ -608,6 +608,368 @@ Note:
 1. Internet Explorer doesn't support `fecth()` function. 
 
 # AJAX Part 2: jQuery and Axios
+### Introduction to jQuery
+1. jQuery is a JavaScript client library that allows developers to use certain functions in less code. 
+    1. Without jQuery
+    ```js 
+    // without jQuery
+    var request = new XMLHttpRequest();
+    request.open('GET', '/my/url');
 
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+            // Success!
+            var data = JSON.parse(request.responseText);
+        } else {
+            // do something
+        }
+    };
+
+    request.onerror = function() {
+        // There was a connection error
+    };
+
+    request.send();
+    ```
+    1. With jQuery
+    ```js
+    // with jQuery 
+    $.getJSON('/my/url', function (data) {
+        // do seomthing 
+    });
+    ```
+1. In this section, we will practice on `$.ajax`, `$.get`, `$.post`, and `$.getJSON`.
+
+### jQuery $.ajax method 
+1. `$.ajax()` works similar to a `promise`, while it takes an `Object` includes `method` and `url` property. The "base" jQuery method just creates an XMLHttpRequest under the hood. Besides, jQuery has smart guessing that it will detect the returned data from a HTTP request and "guess" how to parse it. We can check the [dataType](https://api.jquery.com/jQuery.ajax/) part on jQuery documenation. 
+1. Besides, we can check in the develper console in the "**Network**" tab to check which kind of request is made by the function. 
+    ```js 
+    $.ajax({
+        method: "GET", 
+        url: "some.api.com", 
+        dataType: 'json', // how to parse the data 
+    })
+    .done(function(res) {
+        console.log(res); // this 'res' has been "parsed" with JSON.parse() that we can manipulate it directly
+    })
+    .fail(function(){
+        // do something
+    })
+    ```
+### jQuery AJAX shorthand methods 
+1. All of the following methods are the shorthands for different HTTP requests. Each of them can be replaced with `$.ajax()` by passing certain HTTP methods, while we can simply pass only url as `Strings` to them and to use `.done()` and `.fail()` directly. 
+1. `$.get()` is a shorthand to make a GET HTTP request. 
+    ```js 
+    $.get('url');
+
+    $.ajax({
+        method: "GET", 
+        url: ""
+    })
+    ```
+1. `$.post()` is a shorthand to make a POST HTTP request, while this method takes a 2nd argument which is the data to send to the API endpoint. 
+    ```js 
+    var data = {
+        name: 'Allen', 
+        city: 'Bangkok',
+    }
+    $.post('url', data)
+    .done(function(){})
+    .fail(function(){})
+    ```
+1. `$.getJSON()` is simialr to `$.get()` that works on a GET HTTP request and converts the returned data from JSON string to JavaScript object which we can use directly. 
+    ```js 
+    $.getJSON('url')
+    .done(function(data) {
+        console.log(data);
+    })
+    .fail(function(){
+
+    });
+    ```
+
+### jQuery random cats API exercise 
+1. The given random cat API doesn't work, so we use the previous dog CEO API for the image URL. 
+    1. JavaScript 
+    ```js 
+    const url1 = 'https://aws.random.cat/meow';
+    const url2 = 'https://cors-anywhere.herokuapp.com/http://aws.random.cat/meow';
+    const url3 = 'https://dog.ceo/api/breeds/image/random';
+
+    $('.btn').click(function () {
+        $.get(url3)
+            .done(function (res) {
+                let url = res.message;
+                console.log(url);
+                $('.img').css("background-image", `url(${url})`)
+            })
+            .fail(function (err) {
+                console.log('Error', err);
+            })
+    })
+    ```
+    1. HTML 
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Random Cat</title>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+                background: #ccc;
+                box-sizing: border-box;
+            }
+
+            .container {
+                width: 300px;
+                height: 300px;
+                margin: 6rem auto;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .img {
+                width: 100%;
+                height: 100%;
+                padding: 0.2rem;
+                background: url() center center/cover;
+            }
+
+            .btn {
+                width: 50%;
+                background: steelblue;
+                color: #fff;
+                padding: 1rem;
+                font-size: 1.2rem;
+                margin: 1rem auto;
+                border: none;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+
+            .btn:hover {
+                cursor: pointer;
+                background: rgb(54, 115, 165);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="img"></div>
+            <button class="btn">Random Dog</button>
+        </div>
+        <script src="randomCat.js"></script>
+    </body>
+
+    </html>
+    ```
+
+### axios intro 
+1. `axios` is a lightweight HTTP request library. According to [axios](https://github.com/axios/axios) Github, it has the following features 
+    1. Make XMLHttpRequests from the browser
+    1. Make http requests from node.js
+    1. Supports the Promise API
+    1. Intercept request and response
+    1. Transform request and response data
+    1. Cancel requests
+    1. Automatic transforms for JSON data
+    1. Client side support for protecting against XSRF
+1. In this part, we use client side `axios` that we can import the code with CDN as jQuery. `axios` works similar to `fetch()` API function and `promise` objects, while we don't need to use `.json()` the convert the data and we can use `.then()` and `.catch()` methods directly. 
+    ```js 
+    let url = 'https://opentdb.com/api.php?amount=1';
+    axios.get(url)
+    .then(function (res) {
+        console.log(res.data.results[0].question);
+    })
+    .catch(function (err) {
+        console.log(err);
+    });
+    ```
+
+### Axios Error Handling 
+1. In this case, we try create and append new data on the page. Besides, we use error handler to catch the problems if it is from `request`, `respond`, or something else .
+    ```js 
+    let btn = document.querySelector('button');
+    let section = document.querySelector('#comments');
+
+    btn.addEventListener('click', sendRequest);
+
+    function sendRequest() {
+        axios.get('https://jsonplaceholder.typicode.com/comments', {
+            params: {
+                postId: 1,
+            }
+        })
+            .then(addComments)
+            .catch(handleErrors)
+    }
+
+    function addComments(res) {
+        res.data.forEach(comment => {
+            appendComment(comment);
+        });
+    }
+
+    function appendComment(comment) {
+        let newP = document.createElement('p');
+        newP.innerText = comment.email;
+        section.appendChild(newP);
+    }
+
+    function handleErrors(err) {
+        if (err.response) {
+            console.log('Problems With Response ', err.response.status);
+        } else if (err.request) {
+            console.log('Problem With Request!');
+        } else {
+            console.log('Error', err.message);
+        }
+    }
+    ```
+
+### Ron Swanson Exercise 
+1. The exercise is try to use `XHR`, `fetch()`, `jQuery`, and `axios` to call an API and get a JSON as request and change the content on the webpage. All the 4 methods give the same result but use different syntax and code to achieve the goal. 
+    1. JavaScript 
+    ```js 
+    const p = document.querySelector('#quote');
+    const url = `http://ron-swanson-quotes.herokuapp.com/v2/quotes`;
+    document.querySelector('#xhr').addEventListener('click', XHR);
+    document.querySelector('#fetch').addEventListener('click', fetchData);
+    $('#jquery').on('click', jqueryData);
+    document.querySelector('#axios').addEventListener('click', axiosData);
+
+    function XHR() {
+        let XHR = new XMLHttpRequest();
+        XHR.onreadystatechange = function () {
+            if (XHR.readyState == 4) {
+                if (XHR.status == 200) {
+                    const quote = JSON.parse(XHR.responseText)[0];
+                    p.innerText = quote;
+                } else {
+                    console.log('There was a problem!');
+                }
+            }
+        };
+        XHR.open("GET", url);
+        XHR.send();
+    }
+
+    function fetchData() {
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                p.innerText = data[0];
+            })
+            .catch(err => {
+                console.log('Error', err);
+            })
+    }
+
+    function jqueryData() {
+        $.getJSON(url)
+            .done(data => {
+                p.innerText = data[0];
+            })
+            .fail(err => {
+                console.log(err)
+            });
+    }
+
+    function axiosData() {
+        axios.get(url)
+            .then(res => {
+                p.innerText = res.data[0];
+            })
+            .catch(err => {
+                console.log('Error', err);
+            })
+    }
+    ```
+    1. HTML 
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <title>Axios practice</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Roboto');
+
+            body {
+                font-family: 'Roboto';
+                color: #2c3e50;
+                text-align: center;
+            }
+
+            #quote {
+                font-size: 20px;
+            }
+
+            .container {
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+            }
+
+
+            button {
+                margin-top: 20px;
+                background: red;
+                border: none;
+                outline: none;
+                height: 40px;
+                text-align: center;
+                width: 130px;
+                border-radius: 40px;
+                background: #fff;
+                border: 2px solid #1abc9c;
+                color: #1abc9c;
+                letter-spacing: 1px;
+                text-shadow: 0;
+                font-size: 12px;
+                font-weight: bold;
+                cursor: pointer;
+                -webkit-transition: all 0.25s ease;
+                transition: all 0.25s ease;
+                font-family: 'Roboto', sans-serif;
+
+
+            }
+
+            button:hover {
+                color: white;
+                background: #1abc9c;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Ron Swanson Quote Generator</h1>
+        <p>(4 ways of writing AJAX requests)</p>
+        <section class="container">
+            <button id="xhr">XHR</button>
+            <button id="fetch">Fetch</button>
+            <button id="jquery">jQuery</button>
+            <button id="axios">Axios</button>
+        </section>
+        <p id="quote">Quote Goes Here...</p>
+        <script src="test.js"></script>
+    </body>
+
+    </html>
+    ```
 
 # Testing with Jasmine
