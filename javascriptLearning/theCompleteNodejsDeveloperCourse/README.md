@@ -2078,3 +2078,674 @@ doWorkCallback(function (error, result) {
   ```
 
 ### Structuring a REST API
+1. REST stands for Representational State Transfer. We can also call it RESTful API. 
+1. A server is stateless. 
+1. A request made from a program via the Internet usually uses HTTP protocol. 
+1. With the structure, we can have clearer and succienct path and methods to work on with CRUD. However, the keywords for the actions are different. For example, we can use the path structure for `tasks`.
+  1. Create - POST /tasks
+  1. Read - GET /tasks
+  1. Read - GET /tasks/:id
+  1. Update - PATCH /tasks/:id
+  1. Delete - DELETE /tasks/:id
+  <img src="restapistructure.PNG">
+1. A HTTP request. `express` framework has provided a friendly user interface for developers to work on the `request` and `response`. 
+  1. A `request` includes the `header` and metadata that indicates the method such as the "action" we are going use, "connection" (one-time or being kept alive), and "format" of the data. 
+  1. A `response` has status code such as `200` and `201` if the "GET" or "POST" action works, data format, and the content returned from the server. 
+  <img src="httpRequest.PNG">
+
+### Installing Postman
+1. This is an introduction to POSTMAN App and how to use it. 
+1. We can use POSTMAN to send a POST request 
+  <img src="postmanPOST.PNG">
+
+### Resource Creation Endpoints: Part 1
+1. We install npm package `nodemon` in development mode and `express`. 
+1. We then create `index.js` in the root directory to use `express` framework. Besides, since we are not going to use `mongodb.js`, we will remove the file. The backup of the practices are in the other folder `mongoDBAndPromises`. 
+1. We have an inital setup for `express` framework in `index.js`
+  ```js 
+  const express = require('express');
+  const app = express();
+  const port = process.env.PORT;
+
+  app.listen(port || 3000, () => {
+      console.log(`Server has started on port: ${port || 3000}`);
+  });
+  ```
+1. We change the `scripts` property in `package.json` with `start` and `dev`. We will deploy this app on heroku later. 
+  ```js 
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  }
+  ```
+1. In `express`, we can use `.get()` or `.post()` to specify the listener on the server for different types of request. If we use `app.post()` on a route, the listener won't react if a user give a GET request, such as putting the URL on the browser search bar directly. Note that we can't use a browser to send POST requets directly. Therefore, we can use POSTMAN to test the endpoint. 
+1. In the following case, we can use `app.use(express.json())` which is similar to turn the response from a server in a `Promise` into a JSON format. However, `express` allow us to use a relative simple syntax. Therefore, we can parse the `request.body` directly to check the data in the request. 
+  ```js
+  const express = require('express');
+  const app = express();
+  const port = process.env.PORT || 3000;
+
+  // parse the request data and convert it to JSON
+  app.use(express.json());
+
+  // reciving a POST request 
+  app.post('/users', (req, res) => {
+      console.log(req.body);
+      res.send('testing!');
+  })
+
+  app.listen(port, () => {
+      console.log(`Server has started on port: ${port}`);
+  });
+  ```
+1. In the source `src` directory, we create a new folder `models` that we will keep the data models separately from `mongoose.js`. Besides, we need to use `module.exports` to allow other JavaScript file to use this code in Node.js environment. 
+  ```js 
+  // src/models/user.js 
+  const mongoose = require('mongoose');
+  const validator = require('validator');
+
+  const User = mongoose.model('User', {
+      name: {
+          type: String,
+          required: true,
+          trim: true,
+      },
+      email: {
+          type: String,
+          required: true,
+          trim: true,
+          lowercase: true,
+          validate(value) {
+              if (!validator.isEmail(value)) {
+                  throw new Error('Email is invalid');
+              }
+          },
+      },
+      age: {
+          type: Number,
+          default: 0,
+          validate(value) {
+              if (value < 0) {
+                  throw new Error('Age must be a positive number');
+              }
+          }
+      },
+      password: {
+          type: String,
+          require: true,
+          minlength: 7,
+          trim: true,
+          validate(value) {
+              if (value.toLowerCase().includes('password')) {
+                  throw new Error(`password can't contain "password"!`)
+              }
+          },
+      },
+  });
+
+  module.exports = User;
+  ```
+1. After configuring the directories, we can import the `mongoose.js` (ensuring that the server connects to the database) and the model of `users` (data model with schema and validator) into `index.js`. 
+1. In this case, we try to create a user by the `User` model imported from `user.js` and reply it to user if the data is valid and written into the database. If an error occurs, we use `.catch()` to return the error such as the input data is invalid. 
+1. We can learn more on HTTP status code at [httpstatuses.com](https://httpstatuses.com/).
+  ```js 
+  const express = require('express');
+  require('./db/mongoose');
+  const User = require('./models/user');
+
+  const app = express();
+  const port = process.env.PORT || 3000;
+
+  app.use(express.json());
+
+  app.post('/users', (req, res) => {
+      const user = new User(req.body); // create new user data from the input in JSON format
+
+      user.save().then(() => {
+          res.send(user) // respond the input back to user
+      }).catch(error => {
+          // res.status(400); // return a status code correctly
+          // res.send(error);
+          res.status(400).send(error); // a single line to return status code and error message
+      })
+  })
+
+  app.listen(port, () => {
+      console.log(`Server has started on port: ${port}`);
+  });
+  ```
+
+### Resource Creation Endpoints: Part 2
+1. We create a new route that allows users to make a POST request to create a new input to the database by using the schema of `tasks`. The process and concept is the same as setting up the `users`. In this case, we add up one more function to return status code if the request is successful as well. When a data is given correctly, we can return `201` according to [httpstatuses.com](https://httpstatuses.com/).
+  ```js 
+  const express = require('express');
+  require('./db/mongoose');
+  const User = require('./models/user');
+  const Task = require('./models/task');
+
+  const app = express();
+  const port = process.env.PORT || 3000;
+
+  app.use(express.json());
+
+  app.post('/users', (req, res) => {
+      const user = new User(req.body);
+
+      user.save().then(() => {
+          res.status(201).send(user)
+      }).catch(error => {
+          res.status(400).send(error); // a single line to return status code and error message
+      })
+  })
+
+  app.post('/tasks', (req, res) => {
+      const task = new Task(req.body);
+
+      task.save().then(function () {
+          res.status(201).send(task);
+      }).catch(function (error) {
+          res.status(400).send(error);
+      })
+  })
+
+  app.listen(port, () => {
+      console.log(`Server has started on port: ${port}`);
+  });
+  ```
+
+### Resource Reading Endpoints: Part 1
+1. We can check the `queries` part in `mongoose` API documentation. In this case, we will use [`.find()`](https://mongoosejs.com/docs/api.html#model_Model.find) method. `.find()` method takes an `Object` as an argument.
+1. In the route, we give `:parameter` to send the parameter to the server via URL. Note `express` framework allow us to get the parameter easily from the request by `req.params.[para,]`. Note that if we change the variable name after the column, the returned parameters in the request will also be changed. Besides, if the request has multiple parameters, we can check them all in `req.params` as this is an `Object`. 
+1. In this case, if we use `.findById()` method to check in the database, we won't get 404 directly if the id given is not formmated correct. The program will return an error directly. Status `404` will only be trigerred when the format of given id is correct but there's no such data in the database. Therefore, we can write another line to check if the id is correct formatted. In this case, the id in MongoDB should always be 24 characters long.
+  ```js 
+  // GET request to a specific user data 
+  app.get(`/users/:id`, (req, res) => {
+      const _id = req.params.id;
+      // Check if the given id is in correct format 
+      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+
+      // use findById mongoose method 
+      User.findById(_id).then(user => {
+          // check if the id exists
+          if (!user) {
+              return res.status(404).send();
+          }
+
+          // return the data if found
+          res.send(user);
+      }).catch(err => {
+          res.status(500).send();
+      });
+  });
+
+  // GET request to get all user data in the database
+  app.get('/users', (req, res) => {
+      User.find({}).then(users => {
+          res.send(users);
+      }).catch(error => {
+          res.status(500).send();
+      })
+  });
+  ```
+
+### Resource Reading Endpoints: Part 2
+1. This part is a challenge to work on the GET requests to `tasks` which is using the same methods and concept in retrieving data of `users`. 
+  ```js 
+  // GET request to get a specific task 
+  app.get('/tasks/:id', (req, res) => {
+      const _id = req.params.id;
+      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+      Task.findById(_id).then(task => {
+          if (!task) {
+              return res.status(404).send();
+          }
+
+          res.send(task);
+      }).catch(err => {
+          res.status(500).send();
+      })
+  })
+
+  // GET request to get all task data 
+  app.get('/tasks', (req, res) => {
+      Task.find({}).then(tasks => {
+          res.send(tasks);
+      }).catch(err => {
+          res.status(500).send();
+      })
+  });
+  ```
+
+### Promise chaining 
+1. If we need to use several async functions to deal with returned data from the server, we can use nested promise with `.then()` and `.catch()` inside. However, such structure is hard to read and understand. Besides, we have to use `.catch()` several times. 
+1. On the other hand, we can use promise chaining that let the first asynction function return a promise, so that we can use `.then()` directly on the result to work on `resolve` function. In this case, we can have a simple structure to read and can have one single `.catch()` method to deal with the errors. 
+  ```js 
+  // async function that returns a promise 
+  const add = (a, b) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(a + b);
+            reject('Something went wrong!');
+        }, 1000)
+    });
+  }
+
+  // nested chaining 
+  add(1, 2).then(sum => {
+      console.log(sum);
+
+      add(sum, 5).then(sum2 => {
+          console.log(sum2);
+      }).catch(e => {
+          console.log(e);
+      })
+  }).catch(e => {
+      console.log(e);
+  });
+
+  // promise chaining
+  add(1, 1).then(sum => {
+      console.log(sum);
+      return add(sum, 4);
+  }).then(sum2 => {
+      console.log(sum2);
+  }).catch(err => {
+      console.log(err);
+  })
+  ```
+1. We create `promise-chaining.js` in a `sandbox` folder in the task-manager app to test promise chaining feature for `mongoose` methods. 
+1. We use other `mongoose` methods by checking its documentation. In this case, we use [`Model.countDocuments()`](https://mongoosejs.com/docs/api/model.html#model_Model.countDocuments) to check how many instances of a specific type of data are stored in the collection. Note that the `Guides` in mongoose documentation is just simple instruction for frequently used methods. We can check other methods in `API` section. For example, in `API > Model`.
+1. We tried 2 different methods to manipulate the data `.findByIdAndUpdate()` and `.findByIdAndDelete()` each of which takes an argument of the `_id` of the instance. 
+1. After modifying the single data, we can use `.countDocuments()` which takes an `Object` as filter to check the data and returns the number of instances that matches. 
+  ```js 
+  require('../src/db/mongoose');
+  const User = require('../src/models/user');
+  // find a user and update his/her age 
+  User.findByIdAndUpdate('5f1da581079d580247037b50', { age: 1, }).then(user => {
+      console.log(user);
+      // return the number of users that is 1 year old 
+      return User.countDocuments({ age: 1 });
+  }).then((result) => {
+      console.log(result)
+  }).catch(e => {
+      console.log(e);
+  })
+
+  const Task = require('../src/models/task');
+  // find a task and delete it 
+  Task.findByIdAndDelete('5f1d969510ec5c02cc377501').then(user => {
+      console.log(user);
+      // return the number of tasks that is not completed 
+      return Task.countDocuments({ completed: false });
+  }).then((result) => {
+      console.log(result)
+  }).catch(e => {
+      console.log(e);
+  });
+  ```
+
+### Async/Await 
+1. An `async` function returns a `promise` as the output, so we can use `.then()` and `.catch()` of the returned `Objecgt` directly. `await` keyword can only exist and work in an `async` function. With these keywords, we can have write an `async` function in a synchronous-like syntax. 
+1. This also gives benefits with a clear syntax, as if we'd like to work on different tasks with different variables in multiple `.then()` methods. This can confuse the developer easily when chain is longer and scope of variables starting to get messed up. 
+1. We can also set a condition to ensure that the number to sum up must all be positive. Besides, we can use a counter to check the process of each async function. In the following example, we can see the counter prints out from the 1st approach and stops as the 3rd add function has `-3`. 
+  ```js 
+  let counter = 1;
+  const add = (a, b) => {
+      return new Promise((resolve, reject) => {
+          setTimeout(() => {
+              if (a < 0 || b < 0) {
+                  reject('Numbers must be positive!');
+              }
+              resolve(a + b);
+          }, 500)
+      });
+  }
+
+  const doWork = async () => {
+      console.log(`${counter++} time approach`);
+      const sum = await add(1, 99);
+      console.log(`${counter++} time approach`);
+      const sum2 = await add(sum, 50);
+      console.log(`${counter++} time approach`);
+      const sum3 = await add(sum2, -3);
+      return sum3;
+  }
+
+  doWork().then(result => {
+      console.log('result', result);
+  }).catch(error => {
+      console.log('error', error);
+  });
+  ```
+
+### Async/Await: Part 2
+1. We work on a challenge 
+  1. Create `deleteTaskAndCount as an async function which accepts id of task to remove
+  1. Use await to delete task and count up incomplete tasks 
+  1. Return the count 
+  1. Call the function and attach then/catch to log results 
+  ```js 
+  require('../src/db/mongoose');
+  const Task = require('../src/models/task');
+
+  async function deleteTaskAndCount(id) {
+      await Task.findByIdAndDelete(id);
+      const count = await Task.countDocuments({ completed: false });
+      return count;
+  }
+
+  deleteTaskAndCount('5f1d969510ec5c02cc377502').then(task => {
+      console.log(task);
+  }).catch(error => {
+      console.log(error);
+  })
+  ```
+
+### Integrating Async/Await 
+1. We rewrite all the code in `index.js` with async/await syntax. Since `express` framework doesn't use returned value from methods directly, we can turn its the callback function in the HTTP request methods into `async` functions. Besides, to prevent the errors that causing the program to crash, we can use `try` and `catch` to handle the errors. The refined code works exactly the same as using `.then()` and `.catch()` methods on `promises` objects. 
+  ```js 
+  const express = require('express');
+  require('./db/mongoose');
+  const User = require('./models/user');
+  const Task = require('./models/task');
+  const { Mongoose } = require('mongoose');
+
+  const app = express();
+  const port = process.env.PORT || 3000;
+
+  app.use(express.json());
+
+  // POST request to create a new user 
+  app.post('/users', async (req, res) => {
+      const user = new User(req.body);
+
+      try {
+          await user.save();
+          res.status(201).send(user);
+      } catch (error) {
+          res.status(400).send(error);
+      }
+
+  });
+
+  // GET request to a specific user data 
+  app.get(`/users/:id`, async (req, res) => {
+      const _id = req.params.id;
+      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+      try {
+          const user = await User.findById(_id);
+          if (!user) {
+              return res.status(404).send();
+          }
+          res.send(user);
+      } catch (error) {
+          res.status(500).send()
+      }
+  });
+
+  // GET request to get user data 
+  app.get('/users', async (req, res) => {
+      try {
+          const users = await User.find({});
+          res.send(users);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+
+  // POST request to create a new task 
+  app.post('/tasks', (req, res) => {
+      const task = new Task(req.body);
+
+      task.save().then(function () {
+          res.status(201).send(task);
+      }).catch(function (error) {
+          res.status(400).send(error);
+      })
+  });
+
+  // GET request to get a specific task 
+  app.get('/tasks/:id', async (req, res) => {
+      const _id = req.params.id;
+      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+      try {
+          const task = await Task.findById(_id);
+          if (!task) {
+              return res.status(404).send();
+          }
+          res.send(task);
+      } catch (error) {
+          res.status(500).send();
+      }
+  })
+
+  // GET request to get all task data 
+  app.get('/tasks', async (req, res) => {
+      try {
+          const tasks = await Task.find({});
+          res.send(tasks);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+
+  app.listen(port, () => {
+      console.log(`Server has started on port: ${port}`);
+  });
+  ```
+
+### Resource Updating Endpoints: Part 1
+1. This is relatively complicated that it may have several conditions to handle 
+  1. The user is not found (404). For example, the user gives an id in correct format but doesn't have an entity exist in the database. 
+  1. The new input is invalid (400). For example, the user gives empty string to update the name of the user, which was set to be required. 
+  1. The server has some issues that can't return the data (500)
+  1. Valid input format but incorrect data. For example, the user tries to modify a property can't be changed or doesn't exist. 
+1. We use the following code to work on PATCH request which is to modify a user data. In this case, we use `Object.keys()` which returns the properties of an `Object` in an `Array`, so we can use `.every()` method to check. This `Array.every()` method works similar to `.filter()` that it takes a callback function to check if the elements follow certain conditions and returns a boolean `true` if all the result of callback function is `true`. (Though we can use `.forEach` or other method to achieve the target, but this method is relatively simple for the purpose).
+1. In the `Model.findByIdAndUpdate()` method, we can give a 3rd parameters which is an `Object` of options such as `new: true` means that the method will return the result updated instance as an `Object` and `runValidators: true` means that the method will ensure the input will be checked with the validators in the schema. 
+  ```js 
+  // index.js
+  // PATCH request to modify data of a specific user
+  app.patch('/users/:id', async (req, res) => {
+      // list all the properties of user input as an array
+      const updates = Object.keys(req.body);
+      // list the fields that we allow users to update
+      const allowedUpdates = ['name', 'email', 'password', 'age'];
+      // check if the user gives invalid request to change fields can't be changed or doesn's exist at all 
+      const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+      if (!isValidOperation) {
+          return res.status(400).send({ error: 'Invalid udpates!' });
+      }
+
+      try {
+          const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
+
+          if (!user) {
+              return res.status(404).send();
+          }
+          res.send(user);
+      } catch (error) {
+          res.status(400).send(error);
+      }
+  })
+  ```
+
+### Resource Updating Endpoints: Part 2
+1. This is a chanllenge to work on the router handler to update the content of tasks in the database. 
+  1. Set up the route handler 
+  1. Send error if unknown updates 
+  1. Attempt to update the task 
+    1. Handle task not found 
+    1. Handle validation errors 
+    1. Handle success 
+1. A misake made here was setting the wront route, so server can't render the page on the given route correctly. I forget to put slash `/` before `tasks`
+  ```js 
+  // PATCH request to modify data of a specific task 
+  app.patch('/tasks/:id', async (req, res) => {
+      const id = req.params.id;
+      const updates = Object.keys(req.body);
+      const allowedUpdates = ['description', 'completed'];
+      const isDataAllValid = updates.every(update => allowedUpdates.includes(update))
+
+      if (!isDataAllValid) {
+          return res.status(400).send({ error: 'The input data is invalid!' });
+      }
+
+      try {
+          const task = await Task.findByIdAndUpdate(id, req.body, { new: true, runValidators: true, });
+          if (!task) {
+              return res.status(404).send();
+          }
+          res.send(task);
+      } catch (error) {
+          res.status(400).send();
+      }
+  })
+  ```
+
+### Resource Deleting Endpoints
+1. In this case, we should use `.findByIdAndDelete()` method, while I made mistake and used `.findOneAndDelete()` which will keep deleting data if there's any when the filter option doesn't set up correctly. 
+  ```js 
+  // Delete request to remove a specific task
+  app.delete('/tasks/:id', async (req, res) => {
+      try {
+          const task = await Task.findByIdAndDelete(req.params.id); // be careful with mongoose CRUD command!
+
+          if (!task) {
+              return res.status(404).send();
+          }
+
+          res.send(task);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
+
+### Separate Route Files 
+1. We have made all CRUD commands in the same file `index.js`. In this case, we have work on 2 main parts which are `users` and `tasks`. When the program goes bigger and more complex, the modules are better to be separated to be manageable. We will separate the routes of these and combine them into the an application to work on. 
+1. To use the router, we have to initiate it with `new express.Router()`, set up the route with `router.get()` (which is similar to `app.get()`), and register it with `app.use()`. 
+  ```js 
+  // initiate an express router 
+  const router = new express.Router();
+  router.get('/test', (req, res) => {
+      res.send('This is from my other router');
+  })
+  app.use(router);
+  ```
+1. We create a new directory in `src` named `routers` and create `user.js` as the router is created for `users`. We follow the similar syntax to create a router in this separated file and use `module.exports` to export the `Object`. 
+  ```js 
+  // src/routers/user.js
+  const express = require('express');
+  const router = new express.Router();
+
+  router.get('/test', (req, res) => {
+      res.send('From a new File');
+  })
+
+  module.exports = router;
+
+  // import the router to index.js 
+  const userRouter = require('./routers/user/');
+  app.use(userRouter);
+  ```
+1. After that, we can import user model by using `require('../models/user/')` and copy those routes setup in index.js without rewriting all of them. Note that since we have changed the router syntax and doesn't use `app` variable, we should change all of them into `router` which is a module created with `new express.Router()`. 
+  ```js 
+  const express = require('express');
+  const User = require('../models/user');
+  const router = new express.Router();
+
+  // POST request to create a new user 
+  router.post('/users', async (req, res) => {
+      const user = new User(req.body);
+
+      try {
+          await user.save();
+          res.status(201).send(user);
+      } catch (error) {
+          res.status(400).send(error);
+      }
+
+  });
+
+  // GET request to get user data 
+  router.get('/users', async (req, res) => {
+      try {
+          const users = await User.find({});
+          res.send(users);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+
+  // GET request to a specific user data 
+  router.get(`/users/:id`, async (req, res) => {
+      const _id = req.params.id;
+      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+      try {
+          const user = await User.findById(_id);
+          if (!user) {
+              return res.status(404).send();
+          }
+          res.send(user);
+      } catch (error) {
+          res.status(500).send()
+      }
+  });
+
+  // PATCH request to modify data of a specific user
+  router.patch('/users/:id', async (req, res) => {
+      const updates = Object.keys(req.body);
+      const allowedUpdates = ['name', 'email', 'password', 'age'];
+      const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+      if (!isValidOperation) {
+          return res.status(400).send({ error: 'Invalid udpates!' });
+      }
+
+      try {
+          const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
+
+          if (!user) {
+              return res.status(404).send();
+          }
+          res.send(user);
+      } catch (error) {
+          res.status(400).send(error);
+      }
+  });
+
+  // Delete request to remove a specific user
+  router.delete('/users/:id', async (req, res) => {
+      try {
+          const user = await User.findByIdAndDelete(req.params.id);
+
+          if (!user) {
+              return res.status(404).send();
+          }
+
+          res.send(user);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+
+  module.exports = router;
+  ```
+1. By separating the modules, `index.js` becomes simple and succinct and works exactly the same as before. 
+  ```js 
+  const express = require('express');
+  require('./db/mongoose');
+  const userRouter = require('./routers/user');
+  const taskRouter = require('./routers/task');
+
+  const app = express();
+  const port = process.env.PORT || 3000;
+
+  app.use(express.json());
+
+  app.use(userRouter);
+  app.use(taskRouter);
+
+  app.listen(port, () => {
+      console.log(`Server has started on port: ${port}`);
+  });
+  ```
