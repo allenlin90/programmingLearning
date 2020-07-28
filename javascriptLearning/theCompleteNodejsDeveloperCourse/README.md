@@ -2752,16 +2752,417 @@ doWorkCallback(function (error, result) {
 
 # API Authentication and Security (Task App)
 ### Securely Storing Passwords: Part 1
+1. At this point, we store user password in the database with plain text which is a VERY BAD idea. As most of the users nowadays use the same password across different websites. For security reasons, we should try to keep password hashed. 
+1. We can use `bcrypt.js` package to hash user passwords in the database. We can check its methods from [documentation](https://www.npmjs.com/package/bcryptjs#usage---async)
+  1. We can use `.hash()` which is an async method that can generate a hash "**salt**" automatically. Besides, we can skip the callback function. 
+  1. After users creating password, we can use `.compare()` to check when a user tries to login and look up the hash table to check if it matches.
+  ```js 
+  const bcrypt = require('bcryptjs');
+
+  const myFunction = async function () {
+      const password = 'Red12345!';
+      // give the password input and the times of string to be hashed. 8 is relatively balanced number of times 
+      const hashedPassword = await bcrypt.hash(password, 8);
+
+      console.log(password); // Red12345
+      console.log(hashedPassword); // hashed password 
+
+      // check if given password is the same as the password stored in the database by checking hash table 
+      const isMatch = await bcrypt.compare('Red12345!', hashedPassword);
+      console.log(isMatch) // true. This will be false if user gives wrong password 
+  }
+
+  myFunction();
+  ```
+
 ### Securely Storing Passwords: Part 2
+1. In the task-manager App, there are 2 main cases to use `bcrypt.js`. 
+  1. When a user creates a new account 
+  1. When a user update the account 
+1. In this case, we can use [middleware](https://mongoosejs.com/docs/middleware.html) in `mongoose`. We can run some code before the data is saved to the database. Therefore, we will update `src/models/user.js` in models. These middlewares has `pre` and `post` hook that we can either work "**before**" a task happens or "**after**". For example, a middleware can work before the data is written into database, or give a hint or do something else after data is written successfully. 
+1. We need to modify the code in router to enable the middle is working. In the `try` code block, we separate the code into 3 lines as to separate the `find` and `update` (to [save](https://mongoosejs.com/docs/api/document.html#document_Document-save) the data) process into 2 `await`. 
+  ```js 
+  // src/routers/user.js
+  // PATCH request to modify data of a specific user
+  router.patch('/users/:id', async (req, res) => {
+      const updates = Object.keys(req.body);
+      const allowedUpdates = ['name', 'email', 'password', 'age'];
+      const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+      if (!isValidOperation) {
+          return res.status(400).send({ error: 'Invalid udpates!' });
+      }
+
+      try {
+          // rewrite here!!!
+          // find the user by its id property
+          const user = await User.findById(req.params.id);
+          // update properties from the array above to iterate through each of them 
+          updates.forEach((update) => user[update] = req.body[update]);
+          await user.save();
+          // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
+
+          if (!user) {
+              return res.status(404).send();
+          }
+
+          res.send(user);
+      } catch (error) {
+          res.status(400).send(error);
+      }
+  });
+  ```
+
+1. We create a schema by `new mongoose.Schema()` and move the user model as the `Object` argument. We use [`schema`](https://mongoosejs.com/docs/api/document.html#document_Document-isModified) method to check if a certain field (such as `password` in this case) is modified. If it is `true`, we will hash the input by 
+  ```js 
+  // src/models/user.js
+  const mongoose = require('mongoose');
+  const validator = require('validator');
+  const bcrypt = require('bcryptjs');
+
+  const userSchema = new mongoose.Schema({
+      name: {
+          type: String,
+          required: true,
+          trim: true,
+      },
+      email: {
+          type: String,
+          required: true,
+          trim: true,
+          lowercase: true,
+          validate(value) {
+              if (!validator.isEmail(value)) {
+                  throw new Error('Email is invalid');
+              }
+          },
+      },
+      age: {
+          type: Number,
+          default: 0,
+          validate(value) {
+              if (value < 0) {
+                  throw new Error('Age must be a positive number');
+              }
+          }
+      },
+      password: {
+          type: String,
+          require: true,
+          minlength: 7,
+          trim: true,
+          validate(value) {
+              if (value.toLowerCase().includes('password')) {
+                  throw new Error(`password can't contain "password"!`)
+              }
+          },
+      },
+  })
+
+  // middleware to check before data is saved into database
+  userSchema.pre('save', async function (next) {
+      const user = this;
+      // check if middleware is working 
+      console.log('Just before saving');
+
+      // check if password is modified (or an account is created)
+      if (user.isModified('password')) {
+        user.password = await bcrypt.hash(user.password, 8);
+      }
+      
+      next();
+  })
+
+  const User = mongoose.model('User', userSchema);
+
+  module.exports = User;
+  ```
+
 ### Logging in Users
-### JSON Web Tokens
+1. We create a new endpoint for users to login. 
+1. In `src/routers/user.js`, we update a post route to send data from client to server. We made a middleware in model to check if the given `email` and `password` match any of those user data in the database. 
+  ```js 
+  // authenticate user login with email as account and password
+  router.post('/users/login', async (req, res) => {
+      try {
+          // check if given email and password is correct 
+          const user = await User.findByCredentials(req.body.email, req.body.password);
+          // temporary solution
+          res.send(user);
+      } catch (error) {
+          res.status(400).send();
+      }
+  });
+  ```
+1. There are 2 ways to [add methods](https://mongoosejs.com/docs/api/schema.html#schema_Schema-static) in schema with `.static()` method or `statics` property. Note that we can name the method upon preference. 
+  1. Use `Schema.static(methodName, callbackMethod)` method
+  1. Use `Schema.statics.method = function(){}`. 
+1. Since login process is sensitive, we should return as least info. as possible. For example, we don't indicate whether the email account or password is wrong that causes login process fail. We can simply indicate that the process is not successful. 
+  ```js 
+  // create a new method to check user email (as account) and password 
+  userSchema.statics.findByCredentials = async function (email, password) {
+      // check if there an email exist in the database 
+      const user = await User.findOne({ email });
+
+      // throw an error if there's no user
+      if (!user) {
+          throw new Error('Unable to login');
+      }
+
+      // check if password matches
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      // throw an error if password is not correct and provide as least sensitive info as possible
+      if (!isMatch) {
+          throw new Error('Unable to login');
+      }
+
+      return user;
+  }
+  ```
+1. In addition, we should also prevent users to register accounts with the same email. Therefore, we have to update the schema with `unique: true` for `email` property. Note that after we modify the schema, we have to wipe out the data in the database to ensure the new schema is applied to all new inputs. 
+1. In `robo 3T`, we can go to collections panel on the left to drop a database. Note that we should also stop the server in the terminal to rerun the program again. 
+1. We can test the process in POSTMAN by accessing the endpoint `localhost:3000/login` with JSON data `{"email": "", "password":""}` with a POST request. Therefore, we will only get the `user` data send back if both `email` and `password` match. 
+
+### JSON Web Tokens - JWT
+1. After this point, all routes on the `express` will be categorized in either `public` or `authenticated` with limited access. For example, we only show "**signup**" and "**login**" routes in public that all users can see, while other sensitive and private data will only be shown after the user logs in. 
+1. Besides, we can send each user an unique authentication token, so they don't need to be verified each time working on a task. Besides, the token can expire after certain amount of time to enhance security and prevent abuse. 
+1. This JSON Web Token can be generated and get expired at certain amount of time. We use npm [`jsonwebtoken`](https://www.npmjs.com/package/jsonwebtoken) package to do the job. All the token is encoded with `base64`. We can paste the token to decode by other program such as [base64decode](https://www.base64decode.org/).
+1. We can use `.sing()` method to create a JSON Web Token. The method takes 3 arguments. 
+  1. 1st is an `Object` can take a unique identifier, so the server knows which user is logging in. In this case, "**user's id**" can do the job. 
+  1. 2nd is a `String` perform as the "**signature**" (similar to password) to ensure the token is generated from this server. This can be any `String` value as perfrence, as it works similar to password. Therefore, though another users may get the unique user id from somewhere else, they can't pass the verification because they don't get this "**signature**" to generate the token. 
+  1. 3rd is an `Object` that contains the options such as setting up expiring time. The set up is relative intuitive that we can put in plain English duration, such as `1 week`, `2 months`, or `1 year`. 
+1. A JWT has 3 parts and separated with dots `.`. For example, `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJhYmMxMjMiLCJpYXQiOjE1OTU5MDcyNDd9.r-OpD95XZCa7__x6LafF04wvIu4fy3TLH_uE3ism6mc`, the 1st part is the "**header**" which is the metadata of the token that how is this token generated, the 2nd part is the "**payload**" or the "**body**" which is generated from the data we provided, and the last part is the "**signature**" is for the program to verify the token.
+1. We then can use `.verify()` method to check if the token from the client is correct. The method takes 2 arguments
+  1. 1st is the token itself
+  1. 2nd is the "**signature**" we give when we create the token. 
+  ```js 
+  const jwt = require('jsonwebtoken');
+  const myFunction = async function () {
+      // create a token from jwt.sign() method
+      const token = jwt.sign({_id: 'abc123'}, 'thisismynewcourse', {expiresIn: '7 days'});
+      // print token into terminal
+      console.log(token);
+
+      // verify the token with signature 
+      const data = jwt.verify(token, 'thisismynewcourse')
+      console.log(data);
+  }
+
+  myFunction();
+  ```
 ### Generating Authentication Tokens
+1. When a new user sings a new account, or a exisiting user logs in, we can send a JWT to the user to authenticate the following usage. In this case, both `signup` and `login` router will be updated with a function to send and verify token. 
+  ```js 
+  // src/models/user.js
+  // we need to use 'this' to the specific user, so we should use a regular function statement
+  // 'methods' is the property for instances which method on every instance is a bit different
+  userSchema.methods.generateAuthToken = async function () {
+      const user = this;
+      const token = jwt.sign({ _id: user._id.toString(), }, 'thisismynewcourse');
+      return token;
+  }
+
+  // src/routers/user.js
+  // POST request to authenticate user login with email as account and password
+  router.post('/users/login', async (req, res) => {
+      try {
+          const user = await User.findByCredentials(req.body.email, req.body.password);
+          // generate a specific token for this user, not for all User!
+          const token = await user.generateAuthToken();
+          res.send({ user, token });
+      } catch (error) {
+          res.status(400).send();
+      }
+  });
+  ```
+1. However, there are some scenarios that users can't invalidate the token when they logout at this point. This can make serious security abuse that if others get the token, the user can't invalidate the login status and the token. Besides, the program should allow users to login with different devices with different status. For example, a user can login in both mobile phone and tablet. If the user logout from the tablet, the account on mobile phone is still logged in. 
+1. We can solve the issue with the following steps 
+    1. Modify the `user` model. In the schema, we add `tokens` to the model which is an `Array`. Besides, the token is a `String` and `required` for a user instance. 
+    ```js 
+    //src/models/user.js
+    const userSchema = new mongoose.Schema({
+      tokens: [{
+        token: {
+          type: String, 
+          required: true, 
+        }
+      }]
+    }
+    ```
+  1. Update `userSchema` methods to add the new generated token to the uesr instance. 
+    ```js 
+    //src/models/user.js
+    userSchema.methods.generateAuthToken = async function () {
+      const user = this;
+      const token = jwt.sign({ _id: user._id.toString(), }, 'thisismynewcourse');
+
+      // assign the token to the user instance 
+      user.tokens = user.tokens.concat({ token });
+      // save the instance to database 
+      await user.save();
+
+      return token;
+    }
+    ```
+1. We should generate a token right after the user signs up, as there's no point to authenticate the user who just register the account. We can reuse the method `.generateAuthToken()` directly. 
+  ```js
+  // src/routers/user.js
+  // POST request to create a new user (sign up)
+  router.post('/users', async (req, res) => {
+      const user = new User(req.body);
+
+      try {
+          await user.save();
+          const token = await user.generateAuthToken();
+          res.status(201).send({ user, token });
+      } catch (error) {
+          res.status(400).send(error);
+      }
+
+  });
+  ```
+
 ### Express Middleware
+1. Since we generate tokens for users, we can start to use the tokens to verify the process of tasks in the program. Therefore, when users navigate on the website and try to do different tasks, each task will be verified with the token and check authentication before it can proceed. 
+1. We can use `middleware` in `express` framework `index.js`. Without a middleware, the new quest come from a user will make the program run the route handler without authentication. This may cause abuse and problems and affect other users on the same website. By using middleware, we can run some code (to authenticate) the user before the program proceed the tasks. 
+1. In `index.js`, we add a middleware by passing an anonymous function to `app.use()`. Besides, this task should run before other functions. In the following example, the middleware will check and return the HTTP request made from a user. In this case, we use POSTMAN to send a GET request on `/user` route to check for all users. After sending the requset, we get only `GET /users/` returned in the terminal without any other functions proceeded further. 
+1. This middleware takes 3 arguments 
+  1. `req` is the request made by the user from client side 
+  1. `res` is the response given by the server program
+  1. `next` is a callback function that we can pass to keep the program goes after passing through middleware. Note that if we don't call the `next()` function, the middleware will just stop the program and do nothing. 
+  ```js
+  const express = require('express');
+  require('./db/mongoose');
+  const userRouter = require('./routers/user');
+  const taskRouter = require('./routers/task');
+
+  const app = express();
+  const port = process.env.PORT || 3000;
+
+  // a middleware to run after getting a request and before executing a task 
+  app.use(function (req, res, next) {
+    console.log(req.method, req.path); // GET /users/
+  });
+
+
+  app.use(express.json());
+  // other code below...
+  ```
+1. We can also write logical process to proceed services. For example, we can deny all `GET` request made to all routes. 
+  ```js 
+  app.use(function (req, res, next) {
+    if (req.method === 'GET') {
+      res.send('GET requests are disabled');
+    } else {
+      next();
+    }
+  });
+  ```
+1. In the following challenge, we try to 
+  1. Register a new middleware funciton 
+  1. Send back a maintenance message with a 503 status code 
+1. In this case, we can either check if `req` exist or not. However, since the service is not available and server is on maintenance, we don't need to `IF` statement and simply send the message to users directly. 
+  ```js 
+  app.use(function(req, res, next) {
+    res.status(503).send('Server is on maintenance...');
+  })
+  ```
+
 ### Accepting Authentication Tokens
+1. Summary 
+  1. Set up the middleware in the router to run before executing the route handler function. 
+  1. The middleware proceeds 
+    1. Find the header info. to check the authentication token. 
+    1. Use `jsonwebtoken` to verify the token. 
+    1. Find the associated user from the database by its `_id` and `token`. 
+1. Though the program is not huge, we can separate the function into different modules. Therefore, we create a new directory in `src` named `middleware` for our middleware functions. In this case, we create a new `auth.js`. 
+1. Note that we should clear the middleware we try to use in `index.js` first. 
+1. Besides, each middleware has its specific function and should only work on certain routes. Therefore, we export the `auth.js` middle and import it into `/src/routers/user.js`. 
+  ```js 
+  // src/middleware/auth.js
+  const auth = async function (req, res, next) {
+    console.log('auth middleware');
+    next();
+  }
+
+  module.exports = auth;
+  ```
+1. In each route handler, we add the middleware as the 2nd argument. (The first async callback function will be moved as the 3rd one to be executed after the middleware). In this case, if we make a GET request to `/users` route, we will see a message 'auth middleware' printed in the terminal.  
+  ```js 
+  // src/routers/user.js
+  const auth = require('../middleware/auth');
+
+  // GET request to get all user data 
+  // add middleware 'auth' before the async function 
+  router.get('/users', auth, async (req, res) => {
+      try {
+          const users = await User.find({});
+          res.send(users);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
+1. In the header tag, we put the key as `authorization` and value is `Bearer [token...]`. Note that the value should start with `Bearer ` with capital "B" and followed with a whitespace before the token.
+  <img src="sendTokenInHeader.PNG">
+
+1. We update the middleware `auth.js`. 
+  ```js 
+  const jwt = require('jsonwebtoken');
+  const User = require('../models/user');
+
+  const auth = async function (req, res, next) {
+      try {
+          // remove 'Bearer ' in the beginning of the String
+          const token = req.header('Authorization').replace('Bearer ', '');
+          // use jsonwebtoken package to verify if the token is valid 
+          const decoded = jwt.verify(token, 'thisismynewcourse');
+          // find the single user info according to the id and the token 
+          const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+
+          // return an error if the user is not found 
+          if (!user) {
+              throw new Error();
+          }
+
+          // update user status that the user has been logged in 
+          req.user = user;
+          next();
+      } catch (error) {
+          res.status(401).send({ error: 'Please authenticate.' });
+      }
+  }
+
+  module.exports = auth;
+  ```
+
 ### Advanced Postman
+1. We can setup envrionment variables in POSTMAN, so each time we make a request, we don't need to change the URL manually. 
+  <img src="postmanSetupEnvVar.PNG">
+1. Change Envrionment variable. We can put the predefined variable such as `url` in 2 pairs of curly braces, `{{url}}`.
+  <img src="postmanEnvVar.PNG">
+1. We can add the authentication token in the collection directly, so we don't need to input it everytime. On the left collection panel, we can find the `edit` option in the setting and put the token in the authorization tab. Note that we use `Bearer token` for authentication in this case. 
+1. Besides, for those which need token authroization, we can change the authorization option in each task into `inherit auth from parent`. 
+1. For automation proces, we can change this to an environment variable {{authToken}} that is generated from the testscript. 
+  <img src="postmanSaveToken.PNG">
+1. Recalling that "**login**" and "**singup**" process don't requrie authentication. We can go to the tab an turn the authorization off directly. 
+  <img src="postmanTurnoffAuth.PNG">
+1. We can automate the workflow of returning new access tokens back to the parent auth. This happens when we try to login with different user account and new token is generated. We then have to manually copy and paste the token in the collection's authorization tab, as we did above. However, we can write some JavaScript code to work it out. We can use the testscript in both "**login**" and "**singup**" route.
+1. Note that in the "**signup**" process, the status code should be `201` rather than `200`, as it makes a change to the server. 
+  ```js
+  if (pm.response.code === 201) {
+    pm.environment.set('authToken', pm.response.json().token)
+  }
+  ```
+  <img src="postmanAutoFlow.PNG">
 ### Logging out
+
 ### Hiding Private Data 
+
 ### Authenticating User Endpoints 
+
 ### The User/Task Relationship
+
 ### Authenticating Task Endpoints
+
 ### Cascade Delete Tasks 
