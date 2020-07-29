@@ -1,6 +1,187 @@
 Start learning on 2020/07/11
 Finished on 
 
+1. Installing and exploring Node.js
+
+1. Node.js Module System (Notes App)
+  1. Importing own files 
+  1. Importing NPM Modules 
+  1. Printing in Color
+  1. Global NPM Modules and Nodemon 
+
+1. File System and Command Line Args (Notes App)
+  1. Getting Input from Users 
+  1. Argument Parsing with Yargs: Part 1
+  1. Argument Parsing with Yargs: Part 2
+  1. Storing Data with JSON
+  1. Adding a Note
+  1. Removing a Note
+  1. ES6 Aside: Arrow Functions
+  1. Refactoring to Use Arrow Functions
+  1. Listing Notes
+  1. Reading a Note
+
+1. Debugging Node.js (Notes App)
+  1. Debugging Node.js
+  1. Error Messages 
+
+1. Asynchronous Node.js (Weather App)
+  1. Asynchronous Basics
+  1. Call Stack, Callback Queue, and Event Loop
+  1. Making HTTP Requests
+  1. Customizing HTTP Requests
+  1. An HTTP Request Challenge
+  1. Handling Errors
+  1. Callback Function
+  1. Callback Abstraction 
+  1. Callback Abstraction Challenge
+  1. Callback Chaining
+  1. ES6 Aside: Object Property Shorthand and Destructuring
+  1. Destructuring and Property Shorthand Challenge
+  1. Bonus: HTTP Requests Without a Library 
+
+1. Web Servers (Weather App)
+  1. Hello Express
+  1. Serving up HTML and JSON
+  1. Serving up STatic Assets
+  1. Serving up CSS, JS, Images, and More
+  1. Dynamic Pages with Templating 
+  1. Customizing the Views Directory
+  1. Advanced Templating 
+  1. 404 Pages 
+  1. Styling the Application: Part 1
+  1. Styling the Application: Part 2
+
+1. Accessing API from Browser (Weather App)
+  1. The Query String 
+  1. Building a JSON HTTP Endpoint
+  1. ES6 Aside: Default Function Parameters
+  1. Browser HTTP Requests with Fetch
+  1. Creating a Search Form
+  1. Writing up the User Interface
+
+1. APplication Deployment (Weather App)
+  1. Joining Heroku and Github
+  1. Version Control With Git
+  1. Exploring Git 
+  1. Integrating Git 
+  1. Setting up SSH Keys 
+  1. Pushing Code to Github
+  1. Deploying Node.js to Heroku
+  1. New Feature Deployment Workflow 
+  1. Avoiding Global Modules
+
+1. MongoDB and Promises (Task App)
+  1. MongoDB and NoSQL Databases
+  1. Installing MongoDB macOS, Linux, and Windows
+  1. Installing Database GUI Viewer
+  1. Connecting and Inserting Documents 
+  1. Inserting Documents 
+  1. The ObjectID
+  1. Querying Documents 
+  1. Promises
+  1. Updating Documents 
+  1. Deleting Documents 
+
+1. REST APIs and Mongoose (Task App)
+  1. Setting up Mongoose 
+  1. Creating a Mongoose Model
+  1. Data Validation and Sanitization: Part 1
+  1. Data Validation and Sanitization: Part 2
+  1. Structuring a REST API
+  1. Installing Postman
+  1. Resource Creation Endpoints: Part 1
+  1. Resource Creation Endpoints: Part 2
+  1. Resource Reading Endpoints: Part 1
+  1. Resource Reading Endpoints: Part 2
+  1. Promise Chaining 
+  1. Promise Chaining Challenge
+  1. Async/Await 
+  1. Async/Await: Part 2
+  1. Resource Updating Endpoints: Part 1
+  1. Resource Updating Endpoints: Part 2
+  1. Resource Deleting Endpoints 
+  1. Separate Route Files 
+
+1. API Authentication and Security (Task App)
+  1. Securely Storing Password: Part 1
+  1. Securely Storing Password: Part 2
+  1. Logging in Users
+  1. JSON Web Tokens
+  1. Generating Authentication Tokens
+  1. Express Middleware
+  1. Accepting Authentication Tokens
+  1. Advanced Postman
+  1. Logging Out
+  1. Hiding Private Data 
+  1. Authenticating User Endpoints
+  1. The User/Task Relationship
+  1. Authenticating Task Endpoints
+  1. Cascade Delete Tasks
+
+1. Sorting, Pagination, and Filtering 
+  1. Working with Timestamps
+  1. Filtering Data
+  1. Paginating Data 
+  1. Soring Data 
+
+1. File Uploads (Task App)
+  1. Adding Support for File Uploads
+  1. Validating File Uploads
+  1. Validation Challenge
+  1. Handling Express Errors
+  1. Adding Images to User Profile
+  1. Serving up Files
+  1. Auto-Cropping and Image Formatting
+
+1. Sending Emails (Task App)
+  1. Exploring SendGrid
+  1. Sending Welcome and Cancelation Emails 
+  1. Environment Variables 
+  1. Creating a Production MongoDB Database
+  1. Heroku Deployment
+
+1. Testing Node.js (Task App)
+  1. Jest Testing Framework 
+  1. Writing Tests and Assertions
+  1. Writing Your Own Test 
+  1. Testing Asynchronous Code 
+  1. Testing an Express Application: Part 1
+  1. Testing an Express Application: Part 2
+  1. Jest Setup and Teardown
+  1. Testing with Authentication 
+  1. Advanced Assertions
+  1. Mocking Libraries
+  1. Wrapping up User Tests
+  1. Setup Task Test Suite
+  1. Testing with Task Data 
+  1. Bonus: Extra Test Ideas
+
+1. Real-time Web Applications with Socket.io (Chat App)
+  1. Creating the Chat App Project
+  1. WebSockets
+  1. Getting Started with Socket.io
+  1. Socket.io Events 
+  1. Socket.io Events Challenge
+  1. Broadcasting Events 
+  1. Sharing Your Location 
+  1. Event Acknowledgements 
+  1. Form and Button states 
+  1. Rendering Messages
+  1. Rendering Location MEssages
+  1. Working with Time 
+  1. Timestamps for Location Messages 
+  1. Styling the Chat App
+  1. Join Page
+  1. Socket.io Rooms 
+  1. Storing Users: Part 1 
+  1. Storing Users: Part 2
+  1. Tracking Users Joining and Leaving 
+  1. Sending Messages to Rooms
+  1. Rendering User List 
+  1. Automatic Scrolling 
+  1. Deploying the Chat Application 
+---
 # The Complete Node.js Developer Course
 
 # Installing and exploring Node.js
@@ -3541,3 +3722,66 @@ doWorkCallback(function (error, result) {
       next();
   });
   ```
+
+# Sorting, Pagination, and Filtering 
+### Working with Timestamps
+### Filtering Data
+### Paginating Data 
+### Soring Data 
+
+# File Uploads (Task App)
+### Adding Support for File Uploads
+### Validating File Uploads
+### Validation Challenge
+### Handling Express Errors
+### Adding Images to User Profile
+### Serving up Files
+### Auto-Cropping and Image Formatting
+
+# Sending Emails (Task App)
+### Exploring SendGrid
+### Sending Welcome and Cancelation Emails 
+### Environment Variables 
+### Creating a Production MongoDB Database
+### Heroku Deployment
+
+# Testing Node.js (Task App)
+### Jest Testing Framework 
+### Writing Tests and Assertions
+### Writing Your Own Test 
+### Testing Asynchronous Code 
+### Testing an Express Application: Part 1
+### Testing an Express Application: Part 2
+### Jest Setup and Teardown
+### Testing with Authentication 
+### Advanced Assertions
+### Mocking Libraries
+### Wrapping up User Tests
+### Setup Task Test Suite
+### Testing with Task Data 
+### Bonus: Extra Test Ideas
+
+# Real-time Web Applications with Socket.io (Chat App)
+### Creating the Chat App Project
+### WebSockets
+### Getting Started with Socket.io
+### Socket.io Events 
+### Socket.io Events Challenge
+### Broadcasting Events 
+### Sharing Your Location 
+### Event Acknowledgements 
+### Form and Button states 
+### Rendering Messages
+### Rendering Location MEssages
+### Working with Time 
+### Timestamps for Location Messages 
+### Styling the Chat App
+### Join Page
+### Socket.io Rooms 
+### Storing Users: Part 1 
+### Storing Users: Part 2
+### Tracking Users Joining and Leaving 
+### Sending Messages to Rooms
+### Rendering User List 
+### Automatic Scrolling 
+### Deploying the Chat Application 
