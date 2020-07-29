@@ -13,6 +13,9 @@ const auth = async function (req, res, next) {
             throw new Error();
         }
 
+        // append current token of the device
+        req.token = token;
+
         req.user = user;
         next();
     } catch (error) {

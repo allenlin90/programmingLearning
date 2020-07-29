@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
 
 const taskSchema = new mongoose.Schema({
     description: {
@@ -12,8 +10,13 @@ const taskSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User',
+    }
 });
 
-const Task = mongoose.model('task', taskSchema);
+const Task = mongoose.model('Task', taskSchema);
 
 module.exports = Task;

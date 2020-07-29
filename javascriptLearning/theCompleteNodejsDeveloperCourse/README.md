@@ -3156,13 +3156,388 @@ doWorkCallback(function (error, result) {
   ```
   <img src="postmanAutoFlow.PNG">
 ### Logging out
+1. In this section, we will add a new route in `src/routers/user.js` to allow users to log out. Besides, the user may login in different devices and have different sessions. Since we'd track on the single token that is used on the current device, we will modify `auth.js` and add `req.token = token`.
+  ```js 
+  const jwt = require('jsonwebtoken');
+  const User = require('../models/user');
+
+  const auth = async function (req, res, next) {
+      try {
+          // remove 'Bearer ' in the beginning of the String
+          const token = req.header('Authorization').replace('Bearer ', '');
+          console.log(token);
+          const decoded = jwt.verify(token, 'thisismynewcourse');
+          const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+
+          if (!user) {
+              throw new Error();
+          }
+
+          // append current token of the device
+          req.token = token;
+
+          req.user = user;
+          next();
+      } catch (error) {
+          res.status(401).send({ error: 'Please authenticate.' });
+      }
+  }
+
+  module.exports = auth;
+  ```
+1. We then udpate a new route in `src/routers/user.js`. We check all the tokens that the users use in `req.user.tokens` and use `.filter()` method to check which tokens are not used in the current request. Therefore, we use `!==` "not equal to" to create a new `Array` of tokens which has filtered out the one in use. 
+1. After saving the new tokens array back to database, the token we use now to login will be invalidated, so the user is logged out. 
+1. We can clear the whole `Array` of all tokens to logout a user from his/her all devices. 
+  ```js 
+  // Log out the current session on a single device
+  router.post('/users/logout', auth, async (req, res) => {
+      try {
+          req.user.tokens = req.user.tokens.filter(function (token) {
+              // filter out the tokens which are not in use 
+              return token.token !== req.token;
+          });
+          
+          // save the data back to user in database to logout the current session of the device that send this request. 
+          await req.user.save();
+          res.send();
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+
+  // Log out all sessions of login on all devices of a user
+  router.post('/users/logoutAll', auth, async (req, res) => {
+      try {
+          req.user.tokens = [];
+          await req.user.save();
+          res.send();
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
 
 ### Hiding Private Data 
+1. After a user logs in, the server program shouldn't return sensitive data such as `password` and `tokens` of other login session of the user. In this case, our current data returning back to the user is still the whole dataset. 
+1. We can use a `mongoose` method [`.toObject()`](https://mongoosejs.com/docs/api.html#document_Document-toObject) to duplicate one. Note that though there are other methods, such as `Object.asisgn({}, [obj])`, `{ ... }`, `JSON.parse(JSON.stringify([obj]))` to duplicate the object, we can use those methods as the `Object` returned is totally different. The `user` object itself has other information in this case. 
+1. We then use `delete` keyword to take the properties off from the duplicated `Object` and return it back. Note that this is a regular synchronous function rather than async.
+  ```js 
+  // src/models/user.js
+  // return only non-sensitive data back to user after singup and login 
+  userSchema.methods.getPublicProfile = function () {
+      const user = this;
+
+      // use mongoose method to creat a new object
+      // we can't use Object.assign({}, obj) to duplicate
+      const userObject = user.toObject();
+
+      delete userObject.password;
+      delete userObject.tokens;
+
+      return userObject;
+  }
+
+  // src/routers/user.js
+  router.post('/users/login', async (req, res) => {
+    try {
+      const user = await User.findByCredentials(req.body.email, req.body.password);
+      // generate a specific token for this user, not for all User!
+      const token = await user.generateAuthToken();
+      // return only filtered data by using `.getPublicProfile()` method
+      res.send({ user: user.getPublicProfile(), token });
+    } catch (error) {
+      res.status(400).send();
+    }
+  });
+  ```
+1. Besides the way above, we can use another method to fulfill the purpose. In `src/models/user.js`, we simply change the custom method `.getPublicProfile` to `toJSON`. Therefore, in `src/routers/user.js` we can use the destructing notation as usual. It's because the feature of `Objects` when it has `toJSON` as its method. According to [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify), `JSON.stringify()` function will only convert the value returned from `.toJSON` method on the `Object` to a JSON format data. By this feature, we can "**hide**" the properties that we don't want to reveal. 
+  ```js
+  // src/models/user.js
+  // change method to `toJSON`
+  userSchema.methods.toJSON = function () {
+      const user = this;
+
+      // use mongoose method to creat a new object
+      // we can't use Object.assign({}, obj) to duplicate
+      const userObject = user.toObject();
+
+      delete userObject.password;
+      delete userObject.tokens;
+
+      // when this object is converted to JSON format, password and tokens properties will be taken off 
+      return userObject;
+  }
+
+  // src/routers/user.js
+  router.post('/users/login', async (req, res) => {
+    try {
+      const user = await User.findByCredentials(req.body.email, req.body.password);
+      // generate a specific token for this user, not for all User!
+      const token = await user.generateAuthToken();
+      // change back to use destructure notation 
+      res.send({ user, token });
+    } catch (error) {
+      res.status(400).send();
+    }
+  });
+  ```
+
+1. Use `.toJSON` method to hide data when a `Object` is converted to a JSON format data. 
+  ```js 
+  let guy = {
+    name: 'Allen',
+    age: 25
+  };
+
+  guy.toJSON = function(){
+    console.log(this) // {name: 'Allen', age: 25}
+    return this.name;
+  }
+  console.log(guy.toJSON()); // {name: 'Allen', age: 25} \n Allen
+  console.log(JSON.stringify(guy)); // "Allen"
+  ```
 
 ### Authenticating User Endpoints 
+1. We update `src/routers/user.js` and delete the route that can get user profile by ID, as it's not required since we have `/users/me` to get the profile of the signed in account. 
+  ```js 
+  // src/routers/user.js
+  // delete the following as it's not required in the router handler
+  // GET request to a specific user data 
+  router.get(`/users/:id`, async (req, res) => {
+      const _id = req.params.id;
+      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+      try {
+          const user = await User.findById(_id);
+          if (!user) {
+              return res.status(404).send();
+          }
+          res.send(user);
+      } catch (error) {
+          res.status(500).send()
+      }
+  });
+  ```
+1. On the `delete` route, we firstly place the middleware to check authentication and should modify the code, as the user shouldn't be able to delete other users' account by providing their IDs. Besides, we don't need to check if the `user` exist since we are using authentication. 
+1. We then use `mongoose` model method [`.remove()`](https://mongoosejs.com/docs/api/model.html#model_Model-remove) to remove the instance from the database. Note that it's an async function, so we should use `await` keyword. 
+  ```js 
+  // Delete request to remove a specific user
+  router.delete('/users/me', auth, async (req, res) => {
+      try {
+          // use Model.prototype.remove() method to delete the instance
+          await req.user.remove();
+          res.send(req.user);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
+1. Besides, we should also update the route for update tasks.
+  ```js 
+  // PATCH request to modify data of a specific user
+  router.patch('/users/me', auth, async (req, res) => {
+      const updates = Object.keys(req.body);
+      const allowedUpdates = ['name', 'email', 'password', 'age'];
+      const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+      if (!isValidOperation) {
+          return res.status(400).send({ error: 'Invalid udpates!' });
+      }
+
+      try {
+          const user = req.user
+          updates.forEach((update) => user[update] = req.body[update]);
+          await user.save();
+          res.send(user);
+      } catch (error) {
+          res.status(400).send(error);
+      }
+  });
+  ```
 
 ### The User/Task Relationship
+1. We can update the task model in `src/models/task.js` to have a property to save `owner` which is the id of the user who creates the task. Besides, we can drop the current database, as the old inputs doesn't follow the updated schema. 
+  ```js 
+  // src/models/task.js
+  const mongoose = require('mongoose');
+
+  const taskSchema = new mongoose.Schema({
+      description: {
+          type: String,
+          required: true,
+          trim: true,
+      },
+      completed: {
+          type: Boolean,
+          default: false,
+      },
+      owner: {
+          // ensure new created tasks has an mongoose ID stored
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+      }
+  });
+
+  const Task = mongoose.model('task', taskSchema);
+
+  module.exports = Task;
+  ```
+1. After we update the schema to have `owner` for each `Task` instance, we can use the properties to create new instances. We use spread notation to copy all the properties and values from `req.body` which is written as `...req.body` and hard coded the `owner` property with `req.user._id` returned from the middleware. 
+  ```js 
+  // src/routers/task.js
+  const express = require('express');
+  const Task = require('../models/task');
+  const auth = require('../middleware/auth'); // import the middelware
+  const router = new express.Router();
+
+  // POST request to create a new task 
+  router.post('/tasks', auth, async (req, res) => {
+      const task = new Task({
+          // copy all properties from req.body
+          ...req.body,
+          owner: req.user._id,
+      })
+
+      try {
+          await task.save();
+          res.status(201).send(task);
+      } catch (error) {
+          res.status(400).send(error);
+      }
+  });
+  ```
+1. Since we get the owner id during the process, we can use another `mongoose` method to set up the relationship and return the user `name` property by referring to it's `_id` automatically. Note that this is only set up the relationship unlike in `task.js` model that we really update a property `owner`. Therefore, we can use the method to refer and connect collections according to different properties. 
+  ```js
+  // src/models/user.js
+  // virtual property set up for mongoose to learn the relationship between collections
+  userSchema.virtual('tasks', {
+      ref: 'Task',
+      localField: '_id',
+      foreignField: 'owner',
+  });
+
+  ```
+1. We then can test the function by setting up relationship between different collections. 
+  ```js 
+  const Task = require('./models/task');
+  const User = require('./models/user');
+  const main = async () => {
+      // new property set up in Task model 
+      const task = await Task.findById('5f2118d9b97c5d090e741111'); // '_id' of the task 
+      await task.populate('owner').execPopulate();
+      console.log(task.owner); // return user instance
+      
+      // relationship made by virtual in User model
+      const user = await User.findById('5f2117ecc3ffc208dafe32c5'); // '_id' of the user
+      await user.populate('tasks').execPopulate();
+      console.log(user.tasks); // return task instance according to the user
+  }
+
+  main();
+  ```
+1. We had a bug here that when using `.virtual()` to set up the virtual properties, it's critical about the name we used to export the model. In this case, I firstly set `const Task = mongoose.model('task', taskSchema)` that in `mongoose` model, the model is set in all lowercase. However, in the lecture, it's given as `Task`, so the virtual property can never be set.  
 
 ### Authenticating Task Endpoints
+1. After setting up virtual relationship to connect the collections, we will update the rest route handlers in `src/routers/task.js`. Therefore, each time we look up a task by the task id, the program will also check if the owner is the same as the user id. If the user id doesn't match, the program will return a `404` status. The following task is to retrieve a single task. 
+  ```js 
+  // GET request to get a specific task 
+  router.get('/tasks/:id', auth, async (req, res) => {
+      const _id = req.params.id;
+
+      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+
+      try {
+          // find the task by id and check if it's the correct owner
+          const task = await Task.findOne({ _id, owner: req.user._id });
+
+          if (!task) {
+              return res.status(404).send();
+          }
+
+          res.send(task);
+      } catch (error) {
+          res.status(500).send();
+      }
+  })
+  ```
+1. In the route handler, we have another function to return all the tasks owns by a user. Note that we should also add on the middleware.
+  1. Use filter directly in `.find()` method to check if the tasks returned are owned by the user. 
+  1. Use `.populate().execPopulate()` method to return the tasks of a user. 
+  ```js 
+  // GET request to get all task data 
+  router.get('/tasks', auth, async (req, res) => {
+      try {
+          const tasks = await Task.find({ owner: req.user._id }); // use filter in .find() method
+          res.send(tasks);
+          // Choose ONLY ONE!!!          
+          await req.user.populate('tasks').execPopulate(); // use virtual property to refer data 
+          res.send(req.user.tasks);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
+1. We then modify on the UPDATE command. 
+  ```js 
+  // PATCH request to modify data of a specific task 
+  router.patch('/tasks/:id', auth, async (req, res) => {
+      const id = req.params.id;
+      const updates = Object.keys(req.body);
+      const allowedUpdates = ['description', 'completed'];
+      const isDataAllValid = updates.every(update => allowedUpdates.includes(update))
+      if (!isDataAllValid) {
+          return res.status(400).send({ error: 'The input data is invalid!' });
+      }
+
+      try {
+          const task = await Task.findOne({ _id: req.params.id, owner: req.user._id, });
+
+          // return 404 if no task matches 
+          if (!task) {
+              return res.status(404).send();
+          }
+
+          updates.forEach(update => task[update] = req.body[update]);
+          await task.save();
+          res.send(task);
+      } catch (error) {
+          res.status(400).send();
+      }
+  });
+  ```
+1. Similar concept is applied to DELETE path 
+  ```js 
+  // Delete request to remove a specific task
+  router.delete('/tasks/:id', auth, async (req, res) => {
+      try {
+          // const task = await Task.findByIdAndDelete(req.params.id);
+          const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+
+          if (!task) {
+              return res.status(404).send();
+          }
+
+          res.send(task);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
+1. In summary, all the routes are mainly updated with 
+  1. Add middleware `auth` imported from `src/middleware/auth.js`
+  1. Use `.findOne()` and `.findByIdAndDelete()` with an `Object` includes `_id` (ID of the instance itself) and `owner: req.user._id` (the user ID). 
 
 ### Cascade Delete Tasks 
+1. The section here is to delete the tasks of a user, if the user has delete the account of him/herself. Therefore, we won't keep those tasks in the database which have no account can access. 
+1. Therefore, in `src/routers/user.js`, we update the delete route to allow the function delete not only the user profile, but also the tasks (or other data) aligned to this user. However, instead of doing this manually, we can set another `.pre()` middleware for `userSchema`. 
+1. In `src/models/user.js`, we can use [`.deleteMany()`](https://mongoosejs.com/docs/api.html#model_Model.deleteMany) which is a method that can remove multiple instances by given option. 
+  ```js 
+  // src/models/user.js
+  const Task = require('./task');
+
+  // delete user tasks when user is removed
+  userSchema.pre('remove', async function (next) {
+      const user = this;
+      // delete multiple tasks by using only the owner field
+      await Task.deleteMany({owner: user._id});
+      next();
+  });
+  ```

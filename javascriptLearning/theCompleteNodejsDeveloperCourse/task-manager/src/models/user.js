@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Task = require('./task');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -49,6 +50,12 @@ const userSchema = new mongoose.Schema({
     }]
 });
 
+// virtual property set up for mongoose to learn the relationship between collections
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner',
+});
 
 // we need to use 'this' to the specific user, so we should use a regular function statement
 // 'methods' is the property for instances which method on every instance is a bit different
@@ -62,6 +69,17 @@ userSchema.methods.generateAuthToken = async function () {
     await user.save();
 
     return token;
+}
+
+// return only non-sensitive data back to user after singup and login 
+userSchema.methods.toJSON = function () {
+    const user = this;
+    const userObject = user.toObject();
+
+    delete userObject.password;
+    delete userObject.tokens;
+
+    return userObject;
 }
 
 // create a new method to check user email (as account) and password 
@@ -91,7 +109,15 @@ userSchema.pre('save', async function (next) {
         user.password = await bcrypt.hash(user.password, 8);
     }
     next();
-})
+});
+
+// delete user tasks when user is removed
+userSchema.pre('remove', async function (next) {
+    const user = this;
+    // delete multiple tasks by using only the owner field
+    await Task.deleteMany({ owner: user._id });
+    next();
+});
 
 const User = mongoose.model('User', userSchema);
 
