@@ -2447,7 +2447,7 @@ npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env
 1. MVC stands for `Model`, `Controller`, and `View`.
 1. Though we've used the concept in the budgetApp with IFFEs and closure, we can use `module` which is a new feature in ES6 to implement to concept in an easier way.
 1. For a certain function in the web app, we can separate it into 2 parts, model and view, and get them integrated with the controller module.
-   <img src="mvcRecipeApp.PNG">
+   <img src="mvcRecipeApp.png">
 
 ### How ES6 module works
 
@@ -2663,7 +2663,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
       1. Recipe list
       1. Shopping list
 
-      <img src="forkify.PNG">
+      <img src="forkify.png">
 
 1. According to the HTML template, each `<li>` item is in the following structure. We then udpate `searchViews.js` to with `.forEach()` to iterate through the data `Array` and parse the `Objects`. We update the selector in `base.js` and use `.insertAdjacentHTML()` method to the `<ul>` tag. We can check documentation of the [method](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML). Note that in `.forEach()` we can use pass the callback function directly with out any argument, as we usually use an anonymous function that it would be confusing at the first place.
 1. After rendering the query result according to the input, we can clear the input out and get ready for the next search with `elements.searchInput.value = ""`.
