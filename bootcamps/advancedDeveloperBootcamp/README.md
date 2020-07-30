@@ -973,3 +973,26 @@ Note:
     ```
 
 # Testing with Jasmine
+### Writing Test in the Browser
+1. Objectives 
+    1. Understand what Jasmine and unit testing are
+    1. Define describe, it, matchers, and spies
+    1. Write better tests with before and after hooks
+    1. Write asynchronous tests with clocks and done callbacks 
+    1. Compare and contrast TDD and BDD and differentiate between unit and other kinds of tests
+    1. Write unit tests using Jasmine
+1. We can use unit tests, test parts of an application, (or units). Very commonly, each unit is tested individually and independently to ensure an application is running as expected. Therefore, we need 
+    1. A framework to write tests
+    1. A way of describing the code we are testing 
+    1. A tool where we can make assertions or expectations about our code 
+1. Jasime library
+    1. Comes with everything we need to test our code 
+    1. Works well all kinds of JavaScript environments
+    1. Simple syntax to quickly get up and running with 
+1. In this case, we will use browser as the environment to work on. 
+    1. Create an HTML file 
+    1. Link CSS and JavaScript tags 
+    1. Start writing tests
+
+### Jasmine Syntax and Matchers
+1. 
