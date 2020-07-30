@@ -3724,10 +3724,140 @@ doWorkCallback(function (error, result) {
   ```
 
 # Sorting, Pagination, and Filtering 
+1. We can use POSTMAN to pass paramters for all the function below at the aligned routes. 
 ### Working with Timestamps
+1. We update 2 fields to both user and task model that each of them will have `Last update` and `Created` time stamp to show when was the instance created or modified. When create the schema in models, we can pass a 2nd argument which is an `Object` that can contain an option, so we can enable `timestamp`. Note that the option property name is `timestamps` which is with "s".
+  ```js 
+  const mongoose = require('mongoose');
+  new mongoose.Schema({/* data model */}, {timestamps: true});
+  ```
+
+1. Note that this only avaiable for new schema created on `mongoose.Schema`, while it can't be made on the `mongoose.model()`. 
+  ```js 
+  const mongoose = require('mongoose');
+
+  const taskSchema = new mongoose.Schema({
+      description: {
+          type: String,
+          required: true,
+          trim: true,
+      },
+      completed: {
+          type: Boolean,
+          default: false,
+      },
+      owner: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: 'User',
+      }
+  }, {
+      timestamps: true,
+  });
+
+  const Task = mongoose.model('Task', taskSchema);
+
+  module.exports = Task;
+  ```
+
 ### Filtering Data
+1. If a user has used the program for several years, for example, in this task-manager app, the user may have hundreds or thousands of tasks stored in the database. In this case, we'd like the user to retrieve preferable or certain amout of data rather than returning all the data in the database. 
+1. The approach is to let the user pass requirements (as parameters) through URL. The endpoint can parse the parameters. This concept is similar to what we've done in the weather-app to pass parameters to the end to request data. 
+1. Therefore, at the endpoint for returning all tasks, users can give options after the route such as `/tasks?completed=true` to show all the tasks that have been done or `/tasks?completed=false` for tasks are incomplete. 
+1. The `.populate()` method can take an `Object` rather than just a `String` of a path with options. We can set up a `match` property which is an `Ojbect` that provide the options and filters we want it to render. Thus, we can create a variable of the scope and use destructuring shorthad to pass the object and its properties. 
+  ```js 
+  // src/routers/task.js
+  // GET request to get all task data 
+  router.get('/tasks', auth, async (req, res) => {
+      const match = {}
+      if (req.query.completed) {
+          match.completed = req.query.completed === 'true';
+      }
+
+      try {
+          await req.user.populate({
+              path: 'tasks',
+              match,
+          }).execPopulate();
+          res.send(req.user.tasks);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
+
 ### Paginating Data 
-### Soring Data 
+1. Pagination is to split the returned results with limited amount in multiple groups. For example, when we search something on Google, we may get millions of results returned from the query. However, we don't need to check all of them at once and get all the data. Google will separate the results into different pages. 
+1. We will pass 2 arguments to the endpoint to return results `limit` and `skip`. With such properties, we can render the results in a page-like matter. 
+  1. `limit` is the number for each time the database render the results. 
+  1. `skip` is the number to "**skip**" from the first instance in the collection. For example, if we have 30 instances in the collection and have `limit` as 10 and `skip` as 10, when we request for the results, we will get from the 11th one to 20th instances from the database. 
+1. For example, if we'd like to have 5 items rendered on the `1st` page, we can set `limit` as 5 and `skip` as 0. Therefore, we can have the first 5 instances of the collection. If we'd like the items on the "2nd page", we can use keep `limit` as 5 and `skip` as 5, so the first 5 instances will be skipped and only results from 6th to 10th will be rendered. 
+  ```js 
+  //src/routers/task.js
+  // GET /tasks?completed=true
+  // GET /tasks?limit=10&skip=20
+  router.get('/tasks', auth, async (req, res) => {
+      const match = {}
+      if (req.query.completed) {
+          match.completed = req.query.completed === 'true';
+      }
+
+      try {
+          await req.user.populate({
+              path: 'tasks',
+              match,
+              options: {
+                  limit: parseInt(req.query.limit),
+                  skip: parseInt(req.query.skip),
+              },
+          }).execPopulate();
+          res.send(req.user.tasks);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
+
+### Sorting Data 
+1. With timestamp, we can sort the data in different orders as preference, such as ascending, descending, and `true` or `false` (incomplete) tasks. 
+1. We can set up in the options for `sort` which is an `Object` that takes the fields to sort the data. In this case, `1` (in number type) means ascending, while `-1` is descending. 
+1. Similar to `match` filter object, we can create another `sort` object that has the same name and pass it to the object in `.populate()` method. 
+1. In the URL, user can pass (or pass by button or the UI) parameters as `sortBy=createdAt:desc`. Note that the column after `createdAt` can be another other special character, as we use it as the splicer to split up the strings with `.split()` method. 
+1. Thus, we can create the sort function and allow `asc` (ascending as the default option) by using ternary operator `?` 
+  ```js 
+  // src/routers/task.js
+  // GET /tasks?completed=true
+  // GET /tasks?limit=10&skip=20
+  // GET /tasks?sortBy=createdAt:desc
+  router.get('/tasks', auth, async (req, res) => {
+      const match = {};
+      const sort = {};
+
+      if (req.query.completed) {
+          match.completed = req.query.completed === 'true';
+      }
+
+      if (req.query.sortBy) {
+          const parts = req.query.sortBy.split(':'); // column can be changed to any other character such as underscore _
+          sort[parts[0]] = parts[1] === 'desc' ? -1 : 1; // -1 is descending and 1 is ascending 
+      }
+
+      try {
+          await req.user.populate({
+              path: 'tasks',
+              match, // use destructor notation to pass the whole object above
+              options: {
+                  limit: parseInt(req.query.limit),
+                  skip: parseInt(req.query.skip),
+                  sort, // destructor notation similar to match object 
+              },
+          }).execPopulate();
+          res.send(req.user.tasks);
+      } catch (error) {
+          res.status(500).send();
+      }
+  });
+  ```
 
 # File Uploads (Task App)
 ### Adding Support for File Uploads

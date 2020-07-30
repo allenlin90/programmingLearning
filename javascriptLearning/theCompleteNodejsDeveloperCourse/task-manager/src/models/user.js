@@ -48,6 +48,8 @@ const userSchema = new mongoose.Schema({
             required: true,
         }
     }]
+}, {
+    timestamps: true,
 });
 
 // virtual property set up for mongoose to learn the relationship between collections
