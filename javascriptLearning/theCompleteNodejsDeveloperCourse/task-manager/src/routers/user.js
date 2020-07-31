@@ -1,4 +1,6 @@
 const express = require('express');
+const multer = require('multer');
+const sharp = require('sharp');
 const User = require('../models/user');
 const auth = require('../middleware/auth');
 const router = new express.Router();
@@ -88,5 +90,56 @@ router.delete('/users/me', auth, async (req, res) => {
         res.status(500).send();
     }
 });
+
+// route handler for users to upload avatar. This has no filter for data type and authentication of the user
+const upload = multer({
+    //dest: 'avatar',
+    limits: {
+        fileSize: 1000000,
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpe?g|png)$/g)) {
+            return cb(new Error('Please upload an image as jpg, jpeg, or png file'));
+        }
+
+        cb(null, true);
+    }
+});
+
+// user upload avatar route with error handling 
+router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250, }).png().toBuffer();
+    req.user.avatar = buffer;
+    //req.user.avatar = req.file.buffer // 'req.file' contains the file sent from the user in the request and the binary data is stored in 'buffer' property
+    await req.user.save();
+    res.send();
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+});
+
+// allow user to delete their avatar image
+router.delete('/users/me/avatar', auth, async (req, res) => {
+    if (!req.user.avatar) {
+        return res.status(400).send({ error: `You don't have avatar yet` });
+    }
+    req.user.avatar = undefined; // if we use null, the user 'avatar' filed will exist and has a value 'null' with 'undefined' the field will just disappear
+    await req.user.save();
+    res.send();
+});
+
+// render user avatar image 
+router.get('/users/:id/avatar', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user || !user.avatar) {
+            throw new Error();
+        }
+
+        res.set('Content-Type', 'image/png');
+        res.send(user.avatar);
+    } catch (error) {
+        res.status(404).send();
+    }
+})
 
 module.exports = router;

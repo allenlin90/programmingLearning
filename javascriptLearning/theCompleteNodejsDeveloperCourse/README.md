@@ -3,184 +3,184 @@ Finished on
 
 1. Installing and exploring Node.js
 
-1. Node.js Module System (Notes App)
-  1. Importing own files 
-  1. Importing NPM Modules 
-  1. Printing in Color
-  1. Global NPM Modules and Nodemon 
+1. [Node.js Module System (Notes App)](#Node.js-Module-System-(Notes-App))
+    1. [Importing own files](#Importing-own-files)
+    1. [Importing NPM Modules](#Importing-NPM-Modules)
+    1. [Printing in Color](#Printing-in-Color)
+    1. [Global NPM Modules and Nodemon](#Global-NPM-Modules-and-Nodemon)
 
-1. File System and Command Line Args (Notes App)
-  1. Getting Input from Users 
-  1. Argument Parsing with Yargs: Part 1
-  1. Argument Parsing with Yargs: Part 2
-  1. Storing Data with JSON
-  1. Adding a Note
-  1. Removing a Note
-  1. ES6 Aside: Arrow Functions
-  1. Refactoring to Use Arrow Functions
-  1. Listing Notes
-  1. Reading a Note
+1. [File System and Command Line Args (Notes App)](#File-System-and-Command-Line-Args-(Note-App))
+    1. Getting Input from Users 
+    1. Argument Parsing with Yargs: Part 1
+    1. Argument Parsing with Yargs: Part 2
+    1. Storing Data with JSON
+    1. Adding a Note
+    1. Removing a Note
+    1. ES6 Aside: Arrow Functions
+    1. Refactoring to Use Arrow Functions
+    1. Listing Notes
+    1. Reading a Note
 
 1. Debugging Node.js (Notes App)
-  1. Debugging Node.js
-  1. Error Messages 
+    1. Debugging Node.js
+    1. Error Messages 
 
 1. Asynchronous Node.js (Weather App)
-  1. Asynchronous Basics
-  1. Call Stack, Callback Queue, and Event Loop
-  1. Making HTTP Requests
-  1. Customizing HTTP Requests
-  1. An HTTP Request Challenge
-  1. Handling Errors
-  1. Callback Function
-  1. Callback Abstraction 
-  1. Callback Abstraction Challenge
-  1. Callback Chaining
-  1. ES6 Aside: Object Property Shorthand and Destructuring
-  1. Destructuring and Property Shorthand Challenge
-  1. Bonus: HTTP Requests Without a Library 
+    1. Asynchronous Basics
+    1. Call Stack, Callback Queue, and Event Loop
+    1. Making HTTP Requests
+    1. Customizing HTTP Requests
+    1. An HTTP Request Challenge
+    1. Handling Errors
+    1. Callback Function
+    1. Callback Abstraction 
+    1. Callback Abstraction Challenge
+    1. Callback Chaining
+    1. ES6 Aside: Object Property Shorthand and Destructuring
+    1. Destructuring and Property Shorthand Challenge
+    1. Bonus: HTTP Requests Without a Library 
 
 1. Web Servers (Weather App)
-  1. Hello Express
-  1. Serving up HTML and JSON
-  1. Serving up STatic Assets
-  1. Serving up CSS, JS, Images, and More
-  1. Dynamic Pages with Templating 
-  1. Customizing the Views Directory
-  1. Advanced Templating 
-  1. 404 Pages 
-  1. Styling the Application: Part 1
-  1. Styling the Application: Part 2
+    1. Hello Express
+    1. Serving up HTML and JSON
+    1. Serving up STatic Assets
+    1. Serving up CSS, JS, Images, and More
+    1. Dynamic Pages with Templating 
+    1. Customizing the Views Directory
+    1. Advanced Templating 
+    1. 404 Pages 
+    1. Styling the Application: Part 1
+    1. Styling the Application: Part 2
 
 1. Accessing API from Browser (Weather App)
-  1. The Query String 
-  1. Building a JSON HTTP Endpoint
-  1. ES6 Aside: Default Function Parameters
-  1. Browser HTTP Requests with Fetch
-  1. Creating a Search Form
-  1. Writing up the User Interface
+    1. The Query String 
+    1. Building a JSON HTTP Endpoint
+    1. ES6 Aside: Default Function Parameters
+    1. Browser HTTP Requests with Fetch
+    1. Creating a Search Form
+    1. Writing up the User Interface
 
 1. APplication Deployment (Weather App)
-  1. Joining Heroku and Github
-  1. Version Control With Git
-  1. Exploring Git 
-  1. Integrating Git 
-  1. Setting up SSH Keys 
-  1. Pushing Code to Github
-  1. Deploying Node.js to Heroku
-  1. New Feature Deployment Workflow 
-  1. Avoiding Global Modules
+    1. Joining Heroku and Github
+    1. Version Control With Git
+    1. Exploring Git 
+    1. Integrating Git 
+    1. Setting up SSH Keys 
+    1. Pushing Code to Github
+    1. Deploying Node.js to Heroku
+    1. New Feature Deployment Workflow 
+    1. Avoiding Global Modules
 
 1. MongoDB and Promises (Task App)
-  1. MongoDB and NoSQL Databases
-  1. Installing MongoDB macOS, Linux, and Windows
-  1. Installing Database GUI Viewer
-  1. Connecting and Inserting Documents 
-  1. Inserting Documents 
-  1. The ObjectID
-  1. Querying Documents 
-  1. Promises
-  1. Updating Documents 
-  1. Deleting Documents 
+    1. MongoDB and NoSQL Databases
+    1. Installing MongoDB macOS, Linux, and Windows
+    1. Installing Database GUI Viewer
+    1. Connecting and Inserting Documents 
+    1. Inserting Documents 
+    1. The ObjectID
+    1. Querying Documents 
+    1. Promises
+    1. Updating Documents 
+    1. Deleting Documents 
 
 1. REST APIs and Mongoose (Task App)
-  1. Setting up Mongoose 
-  1. Creating a Mongoose Model
-  1. Data Validation and Sanitization: Part 1
-  1. Data Validation and Sanitization: Part 2
-  1. Structuring a REST API
-  1. Installing Postman
-  1. Resource Creation Endpoints: Part 1
-  1. Resource Creation Endpoints: Part 2
-  1. Resource Reading Endpoints: Part 1
-  1. Resource Reading Endpoints: Part 2
-  1. Promise Chaining 
-  1. Promise Chaining Challenge
-  1. Async/Await 
-  1. Async/Await: Part 2
-  1. Resource Updating Endpoints: Part 1
-  1. Resource Updating Endpoints: Part 2
-  1. Resource Deleting Endpoints 
-  1. Separate Route Files 
+    1. Setting up Mongoose 
+    1. Creating a Mongoose Model
+    1. Data Validation and Sanitization: Part 1
+    1. Data Validation and Sanitization: Part 2
+    1. Structuring a REST API
+    1. Installing Postman
+    1. Resource Creation Endpoints: Part 1
+    1. Resource Creation Endpoints: Part 2
+    1. Resource Reading Endpoints: Part 1
+    1. Resource Reading Endpoints: Part 2
+    1. Promise Chaining 
+    1. Promise Chaining Challenge
+    1. Async/Await 
+    1. Async/Await: Part 2
+    1. Resource Updating Endpoints: Part 1
+    1. Resource Updating Endpoints: Part 2
+    1. Resource Deleting Endpoints 
+    1. Separate Route Files 
 
 1. API Authentication and Security (Task App)
-  1. Securely Storing Password: Part 1
-  1. Securely Storing Password: Part 2
-  1. Logging in Users
-  1. JSON Web Tokens
-  1. Generating Authentication Tokens
-  1. Express Middleware
-  1. Accepting Authentication Tokens
-  1. Advanced Postman
-  1. Logging Out
-  1. Hiding Private Data 
-  1. Authenticating User Endpoints
-  1. The User/Task Relationship
-  1. Authenticating Task Endpoints
-  1. Cascade Delete Tasks
+    1. Securely Storing Password: Part 1
+    1. Securely Storing Password: Part 2
+    1. Logging in Users
+    1. JSON Web Tokens
+    1. Generating Authentication Tokens
+    1. Express Middleware
+    1. Accepting Authentication Tokens
+    1. Advanced Postman
+    1. Logging Out
+    1. Hiding Private Data 
+    1. Authenticating User Endpoints
+    1. The User/Task Relationship
+    1. Authenticating Task Endpoints
+    1. Cascade Delete Tasks
 
 1. Sorting, Pagination, and Filtering 
-  1. Working with Timestamps
-  1. Filtering Data
-  1. Paginating Data 
-  1. Soring Data 
+    1. Working with Timestamps
+    1. Filtering Data
+    1. Paginating Data 
+    1. Soring Data 
 
 1. File Uploads (Task App)
-  1. Adding Support for File Uploads
-  1. Validating File Uploads
-  1. Validation Challenge
-  1. Handling Express Errors
-  1. Adding Images to User Profile
-  1. Serving up Files
-  1. Auto-Cropping and Image Formatting
+    1. Adding Support for File Uploads
+    1. Validating File Uploads
+    1. Validation Challenge
+    1. Handling Express Errors
+    1. Adding Images to User Profile
+    1. Serving up Files
+    1. Auto-Cropping and Image Formatting
 
 1. Sending Emails (Task App)
-  1. Exploring SendGrid
-  1. Sending Welcome and Cancelation Emails 
-  1. Environment Variables 
-  1. Creating a Production MongoDB Database
-  1. Heroku Deployment
+    1. Exploring SendGrid
+    1. Sending Welcome and Cancelation Emails 
+    1. Environment Variables 
+    1. Creating a Production MongoDB Database
+    1. Heroku Deployment
 
 1. Testing Node.js (Task App)
-  1. Jest Testing Framework 
-  1. Writing Tests and Assertions
-  1. Writing Your Own Test 
-  1. Testing Asynchronous Code 
-  1. Testing an Express Application: Part 1
-  1. Testing an Express Application: Part 2
-  1. Jest Setup and Teardown
-  1. Testing with Authentication 
-  1. Advanced Assertions
-  1. Mocking Libraries
-  1. Wrapping up User Tests
-  1. Setup Task Test Suite
-  1. Testing with Task Data 
-  1. Bonus: Extra Test Ideas
+    1. Jest Testing Framework 
+    1. Writing Tests and Assertions
+    1. Writing Your Own Test 
+    1. Testing Asynchronous Code 
+    1. Testing an Express Application: Part 1
+    1. Testing an Express Application: Part 2
+    1. Jest Setup and Teardown
+    1. Testing with Authentication 
+    1. Advanced Assertions
+    1. Mocking Libraries
+    1. Wrapping up User Tests
+    1. Setup Task Test Suite
+    1. Testing with Task Data 
+    1. Bonus: Extra Test Ideas
 
 1. Real-time Web Applications with Socket.io (Chat App)
-  1. Creating the Chat App Project
-  1. WebSockets
-  1. Getting Started with Socket.io
-  1. Socket.io Events 
-  1. Socket.io Events Challenge
-  1. Broadcasting Events 
-  1. Sharing Your Location 
-  1. Event Acknowledgements 
-  1. Form and Button states 
-  1. Rendering Messages
-  1. Rendering Location MEssages
-  1. Working with Time 
-  1. Timestamps for Location Messages 
-  1. Styling the Chat App
-  1. Join Page
-  1. Socket.io Rooms 
-  1. Storing Users: Part 1 
-  1. Storing Users: Part 2
-  1. Tracking Users Joining and Leaving 
-  1. Sending Messages to Rooms
-  1. Rendering User List 
-  1. Automatic Scrolling 
-  1. Deploying the Chat Application 
+    1. Creating the Chat App Project
+    1. WebSockets
+    1. Getting Started with Socket.io
+    1. Socket.io Events 
+    1. Socket.io Events Challenge
+    1. Broadcasting Events 
+    1. Sharing Your Location 
+    1. Event Acknowledgements 
+    1. Form and Button states 
+    1. Rendering Messages
+    1. Rendering Location MEssages
+    1. Working with Time 
+    1. Timestamps for Location Messages 
+    1. Styling the Chat App
+    1. Join Page
+    1. Socket.io Rooms 
+    1. Storing Users: Part 1 
+    1. Storing Users: Part 2
+    1. Tracking Users Joining and Leaving 
+    1. Sending Messages to Rooms
+    1. Rendering User List 
+    1. Automatic Scrolling 
+    1. Deploying the Chat Application 
 ---
 # The Complete Node.js Developer Course
 
@@ -2186,11 +2186,1839 @@ doWorkCallback(function (error, result) {
     1. postcode
     1. and more
 1. For `mongoose` models, we have `schemaTypes` to set up which we can refer to the [documentations](https://mongoosejs.com/docs/schematypes.html#schematype-options). Besides `required` and `validate` which we have introduced above, we can set up a `default` value for the field as well. In addition, we have sanitization options for certain data types. For example, we can convert all letters to lowercase or uppercase for `String` values or to trim the input. 
-  ```js 
-  const mongoose = require('mongoose');
-  const validator = require('validator');
+    ```js 
+    const mongoose = require('mongoose');
+    const validator = require('validator');
 
-  const User = mongoose.model('User', {
+    const User = mongoose.model('User', {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            validate(value) {
+                if (!validator.isEmail(value)) {
+                    throw new Error('Email is invalid');
+                }
+            },
+        },
+        age: {
+            type: Number,
+            default: 0,
+            validate(value) {
+                if (value < 0) {
+                    throw new Error('Age must be a positive number');
+                }
+            }
+        },
+    });
+    ```
+
+### Data Validation and Sanitization: Part 2
+1. In this challenge, we update the model schema for `User` and `Task` dataset. 
+    1. `User`. We can use `.includes()` and `.toLowerCase()` method to check the input `String`. 
+        1. `password` is a required input 
+        1. Must be more than 7 characters
+        1. The input should be trimmed
+        1. The input should not have `password`
+    1. `Task`
+        1. `description` is a required input 
+        1. The input should be trimmed
+        1. `completed` property is `false` by default if it's not given 
+    ```js 
+    const User = mongoose.model('User', {
+    password: {
+        type: String,
+        require: true,
+        minlength: 7,
+        trim: true,
+        validate(value) {
+            if (value.toLowerCase().includes('password')) {
+            throw new Error(`password can't contain "password"!`)
+            }
+        },
+        },
+    });
+
+    const Task = mongoose.model('task', {
+        description: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        completed: {
+            type: Boolean,
+            default: false,
+        },
+    })
+    ```
+
+### Structuring a REST API
+1. REST stands for Representational State Transfer. We can also call it RESTful API. 
+1. A server is stateless. 
+1. A request made from a program via the Internet usually uses HTTP protocol. 
+1. With the structure, we can have clearer and succienct path and methods to work on with CRUD. However, the keywords for the actions are different. For example, we can use the path structure for `tasks`.
+    1. Create - POST /tasks
+    1. Read - GET /tasks
+    1. Read - GET /tasks/:id
+    1. Update - PATCH /tasks/:id
+    1. Delete - DELETE /tasks/:id
+    <img src="restapistructure.PNG">
+1. A HTTP request. `express` framework has provided a friendly user interface for developers to work on the `request` and `response`. 
+    1. A `request` includes the `header` and metadata that indicates the method such as the "action" we are going use, "connection" (one-time or being kept alive), and "format" of the data. 
+    1. A `response` has status code such as `200` and `201` if the "GET" or "POST" action works, data format, and the content returned from the server. 
+    <img src="httpRequest.PNG">
+
+### Installing Postman
+1. This is an introduction to POSTMAN App and how to use it. 
+1. We can use POSTMAN to send a POST request 
+    <img src="postmanPOST.PNG">
+
+### Resource Creation Endpoints: Part 1
+1. We install npm package `nodemon` in development mode and `express`. 
+1. We then create `index.js` in the root directory to use `express` framework. Besides, since we are not going to use `mongodb.js`, we will remove the file. The backup of the practices are in the other folder `mongoDBAndPromises`. 
+1. We have an inital setup for `express` framework in `index.js`
+    ```js 
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT;
+
+    app.listen(port || 3000, () => {
+        console.log(`Server has started on port: ${port || 3000}`);
+    });
+    ```
+1. We change the `scripts` property in `package.json` with `start` and `dev`. We will deploy this app on heroku later. 
+    ```js 
+    "scripts": {
+        "start": "node src/index.js",
+        "dev": "nodemon src/index.js"
+    }
+    ```
+1. In `express`, we can use `.get()` or `.post()` to specify the listener on the server for different types of request. If we use `app.post()` on a route, the listener won't react if a user give a GET request, such as putting the URL on the browser search bar directly. Note that we can't use a browser to send POST requets directly. Therefore, we can use POSTMAN to test the endpoint. 
+1. In the following case, we can use `app.use(express.json())` which is similar to turn the response from a server in a `Promise` into a JSON format. However, `express` allow us to use a relative simple syntax. Therefore, we can parse the `request.body` directly to check the data in the request. 
+    ```js
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    // parse the request data and convert it to JSON
+    app.use(express.json());
+
+    // reciving a POST request 
+    app.post('/users', (req, res) => {
+        console.log(req.body);
+        res.send('testing!');
+    })
+
+    app.listen(port, () => {
+        console.log(`Server has started on port: ${port}`);
+    });
+    ```
+1. In the source `src` directory, we create a new folder `models` that we will keep the data models separately from `mongoose.js`. Besides, we need to use `module.exports` to allow other JavaScript file to use this code in Node.js environment. 
+    ```js 
+    // src/models/user.js 
+    const mongoose = require('mongoose');
+    const validator = require('validator');
+
+    const User = mongoose.model('User', {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            validate(value) {
+                if (!validator.isEmail(value)) {
+                    throw new Error('Email is invalid');
+                }
+            },
+        },
+        age: {
+            type: Number,
+            default: 0,
+            validate(value) {
+                if (value < 0) {
+                    throw new Error('Age must be a positive number');
+                }
+            }
+        },
+        password: {
+            type: String,
+            require: true,
+            minlength: 7,
+            trim: true,
+            validate(value) {
+                if (value.toLowerCase().includes('password')) {
+                    throw new Error(`password can't contain "password"!`)
+                }
+            },
+        },
+    });
+
+    module.exports = User;
+    ```
+
+1. After configuring the directories, we can import the `mongoose.js` (ensuring that the server connects to the database) and the model of `users` (data model with schema and validator) into `index.js`. 
+1. In this case, we try to create a user by the `User` model imported from `user.js` and reply it to user if the data is valid and written into the database. If an error occurs, we use `.catch()` to return the error such as the input data is invalid. 
+1. We can learn more on HTTP status code at [httpstatuses.com](https://httpstatuses.com/).
+    ```js 
+    const express = require('express');
+    require('./db/mongoose');
+    const User = require('./models/user');
+
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    app.use(express.json());
+
+    app.post('/users', (req, res) => {
+        const user = new User(req.body); // create new user data from the input in JSON format
+
+        user.save().then(() => {
+            res.send(user) // respond the input back to user
+        }).catch(error => {
+            // res.status(400); // return a status code correctly
+            // res.send(error);
+            res.status(400).send(error); // a single line to return status code and error message
+        })
+    })
+
+    app.listen(port, () => {
+        console.log(`Server has started on port: ${port}`);
+    });
+    ```
+
+### Resource Creation Endpoints: Part 2
+1. We create a new route that allows users to make a POST request to create a new input to the database by using the schema of `tasks`. The process and concept is the same as setting up the `users`. In this case, we add up one more function to return status code if the request is successful as well. When a data is given correctly, we can return `201` according to [httpstatuses.com](https://httpstatuses.com/).
+    ```js 
+    const express = require('express');
+    require('./db/mongoose');
+    const User = require('./models/user');
+    const Task = require('./models/task');
+
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    app.use(express.json());
+
+    app.post('/users', (req, res) => {
+        const user = new User(req.body);
+
+        user.save().then(() => {
+            res.status(201).send(user)
+        }).catch(error => {
+            res.status(400).send(error); // a single line to return status code and error message
+        })
+    })
+
+    app.post('/tasks', (req, res) => {
+        const task = new Task(req.body);
+
+        task.save().then(function () {
+            res.status(201).send(task);
+        }).catch(function (error) {
+            res.status(400).send(error);
+        })
+    })
+
+    app.listen(port, () => {
+        console.log(`Server has started on port: ${port}`);
+    });
+    ```
+
+### Resource Reading Endpoints: Part 1
+1. We can check the `queries` part in `mongoose` API documentation. In this case, we will use [`.find()`](https://mongoosejs.com/docs/api.html#model_Model.find) method. `.find()` method takes an `Object` as an argument.
+1. In the route, we give `:parameter` to send the parameter to the server via URL. Note `express` framework allow us to get the parameter easily from the request by `req.params.[para,]`. Note that if we change the variable name after the column, the returned parameters in the request will also be changed. Besides, if the request has multiple parameters, we can check them all in `req.params` as this is an `Object`. 
+1. In this case, if we use `.findById()` method to check in the database, we won't get 404 directly if the id given is not formmated correct. The program will return an error directly. Status `404` will only be trigerred when the format of given id is correct but there's no such data in the database. Therefore, we can write another line to check if the id is correct formatted. In this case, the id in MongoDB should always be 24 characters long.
+    ```js 
+    // GET request to a specific user data 
+    app.get(`/users/:id`, (req, res) => {
+        const _id = req.params.id;
+        // Check if the given id is in correct format 
+        if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+
+        // use findById mongoose method 
+        User.findById(_id).then(user => {
+            // check if the id exists
+            if (!user) {
+                return res.status(404).send();
+            }
+
+            // return the data if found
+            res.send(user);
+        }).catch(err => {
+            res.status(500).send();
+        });
+    });
+
+    // GET request to get all user data in the database
+    app.get('/users', (req, res) => {
+        User.find({}).then(users => {
+            res.send(users);
+        }).catch(error => {
+            res.status(500).send();
+        })
+    });
+    ```
+
+### Resource Reading Endpoints: Part 2
+1. This part is a challenge to work on the GET requests to `tasks` which is using the same methods and concept in retrieving data of `users`. 
+    ```js 
+    // GET request to get a specific task 
+    app.get('/tasks/:id', (req, res) => {
+        const _id = req.params.id;
+        if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+        Task.findById(_id).then(task => {
+            if (!task) {
+                return res.status(404).send();
+            }
+
+            res.send(task);
+        }).catch(err => {
+            res.status(500).send();
+        })
+    })
+
+    // GET request to get all task data 
+    app.get('/tasks', (req, res) => {
+        Task.find({}).then(tasks => {
+            res.send(tasks);
+        }).catch(err => {
+            res.status(500).send();
+        })
+    });
+    ```
+
+### Promise chaining 
+1. If we need to use several async functions to deal with returned data from the server, we can use nested promise with `.then()` and `.catch()` inside. However, such structure is hard to read and understand. Besides, we have to use `.catch()` several times. 
+1. On the other hand, we can use promise chaining that let the first asynction function return a promise, so that we can use `.then()` directly on the result to work on `resolve` function. In this case, we can have a simple structure to read and can have one single `.catch()` method to deal with the errors. 
+    ```js 
+    // async function that returns a promise 
+    const add = (a, b) => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(a + b);
+                reject('Something went wrong!');
+            }, 1000)
+        });
+    }
+
+    // nested chaining 
+    add(1, 2).then(sum => {
+        console.log(sum);
+
+        add(sum, 5).then(sum2 => {
+            console.log(sum2);
+        }).catch(e => {
+            console.log(e);
+        })
+    }).catch(e => {
+        console.log(e);
+    });
+
+    // promise chaining
+    add(1, 1).then(sum => {
+        console.log(sum);
+        return add(sum, 4);
+    }).then(sum2 => {
+        console.log(sum2);
+    }).catch(err => {
+        console.log(err);
+    })
+    ```
+1. We create `promise-chaining.js` in a `sandbox` folder in the task-manager app to test promise chaining feature for `mongoose` methods. 
+1. We use other `mongoose` methods by checking its documentation. In this case, we use [`Model.countDocuments()`](https://mongoosejs.com/docs/api/model.html#model_Model.countDocuments) to check how many instances of a specific type of data are stored in the collection. Note that the `Guides` in mongoose documentation is just simple instruction for frequently used methods. We can check other methods in `API` section. For example, in `API > Model`.
+1. We tried 2 different methods to manipulate the data `.findByIdAndUpdate()` and `.findByIdAndDelete()` each of which takes an argument of the `_id` of the instance. 
+1. After modifying the single data, we can use `.countDocuments()` which takes an `Object` as filter to check the data and returns the number of instances that matches. 
+    ```js 
+    require('../src/db/mongoose');
+    const User = require('../src/models/user');
+    // find a user and update his/her age 
+    User.findByIdAndUpdate('5f1da581079d580247037b50', { age: 1, }).then(user => {
+        console.log(user);
+        // return the number of users that is 1 year old 
+        return User.countDocuments({ age: 1 });
+    }).then((result) => {
+        console.log(result)
+    }).catch(e => {
+        console.log(e);
+    })
+
+    const Task = require('../src/models/task');
+    // find a task and delete it 
+    Task.findByIdAndDelete('5f1d969510ec5c02cc377501').then(user => {
+        console.log(user);
+        // return the number of tasks that is not completed 
+        return Task.countDocuments({ completed: false });
+    }).then((result) => {
+        console.log(result)
+    }).catch(e => {
+        console.log(e);
+    });
+    ```
+
+### Async/Await 
+1. An `async` function returns a `promise` as the output, so we can use `.then()` and `.catch()` of the returned `Objecgt` directly. `await` keyword can only exist and work in an `async` function. With these keywords, we can have write an `async` function in a synchronous-like syntax. 
+1. This also gives benefits with a clear syntax, as if we'd like to work on different tasks with different variables in multiple `.then()` methods. This can confuse the developer easily when chain is longer and scope of variables starting to get messed up. 
+1. We can also set a condition to ensure that the number to sum up must all be positive. Besides, we can use a counter to check the process of each async function. In the following example, we can see the counter prints out from the 1st approach and stops as the 3rd add function has `-3`. 
+    ```js 
+    let counter = 1;
+    const add = (a, b) => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (a < 0 || b < 0) {
+                    reject('Numbers must be positive!');
+                }
+                resolve(a + b);
+            }, 500)
+        });
+    }
+
+    const doWork = async () => {
+        console.log(`${counter++} time approach`);
+        const sum = await add(1, 99);
+        console.log(`${counter++} time approach`);
+        const sum2 = await add(sum, 50);
+        console.log(`${counter++} time approach`);
+        const sum3 = await add(sum2, -3);
+        return sum3;
+    }
+
+    doWork().then(result => {
+        console.log('result', result);
+    }).catch(error => {
+        console.log('error', error);
+    });
+    ```
+
+### Async/Await: Part 2
+1. We work on a challenge 
+    1. Create `deleteTaskAndCount as an async function which accepts id of task to remove
+    1. Use await to delete task and count up incomplete tasks 
+    1. Return the count 
+    1. Call the function and attach then/catch to log results 
+    ```js 
+    require('../src/db/mongoose');
+    const Task = require('../src/models/task');
+
+    async function deleteTaskAndCount(id) {
+        await Task.findByIdAndDelete(id);
+        const count = await Task.countDocuments({ completed: false });
+        return count;
+    }
+
+    deleteTaskAndCount('5f1d969510ec5c02cc377502').then(task => {
+        console.log(task);
+    }).catch(error => {
+        console.log(error);
+    })
+    ```
+
+### Integrating Async/Await 
+1. We rewrite all the code in `index.js` with async/await syntax. Since `express` framework doesn't use returned value from methods directly, we can turn its the callback function in the HTTP request methods into `async` functions. Besides, to prevent the errors that causing the program to crash, we can use `try` and `catch` to handle the errors. The refined code works exactly the same as using `.then()` and `.catch()` methods on `promises` objects. 
+    ```js 
+    const express = require('express');
+    require('./db/mongoose');
+    const User = require('./models/user');
+    const Task = require('./models/task');
+    const { Mongoose } = require('mongoose');
+
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    app.use(express.json());
+
+    // POST request to create a new user 
+    app.post('/users', async (req, res) => {
+        const user = new User(req.body);
+
+        try {
+            await user.save();
+            res.status(201).send(user);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+
+    });
+
+    // GET request to a specific user data 
+    app.get(`/users/:id`, async (req, res) => {
+        const _id = req.params.id;
+        if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+        try {
+            const user = await User.findById(_id);
+            if (!user) {
+                return res.status(404).send();
+            }
+            res.send(user);
+        } catch (error) {
+            res.status(500).send()
+        }
+    });
+
+    // GET request to get user data 
+    app.get('/users', async (req, res) => {
+        try {
+            const users = await User.find({});
+            res.send(users);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+
+    // POST request to create a new task 
+    app.post('/tasks', (req, res) => {
+        const task = new Task(req.body);
+
+        task.save().then(function () {
+            res.status(201).send(task);
+        }).catch(function (error) {
+            res.status(400).send(error);
+        })
+    });
+
+    // GET request to get a specific task 
+    app.get('/tasks/:id', async (req, res) => {
+        const _id = req.params.id;
+        if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+        try {
+            const task = await Task.findById(_id);
+            if (!task) {
+                return res.status(404).send();
+            }
+            res.send(task);
+        } catch (error) {
+            res.status(500).send();
+        }
+    })
+
+    // GET request to get all task data 
+    app.get('/tasks', async (req, res) => {
+        try {
+            const tasks = await Task.find({});
+            res.send(tasks);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+
+    app.listen(port, () => {
+        console.log(`Server has started on port: ${port}`);
+    });
+    ```
+
+### Resource Updating Endpoints: Part 1
+1. This is relatively complicated that it may have several conditions to handle 
+  1. The user is not found (404). For example, the user gives an id in correct format but doesn't have an entity exist in the database. 
+  1. The new input is invalid (400). For example, the user gives empty string to update the name of the user, which was set to be required. 
+  1. The server has some issues that can't return the data (500)
+  1. Valid input format but incorrect data. For example, the user tries to modify a property can't be changed or doesn't exist. 
+1. We use the following code to work on PATCH request which is to modify a user data. In this case, we use `Object.keys()` which returns the properties of an `Object` in an `Array`, so we can use `.every()` method to check. This `Array.every()` method works similar to `.filter()` that it takes a callback function to check if the elements follow certain conditions and returns a boolean `true` if all the result of callback function is `true`. (Though we can use `.forEach` or other method to achieve the target, but this method is relatively simple for the purpose).
+1. In the `Model.findByIdAndUpdate()` method, we can give a 3rd parameters which is an `Object` of options such as `new: true` means that the method will return the result updated instance as an `Object` and `runValidators: true` means that the method will ensure the input will be checked with the validators in the schema. 
+    ```js 
+    // index.js
+    // PATCH request to modify data of a specific user
+    app.patch('/users/:id', async (req, res) => {
+        // list all the properties of user input as an array
+        const updates = Object.keys(req.body);
+        // list the fields that we allow users to update
+        const allowedUpdates = ['name', 'email', 'password', 'age'];
+        // check if the user gives invalid request to change fields can't be changed or doesn's exist at all 
+        const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+        if (!isValidOperation) {
+            return res.status(400).send({ error: 'Invalid udpates!' });
+        }
+
+        try {
+            const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
+
+            if (!user) {
+                return res.status(404).send();
+            }
+            res.send(user);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+    })
+    ```
+
+### Resource Updating Endpoints: Part 2
+1. This is a chanllenge to work on the router handler to update the content of tasks in the database. 
+  1. Set up the route handler 
+  1. Send error if unknown updates 
+  1. Attempt to update the task 
+    1. Handle task not found 
+    1. Handle validation errors 
+    1. Handle success 
+1. A misake made here was setting the wront route, so server can't render the page on the given route correctly. I forget to put slash `/` before `tasks`
+    ```js 
+    // PATCH request to modify data of a specific task 
+    app.patch('/tasks/:id', async (req, res) => {
+        const id = req.params.id;
+        const updates = Object.keys(req.body);
+        const allowedUpdates = ['description', 'completed'];
+        const isDataAllValid = updates.every(update => allowedUpdates.includes(update))
+
+        if (!isDataAllValid) {
+            return res.status(400).send({ error: 'The input data is invalid!' });
+        }
+
+        try {
+            const task = await Task.findByIdAndUpdate(id, req.body, { new: true, runValidators: true, });
+            if (!task) {
+                return res.status(404).send();
+            }
+            res.send(task);
+        } catch (error) {
+            res.status(400).send();
+        }
+    })
+    ```
+
+### Resource Deleting Endpoints
+1. In this case, we should use `.findByIdAndDelete()` method, while I made mistake and used `.findOneAndDelete()` which will keep deleting data if there's any when the filter option doesn't set up correctly. 
+    ```js 
+    // Delete request to remove a specific task
+    app.delete('/tasks/:id', async (req, res) => {
+        try {
+            const task = await Task.findByIdAndDelete(req.params.id); // be careful with mongoose CRUD command!
+
+            if (!task) {
+                return res.status(404).send();
+            }
+
+            res.send(task);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+
+### Separate Route Files 
+1. We have made all CRUD commands in the same file `index.js`. In this case, we have work on 2 main parts which are `users` and `tasks`. When the program goes bigger and more complex, the modules are better to be separated to be manageable. We will separate the routes of these and combine them into the an application to work on. 
+1. To use the router, we have to initiate it with `new express.Router()`, set up the route with `router.get()` (which is similar to `app.get()`), and register it with `app.use()`. 
+    ```js 
+    // initiate an express router 
+    const router = new express.Router();
+    router.get('/test', (req, res) => {
+        res.send('This is from my other router');
+    })
+    app.use(router);
+    ```
+1. We create a new directory in `src` named `routers` and create `user.js` as the router is created for `users`. We follow the similar syntax to create a router in this separated file and use `module.exports` to export the `Object`. 
+    ```js 
+    // src/routers/user.js
+    const express = require('express');
+    const router = new express.Router();
+
+    router.get('/test', (req, res) => {
+        res.send('From a new File');
+    })
+
+    module.exports = router;
+
+    // import the router to index.js 
+    const userRouter = require('./routers/user/');
+    app.use(userRouter);
+    ```
+1. After that, we can import user model by using `require('../models/user/')` and copy those routes setup in index.js without rewriting all of them. Note that since we have changed the router syntax and doesn't use `app` variable, we should change all of them into `router` which is a module created with `new express.Router()`. 
+    ```js 
+    const express = require('express');
+    const User = require('../models/user');
+    const router = new express.Router();
+
+    // POST request to create a new user 
+    router.post('/users', async (req, res) => {
+        const user = new User(req.body);
+
+        try {
+            await user.save();
+            res.status(201).send(user);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+
+    });
+
+    // GET request to get user data 
+    router.get('/users', async (req, res) => {
+        try {
+            const users = await User.find({});
+            res.send(users);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+
+    // GET request to a specific user data 
+    router.get(`/users/:id`, async (req, res) => {
+        const _id = req.params.id;
+        if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+        try {
+            const user = await User.findById(_id);
+            if (!user) {
+                return res.status(404).send();
+            }
+            res.send(user);
+        } catch (error) {
+            res.status(500).send()
+        }
+    });
+
+    // PATCH request to modify data of a specific user
+    router.patch('/users/:id', async (req, res) => {
+        const updates = Object.keys(req.body);
+        const allowedUpdates = ['name', 'email', 'password', 'age'];
+        const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+        if (!isValidOperation) {
+            return res.status(400).send({ error: 'Invalid udpates!' });
+        }
+
+        try {
+            const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
+
+            if (!user) {
+                return res.status(404).send();
+            }
+            res.send(user);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+    });
+
+    // Delete request to remove a specific user
+    router.delete('/users/:id', async (req, res) => {
+        try {
+            const user = await User.findByIdAndDelete(req.params.id);
+
+            if (!user) {
+                return res.status(404).send();
+            }
+
+            res.send(user);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+
+    module.exports = router;
+    ```
+1. By separating the modules, `index.js` becomes simple and succinct and works exactly the same as before. 
+    ```js 
+    const express = require('express');
+    require('./db/mongoose');
+    const userRouter = require('./routers/user');
+    const taskRouter = require('./routers/task');
+
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    app.use(express.json());
+
+    app.use(userRouter);
+    app.use(taskRouter);
+
+    app.listen(port, () => {
+        console.log(`Server has started on port: ${port}`);
+    });
+    ```
+
+# API Authentication and Security (Task App)
+### Securely Storing Passwords: Part 1
+1. At this point, we store user password in the database with plain text which is a VERY BAD idea. As most of the users nowadays use the same password across different websites. For security reasons, we should try to keep password hashed. 
+1. We can use `bcrypt.js` package to hash user passwords in the database. We can check its methods from [documentation](https://www.npmjs.com/package/bcryptjs#usage---async)
+    1. We can use `.hash()` which is an async method that can generate a hash "**salt**" automatically. Besides, we can skip the callback function. 
+    1. After users creating password, we can use `.compare()` to check when a user tries to login and look up the hash table to check if it matches.
+    ```js 
+    const bcrypt = require('bcryptjs');
+
+    const myFunction = async function () {
+        const password = 'Red12345!';
+        // give the password input and the times of string to be hashed. 8 is relatively balanced number of times 
+        const hashedPassword = await bcrypt.hash(password, 8);
+
+        console.log(password); // Red12345
+        console.log(hashedPassword); // hashed password 
+
+        // check if given password is the same as the password stored in the database by checking hash table 
+        const isMatch = await bcrypt.compare('Red12345!', hashedPassword);
+        console.log(isMatch) // true. This will be false if user gives wrong password 
+    }
+
+    myFunction();
+    ```
+
+### Securely Storing Passwords: Part 2
+1. In the task-manager App, there are 2 main cases to use `bcrypt.js`. 
+    1. When a user creates a new account 
+    1. When a user update the account 
+1. In this case, we can use [middleware](https://mongoosejs.com/docs/middleware.html) in `mongoose`. We can run some code before the data is saved to the database. Therefore, we will update `src/models/user.js` in models. These middlewares has `pre` and `post` hook that we can either work "**before**" a task happens or "**after**". For example, a middleware can work before the data is written into database, or give a hint or do something else after data is written successfully. 
+1. We need to modify the code in router to enable the middle is working. In the `try` code block, we separate the code into 3 lines as to separate the `find` and `update` (to [save](https://mongoosejs.com/docs/api/document.html#document_Document-save) the data) process into 2 `await`. 
+    ```js 
+    // src/routers/user.js
+    // PATCH request to modify data of a specific user
+    router.patch('/users/:id', async (req, res) => {
+        const updates = Object.keys(req.body);
+        const allowedUpdates = ['name', 'email', 'password', 'age'];
+        const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+        if (!isValidOperation) {
+            return res.status(400).send({ error: 'Invalid udpates!' });
+        }
+
+        try {
+            // rewrite here!!!
+            // find the user by its id property
+            const user = await User.findById(req.params.id);
+            // update properties from the array above to iterate through each of them 
+            updates.forEach((update) => user[update] = req.body[update]);
+            await user.save();
+            // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
+
+            if (!user) {
+                return res.status(404).send();
+            }
+
+            res.send(user);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+    });
+    ```
+
+1. We create a schema by `new mongoose.Schema()` and move the user model as the `Object` argument. We use [`schema`](https://mongoosejs.com/docs/api/document.html#document_Document-isModified) method to check if a certain field (such as `password` in this case) is modified. If it is `true`, we will hash the input by 
+    ```js 
+    // src/models/user.js
+    const mongoose = require('mongoose');
+    const validator = require('validator');
+    const bcrypt = require('bcryptjs');
+
+    const userSchema = new mongoose.Schema({
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            validate(value) {
+                if (!validator.isEmail(value)) {
+                    throw new Error('Email is invalid');
+                }
+            },
+        },
+        age: {
+            type: Number,
+            default: 0,
+            validate(value) {
+                if (value < 0) {
+                    throw new Error('Age must be a positive number');
+                }
+            }
+        },
+        password: {
+            type: String,
+            require: true,
+            minlength: 7,
+            trim: true,
+            validate(value) {
+                if (value.toLowerCase().includes('password')) {
+                    throw new Error(`password can't contain "password"!`)
+                }
+            },
+        },
+    })
+
+    // middleware to check before data is saved into database
+    userSchema.pre('save', async function (next) {
+        const user = this;
+        // check if middleware is working 
+        console.log('Just before saving');
+
+        // check if password is modified (or an account is created)
+        if (user.isModified('password')) {
+            user.password = await bcrypt.hash(user.password, 8);
+        }
+        
+        next();
+    })
+
+    const User = mongoose.model('User', userSchema);
+
+    module.exports = User;
+    ```
+
+### Logging in Users
+1. We create a new endpoint for users to login. 
+1. In `src/routers/user.js`, we update a post route to send data from client to server. We made a middleware in model to check if the given `email` and `password` match any of those user data in the database. 
+    ```js 
+    // authenticate user login with email as account and password
+    router.post('/users/login', async (req, res) => {
+        try {
+            // check if given email and password is correct 
+            const user = await User.findByCredentials(req.body.email, req.body.password);
+            // temporary solution
+            res.send(user);
+        } catch (error) {
+            res.status(400).send();
+        }
+    });
+    ```
+1. There are 2 ways to [add methods](https://mongoosejs.com/docs/api/schema.html#schema_Schema-static) in schema with `.static()` method or `statics` property. Note that we can name the method upon preference. 
+    1. Use `Schema.static(methodName, callbackMethod)` method
+    1. Use `Schema.statics.method = function(){}`. 
+1. Since login process is sensitive, we should return as least info. as possible. For example, we don't indicate whether the email account or password is wrong that causes login process fail. We can simply indicate that the process is not successful. 
+    ```js 
+    // create a new method to check user email (as account) and password 
+    userSchema.statics.findByCredentials = async function (email, password) {
+        // check if there an email exist in the database 
+        const user = await User.findOne({ email });
+
+        // throw an error if there's no user
+        if (!user) {
+            throw new Error('Unable to login');
+        }
+
+        // check if password matches
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        // throw an error if password is not correct and provide as least sensitive info as possible
+        if (!isMatch) {
+            throw new Error('Unable to login');
+        }
+
+        return user;
+    }
+    ```
+1. In addition, we should also prevent users to register accounts with the same email. Therefore, we have to update the schema with `unique: true` for `email` property. Note that after we modify the schema, we have to wipe out the data in the database to ensure the new schema is applied to all new inputs. 
+1. In `robo 3T`, we can go to collections panel on the left to drop a database. Note that we should also stop the server in the terminal to rerun the program again. 
+1. We can test the process in POSTMAN by accessing the endpoint `localhost:3000/login` with JSON data `{"email": "", "password":""}` with a POST request. Therefore, we will only get the `user` data send back if both `email` and `password` match. 
+
+### JSON Web Tokens - JWT
+1. After this point, all routes on the `express` will be categorized in either `public` or `authenticated` with limited access. For example, we only show "**signup**" and "**login**" routes in public that all users can see, while other sensitive and private data will only be shown after the user logs in. 
+1. Besides, we can send each user an unique authentication token, so they don't need to be verified each time working on a task. Besides, the token can expire after certain amount of time to enhance security and prevent abuse. 
+1. This JSON Web Token can be generated and get expired at certain amount of time. We use npm [`jsonwebtoken`](https://www.npmjs.com/package/jsonwebtoken) package to do the job. All the token is encoded with `base64`. We can paste the token to decode by other program such as [base64decode](https://www.base64decode.org/).
+1. We can use `.sing()` method to create a JSON Web Token. The method takes 3 arguments. 
+    1. 1st is an `Object` can take a unique identifier, so the server knows which user is logging in. In this case, "**user's id**" can do the job. 
+    1. 2nd is a `String` perform as the "**signature**" (similar to password) to ensure the token is generated from this server. This can be any `String` value as perfrence, as it works similar to password. Therefore, though another users may get the unique user id from somewhere else, they can't pass the verification because they don't get this "**signature**" to generate the token. 
+    1. 3rd is an `Object` that contains the options such as setting up expiring time. The set up is relative intuitive that we can put in plain English duration, such as `1 week`, `2 months`, or `1 year`. 
+1. A JWT has 3 parts and separated with dots `.`. For example, `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJhYmMxMjMiLCJpYXQiOjE1OTU5MDcyNDd9.r-OpD95XZCa7__x6LafF04wvIu4fy3TLH_uE3ism6mc`, the 1st part is the "**header**" which is the metadata of the token that how is this token generated, the 2nd part is the "**payload**" or the "**body**" which is generated from the data we provided, and the last part is the "**signature**" is for the program to verify the token.
+1. We then can use `.verify()` method to check if the token from the client is correct. The method takes 2 arguments
+    1. 1st is the token itself
+    1. 2nd is the "**signature**" we give when we create the token. 
+    ```js 
+    const jwt = require('jsonwebtoken');
+    const myFunction = async function () {
+        // create a token from jwt.sign() method
+        const token = jwt.sign({_id: 'abc123'}, 'thisismynewcourse', {expiresIn: '7 days'});
+        // print token into terminal
+        console.log(token);
+
+        // verify the token with signature 
+        const data = jwt.verify(token, 'thisismynewcourse')
+        console.log(data);
+    }
+
+    myFunction();
+  ```
+### Generating Authentication Tokens
+1. When a new user sings a new account, or a exisiting user logs in, we can send a JWT to the user to authenticate the following usage. In this case, both `signup` and `login` router will be updated with a function to send and verify token. 
+    ```js 
+    // src/models/user.js
+    // we need to use 'this' to the specific user, so we should use a regular function statement
+    // 'methods' is the property for instances which method on every instance is a bit different
+    userSchema.methods.generateAuthToken = async function () {
+        const user = this;
+        const token = jwt.sign({ _id: user._id.toString(), }, 'thisismynewcourse');
+        return token;
+    }
+
+    // src/routers/user.js
+    // POST request to authenticate user login with email as account and password
+    router.post('/users/login', async (req, res) => {
+        try {
+            const user = await User.findByCredentials(req.body.email, req.body.password);
+            // generate a specific token for this user, not for all User!
+            const token = await user.generateAuthToken();
+            res.send({ user, token });
+        } catch (error) {
+            res.status(400).send();
+        }
+    });
+    ```
+1. However, there are some scenarios that users can't invalidate the token when they logout at this point. This can make serious security abuse that if others get the token, the user can't invalidate the login status and the token. Besides, the program should allow users to login with different devices with different status. For example, a user can login in both mobile phone and tablet. If the user logout from the tablet, the account on mobile phone is still logged in. 
+1. We can solve the issue with the following steps 
+    1. Modify the `user` model. In the schema, we add `tokens` to the model which is an `Array`. Besides, the token is a `String` and `required` for a user instance. 
+    ```js 
+    //src/models/user.js
+    const userSchema = new mongoose.Schema({
+      tokens: [{
+        token: {
+          type: String, 
+          required: true, 
+        }
+      }]
+    }
+    ```
+    1. Update `userSchema` methods to add the new generated token to the uesr instance. 
+    ```js 
+    //src/models/user.js
+    userSchema.methods.generateAuthToken = async function () {
+      const user = this;
+      const token = jwt.sign({ _id: user._id.toString(), }, 'thisismynewcourse');
+
+      // assign the token to the user instance 
+      user.tokens = user.tokens.concat({ token });
+      // save the instance to database 
+      await user.save();
+
+      return token;
+    }
+    ```
+1. We should generate a token right after the user signs up, as there's no point to authenticate the user who just register the account. We can reuse the method `.generateAuthToken()` directly. 
+    ```js
+    // src/routers/user.js
+    // POST request to create a new user (sign up)
+    router.post('/users', async (req, res) => {
+        const user = new User(req.body);
+
+        try {
+            await user.save();
+            const token = await user.generateAuthToken();
+            res.status(201).send({ user, token });
+        } catch (error) {
+            res.status(400).send(error);
+        }
+
+    });
+    ```
+
+### Express Middleware
+1. Since we generate tokens for users, we can start to use the tokens to verify the process of tasks in the program. Therefore, when users navigate on the website and try to do different tasks, each task will be verified with the token and check authentication before it can proceed. 
+1. We can use `middleware` in `express` framework `index.js`. Without a middleware, the new quest come from a user will make the program run the route handler without authentication. This may cause abuse and problems and affect other users on the same website. By using middleware, we can run some code (to authenticate) the user before the program proceed the tasks. 
+1. In `index.js`, we add a middleware by passing an anonymous function to `app.use()`. Besides, this task should run before other functions. In the following example, the middleware will check and return the HTTP request made from a user. In this case, we use POSTMAN to send a GET request on `/user` route to check for all users. After sending the requset, we get only `GET /users/` returned in the terminal without any other functions proceeded further. 
+1. This middleware takes 3 arguments 
+    1. `req` is the request made by the user from client side 
+    1. `res` is the response given by the server program
+    1. `next` is a callback function that we can pass to keep the program goes after passing through middleware. Note that if we don't call the `next()` function, the middleware will just stop the program and do nothing. 
+    ```js
+    const express = require('express');
+    require('./db/mongoose');
+    const userRouter = require('./routers/user');
+    const taskRouter = require('./routers/task');
+
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    // a middleware to run after getting a request and before executing a task 
+    app.use(function (req, res, next) {
+    console.log(req.method, req.path); // GET /users/
+    });
+
+
+    app.use(express.json());
+    // other code below...
+    ```
+1. We can also write logical process to proceed services. For example, we can deny all `GET` request made to all routes. 
+  ```js 
+  app.use(function (req, res, next) {
+    if (req.method === 'GET') {
+      res.send('GET requests are disabled');
+    } else {
+      next();
+    }
+  });
+  ```
+1. In the following challenge, we try to 
+    1. Register a new middleware funciton 
+    1. Send back a maintenance message with a 503 status code 
+1. In this case, we can either check if `req` exist or not. However, since the service is not available and server is on maintenance, we don't need to `IF` statement and simply send the message to users directly. 
+    ```js 
+    app.use(function(req, res, next) {
+    res.status(503).send('Server is on maintenance...');
+    })
+    ```
+
+### Accepting Authentication Tokens
+1. Summary 
+    1. Set up the middleware in the router to run before executing the route handler function. 
+    1. The middleware proceeds 
+        1. Find the header info. to check the authentication token. 
+        1. Use `jsonwebtoken` to verify the token. 
+        1. Find the associated user from the database by its `_id` and `token`. 
+1. Though the program is not huge, we can separate the function into different modules. Therefore, we create a new directory in `src` named `middleware` for our middleware functions. In this case, we create a new `auth.js`. 
+1. Note that we should clear the middleware we try to use in `index.js` first. 
+1. Besides, each middleware has its specific function and should only work on certain routes. Therefore, we export the `auth.js` middle and import it into `/src/routers/user.js`. 
+    ```js 
+    // src/middleware/auth.js
+    const auth = async function (req, res, next) {
+    console.log('auth middleware');
+    next();
+    }
+
+    module.exports = auth;
+    ```
+1. In each route handler, we add the middleware as the 2nd argument. (The first async callback function will be moved as the 3rd one to be executed after the middleware). In this case, if we make a GET request to `/users` route, we will see a message 'auth middleware' printed in the terminal.  
+    ```js 
+    // src/routers/user.js
+    const auth = require('../middleware/auth');
+
+    // GET request to get all user data 
+    // add middleware 'auth' before the async function 
+    router.get('/users', auth, async (req, res) => {
+        try {
+            const users = await User.find({});
+            res.send(users);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+1. In the header tag, we put the key as `authorization` and value is `Bearer [token...]`. Note that the value should start with `Bearer ` with capital "B" and followed with a whitespace before the token.
+    <img src="sendTokenInHeader.PNG">
+
+1. We update the middleware `auth.js`. 
+    ```js 
+    const jwt = require('jsonwebtoken');
+    const User = require('../models/user');
+
+    const auth = async function (req, res, next) {
+        try {
+            // remove 'Bearer ' in the beginning of the String
+            const token = req.header('Authorization').replace('Bearer ', '');
+            // use jsonwebtoken package to verify if the token is valid 
+            const decoded = jwt.verify(token, 'thisismynewcourse');
+            // find the single user info according to the id and the token 
+            const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+
+            // return an error if the user is not found 
+            if (!user) {
+                throw new Error();
+            }
+
+            // update user status that the user has been logged in 
+            req.user = user;
+            next();
+        } catch (error) {
+            res.status(401).send({ error: 'Please authenticate.' });
+        }
+    }
+
+    module.exports = auth;
+    ```
+
+### Advanced Postman
+1. We can setup envrionment variables in POSTMAN, so each time we make a request, we don't need to change the URL manually. 
+    <img src="postmanSetupEnvVar.PNG">
+1. Change Envrionment variable. We can put the predefined variable such as `url` in 2 pairs of curly braces, `{{url}}`.
+    <img src="postmanEnvVar.PNG">
+1. We can add the authentication token in the collection directly, so we don't need to input it everytime. On the left collection panel, we can find the `edit` option in the setting and put the token in the authorization tab. Note that we use `Bearer token` for authentication in this case. 
+1. Besides, for those which need token authroization, we can change the authorization option in each task into `inherit auth from parent`. 
+1. For automation proces, we can change this to an environment variable {{authToken}} that is generated from the testscript. 
+    <img src="postmanSaveToken.PNG">
+1. Recalling that "**login**" and "**singup**" process don't requrie authentication. We can go to the tab an turn the authorization off directly. 
+    <img src="postmanTurnoffAuth.PNG">
+1. We can automate the workflow of returning new access tokens back to the parent auth. This happens when we try to login with different user account and new token is generated. We then have to manually copy and paste the token in the collection's authorization tab, as we did above. However, we can write some JavaScript code to work it out. We can use the testscript in both "**login**" and "**singup**" route.
+1. Note that in the "**signup**" process, the status code should be `201` rather than `200`, as it makes a change to the server. 
+    ```js
+    if (pm.response.code === 201) {
+    pm.environment.set('authToken', pm.response.json().token)
+    }
+    ```
+    <img src="postmanAutoFlow.PNG">
+### Logging out
+1. In this section, we will add a new route in `src/routers/user.js` to allow users to log out. Besides, the user may login in different devices and have different sessions. Since we'd track on the single token that is used on the current device, we will modify `auth.js` and add `req.token = token`.
+    ```js 
+    const jwt = require('jsonwebtoken');
+    const User = require('../models/user');
+
+    const auth = async function (req, res, next) {
+        try {
+            // remove 'Bearer ' in the beginning of the String
+            const token = req.header('Authorization').replace('Bearer ', '');
+            console.log(token);
+            const decoded = jwt.verify(token, 'thisismynewcourse');
+            const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+
+            if (!user) {
+                throw new Error();
+            }
+
+            // append current token of the device
+            req.token = token;
+
+            req.user = user;
+            next();
+        } catch (error) {
+            res.status(401).send({ error: 'Please authenticate.' });
+        }
+    }
+
+    module.exports = auth;
+    ```
+  
+1. We then udpate a new route in `src/routers/user.js`. We check all the tokens that the users use in `req.user.tokens` and use `.filter()` method to check which tokens are not used in the current request. Therefore, we use `!==` "not equal to" to create a new `Array` of tokens which has filtered out the one in use. 
+1. After saving the new tokens array back to database, the token we use now to login will be invalidated, so the user is logged out. 
+1. We can clear the whole `Array` of all tokens to logout a user from his/her all devices. 
+    ```js 
+    // Log out the current session on a single device
+    router.post('/users/logout', auth, async (req, res) => {
+        try {
+            req.user.tokens = req.user.tokens.filter(function (token) {
+                // filter out the tokens which are not in use 
+                return token.token !== req.token;
+            });
+            
+            // save the data back to user in database to logout the current session of the device that send this request. 
+            await req.user.save();
+            res.send();
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+
+    // Log out all sessions of login on all devices of a user
+    router.post('/users/logoutAll', auth, async (req, res) => {
+        try {
+            req.user.tokens = [];
+            await req.user.save();
+            res.send();
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+
+### Hiding Private Data 
+1. After a user logs in, the server program shouldn't return sensitive data such as `password` and `tokens` of other login session of the user. In this case, our current data returning back to the user is still the whole dataset. 
+1. We can use a `mongoose` method [`.toObject()`](https://mongoosejs.com/docs/api.html#document_Document-toObject) to duplicate one. Note that though there are other methods, such as `Object.asisgn({}, [obj])`, `{ ... }`, `JSON.parse(JSON.stringify([obj]))` to duplicate the object, we can use those methods as the `Object` returned is totally different. The `user` object itself has other information in this case. 
+1. We then use `delete` keyword to take the properties off from the duplicated `Object` and return it back. Note that this is a regular synchronous function rather than async.
+    ```js 
+    // src/models/user.js
+    // return only non-sensitive data back to user after singup and login 
+    userSchema.methods.getPublicProfile = function () {
+        const user = this;
+
+        // use mongoose method to creat a new object
+        // we can't use Object.assign({}, obj) to duplicate
+        const userObject = user.toObject();
+
+        delete userObject.password;
+        delete userObject.tokens;
+
+        return userObject;
+    }
+
+    // src/routers/user.js
+    router.post('/users/login', async (req, res) => {
+    try {
+        const user = await User.findByCredentials(req.body.email, req.body.password);
+        // generate a specific token for this user, not for all User!
+        const token = await user.generateAuthToken();
+        // return only filtered data by using `.getPublicProfile()` method
+        res.send({ user: user.getPublicProfile(), token });
+    } catch (error) {
+        res.status(400).send();
+    }
+    });
+```
+
+1. Besides the way above, we can use another method to fulfill the purpose. In `src/models/user.js`, we simply change the custom method `.getPublicProfile` to `toJSON`. Therefore, in `src/routers/user.js` we can use the destructing notation as usual. It's because the feature of `Objects` when it has `toJSON` as its method. According to [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify), `JSON.stringify()` function will only convert the value returned from `.toJSON` method on the `Object` to a JSON format data. By this feature, we can "**hide**" the properties that we don't want to reveal. 
+    ```js
+    // src/models/user.js
+    // change method to `toJSON`
+    userSchema.methods.toJSON = function () {
+        const user = this;
+
+        // use mongoose method to creat a new object
+        // we can't use Object.assign({}, obj) to duplicate
+        const userObject = user.toObject();
+
+        delete userObject.password;
+        delete userObject.tokens;
+
+        // when this object is converted to JSON format, password and tokens properties will be taken off 
+        return userObject;
+    }
+
+    // src/routers/user.js
+    router.post('/users/login', async (req, res) => {
+    try {
+        const user = await User.findByCredentials(req.body.email, req.body.password);
+        // generate a specific token for this user, not for all User!
+        const token = await user.generateAuthToken();
+        // change back to use destructure notation 
+        res.send({ user, token });
+    } catch (error) {
+        res.status(400).send();
+    }
+    });
+    ```
+
+1. Use `.toJSON` method to hide data when a `Object` is converted to a JSON format data. 
+    ```js 
+    let guy = {
+    name: 'Allen',
+    age: 25
+    };
+
+    guy.toJSON = function(){
+    console.log(this) // {name: 'Allen', age: 25}
+    return this.name;
+    }
+    console.log(guy.toJSON()); // {name: 'Allen', age: 25} \n Allen
+    console.log(JSON.stringify(guy)); // "Allen"
+    ```
+
+### Authenticating User Endpoints 
+1. We update `src/routers/user.js` and delete the route that can get user profile by ID, as it's not required since we have `/users/me` to get the profile of the signed in account. 
+    ```js 
+    // src/routers/user.js
+    // delete the following as it's not required in the router handler
+    // GET request to a specific user data 
+    router.get(`/users/:id`, async (req, res) => {
+        const _id = req.params.id;
+        if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+        try {
+            const user = await User.findById(_id);
+            if (!user) {
+                return res.status(404).send();
+            }
+            res.send(user);
+        } catch (error) {
+            res.status(500).send()
+        }
+    });
+    ```
+1. On the `delete` route, we firstly place the middleware to check authentication and should modify the code, as the user shouldn't be able to delete other users' account by providing their IDs. Besides, we don't need to check if the `user` exist since we are using authentication. 
+1. We then use `mongoose` model method [`.remove()`](https://mongoosejs.com/docs/api/model.html#model_Model-remove) to remove the instance from the database. Note that it's an async function, so we should use `await` keyword. 
+    ```js 
+    // Delete request to remove a specific user
+    router.delete('/users/me', auth, async (req, res) => {
+        try {
+            // use Model.prototype.remove() method to delete the instance
+            await req.user.remove();
+            res.send(req.user);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+1. Besides, we should also update the route for update tasks.
+    ```js 
+    // PATCH request to modify data of a specific user
+    router.patch('/users/me', auth, async (req, res) => {
+        const updates = Object.keys(req.body);
+        const allowedUpdates = ['name', 'email', 'password', 'age'];
+        const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+        if (!isValidOperation) {
+            return res.status(400).send({ error: 'Invalid udpates!' });
+        }
+
+        try {
+            const user = req.user
+            updates.forEach((update) => user[update] = req.body[update]);
+            await user.save();
+            res.send(user);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+    });
+    ```
+
+### The User/Task Relationship
+1. We can update the task model in `src/models/task.js` to have a property to save `owner` which is the id of the user who creates the task. Besides, we can drop the current database, as the old inputs doesn't follow the updated schema. 
+    ```js 
+    // src/models/task.js
+    const mongoose = require('mongoose');
+
+    const taskSchema = new mongoose.Schema({
+        description: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        completed: {
+            type: Boolean,
+            default: false,
+        },
+        owner: {
+            // ensure new created tasks has an mongoose ID stored
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+        }
+    });
+
+    const Task = mongoose.model('task', taskSchema);
+
+    module.exports = Task;
+    ```
+1. After we update the schema to have `owner` for each `Task` instance, we can use the properties to create new instances. We use spread notation to copy all the properties and values from `req.body` which is written as `...req.body` and hard coded the `owner` property with `req.user._id` returned from the middleware. 
+    ```js 
+    // src/routers/task.js
+    const express = require('express');
+    const Task = require('../models/task');
+    const auth = require('../middleware/auth'); // import the middelware
+    const router = new express.Router();
+
+    // POST request to create a new task 
+    router.post('/tasks', auth, async (req, res) => {
+        const task = new Task({
+            // copy all properties from req.body
+            ...req.body,
+            owner: req.user._id,
+        })
+
+        try {
+            await task.save();
+            res.status(201).send(task);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+    });
+```
+
+1. Since we get the owner id during the process, we can use another `mongoose` method to set up the relationship and return the user `name` property by referring to it's `_id` automatically. Note that this is only set up the relationship unlike in `task.js` model that we really update a property `owner`. Therefore, we can use the method to refer and connect collections according to different properties. 
+    ```js
+    // src/models/user.js
+    // virtual property set up for mongoose to learn the relationship between collections
+    userSchema.virtual('tasks', {
+        ref: 'Task',
+        localField: '_id',
+        foreignField: 'owner',
+    });
+    ```
+
+1. We then can test the function by setting up relationship between different collections. 
+    ```js 
+    const Task = require('./models/task');
+    const User = require('./models/user');
+    const main = async () => {
+        // new property set up in Task model 
+        const task = await Task.findById('5f2118d9b97c5d090e741111'); // '_id' of the task 
+        await task.populate('owner').execPopulate();
+        console.log(task.owner); // return user instance
+        
+        // relationship made by virtual in User model
+        const user = await User.findById('5f2117ecc3ffc208dafe32c5'); // '_id' of the user
+        await user.populate('tasks').execPopulate();
+        console.log(user.tasks); // return task instance according to the user
+    }
+
+    main();
+    ```
+1. We had a bug here that when using `.virtual()` to set up the virtual properties, it's critical about the name we used to export the model. In this case, I firstly set `const Task = mongoose.model('task', taskSchema)` that in `mongoose` model, the model is set in all lowercase. However, in the lecture, it's given as `Task`, so the virtual property can never be set.  
+
+### Authenticating Task Endpoints
+1. After setting up virtual relationship to connect the collections, we will update the rest route handlers in `src/routers/task.js`. Therefore, each time we look up a task by the task id, the program will also check if the owner is the same as the user id. If the user id doesn't match, the program will return a `404` status. The following task is to retrieve a single task. 
+    ```js 
+    // GET request to get a specific task 
+    router.get('/tasks/:id', auth, async (req, res) => {
+        const _id = req.params.id;
+
+        if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
+
+        try {
+            // find the task by id and check if it's the correct owner
+            const task = await Task.findOne({ _id, owner: req.user._id });
+
+            if (!task) {
+                return res.status(404).send();
+            }
+
+            res.send(task);
+        } catch (error) {
+            res.status(500).send();
+        }
+    })
+    ```
+1. In the route handler, we have another function to return all the tasks owns by a user. Note that we should also add on the middleware.
+    1. Use filter directly in `.find()` method to check if the tasks returned are owned by the user. 
+    1. Use `.populate().execPopulate()` method to return the tasks of a user. 
+    ```js 
+    // GET request to get all task data 
+    router.get('/tasks', auth, async (req, res) => {
+        try {
+            const tasks = await Task.find({ owner: req.user._id }); // use filter in .find() method
+            res.send(tasks);
+            // Choose ONLY ONE!!!          
+            await req.user.populate('tasks').execPopulate(); // use virtual property to refer data 
+            res.send(req.user.tasks);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+1. We then modify on the UPDATE command. 
+    ```js 
+    // PATCH request to modify data of a specific task 
+    router.patch('/tasks/:id', auth, async (req, res) => {
+        const id = req.params.id;
+        const updates = Object.keys(req.body);
+        const allowedUpdates = ['description', 'completed'];
+        const isDataAllValid = updates.every(update => allowedUpdates.includes(update))
+        if (!isDataAllValid) {
+            return res.status(400).send({ error: 'The input data is invalid!' });
+        }
+
+        try {
+            const task = await Task.findOne({ _id: req.params.id, owner: req.user._id, });
+
+            // return 404 if no task matches 
+            if (!task) {
+                return res.status(404).send();
+            }
+
+            updates.forEach(update => task[update] = req.body[update]);
+            await task.save();
+            res.send(task);
+        } catch (error) {
+            res.status(400).send();
+        }
+    });
+    ```
+1. Similar concept is applied to DELETE path 
+    ```js 
+    // Delete request to remove a specific task
+    router.delete('/tasks/:id', auth, async (req, res) => {
+        try {
+            // const task = await Task.findByIdAndDelete(req.params.id);
+            const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+
+            if (!task) {
+                return res.status(404).send();
+            }
+
+            res.send(task);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+1. In summary, all the routes are mainly updated with 
+    1. Add middleware `auth` imported from `src/middleware/auth.js`
+    1. Use `.findOne()` and `.findByIdAndDelete()` with an `Object` includes `_id` (ID of the instance itself) and `owner: req.user._id` (the user ID). 
+
+### Cascade Delete Tasks 
+1. The section here is to delete the tasks of a user, if the user has delete the account of him/herself. Therefore, we won't keep those tasks in the database which have no account can access. 
+1. Therefore, in `src/routers/user.js`, we update the delete route to allow the function delete not only the user profile, but also the tasks (or other data) aligned to this user. However, instead of doing this manually, we can set another `.pre()` middleware for `userSchema`. 
+1. In `src/models/user.js`, we can use [`.deleteMany()`](https://mongoosejs.com/docs/api.html#model_Model.deleteMany) which is a method that can remove multiple instances by given option. 
+    ```js 
+    // src/models/user.js
+    const Task = require('./task');
+
+    // delete user tasks when user is removed
+    userSchema.pre('remove', async function (next) {
+        const user = this;
+        // delete multiple tasks by using only the owner field
+        await Task.deleteMany({owner: user._id});
+        next();
+    });
+    ```
+
+# Sorting, Pagination, and Filtering 
+1. We can use POSTMAN to pass paramters for all the function below at the aligned routes. 
+### Working with Timestamps
+1. We update 2 fields to both user and task model that each of them will have `Last update` and `Created` time stamp to show when was the instance created or modified. When create the schema in models, we can pass a 2nd argument which is an `Object` that can contain an option, so we can enable `timestamp`. Note that the option property name is `timestamps` which is with "s".
+    ```js 
+    const mongoose = require('mongoose');
+    new mongoose.Schema({/* data model */}, {timestamps: true});
+    ```
+
+1. Note that this only avaiable for new schema created on `mongoose.Schema`, while it can't be made on the `mongoose.model()`. 
+    ```js 
+    const mongoose = require('mongoose');
+
+    const taskSchema = new mongoose.Schema({
+        description: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        completed: {
+            type: Boolean,
+            default: false,
+        },
+        owner: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'User',
+        }
+    }, {
+        timestamps: true,
+    });
+
+    const Task = mongoose.model('Task', taskSchema);
+
+    module.exports = Task;
+    ```
+
+### Filtering Data
+1. If a user has used the program for several years, for example, in this task-manager app, the user may have hundreds or thousands of tasks stored in the database. In this case, we'd like the user to retrieve preferable or certain amout of data rather than returning all the data in the database. 
+1. The approach is to let the user pass requirements (as parameters) through URL. The endpoint can parse the parameters. This concept is similar to what we've done in the weather-app to pass parameters to the end to request data. 
+1. Therefore, at the endpoint for returning all tasks, users can give options after the route such as `/tasks?completed=true` to show all the tasks that have been done or `/tasks?completed=false` for tasks are incomplete. 
+1. The `.populate()` method can take an `Object` rather than just a `String` of a path with options. We can set up a `match` property which is an `Ojbect` that provide the options and filters we want it to render. Thus, we can create a variable of the scope and use destructuring shorthad to pass the object and its properties. 
+    ```js 
+    // src/routers/task.js
+    // GET request to get all task data 
+    router.get('/tasks', auth, async (req, res) => {
+        const match = {}
+        if (req.query.completed) {
+            match.completed = req.query.completed === 'true';
+        }
+
+        try {
+            await req.user.populate({
+                path: 'tasks',
+                match,
+            }).execPopulate();
+            res.send(req.user.tasks);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+
+### Paginating Data 
+1. Pagination is to split the returned results with limited amount in multiple groups. For example, when we search something on Google, we may get millions of results returned from the query. However, we don't need to check all of them at once and get all the data. Google will separate the results into different pages. 
+1. We will pass 2 arguments to the endpoint to return results `limit` and `skip`. With such properties, we can render the results in a page-like matter. 
+    1. `limit` is the number for each time the database render the results. 
+    1. `skip` is the number to "**skip**" from the first instance in the collection. For example, if we have 30 instances in the collection and have `limit` as 10 and `skip` as 10, when we request for the results, we will get from the 11th one to 20th instances from the database. 
+1. For example, if we'd like to have 5 items rendered on the `1st` page, we can set `limit` as 5 and `skip` as 0. Therefore, we can have the first 5 instances of the collection. If we'd like the items on the "2nd page", we can use keep `limit` as 5 and `skip` as 5, so the first 5 instances will be skipped and only results from 6th to 10th will be rendered. 
+    ```js 
+    //src/routers/task.js
+    // GET /tasks?completed=true
+    // GET /tasks?limit=10&skip=20
+    router.get('/tasks', auth, async (req, res) => {
+        const match = {}
+        if (req.query.completed) {
+            match.completed = req.query.completed === 'true';
+        }
+
+        try {
+            await req.user.populate({
+                path: 'tasks',
+                match,
+                options: {
+                    limit: parseInt(req.query.limit),
+                    skip: parseInt(req.query.skip),
+                },
+            }).execPopulate();
+            res.send(req.user.tasks);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+
+### Sorting Data 
+1. With timestamp, we can sort the data in different orders as preference, such as ascending, descending, and `true` or `false` (incomplete) tasks. 
+1. We can set up in the options for `sort` which is an `Object` that takes the fields to sort the data. In this case, `1` (in number type) means ascending, while `-1` is descending. 
+1. Similar to `match` filter object, we can create another `sort` object that has the same name and pass it to the object in `.populate()` method. 
+1. In the URL, user can pass (or pass by button or the UI) parameters as `sortBy=createdAt:desc`. Note that the column after `createdAt` can be another other special character, as we use it as the splicer to split up the strings with `.split()` method. 
+1. Thus, we can create the sort function and allow `asc` (ascending as the default option) by using ternary operator `?` 
+    ```js 
+    // src/routers/task.js
+    // GET /tasks?completed=true
+    // GET /tasks?limit=10&skip=20
+    // GET /tasks?sortBy=createdAt:desc
+    router.get('/tasks', auth, async (req, res) => {
+        const match = {};
+        const sort = {};
+
+        if (req.query.completed) {
+            match.completed = req.query.completed === 'true';
+        }
+
+        if (req.query.sortBy) {
+            const parts = req.query.sortBy.split(':'); // column can be changed to any other character such as underscore _
+            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1; // -1 is descending and 1 is ascending 
+        }
+
+        try {
+            await req.user.populate({
+                path: 'tasks',
+                match, // use destructor notation to pass the whole object above
+                options: {
+                    limit: parseInt(req.query.limit),
+                    skip: parseInt(req.query.skip),
+                    sort, // destructor notation similar to match object 
+                },
+            }).execPopulate();
+            res.send(req.user.tasks);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+
+# File Uploads (Task App)
+### Adding Support for File Uploads
+1. npm `express` framework itself doesn't support file upload, while we can use npm `multer` package to have the job done. 
+1. In the previous sections, we send JSON format data from client (user) to the server. Since images aren't JSON, we can use `multer` package as the middleware to handle the `form-data` as it can be read as binary data of a file.
+1. We can `require` `multer` package and configure its setting by passing an `Object` of options, such as limit the file types to pdf, excel sheets, and images. (Note that we don't limit the type in this case). Besides, we need to set up the path where the uploaded files will be stored. In this case, we set up `dest` (destination) at `/upload`. We can check for more [details](https://www.npmjs.com/package/multer#multeropts). 
+1. In the middleware, we use `.single()` method and have a name, which is the `field` name that will be stored in the database for the file. When the user send a request, the parameter's key must be the same with this given string. According to `multer`, this single file will be stored in `req.file`. Therefore, when we use POSTMAN to upload the file, the key of the parameter should be the same as this. 
+    ```js 
+    const multer = require('multer');
+    const upload = multer({ // configure multer for data type 
+        dest: 'images' // this will create a new folder `image` in the root directory
+    });
+    // 'upload' is the arbitrary name of the key of parameter to send a upload request. 
+    app.post('/upload', upload.single('upload'), (req, res) => {
+        res.send();
+    });
+    ```
+1. In POSTMAN, we can send the data with `body` tab and change the type from `raw` to `form-data`. In the `key` field, we can change the data type from `text` to `file` and use file selector to choose the file we want to upload. 
+    <img src="postmanSendFile.PNG">
+1. The uploaded files doesn't have extension (file type suffix). We can manually modify the file name with `.jpg` or other type of format according to its original datatype. 
+1. We add a new route handler in `src/routers/user.js`. However, this has no filter for data type and authentication of the user. 
+    ```js 
+    // src/routers/user.js
+    // route handler for users to upload avatar. This has no filter for data type and authentication of the user
+    const multer = require('multer');
+    const upload = multer({
+        dest: 'avatar'
+    });
+    router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+        res.send();
+    })
+    ```
+
+### Validating File Uploads
+1. For each user uplaod, we'd like to check and validate the "**file size**" and "**file type**". 
+    1. File Size - In the `Object`, which we passed to config `multer`, we can add a property `limits` which takes another `Objec` that we can give limit to the size by `fileSize`. The property takes file limit in "**bytes**". If we'd like to limit the file size to 1mb which is 1 mega bytes, we can pass `1000000` which is a million. 
+    1. File type - We can pass another property `fileFilter` which is function that takes 3 arguments `req`, `file`, and `cb`. We can check [here](https://www.npmjs.com/package/multer#filefilter) for more details. 
+1. To work on the filter, we can look up the documentation of `multer` for it [API](https://www.npmjs.com/package/multer#api) section. In `fileFilter` method, we can check the file info from the `file` (the 2nd argument) in the function. 
+1. As we'd like to check for the extension (suffix) of the file, we can check on `file.originalname`. We can use `String.prototype.endsWith()` method to check if the `String` ends with a certain string. For example, we can check if the file name has `.pdf` as suffix. 
+1. Note that for silent process can take either `undefined` or `null` and pass a boolean `true` or `false` as argument. 
+    ```js 
+    const multer = require('multer');
+    const upload = multer({
+        dest: 'images',
+        limits: {
+            fileSize: 1000000, // 1 mb, megabytes
+        },
+        fileFilter(req, file, cb) { // args are request, file, and callback
+        if (!file.originalname.endsWith('.pdf')) { // check if the uploaded file has .pdf as suffix
+            return new Error('Please upload a PDF');
+        }
+
+        cb(undefined, true) // silently proceed the process if upload succeed
+        cb(undefined, false) // silently reject the upload 
+        cb(new Error('File must be a PDF')); // send back an error 
+        }
+    });
+    app.post('/upload', upload.single('upload'), (req, res) => {
+        res.send();
+    });
+    ```
+1. For the string filter in `fileFilter` method, we can also use `regex` (regular expression) to check. We can use [regex101.com](https://regex101.com/) to check with the `regex` to parse the string. `\.(doc|docx)$` means to start with dot `.` (by using back slash to escape) and ends with `c` or `x`. Note that we can also use question mark `?` as `\.docx?$` which means `x` character can appear 0 or 1 time in the expression. In JavaScript, we can use `String.prototype.match()` method to apply regular expression to check `String` value. 
+    ```js 
+    const multer = require('multer');
+    const upload = multer({
+        dest: 'images',
+        limits: {
+            fileSize: 1000000, 
+        },
+        fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.docx?$/g)) { // use match method with regex 
+            return new Error('Please upload a MS word document');
+        }
+
+        cb(undefined, true); 
+        // cb(undefined, false); 
+        cb(new Error('Something went wrong'));  
+        }
+    });
+    app.post('/upload', upload.single('upload'), (req, res) => {
+        res.send();
+    });
+    ```
+
+### Validation Challenge
+1. In `src/routers/user.js`, we can update the filter to allow users to upload avatar 
+    1. Limit the upload size to 1MB
+    1. Only allow jpg, jpeg, png
+1. The concept is similar to the configuration in the last section for validation. 
+    ```js 
+    // route handler for users to upload avatar. This has no filter for data type and authentication of the user
+    const upload = multer({
+        dest: 'avatar',
+        limits: {
+            fileSize: 1000000,
+        },
+        fileFilter(req, file, cb) {
+            if (!file.originalname.match(/\.(jpe?g|png)$/g)) {
+                return cb(new Error('Please upload an image as jpg, jpeg, or png file'));
+            }
+
+            cb(null, true);
+        }
+    });
+
+    router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+        res.send();
+    })
+    ```
+
+### Handling Express Errors
+1. We can customize the message returned back to the user without rendering the whole HTML file by default but return simple JSON format data. In the following example, the program will respond HTML with error message to the user. 
+    ```js 
+    const errorMiddleware = function(req, res, next){
+    throw new Error('From error middleware');
+    }
+
+    app.post('/upload', errorMiddleware, function(req, res) {
+    res.send();
+    });
+    ```
+
+1. In the route handler, we pass a 4th argument, which is an anonymous function that has 4 parameters `error`, `req`, `res`, and `next`. Note that the function must have 4 arguments to let `express` framework know that it is for the error handling purpose. Therefore, we can customize the message we'd like to return back on the error when there's a problem. 
+1. An error handling function is a middleware similar to regular ones but has 4 arguments rather than only 3. 
+    ```js 
+    // upload route handler
+    app.post('/upload', upload.single('upload'), (req, res) => {
+        res.send();
+    }, function (error, req, res, next) {
+        res.status(400).send({ error: error.message }); // reply simply JSON format message
+    });
+    ```
+1. In `src/router/user.js` we update the `/users/me/avatar` route with the error handling function. 
+    ```js 
+    // user upload avatar route with error handling 
+    router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+        res.send();
+    }, function (error, req, res, next) {
+        res.status(400).send({ error: error.message }); // reply simply JSON format message
+    });
+    ```
+
+### Adding Images to User Profile
+1. In the previous sections, we've learnt how to validate an upload and handle errors with custom message. However, we haven't applied authentication to ensure the user can only modify his/her own data. In this case, we can simply add the `auth` middleware to the route handler. Note that a route handler can have multiple middlewares, while their order in the function is critical, as it affects the order (priority) of middleware to be executed.
+1. Besides, the uploaded files aren't associated with the owner (who is the person upload the file). 
+    ```js 
+    // add "auth" before upload.single()
+    router.post('/users/me/avatar', auth, upload.single('avatar'), (req, res) => {
+        res.send();
+    }, function (error, req, res, next) {
+        res.status(400).send({ error: error.message }); // reply simply JSON format message
+    });
+    ```
+1. However, we cannot store the uploaded file directly in the file system on the server, because every time we deploy a new program as using GIT repository, the files that are not in recorded (such as the database directory) will be wiped out (removed).
+1. Therefore, we can modify the user model to add an extra field and store the image as binary data in the database aligned with users. In `src/models/user.js`, we give another property `avatar` to users. In this case, the new property is added after `tokens` property and has a simple property `type` as `Buffer`. Note that in this case, the profile avatar is not required, so we can have least modification to the model. Besides, we don't need to validate the data as `multer` package middleware has already given limitation on `type` and `size`. 
+    ```js 
+    const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -2198,6 +4026,7 @@ doWorkCallback(function (error, result) {
     },
     email: {
         type: String,
+        unique: true,
         required: true,
         trim: true,
         lowercase: true,
@@ -2216,1674 +4045,149 @@ doWorkCallback(function (error, result) {
             }
         }
     },
-  });
-  ```
-
-### Data Validation and Sanitization: Part 2
-1. In this challenge, we update the model schema for `User` and `Task` dataset. 
-  1. `User`. We can use `.includes()` and `.toLowerCase()` method to check the input `String`. 
-    1. `password` is a required input 
-    1. Must be more than 7 characters
-    1. The input should be trimmed
-    1. The input should not have `password`
-  1. `Task`
-    1. `description` is a required input 
-    1. The input should be trimmed
-    1. `completed` property is `false` by default if it's not given 
-  ```js 
-  const User = mongoose.model('User', {
-  password: {
-      type: String,
-      require: true,
-      minlength: 7,
-      trim: true,
-      validate(value) {
-        if (value.toLowerCase().includes('password')) {
-          throw new Error(`password can't contain "password"!`)
-        }
-      },
-    },
-  });
-
-  const Task = mongoose.model('task', {
-    description: {
+    password: {
         type: String,
-        required: true,
+        require: true,
+        minlength: 7,
         trim: true,
+        validate(value) {
+            if (value.toLowerCase().includes('password')) {
+                throw new Error(`password can't contain "password"!`)
+            }
+        },
     },
-    completed: {
-        type: Boolean,
-        default: false,
-    },
-  })
-  ```
-
-### Structuring a REST API
-1. REST stands for Representational State Transfer. We can also call it RESTful API. 
-1. A server is stateless. 
-1. A request made from a program via the Internet usually uses HTTP protocol. 
-1. With the structure, we can have clearer and succienct path and methods to work on with CRUD. However, the keywords for the actions are different. For example, we can use the path structure for `tasks`.
-  1. Create - POST /tasks
-  1. Read - GET /tasks
-  1. Read - GET /tasks/:id
-  1. Update - PATCH /tasks/:id
-  1. Delete - DELETE /tasks/:id
-  <img src="restapistructure.PNG">
-1. A HTTP request. `express` framework has provided a friendly user interface for developers to work on the `request` and `response`. 
-  1. A `request` includes the `header` and metadata that indicates the method such as the "action" we are going use, "connection" (one-time or being kept alive), and "format" of the data. 
-  1. A `response` has status code such as `200` and `201` if the "GET" or "POST" action works, data format, and the content returned from the server. 
-  <img src="httpRequest.PNG">
-
-### Installing Postman
-1. This is an introduction to POSTMAN App and how to use it. 
-1. We can use POSTMAN to send a POST request 
-  <img src="postmanPOST.PNG">
-
-### Resource Creation Endpoints: Part 1
-1. We install npm package `nodemon` in development mode and `express`. 
-1. We then create `index.js` in the root directory to use `express` framework. Besides, since we are not going to use `mongodb.js`, we will remove the file. The backup of the practices are in the other folder `mongoDBAndPromises`. 
-1. We have an inital setup for `express` framework in `index.js`
-  ```js 
-  const express = require('express');
-  const app = express();
-  const port = process.env.PORT;
-
-  app.listen(port || 3000, () => {
-      console.log(`Server has started on port: ${port || 3000}`);
-  });
-  ```
-1. We change the `scripts` property in `package.json` with `start` and `dev`. We will deploy this app on heroku later. 
-  ```js 
-  "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
-  }
-  ```
-1. In `express`, we can use `.get()` or `.post()` to specify the listener on the server for different types of request. If we use `app.post()` on a route, the listener won't react if a user give a GET request, such as putting the URL on the browser search bar directly. Note that we can't use a browser to send POST requets directly. Therefore, we can use POSTMAN to test the endpoint. 
-1. In the following case, we can use `app.use(express.json())` which is similar to turn the response from a server in a `Promise` into a JSON format. However, `express` allow us to use a relative simple syntax. Therefore, we can parse the `request.body` directly to check the data in the request. 
-  ```js
-  const express = require('express');
-  const app = express();
-  const port = process.env.PORT || 3000;
-
-  // parse the request data and convert it to JSON
-  app.use(express.json());
-
-  // reciving a POST request 
-  app.post('/users', (req, res) => {
-      console.log(req.body);
-      res.send('testing!');
-  })
-
-  app.listen(port, () => {
-      console.log(`Server has started on port: ${port}`);
-  });
-  ```
-1. In the source `src` directory, we create a new folder `models` that we will keep the data models separately from `mongoose.js`. Besides, we need to use `module.exports` to allow other JavaScript file to use this code in Node.js environment. 
-  ```js 
-  // src/models/user.js 
-  const mongoose = require('mongoose');
-  const validator = require('validator');
-
-  const User = mongoose.model('User', {
-      name: {
-          type: String,
-          required: true,
-          trim: true,
-      },
-      email: {
-          type: String,
-          required: true,
-          trim: true,
-          lowercase: true,
-          validate(value) {
-              if (!validator.isEmail(value)) {
-                  throw new Error('Email is invalid');
-              }
-          },
-      },
-      age: {
-          type: Number,
-          default: 0,
-          validate(value) {
-              if (value < 0) {
-                  throw new Error('Age must be a positive number');
-              }
-          }
-      },
-      password: {
-          type: String,
-          require: true,
-          minlength: 7,
-          trim: true,
-          validate(value) {
-              if (value.toLowerCase().includes('password')) {
-                  throw new Error(`password can't contain "password"!`)
-              }
-          },
-      },
-  });
-
-  module.exports = User;
-  ```
-1. After configuring the directories, we can import the `mongoose.js` (ensuring that the server connects to the database) and the model of `users` (data model with schema and validator) into `index.js`. 
-1. In this case, we try to create a user by the `User` model imported from `user.js` and reply it to user if the data is valid and written into the database. If an error occurs, we use `.catch()` to return the error such as the input data is invalid. 
-1. We can learn more on HTTP status code at [httpstatuses.com](https://httpstatuses.com/).
-  ```js 
-  const express = require('express');
-  require('./db/mongoose');
-  const User = require('./models/user');
-
-  const app = express();
-  const port = process.env.PORT || 3000;
-
-  app.use(express.json());
-
-  app.post('/users', (req, res) => {
-      const user = new User(req.body); // create new user data from the input in JSON format
-
-      user.save().then(() => {
-          res.send(user) // respond the input back to user
-      }).catch(error => {
-          // res.status(400); // return a status code correctly
-          // res.send(error);
-          res.status(400).send(error); // a single line to return status code and error message
-      })
-  })
-
-  app.listen(port, () => {
-      console.log(`Server has started on port: ${port}`);
-  });
-  ```
-
-### Resource Creation Endpoints: Part 2
-1. We create a new route that allows users to make a POST request to create a new input to the database by using the schema of `tasks`. The process and concept is the same as setting up the `users`. In this case, we add up one more function to return status code if the request is successful as well. When a data is given correctly, we can return `201` according to [httpstatuses.com](https://httpstatuses.com/).
-  ```js 
-  const express = require('express');
-  require('./db/mongoose');
-  const User = require('./models/user');
-  const Task = require('./models/task');
-
-  const app = express();
-  const port = process.env.PORT || 3000;
-
-  app.use(express.json());
-
-  app.post('/users', (req, res) => {
-      const user = new User(req.body);
-
-      user.save().then(() => {
-          res.status(201).send(user)
-      }).catch(error => {
-          res.status(400).send(error); // a single line to return status code and error message
-      })
-  })
-
-  app.post('/tasks', (req, res) => {
-      const task = new Task(req.body);
-
-      task.save().then(function () {
-          res.status(201).send(task);
-      }).catch(function (error) {
-          res.status(400).send(error);
-      })
-  })
-
-  app.listen(port, () => {
-      console.log(`Server has started on port: ${port}`);
-  });
-  ```
-
-### Resource Reading Endpoints: Part 1
-1. We can check the `queries` part in `mongoose` API documentation. In this case, we will use [`.find()`](https://mongoosejs.com/docs/api.html#model_Model.find) method. `.find()` method takes an `Object` as an argument.
-1. In the route, we give `:parameter` to send the parameter to the server via URL. Note `express` framework allow us to get the parameter easily from the request by `req.params.[para,]`. Note that if we change the variable name after the column, the returned parameters in the request will also be changed. Besides, if the request has multiple parameters, we can check them all in `req.params` as this is an `Object`. 
-1. In this case, if we use `.findById()` method to check in the database, we won't get 404 directly if the id given is not formmated correct. The program will return an error directly. Status `404` will only be trigerred when the format of given id is correct but there's no such data in the database. Therefore, we can write another line to check if the id is correct formatted. In this case, the id in MongoDB should always be 24 characters long.
-  ```js 
-  // GET request to a specific user data 
-  app.get(`/users/:id`, (req, res) => {
-      const _id = req.params.id;
-      // Check if the given id is in correct format 
-      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
-
-      // use findById mongoose method 
-      User.findById(_id).then(user => {
-          // check if the id exists
-          if (!user) {
-              return res.status(404).send();
-          }
-
-          // return the data if found
-          res.send(user);
-      }).catch(err => {
-          res.status(500).send();
-      });
-  });
-
-  // GET request to get all user data in the database
-  app.get('/users', (req, res) => {
-      User.find({}).then(users => {
-          res.send(users);
-      }).catch(error => {
-          res.status(500).send();
-      })
-  });
-  ```
-
-### Resource Reading Endpoints: Part 2
-1. This part is a challenge to work on the GET requests to `tasks` which is using the same methods and concept in retrieving data of `users`. 
-  ```js 
-  // GET request to get a specific task 
-  app.get('/tasks/:id', (req, res) => {
-      const _id = req.params.id;
-      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
-      Task.findById(_id).then(task => {
-          if (!task) {
-              return res.status(404).send();
-          }
-
-          res.send(task);
-      }).catch(err => {
-          res.status(500).send();
-      })
-  })
-
-  // GET request to get all task data 
-  app.get('/tasks', (req, res) => {
-      Task.find({}).then(tasks => {
-          res.send(tasks);
-      }).catch(err => {
-          res.status(500).send();
-      })
-  });
-  ```
-
-### Promise chaining 
-1. If we need to use several async functions to deal with returned data from the server, we can use nested promise with `.then()` and `.catch()` inside. However, such structure is hard to read and understand. Besides, we have to use `.catch()` several times. 
-1. On the other hand, we can use promise chaining that let the first asynction function return a promise, so that we can use `.then()` directly on the result to work on `resolve` function. In this case, we can have a simple structure to read and can have one single `.catch()` method to deal with the errors. 
-  ```js 
-  // async function that returns a promise 
-  const add = (a, b) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve(a + b);
-            reject('Something went wrong!');
-        }, 1000)
-    });
-  }
-
-  // nested chaining 
-  add(1, 2).then(sum => {
-      console.log(sum);
-
-      add(sum, 5).then(sum2 => {
-          console.log(sum2);
-      }).catch(e => {
-          console.log(e);
-      })
-  }).catch(e => {
-      console.log(e);
-  });
-
-  // promise chaining
-  add(1, 1).then(sum => {
-      console.log(sum);
-      return add(sum, 4);
-  }).then(sum2 => {
-      console.log(sum2);
-  }).catch(err => {
-      console.log(err);
-  })
-  ```
-1. We create `promise-chaining.js` in a `sandbox` folder in the task-manager app to test promise chaining feature for `mongoose` methods. 
-1. We use other `mongoose` methods by checking its documentation. In this case, we use [`Model.countDocuments()`](https://mongoosejs.com/docs/api/model.html#model_Model.countDocuments) to check how many instances of a specific type of data are stored in the collection. Note that the `Guides` in mongoose documentation is just simple instruction for frequently used methods. We can check other methods in `API` section. For example, in `API > Model`.
-1. We tried 2 different methods to manipulate the data `.findByIdAndUpdate()` and `.findByIdAndDelete()` each of which takes an argument of the `_id` of the instance. 
-1. After modifying the single data, we can use `.countDocuments()` which takes an `Object` as filter to check the data and returns the number of instances that matches. 
-  ```js 
-  require('../src/db/mongoose');
-  const User = require('../src/models/user');
-  // find a user and update his/her age 
-  User.findByIdAndUpdate('5f1da581079d580247037b50', { age: 1, }).then(user => {
-      console.log(user);
-      // return the number of users that is 1 year old 
-      return User.countDocuments({ age: 1 });
-  }).then((result) => {
-      console.log(result)
-  }).catch(e => {
-      console.log(e);
-  })
-
-  const Task = require('../src/models/task');
-  // find a task and delete it 
-  Task.findByIdAndDelete('5f1d969510ec5c02cc377501').then(user => {
-      console.log(user);
-      // return the number of tasks that is not completed 
-      return Task.countDocuments({ completed: false });
-  }).then((result) => {
-      console.log(result)
-  }).catch(e => {
-      console.log(e);
-  });
-  ```
-
-### Async/Await 
-1. An `async` function returns a `promise` as the output, so we can use `.then()` and `.catch()` of the returned `Objecgt` directly. `await` keyword can only exist and work in an `async` function. With these keywords, we can have write an `async` function in a synchronous-like syntax. 
-1. This also gives benefits with a clear syntax, as if we'd like to work on different tasks with different variables in multiple `.then()` methods. This can confuse the developer easily when chain is longer and scope of variables starting to get messed up. 
-1. We can also set a condition to ensure that the number to sum up must all be positive. Besides, we can use a counter to check the process of each async function. In the following example, we can see the counter prints out from the 1st approach and stops as the 3rd add function has `-3`. 
-  ```js 
-  let counter = 1;
-  const add = (a, b) => {
-      return new Promise((resolve, reject) => {
-          setTimeout(() => {
-              if (a < 0 || b < 0) {
-                  reject('Numbers must be positive!');
-              }
-              resolve(a + b);
-          }, 500)
-      });
-  }
-
-  const doWork = async () => {
-      console.log(`${counter++} time approach`);
-      const sum = await add(1, 99);
-      console.log(`${counter++} time approach`);
-      const sum2 = await add(sum, 50);
-      console.log(`${counter++} time approach`);
-      const sum3 = await add(sum2, -3);
-      return sum3;
-  }
-
-  doWork().then(result => {
-      console.log('result', result);
-  }).catch(error => {
-      console.log('error', error);
-  });
-  ```
-
-### Async/Await: Part 2
-1. We work on a challenge 
-  1. Create `deleteTaskAndCount as an async function which accepts id of task to remove
-  1. Use await to delete task and count up incomplete tasks 
-  1. Return the count 
-  1. Call the function and attach then/catch to log results 
-  ```js 
-  require('../src/db/mongoose');
-  const Task = require('../src/models/task');
-
-  async function deleteTaskAndCount(id) {
-      await Task.findByIdAndDelete(id);
-      const count = await Task.countDocuments({ completed: false });
-      return count;
-  }
-
-  deleteTaskAndCount('5f1d969510ec5c02cc377502').then(task => {
-      console.log(task);
-  }).catch(error => {
-      console.log(error);
-  })
-  ```
-
-### Integrating Async/Await 
-1. We rewrite all the code in `index.js` with async/await syntax. Since `express` framework doesn't use returned value from methods directly, we can turn its the callback function in the HTTP request methods into `async` functions. Besides, to prevent the errors that causing the program to crash, we can use `try` and `catch` to handle the errors. The refined code works exactly the same as using `.then()` and `.catch()` methods on `promises` objects. 
-  ```js 
-  const express = require('express');
-  require('./db/mongoose');
-  const User = require('./models/user');
-  const Task = require('./models/task');
-  const { Mongoose } = require('mongoose');
-
-  const app = express();
-  const port = process.env.PORT || 3000;
-
-  app.use(express.json());
-
-  // POST request to create a new user 
-  app.post('/users', async (req, res) => {
-      const user = new User(req.body);
-
-      try {
-          await user.save();
-          res.status(201).send(user);
-      } catch (error) {
-          res.status(400).send(error);
-      }
-
-  });
-
-  // GET request to a specific user data 
-  app.get(`/users/:id`, async (req, res) => {
-      const _id = req.params.id;
-      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
-      try {
-          const user = await User.findById(_id);
-          if (!user) {
-              return res.status(404).send();
-          }
-          res.send(user);
-      } catch (error) {
-          res.status(500).send()
-      }
-  });
-
-  // GET request to get user data 
-  app.get('/users', async (req, res) => {
-      try {
-          const users = await User.find({});
-          res.send(users);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-
-  // POST request to create a new task 
-  app.post('/tasks', (req, res) => {
-      const task = new Task(req.body);
-
-      task.save().then(function () {
-          res.status(201).send(task);
-      }).catch(function (error) {
-          res.status(400).send(error);
-      })
-  });
-
-  // GET request to get a specific task 
-  app.get('/tasks/:id', async (req, res) => {
-      const _id = req.params.id;
-      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
-      try {
-          const task = await Task.findById(_id);
-          if (!task) {
-              return res.status(404).send();
-          }
-          res.send(task);
-      } catch (error) {
-          res.status(500).send();
-      }
-  })
-
-  // GET request to get all task data 
-  app.get('/tasks', async (req, res) => {
-      try {
-          const tasks = await Task.find({});
-          res.send(tasks);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-
-  app.listen(port, () => {
-      console.log(`Server has started on port: ${port}`);
-  });
-  ```
-
-### Resource Updating Endpoints: Part 1
-1. This is relatively complicated that it may have several conditions to handle 
-  1. The user is not found (404). For example, the user gives an id in correct format but doesn't have an entity exist in the database. 
-  1. The new input is invalid (400). For example, the user gives empty string to update the name of the user, which was set to be required. 
-  1. The server has some issues that can't return the data (500)
-  1. Valid input format but incorrect data. For example, the user tries to modify a property can't be changed or doesn't exist. 
-1. We use the following code to work on PATCH request which is to modify a user data. In this case, we use `Object.keys()` which returns the properties of an `Object` in an `Array`, so we can use `.every()` method to check. This `Array.every()` method works similar to `.filter()` that it takes a callback function to check if the elements follow certain conditions and returns a boolean `true` if all the result of callback function is `true`. (Though we can use `.forEach` or other method to achieve the target, but this method is relatively simple for the purpose).
-1. In the `Model.findByIdAndUpdate()` method, we can give a 3rd parameters which is an `Object` of options such as `new: true` means that the method will return the result updated instance as an `Object` and `runValidators: true` means that the method will ensure the input will be checked with the validators in the schema. 
-  ```js 
-  // index.js
-  // PATCH request to modify data of a specific user
-  app.patch('/users/:id', async (req, res) => {
-      // list all the properties of user input as an array
-      const updates = Object.keys(req.body);
-      // list the fields that we allow users to update
-      const allowedUpdates = ['name', 'email', 'password', 'age'];
-      // check if the user gives invalid request to change fields can't be changed or doesn's exist at all 
-      const isValidOperation = updates.every(update => allowedUpdates.includes(update));
-      if (!isValidOperation) {
-          return res.status(400).send({ error: 'Invalid udpates!' });
-      }
-
-      try {
-          const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
-
-          if (!user) {
-              return res.status(404).send();
-          }
-          res.send(user);
-      } catch (error) {
-          res.status(400).send(error);
-      }
-  })
-  ```
-
-### Resource Updating Endpoints: Part 2
-1. This is a chanllenge to work on the router handler to update the content of tasks in the database. 
-  1. Set up the route handler 
-  1. Send error if unknown updates 
-  1. Attempt to update the task 
-    1. Handle task not found 
-    1. Handle validation errors 
-    1. Handle success 
-1. A misake made here was setting the wront route, so server can't render the page on the given route correctly. I forget to put slash `/` before `tasks`
-  ```js 
-  // PATCH request to modify data of a specific task 
-  app.patch('/tasks/:id', async (req, res) => {
-      const id = req.params.id;
-      const updates = Object.keys(req.body);
-      const allowedUpdates = ['description', 'completed'];
-      const isDataAllValid = updates.every(update => allowedUpdates.includes(update))
-
-      if (!isDataAllValid) {
-          return res.status(400).send({ error: 'The input data is invalid!' });
-      }
-
-      try {
-          const task = await Task.findByIdAndUpdate(id, req.body, { new: true, runValidators: true, });
-          if (!task) {
-              return res.status(404).send();
-          }
-          res.send(task);
-      } catch (error) {
-          res.status(400).send();
-      }
-  })
-  ```
-
-### Resource Deleting Endpoints
-1. In this case, we should use `.findByIdAndDelete()` method, while I made mistake and used `.findOneAndDelete()` which will keep deleting data if there's any when the filter option doesn't set up correctly. 
-  ```js 
-  // Delete request to remove a specific task
-  app.delete('/tasks/:id', async (req, res) => {
-      try {
-          const task = await Task.findByIdAndDelete(req.params.id); // be careful with mongoose CRUD command!
-
-          if (!task) {
-              return res.status(404).send();
-          }
-
-          res.send(task);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-
-### Separate Route Files 
-1. We have made all CRUD commands in the same file `index.js`. In this case, we have work on 2 main parts which are `users` and `tasks`. When the program goes bigger and more complex, the modules are better to be separated to be manageable. We will separate the routes of these and combine them into the an application to work on. 
-1. To use the router, we have to initiate it with `new express.Router()`, set up the route with `router.get()` (which is similar to `app.get()`), and register it with `app.use()`. 
-  ```js 
-  // initiate an express router 
-  const router = new express.Router();
-  router.get('/test', (req, res) => {
-      res.send('This is from my other router');
-  })
-  app.use(router);
-  ```
-1. We create a new directory in `src` named `routers` and create `user.js` as the router is created for `users`. We follow the similar syntax to create a router in this separated file and use `module.exports` to export the `Object`. 
-  ```js 
-  // src/routers/user.js
-  const express = require('express');
-  const router = new express.Router();
-
-  router.get('/test', (req, res) => {
-      res.send('From a new File');
-  })
-
-  module.exports = router;
-
-  // import the router to index.js 
-  const userRouter = require('./routers/user/');
-  app.use(userRouter);
-  ```
-1. After that, we can import user model by using `require('../models/user/')` and copy those routes setup in index.js without rewriting all of them. Note that since we have changed the router syntax and doesn't use `app` variable, we should change all of them into `router` which is a module created with `new express.Router()`. 
-  ```js 
-  const express = require('express');
-  const User = require('../models/user');
-  const router = new express.Router();
-
-  // POST request to create a new user 
-  router.post('/users', async (req, res) => {
-      const user = new User(req.body);
-
-      try {
-          await user.save();
-          res.status(201).send(user);
-      } catch (error) {
-          res.status(400).send(error);
-      }
-
-  });
-
-  // GET request to get user data 
-  router.get('/users', async (req, res) => {
-      try {
-          const users = await User.find({});
-          res.send(users);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-
-  // GET request to a specific user data 
-  router.get(`/users/:id`, async (req, res) => {
-      const _id = req.params.id;
-      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
-      try {
-          const user = await User.findById(_id);
-          if (!user) {
-              return res.status(404).send();
-          }
-          res.send(user);
-      } catch (error) {
-          res.status(500).send()
-      }
-  });
-
-  // PATCH request to modify data of a specific user
-  router.patch('/users/:id', async (req, res) => {
-      const updates = Object.keys(req.body);
-      const allowedUpdates = ['name', 'email', 'password', 'age'];
-      const isValidOperation = updates.every(update => allowedUpdates.includes(update));
-      if (!isValidOperation) {
-          return res.status(400).send({ error: 'Invalid udpates!' });
-      }
-
-      try {
-          const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
-
-          if (!user) {
-              return res.status(404).send();
-          }
-          res.send(user);
-      } catch (error) {
-          res.status(400).send(error);
-      }
-  });
-
-  // Delete request to remove a specific user
-  router.delete('/users/:id', async (req, res) => {
-      try {
-          const user = await User.findByIdAndDelete(req.params.id);
-
-          if (!user) {
-              return res.status(404).send();
-          }
-
-          res.send(user);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-
-  module.exports = router;
-  ```
-1. By separating the modules, `index.js` becomes simple and succinct and works exactly the same as before. 
-  ```js 
-  const express = require('express');
-  require('./db/mongoose');
-  const userRouter = require('./routers/user');
-  const taskRouter = require('./routers/task');
-
-  const app = express();
-  const port = process.env.PORT || 3000;
-
-  app.use(express.json());
-
-  app.use(userRouter);
-  app.use(taskRouter);
-
-  app.listen(port, () => {
-      console.log(`Server has started on port: ${port}`);
-  });
-  ```
-
-# API Authentication and Security (Task App)
-### Securely Storing Passwords: Part 1
-1. At this point, we store user password in the database with plain text which is a VERY BAD idea. As most of the users nowadays use the same password across different websites. For security reasons, we should try to keep password hashed. 
-1. We can use `bcrypt.js` package to hash user passwords in the database. We can check its methods from [documentation](https://www.npmjs.com/package/bcryptjs#usage---async)
-  1. We can use `.hash()` which is an async method that can generate a hash "**salt**" automatically. Besides, we can skip the callback function. 
-  1. After users creating password, we can use `.compare()` to check when a user tries to login and look up the hash table to check if it matches.
-  ```js 
-  const bcrypt = require('bcryptjs');
-
-  const myFunction = async function () {
-      const password = 'Red12345!';
-      // give the password input and the times of string to be hashed. 8 is relatively balanced number of times 
-      const hashedPassword = await bcrypt.hash(password, 8);
-
-      console.log(password); // Red12345
-      console.log(hashedPassword); // hashed password 
-
-      // check if given password is the same as the password stored in the database by checking hash table 
-      const isMatch = await bcrypt.compare('Red12345!', hashedPassword);
-      console.log(isMatch) // true. This will be false if user gives wrong password 
-  }
-
-  myFunction();
-  ```
-
-### Securely Storing Passwords: Part 2
-1. In the task-manager App, there are 2 main cases to use `bcrypt.js`. 
-  1. When a user creates a new account 
-  1. When a user update the account 
-1. In this case, we can use [middleware](https://mongoosejs.com/docs/middleware.html) in `mongoose`. We can run some code before the data is saved to the database. Therefore, we will update `src/models/user.js` in models. These middlewares has `pre` and `post` hook that we can either work "**before**" a task happens or "**after**". For example, a middleware can work before the data is written into database, or give a hint or do something else after data is written successfully. 
-1. We need to modify the code in router to enable the middle is working. In the `try` code block, we separate the code into 3 lines as to separate the `find` and `update` (to [save](https://mongoosejs.com/docs/api/document.html#document_Document-save) the data) process into 2 `await`. 
-  ```js 
-  // src/routers/user.js
-  // PATCH request to modify data of a specific user
-  router.patch('/users/:id', async (req, res) => {
-      const updates = Object.keys(req.body);
-      const allowedUpdates = ['name', 'email', 'password', 'age'];
-      const isValidOperation = updates.every(update => allowedUpdates.includes(update));
-      if (!isValidOperation) {
-          return res.status(400).send({ error: 'Invalid udpates!' });
-      }
-
-      try {
-          // rewrite here!!!
-          // find the user by its id property
-          const user = await User.findById(req.params.id);
-          // update properties from the array above to iterate through each of them 
-          updates.forEach((update) => user[update] = req.body[update]);
-          await user.save();
-          // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
-
-          if (!user) {
-              return res.status(404).send();
-          }
-
-          res.send(user);
-      } catch (error) {
-          res.status(400).send(error);
-      }
-  });
-  ```
-
-1. We create a schema by `new mongoose.Schema()` and move the user model as the `Object` argument. We use [`schema`](https://mongoosejs.com/docs/api/document.html#document_Document-isModified) method to check if a certain field (such as `password` in this case) is modified. If it is `true`, we will hash the input by 
-  ```js 
-  // src/models/user.js
-  const mongoose = require('mongoose');
-  const validator = require('validator');
-  const bcrypt = require('bcryptjs');
-
-  const userSchema = new mongoose.Schema({
-      name: {
-          type: String,
-          required: true,
-          trim: true,
-      },
-      email: {
-          type: String,
-          required: true,
-          trim: true,
-          lowercase: true,
-          validate(value) {
-              if (!validator.isEmail(value)) {
-                  throw new Error('Email is invalid');
-              }
-          },
-      },
-      age: {
-          type: Number,
-          default: 0,
-          validate(value) {
-              if (value < 0) {
-                  throw new Error('Age must be a positive number');
-              }
-          }
-      },
-      password: {
-          type: String,
-          require: true,
-          minlength: 7,
-          trim: true,
-          validate(value) {
-              if (value.toLowerCase().includes('password')) {
-                  throw new Error(`password can't contain "password"!`)
-              }
-          },
-      },
-  })
-
-  // middleware to check before data is saved into database
-  userSchema.pre('save', async function (next) {
-      const user = this;
-      // check if middleware is working 
-      console.log('Just before saving');
-
-      // check if password is modified (or an account is created)
-      if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 8);
-      }
-      
-      next();
-  })
-
-  const User = mongoose.model('User', userSchema);
-
-  module.exports = User;
-  ```
-
-### Logging in Users
-1. We create a new endpoint for users to login. 
-1. In `src/routers/user.js`, we update a post route to send data from client to server. We made a middleware in model to check if the given `email` and `password` match any of those user data in the database. 
-  ```js 
-  // authenticate user login with email as account and password
-  router.post('/users/login', async (req, res) => {
-      try {
-          // check if given email and password is correct 
-          const user = await User.findByCredentials(req.body.email, req.body.password);
-          // temporary solution
-          res.send(user);
-      } catch (error) {
-          res.status(400).send();
-      }
-  });
-  ```
-1. There are 2 ways to [add methods](https://mongoosejs.com/docs/api/schema.html#schema_Schema-static) in schema with `.static()` method or `statics` property. Note that we can name the method upon preference. 
-  1. Use `Schema.static(methodName, callbackMethod)` method
-  1. Use `Schema.statics.method = function(){}`. 
-1. Since login process is sensitive, we should return as least info. as possible. For example, we don't indicate whether the email account or password is wrong that causes login process fail. We can simply indicate that the process is not successful. 
-  ```js 
-  // create a new method to check user email (as account) and password 
-  userSchema.statics.findByCredentials = async function (email, password) {
-      // check if there an email exist in the database 
-      const user = await User.findOne({ email });
-
-      // throw an error if there's no user
-      if (!user) {
-          throw new Error('Unable to login');
-      }
-
-      // check if password matches
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      // throw an error if password is not correct and provide as least sensitive info as possible
-      if (!isMatch) {
-          throw new Error('Unable to login');
-      }
-
-      return user;
-  }
-  ```
-1. In addition, we should also prevent users to register accounts with the same email. Therefore, we have to update the schema with `unique: true` for `email` property. Note that after we modify the schema, we have to wipe out the data in the database to ensure the new schema is applied to all new inputs. 
-1. In `robo 3T`, we can go to collections panel on the left to drop a database. Note that we should also stop the server in the terminal to rerun the program again. 
-1. We can test the process in POSTMAN by accessing the endpoint `localhost:3000/login` with JSON data `{"email": "", "password":""}` with a POST request. Therefore, we will only get the `user` data send back if both `email` and `password` match. 
-
-### JSON Web Tokens - JWT
-1. After this point, all routes on the `express` will be categorized in either `public` or `authenticated` with limited access. For example, we only show "**signup**" and "**login**" routes in public that all users can see, while other sensitive and private data will only be shown after the user logs in. 
-1. Besides, we can send each user an unique authentication token, so they don't need to be verified each time working on a task. Besides, the token can expire after certain amount of time to enhance security and prevent abuse. 
-1. This JSON Web Token can be generated and get expired at certain amount of time. We use npm [`jsonwebtoken`](https://www.npmjs.com/package/jsonwebtoken) package to do the job. All the token is encoded with `base64`. We can paste the token to decode by other program such as [base64decode](https://www.base64decode.org/).
-1. We can use `.sing()` method to create a JSON Web Token. The method takes 3 arguments. 
-  1. 1st is an `Object` can take a unique identifier, so the server knows which user is logging in. In this case, "**user's id**" can do the job. 
-  1. 2nd is a `String` perform as the "**signature**" (similar to password) to ensure the token is generated from this server. This can be any `String` value as perfrence, as it works similar to password. Therefore, though another users may get the unique user id from somewhere else, they can't pass the verification because they don't get this "**signature**" to generate the token. 
-  1. 3rd is an `Object` that contains the options such as setting up expiring time. The set up is relative intuitive that we can put in plain English duration, such as `1 week`, `2 months`, or `1 year`. 
-1. A JWT has 3 parts and separated with dots `.`. For example, `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJhYmMxMjMiLCJpYXQiOjE1OTU5MDcyNDd9.r-OpD95XZCa7__x6LafF04wvIu4fy3TLH_uE3ism6mc`, the 1st part is the "**header**" which is the metadata of the token that how is this token generated, the 2nd part is the "**payload**" or the "**body**" which is generated from the data we provided, and the last part is the "**signature**" is for the program to verify the token.
-1. We then can use `.verify()` method to check if the token from the client is correct. The method takes 2 arguments
-  1. 1st is the token itself
-  1. 2nd is the "**signature**" we give when we create the token. 
-  ```js 
-  const jwt = require('jsonwebtoken');
-  const myFunction = async function () {
-      // create a token from jwt.sign() method
-      const token = jwt.sign({_id: 'abc123'}, 'thisismynewcourse', {expiresIn: '7 days'});
-      // print token into terminal
-      console.log(token);
-
-      // verify the token with signature 
-      const data = jwt.verify(token, 'thisismynewcourse')
-      console.log(data);
-  }
-
-  myFunction();
-  ```
-### Generating Authentication Tokens
-1. When a new user sings a new account, or a exisiting user logs in, we can send a JWT to the user to authenticate the following usage. In this case, both `signup` and `login` router will be updated with a function to send and verify token. 
-  ```js 
-  // src/models/user.js
-  // we need to use 'this' to the specific user, so we should use a regular function statement
-  // 'methods' is the property for instances which method on every instance is a bit different
-  userSchema.methods.generateAuthToken = async function () {
-      const user = this;
-      const token = jwt.sign({ _id: user._id.toString(), }, 'thisismynewcourse');
-      return token;
-  }
-
-  // src/routers/user.js
-  // POST request to authenticate user login with email as account and password
-  router.post('/users/login', async (req, res) => {
-      try {
-          const user = await User.findByCredentials(req.body.email, req.body.password);
-          // generate a specific token for this user, not for all User!
-          const token = await user.generateAuthToken();
-          res.send({ user, token });
-      } catch (error) {
-          res.status(400).send();
-      }
-  });
-  ```
-1. However, there are some scenarios that users can't invalidate the token when they logout at this point. This can make serious security abuse that if others get the token, the user can't invalidate the login status and the token. Besides, the program should allow users to login with different devices with different status. For example, a user can login in both mobile phone and tablet. If the user logout from the tablet, the account on mobile phone is still logged in. 
-1. We can solve the issue with the following steps 
-    1. Modify the `user` model. In the schema, we add `tokens` to the model which is an `Array`. Besides, the token is a `String` and `required` for a user instance. 
-    ```js 
-    //src/models/user.js
-    const userSchema = new mongoose.Schema({
-      tokens: [{
+    tokens: [{
         token: {
-          type: String, 
-          required: true, 
+            type: String,
+            required: true,
         }
-      }]
-    }
+    }],
+    avatar: {
+        type: Buffer, // store image as binary data 
+    },
+    }, {
+        timestamps: true,
+    });
     ```
-  1. Update `userSchema` methods to add the new generated token to the uesr instance. 
+1. After setting up the model, we can store the binary data to the database as a field of a user. Note that binary data is represented as a long `String`. 
+1. Besides, since we will store the image as binary data type in a field of a user, we don't need to store it in the file system. 
     ```js 
-    //src/models/user.js
-    userSchema.methods.generateAuthToken = async function () {
-      const user = this;
-      const token = jwt.sign({ _id: user._id.toString(), }, 'thisismynewcourse');
+    const upload = multer({
+        //dest: 'avatar', // we don't need to store the image in the local file system 
+        limits: {
+            fileSize: 1000000,
+        },
+        fileFilter(req, file, cb) {
+            if (!file.originalname.match(/\.(jpe?g|png)$/g)) {
+                return cb(new Error('Please upload an image as jpg, jpeg, or png file'));
+            }
 
-      // assign the token to the user instance 
-      user.tokens = user.tokens.concat({ token });
-      // save the instance to database 
-      await user.save();
+            cb(null, true);
+        }
+    });
+    ```
+1. In route handler, we update the route method to `async` function. 
+1. Add the file updated as the binary data to the user model in the `avatar` field with `req.user.avatar = req.file.buffer`. Note that `req.file` is an `Object` contains the meta-data of the file uploaded by the user and `req.file.buffer` is the type of data we will store in the database.  
+1. Use `await req.user.save()` as in the other routes to save data. 
+1. In this case, we can just save the data without returning anything back to the user. However, for better UX, we can redirect the page to the user profile with updated data. 
+    ```js 
+    // user upload avatar route with error handling 
+    router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => { // update route method to async function 
+        req.user.avatar = req.file.buffer // 'req.file' contains the file sent from the user in the request and the binary data is stored in 'buffer' property
+        await req.user.save(); // save the file to user's avatar field 
+        res.send();
+    }, (error, req, res, next) => {
+        res.status(400).send({ error: error.message });
+    });
+    ```
+1. To check the uploaded image, we can access in the database in the `avatar` field and find the long `String`. We can take the binary data to render the image in HTML file. We can do this either in a regular HTML and read it in a browser or use online IDE such as CodePen or [JSBin](https://jsbin.com/). We can create a `<img>` tag in the `<body>` tag.
+1. In the image tag, we can specify `data:img` with suffix of the image we are going to render, such as `jpg`, `jpeg`, and `png` and followed with encoding method such as `base64` in this case and follow with the binary code. 
+    ```html 
+    <body>
+    <!-- sepcify the extension of image as jpeg/jpg/png -->
+    <img src="data:image/jpg;base64,[image binary code]">
+    </body>
+    ```
+    <img src="jsbinImg.PNG">
+1. We update the delete route to allow user to delete avatar. We can simply set the `avatar` field as `undefined`. Though we can set to `null` as well, we will see the field of the model of the instance, as the field holds a `null` value. However, if we pass an `undefined` the field will disappear as there's no value. Besides, we can set up a condition as if there's no avatar data in the field if the user wants to try something funny. Besides, as the user is authenticated, we don't need an error handler in the route methods. 
+1. Note that if we use `throw new Error()` in the route method directly, the error will appear in the terminal rather than catched by the error handler. Besides, we can't throw the error directly, as this will crash the server program. 
+    ```js 
+    router.delete('/users/me/avatar', auth, async (req, res) => {
+    if (!req.user.avatar) {
+        return res.status(400).send({ error: `You don't have avatar yet` });
+    }
+    req.user.avatar = undefined; // if we use null, the user 'avatar' filed will exist and has a value 'null' with 'undefined' the field will just disappear
+    await req.user.save();
+    res.send();
+    });
+    ```
 
-      return token;
+### Serving up Files
+1. To render the image back from the database, we can either 
+    1. Use an `<img>` tag by giving attribute `src="data:image/jpg;base64,[binaryData]"`
+    1. Set up an URL to return the image
+1. Therefore, we set up a new router in `src/routers/user.js` with a GET requets. In this case, there may not have the user, or the user has no avatar image uploaded yet. 
+    1. Use `try` and `catch` block to handle potential errors 
+        1. Send `404` if there's nothing found. 
+    1. Set up `header` info as `res.set('Content-Type', 'image/jpg');`. We can give the info according to the extension of the image such as `png` or `jpg`. Note that this doesn't affect the data rendered in the browser. 
+    1. Return the binary data directly to the browser with `res.send()`. 
+1. Note that the browser will download the file without suffix if we use `icognito` mode to access `localhost:3000/user/[id]/avatar`. We can change the suffix to `.jpg` to turn the file into an image in the OS. 
+    ```js 
+    // render user avatar image 
+    router.get('/users/:id/avatar', async (req, res) => {
+        try {
+            const user = await User.findById(req.params.id)
+            if (!user || !user.avatar) {
+                throw new Error();
+            }
+
+            res.set('Content-Type', 'image/jpg'); // set up header info
+            res.send(user.avatar);
+        } catch (error) {
+            res.status(404).send();
+        }
+    })
+    ```
+    <img src="checkAvatarinBrowser.PNG">
+1. Therefore, a user is actually accessing the image data and view the image through browser. We can use this feature to return this URL in a `<img>` tag to use in a HTML page. 
+    <img src="accessImgURL">
+
+### Auto-Cropping and Image Formatting
+1. When users upload an avatar to the server, we can use npm `sharp` package sharp to unify the data type as in `png` and resize the image to a standard size to store in the database. In this case, as the avatar image is relatively small, we can compress the image to save space in the database. 
+1. We can remove the avatar property of the `user` instance model in `src/models/user.js`, as we did for `password` and `token` fields because the binary data is relatively large and we still can access the image from the new route handler through URL. 
+    ```js 
+    // return only non-sensitive data back to user after singup and login 
+    userSchema.methods.toJSON = function () {
+        const user = this;
+        const userObject = user.toObject();
+
+        delete userObject.password;
+        delete userObject.tokens;
+        delete userObject.avatar; // remove avatar binary data as it's large 
+
+        return userObject;
     }
     ```
-1. We should generate a token right after the user signs up, as there's no point to authenticate the user who just register the account. We can reuse the method `.generateAuthToken()` directly. 
-  ```js
-  // src/routers/user.js
-  // POST request to create a new user (sign up)
-  router.post('/users', async (req, res) => {
-      const user = new User(req.body);
-
-      try {
-          await user.save();
-          const token = await user.generateAuthToken();
-          res.status(201).send({ user, token });
-      } catch (error) {
-          res.status(400).send(error);
-      }
-
-  });
-  ```
-
-### Express Middleware
-1. Since we generate tokens for users, we can start to use the tokens to verify the process of tasks in the program. Therefore, when users navigate on the website and try to do different tasks, each task will be verified with the token and check authentication before it can proceed. 
-1. We can use `middleware` in `express` framework `index.js`. Without a middleware, the new quest come from a user will make the program run the route handler without authentication. This may cause abuse and problems and affect other users on the same website. By using middleware, we can run some code (to authenticate) the user before the program proceed the tasks. 
-1. In `index.js`, we add a middleware by passing an anonymous function to `app.use()`. Besides, this task should run before other functions. In the following example, the middleware will check and return the HTTP request made from a user. In this case, we use POSTMAN to send a GET request on `/user` route to check for all users. After sending the requset, we get only `GET /users/` returned in the terminal without any other functions proceeded further. 
-1. This middleware takes 3 arguments 
-  1. `req` is the request made by the user from client side 
-  1. `res` is the response given by the server program
-  1. `next` is a callback function that we can pass to keep the program goes after passing through middleware. Note that if we don't call the `next()` function, the middleware will just stop the program and do nothing. 
-  ```js
-  const express = require('express');
-  require('./db/mongoose');
-  const userRouter = require('./routers/user');
-  const taskRouter = require('./routers/task');
-
-  const app = express();
-  const port = process.env.PORT || 3000;
-
-  // a middleware to run after getting a request and before executing a task 
-  app.use(function (req, res, next) {
-    console.log(req.method, req.path); // GET /users/
-  });
-
-
-  app.use(express.json());
-  // other code below...
-  ```
-1. We can also write logical process to proceed services. For example, we can deny all `GET` request made to all routes. 
-  ```js 
-  app.use(function (req, res, next) {
-    if (req.method === 'GET') {
-      res.send('GET requests are disabled');
-    } else {
-      next();
-    }
-  });
-  ```
-1. In the following challenge, we try to 
-  1. Register a new middleware funciton 
-  1. Send back a maintenance message with a 503 status code 
-1. In this case, we can either check if `req` exist or not. However, since the service is not available and server is on maintenance, we don't need to `IF` statement and simply send the message to users directly. 
-  ```js 
-  app.use(function(req, res, next) {
-    res.status(503).send('Server is on maintenance...');
-  })
-  ```
-
-### Accepting Authentication Tokens
-1. Summary 
-  1. Set up the middleware in the router to run before executing the route handler function. 
-  1. The middleware proceeds 
-    1. Find the header info. to check the authentication token. 
-    1. Use `jsonwebtoken` to verify the token. 
-    1. Find the associated user from the database by its `_id` and `token`. 
-1. Though the program is not huge, we can separate the function into different modules. Therefore, we create a new directory in `src` named `middleware` for our middleware functions. In this case, we create a new `auth.js`. 
-1. Note that we should clear the middleware we try to use in `index.js` first. 
-1. Besides, each middleware has its specific function and should only work on certain routes. Therefore, we export the `auth.js` middle and import it into `/src/routers/user.js`. 
-  ```js 
-  // src/middleware/auth.js
-  const auth = async function (req, res, next) {
-    console.log('auth middleware');
-    next();
-  }
-
-  module.exports = auth;
-  ```
-1. In each route handler, we add the middleware as the 2nd argument. (The first async callback function will be moved as the 3rd one to be executed after the middleware). In this case, if we make a GET request to `/users` route, we will see a message 'auth middleware' printed in the terminal.  
-  ```js 
-  // src/routers/user.js
-  const auth = require('../middleware/auth');
-
-  // GET request to get all user data 
-  // add middleware 'auth' before the async function 
-  router.get('/users', auth, async (req, res) => {
-      try {
-          const users = await User.find({});
-          res.send(users);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-1. In the header tag, we put the key as `authorization` and value is `Bearer [token...]`. Note that the value should start with `Bearer ` with capital "B" and followed with a whitespace before the token.
-  <img src="sendTokenInHeader.PNG">
-
-1. We update the middleware `auth.js`. 
-  ```js 
-  const jwt = require('jsonwebtoken');
-  const User = require('../models/user');
-
-  const auth = async function (req, res, next) {
-      try {
-          // remove 'Bearer ' in the beginning of the String
-          const token = req.header('Authorization').replace('Bearer ', '');
-          // use jsonwebtoken package to verify if the token is valid 
-          const decoded = jwt.verify(token, 'thisismynewcourse');
-          // find the single user info according to the id and the token 
-          const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
-
-          // return an error if the user is not found 
-          if (!user) {
-              throw new Error();
-          }
-
-          // update user status that the user has been logged in 
-          req.user = user;
-          next();
-      } catch (error) {
-          res.status(401).send({ error: 'Please authenticate.' });
-      }
-  }
-
-  module.exports = auth;
-  ```
-
-### Advanced Postman
-1. We can setup envrionment variables in POSTMAN, so each time we make a request, we don't need to change the URL manually. 
-  <img src="postmanSetupEnvVar.PNG">
-1. Change Envrionment variable. We can put the predefined variable such as `url` in 2 pairs of curly braces, `{{url}}`.
-  <img src="postmanEnvVar.PNG">
-1. We can add the authentication token in the collection directly, so we don't need to input it everytime. On the left collection panel, we can find the `edit` option in the setting and put the token in the authorization tab. Note that we use `Bearer token` for authentication in this case. 
-1. Besides, for those which need token authroization, we can change the authorization option in each task into `inherit auth from parent`. 
-1. For automation proces, we can change this to an environment variable {{authToken}} that is generated from the testscript. 
-  <img src="postmanSaveToken.PNG">
-1. Recalling that "**login**" and "**singup**" process don't requrie authentication. We can go to the tab an turn the authorization off directly. 
-  <img src="postmanTurnoffAuth.PNG">
-1. We can automate the workflow of returning new access tokens back to the parent auth. This happens when we try to login with different user account and new token is generated. We then have to manually copy and paste the token in the collection's authorization tab, as we did above. However, we can write some JavaScript code to work it out. We can use the testscript in both "**login**" and "**singup**" route.
-1. Note that in the "**signup**" process, the status code should be `201` rather than `200`, as it makes a change to the server. 
-  ```js
-  if (pm.response.code === 201) {
-    pm.environment.set('authToken', pm.response.json().token)
-  }
-  ```
-  <img src="postmanAutoFlow.PNG">
-### Logging out
-1. In this section, we will add a new route in `src/routers/user.js` to allow users to log out. Besides, the user may login in different devices and have different sessions. Since we'd track on the single token that is used on the current device, we will modify `auth.js` and add `req.token = token`.
-  ```js 
-  const jwt = require('jsonwebtoken');
-  const User = require('../models/user');
-
-  const auth = async function (req, res, next) {
-      try {
-          // remove 'Bearer ' in the beginning of the String
-          const token = req.header('Authorization').replace('Bearer ', '');
-          console.log(token);
-          const decoded = jwt.verify(token, 'thisismynewcourse');
-          const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
-
-          if (!user) {
-              throw new Error();
-          }
-
-          // append current token of the device
-          req.token = token;
-
-          req.user = user;
-          next();
-      } catch (error) {
-          res.status(401).send({ error: 'Please authenticate.' });
-      }
-  }
-
-  module.exports = auth;
-  ```
-1. We then udpate a new route in `src/routers/user.js`. We check all the tokens that the users use in `req.user.tokens` and use `.filter()` method to check which tokens are not used in the current request. Therefore, we use `!==` "not equal to" to create a new `Array` of tokens which has filtered out the one in use. 
-1. After saving the new tokens array back to database, the token we use now to login will be invalidated, so the user is logged out. 
-1. We can clear the whole `Array` of all tokens to logout a user from his/her all devices. 
-  ```js 
-  // Log out the current session on a single device
-  router.post('/users/logout', auth, async (req, res) => {
-      try {
-          req.user.tokens = req.user.tokens.filter(function (token) {
-              // filter out the tokens which are not in use 
-              return token.token !== req.token;
-          });
-          
-          // save the data back to user in database to logout the current session of the device that send this request. 
-          await req.user.save();
-          res.send();
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-
-  // Log out all sessions of login on all devices of a user
-  router.post('/users/logoutAll', auth, async (req, res) => {
-      try {
-          req.user.tokens = [];
-          await req.user.save();
-          res.send();
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-
-### Hiding Private Data 
-1. After a user logs in, the server program shouldn't return sensitive data such as `password` and `tokens` of other login session of the user. In this case, our current data returning back to the user is still the whole dataset. 
-1. We can use a `mongoose` method [`.toObject()`](https://mongoosejs.com/docs/api.html#document_Document-toObject) to duplicate one. Note that though there are other methods, such as `Object.asisgn({}, [obj])`, `{ ... }`, `JSON.parse(JSON.stringify([obj]))` to duplicate the object, we can use those methods as the `Object` returned is totally different. The `user` object itself has other information in this case. 
-1. We then use `delete` keyword to take the properties off from the duplicated `Object` and return it back. Note that this is a regular synchronous function rather than async.
-  ```js 
-  // src/models/user.js
-  // return only non-sensitive data back to user after singup and login 
-  userSchema.methods.getPublicProfile = function () {
-      const user = this;
-
-      // use mongoose method to creat a new object
-      // we can't use Object.assign({}, obj) to duplicate
-      const userObject = user.toObject();
-
-      delete userObject.password;
-      delete userObject.tokens;
-
-      return userObject;
-  }
-
-  // src/routers/user.js
-  router.post('/users/login', async (req, res) => {
-    try {
-      const user = await User.findByCredentials(req.body.email, req.body.password);
-      // generate a specific token for this user, not for all User!
-      const token = await user.generateAuthToken();
-      // return only filtered data by using `.getPublicProfile()` method
-      res.send({ user: user.getPublicProfile(), token });
-    } catch (error) {
-      res.status(400).send();
-    }
-  });
-  ```
-1. Besides the way above, we can use another method to fulfill the purpose. In `src/models/user.js`, we simply change the custom method `.getPublicProfile` to `toJSON`. Therefore, in `src/routers/user.js` we can use the destructing notation as usual. It's because the feature of `Objects` when it has `toJSON` as its method. According to [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify), `JSON.stringify()` function will only convert the value returned from `.toJSON` method on the `Object` to a JSON format data. By this feature, we can "**hide**" the properties that we don't want to reveal. 
-  ```js
-  // src/models/user.js
-  // change method to `toJSON`
-  userSchema.methods.toJSON = function () {
-      const user = this;
-
-      // use mongoose method to creat a new object
-      // we can't use Object.assign({}, obj) to duplicate
-      const userObject = user.toObject();
-
-      delete userObject.password;
-      delete userObject.tokens;
-
-      // when this object is converted to JSON format, password and tokens properties will be taken off 
-      return userObject;
-  }
-
-  // src/routers/user.js
-  router.post('/users/login', async (req, res) => {
-    try {
-      const user = await User.findByCredentials(req.body.email, req.body.password);
-      // generate a specific token for this user, not for all User!
-      const token = await user.generateAuthToken();
-      // change back to use destructure notation 
-      res.send({ user, token });
-    } catch (error) {
-      res.status(400).send();
-    }
-  });
-  ```
-
-1. Use `.toJSON` method to hide data when a `Object` is converted to a JSON format data. 
-  ```js 
-  let guy = {
-    name: 'Allen',
-    age: 25
-  };
-
-  guy.toJSON = function(){
-    console.log(this) // {name: 'Allen', age: 25}
-    return this.name;
-  }
-  console.log(guy.toJSON()); // {name: 'Allen', age: 25} \n Allen
-  console.log(JSON.stringify(guy)); // "Allen"
-  ```
-
-### Authenticating User Endpoints 
-1. We update `src/routers/user.js` and delete the route that can get user profile by ID, as it's not required since we have `/users/me` to get the profile of the signed in account. 
-  ```js 
-  // src/routers/user.js
-  // delete the following as it's not required in the router handler
-  // GET request to a specific user data 
-  router.get(`/users/:id`, async (req, res) => {
-      const _id = req.params.id;
-      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
-      try {
-          const user = await User.findById(_id);
-          if (!user) {
-              return res.status(404).send();
-          }
-          res.send(user);
-      } catch (error) {
-          res.status(500).send()
-      }
-  });
-  ```
-1. On the `delete` route, we firstly place the middleware to check authentication and should modify the code, as the user shouldn't be able to delete other users' account by providing their IDs. Besides, we don't need to check if the `user` exist since we are using authentication. 
-1. We then use `mongoose` model method [`.remove()`](https://mongoosejs.com/docs/api/model.html#model_Model-remove) to remove the instance from the database. Note that it's an async function, so we should use `await` keyword. 
-  ```js 
-  // Delete request to remove a specific user
-  router.delete('/users/me', auth, async (req, res) => {
-      try {
-          // use Model.prototype.remove() method to delete the instance
-          await req.user.remove();
-          res.send(req.user);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-1. Besides, we should also update the route for update tasks.
-  ```js 
-  // PATCH request to modify data of a specific user
-  router.patch('/users/me', auth, async (req, res) => {
-      const updates = Object.keys(req.body);
-      const allowedUpdates = ['name', 'email', 'password', 'age'];
-      const isValidOperation = updates.every(update => allowedUpdates.includes(update));
-      if (!isValidOperation) {
-          return res.status(400).send({ error: 'Invalid udpates!' });
-      }
-
-      try {
-          const user = req.user
-          updates.forEach((update) => user[update] = req.body[update]);
-          await user.save();
-          res.send(user);
-      } catch (error) {
-          res.status(400).send(error);
-      }
-  });
-  ```
-
-### The User/Task Relationship
-1. We can update the task model in `src/models/task.js` to have a property to save `owner` which is the id of the user who creates the task. Besides, we can drop the current database, as the old inputs doesn't follow the updated schema. 
-  ```js 
-  // src/models/task.js
-  const mongoose = require('mongoose');
-
-  const taskSchema = new mongoose.Schema({
-      description: {
-          type: String,
-          required: true,
-          trim: true,
-      },
-      completed: {
-          type: Boolean,
-          default: false,
-      },
-      owner: {
-          // ensure new created tasks has an mongoose ID stored
-          type: mongoose.Schema.Types.ObjectId,
-          required: true,
-      }
-  });
-
-  const Task = mongoose.model('task', taskSchema);
-
-  module.exports = Task;
-  ```
-1. After we update the schema to have `owner` for each `Task` instance, we can use the properties to create new instances. We use spread notation to copy all the properties and values from `req.body` which is written as `...req.body` and hard coded the `owner` property with `req.user._id` returned from the middleware. 
-  ```js 
-  // src/routers/task.js
-  const express = require('express');
-  const Task = require('../models/task');
-  const auth = require('../middleware/auth'); // import the middelware
-  const router = new express.Router();
-
-  // POST request to create a new task 
-  router.post('/tasks', auth, async (req, res) => {
-      const task = new Task({
-          // copy all properties from req.body
-          ...req.body,
-          owner: req.user._id,
-      })
-
-      try {
-          await task.save();
-          res.status(201).send(task);
-      } catch (error) {
-          res.status(400).send(error);
-      }
-  });
-  ```
-1. Since we get the owner id during the process, we can use another `mongoose` method to set up the relationship and return the user `name` property by referring to it's `_id` automatically. Note that this is only set up the relationship unlike in `task.js` model that we really update a property `owner`. Therefore, we can use the method to refer and connect collections according to different properties. 
-  ```js
-  // src/models/user.js
-  // virtual property set up for mongoose to learn the relationship between collections
-  userSchema.virtual('tasks', {
-      ref: 'Task',
-      localField: '_id',
-      foreignField: 'owner',
-  });
-
-  ```
-1. We then can test the function by setting up relationship between different collections. 
-  ```js 
-  const Task = require('./models/task');
-  const User = require('./models/user');
-  const main = async () => {
-      // new property set up in Task model 
-      const task = await Task.findById('5f2118d9b97c5d090e741111'); // '_id' of the task 
-      await task.populate('owner').execPopulate();
-      console.log(task.owner); // return user instance
-      
-      // relationship made by virtual in User model
-      const user = await User.findById('5f2117ecc3ffc208dafe32c5'); // '_id' of the user
-      await user.populate('tasks').execPopulate();
-      console.log(user.tasks); // return task instance according to the user
-  }
-
-  main();
-  ```
-1. We had a bug here that when using `.virtual()` to set up the virtual properties, it's critical about the name we used to export the model. In this case, I firstly set `const Task = mongoose.model('task', taskSchema)` that in `mongoose` model, the model is set in all lowercase. However, in the lecture, it's given as `Task`, so the virtual property can never be set.  
-
-### Authenticating Task Endpoints
-1. After setting up virtual relationship to connect the collections, we will update the rest route handlers in `src/routers/task.js`. Therefore, each time we look up a task by the task id, the program will also check if the owner is the same as the user id. If the user id doesn't match, the program will return a `404` status. The following task is to retrieve a single task. 
-  ```js 
-  // GET request to get a specific task 
-  router.get('/tasks/:id', auth, async (req, res) => {
-      const _id = req.params.id;
-
-      if (_id.length !== 24) return res.status(400).send('User ID must be 24 characters long!');
-
-      try {
-          // find the task by id and check if it's the correct owner
-          const task = await Task.findOne({ _id, owner: req.user._id });
-
-          if (!task) {
-              return res.status(404).send();
-          }
-
-          res.send(task);
-      } catch (error) {
-          res.status(500).send();
-      }
-  })
-  ```
-1. In the route handler, we have another function to return all the tasks owns by a user. Note that we should also add on the middleware.
-  1. Use filter directly in `.find()` method to check if the tasks returned are owned by the user. 
-  1. Use `.populate().execPopulate()` method to return the tasks of a user. 
-  ```js 
-  // GET request to get all task data 
-  router.get('/tasks', auth, async (req, res) => {
-      try {
-          const tasks = await Task.find({ owner: req.user._id }); // use filter in .find() method
-          res.send(tasks);
-          // Choose ONLY ONE!!!          
-          await req.user.populate('tasks').execPopulate(); // use virtual property to refer data 
-          res.send(req.user.tasks);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-1. We then modify on the UPDATE command. 
-  ```js 
-  // PATCH request to modify data of a specific task 
-  router.patch('/tasks/:id', auth, async (req, res) => {
-      const id = req.params.id;
-      const updates = Object.keys(req.body);
-      const allowedUpdates = ['description', 'completed'];
-      const isDataAllValid = updates.every(update => allowedUpdates.includes(update))
-      if (!isDataAllValid) {
-          return res.status(400).send({ error: 'The input data is invalid!' });
-      }
-
-      try {
-          const task = await Task.findOne({ _id: req.params.id, owner: req.user._id, });
-
-          // return 404 if no task matches 
-          if (!task) {
-              return res.status(404).send();
-          }
-
-          updates.forEach(update => task[update] = req.body[update]);
-          await task.save();
-          res.send(task);
-      } catch (error) {
-          res.status(400).send();
-      }
-  });
-  ```
-1. Similar concept is applied to DELETE path 
-  ```js 
-  // Delete request to remove a specific task
-  router.delete('/tasks/:id', auth, async (req, res) => {
-      try {
-          // const task = await Task.findByIdAndDelete(req.params.id);
-          const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
-
-          if (!task) {
-              return res.status(404).send();
-          }
-
-          res.send(task);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-1. In summary, all the routes are mainly updated with 
-  1. Add middleware `auth` imported from `src/middleware/auth.js`
-  1. Use `.findOne()` and `.findByIdAndDelete()` with an `Object` includes `_id` (ID of the instance itself) and `owner: req.user._id` (the user ID). 
-
-### Cascade Delete Tasks 
-1. The section here is to delete the tasks of a user, if the user has delete the account of him/herself. Therefore, we won't keep those tasks in the database which have no account can access. 
-1. Therefore, in `src/routers/user.js`, we update the delete route to allow the function delete not only the user profile, but also the tasks (or other data) aligned to this user. However, instead of doing this manually, we can set another `.pre()` middleware for `userSchema`. 
-1. In `src/models/user.js`, we can use [`.deleteMany()`](https://mongoosejs.com/docs/api.html#model_Model.deleteMany) which is a method that can remove multiple instances by given option. 
-  ```js 
-  // src/models/user.js
-  const Task = require('./task');
-
-  // delete user tasks when user is removed
-  userSchema.pre('remove', async function (next) {
-      const user = this;
-      // delete multiple tasks by using only the owner field
-      await Task.deleteMany({owner: user._id});
-      next();
-  });
-  ```
-
-# Sorting, Pagination, and Filtering 
-1. We can use POSTMAN to pass paramters for all the function below at the aligned routes. 
-### Working with Timestamps
-1. We update 2 fields to both user and task model that each of them will have `Last update` and `Created` time stamp to show when was the instance created or modified. When create the schema in models, we can pass a 2nd argument which is an `Object` that can contain an option, so we can enable `timestamp`. Note that the option property name is `timestamps` which is with "s".
-  ```js 
-  const mongoose = require('mongoose');
-  new mongoose.Schema({/* data model */}, {timestamps: true});
-  ```
-
-1. Note that this only avaiable for new schema created on `mongoose.Schema`, while it can't be made on the `mongoose.model()`. 
-  ```js 
-  const mongoose = require('mongoose');
-
-  const taskSchema = new mongoose.Schema({
-      description: {
-          type: String,
-          required: true,
-          trim: true,
-      },
-      completed: {
-          type: Boolean,
-          default: false,
-      },
-      owner: {
-          type: mongoose.Schema.Types.ObjectId,
-          required: true,
-          ref: 'User',
-      }
-  }, {
-      timestamps: true,
-  });
-
-  const Task = mongoose.model('Task', taskSchema);
-
-  module.exports = Task;
-  ```
-
-### Filtering Data
-1. If a user has used the program for several years, for example, in this task-manager app, the user may have hundreds or thousands of tasks stored in the database. In this case, we'd like the user to retrieve preferable or certain amout of data rather than returning all the data in the database. 
-1. The approach is to let the user pass requirements (as parameters) through URL. The endpoint can parse the parameters. This concept is similar to what we've done in the weather-app to pass parameters to the end to request data. 
-1. Therefore, at the endpoint for returning all tasks, users can give options after the route such as `/tasks?completed=true` to show all the tasks that have been done or `/tasks?completed=false` for tasks are incomplete. 
-1. The `.populate()` method can take an `Object` rather than just a `String` of a path with options. We can set up a `match` property which is an `Ojbect` that provide the options and filters we want it to render. Thus, we can create a variable of the scope and use destructuring shorthad to pass the object and its properties. 
-  ```js 
-  // src/routers/task.js
-  // GET request to get all task data 
-  router.get('/tasks', auth, async (req, res) => {
-      const match = {}
-      if (req.query.completed) {
-          match.completed = req.query.completed === 'true';
-      }
-
-      try {
-          await req.user.populate({
-              path: 'tasks',
-              match,
-          }).execPopulate();
-          res.send(req.user.tasks);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-
-### Paginating Data 
-1. Pagination is to split the returned results with limited amount in multiple groups. For example, when we search something on Google, we may get millions of results returned from the query. However, we don't need to check all of them at once and get all the data. Google will separate the results into different pages. 
-1. We will pass 2 arguments to the endpoint to return results `limit` and `skip`. With such properties, we can render the results in a page-like matter. 
-  1. `limit` is the number for each time the database render the results. 
-  1. `skip` is the number to "**skip**" from the first instance in the collection. For example, if we have 30 instances in the collection and have `limit` as 10 and `skip` as 10, when we request for the results, we will get from the 11th one to 20th instances from the database. 
-1. For example, if we'd like to have 5 items rendered on the `1st` page, we can set `limit` as 5 and `skip` as 0. Therefore, we can have the first 5 instances of the collection. If we'd like the items on the "2nd page", we can use keep `limit` as 5 and `skip` as 5, so the first 5 instances will be skipped and only results from 6th to 10th will be rendered. 
-  ```js 
-  //src/routers/task.js
-  // GET /tasks?completed=true
-  // GET /tasks?limit=10&skip=20
-  router.get('/tasks', auth, async (req, res) => {
-      const match = {}
-      if (req.query.completed) {
-          match.completed = req.query.completed === 'true';
-      }
-
-      try {
-          await req.user.populate({
-              path: 'tasks',
-              match,
-              options: {
-                  limit: parseInt(req.query.limit),
-                  skip: parseInt(req.query.skip),
-              },
-          }).execPopulate();
-          res.send(req.user.tasks);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-
-### Sorting Data 
-1. With timestamp, we can sort the data in different orders as preference, such as ascending, descending, and `true` or `false` (incomplete) tasks. 
-1. We can set up in the options for `sort` which is an `Object` that takes the fields to sort the data. In this case, `1` (in number type) means ascending, while `-1` is descending. 
-1. Similar to `match` filter object, we can create another `sort` object that has the same name and pass it to the object in `.populate()` method. 
-1. In the URL, user can pass (or pass by button or the UI) parameters as `sortBy=createdAt:desc`. Note that the column after `createdAt` can be another other special character, as we use it as the splicer to split up the strings with `.split()` method. 
-1. Thus, we can create the sort function and allow `asc` (ascending as the default option) by using ternary operator `?` 
-  ```js 
-  // src/routers/task.js
-  // GET /tasks?completed=true
-  // GET /tasks?limit=10&skip=20
-  // GET /tasks?sortBy=createdAt:desc
-  router.get('/tasks', auth, async (req, res) => {
-      const match = {};
-      const sort = {};
-
-      if (req.query.completed) {
-          match.completed = req.query.completed === 'true';
-      }
-
-      if (req.query.sortBy) {
-          const parts = req.query.sortBy.split(':'); // column can be changed to any other character such as underscore _
-          sort[parts[0]] = parts[1] === 'desc' ? -1 : 1; // -1 is descending and 1 is ascending 
-      }
-
-      try {
-          await req.user.populate({
-              path: 'tasks',
-              match, // use destructor notation to pass the whole object above
-              options: {
-                  limit: parseInt(req.query.limit),
-                  skip: parseInt(req.query.skip),
-                  sort, // destructor notation similar to match object 
-              },
-          }).execPopulate();
-          res.send(req.user.tasks);
-      } catch (error) {
-          res.status(500).send();
-      }
-  });
-  ```
-
-# File Uploads (Task App)
-### Adding Support for File Uploads
-1. npm `express` framework itself doesn't support file upload, while we can use npm `multer` package to have the job done. 
-1. In the previous sections, we send JSON format data from client (user) to the server. Since images aren't JSON, we can use `multer` package as the middleware to handle the `form-data` as it can be read as binary data of a file.
-1. We can `require` `multer` package and configure its setting by passing an `Object` of options, such as limit the file types to pdf, excel sheets, and images. (Note that we don't limit the type in this case). Besides, we need to set up the path where the uploaded files will be stored. In this case, we set up `dest` (destination) at `/upload`. We can check for more [details](https://www.npmjs.com/package/multer#multeropts). 
-1. In the middleware, we use `.single()` method and have a name, which is the `field` name that will be stored in the database for the file. When the user send a request, the parameter's key must be the same with this given string. According to `multer`, this single file will be stored in `req.file`. Therefore, when we use POSTMAN to upload the file, the key of the parameter should be the same as this. 
-  ```js 
-  const multer = require('multer');
-  const upload = multer({ // configure multer for data type 
-      dest: 'images'
-  });
-  // 'upload' is the arbitrary name of the key of parameter to send a upload request. 
-  app.post('/upload', upload.single('upload'), (req, res) => {
-      res.send();
-  });
-  ```
-1. In POSTMAN, we can send the data with `body` tab and change the type from `raw` to `form-data`. In the `key` field, we can change the data type from `text` to `file` and use file selector to choose the file we want to upload. 
-  <img src="postmanSendFile.PNG">
-
-### Validating File Uploads
-### Validation Challenge
-### Handling Express Errors
-### Adding Images to User Profile
-### Serving up Files
-### Auto-Cropping and Image Formatting
+1. We then install [`sharp`](https://sharp.pixelplumbing.com/api-constructor#sharp) package via npm. Note that this package uses several libraries and will detect the envrionment which downloads the package. In my case, I use Windows command prompt to use `npm i sharp`, npm will download the package according to the environment. When we run `npm run dev` in WSL, it returns an error as the package is not available for the environment. However, if we don't use VSCode and use Ubuntu directly npm can run and install package normally. 
+1. After installing `sharp`, we import the package in `src/routers/user.js` and use `sharp()` function which return a promise and takes the buffer data as input. Besides, it needs `.toBuffer()` to turn the data back to binary data. 
+    1. Use `.resize()` which takes an `Object` that we can pass `width` and `height` of the image. 
+    1. Use `.png()` to turn the image extension to `png`, including other types of image data, such as `jpg`. 
+    1. Use `.toBuffer()` to turn the data back to buffer. 
+    ```js 
+    const sharp = require('sharp');
+    // user upload avatar route with error handling 
+    router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+        // use resice() and png() to standardize the image
+        const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250, }).png().toBuffer();
+        // all the image will be saved as .png file and has 250px * 250px on width and height.
+        req.user.avatar = buffer;
+        await req.user.save();
+        res.send();
+    }, (error, req, res, next) => {
+        res.status(400).send({ error: error.message });
+    });
+    ```
+1. Note that we can design user interface to allow users to adjust the photo upon requirements by giving adjustable width and height as input. 
 
 # Sending Emails (Task App)
 ### Exploring SendGrid
