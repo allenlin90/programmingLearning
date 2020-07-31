@@ -3861,6 +3861,23 @@ doWorkCallback(function (error, result) {
 
 # File Uploads (Task App)
 ### Adding Support for File Uploads
+1. npm `express` framework itself doesn't support file upload, while we can use npm `multer` package to have the job done. 
+1. In the previous sections, we send JSON format data from client (user) to the server. Since images aren't JSON, we can use `multer` package as the middleware to handle the `form-data` as it can be read as binary data of a file.
+1. We can `require` `multer` package and configure its setting by passing an `Object` of options, such as limit the file types to pdf, excel sheets, and images. (Note that we don't limit the type in this case). Besides, we need to set up the path where the uploaded files will be stored. In this case, we set up `dest` (destination) at `/upload`. We can check for more [details](https://www.npmjs.com/package/multer#multeropts). 
+1. In the middleware, we use `.single()` method and have a name, which is the `field` name that will be stored in the database for the file. When the user send a request, the parameter's key must be the same with this given string. According to `multer`, this single file will be stored in `req.file`. Therefore, when we use POSTMAN to upload the file, the key of the parameter should be the same as this. 
+  ```js 
+  const multer = require('multer');
+  const upload = multer({ // configure multer for data type 
+      dest: 'images'
+  });
+  // 'upload' is the arbitrary name of the key of parameter to send a upload request. 
+  app.post('/upload', upload.single('upload'), (req, res) => {
+      res.send();
+  });
+  ```
+1. In POSTMAN, we can send the data with `body` tab and change the type from `raw` to `form-data`. In the `key` field, we can change the data type from `text` to `file` and use file selector to choose the file we want to upload. 
+  <img src="postmanSendFile.PNG">
+
 ### Validating File Uploads
 ### Validation Challenge
 ### Handling Express Errors
