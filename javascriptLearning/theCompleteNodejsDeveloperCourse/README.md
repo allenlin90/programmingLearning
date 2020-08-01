@@ -4191,8 +4191,138 @@ doWorkCallback(function (error, result) {
 
 # Sending Emails (Task App)
 ### Exploring SendGrid
+1. We firstly sign up and use the free plan on sendGrid, which can send 10k emails in the first month and up to 100 emails per day after first 30 days free trial. 
+1. In this case, we can use Send Grid Web API to work with our backend. 
+    ```js 
+    // src/emails/account.js 
+    const sgMail = require('@sendgrid/mail');
+    const sendgridAPIKey = `[your send grid API key]`; // we can store this in environment variable in the OS runs this app
+
+    sgMail.setApiKey(sendgridAPIKey);
+
+    // send email to and from a user
+    // we can send HTML format email to users as well 
+    sgMail.send({
+        to: `apple@gmail.com`,
+        from: `apple@gmail.com`, // this can be any even we don't actually own the domain name. This may let email services put the email to spam
+        subject: `This is my first creation!`,
+        text: `I hope this one actually get to you`,
+    });
+    ```
+1. Sendgrid currectly requires further authentication to prevent users abuse the service to send spams. Therefore, we have to configure more settings before we start. We go to "**settings**" on the left navigation panel and work on "**sender authentication**". We create single sender verification and set the "From email address" and "Reply to" to the email we are going to use in the `account.js`. 
+1. We can check documentations for verifying domain, we can prevent email services to put the emails from sendgrid to spams because the email services, such as Gmail or Microsoft, can't verify if we really owns the domain name we give. This is in the last task to work on sender authentication in the setting that we can either authenticate a single user or a domain name. 
+
 ### Sending Welcome and Cancelation Emails 
+1. When users sign up new accounts or choose to cancel or delete the account, we can send an email to them with a welcome message or questionnaire to check feedbacks and follow up. 
+    ```js 
+    const sgMail = require('@sendgrid/mail');
+    const sendgridAPIKey = `[your API Key]`;
+
+    sgMail.setApiKey(sendgridAPIKey);
+
+    const sendWelcomeEmail = (email, name) => {
+        sgMail.send({
+            to: email,
+            from: 'apple@gmail.com',
+            subject: 'Thanks for joining us',
+            text: `Welcome to the app, ${name}. Let me know how you get along with the app.`,
+        })
+    }
+
+    module.exports = {
+        sendWelcomeEmail,
+    };
+    ```
+1. Therefore, we can set up other function to call in the routers such as send a welcome email to user when firstly sign up and recap email when a user choose to delete the account. In this case, we import the functoin from `src/emails/account.js` and use it in the account create route. Though we can add the function in the router file directly, we can separate it into a different module, so the code can be managed. 
+1. Besides, though `sgMail.send()` is a async function, we don't need to use `await` to wait for the result back to proceed on, as the user can just go to their email to check the welcoming email. 
+    ```js 
+    // src/routers/user.js
+    const { sendWelcomeEmail } = require('../emails/account');
+    // POST request to create a new user (sign up)
+    router.post('/users', async (req, res) => {
+        const user = new User(req.body);
+
+        try {
+            await user.save();
+            sendWelcomeEmail(user.email, user.name); // send a welcome email to the user
+            const token = await user.generateAuthToken();
+            res.status(201).send({ user, token });
+        } catch (error) {
+            res.status(400).send(error);
+        }
+    });
+    ```
+1. Besides welcome email, we can send a farewell email when a user choose to delete the account for a chance to recap or hold the user back. Note that besides `text` in the email, we can send `html` with HTML elements for marketing campaign. 
+    ```js 
+    //src/emails/account.js
+    const sendGoodByeEmail = (email, name) => {
+        sgMail.send({
+            to: email,
+            from: 'apple@gmail.com',
+            subject: `Oh no... Please Don't go...`,
+            html: `<h1>Don't Go Away!!!</h1>
+                   <p>Dear ${name}</p>
+                   <p>Please give us a 2nd chance...</p>
+                  `,
+        });
+    }
+
+    module.exports = {
+        sendWelcomeEmail,
+        sendGoodByeEmail,
+    }
+
+    //src/routers/user.js
+    const { sendWelcomeEmail, sendGoodByeEmail } = require('../emails/account');
+
+    // Delete request to remove a specific user
+    router.delete('/users/me', auth, async (req, res) => {
+        try {
+            await req.user.remove();
+            sendGoodByeEmail(req.user.email, req.user.name) // send a goodbye email
+            res.send(req.user);
+        } catch (error) {
+            res.status(500).send();
+        }
+    });
+    ```
+
 ### Environment Variables 
+1. We can set up environment variables for 2 main purposes
+    1. We can secure the sensitive data by hiding them in environment variabls, whic can be accessed through the local OS. 
+    1. We can customized the code to run in different environment. For example, we use `process.env.PORT` in `index.js`, so when the program is deployed to Heroku, the program will find the correct port in the environment. 
+1. In this case, we hard coded the path for `src/db/mongoose.js` to link. When this code deployed to Heroku, it will still try to access the local database which is not correct. 
+1. We create a new directory `config` which should be added to `.gitignore` that is not included and uploaded to the repository. In `config` directory, we can create a new file `dev.env` to store the environment variables. In the file, we can simply provide `key=value` pairs directly. Note that there's no space between equal sign and `key` and `value`. 
+1. Setting up environment variables in different OS is the pain in the ass. We can use a npm package `env-cmd` to deploy the environment variabls through npm and fufill cross-platform feature. Besides, this package is only required locally, so we can use `npm i env-cmd --save-dev` to install the depency only in development mode. 
+1. We create a `config` folder and have the `key=value` pairs stored in the file. 
+    ```shell
+    PORT=3000
+    SENDGRID_API_KEY=[your API key]
+    JWT_SECRET=thisismynewcourse
+    MONGODB_URL=mongodb://127.0.0.1:27017/task-manager-api
+    ```
+1. In JSON, we can update the `dev` property in `scripts`. From the lecture the command can be `env-cmd -f ./config/dev.env nodemon src/index.js`. However, as my environment can't find the file, I have to put a `-f` flag. 
+    ```json
+    {
+        "scripts": {
+        "start": "node src/index.js",
+        "dev": "env-cmd -f ./config/dev.env nodemon src/index.js" // here requires -f flag 
+        },
+    }
+    ```
+1. Note that we store environment variables in all captial letters in convention, so does we do in `index.js` for `PORT` variable. Besides, after updating, we can try with POSTMAN to test the endpoint if it works correctly. 
+    ```js 
+    // src/emails/account.js
+    // const sendgridAPIKey = `[your send grid API key]`;
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY); // use environment variable 
+    ```
+1. Note that in this case, we have several files to modify to change the hard coded value to environment variabls. 
+    1. `index.js` for `PORT`
+    1. `account.js` for `SENDGRID_API_KEY`
+    1. `mongoose.js` for `MONGODB_URL`
+    1. `auth.js` for `process.env.JWT_SECRET`
+    1. `src/models/user.js` for `process.env.JWT_SECRET`
+
 ### Creating a Production MongoDB Database
 ### Heroku Deployment
 
