@@ -4324,6 +4324,8 @@ doWorkCallback(function (error, result) {
     1. `src/models/user.js` for `process.env.JWT_SECRET`
 
 ### Creating a Production MongoDB Database
+1. Since we can't link to the local database in production on Heroku, we can use a hosting service from MongoDB in production. 
+
 ### Heroku Deployment
 
 # Testing Node.js (Task App)
