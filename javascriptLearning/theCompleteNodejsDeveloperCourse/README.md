@@ -4149,8 +4149,7 @@ doWorkCallback(function (error, result) {
     })
     ```
     <img src="checkAvatarinBrowser.PNG">
-1. Therefore, a user is actually accessing the image data and view the image through browser. We can use this feature to return this URL in a `<img>` tag to use in a HTML page. 
-    <img src="accessImgURL">
+1. Therefore, a user is actually accessing the image data and view the image through browser. We can use this feature to return this URL in a `<img>` tag to use in a HTML page. `<img src="accessImgURL">`
 
 ### Auto-Cropping and Image Formatting
 1. When users upload an avatar to the server, we can use npm `sharp` package sharp to unify the data type as in `png` and resize the image to a standard size to store in the database. In this case, as the avatar image is relatively small, we can compress the image to save space in the database. 
@@ -4325,6 +4324,19 @@ doWorkCallback(function (error, result) {
 
 ### Creating a Production MongoDB Database
 1. Since we can't link to the local database in production on Heroku, we can use a hosting service from MongoDB in production. 
+1. Though there are several options for database hosting in the market, we will use "Atlas" provided by MongoDB organization. 
+1. When singup the account, we should always be careful with the plan and solution we select and see "free" in the navigation bar at the bottom. (I have signed up a database on ht, while there's one free database perproject on atlas. Therefore, I'll use li in this case). Besides, since we are in Asia, we can choose the host at Singapore rather than in the US.
+1. After building the initial cluster, we can click connect to configure the database. 
+    <img src="mongodbAtlas.png">
+1. We firstly whitelist a connection IP address. In the step, we choose "Add a different IP address". Note that we should be very careful about these options, as they are security sensitive. In this case, we provide `0.0.0.0/0` which is available for connection from anywhere, such as from local machine to heroku deployments. 
+    <img src="mongodbAtlasWhitelistIP.png">
+1. After setting up whitelist for IP addresses, we can set up the account and password for the database admin. `taskapp` and `e5cq****`
+1. We then download the MongoDB compass to use GUI 
+    <img src="mongodbAtlasDownloadCompass.png">
+1. Initiate the software and copy and paste the connection string from MongoDB atlas website. This is easier than the step given from the lecture, as we can simply copy and paste the string to set the database up. Thus, we can stop using robo 3t and use mongodb compass instead. 
+    <img src="mongodbAtlasConnectString.PNG">
+1. If we forget database user (or admin) that we set up, we can go to secureity tab on the left navigation and check "database access" to check the user. 
+    <img src="mongodbAtalasShowUser.png">
 
 ### Heroku Deployment
 
