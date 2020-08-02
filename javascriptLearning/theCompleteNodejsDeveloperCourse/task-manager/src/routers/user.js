@@ -58,7 +58,6 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     }
 });
 
-// GET request to get all user data 
 router.get('/users/me', auth, async (req, res) => {
     // rather than returning all users data which doesn't make sense, this route handler is changed to return the profile of the authenticated user
     res.send(req.user);

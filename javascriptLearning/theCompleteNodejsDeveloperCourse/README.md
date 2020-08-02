@@ -3319,7 +3319,7 @@ doWorkCallback(function (error, result) {
     ```
 
 ### Advanced Postman
-1. We can setup envrionment variables in POSTMAN, so each time we make a request, we don't need to change the URL manually. 
+1. We can setup envrionment variables in POSTMAN, so each time we make a request, we don't need to change the URL manually. The option is on the upper right corner.
     <img src="postmanSetupEnvVar.PNG">
 1. Change Envrionment variable. We can put the predefined variable such as `url` in 2 pairs of curly braces, `{{url}}`.
     <img src="postmanEnvVar.PNG">
@@ -3330,7 +3330,7 @@ doWorkCallback(function (error, result) {
 1. Recalling that "**login**" and "**singup**" process don't requrie authentication. We can go to the tab an turn the authorization off directly. 
     <img src="postmanTurnoffAuth.PNG">
 1. We can automate the workflow of returning new access tokens back to the parent auth. This happens when we try to login with different user account and new token is generated. We then have to manually copy and paste the token in the collection's authorization tab, as we did above. However, we can write some JavaScript code to work it out. We can use the testscript in both "**login**" and "**singup**" route.
-1. Note that in the "**signup**" process, the status code should be `201` rather than `200`, as it makes a change to the server. 
+1. Note that in the "**signup**" process, the status code should be `201` rather than `200`, as it makes a change to the server. Besides, we only need to generate tokens automatically in sign up and login process. 
     ```js
     if (pm.response.code === 201) {
     pm.environment.set('authToken', pm.response.json().token)
@@ -3432,7 +3432,7 @@ doWorkCallback(function (error, result) {
         res.status(400).send();
     }
     });
-```
+    ```
 
 1. Besides the way above, we can use another method to fulfill the purpose. In `src/models/user.js`, we simply change the custom method `.getPublicProfile` to `toJSON`. Therefore, in `src/routers/user.js` we can use the destructing notation as usual. It's because the feature of `Objects` when it has `toJSON` as its method. According to [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify), `JSON.stringify()` function will only convert the value returned from `.toJSON` method on the `Object` to a JSON format data. By this feature, we can "**hide**" the properties that we don't want to reveal. 
     ```js
@@ -3587,7 +3587,7 @@ doWorkCallback(function (error, result) {
             res.status(400).send(error);
         }
     });
-```
+    ```
 
 1. Since we get the owner id during the process, we can use another `mongoose` method to set up the relationship and return the user `name` property by referring to it's `_id` automatically. Note that this is only set up the relationship unlike in `task.js` model that we really update a property `owner`. Therefore, we can use the method to refer and connect collections according to different properties. 
     ```js
