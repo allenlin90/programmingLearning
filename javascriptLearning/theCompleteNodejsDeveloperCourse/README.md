@@ -4431,14 +4431,308 @@ doWorkCallback(function (error, result) {
         }
     }
     ```
-1. However, the testing process will fail in this stage, as we haven't set up the testing targets. 
+1. However, the testing process will fail in this stage, as we haven't set up the testing targets. We create a new folder in the root directory `test`. For example, we give `test/math.test.js` for `Jest` to test the program. In the test file, we use `test()` function directly without importing any library or code. `test()` function takes 2 arguments. 1st is a string for the name of the testing case, and the 2nd is the function to test. 
+    1. If `math.test.js` is empty, `Jest` returns an error. 
+    ```js 
+    // /tests/math.test.js
+    // file is empty
+    ```
+    1. If we pass a name and empty function (without really checking anything), the test succeed. 
+    ```js 
+    // /tests/math.test.js
+    test('Hello world', () => {});
+    ```
+    <img src="./images/runTestJest.PNG">
+    1. Pass a failure case with `throw new Error()`
+    ```js 
+    test('This should fail', ()=>{
+        throw new Error('Failure!');
+    })
+    ```
+    <img src="./images/jestFailureCase.PNG">
+1. Reasons to test program 
+    1. Time saving - It's time saving, as we can use similar cases and suite to test multipel programs. Besides, we can cover edge cases and avoid missing testing scenarios. 
+    1. Create reliable software - After testing, we can ensure the program in production is more **reliable**.
+    1. Flexibility
+        1. Refactoring - When we modify the code, we can use the same testing models to check if anything goes wrong. 
+        1. Collaborate - When working on developing project with crossing teams, other developers may not know exactly the problems may occur or modification that can crash the program. 
+        1. Profiling - We can check the results in different stages for the same testing methods to optimize the performance of the program. 
 
 ### Writing Tests and Assertions
+1. In the very basic, manual setup.
+    1. Export the function from the code we want to test. 
+    1. Import the code in `Jest` test file. 
+    1. Set up the condition and the correct results we should get. 
+    1. Run `npm test` to check the result from `Jest`
+    ```js 
+    // src/math.js
+    const calculateTip = (total, tipPercent) => {
+        const tip = total * tipPercent;
+        return total + tip;
+    }
+
+    module.exports = {
+        calculateTip,
+    }
+
+    // /tests/math.test.js
+    const { calculateTip } = require('../src/math');
+
+    test('Should calculate total with tip', () => {
+        const total = calculateTip(10, .3);
+
+        if (total !== 13) {
+            throw new Error(`Total tip should be 13. Got ${total}`);
+        }
+    });
+    ```
+1. The above example is a manual and basic way of how `Jest` runs. However, this approach is not ideal, as the code, scenarios, and conditions would be very complex that we should write many cases and `IF` statements to test. `Jest` has an [assertion library](https://jestjs.io/docs/en/expect) that can help us reduce the code to write. In this case, we can use `expect()` function. 
+1. Besides `.toBe()` method, there are other methods such as to check if the result is `null`, `length`, `greater than` or `less than`. 
+    ```js 
+    // src/math.js
+    const calculateTip = (total, tipPercent) => {
+        const tip = total * tipPercent;
+        return total + tip + tip; // one more tip added to return incorrect output
+    }
+    module.exports = {calculateTip,}
+
+    // math.test.js
+    const { calculateTip } = require('../src/math');
+
+    test('Should calculate total with tip', () => {
+        const total = calculateTip(10, .3);
+        expect(total).toBe(13);
+
+        // if (total !== 13) {
+        //     throw new Error(`Total tip should be 13. Got ${total}`);
+        // }
+    });
+    ```
+    <img src="./images/jestUseExpectAndTobe.PNG">
+1. Therefore, if we rewrite the code, we can use the test case to check if the function still works correctly. 
+    ```js 
+    // src/math.js
+    const calculateTip = (total, tipPercent = .25) => total + (total * tipPercent); // working the same as following the multi-line code 
+    /* const calculateTip = (total, tipPercent) => {
+        const tip = total * tipPercent;
+        return total + tip + tip; // one more tip added to return incorrect output
+    } */
+    module.exports = {calculateTip,}
+
+    // math.test.js
+    const { calculateTip } = require('../src/math');
+
+    test('Should calculate total with tip', () => {
+        const total = calculateTip(10); // we don't pass the 2nd argument, as we give a default value 
+        expect(total).toBe(12.5);
+    });
+    ```
+
 ### Writing Your Own Test 
+1. `math.js`
+    ```js 
+    const calculateTip = (total, tipPercent = .25) => total + (total * tipPercent);
+    const fahrenheitToCelsius = (temp) => {
+        return (temp - 32) / 1.8
+    }
+    const celsiusToFahrenheit = (temp) => {
+        return (temp * 1.8) + 32
+    }
+
+    //
+    // Goal: Test temperature conversion functions
+    //
+    // 1. Export both functions and load them into test suite
+    // 2. Create "Should convert 32 F to 0 C"
+    // 3. Create "Should convert 0 C to 32 F"
+    // 4. Run the Jest to test your work!
+
+    module.exports = {
+        calculateTip,
+        fahrenheitToCelsius,
+        celsiusToFahrenheit,
+    }
+    ```
+1. `math.test.js`
+    ```js 
+    const { calculateTip, fahrenheitToCelsius, celsiusToFahrenheit } = require('../src/math');
+
+    test('Should calculate total with tip', () => {
+        const total = calculateTip(10, .3);
+        expect(total).toBe(13);
+    });
+
+    test('Should calculate total with tip', () => {
+        const total = calculateTip(10);
+        expect(total).toBe(12.5);
+    });
+
+    test('Should cover 32 F to 0 C', function () {
+        const temp = fahrenheitToCelsius(32);
+        expect(temp).toBe(0);
+    });
+
+    test('Should cover 0 C to 32 F', function () {
+        const temp = celsiusToFahrenheit(0);
+        expect(temp).toBe(32);
+    });
+    ```
+
 ### Testing Asynchronous Code 
+1. We updtae the `scripts` in `package.json` to allow `Jest` run and watch the changes all the time along developing the code. 
+    ```json
+    {
+    "scripts": {
+            "test": "jest --watch"
+        },
+    }
+    ```
+1. Besides, there are several options for us to use in the terminal, such as `a` to run all the tests again. We can check other options and features for [`Jest` in CLI](https://jestjs.io/docs/en/cli). 
+    ```shell
+    > Press a to run all tests.
+    > Press f to run only failed tests.
+    > Press p to filter by a filename regex pattern.
+    > Press t to filter by a test name regex pattern.
+    > Press q to quit watch mode.
+    > Press Enter to trigger a test run.
+    ```
+1. We then can test the async function. In the callback of `test()` function, we can pass a parameter and call it to indicate when the async function completes. Otherwise, the code will run as regular synchronous function that `Jest` can't test the function correctly. Besides, to work on `Promises`, we can use async/await for shorten syntax and write as synchronous code. Therefore, we have 3 ways to work with `Jest` to test async functions and Promises. 
+    ```js 
+    // tests/math.js    
+    const add = (a, b) => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (a < 0 || b < 0) {
+                    reject('Numbers must be positive!');
+                }
+                resolve(a + b);
+            }, 500)
+        });
+    }
+    module.exports = {add}
+
+    // math.test.js
+    // use callback
+    test('Async test demo', (done) => { // pass 'done' to call when the async function is done 
+        setTimeout(function () {
+            expect(1).toBe(2); // this will return an error as 1 is not equal to 2 
+            done();
+        }, 2000);
+    });
+
+    // use .then()
+    test('Should add two numbers', (done) => {
+        add(2, 3).then((sum) => { // use .then() to work on Promise
+            expect(sum).toBe(5);
+            done();
+        });
+    });
+
+    // use async/await syntax 
+    test('Should add two numbers async/await', async () => {
+        const sum = await add(10, 22);
+        expect(sum).toBe(32);
+    });
+    ```
+
 ### Testing an Express Application: Part 1
+1. After learning the basics of using `Jest`, we can use it to test the endpoints of our APIs with `Jest` assertions. 
+1. Besides, since we use environment variables to keep the sensitive data, we should create a separate environment to test the code, as we don't import the environment variables to `Jest` test file. 
+1. In `/config` direcotry, we create another file `test.env`. The main reason is to separate the database, as during testing, `Jest` will keep creating or sending dummy data which will pollute our developing environment. 
+    ```js
+    // in test.env
+    // add "-test" after the database to access 
+    MONGODB_URL=mongodb://127.0.0.1:27017/task-manager-api-test
+    ```
+1. Therefore, as we do with developing mode, we can add `env-cmd [envVarPath]` in `scripts` in `package.json`. Besides, we need to update the environment for `Jest` to emulate. We can check `Jest` documentation of [environment configuration](https://jestjs.io/docs/en/configuration#testenvironment-string). 
+    ```json 
+    {
+    "scripts": {
+        "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+        "test": "env-cmd -f ./config/test.env jest --watch"
+        },
+    "jest": {
+        "testEnvironment": "node"
+        },
+    }, 
+    ```
+
 ### Testing an Express Application: Part 2
+1. Thourgh the previous settings and configurations, we can start to make HTTP request call to the endpoints. `express` framework developing team release a `supertest` package on NPM that we can make HTTP request through code in an easier way. This package can work without running the server by simply importing both `express`, setting up a route, and importing `supertest` to make a request. We can refer to the [example](https://www.npmjs.com/package/supertest#example). 
+    ```js 
+    const request = require('supertest');
+    const express = require('express');
+    
+    const app = express();
+    
+    app.get('/user', function(req, res) {
+    res.status(200).json({ name: 'john' });
+    });
+    
+    request(app)
+    .get('/user')
+    .expect('Content-Type', /json/)
+    .expect('Content-Length', '15')
+    .expect(200)
+    .end(function(err, res) {
+        if (err) throw err;
+    });
+    ```
+1. We create another testing file `user.test.js` in `tests` folder with `math.test.js`. Besides, to avoid affecting the developing code, we create another `app.js` alongside with `index.js` in `src` directory and duplicate its code. This approach is to solve the issue that when we import `index.js`, we'd like to use the code only before the server listener `app.listen()`. Therefore, in `app.js` we don't required the `PORT` and the listener `app.listen()`.
+1. However, as we have duplicate code in the file, we can separate and import the code to use for different purpose. Therefore, we can refactor the code into 2 modules. In this structure, we can still run `index.js` to get the same result. 
+    1. `src/app.js`
+    ```js 
+    // src/app.js
+    const express = require('express');
+    require('./db/mongoose');
+    const userRouter = require('./routers/user');
+    const taskRouter = require('./routers/task');
+
+    const app = express();
+    // const port = process.env.PORT; // PORT is not required because we are not going to run the server 
+
+    app.use(express.json());
+    app.use(userRouter);
+    app.use(taskRouter);
+
+    // app.listen(port, () => {console.log(`Server has started on port: ${port}`);}); // listener is not required 
+
+    module.exports = app; // export to be used 
+    ```
+    1. `src/index.js`
+    ```js 
+    // src/index.js 
+    const app = require('./app');
+    const port = process.env.PORT;
+
+    app.listen(port, () => {
+        console.log(`Server has started on port: ${port}`);
+    });
+    ```
+1. After refactoring the code, we can import `app.js` to `user.test.js` to use `supertest` package to make HTTP request. 
+    1. Pass the `express` framework to `request` (supertest).
+    1. Use `.post()` to make a POST HTTP request. (We can use GET, PATCH, and DELETE as well). 
+    1. Pass the route to POST method. In this case, we pass `/users` as we are going to create a user. 
+    1. Use `.send()` to send JSON data to the endpoint to test. 
+    1. Use `Jest` assertion `.expect()` method to check if the HTTP status code is correct. In this case, it should be `201`, as we are using a POST requets to create data to the endpoint. 
+    ```js 
+    // user.test.js
+    const request = require('supertest');
+    const app = require('../src/app');
+
+    test('Should singup a new user', async () => {
+        await request(app).post('/users').send({
+            name: 'Allen',
+            email: 'apple@gmail.com',
+            password: 'MyPass777!',
+        }).expect(201)
+    })
+    ```
+1. However, the above method has a critical issue that the content used to create the user can only be used once, as it will be stored in the database. According to the user model, a single email can be used to register a user only once. This is the main reason why we should separate the database, as everytime we run the test, we should clean and wipe out all the data in the database before and after testing to ensure teh testing environment is consistent. 
+
 ### Jest Setup and Teardown
+
+
 ### Testing with Authentication 
 ### Advanced Assertions
 ### Mocking Libraries
