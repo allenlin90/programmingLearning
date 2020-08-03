@@ -685,4 +685,8 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 
-# Day 27 - Control versions through branches in the same remote repository. 
+# Day 27 - Control versions through branches in the same remote repository
+1. When a developing team shares a single remote repository, it is easy to get conflict with the files if everyone can access the files and work on different tasks or for different purposes. For example, developing new functions, maintaining features, or fixing bugs on the same or related functions or modules. In this case, it is suggested to use `branch` feature of Git to avoid the conflicts. 
+
+### Create a remote repository and working directory multiple users
+1. 
