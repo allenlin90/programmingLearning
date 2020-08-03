@@ -4731,10 +4731,200 @@ doWorkCallback(function (error, result) {
 1. However, the above method has a critical issue that the content used to create the user can only be used once, as it will be stored in the database. According to the user model, a single email can be used to register a user only once. This is the main reason why we should separate the database, as everytime we run the test, we should clean and wipe out all the data in the database before and after testing to ensure teh testing environment is consistent. 
 
 ### Jest Setup and Teardown
+1. In the previous section, we've learnt the reason that causes testing process fail and become inconsistent. Therefore,we can add up life cycle method to work before and/or after the testing functions. [Jest setup and teardown](https://jestjs.io/docs/en/setup-teardown). However, we only use `beforeEach()` in this case. 
+    1. `beforeEach()`
+    1. `afterEach()`
+1. We import `User` model to the testing file and use the methods to clear out the database. Therefore, we can check 3 enpoints in this case. 
+    1. Create user 
+    1. User login
+    1. Invalid user login
+    ```js 
+    const request = require('supertest');
+    const app = require('../src/app');
+    const User = require('../src/models/user');
 
+    const userOne = {
+        name: 'Mike',
+        email: 'mike@example.com',
+        password: '56what!!',
+    }
+
+    beforeEach(async () => {
+        await User.deleteMany(); // clear all the user data in the database 
+        await new User(userOne).save(); // create a user for loging function testing with pre-built/existing data
+    });
+
+    test('Should singup a new user', async () => {
+        await request(app).post('/users').send({
+            name: 'Allen',
+            email: 'apple@gmail.com',
+            password: 'MyPass777!',
+        }).expect(201);
+    });
+
+    test('Should login existing user', async () => {
+        await request(app).post('/users/login').send({
+            email: userOne.email,
+            password: userOne.password,
+        }).expect(200);
+    });
+
+    test('Should not login nonexistent user', async () => {
+        await request(app).post('/users/login').send({
+            email: 'google@apple.com',
+            password: '123456789',
+        }).expect(400);
+    });
+    ```
 
 ### Testing with Authentication 
+1. In this section, we will test on the endpoints that require authentication. 
+1. If we have multiple methods to chain on, we can change the line to make the code easier to read. 
+    1. Import `jsonwebtoken` to generate the web token and `mongoose` to generate an ID for a new created user. 
+    1. Refactor the `userOne` object with `_id` generated with `new mongoose.Types.ObjectId()` and `tokens` which should be an array that has a token with a login session. 
+    1. Use `.get()` (or orther HTTP method) to make a request
+    1. Use `.set()` to set up the "**header**" info of the requets. 
+        1. As we are using bearer token authentication, we can use `.set('Authorization', 'Bearer ${userOne.tokens[0].token}')` (note that the single quote should be backticks). 
+        1. We can skip this method in the chain if we'd like to test a route without authentication 
+    1. Use `.send()` without passing any value
+    1. Use `.expect()` to check the HTTP status code if it's correct. 
+    ```js
+    const request = require('supertest');
+    const jwt = require('jsonwebtoken'); // generate a token 
+    const mongoose = require('mongoose'); // generate an id for a new created user 
+    const app = require('../src/app');
+    const User = require('../src/models/user');
+
+    const userOneId = new mongoose.Types.ObjectId();
+    const userOne = {
+        _id: userOneId,
+        name: 'Mike',
+        email: 'mike@example.com',
+        password: '56what!!',
+        tokens: [{
+            token: jwt.sign({ _id: userOneId, }, process.env.JWT_SECRET),
+        }]
+    }
+
+    beforeEach(async () => {
+        await User.deleteMany(); // clear all the user data in the database 
+        await new User(userOne).save(); // create a user for loging function testing with pre-built/existing data
+    });
+
+    test('Should singup a new user', async () => {
+        await request(app).post('/users').send({
+            name: 'Allen',
+            email: 'apple@gmail.com',
+            password: 'MyPass777!',
+        }).expect(201);
+    });
+
+    test('Should login existing user', async () => {
+        await request(app).post('/users/login').send({
+            email: userOne.email,
+            password: userOne.password,
+        }).expect(200);
+    });
+
+    test('Should not login nonexistent user', async () => {
+        await request(app).post('/users/login').send({
+            email: 'google@apple.com',
+            password: '123456789',
+        }).expect(400);
+    });
+
+    test('Should get profile for user', async () => {
+        // await request(app).get('/users/me').send().expect(200);
+        await request(app)
+            .get('/users/me')
+            .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+            .send()
+            .expect(200)
+    });
+
+    test('Should not get profile for unauthenticated user', async () => {
+        await request(app)
+            .get('/users/me')
+            .send()
+            .expect(401)
+    });
+
+    test('Should delete account for user', async () => {
+        await request(app)
+            .delete('/users/me')
+            .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+            .send()
+            .expect(200)
+    });
+
+    test('Should delete account for user', async () => {
+        await request(app)
+            .delete('/users/me')
+            .send()
+            .expect(401)
+    });
+    ```
+
 ### Advanced Assertions
+1. Besides regular HTTP status code responded from the route, we can also check the response contents and data in the database if the data is modified correctly. 
+    1. We assign the value returned from `await` promises to a variable, so we can check their contents. 
+    1. Use `mongoose` method to check if the instance is "**not**" in database by `.toBeNull()`. Note that we can use another method [`.not`](https://jestjs.io/docs/en/expect#not) to chain from `supertest` library to have reverse result. For example, `expect(user).not.toBeNull()` is expecting that `user` object is not `null`. 
+1. In this case, we use advanced `Jset` testing assertions to test several routes
+    1. Database is updated correctly when a new user is created 
+    1. Check if response from the route matches what we have given 
+    1. Check if the password is not stored in the database with the given string directly. 
+    1. Check if a new token is created when the same user login twice. 
+    1. Check if a user is removed after accessing "**delete**" route.
+    ```js 
+    test('Should singup a new user', async () => {
+        // assign the value returned from await to a variable
+        const response = await request(app).post('/users').send({ 
+            name: 'Allen',
+            email: 'apple@gmail.com',
+            password: 'MyPass777!',
+        }).expect(201);
+
+        // assert that database was changed correctly 
+        const user = await User.findById(response.body.user._id);
+        expect(user).not.toBeNull();
+
+        // assertions about the response
+        expect(response.body).toMatchObject({
+            user: {
+                name: 'Allen',
+                email: 'apple@gmail.com'
+            },
+            token: user.tokens[0].token
+        });
+
+        // check if the password is added "salt" and not stored directly
+        expect(user.password).not.toBe('MyPass777!');
+    });
+
+    test('Should login existing user', async () => {
+        const response = await request(app).post('/users/login').send({
+            email: userOne.email,
+            password: userOne.password,
+        }).expect(200);
+
+        // validate new token is saved
+        const user = await User.findById(userOneId);
+        expect(response.body.token).toBe(user.tokens[1].token);
+    });
+
+    test('Should delete account for user', async () => {
+        const response = await request(app)
+            .delete('/users/me')
+            .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+            .send()
+            .expect(200);
+
+        // Validate user is removed
+        const user = await User.findById(response.body._id);
+        expect(user).toBeNull();
+    });
+    ```
+
 ### Mocking Libraries
 ### Wrapping up User Tests
 ### Setup Task Test Suite
