@@ -692,7 +692,7 @@ Module `fs`, `require()`
    1. Open Chrome browser and type `chrome://inspect/` in the search bar. We will get the option as "Remote Target". Note that this also works with WSL, tested on 2020/07/15. Besides, we can check with "**Configure**" in "**Devices**" section on the top. For example, `localhost: 9229` and `127.0.0.1:9229`.
    1. We then click "**inspect**" in the "**Remote Target**". Chrome will open another console for us to run debugger.
    1. We can use the navigator panel on the left to add the folder to this debugger console (though it's not neccessary).
-      <img src="./chromeDebugger.png">
+      <img src="./images/chromeDebugger.png">
    1. After inspecting the program, we can type `restart` in terminal to resume the debugger in Chrome again.
    1. If we've finished and would like to quit, we can type <kbd>Ctrl + c</kbd> twice to leave node in the terminal.
    1. We can use the function to look into the variables by a closer look to identify the possisble issues when there's any problem with the program.
@@ -1289,7 +1289,7 @@ module.exports = forecast;
    </footer>
    ```
 
-  <img src="expressDirectoryWithHBS.png">
+  <img src="./images/expressDirectoryWithHBS.png">
 
 ### 404 Pages
 
@@ -1606,7 +1606,7 @@ module.exports = forecast;
    }
    ```
 
-    <img src="weatherApp.gif">
+    <img src="./images/weatherApp.gif">
 
 # Application Deployment
 
@@ -1728,7 +1728,7 @@ module.exports = forecast;
 1. The main difference between SQL and NoSQL database is that SQL is database is more like a "table" (taking Excel or Google Sheet for example) which has several elements 
     1. Column (field) - The trait or feature that the instance should have in SQL, this can only has value or be `null` ("empty") that the instance in the same table should have exactly the same columns. However, for NoSQL database, the instances may have different number of fields in the same "**collection**" 
     1. Row (Document) - This is an instance in the table. In SQL, a row stands for an instance that it must has its columns fill up (either has value or be empty that has `null`). While NoSQL is more than JSON data that each instances be stored in `Arrays` or `Object` 
-    <img src="diffDB.png">
+    <img src="./images/diffDB.png">
 
 ### Installing MongoDB on Mac and Linux
 1. We can follow the instructions as the followings to install MongoDB in WSL. Though it mentions that MongoDB is not available on WSL, we still can install and use it locally. 
@@ -1776,7 +1776,7 @@ module.exports = forecast;
 1. We can use the GUI from Robo which was "**Robomongo**" for the GUI control (this is simialr to php MySQLAdmin). 
 1. Download the protable version from [Robo 3T](https://robomongo.org/download). 
 1. Though WSL and Win10 can't share the same database directory, both of them use localhost `127.0.0.1` on port `27017`, so we can just access each of them with the same connection config. 
-    <img src="robo3tshell.png">
+    <img src="./images/robo3tshell.png">
 1. We can type in `db.version()` to and click the green play button on the top to check the version of MongoDB installed on the machine. 
 1. MongoDB uses commands as OOP in JavaScript. Besides, it's data structure is refered to JSON, so it's relatively easy to understand. 
 1. We can use <kbd>Ctrl + r</kbd> to refresh the page with latest data in the database or colleciton. 
@@ -2268,16 +2268,16 @@ doWorkCallback(function (error, result) {
     1. Read - GET /tasks/:id
     1. Update - PATCH /tasks/:id
     1. Delete - DELETE /tasks/:id
-    <img src="restapistructure.PNG">
+    <img src="./images/restapistructure.PNG">
 1. A HTTP request. `express` framework has provided a friendly user interface for developers to work on the `request` and `response`. 
     1. A `request` includes the `header` and metadata that indicates the method such as the "action" we are going use, "connection" (one-time or being kept alive), and "format" of the data. 
     1. A `response` has status code such as `200` and `201` if the "GET" or "POST" action works, data format, and the content returned from the server. 
-    <img src="httpRequest.PNG">
+    <img src="./images/httpRequest.PNG">
 
 ### Installing Postman
 1. This is an introduction to POSTMAN App and how to use it. 
 1. We can use POSTMAN to send a POST request 
-    <img src="postmanPOST.PNG">
+    <img src="./images/postmanPOST.PNG">
 
 ### Resource Creation Endpoints: Part 1
 1. We install npm package `nodemon` in development mode and `express`. 
@@ -3286,7 +3286,7 @@ doWorkCallback(function (error, result) {
     });
     ```
 1. In the header tag, we put the key as `authorization` and value is `Bearer [token...]`. Note that the value should start with `Bearer ` with capital "B" and followed with a whitespace before the token.
-    <img src="sendTokenInHeader.PNG">
+    <img src="./images/sendTokenInHeader.PNG">
 
 1. We update the middleware `auth.js`. 
     ```js 
@@ -3320,15 +3320,15 @@ doWorkCallback(function (error, result) {
 
 ### Advanced Postman
 1. We can setup envrionment variables in POSTMAN, so each time we make a request, we don't need to change the URL manually. The option is on the upper right corner.
-    <img src="postmanSetupEnvVar.PNG">
+    <img src="./images/postmanSetupEnvVar.PNG">
 1. Change Envrionment variable. We can put the predefined variable such as `url` in 2 pairs of curly braces, `{{url}}`.
-    <img src="postmanEnvVar.PNG">
+    <img src="./images/postmanEnvVar.PNG">
 1. We can add the authentication token in the collection directly, so we don't need to input it everytime. On the left collection panel, we can find the `edit` option in the setting and put the token in the authorization tab. Note that we use `Bearer token` for authentication in this case. 
 1. Besides, for those which need token authroization, we can change the authorization option in each task into `inherit auth from parent`. 
 1. For automation proces, we can change this to an environment variable {{authToken}} that is generated from the testscript. 
-    <img src="postmanSaveToken.PNG">
+    <img src="./images/postmanSaveToken.PNG">
 1. Recalling that "**login**" and "**singup**" process don't requrie authentication. We can go to the tab an turn the authorization off directly. 
-    <img src="postmanTurnoffAuth.PNG">
+    <img src="./images/postmanTurnoffAuth.PNG">
 1. We can automate the workflow of returning new access tokens back to the parent auth. This happens when we try to login with different user account and new token is generated. We then have to manually copy and paste the token in the collection's authorization tab, as we did above. However, we can write some JavaScript code to work it out. We can use the testscript in both "**login**" and "**singup**" route.
 1. Note that in the "**signup**" process, the status code should be `201` rather than `200`, as it makes a change to the server. Besides, we only need to generate tokens automatically in sign up and login process. 
     ```js
@@ -3336,7 +3336,7 @@ doWorkCallback(function (error, result) {
     pm.environment.set('authToken', pm.response.json().token)
     }
     ```
-    <img src="postmanAutoFlow.PNG">
+    <img src="./images/postmanAutoFlow.PNG">
 ### Logging out
 1. In this section, we will add a new route in `src/routers/user.js` to allow users to log out. Besides, the user may login in different devices and have different sessions. Since we'd track on the single token that is used on the current device, we will modify `auth.js` and add `req.token = token`.
     ```js 
@@ -3880,7 +3880,7 @@ doWorkCallback(function (error, result) {
     });
     ```
 1. In POSTMAN, we can send the data with `body` tab and change the type from `raw` to `form-data`. In the `key` field, we can change the data type from `text` to `file` and use file selector to choose the file we want to upload. 
-    <img src="postmanSendFile.PNG">
+    <img src="./images/postmanSendFile.PNG">
 1. The uploaded files doesn't have extension (file type suffix). We can manually modify the file name with `.jpg` or other type of format according to its original datatype. 
 1. We add a new route handler in `src/routers/user.js`. However, this has no filter for data type and authentication of the user. 
     ```js 
@@ -4105,10 +4105,10 @@ doWorkCallback(function (error, result) {
     ```html 
     <body>
     <!-- sepcify the extension of image as jpeg/jpg/png -->
-    <img src="data:image/jpg;base64,[image binary code]">
+    <img src="./images/data:image/jpg;base64,[image binary code]">
     </body>
     ```
-    <img src="jsbinImg.PNG">
+    <img src="./images/jsbinImg.PNG">
 1. We update the delete route to allow user to delete avatar. We can simply set the `avatar` field as `undefined`. Though we can set to `null` as well, we will see the field of the model of the instance, as the field holds a `null` value. However, if we pass an `undefined` the field will disappear as there's no value. Besides, we can set up a condition as if there's no avatar data in the field if the user wants to try something funny. Besides, as the user is authenticated, we don't need an error handler in the route methods. 
 1. Note that if we use `throw new Error()` in the route method directly, the error will appear in the terminal rather than catched by the error handler. Besides, we can't throw the error directly, as this will crash the server program. 
     ```js 
@@ -4148,8 +4148,8 @@ doWorkCallback(function (error, result) {
         }
     })
     ```
-    <img src="checkAvatarinBrowser.PNG">
-1. Therefore, a user is actually accessing the image data and view the image through browser. We can use this feature to return this URL in a `<img>` tag to use in a HTML page. `<img src="accessImgURL">`
+    <img src="./images/checkAvatarinBrowser.PNG">
+1. Therefore, a user is actually accessing the image data and view the image through browser. We can use this feature to return this URL in a `<img>` tag to use in a HTML page. `<img src="./images/accessImgURL">`
 
 ### Auto-Cropping and Image Formatting
 1. When users upload an avatar to the server, we can use npm `sharp` package sharp to unify the data type as in `png` and resize the image to a standard size to store in the database. In this case, as the avatar image is relatively small, we can compress the image to save space in the database. 
@@ -4327,16 +4327,16 @@ doWorkCallback(function (error, result) {
 1. Though there are several options for database hosting in the market, we will use "Atlas" provided by MongoDB organization. 
 1. When singup the account, we should always be careful with the plan and solution we select and see "free" in the navigation bar at the bottom. (I have signed up a database on ht, while there's one free database perproject on atlas. Therefore, I'll use li in this case). Besides, since we are in Asia, we can choose the host at Singapore rather than in the US.
 1. After building the initial cluster, we can click connect to configure the database. 
-    <img src="mongodbAtlas.png">
+    <img src="./images/./images/mongodbAtlas.png">
 1. We firstly whitelist a connection IP address. In the step, we choose "Add a different IP address". Note that we should be very careful about these options, as they are security sensitive. In this case, we provide `0.0.0.0/0` which is available for connection from anywhere, such as from local machine to heroku deployments. 
-    <img src="mongodbAtlasWhitelistIP.png">
+    <img src="./images/mongodbAtlasWhitelistIP.png">
 1. After setting up whitelist for IP addresses, we can set up the account and password for the database admin. `taskapp` and `e5cq****`
 1. We then download the MongoDB compass to use GUI 
-    <img src="mongodbAtlasDownloadCompass.png">
+    <img src="./images/mongodbAtlasDownloadCompass.png">
 1. Initiate the software and copy and paste the connection string from MongoDB atlas website. This is easier than the step given from the lecture, as we can simply copy and paste the string to set the database up. Thus, we can stop using robo 3t and use mongodb compass instead. 
-    <img src="mongodbAtlasConnectString.PNG">
+    <img src="./images/mongodbAtlasConnectString.PNG">
 1. If we forget database user (or admin) that we set up, we can go to secureity tab on the left navigation and check "database access" to check the user. 
-    <img src="mongodbAtlasShowUser.png">
+    <img src="./images/mongodbAtlasShowUser.png">
 
 ### Heroku Deployment
 1. There are 2 main tasks for deployment: 
@@ -4395,8 +4395,8 @@ doWorkCallback(function (error, result) {
     1. In the overview page, we choose `connect` and check the 2nd option to "**connect your app**". 
     1. Choose "**Short SRV connection string**". Update on 2020/08/03, there's no option for short or standard. There's an option in the 2nd step "**Include full driver code example**".
     1. The Mongodb Atlas can be connected through `mongodb+srv://taskapp:<password>@cluster0.fodcx.mongodb.net/<dbname>?retryWrites=true&w=majority`. We should change the `password` and the `database name`.
-    <img src="mongodbAtlasConnectToApp.png">
-    <img src="mongodbAtlasShortSRV.png">
+    <img src="./images/mongodbAtlasConnectToApp.png">
+    <img src="./images/mongodbAtlasShortSRV.png">
 
 1. Set up the MongoDB Atlas URL on Heroku. Note that another remote repository `heroku` is added when we use `heroku create`. 
     ```shell 
@@ -4410,15 +4410,29 @@ doWorkCallback(function (error, result) {
     git push heroku master 
     ```
 1. We can use POSTMANt to test the [endpoints](https://peaceful-fortress-16772.herokuapp.com/) we just deployed. 
-    <img src="postmanUpdateEnvVar.PNG">
-    <img src="mongodbAtlasTaskManagerAppDeployment.PNG">
-    <img src="mongodbAtlasTaskManagerAppCreatedTasks.PNG">
+    <img src="./images/postmanUpdateEnvVar.PNG">
+    <img src="./images/mongodbAtlasTaskManagerAppDeployment.PNG">
+    <img src="./images/mongodbAtlasTaskManagerAppCreatedTasks.PNG">
 1. Note
     1. I changed the passcode to generate the JWT in this production version.
     1. The database name used on MongoDB Atlas is `task-manager-api` which is set in the remote DB URL. 
 
 # Testing Node.js (Task App)
 ### Jest Testing Framework 
+1. In practice, we can use `Jest` or `Mocha` to do testing 
+    1. [Jest](https://jestjs.io/)
+    1. [Mocha](https://mochajs.org/)
+1. In this section, we will use `Jest` as the testing framework. We use `npm i jest --save-dev` to install `Jest` in development mode. Besides, we update `scripts` in `package.json` to use `Jest`. Note that `Jest` is relative easy to setup, as we can just use `npm run test` which is `jest`. 
+1. Though we can install the package globally and use as `nodemon`, we can use the above methods to keep the project simple. 
+    ```json
+    {
+        "srcripts":{
+            "test": "jest"
+        }
+    }
+    ```
+1. However, the testing process will fail in this stage, as we haven't set up the testing targets. 
+
 ### Writing Tests and Assertions
 ### Writing Your Own Test 
 ### Testing Asynchronous Code 
