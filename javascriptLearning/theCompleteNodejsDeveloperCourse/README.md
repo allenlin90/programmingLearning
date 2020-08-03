@@ -4336,9 +4336,86 @@ doWorkCallback(function (error, result) {
 1. Initiate the software and copy and paste the connection string from MongoDB atlas website. This is easier than the step given from the lecture, as we can simply copy and paste the string to set the database up. Thus, we can stop using robo 3t and use mongodb compass instead. 
     <img src="mongodbAtlasConnectString.PNG">
 1. If we forget database user (or admin) that we set up, we can go to secureity tab on the left navigation and check "database access" to check the user. 
-    <img src="mongodbAtalasShowUser.png">
+    <img src="mongodbAtlasShowUser.png">
 
 ### Heroku Deployment
+1. There are 2 main tasks for deployment: 
+    1. Upload the repository to Github
+    1. Upload the project to Heroku 
+1. We can copy and create a new directory to set up Git for this project. We can go to Github and create a new repository to store the project. 
+    1. Create a new repository on Github
+    1. Add sentive file and folder to `.gitignore`
+    1. Add remote repository on Github to Git
+    1. Upload the project to Github
+    ```shell
+    # initiate a git repository 
+    git init
+
+    # create and update .gitignore to exclude sensitive data
+    touch .gitignore
+    # open VSCode to edit the file 
+    code .gitignore
+
+    # read content of .gitignore too check if "node_modules" and "config" folders are added to be ignored by Git
+    cat .gitignore
+
+    # add and push exisiting project to a remote repository 
+    git remote add origin https://github.com/[username]/[repositoryName].git
+
+    # type "git remote" to check if the remote repository is added. It should show "origin"
+    git remote 
+
+    # upload the repository
+    git push -u origin master
+    ```
+1. Ensure Heroku CLI is installed in the terminal. 
+1. Create a new project for Heroku and upload. We can use `heroku create [app name]`. (note that the app name is optional, as Heroku can generate one for us). We then will get the `remote repository` on heroku and the `URL` of the web app to visit. 
+    1. Initiate a Heroku App with `heroku create`
+    1. Configure environment variables on Heroku
+        1. Set up environment variables on Heroku `heroku config:set [key=value]`. Note that there's a column `:` right after `heroku config:`, and there should not have any space in the given `key=value` pair. 
+        1. We can give and set up multiple `key=value` pairs at the same time. 
+        1. We can check configured envivronment variables with `heroku config`. 
+        1. Use `hroku config:unset [key]` to remove a environment variable. 
+
+    ```shell
+    # create a new project on Heroku by default. Heroku will generate a name for the project 
+    heroku create 
+
+    # set up environment variables on Heroku. This is similar to set up environment variables on local terminal
+    heroku config:set [key=value] [key=value]
+
+    # check all environment variables 
+    heroku config
+
+    #remove a environment variable
+    heroku config:unset [key]
+    ```
+
+1. On MongoDB Atlas
+    1. In the overview page, we choose `connect` and check the 2nd option to "**connect your app**". 
+    1. Choose "**Short SRV connection string**". Update on 2020/08/03, there's no option for short or standard. There's an option in the 2nd step "**Include full driver code example**".
+    1. The Mongodb Atlas can be connected through `mongodb+srv://taskapp:<password>@cluster0.fodcx.mongodb.net/<dbname>?retryWrites=true&w=majority`. We should change the `password` and the `database name`.
+    <img src="mongodbAtlasConnectToApp.png">
+    <img src="mongodbAtlasShortSRV.png">
+
+1. Set up the MongoDB Atlas URL on Heroku. Note that another remote repository `heroku` is added when we use `heroku create`. 
+    ```shell 
+    # change the URL accordingly, especially "password" and "dbname"
+    heroku config:set MONGODB_URL=[mongodb+srv://taskapp:<password>@cluster0.fodcx.mongodb.net/task-manager-api?retryWrites=true&w=majority]
+
+    # check if all environment variables are set
+    heroku config
+
+    # push the code to heroku repository
+    git push heroku master 
+    ```
+1. We can use POSTMANt to test the [endpoints](https://peaceful-fortress-16772.herokuapp.com/) we just deployed. 
+    <img src="postmanUpdateEnvVar.PNG">
+    <img src="mongodbAtlasTaskManagerAppDeployment.PNG">
+    <img src="mongodbAtlasTaskManagerAppCreatedTasks.PNG">
+1. Note
+    1. I changed the passcode to generate the JWT in this production version.
+    1. The database name used on MongoDB Atlas is `task-manager-api` which is set in the remote DB URL. 
 
 # Testing Node.js (Task App)
 ### Jest Testing Framework 
