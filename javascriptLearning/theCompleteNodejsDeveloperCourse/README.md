@@ -4926,10 +4926,245 @@ doWorkCallback(function (error, result) {
     ```
 
 ### Mocking Libraries
+1. During developing and testing, we can use mocking library to simulate the tasks such as sending emails from sendgrid to avoid abusing limited package in the free plan or pay for extra email requests which will never be opened as testers. 
+1. We create `__mocks__` (2 underscores before and after "**mocks**") in `tests` folder. `Jest` will find this directory and use the mockups rather than accessing the real packages. We can check more details about [mocks](https://jestjs.io/docs/en/manual-mocks) on `Jest` documentation.
+1. In this case, we are trying to mock up the `@sendgrid/mail` package with the methods such as `.send()`. In the root directory, we have `/tests/__mocks__/@sendgrid/mail.js`. In `mail.js`, we just export the methods we can use. However, as we are not going to send any email in really, we can keep the methods in blank to allow `Jest` tests the functions correctly. 
+1. Note that we will get error for testing if we don't import the methods, as the code nothing to refer. 
+    ```js 
+    // tests/__mocks__/@sendgrid/mail.js
+    module.exports = {
+        setApiKey() {},
+        send(){}
+    }
+    ```
+
 ### Wrapping up User Tests
+1. In this section, we will learn how to send a file (such as image for user avatar) through `supertest`. 
+1. In `/tests`, we create another folder `fixtures` to keep the media. In this case, we use the profile-pic that we used to test uploading function for user avator. 
+    1. Use `.post()` to send a POST request
+    1. Use `.set()` to authorize the user
+    1. Use `.attach()` which is a `supertest` method to upload the image file
+    1. Use `.toEqual()` and `expect.any()` to check if the object holds a `Buffer` type data
+    ```js 
+    test('Should upload avatar image', async () => {
+        await request(app)
+            .post('/users/me/avatar')
+            .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+            .attach('avatar', 'tests/fixtures/profile-pic.jpg') // .attach() is a supertest method 
+            .expect(200);
+        const user = await User.findById(userOneId);
+        // .toBe() is using === 
+        // expect.any() can take other types of data such as String, Number, Boolean
+        expect(user.avatar).toEqual(expect.any(Buffer)); // use .toEqual() method to check if objects are equivalent
+    });
+    ```
+
+1. Update `patch` request to check if user data update function works correctly. 
+    ```js
+    test('Should update valid user fields', async () => {
+        const name = 'John Doe';
+        await request(app)
+            .patch('/users/me')
+            .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+            .send({
+                name
+            })
+            .expect(200);
+        const user = await User.findById(userOneId);
+        // expect(user.name).toEqual(name);
+        expect(user.name).not.toBe(userOne.name);
+    });
+
+    test('Should update valid user fields', async () => {
+        await request(app)
+            .patch('/users/me')
+            .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+            .send({
+                location: 'Bangkok'
+            })
+            .expect(400);
+    });
+    ```
+
 ### Setup Task Test Suite
+1. We'd like to separate testing suites between `task` and `user`, so we create `tasks.test.js` in `tests` directory. However, since we haven't had configuration in `tasks.test.js` to access a user data, we can refactor the testing files to share a database that can be used by both `task` and `user` testers. We then create `db.js` in `/tests/fixtures`. 
+1. We then can move the code of creating a user in `user.test.js` to `db.js`. However, we have `beforeEach()` function which uses the pre-built user data in `user.test.js`. We turn the code in `db.js` into a function which can be imported and called in both `user.test.js` and `task.test.js`. After refactoring, both testers can run and access the same data generated dynamically from `db.js`. 
+    1. `db.js`
+    ```js 
+    const jwt = require('jsonwebtoken');
+    const mongoose = require('mongoose');
+    const User = require('../../src/models/user');
+
+    const userOneId = new mongoose.Types.ObjectId();
+    const userOne = {
+        _id: userOneId,
+        name: 'Mike',
+        email: 'mike@example.com',
+        password: '56what!!',
+        tokens: [{
+            token: jwt.sign({ _id: userOneId, }, process.env.JWT_SECRET),
+        }]
+    };
+
+    const setupDatabase = async () => {
+        await User.deleteMany(); // clear all the user data in the database 
+        await new User(userOne).save(); // create a user for loging function testing with pre-built/existing data
+    }
+
+    module.exports = {
+        userOneId,
+        userOne,
+        setupDatabase,
+    }
+    ```
+    1. `user.test.js`
+    ```js 
+    const request = require('supertest');
+    const app = require('../src/app');
+    const User = require('../src/models/user');
+    const { userOneId, userOne, setupDatabase } = require('./fixtures/db');
+
+    beforeEach(setupDatabase);
+    ```
+    1. `task.test.js`
+    ```js 
+    const requste = require('supertest');
+    const app = require('../src/app');
+    const Task = require('../src/models/task');
+    const { userOneId, userOne, setupDatabase } = require('./fixtures/db');
+
+    beforeEach(setupDatabase);
+    ```
+1. However, though we can modulize the code into different models, they may have conflicts, as `Jest` use the shared codebase to run through different tasks. For example, when `Jest` tests user models and wipe out the database in the intial stage, `task.test.js` may have problems because the data was wiped out. 
+1. We can modify the way of running tasks in `package.json` 
+    ```json
+    {
+        "scripts": {
+            "test": "env-cmd -f ./config/test.env jest --watch --runInBand" // add --runInBand to run the testers in order
+        }
+    }
+    ```
+1. After all setup, we can have test case in `task.test.js`.
+    1. Check if HTTP status code is `201`, as there's a new instance created.
+    1. Check if the task is really created by `.not.toBeNull()`.
+    1. Check `completed` property of a `Task` instance as it's given with `false` by default according to the model. 
+    ```js 
+    test('Should create task for user', async () => {
+        const response = await request(app)
+            .post('/tasks')
+            .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+            .send({
+                description: 'From my test',
+            })
+            .expect(201);
+        const task = await Task.findById(response.body._id);
+        expect(task).not.toBeNull();
+        expect(task.completed).toEqual(false);
+    });
+    ```
+
 ### Testing with Task Data 
+1. In `db.js`, we update and create some mockup data for another user and task instances to test. These data can be called and tested in both `task` and `user` `Jest` testers.
+    ```js 
+    // /tests/fixtures/db.js
+    const userTwoId = new mongoose.Types.ObjectId();
+    const userTwo = {
+        _id: userTwoId,
+        name: 'Allen',
+        email: 'allen@example.com',
+        password: 'myhouse099@@',
+        tokens: [{
+            token: jwt.sign({ _id: userTwoId, }, process.env.JWT_SECRET),
+        }]
+    };
+
+    const taskOne = {
+        _id: new mongoose.Types.ObjectId(),
+        description: 'First Task',
+        completed: false,
+        owner: userOneId, // this can be userOne._id as well
+    }
+
+    const taskTwo = {
+        _id: new mongoose.Types.ObjectId(),
+        description: 'Second Task',
+        completed: true,
+        owner: userOneId, // this can be userOne._id as well
+    }
+
+    const taskThree = {
+        _id: new mongoose.Types.ObjectId(),
+        description: 'Third Task',
+        completed: false,
+        owner: userTwoId, // this can be userTwo._id as well
+    }
+
+    const setupDatabase = async () => {
+        await User.deleteMany(); // clear all the user data in the database 
+        await Task.deleteMany(); // clear all task data in the database
+        await new User(userOne).save(); // create a user for loging function testing with pre-built/existing data
+        await new User(userTwo).save(); // another user to test task model
+        await new Task(taskOne).save();
+        await new Task(taskTwo).save();
+        await new Task(taskThree).save();
+    }
+    ```
+
+1. Test to request all tasks of a user - Since we have assigned `2` tasks to `userOne`, we can test in `task.test.js` to check with task route to check all the tasks of a user. 
+    1. Request all tasks for user one 
+    1. Assert the correct status code 
+    1. Check the length of the response array is 2
+    ```js 
+    test('Request all tasks of user one', async () => {
+        const response = await request(app)
+            .get('/tasks')
+            .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+            .send()
+            .expect(200);
+        // const numTasks = await Task.find({ owner: userOneId });
+        // expect(numTasks.length).toBe(2); 
+        expect(response.body.length).toEqual(2);
+    });
+    ```
+
+1. Test delete task security - If user two wants to delete task one which is owned by user one, the process should fail due to authentication protect. 
+    1. Attempt to have the 2nd user delete the first task (should fail)
+        1. Setup necessary exports from `db.js`
+    1. Assert the failed status code 
+    1. Assert the task is still in the database
+    ```js 
+    test('Should not delete other users tasks', async () => {
+        const response = await request(app)
+            .delete(`/tasks/${taskOne._id}`) // doesn't require column character `:` here
+            .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
+            .send()
+            .expect(404); // should be 404 rather than 500, because user two doesn't have the task
+        // const task = await Task.findById({ _id: taskOne._id }); 
+        const task = await Task.findById(taskOne._id); // we can pass the string value directly without passing an object
+        expect(task).not.toBeNull();
+    });
+    ```
+
 ### Bonus: Extra Test Ideas
+1. From the lessons and techniques we have learnt previously, we can try to build up the following scenarios to test if the program runs well. 
+1. User Test Ideas
+    1. Should not signup user with invalid name/email/password
+    1. Should not update user if unauthenticated
+    1. Should not update user with invalid name/email/password
+    1. Should not delete user if unauthenticated
+1. Task Test Ideas
+    1. Should not create task with invalid description/completed
+    1. Should not update task with invalid description/completed
+    1. Should delete user task
+    1. Should not delete task if unauthenticated
+    1. Should not update other users task
+    1. Should fetch user task by id
+    1. Should not fetch user task by id if unauthenticated
+    1. Should not fetch other users task by id
+    1. Should fetch only completed tasks
+    1. Should fetch only incomplete tasks
+    1. Should sort tasks by description/completed/createdAt/updatedAt
+    1. Should fetch page of tasks
 
 # Real-time Web Applications with Socket.io (Chat App)
 ### Creating the Chat App Project

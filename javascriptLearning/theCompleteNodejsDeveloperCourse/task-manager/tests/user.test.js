@@ -1,24 +1,9 @@
 const request = require('supertest');
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
 const app = require('../src/app');
 const User = require('../src/models/user');
+const { userOneId, userOne, setupDatabase } = require('./fixtures/db');
 
-const userOneId = new mongoose.Types.ObjectId();
-const userOne = {
-    _id: userOneId,
-    name: 'Mike',
-    email: 'mike@example.com',
-    password: '56what!!',
-    tokens: [{
-        token: jwt.sign({ _id: userOneId, }, process.env.JWT_SECRET),
-    }]
-}
-
-beforeEach(async () => {
-    await User.deleteMany(); // clear all the user data in the database 
-    await new User(userOne).save(); // create a user for loging function testing with pre-built/existing data
-});
+beforeEach(setupDatabase);
 
 test('Should singup a new user', async () => {
     const response = await request(app).post('/users').send({
@@ -95,4 +80,40 @@ test('Should delete account for user', async () => {
         .delete('/users/me')
         .send()
         .expect(401)
+});
+
+test('Should upload avatar image', async () => {
+    await request(app)
+        .post('/users/me/avatar')
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .attach('avatar', 'tests/fixtures/profile-pic.jpg') // .attach() is a supertest method 
+        .expect(200);
+    const user = await User.findById(userOneId);
+    // .toBe() is using === 
+    // expect.any() can take other types of data such as String, Number, Boolean
+    expect(user.avatar).toEqual(expect.any(Buffer)); // use .toEqual() method to check if objects are equivalent
+});
+
+test('Should update valid user fields', async () => {
+    const name = 'John Doe';
+    await request(app)
+        .patch('/users/me')
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .send({
+            name
+        })
+        .expect(200);
+    const user = await User.findById(userOneId);
+    // expect(user.name).toEqual(name);
+    expect(user.name).not.toBe(userOne.name);
+});
+
+test('Should update valid user fields', async () => {
+    await request(app)
+        .patch('/users/me')
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .send({
+            location: 'Bangkok'
+        })
+        .expect(400);
 });
