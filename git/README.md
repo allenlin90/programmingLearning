@@ -688,5 +688,18 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 # Day 27 - Control versions through branches in the same remote repository
 1. When a developing team shares a single remote repository, it is easy to get conflict with the files if everyone can access the files and work on different tasks or for different purposes. For example, developing new functions, maintaining features, or fixing bugs on the same or related functions or modules. In this case, it is suggested to use `branch` feature of Git to avoid the conflicts. 
 
-### Create a remote repository and working directory multiple users
-1. 
+### Good naming for branches
+1. `master` branch is usually used only for stable releases. Therefore, in prctice, we should create other branches such as (`develop`) to work on developing functions and features. 
+    1. **New features** - If we'd like to create some small scale features, we can use `feature/[branchname]` for certain function to avoid affecting other developers in the repository. 
+    1. **Hot Fix** - If we found a serious bug on the stable release or the production server, as the task is urgent, we can create a `hotfix/[branch_name]` for the recovering task. 
+    1. **Tag a version** - When we found the current `master` branch is relatively stable, we can use tag object (annotated tag). We firstly use `git checkout master` to return back to master branch and then use `git tag -1.0.0-beta -a -m "[message]"`
+
+### Download all objects from remote repository
+1. Use `git push --all --tags` to push all branches from local to remote repository all at once. f we have tag objects, we need to add on `--tags`. 
+1. Other developers can use `git fetch --all -tags` to download all tag objects and branchese from the remote repository. 
+
+### Develop on different branches
+1. We can use `git branch -a` to check all branches, including remote ones`. 
+1. Though we don't have direct access to other branches in the remote repository, we still can checkout and work on them. After finishing development, we can use `git push origin [branchname]`.
+
+# Day 28 - Understanding fork and pull request on Github
