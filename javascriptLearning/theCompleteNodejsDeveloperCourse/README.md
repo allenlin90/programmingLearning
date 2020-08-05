@@ -4418,6 +4418,9 @@ doWorkCallback(function (error, result) {
     1. The database name used on MongoDB Atlas is `task-manager-api` which is set in the remote DB URL. 
 
 # Testing Node.js (Task App)
+1. Directories of `Jest` tester files in this section
+    <img src="./images/taskAppJestTest.PNG">
+
 ### Jest Testing Framework 
 1. In practice, we can use `Jest` or `Mocha` to do testing 
     1. [Jest](https://jestjs.io/)
@@ -5168,12 +5171,347 @@ doWorkCallback(function (error, result) {
 
 # Real-time Web Applications with Socket.io (Chat App)
 ### Creating the Chat App Project
+1. We firstly create a Node.js web server with `express` framework. 
+    1. Initialize npm and install `express`.
+    1. Setup a new `express` server (we can follow the structure of building weather app or from the section of "web-server")
+        1. Serve up the public directory.
+        1. Listen on port 3000 (default express port).
+    1. Create `index.html` and render "Chat App" to the screen.
+    ```js 
+    // index.js
+    const path = require("path");
+    const express = require('express');
+    const app = express();
+    const hbs = require('hbs');
+
+    const PORT = process.env.PORT || 3000;
+
+    // Define paths for Express config
+    const publicDirectoryPath = path.join(__dirname, "../public");
+    const viewsPath = path.join(__dirname, "../templates/views");
+    const partialsPath = path.join(__dirname, "../templates/partials");
+
+    // Setup handlerbars engine and views location
+    app.set("views", viewsPath);
+    app.set("view engine", "hbs");
+    hbs.registerPartials(partialsPath);
+
+    // Setup static directory to serve
+    app.use(express.static(publicDirectoryPath));
+
+    app.get('/', (req, res) => {
+        res.render('index', {
+            text: 'Chat App'
+        });
+    });
+
+    app.listen(PORT, () => {
+        console.log(`local server starts on PORT ${PORT}`);
+    });
+    ```
+
+1. From the lecture, we can render a static HTML file without using `hbs` package. In this case, we can just create `index.html` in `/public` for `express` to render. 
+    ```js 
+    const path = require('path');
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT || 3000; 
+    const publicDirectoryPath = path.join(__dirname, '../public');
+
+    app.use(express.static(publicDirectoryPath));
+
+    app.listen(port, ()=>{
+        console.log(`Server is on port ${port}`);
+    });
+    ```
+
+1. After initiating the server, we can set up scripts in `package.json`
+    1. Create a "**start**" script to start the app using node. 
+    1. Install `nodemon` and a development dependency
+    1. Create a "dev" script to start the app using nodemon 
+    ```json
+    {
+      "scripts": {
+        "start": "node src/index.js",
+        "dev": "nodemon src/index.js"
+      }
+    }
+    ```
+
 ### WebSockets
+1. WebSocket Protocol (as HTTP protocol) to set up communication. WebSockets allow for "**full-duplex**" communication, which is a type of communication that provides bi-diractional communication and can be initiated from either client or server side. In HTTP request, the communication always starts from the request from the client, and the server can only respond to the request from the client. With WebSocket, the server can also start a communication with a client. 
+    1. WebSockets allow for full-duplex communication
+    1. WebSocket is a separate protocol from HTTP 
+    1. WebSocket provides persistent connection between client and server
+1. For example, when a user sends a message to the server, the server can send or render other types of data or info to other users who connect to the server. 
+    <img src="./images/webSocketProtocol.PNG">
+
 ### Getting Started with Socket.io
+1. We can check details and info of [socket.io](https://socket.io/). However, before we start to use `socket.io`, we have to refactor the code in `index.js`. After the following configuration, we can start to deal with the connections from clients. 
+    ```js 
+    // src/index.js
+    const path = require("path");
+    const http = require('http'); // require http library
+    const express = require('express');
+    const socketio = require('socket.io'); // require socket.io library 
+
+    const app = express();
+    const server = http.createServer(app); // change the way to initiate the server
+    const io = socketio(server); // use socket.io in this Node.js server 
+
+    const PORT = process.env.PORT || 3000;
+
+    // Define paths for Express config
+    const publicDirectoryPath = path.join(__dirname, "../public");
+
+    // Setup static directory to serve
+    app.use(express.static(publicDirectoryPath));
+
+    // print a message when a user connects to the server 
+    io.on('connection', function(){
+        console.log('New WebSocket connection');
+    }); 
+
+    // change from app.listen to server.listen
+    server.listen(PORT, () => { 
+        console.log(`local server starts on PORT ${PORT}`);
+    });
+    ```
+1. Thoug we can just add a listener on `io` directly and use a callback function to print a message to the console when a user connects to it. However, this process works only if the client side also starts a connection in WebSocket. Therefore, we have to modify the HTML file and include the library to use WebSocket. 
+    1. Create `chat.js` in `/public/js`.
+    ```js 
+    io();
+    ```
+    1. Include the JavaScript code in `index.html`.
+        1. `/socket.io/socket.io.js`
+        1. `./js/chat.js`
+    ```html 
+    <!-- index.html -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/chat.js"></script>
+    ```
+1. After setting up, we can connect to `http://localhost:3000/` to check. In this case, the message "**New WebSocket Connection**" should show in the terminal. 
+
 ### Socket.io Events 
+1. We can configure custom events to communicate from server to the client. 
+    1. On the server side, `index.js`, we can use `socket.emit()` which takes a customized name of method to send to the client. Besides, we can pass a variable in the method. 
+    ```js 
+    // index.js (server)
+    // give a count variable 
+    let count = 0;
+
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('countUpdated', count);
+    });
+    ```
+    1. On the client side, `chat.js`, we can use `socket.on()` which is similar to the `io` listener on the server side and take exactly the same name of event with a callback function. The callback function can take the variable or value passed from server-side. 
+    ```js 
+    // chat.js (client)
+    socket.on('countUpdated', (count) => {
+        console.log('The count has been updated');
+    })
+    ```
+1. If we visit `http://localhost:3000`, we can check the message `The count has been updated` in the developer console.
+    <img src="./images/webSocketPassVar.png">
+1. We create a `+1` button on the HTML file for user to click on and send an event. 
+1. We can send data from the client-side to the server to work on. We can also use `socket.emit()` on the client side. However, we don't pass any argument in this case, as the purpose is to let the server know that there's a new event comes from the client. 
+    ```js 
+    // chat.js 
+    const socket = io();
+    socket.on('countUpdated', function (count) {
+        console.log(`The count has been updated`, count);
+    })
+    document.querySelector('#increment').addEventListener('click', function () {
+        console.log('Clicked');
+        socket.emit('increment');
+    });
+    ```
+1. In `index.js`, we update `io` to add a listener to check if there's a `increment` event sending from the client side. If the event comes, we can use the callback function to react. In this case, the event comes only when the user click `+1` button on the webpage. Thus, after ther server-side program updats the varible, it sends back to client, while client side JavaScript has had the listener for `countUpdated` event, and it will print the updated `count` variable in the console on the client side. 
+    ```js 
+    // index.js
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('countUpdated', count);
+        // listen if "increment" event is sent from the client side 
+        socket.on('increment', () => {
+            count++;
+            socket.emit('countUpdated', count); // this sends the updated "count" variable back with "countUpdated" event to client side 
+        });
+    });
+    ```
+1. If we refresh the page or connect to the server with another request, the `count` variable is updated and shows the latest value according to the other users. If one of the users click the `+1` button, the others users will see the updated value when they click the button. The value of `count` will remain modified as long as the session of server is not stopped. Note that if we restart the server, the `count` variable will be back to `0` as its initial stage because we don't use database to store the modified value. 
+1. Besides, we can modify the code and let server program to send update message to all the connected users when one of the users click and update the value. In this case, we use `io.emit()` instead of `socket.emit()`.
+    ```js 
+    // index.js
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('countUpdated', count);
+        socket.on('increment', () => {
+            count++;
+            // socket.emit('countUpdated', count); // emit event to specific connection
+            io.emit('countUpdated', count); // emit event to all the connections to the server
+        });
+    });
+    ```
+
 ### Socket.io Events Challenge
+1. Send a welcome message to a new user
+    1. Have server emit "message" when new client connects
+        1. Send 'Welcome!' as the event data 
+    1. Have client listen for 'message' event and print to console
+    ```js 
+    //index.js
+    let message = 'Welcome!';
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('welcome', message);
+    });
+
+    //chat.js
+    const socket = io();
+    socket.on('welcome', message => {
+        console.log(message);
+    });
+    ```
+1. Allow clients to send messages 
+    1. Create a form with an input and button (similar to weather form)
+    1. Setup event listener for form submissions
+        1. Emit "sendMessage" with input string as message data
+    ```js 
+    // chat.js
+    socket.on('message', message => {
+        console.log(message);
+    })
+
+    document.querySelector('#message-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const message = event.target.elements.message.value;
+        socket.emit('sendMessage', message);
+    });
+    ```
+    1. Have server listen for "sendMessage"
+        1. Send message to all connected clients
+    ```js 
+    // index.js 
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('welcome', message);
+
+        socket.on('sendMessage', message => {
+            io.emit('message', message);
+        });
+    });
+    ```
+
 ### Broadcasting Events 
+1. Broadcast when a new user joined - From the previous section, we can update the listener and add another method to "**broadcast**". By using `socket.broadcast.emit()`, all the other connections besides the specific socket connection (which is the new coming user) will get a `message` event emitted from the server. 
+    ```js
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('welcome', 'Welcome!');
+
+        // socket.broadcast.emit() sends message all the users except the connection of the socket 
+        socket.broadcast.emit('message', 'A new user has joined!');
+
+        socket.on('sendMessage', message => {
+            io.emit('message', message);
+        });
+    });
+    ```
+1. Make a broadcast when a user leaves - When a user disconnect (such as closing the browser), the server will send a messsage to all the users stay connected. In this case, we can set up a listener for `disconnect` as a callback function in `io.on('connection')`. 
+    ```js 
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('welcome', 'Welcome!');
+        // socket.broadcast.emit() sends message all the users except the connection of the socket 
+        socket.broadcast.emit('message', 'A new user has joined!');
+
+        socket.on('sendMessage', message => {
+            io.emit('message', message);
+        });
+        
+        // broadcast a message when a user leaves. We don't need to use .broadcast.emit() method because the user has left
+        socket.on('disconnect', () => {
+            io.emit('message', 'A user has left!')
+        })
+    });
+    ```
+
 ### Sharing Your Location 
+1. We can use client side geo-location API to get the location of a user. We can visit [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API) on MDN for more info. Note that not all browsers support the feature. 
+1. In this case, we make a button in HTML to call `Geolocation API`.
+1. In mordern browser, we can use `navigator.geolocation` to check the location of the user. Though this is API takes some time to process as async function, it doesn't support `Promise` and `Async/Await`, so we can only use callback function to manipulate the data. 
+    ```js 
+    if (!navigator.geolocation) {
+        return alert('Geolocation is not supported by your browser.');
+    }
+
+    navigator.geolocation.getCurrentPosition((position) => {
+        console.log(position); 
+    });
+    ```
+1. When a user clicks the button to send the location, the browser will ask for consent and fetch the location of the user.
+    1. Have client emit "sendLoction" with an object as the data 
+    1. Object should contain latitdude and longitude peroperties
+    1. Server should listen for "SendLocation"
+    1. When fired, send a "message" to all connected clients "Location: lat, long"
+    ```js 
+    // index.js 
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('welcome', 'Welcome!');
+        // socket.broadcast.emit() sends message all the users except the connection of the socket 
+        socket.broadcast.emit('message', 'A new user has joined!');
+
+        socket.on('sendMessage', message => {
+            io.emit('message', message);
+        });
+
+        socket.on('disconnect', () => {
+            io.emit('message', 'A user has left!')
+        });
+
+        socket.on('sendLocation', coords => {
+            io.emit('message', `Location: ${coords.latitude}, ${coords.longitude}`);
+        })
+    });
+    // chat.js 
+    document.querySelector('#send-location').addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            return alert('Geolocation is not supported by your browser.');
+        }
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            socket.emit('sendLocation', {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+            });
+        });
+    });
+    ```
+1. We can pass the coordinate as the parameters to `https://www.google.com/maps?q=[latitude],[longitude]` to get the location on Google Map. By this feature, we can use DOM and resend this to a `<a>` link to check the location. In this case, we just print the URL to the browser console.
+    ```js 
+    io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
+        socket.emit('welcome', 'Welcome!');
+        // socket.broadcast.emit() sends message all the users except the connection of the socket 
+        socket.broadcast.emit('message', 'A new user has joined!');
+
+        socket.on('sendMessage', message => {
+            io.emit('message', message);
+        });
+
+        socket.on('disconnect', () => {
+            io.emit('message', 'A user has left!')
+        });
+
+        socket.on('sendLocation', coords => {
+            io.emit('message', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
+        });
+    });
+    ```
+
 ### Event Acknowledgements 
 ### Form and Button states 
 ### Rendering Messages
