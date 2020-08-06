@@ -5844,6 +5844,12 @@ doWorkCallback(function (error, result) {
     <img src="./images/momentTimestamp.PNG">
 
 ### Timestamps for Location Messages 
+1. Add timestamps for location messages 
+1. Create generateLocationMessage and export 
+    {url: '', createdAt: 0}
+1. Use generateLocationMessage when server emits locationMessage
+1. Update template to render time before the url
+1. Complete the template with the URL and teh formatted time
 
 ### Styling the Chat App
 ### Join Page
