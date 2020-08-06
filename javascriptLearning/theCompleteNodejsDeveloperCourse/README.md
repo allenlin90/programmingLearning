@@ -5492,20 +5492,7 @@ doWorkCallback(function (error, result) {
     ```
 1. We can pass the coordinate as the parameters to `https://www.google.com/maps?q=[latitude],[longitude]` to get the location on Google Map. By this feature, we can use DOM and resend this to a `<a>` link to check the location. In this case, we just print the URL to the browser console.
     ```js 
-    io.on('connection', (socket) => {
-        console.log('New WebSocket connection');
-        socket.emit('welcome', 'Welcome!');
-        // socket.broadcast.emit() sends message all the users except the connection of the socket 
-        socket.broadcast.emit('message', 'A new user has joined!');
-
-        socket.on('sendMessage', message => {
-            io.emit('message', message);
-        });
-
-        socket.on('disconnect', () => {
-            io.emit('message', 'A user has left!')
-        });
-
+    io.on('connection', (socket) => {      
         socket.on('sendLocation', coords => {
             io.emit('message', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
         });
@@ -5513,11 +5500,351 @@ doWorkCallback(function (error, result) {
     ```
 
 ### Event Acknowledgements 
+1. Event acknowledgement allows the receiver of the event to know that the program has received and processed an event. This acknowledgement is optional. 
+    1. Server sends a message to client, and the client sends a message back to server as acknowledgement.
+    1. Client sends a message to server, and the server sends a message back to client as acknowledgement.
+1. We update both the sender and listener function in `chat.js` and `index.js`
+    1. In `chat.js`, we can add an anonymous callback function to `socket.emit()` which will be executed when the client side receives an acknowledgement. 
+    ```js 
+    // chat.js
+    document.querySelector('#message-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const message = event.target.elements.message.value;
+
+        // add a callback function to execute when receive a acknowledgement from the server
+        // server pass 'Delivered' string as a argument 
+        socket.emit('sendMessage', message, (message) => { 
+            console.log('The message was delivered', message);
+        });
+    });
+    ```
+    1. In `index.js`, we give the listener another argument, the callback function that is sent form the client side. Besides, we can pass arguments from server to client. 
+    ```js
+    // index.js
+    io.on('connection', (socket) => {        
+        // pass a callback function. Besides, we can pass other arguments back to the client. 
+        socket.on('sendMessage', (message, callback) => {
+            io.emit('message', message); 
+            callback('Delivered'); // pass 'Delivered' back to client
+        });        
+    });
+    ```
+
+1. This feature is useful for message filter. For example, we can use 3rd party library to filter the message sent from client side to prevent abusing. In this case, we use npm [`bad-words`](https://www.npmjs.com/package/bad-words) package to filter the message. 
+    ```js 
+    // index.js 
+    const Filter = require('bad-words');
+
+    io.on('connection', (socket) => {
+        socket.on('sendMessage', (message, callback) => {
+            const filter = new Filter();
+
+            if (filter.isProfane(message)) {
+                return callback('Profanity is not allowed!')
+            }
+            io.emit('message', message);
+            // pass no argument if it's passed
+            callback();
+        });
+    }
+    ```
+1. In `chat.js`, we can use an `IF` statement to check if there's an error returned.
+    ```js 
+    document.querySelector('#message-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const message = event.target.elements.message.value;
+        socket.emit('sendMessage', message, (error) => {
+            if (error) {
+                return console.log(error);
+            }
+
+            console.log('Message delivered');
+        });
+    });
+    ```
+1. We then set up location sharing acknowledgement 
+    1. Setup the client acknowledgement function
+    1. Setup the server to send back the acknowledgement 
+    1. Have the client print "Location shared!" when acknowledged
+1. In `chat.js`, 
+    ```js 
+    // chat.js
+    document.querySelector('#send-location').addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            return alert('Geolocation is not supported by your browser.');
+        }
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            socket.emit('sendLocation', {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+            }, () => {
+                console.log('Location shared!');
+            });
+        });
+    });
+    ```
+1. In `index.js`, we can check the data sent from the client is correct. 
+    ```js 
+    io.on('connection', (socket) => {
+        socket.on('sendLocation', (coords, callback) => {           
+            io.emit('message', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
+            callback();
+        });
+    }
+    ```
+
 ### Form and Button states 
+1. The current UI doesn't have any indication for the states after users click the buttons, they don't know what's happening. Besides, we can use use DOM to disable the buttons, while APIs and the functions are working behind the scene. 
+    ```js 
+    // chat.js 
+    // Elements 
+    const $messageForm = document.querySelector('#message-form');
+    const $messageFormInput = $messageForm.querySelector('input');
+    const $messageFormButton = $messageForm.querySelector('button');
+
+    $messageForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        // disable 
+        $messageFormButton.setAttribute('disabled', 'disabled');
+
+        const message = event.target.elements.message.value;
+
+        socket.emit('sendMessage', message, (error) => {
+            // enable 
+            $messageFormButton.removeAttribute('disabled');
+            $messageFormInput.value = '';
+            $messageFormInput.focus();
+
+            if (error) {
+                return console.log(error);
+            }
+
+            console.log('Message delivered');
+        });
+    });
+    ```
+1. Disable the send location button while location being sent 
+    1. Set up a selector at the top of the file 
+    1. Disable the button just before getting the current position
+    1. Enable the button in the acknowledgement callback
+    ```js 
+    // chat.js 
+    const $sendLocationButton = document.querySelector('#send-location');
+
+    $sendLocationButton.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            return alert('Geolocation is not supported by your browser.');
+        }
+        // disable button while processing
+        $sendLocationButton.setAttribute('disabled', 'disabled');
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            // enable button after process
+            $sendLocationButton.removeAttribute('disabled');
+            socket.emit('sendLocation', {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+            }, function () {
+                console.log('Location shared!');
+            });
+        });
+    });
+    ```
+
 ### Rendering Messages
-### Rendering Location MEssages
+1. In this case, we use a JavaScript library to render HTML file and templates. We use the following client-side librarys and import them to `index.html`.
+    1. `mustache`
+    1. `moment`
+    1. `qs` query string
+1. We import the libraries to the HTML file and create another `<script>` tag to render the HTML template. We use `<srcipt>` to wrap the template, as to prevent HTML file render the elements to the page. Besides, we can modified the meta-data to specify `type` attribute of the `<script>` tag that the code is actually `text/html`. 
+    ```html
+    <!-- index.html -->
+    <body>
+        <h1>Chat App</h1>
+
+        <!-- section for new message to render -->
+        <div id="messages"></div>
+
+        <form id="message-form">
+            <input name="message" type="text" placeholder="Message">
+            <button class="msg">Send</button>
+        </form>
+        <button id="send-location">Send My Location</button>
+
+        <!-- template for mustache library to render -->
+        <script id="message-template" type="text/html">
+            <div>
+                <p>This is a message</p>
+            </div>
+        </script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="./js/chat.js"></script>
+    </body>
+    ```
+1. In `chat.js`, we can use DOM selector to choose the message section to render the HTML template into. Besides, we use another DOM selector to chosoe the message of the `innerHTML`. Thus, we can use `Mustache` library with `Mustache.render()` method to build up the HTML file and render it with `.insertAdjacentHTML()` method into the message section. 
+    ```js 
+    const $messages = document.querySelector('#messages');
+    // Templates
+    const messageTemplate = document.querySelector('#message-template').innerHTML;
+
+    socket.on('welcome', message => {
+        console.log(message);
+        const html = Mustache.render(messageTemplate); // use Mustache to render the HTML 
+        $messages.insertAdjacentHTML('beforeend', html);
+    });
+    ```
+1. With `Mustache` library, we can render the HTML file and pass variables into it. We can use dual curly braces syntax to wrap the placeholder. 
+    ```html 
+    <!-- template for mustache library to render -->
+    <script id="message-template" type="text/html">
+        <div>
+            <p>{{message}}</p>
+        </div>
+    </script>
+    ```
+1. Therefore, in `Mustache.render()` method in `chat.js`, we can pass a 2nd argument (which is an `Object`) for the placeholder in the HTML template. 
+    ```js 
+    // chat.js 
+    socket.on('welcome', message => {
+        console.log(message);
+        const html = Mustache.render(messageTemplate, {
+            message, // use destructure syntax to pass 'message' from server
+        });
+        $messages.insertAdjacentHTML('beforeend', html);
+    });
+    ```
+1. However, until this point, we haven't separated the events, as the functions use `message` to render. Therefore, when users click share location, it will also leak in the rendered HTML template. 
+
+### Rendering Location Messages
+1. Create a separate event for location sharing message
+    1. Have server emit "locationMessage" with the URL
+    1. Have the client listen for "locationMessage" and pinrt the URL to the console.
+    ```js 
+    // chat.js 
+    // add a new listener
+    socket.on('locationMessage', url => {
+        console.log(url);
+    });
+
+    // index.js 
+    io.on('connection', socket=>{
+        socket.on('sendLocation', (coords, callback) => {
+            // change the event name from 'message' to 'locationMessage'
+            io.emit('locationMessage', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
+            callback();
+        });
+    });
+    ```
+1. Render new template for location messages 
+    1. Duplicate the message tempalte
+        1. Change the id of HTML message template to be selected
+    1. Add a link inside the paragraph 
+        1. URL for link should be the maps URL (dynamic)
+    1. Select the template from JavaScript
+    1. Render the template with the URL and append to messages list 
+    ```html 
+    <!-- index.html -->
+    <!-- template of location for mustache library to render -->
+    <script id="location-message-template" type="text/html">
+        <div>
+            <p><a href="{{url}}" target="_blank">My Current Location</a></p>
+        </div>
+    </script>
+    ```
+    ```js 
+    // chat.js 
+    const locationTemplate = document.querySelector('#location-message-template').innerHTML;
+    socket.on('locationMessage', url => {
+        console.log(url);
+        const html = Mustache.render(locationTemplate, {
+            url,
+        });
+        $messages.insertAdjacentHTML('beforeend', html);
+    });
+    ```
+1. `Mustache` placeholder can also be used in the attribute of a HTML element. However, the attribute can also be modified with DOM methods, though is a relatively complicated method. If we use DOM method, we have to run the DOM method after the template element has been rendered to the page. 
+1. In the anchor tag, we can add `target="_blank"` to prevent it redirect the page to the given URL on the tab, as we want to open a web tag rather than close the chat room page. By this `target` attribute, the browser will open a new tag for the URL. 
+
 ### Working with Time 
+1. In this section, we can add a timestamp to the messages rendered in the section, so users can know when the message were sent. We can use built-in JavaScript Object [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) for the task.  
+    1. `new Date()` to create the current timestamp 
+    1. `new Date().toString()` turn the `Date` object to a string 
+    1. `new Date().getDate()` retrieve the date of the current time 
+    1. `new Date().getTime()` to get time number which is the total seconds since 1970/01/01 till now. If we try to get the date before year `1970`, it returns a negative number. The date benchmark is an universal time and acknowledged by many programming languages. 
+1. In current `index.js` (server code), we have multiple functions that can use timestamp. Therefore, we can create a reusable code for the purpose.
+    1. welcome message
+    1. notification when a new user joins
+    1. share location
+    1. notification when a user leaves 
+1. In the `.emit()` method of `socket.io`, we can pass multiple arguments after the event variable or an `Object` that carries all the variables we want to pass as arguments. Therefore, we can create a function to generate the `Object` we want to pass in different events. 
+    ```js 
+    // pass multiple variables 
+    socket.emit('message', 'var1', 'var2'); 
+
+    // use object to wrap all variables
+    socket.emit('message', {
+        var1,
+        var2,
+        var3,
+        createdAt: new Date().getTime(), // time generated
+    });
+    ```
+1. In this case, we create a new folder `utilis` in `src` with a new JavaScript file `messages.js` which can be used for generate message `Objects`.
+    ```js 
+    // src/utilis/messages.js
+    const generateMessage = (text) => {
+        return {
+            text,
+            createdAt: new Date().getTime(),
+        }
+    }
+
+    module.exports = {
+        generateMessage,
+    }
+    ```
+1. In `index.js`, we can import the function by using destructuring for the shorthand and call the function by passing the message to create the `Object` to pass with the `.emit()` method. 
+    ```js 
+    // index.js
+    const { generateMessage } = require('./utilis/messages');
+
+    io.on('connection', socket => {
+        socket.emit('message', generateMessage('Welcome!'));
+    })
+    ```
+1. Thus, we can modified the code in `chat.js` to render the message in the object on the webpage. Besides, we need to update the HTML template with another placeholder `createdAt`. 
+    ```js 
+    socket.on('message', message => {
+        console.log(message);
+        const html = Mustache.render(messageTemplate, {
+            message: message.text, 
+            createdAt: message.createdAt,
+        });
+        $messages.insertAdjacentHTML('beforeend', html);
+    });
+    ```
+1. Since the ordinary JavaScript doesn't have an easy way to deal with date and time, we can use [`moment`](https://momentjs.com/) library to handle the time related data. In this case, we use "[Display](https://momentjs.com/docs/#/displaying/)" methods from `moment` library. (Note that we've loaded `moment` library through CDN already).
+    ```js 
+    // chat.js
+    socket.on('message', message => {
+        console.log(message);
+        const html = Mustache.render(messageTemplate, {
+            message: message.text,
+            // use moment library to format the time 
+            createdAt: moment(message.createdAt).format('h:mm a'),
+        });
+        $messages.insertAdjacentHTML('beforeend', html);
+    });
+    ```
+    <img src="./images/momentTimestamp.PNG">
+
 ### Timestamps for Location Messages 
+
 ### Styling the Chat App
 ### Join Page
 ### Socket.io Rooms 
