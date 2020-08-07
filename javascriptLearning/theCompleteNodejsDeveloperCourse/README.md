@@ -5845,19 +5845,652 @@ doWorkCallback(function (error, result) {
 
 ### Timestamps for Location Messages 
 1. Add timestamps for location messages 
-1. Create generateLocationMessage and export 
-    {url: '', createdAt: 0}
-1. Use generateLocationMessage when server emits locationMessage
-1. Update template to render time before the url
-1. Complete the template with the URL and teh formatted time
+    1. Create generateLocationMessage and export 
+        {url: '', createdAt: 0}
+    1. Use generateLocationMessage when server emits locationMessage
+    1. Update template to render time before the url
+    1. Complete the template with the URL and teh formatted time
+1. `index.html`
+    1. Create placeholder for timestamp as `createdAt` 
+    ```html
+    <!-- template of location for mustache library to render -->
+    <script id="location-template" type="text/html">
+        <div>
+            <p>{{createdAt}} - <a href="{{url}}" target="_blank">My Current Location</a></p>
+        </div>
+    </script>
+    ```
+
+1. `messages.js`
+    1. Create the function `generateLocationMessage` which creates an `Object` with `url` and `timestamp`
+    ```js
+    const generateLocationMessage = (url) => {
+        return {
+            url,
+            createdAt: new Date().getTime(),
+        }
+    }
+
+    module.exports = {
+        generateLocationMessage,
+    }
+    ```
+
+1. `index.js`
+    1. Import the function from `messages.js`. 
+    1. Use `generateLocationMessage()` function to generate the `Object` to send to all users. 
+    ```js 
+    const {generateLocationMessage} = require('./utilis/messages');
+    
+    io.on('connction', socket => {
+        socket.on('sendLocation', (coords, callback) => {
+            io.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`));
+            callback();
+        });
+    })
+    ```
+
+1. `chat.js`
+    1. Use `Mustache` library to handle the `Object` and replace the placeholders in the template. 
+    1. Use DOM to render the template to `index.html`.
+    ```js 
+    socket.on('locationMessage', message => {
+        console.log(message);
+        const html = Mustache.render(locationMessageTemplate, {
+            url: message.url,
+            createdAt: moment(message.createdAt).format('h:mm a'),
+        });
+        $messages.insertAdjacentHTML('beforeend', html);
+    });
+    ```
 
 ### Styling the Chat App
+1. We can download the CSS file and favicon image on [https://links.mead.io/chatassets](https://links.mead.io/chatassets)
+1. We put both `img` and `css` folder in `public` folder.
+1. Configure and setup `index.html`
+    1. Import `favicon.png`
+    1. Import `styles.min.css`
+    1. Create a `<div>` container with class `chat`. There 2 main components of the page
+        1. `<div>` tag with class `chat__sidebar`.
+        1. `<div>` tag with class `chat__main`.
+    1. In `<div class="chat__main">` tag, we have separated 2 sections 
+        1. `<div class="chat_messages">` for messages to render (which is empty). 
+        1. `<div class="compose">` for the form for users to input messages. 
+    1. Update `<script>` tags which hold the HTML templates 
+        ```html 
+        <div class="message">
+            <p>
+                <span class="message__name">Some User Name</span>
+                <span class="message__meta">{{createdAt}}</span>
+            </p>
+            <p>{{message}}</p>
+        </div>
+        ```
+1. Final setup of `index.html`
+    ```html
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="./img/favicon.png">
+        <link rel="stylesheet" href="./css/styles.min.css">
+        <title>Chat App</title>
+    </head>
+
+    <body>
+        <div class="chat">
+            <div class="chat__sidebar"></div>
+
+            <div class="chat__main">
+                <!-- section for new message to render -->
+                <div id="messages" class="chat__messages"></div>
+
+                <!-- form for user to input message -->
+                <div class="compose">
+                    <form id="message-form">
+                        <input name="message" type="text" placeholder="Message">
+                        <button class="msg">Send</button>
+                    </form>
+                    <button id="send-location">Send My Location</button>
+                </div>
+
+            </div> <!-- end of chat__main -->
+        </div> <!-- end of chat -->
+
+        <!-- template of message for mustache library to render -->
+        <script id="message-template" type="text/html">
+            <div class="message">
+                <p>
+                    <span class="message__name">Some User Name</span>
+                    <span class="message__meta">{{createdAt}}</span>
+                </p>
+                <p>{{message}}</p>
+            </div>
+        </script>
+
+        <!-- template of location for mustache library to render -->
+        <script id="location-template" type="text/html">
+            <div class="message">
+                <p>
+                    <span class="message__name">Some User Name</span>
+                    <span class="message__meta">{{createdAt}}</span>
+                </p>
+                <p><a href="{{url}}" target="_blank">My Current Location</a></p>
+            </div>
+        </script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="./js/chat.js"></script>
+    </body>
+    ```
+    <img src="./images/chatAppUI.PNG">
+
 ### Join Page
+1. This is a landing page for users to choose the chatrooms they'd like to join. Therefore, we'd like to refactor the structure, as `index.html` should actually the landing page and have a list of chatrooms for users to join, while we copy all the contents in the current `index.html` to another new HTML file `chat.html`. 
+1. However, though we can use `form` tag to send the parameters to `chat.html`, it doesn't actually separate the users at this point, as all the users are actually direct to page `chat.html`. On the other hand, we can use JavaScript to check the parameters and categorize the messages.  
+    ```html
+    <!-- updated index.html -->
+    <body>
+        <div class="centered-form">
+            <div class="centered-form__box">
+                <h1>Join</h1>
+                <form action="./chat.html">
+                    <label for="">Display Name</label>
+                    <input type="text" name="username" placeholder="Display name" required>
+                    <label for="">Room</label>
+                    <input type="text" name="room" placeholder="room" required>
+                    <button>Join</button>
+                </form>
+            </div>
+        </div>
+    </body>
+    ```
+    <img src="./images/chatAppJoinChatRoom.gif">
+
 ### Socket.io Rooms 
-### Storing Users: Part 1 
+1. In this section, we will learn how to parse the parameters send in the URL and create rooms through `socket.io` and filter the message for users in only certain rooms. For example, we can open developer console in the browser and check the parameters through `location.search`. In this case, it will return the parameters (key/value pairs after question mark `?` in the URL). 
+1. We will use the 3rd libraries we imported in `chat.html`, which is `qs` (query string), to solve the problems. The client side library is going to help to convert the queried `String` returned from `location.search` to an `Object`. 
+1. In `chat.js`, we use `Qs.parse(location.search)` to check the parameters. However, the string returned will contain the question mark `?` in the beginning. Therefore, we pass an object as the 2nd argument `{ ignoreQueryPrefix: true }` to `Qs.parse()` to ignore the question mark. (Though we can use other method to take the character off, such as `Array.shift()`)
+    ```js 
+    // chat.js
+    // Options
+    // User destructuring to create 'username' and 'room' variable 
+    // pass an object as the 2nd argument for Qs.parse() with { ignoreQueryPrefix: true } to ignore the question mark in the string
+    const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+
+    // send data to server when a user try to join a certain chatroom with a username
+    socket.emit('join', { username, room });
+    ```
+1. On the server side, we can use `socket.join()` which is a server-side method to join a certain chatroom. Therefore, the message of the socket connection will only be sent to the given `room` in `socket.join()`.
+    ```js 
+    // index.js
+    io.on('connection', socket => {
+        socket.on('join', ({ username, room}) => {
+            socket.join(room);
+
+            socket.emit('message', generateMessage('Welcome!'));
+            socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`));
+        });
+    });
+    ```
+1. At the current point, we have learnt 3 ways to send message. 
+    1. `socket.emit()`
+    1. `io.emit()`
+    1. `socket.broadcast.emit()` 
+1. Since we'd like to limit the message of a chatroom to members joining the room, we can use the followings with `.to()` method. Similar to their counterparts we used above, `io.to.emit()` can send messages to all members in the chatroom, including the sender, while `socket.broadcast.to.emit()` can send message to all memebers exclude the sender. 
+    1. `io.to(room).emit()`
+    1. `socket.broadcast.to(room).emit()`
+1. However, `room` variable is only accessible to `join` event listener at the moment, while other event handlers still can access to it and the message aren't filtered correctly at this point.  
+
+### Storing Users: Part 1
+1. Since we'd like to control and manage the message flow, we can create functions to keep tracking on users with their `username` and `chatrooms`. Thus, we create a `users.js` in `utilis`. In this case, we will create 4 functions. 
+    1. `addUser` to track on if a new user joins the chatroom 
+    1. `removeUser` stop tracking a user when the user close the chatroom tab 
+    1. `getUser` to fetch an existing user's data 
+    1. `getUsersInRoom` to get a list of users in a specific room and use the data to render the user list on the side bar of a chatroom. 
+1. In `socket.io`, every single connection has an unqiue `id` with it, we can use the data as an identifier to mark the users. However, in this case, we haven't set up the function to find the connection id of a socket. 
+    1. `addUser()` takes 3 arguments `id`, `username`, and `room`. 
+        1. Create an empty array to keep users
+        1. Clean the data input with `.trim()` and `.toLowerCase()`.
+        1. Check if `username` and `room` are given. 
+        1. Check if a `username` has already used in a `chatroom`. 
+        1. Store the verified user to the empty array
+    ```js 
+    const users = [];
+
+    const addUser = ({ id, username, room }) => {
+        // clean the data 
+        username = username.trim().toLowerCase();
+        room = room.trim().toLowerCase();
+
+        // validate the data 
+        if (!username || !room) {
+            return {
+                error: 'Username and room are required!',
+            }
+        }
+
+        // check for existing user
+        const existingUser = users.find((user) => {
+            return user.room === room && user.username === username;
+        });
+
+        // validate username 
+        if (existingUser) {
+            return {
+                error: 'Username is in use',
+            }
+        }
+
+        // store user
+        const user = { id, username, room }
+        users.push(user);
+        return { user }
+    }
+    ```
+    1. `removeUser()` takes only 1 argument `id`. We can use `.findIndex()` array method to search the `users` array if the user is in there and use `.splice()` method to remove the user. Note that `.splice()` method modify the original array directly and return the element removed from the `Array`. 
+    ```js 
+    const removeUser = (id) => {
+        const index = users.findIndex(user => user.id === id);
+
+        if (index !== -1) {
+            return users.splice(index, 1)[0];
+        }
+    }
+    ```
+
 ### Storing Users: Part 2
+1. Create two new function for users
+    1. Create getUser
+        1. Accept id and return user object (or `undefined`) 
+        1. Can use `Array.find()`
+    1. Create getUsersInRoom
+        1. Accept room name and return array of users (or empty array)
+        1. Can use `Array.filter()`
+    ```js 
+    // src/utilis/users.js
+    const getUser = (id) => {
+        const userFound = users.find(user => user.id === id);
+
+        return userFound;
+    };
+
+    const getUsersInRoom = (room) => {
+        room = room.trim().toLowerCase();
+        const usersInRoom = users.filter(user => user.room === room);
+
+        return usersInRoom;
+    };
+    ```
+1. We use closure the have the empty `Array` only accessible in `users.js`. After creating all the function, we export all of them to be used in the other script files.
+    ```js 
+    // users.js
+    const users = [];
+
+    const addUser = ({ id, username, room }) => {
+        // clean the data 
+        username = username.trim().toLowerCase();
+        room = room.trim().toLowerCase();
+
+        // validate the data 
+        if (!username || !room) {
+            return {
+                error: 'Username and room are required!',
+            }
+        }
+
+        // check for existing user
+        const existingUser = users.find((user) => {
+            return user.room === room && user.username === username;
+        });
+
+        // validate username 
+        if (existingUser) {
+            return {
+                error: 'Username is in use',
+            }
+        }
+
+        // store user
+        const user = { id, username, room }
+        users.push(user);
+        return { user }
+    };
+
+    const removeUser = (id) => {
+        const index = users.findIndex(user => user.id === id);
+
+        if (index !== -1) {
+            return users.splice(index, 1)[0];
+        }
+    };
+
+    const getUser = (id) => {
+        const userFound = users.find(user => user.id === id);
+
+        return userFound;
+    };
+
+    const getUsersInRoom = (room) => {
+        room = room.trim().toLowerCase();
+        const usersInRoom = users.filter(user => user.room === room);
+
+        return usersInRoom;
+    };
+
+    module.exports = {
+        addUser,
+        removeUser,
+        getUser,
+        getUsersInRoom,
+    }
+    ```
+
 ### Tracking Users Joining and Leaving 
+1. In `chat.js`, we can use pass a callback function as the 3rd argument to run as an acknowledement that server has got the message. In the callback function, we can use `alert()` to show the message and use `location.href = '/'` to redirect the user to the landing page, as if the user gives a existing username who has been joined to the chatroom. 
+    ```js 
+    // chat.js
+    socket.emit('join', { username, room }, (error) => {
+        if (error) {
+            alert(error);
+            location.href = '/';
+        }
+    });
+    ```
+1. We firstly import the functions created in users.js to `index.js` and get the socket id from the argument `socket` in the argument of the callback in `io.on()`. Besides, we can use destructuring syntax to create an `Object` with either `error` or `user` property that is generated from `addUser()` function. (Note that `addUser()` function returns an `Object` which either contains `error` or `user` property). 
+    ```js 
+    // index.js
+    const { addUser, removeUser, getUser, getUsersInRoom } = require('./utilis/users');
+
+    io.on('connection', (socket) => {
+        socket.on('join', ({ username, room }, callback) => {
+            // get socket id from socket.id
+            const { error, user } = addUser({ id: socket.id, username, room });
+
+            if (error) {
+                return callback(error);
+            }
+
+            socket.join(user.room);
+
+            socket.emit('message', generateMessage('Welcome!'));
+            socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined!`));
+
+            callback();
+        });
+    }
+    ```
+1. Since there's an `Object` is sent from the client side, we can use a variable to get the object and use spread destructuring syntax. 
+    ```js 
+    io.on('connection', (socket) => {
+        socket.on('join', (options, callback) => {
+            // use spread destructuring syntax
+            const { error, user } = addUser({ id: socket.id, ...options });
+
+            if (error) {
+                return callback(error);
+            }
+
+            socket.join(user.room);
+
+            socket.emit('message', generateMessage('Welcome!'));
+            socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined!`));
+
+            callback();
+        });
+    }
+    ```
+1. We then update the `disconnect` event handler. When the user leaves the room, we can use `removeUser()` function to removethe user from the array.
+    ```js 
+    socket.on('disconnect', () => {
+        const user = removeUser(socket.id);
+
+        if (user) {
+            io.to(user.room).emit('message', generateMessage(`${user.username} has left!`));
+        }
+    });
+    ```
+
 ### Sending Messages to Rooms
+1. Send messages to correct room 
+    1. Use getUser inside "**sendMessage**" event handler to get user data 
+    1. Emit the message to their current room 
+    1. Enable the feature for "**sendLocation**" event 
+    ```js 
+    socket.on('sendMessage', (message, callback) => {
+        const filter = new Filter();
+
+        if (filter.isProfane(message)) {
+            return callback('Profanity is not allowed!')
+        }
+
+        // find the user by id
+        const user = getUser(socket.id);
+        io.to(user.room).emit('message', generateMessage(message));
+        callback();
+    });
+
+    socket.on('sendLocation', (coords, callback) => {
+        const user = getUser(socket.id);
+        io.to(user.room).emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`));
+        callback();
+    });
+    ```
+1. We update both `chat.js`, `messages.js`, `index.js`, and `chat.html` to show the username who shares the location. 
+    1. `messages.js`
+    ```js
+    // messages.js
+    const generateLocationMessage = (username, url) => {
+        return {
+            username, // add username 
+            url,
+            createdAt: new Date().getTime(),
+        }
+    }
+    ```
+    1. `index.js`
+    ```js
+    // index.js
+    socket.on('sendLocation', (coords, callback) => {
+        const user = getUser(socket.id);
+        io.to(user.room).emit('locationMessage', generateLocationMessage(user.username, `https://google.com/maps?q=${coords.latitude},${coords.longitude}`));
+        callback();
+    });
+    ```
+    1. `chat.js`
+    ```js 
+    // chat.js
+    socket.on('locationMessage', message => {
+        console.log(message);
+        const html = Mustache.render(locationMessageTemplate, {
+            username: message.username,
+            url: message.url,
+            createdAt: moment(message.createdAt).format('h:mm a'),
+        });
+        $messages.insertAdjacentHTML('beforeend', html);
+    });
+    ```
+    1. `chat.html`
+    ```html
+    <!-- chat.html -->
+    <!-- template of location for mustache library to render -->
+    <script id="location-template" type="text/html">
+        <div class="message">
+            <p>
+                <span class="message__name">{{username}}</span>
+                <span class="message__meta">{{createdAt}}</span>
+            </p>
+            <p><a href="{{url}}" target="_blank">My Current Location</a></p>
+        </div>
+    </script>
+    ```
+1. Render username for text messages 
+    1. Setup the server to send username to client
+    1. Edit every call to "**generateMessage**" to include username
+        1. Use "**Admin**" for system messages like connect/welcome/disconnect
+    1. Update client to render username in template 
+    1. In `index.js`, we give all `generateMessage()` function with 1st argument of either '**Admin**' for system message or `user.username` to pass to `chat.js`. 
+    1. `messages.js`
+    ```js 
+    const generateMessage = (username, text) => {
+        return {
+            username,
+            text,
+            createdAt: new Date().getTime(),
+        }
+    }
+    ```
+    1. `chat.js`
+    ```js
+    socket.on('message', message => {
+        console.log(message);
+        const html = Mustache.render(messageTemplate, {
+            username: message.username,
+            message: message.text,
+            createdAt: moment(message.createdAt).format('h:mm a'),
+        });
+        $messages.insertAdjacentHTML('beforeend', html);
+    });
+    ```
+    1. `chat.html`
+    ```html
+    <!-- template of message for mustache library to render -->
+    <script id="message-template" type="text/html">
+        <div class="message">
+            <p>
+                <span class="message__name">{{username}}</span>
+                <span class="message__meta">{{createdAt}}</span>
+            </p>
+            <p>{{message}}</p>
+        </div>
+    </script>
+    ```
+1. In `chat__main` section of `chat.html`, we can update the `<input>` tag with `required` and set up `cutocomplete` attribute to `off` because users are not going to send the same message again and again. Note that this feature is useful in the other cases, such as filling up emails contacts or some of the other user info. 
+    ```html
+    <!-- form for user to input message -->
+    <div class="compose">
+        <form id="message-form">
+            <input name="message" type="text" placeholder="Message" required autocomplete="off">
+            <button class="msg">Send</button>
+        </form>
+        <button id="send-location">Send My Location</button>
+    </div>
+    ```
+
 ### Rendering User List 
+1. In this section, we are going to populate the list of users in a certain chatroom on the side bar. 
+1. Note that we have created a function `getUsersInRoom()` in `users.js`. 
+1. In `index.js`, we update the `join` and `disconnect` event and use `io.to.emit()` to send data of current users from server to client. 
+    ```js 
+    // index.js
+    io.on('connect', socket => {
+        socket.on('join', (options, callback) => {
+            const { error, user } = addUser({ id: socket.id, ...options });
+
+            if (error) {
+                return callback(error);
+            }
+
+            socket.join(user.room);
+
+            socket.emit('message', generateMessage('Admin', 'Welcome!'));
+            socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `${user.username} has joined!`));
+
+            // use getUsersInRoom function to send current user list from server to client 
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room),
+            });
+
+            callback();
+        });
+
+        socket.on('disconnect', () => {
+        const user = removeUser(socket.id);
+        if (user) {
+            io.to(user.room).emit('message', generateMessage('Admin', `${user.username} has left!`));
+            // send updated users data with getUsersInRoom function from server to client 
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room),
+            });
+        }
+    });
+    })
+    ```
+1. In `chat.html`, we create the HTML template to generate the list of users. Besides, we assign an `id` attribute to the `<div>` tag which to contain the sidebar. 
+    ```html 
+    <body>
+        <div class="chat">
+            <!-- give id attribute to sidebar element -->
+            <div id="sidebar" class="chat__sidebar"></div>
+        </div>
+    </body>
+
+    <!-- template of user list for mustache library to render on the side bar -->
+    <script id="sidebar-template" type="text/html">
+        <h2 class="room-title">{{room}}</h2>
+        <h3 class="list-title">Users</h3>
+        <ul class="users">
+            <!-- start of an array with pound sign '#' -->
+            {{#users}}
+                <li>{{username}}</li> <!-- elements of the array -->
+            {{/users}}
+            <!-- end of an array with slash '/' -->
+        </ul>
+    </script>
+    ```
+1. In `chat.js`, we create a DOM selector to get the tempalte and a new socket listener for `roomData` to receive the user list sent from server to client. 
+    ```js 
+    // chat.
+    const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML;
+
+    socket.on('roomData', ({ room, users }) => {
+        const html = Mustache.render(sidebarTemplate, {
+            room,
+            users, // this is an array
+        });
+        document.querySelector('#sidebar').innerHTML = html;
+    });
+    ```
+
 ### Automatic Scrolling 
+1. We'd like to design an user-friendly UI/UX for the chatroom. 
+    1. When a user is looking at the latest message in the chatroom, the page can automatically scroll down when a new message comes. 
+    1. When a user scroll up to find a specific message, the page should not scroll down to use the latest message, as the user is trying to read the histories and records above. 
+1. We create `autoScroll()` function in `chat.js` for client-side code. This function can be fired when there's a new message or location sharing into the chatroom. The concept is to detect the location of the scroll bar and the height of the elements on the page to decide when to scroll down automatically to have a better user experience. 
+1. However, the following code is still buggy, as it doesn't work all the time, the CSS styling should be improved, as if a user sends a long message, the width of the main section will overwrite and cover the side bar. 
+    ```js 
+    // chat.js
+    const autoscroll = () => {
+        // New message element 
+        const $newMessage = $messages.lastElementChild
+
+        // Height of the new message
+        const newMessageStyles = getComputedStyle($newMessage);
+        const newMessageMargin = parseInt(newMessageStyles.marginBottom);
+        const newMessageHeight = $newMessage.offsetHeight + newMessageMargin;
+
+        // visible height
+        const visibleHeight = $messages.offsetHeight
+
+        // height of messages container
+        const containerHeight = $messages.scrollHeight;
+
+        // How far have I scrolled? 
+        const scrollOffset = ($messages.scrollTop + visibleHeight);
+
+        if (containerHeight - newMessageHeight <= scrollOffset) {
+            $messages.scrollTop = $messages.scrollHeight;
+        }
+    }
+    ```
+
 ### Deploying the Chat Application 
+1. Deploy the chat application to Heroku 
+    1. Set up Git and commit files 
+        1. Ignore node_module folder
+    1. Setup a Github repository and push code up 
+    1. Set up a Heroku app and push code up
