@@ -1,46 +1,44 @@
 Note:
-
 1. Start learning course on 2020/07/23
 1. Finished on
 1. As I just finished a course about HTML and CSS during June and July 2020, I will start the CSS session later to review the techniques and skills of HTML and CSS.
 
 # Structure
-
-1. CSS Animation: Transforms and Transitions
-1. CSS Animation: Keyframes
-1. Advanced CSS: Layout with Flexbox
-1. Project: Building A Startup Site
-1. Async Foundations
-1. AJAX Part 1: XHR and Fetch
-1. AJAX Part 2: jQuery and Axios
-1. Testing with Jasmine
-1. Advanced Array Methods
-1. Closures and the Keyword 'this'
-1. Object Oriented Programming with JavaScript
-1. Creating JSON API's with Node and Mongo
-1. Codealong: Single Page Todo List with Express, Mongo, and jQuery
-1. ES2015 Part 1
-1. ES2015 Project - Guess the Password
-1. ES2015 Part 2
-1. ES2016 and ES2017
-1. D3 and the DOM
-1. Data Joins and Update Patterns in D3
-1. SVG and D3
-1. D3 Odds and Ends, and Advanced Graph Types
-1. Project: Building a Data Dashboard with D3
-1. Introduction to React and JSX
-1. Create React App and Props
-1. State
-1. The Virtual DOM, Events, and Forms
-1. Component Lifecycle Methods
-1. Building A Full-stack App with React
-1. React Router
-1. Redux Introduction
-1. In Depth Redux Code Walkthrough
-1. Warbler Introduction and Backend Part 1
-1. Warbler Backend Part 2
-1. Warbler Frontend Part 1
-1. Warbler Frontend Part 2
+1. [CSS Animation: Transforms and Transitions](#CSS-Animation:-Transforms-and-Transitions)
+1. [CSS Animation: Keyframes](#CSS-Animation:-Keyframes)
+1. [Advanced CSS: Layout with Flexbox](#Advanced-CSS:-Layout-with-Flexbox)
+1. [Project: Building A Startup Site](#Project:-Building-A-Startup-Site)
+1. [Async Foundations](#Async-Foundations)
+1. [AJAX Part 1: XHR and Fetch](#AJAX-Part-1:-XHR-and-Fetch)
+1. [AJAX Part 2: jQuery and Axios](#AJAX-Part-2:-jQuery-and-Axios)
+1. [Testing with Jasmine](#Testing-with-Jasmine)
+1. [Advanced Array Methods](#Advanced-Array-Methods)
+1. [Closures and the Keyword 'this'](#Closures-and-the-Keyword-'this')
+1. [Object Oriented Programming with JavaScript](#Object-Oriented-Programming-with-JavaScript)
+1. [Creating JSON API's with Node and Mongo](#Creating-JSON-API's-with-Node-and-Mongo)
+1. [Codealong: Single Page Todo List with Express, Mongo, and jQuery](#Codealong:-Single-Page-Todo-List-with-Express,-Mongo,-and-jQuery)
+1. [ES2015 Part 1](#ES2015-Part-1)
+1. [ES2015 Project - Guess the Password](#ES2015-Project-\--Guess-the-Password)
+1. [ES2015 Part 2](#ES2015-Part-2)
+1. [ES2016 and ES2017](#ES2016-and-ES2017)
+1. [D3 and the DOM](#D3-and-the-DOM)
+1. [Data Joins and Update Patterns in D3](#Data-Joins-and-Update-Patterns-in-D3)
+1. [SVG and D3](#SVG-and-D3)
+1. [D3 Odds and Ends, and Advanced Graph Types](#D3-Odds-and-Ends,-and-Advanced-Graph-Types)
+1. [Project: Building a Data Dashboard with D3](#Project:-Building-a-Data-Dashboard-with-D3)
+1. [Introduction to React and JSX](#Introduction-to-React-and-JSX)
+1. [Create React App and Props](#Create-React-App-and-Props)
+1. [State](#State)
+1. [The Virtual DOM, Events, and Forms](#The-Virtual-DOM,-Events,-and-Forms)
+1. [Component Lifecycle Methods](#Component-Lifecycle-Methods)
+1. [Building A Full-stack App with React](#Building-A-Full\-stack-App-with-React)
+1. [React Router](#React-Router)
+1. [Redux Introduction](#Redux-Introduction)
+1. [In Depth Redux Code Walkthrough](#In-Depth-Redux-Code-Walkthrough)
+1. [Warbler Introduction and Backend Part 1](#Warbler-Introduction-and-Backend-Part-1)
+1. [Warbler Backend Part 2](#Warbler-Backend-Part-2)
+1. [Warbler Frontend Part 1](#Warbler-Frontend-Part-1)
+1. [Warbler Frontend Part 2](#Warbler-Frontend-Part-2)
 
 # Async Foundations
 
@@ -995,4 +993,65 @@ Note:
     1. Start writing tests
 
 ### Jasmine Syntax and Matchers
-1. 
+1. Essential Keywords
+    1. **describe** - let me describe __ to your
+    1. **it** - let me tell you about __ 
+        1. **expect** lives in `it` function
+1. A ceonceptual exercise 
+    1. `discribe("Earth")`
+    1. `it("is round")`
+        1. `expect(earth.isRound.toBe(true))`
+    1. `it("is the third planet from the sun")`
+        1. `expect(earth.numberFromSun).toBe(3)`
+1. In Code, `describe`, `it`, and `expect` are given to us by `Jasmine`.
+    ```js 
+    var earth = {
+        isRound: true,
+        numberFromSun: 3
+    }
+
+    describe("Earth", function(){
+        it("is round", function(){
+            expect(earth.isRound).toBe(true)
+        });
+        it("is the thrid planet from the sun", function(){
+            expect(earth.numberFromSun.toBe(3))
+        });
+    });
+    ```
+1. There are several `Matchers` we can use in `Jasmine`
+    1. `toBe`/`not.toBe`
+    1. `toBeCloseTo`
+    1. `toBeDefined`
+    1. `toBeFalsey`/`toBeTruthy`
+    1. `toBeGreaterThan`/`toBeLessThan`
+    1. `toContain`
+    1. `toEqual` can compare 2 individual objects with their properties though they have different reference in the memory. This is a handy method to compare 2 `Arrays` or `Objects`. 
+
+# Advanced Array Methods
+# Closures and the Keyword 'this'
+# Object Oriented Programming with JavaScript
+# Creating JSON API's with Node and Mongo
+# Codealong: Single Page Todo List with Express, Mongo, and jQuery
+# ES2015 Part 1
+# ES2015 Project - Guess the Password
+# ES2015 Part 2
+# ES2016 and ES2017
+# D3 and the DOM
+# Data Joins and Update Patterns in D3
+# SVG and D3
+# D3 Odds and Ends, and Advanced Graph Types
+# Project: Building a Data Dashboard with D3
+# Introduction to React and JSX
+# Create React App and Props
+# State
+# The Virtual DOM, Events, and Forms
+# Component Lifecycle Methods
+# Building A Full-stack App with React
+# React Router
+# Redux Introduction
+# In Depth Redux Code Walkthrough
+# Warbler Introduction and Backend Part 1
+# Warbler Backend Part 2
+# Warbler Frontend Part 1
+# Warbler Frontend Part 2
