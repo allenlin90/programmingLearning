@@ -6494,3 +6494,18 @@ doWorkCallback(function (error, result) {
         1. Ignore node_module folder
     1. Setup a Github repository and push code up 
     1. Set up a Heroku app and push code up
+1. Github repository 
+    1. Use `git init` to create a new Git repository 
+    1. Create `.gitignore` and include `node_modules` which shall not be uploaded to remote repository
+    1. Use `git add .` and `git commit -m "[inital commit]"`.
+    1. Create a new Github repository and push the local files to the remote repository. Use the option to push an existing repository from local to Github. 
+1. Deploy on Heroku 
+    1. Use `heroku create` to start a new heroku application, `heroku` will generate the URL and remote repository and add it to `git remote` automatically. 
+    1. Use `git remote` to check if both `heroku` and `Github` endpoints are added. 
+    1. Use `git push heroku master` to deploy the code. 
+
+# Wrapping up
+### New Feature Ideas 
+1. Weather App - Allow user to use geolocation API to get weather for their location
+1. Todo App - Allow users to upload images for individual todos. Use `multer`. 
+1. Chat App - Let uses pick from list of active rooms or type in custom room name. 
