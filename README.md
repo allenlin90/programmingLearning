@@ -12,7 +12,8 @@
    1. [materials](https://www.udemy.com/course/the-complete-javascript-course/)
 1. [The Complete Node.js Developer Course (3rd Edition)](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/theCompleteNodejsDeveloperCourse)
    1. [materials](https://www.udemy.com/course/the-complete-nodejs-developer-course-2/)
-
+1. [Modern React with Redux [2020 Update]](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/react/modernReactWithRedux)
+   1. [materials](https://www.udemy.com/course/react-redux/)
 # Python Learning
 
 **<int>Materials</int>**
