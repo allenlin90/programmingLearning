@@ -1,5 +1,5 @@
 Start learning on 2020/07/11
-Finished on 
+Finished on 2020/08/07
 
 1. Installing and exploring Node.js
 
