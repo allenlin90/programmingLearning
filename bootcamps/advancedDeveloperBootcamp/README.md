@@ -1027,31 +1027,962 @@ Note:
     1. `toBeGreaterThan`/`toBeLessThan`
     1. `toContain`
     1. `toEqual` can compare 2 individual objects with their properties though they have different reference in the memory. This is a handy method to compare 2 `Arrays` or `Objects`. 
+    1. `jasmine.any()` is to check the type of the data. For example, we can't use `typeof` to check `Array`, as an `Array` is an `Object` in JavaScript. 
+
+### Writing better tests with Hooks
+1. If a variable is used multiple times in the flow of testing methods, we can run `beforeEach` before each `it` callback. 
+    ```js 
+    describe('Arrays', function(){
+        var arr; 
+        beforeEach(function(){
+            arr = [1,3,5];
+        });
+        
+        it('adds elements to an array', function() {
+            arr.push(7);
+            expect(arr).toEqual([1,3,5,7]);
+        });
+
+        it('returns the new length of the array', function(){
+            expect(arr.push(7)).toBe(4);
+        });
+
+        it('adds anything into the array', function(){
+            expect(arr.push({})).toBe(4);
+        })
+    });
+    ```
+1. On the other hand, we can use `afterEach` and run after each `it` callback which is useful for teardown. 
+    ```js 
+    describe('Counting', function(){
+        var count = 0; 
+        beforeEach(function(){
+            count++;
+        });
+
+        afterEach(function(){
+            count = 0;
+        });
+
+        it('has a counter that increments', function(){
+            expect(count).toBe(1);
+        });
+
+        it('gets reset', function(){
+            expect(count).toBe(1);
+        });
+    });
+    ```
+1. Besides `beforeEach` and `afterEach`, we can use `beforeAll` and `afterAll` which variables will only be defined once and be shared by each tester. Note that this may have side-effects, as `Array` and `Object` are mutable, and following testers may use the wrong input to test the function. 
+    ```js 
+    var arr = [];
+    beforeAll(function(){
+        arr = [1,2,3];
+    });
+    
+    describe('Counting', function(){
+        it('starts with an array', function(){
+            arr.push(4);
+            expect(1).toBe(1);
+        });
+        it('keeps mutating that array', function(){
+            console.log(arr); // [1,2,3,4]
+            arr.push(5);
+            expect(1).toBe(1);
+        });
+    });
+    
+    describe('Again', function(){
+        it('keeps mutating the array...again', function(){
+            console.log(arr); // [1,2,3,4,5]
+            expect(1).toBe(1);
+        });
+    });
+    ```
+
+### Spies
+1. Jasmine has test double funcitons called spies
+1. A spy can stub (mimic) any function and track calls to it and all arguments 
+1. Spies only exists in the `describe` or `it` block in which it is defined. 
+1. Spies are removed after each spec. 
+1. There are special matchers for interacting with spies. 
+
+### Clocks
+1. The Jasmine Clock is available for testing time dependent code. 
+1. It is installed by invoking jasmine.clock().install()
+1. Be sure to uninstall the clock after you are done to restore the original functions.
+1. Testing async code 
+    1. Jasmine also has support for running spects that require testing async code 
+    1. `beforeAll`, `afterAll`, `beforeEach`, `afterEach`, and it take an optional single argument (commonly called 'done') that should be called when the async work is complete. 
+    1. A test will not complete until its 'done' is called. 
+
+### TDD and BDD
+1. TDD - Test Driven Development
+    1. Write the tests 
+    1. See the tests fail 
+    1. Write code to pass the tests
+    1. Refactor code as necessary 
+    1. Repeat
+1. BDD - Behavior Driven Development 
+    1. BDD is a subset of TDD 
+    1. Not mutually exclusive with TDD
+    1. Involve being verbose with our style and describing the behavior of the functionality
+    1. Helpful when testing the design of the software 
+
+### Different Types of Test
+1. Other types of tests
+    1. Integration tests 
+    1. Acceptance tests 
+    1. Stress tests
+1. Unit testing involves testing pieces of functionality.
+1. Jasmine is a testing framework that allows us to easily write unit tests. 
+1. Jasmine has quite a few matchers for testing almost any kind of expectation.
+1. Using `beforeEach`, `afterEach`, `beforeAll`, `afterAll` hooks can help reduce duplication and confusion. 
+1. Jasmine provides spies for mimicking the behavior of a function.
+1. Jasmine provides a clock object for testing timers and a callback function for testing asynchronous code.
 
 # Advanced Array Methods
+### forEach
+1. Iterates through an `Array`. 
+1. Runs a calbback function on each value in the array. 
+1. `.forEach()` method returns `undefined`. 
+    ```js 
+    function halfValue(arr) {
+        var newArr = [];
+        arr.forEach(function(val){
+            newArr.push(val / 2);
+        });
+        return newArr; 
+    }
+
+    halfValues([2,4,6]); // [1,2,3]
+    ```
+### Coding Exercise 2: Exercise: forEach
+```js
+/*
+Write a function called doubleValues which accepts an array and returns a new array with all the values in the array passed to the function doubled
+
+Examples:
+    doubleValues([1,2,3]) // [2,4,6]
+    doubleValues([5,1,2,3,10]) // [10,2,4,6,20]
+
+*/
+function doubleValues(arr){
+    var list = [];
+    arr.forEach((el) => {
+        list.push(el * 2);
+    });
+    return list; 
+}
+
+/*
+Write a function called onlyEvenValues which accepts an array and returns a new array with only the even values in the array passed to the function
+
+Examples:
+    onlyEvenValues([1,2,3]) // [2]
+    onlyEvenValues([5,1,2,3,10]) // [2,10]
+
+*/
+function onlyEvenValues(arr){
+    var list = [];
+    arr.forEach(el => {
+        if ((el % 2) === 0 && el !== 0) {
+            list.push(el);
+        }
+    });
+    return list; 
+}
+
+/*
+Write a function called showFirstAndLast which accepts an array of strings and returns a new array with only the first and last character of each string.
+
+Examples:
+    showFirstAndLast(['colt','matt', 'tim', 'udemy']) // ["ct", "mt", "tm", "uy"]
+    showFirstAndLast(['hi', 'goodbye', 'smile']) // ['hi', 'ge', 'se']
+
+*/
+function showFirstAndLast(arr){
+    var list = [];
+    arr.forEach(e => {
+        list.push(`${e[0]}${(e[e.length-1])}`);
+    });
+    return list; 
+}
+
+/*
+Write a function called addKeyAndValue which accepts an array of objects, a key, and a value and returns the array passed to the function with the new key and value added for each object 
+
+Examples:
+    addKeyAndValue([{name: 'Elie'}, {name: 'Tim'}, {name: 'Matt'}, {name: 'Colt'}], 'title', 'instructor') 
+    
+    // [{name: 'Elie', title:'instructor'}, {name: 'Tim', title:'instructor'}, {name: 'Matt', title:'instructor'}, {name: 'Colt', title:'instructor'}]
+
+*/
+function addKeyAndValue(arr,key,value){
+    const list = arr; 
+    arr.forEach(e => {
+        e[key] = value;
+    });
+    return list; 
+}
+
+/*
+Write a function called vowelCount which accepts a string and returns an object with the keys as the vowel and the values as the number of times the vowel appears in the string. This function should be case insensitive so a lowercase letter and uppercase letter should count
+
+Examples:
+    vowelCount('Elie') // {e:2,i:1};
+    vowelCount('Tim') // {i:1};
+    vowelCount('Matt') // {a:1})
+    vowelCount('hmmm') // {};
+    vowelCount('I Am awesome and so are you') // {i: 1, a: 4, e: 3, o: 3, u: 1};
+*/
+function vowelCount(str){
+   str = str.toLowerCase();
+   const arr = str.split('');
+   const obj = {};
+   arr.forEach(e => {
+       if (e === 'a') {(!obj['a']) ? obj['a'] = 1 : obj['a']++;}
+       if (e === 'e') {(!obj['e']) ? obj['e'] = 1 : obj['e']++;}
+       if (e === 'i') {(!obj['i']) ? obj['i'] = 1 : obj['i']++;}
+       if (e === 'o') {(!obj['o']) ? obj['o'] = 1 : obj['o']++;}
+       if (e === 'u') {(!obj['u']) ? obj['u'] = 1 : obj['u']++;}
+   });
+   return obj;
+}
+
+// alternative solution from the lecture 
+function vowelCount(str) {
+    var splitArr = str.split('');
+    var obj = {};
+    var vowels = 'aeiou';
+
+    splitArr.forEach(function(letter) {
+        if (vowels.indexOf(letter.toLowerCase()) !== -1) {
+            if (letter in obj) {
+                obj[letter]++
+            } else {
+                obj[letter] = 1;
+            }
+        }
+    });
+
+    return obj;
+}
+```
+
+### map 
+1. Creates a new array
+1. Iterates through an array 
+1. Runs a callback function for each value in the array
+1. Adds the result of that callback function to the new array
+1. Returns the new array 
+1. `.map()` method always returns a new array of the same `length`
+```js 
+function tripeValues(arr) {
+    return arr.map(function(value){
+        return value * 3;
+    });
+}
+tripleValues([1,2,3]); //[3,6,9]
+
+function onlyFirstName(arr) {
+    return arr.map(function(val) {
+        return val.first; 
+    });
+}
+
+onlyFirstName([{first: 'Tim', last: 'Garcia'}, {first: 'Matt', last: 'Lane'}]); // ['Tim', 'Matt']
+```
+
+### Coding Exercise 3: Exercise: Map
+```js
+/*
+Write a function called doubleValues which accepts an array and returns a new array with all the values in the array passed to the function doubled
+
+Examples:
+    doubleValues([1,2,3]) // [2,4,6]
+    doubleValues([1,-2,-3]) // [2,-4,-6]
+*/
+
+function doubleValues(arr){
+    return arr.map(function(value) {
+        return value * 2;
+    })
+}
+
+/*
+Write a function called valTimesIndex which accepts an array and returns a new array with each value multiplied by the index it is currently at in the array.
+
+Examples:
+    valTimesIndex([1,2,3]) // [0,2,6]
+    valTimesIndex([1,-2,-3]) // [0,-2,-6]
+*/
+
+function valTimesIndex(arr){
+    return arr.map(function(e, i){
+        return e * i;
+    })
+}
+
+/*
+Write a function called extractKey which accepts an array of objects and some key and returns a new array with the value of that key in each object.
+
+Examples:
+    extractKey([{name: 'Elie'}, {name: 'Tim'}, {name: 'Matt'}, {name: 'Colt'}], 'name') // ['Elie', 'Tim', 'Matt', 'Colt']
+*/
+
+function extractKey(arr, key){
+    return arr.map(function(el) {
+        return el[key];
+    })
+}
+
+/*
+Write a function called extractFullName which accepts an array of objects and returns a new array with the value of the key with a name of "first" and the value of a key with the name of  "last" in each object, concatenated together with a space. 
+
+Examples:
+    extractFullName([{first: 'Elie', last:"Schoppik"}, {first: 'Tim', last:"Garcia"}, {first: 'Matt', last:"Lane"}, {first: 'Colt', last:"Steele"}]) // ['Elie Schoppik', 'Tim Garcia', 'Matt Lane', 'Colt Steele']
+*/
+
+function extractFullName(arr){
+    return arr.map(function(el){
+        return `${el.first} ${el.last}`;
+    })
+}
+```
+
+### Filter
+1. Creates a new array.
+1. Iterates through an array. 
+1. Runs a callback function on each value in the array.
+1. If the callback funciton returns `true`, that value will be added to the new array.
+1. If the callback function returns `false`, that value will be ignored from the new array. 
+1. The result of the callback will always be a boolean.
+```js 
+var arr = [1,2,3];
+var list = arr.filter(function(value, index, array) {
+    return value > 2; 
+}); 
+console.log(list) //[3]
+
+
+var instructors = [{name: 'Elie'}, {name: 'Tim'}, {name: 'Matt'}, {name: 'Colt'}];
+instructors.filter(function(value, index, array){
+    return value.name.length > 3;
+});
+
+
+function filter(array, callback) {
+    var newArr = [];
+    for(var i = 0; i < array.length; i++) {
+        if(callback(array[i], i, array)) {
+            newArr.push(array[i]);
+        }
+    }
+    return newArr;
+}
+
+function onlyFourLetterName(arr) {
+    return arr.filter(function(value){
+        return value.length === 4;
+    });
+}
+onlyFourLetterName(['Rusty', 'Matt', 'Moxie', 'Colt']) // ['Matt', 'Colt']
+
+
+function divisibleByThree(arr) {
+    return arr.filter(function(value){
+        return value % 3 === 0;
+    });
+}
+divisibleByThree([1,2,3,4,5,6,7,8,9]); // [3,6,9]
+```
+
+### Coding Exercise 4: Exercise: Filter
+```js 
+/*
+Write a function called filterByValue which accepts an array of objects and a key and returns a new array with all the objects that contain that key.
+
+Examples:
+    filterByValue([{first: 'Elie', last:"Schoppik"}, {first: 'Tim', last:"Garcia", isCatOwner: true}, {first: 'Matt', last:"Lane"}, {first: 'Colt', last:"Steele", isCatOwner: true}], 'isCatOwner') // [{first: 'Tim', last:"Garcia", isCatOwner: true}, {first: 'Colt', last:"Steele", isCatOwner: true}]
+*/
+
+function filterByValue(arr, key){
+    return arr.filter(function(el){
+        return !(!el[key]);
+    })
+}
+
+/*
+Write a function called find which accepts an array and a value and returns the first element in the array that has the same value as the second parameter or undefined if the value is not found in the array.
+
+Examples:
+    find([1,2,3,4,5], 3) // 3
+    find([1,2,3,4,5], 10) // undefined
+*/
+
+function find(arr, searchValue){
+    const list = arr.filter(function(el) {
+        return el === searchValue;
+    });
+    if (!list.length) return undefined;
+    return list[0];
+}
+
+// we can shorten the code as the following according to the lecture
+// Array[0] will be 'undefined' if the array is empty
+function find(arr, searchValue){
+    return arr.filter(function(el) {
+        return el === searchValue;
+    })[0];
+}
+
+/*
+Write a function called findInObj which accepts an array of objects, a key, and some value to search for and returns the first found value in the arrayt.
+
+Examples:
+    findInObj([{first: 'Elie', last:"Schoppik"}, {first: 'Tim', last:"Garcia", isCatOwner: true}, {first: 'Matt', last:"Lane"}, {first: 'Colt', last:"Steele", isCatOwner: true}], 'isCatOwner',true) // {first: 'Tim', last:"Garcia", isCatOwner: true}
+*/
+
+function findInObj(arr, key, searchValue){
+    const list = arr.filter( el => {
+        return el[key] === searchValue;
+    });
+    return list[0];
+}
+
+// we can shorten the code as the following according to the lecture
+function findInObj(arr, key, searchValue){
+    return arr.filter( el => {
+        return el[key] === searchValue;
+    })[0];
+}
+
+/*
+Write a function called removeVowels which accepts a string and returns a new string with all of the vowels (both uppercased and lowercased) removed. Every character in the new string should be lowercased.
+
+Examples:
+    removeVowels('Elie') // ('l')
+    removeVowels('TIM') // ('tm')
+    removeVowels('ZZZZZZ') // ('zzzzzz')
+*/
+
+function removeVowels(str){
+    const arr = str.toLowerCase().split('');
+    const vowels = 'aeiou';
+    const list = arr.filter(el => {
+        if (vowels.indexOf(el) !== -1) return false;
+        return true; 
+    });
+    const string = list.join('');
+    return string;
+}
+
+// we can shorten the code as the following according to the lecture
+function removeVowels(str){
+    const vowels = 'aeiou';
+    return str.toLowerCase().split('').filter(el => {
+        return vowels.indexOf(el) === -1;
+    }).join('');
+}
+
+/*
+Write a function called doubleOddNumbers which accepts an array and returns a new array with all of the odd numbers doubled (HINT - you can use map and fitler to double and then filter the odd numbers).
+
+Examples:
+    doubleOddNumbers([1,2,3,4,5]) // [2,6,10]
+    doubleOddNumbers([4,4,4,4,4]) // []
+*/
+
+function doubleOddNumbers(arr){
+    const list = arr.filter(function(el){
+        if ((el % 2) !== 0) return true; 
+        return false; 
+    });
+    
+    return list.map(el=>{
+        return el * 2;
+    })
+}
+
+// we can shorten the code as the following according to the lecture
+function doubleOddNumbers(arr){
+    return arr.filter(function(el){
+        return (el % 2) !== 0;
+    }).map( function(el) {
+        return el * 2;
+    });
+}
+```
+
+### Some
+1. Iterates through an array.
+1. Runs a callback on each value in the array.
+1. If the callback returns `true` for at least one single value, return `true`.
+1. Otherwise, return `false`. 
+1. The result of the callback will always be a `Boolean`.
+```js
+var arr = [1,2,3];
+arr.some(function(value, index, array) {
+    return value < 2;
+}); // true 
+
+
+var arr = [1,2,3];
+arr.some(function(value, index, array) {
+    return value < 4;
+}); // false 
+
+
+function some(array, callback) {
+    for (var i = 0; i < array.length; i++) {
+        if(callback(array[i], i, array)) {
+            return true; 
+        }
+    }
+    return false;
+}
+
+
+function hasEvenNumber(arr) {
+    return arr.some(function(value){
+        return value % 2 === 0;
+    });
+}
+hasEvenNumber([1,2,3,4]) // true
+hasEvenNumber([1,3,5]) // false
+
+
+function hasComma(str) {
+    return str.split('').some(function(value){
+        return value === ',';
+    });
+}
+hasComma('This is wonderful'); //false 
+hasComma('This, is wonderful'); // true
+```
+
+### Every 
+1. Iterates through an array.
+1. Runs a callback on each value in the array.
+1. If the callback returns `false` for any single value, returns `false`.
+1. Otherwise, return `true`. 
+1. The result of the callback will always be a `Boolean`. 
+```js 
+var arr = [-1, -2, -3];
+arr.every(function(value, index, array){
+    return value < 0;
+}); //true 
+
+
+var arr = [1,2,3];
+arr.every(function(value, index, array) {
+    return value > 2;
+}); // false 
+
+
+function every(array, callback) {
+    for (var i = 0; i < array.length; i++) {
+        if (callback(array[i], i, array) === false)
+        return false; 
+    }
+    return true; 
+}
+
+
+function allLowerCase(str) {
+    return str.split('').every(function(value){
+        return value === value.toLowerCase();
+    })
+}
+allLowerCase('this is really nice'); // true
+allLowerCase('this is Really nice'); // false
+
+
+function allArrays(arr) {
+    return arr.every(Array.isArray);
+}
+allArrays([[1], [2], [3,4]]); // true
+allArrays([[1], [2], {}]); // false 
+```
+
+### Exercise: Some and Every 
+```js 
+/*
+Write a function called hasOddNumber which accepts an array and returns true if the array contains at least one odd number, otherwise it returns false.
+
+Examples:
+    hasOddNumber([1,2,2,2,2,2,4]) // true
+    hasOddNumber([2,2,2,2,2,4]) // false
+*/
+
+function hasOddNumber(arr){
+    return arr.some(function(el){
+        return (el % 2) !== 0;
+    })
+}
+
+/*
+Write a function called hasAZero which accepts a number and returns true if that number contains at least one zero. Otherwise, the function should return false
+
+Examples:
+    hasAZero(3332123213101232321) // true
+    hasAZero(1212121) // false
+*/
+
+function hasAZero(num){
+    return String(num).split('').some(function(num){
+        return num === '0';
+    })
+}
+
+// According to the lecture, we can use .toString() method to turn a number value into string
+function hasAZero(num) {
+    return num.toString().split('').some(function(num){
+        return num === '0';
+    })
+}
+
+/*
+Write a function called hasOnlyOddNumbers which accepts an array and returns true if every single number in the array is odd. If any of the values in the array are not odd, the function should return false. 
+
+Examples:
+    hasOnlyOddNumbers([1,3,5,7]) // true
+    hasOnlyOddNumbers([1,2,3,5,7]) // false
+*/
+
+function hasOnlyOddNumbers(arr){
+    return arr.every(function(num){
+        return num % 2 !== 0;
+    })
+}
+
+/*
+Write a function called hasNoDuplicates which accepts an array and returns true if there are no duplicate values (more than one element in the array that has the same value as another). If there are any duplicates, the function should return false.
+
+Examples:
+    hasNoDuplicates([1,2,3,1]) // false
+    hasNoDuplicates([1,2,3]) // true
+*/
+
+function hasNoDuplicates(arr){
+    const obj = {};
+    arr.forEach(function(el){
+        if (!obj[el]) {
+            obj[el] = 1;
+        } else {
+            obj[el]++;
+        }
+    });
+    for (key in obj) {
+        if (obj[key] > 1) return false;
+    }
+    return true;
+}
+
+function hasNoDuplicates(arr){
+    return arr.every(function(el) {
+        return array.filter(e => el === e).length === 1;
+    });
+}
+
+// Another solution from the lecture
+// this method is to use .indexOf to search the string by order and .lastIndexOf to search reversely to check if the same value appears at the same position in the array
+function hasNoDuplicates(arr) {
+    return arr.every(function(val) {
+        return arr.indexOf(val) === arr.lastIndexOf(val);
+    });
+}
+
+/*
+Write a function called hasCertainKey which accepts an array of objects and a key, and returns true if every single object in the array contains that key. Otherwise it should return false.
+
+Examples:
+    var arr = [
+        {title: "Instructor", first: 'Elie', last:"Schoppik"}, 
+        {title: "Instructor", first: 'Tim', last:"Garcia", isCatOwner: true}, 
+        {title: "Instructor", first: 'Matt', last:"Lane"}, 
+        {title: "Instructor", first: 'Colt', last:"Steele", isCatOwner: true}
+    ]
+    
+    hasCertainKey(arr,'first') // true
+    hasCertainKey(arr,'isCatOwner') // false
+*/
+
+function hasCertainKey(arr, key){
+    return arr.every(el => {
+        return !(!el[key]);
+    });
+}
+
+// According to the lecture, we can use `in` keyword to check as well 
+function hasCertainKey(arr, key) {
+    return arr.every(function(val) {
+        return key in val;
+    });
+}
+
+/*
+Write a function called hasCertainValue which accepts an array of objects and a key, and a value, and returns true if every single object in the array contains that value for the specific key. Otherwise it should return false.
+
+Examples:
+    var arr = [
+        {title: "Instructor", first: 'Elie', last:"Schoppik"}, 
+        {title: "Instructor", first: 'Tim', last:"Garcia", isCatOwner: true}, 
+        {title: "Instructor", first: 'Matt', last:"Lane"}, 
+        {title: "Instructor", first: 'Colt', last:"Steele", isCatOwner: true}
+    ]
+    
+    hasCertainValue(arr,'title','Instructor') // true
+    hasCertainValue(arr,'first','Elie') // false
+    
+*/
+
+function hasCertainValue(arr, key, searchValue){
+    return arr.every(function(el){
+        return el[key] === searchValue;
+    });
+}
+```
+
+### Reduce
+1. Accepts a callback function and an optional second parameter.
+1. Iterates through an array.
+1. Runs a callback on each value in the array.
+1. The first parameter to the callback is either the first value in the array or the optional second parameter.
+1. The first parameter to the callback is often called 'accumulator'.
+1. The returned value from the callback becomes the new value of accumulator. 
+1. Whatever is returned from the callback function, becomes the new value of the accumulator. 
+```js 
+var arr = [1,2,3,4,5];
+arr.reduce(function(accumulator, nextValue){
+    return accumulator + nextValue;
+}); // 15
+
+var arr = [1,2,3,4,5];
+arr.reduce(function(accumulator, nextValue){
+    return accumulator + nextValue;
+}, 10); // 25
+
+
+var names = ['Tim', 'Matt', 'Colt', 'Elie'];
+names.reduce(function(accumulator, nextValue){
+    return accumulator += ' ' + nextValue;
+}, 'The instructors are');
+
+
+var arr = [5,4,1,4,5];
+arr.reduce(function(accumulator, nextValue) {
+    if(nextValue in accumulator) {
+        accumulator[nextValue]++;
+    } else {
+        accumulator[nextValue] = 1;
+    }
+    return accumulator;
+}, {});
+
+
+function sumOddNumbers(arr) {
+    return arr.reduce(function(accumulator, nextValue){
+        if (nextValue %2 !== 0) {
+            accumulator += nextValue;
+        }
+        return accumulator;
+    }, 0);
+}
+sumOddNumbers([1,2,3,4,5]); // 9
+
+
+function createFullName(arr) {
+    return arr.reduce(function(accumulator, nextValue) {
+        accumulator.push(nextValue.first + ' ' + nextValue.last);
+        return accumulator;
+    }, []);
+}
+createFullName([{first: 'Colt', last: 'Steele'}, {first: 'Matt', last: 'Lane'}]);
+// ['Colt Steel', 'Matt Lane']
+```
+
+### Exercise: Reduce
+```js 
+/*
+Write a function called extractValue which accepts an array of objects and a key and returns a new array with the value of each object at the key.
+
+Examples:
+    var arr = [{name: 'Elie'}, {name: 'Tim'}, {name: 'Matt'}, {name: 'Colt'}]
+    extractValue(arr,'name') // ['Elie', 'Tim', 'Matt', 'Colt']
+*/
+
+function extractValue(arr, key){
+    return arr.reduce(function(acc, el){
+        acc.push(el[key]);
+        return acc;
+    }, []);
+}
+
+
+/*
+Write a function called vowelCount which accepts a string and returns an object with the keys as the vowel and the values as the number of times the vowel appears in the string. This function should be case insensitive so a lowercase letter and uppercase letter should count
+
+Examples:
+    vowelCount('Elie') // {e:2,i:1};
+    vowelCount('Tim') // {i:1};
+    vowelCount('Matt') // {a:1})
+    vowelCount('hmmm') // {};
+    vowelCount('I Am awesome and so are you') // {i: 1, a: 4, e: 3, o: 3, u: 1};
+*/
+
+function vowelCount(str){
+    const list = str.toLowerCase().split('');
+    const vowels = 'aeiou';
+    return list.reduce(function(acc, el){
+       if (vowels.indexOf(el) !== -1) {
+           if (acc[el]) {
+               acc[el]++;
+           } else {
+               acc[el] = 1;
+           }
+       } 
+       return acc; 
+   }, {});
+}
+
+// we can shorten the code according to the lecture 
+function vowelCount(str) {
+    var vowels = "aeiou";
+    reutrn str.split("").reduce(function(acc, next){
+        if(vowels.indexOf(next.toLowerCase()) !== -1) {
+            if (next in acc) {
+                acc[next]++;
+            } else {
+                acc[next] = 1;
+            }
+        }
+        return acc; 
+    }, {})
+}
+
+/*
+Write a function called addKeyAndValue which accepts an array of objects and returns the array of objects passed to it with each object now including the key and value passed to the function.
+
+Examples:
+    var arr = [{name: 'Elie'}, {name: 'Tim'}, {name: 'Matt'}, {name: 'Colt'}];
+    
+    addKeyAndValue(arr, 'title', 'Instructor') // 
+      [
+        {title: 'Instructor', name: 'Elie'}, 
+        {title: 'Instructor', name: 'Tim'}, 
+        {title: 'Instructor', name: 'Matt'}, 
+        {title: 'Instructor', name: 'Colt'}
+       ]
+*/
+
+function addKeyAndValue(arr, key, value){
+    return arr.reduce(function(acc, el){
+        el[key] = value
+        acc.push(el);
+        return acc;
+    }, [])
+}
+
+// Solution from the lecture
+function addKeyAndValue(arr, key, value) {
+    return arr.reduce(function(acc, next, idx) {
+        acc[idx][key] = value;
+        return acc;
+    }, acc);
+}
+
+/*
+Write a function called partition which accepts an array and a callback and returns an array with two arrays inside of it. The partition function should run the callback function on each value in the array and if the result of the callback function at that specific value is true, the value should be placed in the first subarray. If the result of the callback function at that specific value is false, the value should be placed in the second subarray. 
+
+Examples:
+    
+    function isEven(val){
+        return val % 2 === 0;
+    }
+    
+    var arr = [1,2,3,4,5,6,7,8];
+    
+    partition(arr, isEven) // [[2,4,6,8], [1,3,5,7]];
+    
+    function isLongerThanThreeCharacters(val){
+        return val.length > 3;
+    }
+    
+    var names = ['Elie', 'Colt', 'Tim', 'Matt'];
+    
+    partition(names, isLongerThanThreeCharacters) // [['Elie', 'Colt', 'Matt'], ['Tim']]
+*/
+
+function partition(arr, callback){
+    return arr.reduce(function(acc, el){
+        if (callback(el)) {
+            acc[0].push(el);
+        } else {
+            acc[1].push(el);
+        }
+        return acc; 
+    }, [[], []]);
+}
+```
+
+### Recap 
+1. `.forEach()` iterates over an array, runs a callback on each value and returns `undefined`.
+1. `.map()` creates a new array, runs a callback on each value and pushes the result of each callback in the new array.
+1. `.filter()` creats a new array, runs a callback on each value and if the result of the callback returns `true`, that value is added to the new array.
+1. `.some()` iterates through an array and runs a callback on each value, if the callback for at least one value returns `true`, `.some()` returns `true`, otherwise `false`. 
+1. `.every()` iterates through an array and runs a callback on each value, if the callback at any time returns `false`, `.every()` returns `false`. 
+1. `.reduce()` returns an accumulated value which is determined by the result of what is returned to each callback. 
+
 # Closures and the Keyword 'this'
+
 # Object Oriented Programming with JavaScript
+
 # Creating JSON API's with Node and Mongo
+
 # Codealong: Single Page Todo List with Express, Mongo, and jQuery
+
 # ES2015 Part 1
+
 # ES2015 Project - Guess the Password
+
 # ES2015 Part 2
+
 # ES2016 and ES2017
+
 # D3 and the DOM
+
 # Data Joins and Update Patterns in D3
+
 # SVG and D3
+
 # D3 Odds and Ends, and Advanced Graph Types
+
 # Project: Building a Data Dashboard with D3
+
 # Introduction to React and JSX
+
 # Create React App and Props
+
 # State
+
 # The Virtual DOM, Events, and Forms
+
 # Component Lifecycle Methods
+
 # Building A Full-stack App with React
+
 # React Router
+
 # Redux Introduction
+
 # In Depth Redux Code Walkthrough
+
 # Warbler Introduction and Backend Part 1
+
 # Warbler Backend Part 2
+
 # Warbler Frontend Part 1
+
 # Warbler Frontend Part 2
