@@ -290,7 +290,7 @@ Note:
 ### AJAX workflow: Building the Random Image App
 1. We can check on some websites such as Pininterst or Facebook main page. Every time we (as the user) scroll the page down to the button, the progarm will make further request to its server and render contents and makes the page never ends. 
 1. We can check the async function working in the developer console with the `Network` tab. Every time we scroll to let the page render new contents, a `XHR` is made for the task. 
-    <img src="pinterestAJAX.gif">
+    <img src="./images/pinterestAJAX.gif">
 1. We firstly create a very simple webpage for the infrastructure to enable the JS to work and interact with DOM. 
     ```html 
     <!DOCTYPE html>
@@ -321,7 +321,7 @@ Note:
     <body>
         <div class="container">
             <h1>Welcome To Random Dog Pictures</h1>
-            <img src="" alt="" id="photo">
+            <img src="./images/" alt="" id="photo">
             <button id="btn">Get Random Dog!</button>
         </div>
         <script src="test.js"></script>
@@ -350,7 +350,7 @@ Note:
         XHR.send();
     });
     ```
-    <img src="xmlhttprequest.gif">
+    <img src="./images/xmlhttprequest.gif">
 
 ### Bitcoin Price Exercise
 1. We call an API to get the latest price info. from [coindesk](https://www.coindesk.com/). Its API endpoint is `https://api.coindesk.com/v1/bpi/currentprice.json`. After getting the data, we parse it and use DOM to put the data on the webpage when the user click the button to refresh. 
