@@ -1936,6 +1936,332 @@ function partition(arr, callback){
 1. `.reduce()` returns an accumulated value which is determined by the result of what is returned to each callback. 
 
 # Closures and the Keyword 'this'
+### Introduction to Closures
+1. Objectives 
+    1. Understand waht a closure is and what it is not.
+    1. Use a closure to emulate private variables. 
+    1. List use cases for closures in the real world. 
+1. Closure Definition - A closure is a function that makes use of variables defined in outer functions that have previously returned. 
+    ```js 
+    function outer(a) {
+        return function inner(b) {
+            // the inner function is making use of the variable "a"
+            // which was defined in an outer function called "outer"
+            // and by the time inner is called, that outer function has returned 
+            // this function called "inner" is a closure
+            return a + b;
+        }
+    }
+
+    outer(5)(5); // 10
+
+    var storeOuter = outer(5); 
+    storeOuter(10); // 15
+    ```
+
+### Using closures in the wild 
+1. Private Variables - In other languages, there exists support for variables that can not be modified externally. We call those private variables, but in JavaScript we don't have that built in. 
+    ```js 
+    function classRoom() {
+        var instructors = ['Elie', 'Colt'];
+        return {
+            getInstructors: function(){
+                return instructors;
+            },
+            addInstructor: function(instructor){
+                instructors.push(instructor);
+                return instructors.slice(); // return a copy of the array without modifying it
+            }
+        }
+    }
+    ```
+
+### Exercise: Closures
+```js 
+/* 
+Write a function called specialMultiply which accepts two parameters. If the function is passed both parameters, it should return the product of the two. If the function is only passed one parameter - it should return a function which can later be passed another parameter to return the product. You will have to use closure and arguments to solve this.
+
+Examples: 
+
+    specialMultiply(3,4); // 12
+    specialMultiply(3)(4); // 12
+    specialMultiply(3); // function(){}....
+*/
+
+function specialMultiply(a,b){
+    if (a && b) {
+        return a * b;
+    }
+    if (a) {
+        return function(b){
+            return a * b;
+        }   
+    }
+}
+
+// solution from the lecture
+function specialMultiply(a, b){
+    if (arguments.length === 1) {
+        return function(b){
+            return a * b;
+        }
+    }
+    return a * b;
+}
+
+/* 
+Write a function called guessingGame which takes in one parameter amount. The function should return another function that takes in a parameter called guess. In the outer function, you should create a variable called answer which is the result of a random number between 0 and 10 as well as a variable called guesses which should be set to 0.
+
+In the inner function, if the guess passed in is the same as the random number (defined in the outer function) - you should return the string "You got it!". If the guess is too high return "Your guess is too high!" and if it is too low, return "Your guess is too low!". You should stop the user from guessing if the amount of guesses they have made is greater than the initial amount passed to the outer function.
+
+You will have to make use of closure to solve this problem.
+
+Examples (yours might not be like this, since the answer is random every time):
+
+    var game = guessingGame(5)
+    game(1) // "You're too low!"
+    game(8) // "You're too high!"
+    game(5) // "You're too low!"
+    game(7) // "You got it!"
+    game(1) // "You are all done playing!"
+
+    var game2 = guessingGame(3)
+    game2(5) // "You're too low!"
+    game2(3) // "You're too low!"
+    game2(1) // "No more guesses the answer was 0"
+    game2(1) // "You are all done playing!"
+*/
+
+function guessingGame(amount){
+    var count = 0;
+    var num = Math.floor(Math.random()*10);
+    var completed = false; 
+    return function(guess){
+        if (!completed) {
+            count++;
+            if (guess === amount) {
+                completed = true; 
+                return "You got it!";
+            } else if (guess > num){
+                return "You're too high!";
+            } else if (guess < num){
+                return "You're too low!";
+            } else if (guess === amount) {
+                completed = true; 
+                return "No more guesses the answer was " + num;
+            }
+        }
+        return "You are all done playing!"; 
+    }
+}
+```
+### Closures Recap
+1. Closure exists when an inner function makes use of variables declared in an outer function which has previously returned.
+1. Closure doesn't exist if you do not return an inner function and if that inner function doesn't make use of variables returned by an outer function
+1. JavaScript will only remember values that are being used inside of the inner function, not all variables defined in the outer function.
+1. We can use closures to create private variables and write better code that isolates our logic and application. 
+
+### Introduction to the keyword 'this' 
+### 'this' with functions and 'use strict'
+1. Objectives
+    1. Define what the keyword `this` is.
+    1. Understand the four ways to always figure out what the keyword `this` is.
+1. `this`
+    1. A reserved keyword in JavaScript
+    1. Usually determined by how a function is called (what we call 'execution context')
+    1. Can be determined using four rules (global, object/implicit, explicit, new)
+1. Global Context 
+    1. When `this` is not inside of a declared object, it will refer to the global object of the runtime, such as `window` in browser and `global` in Node.js.
+    ```js 
+    console.log(this); // window
+    function whatIsThis(){
+        return this;
+    }
+    whatIsThis(); // window
+
+    function variablesInThis(){
+        this.person = 'Elie';
+    }
+    variablesInThis(); // the keyword this inside the function is the window
+    console.log(person); // Elie
+    ```
+1. We can use `"use strict"` to invoke strict mode that we can't refer to gobal object by `this`, so we can prevent accidentally creating global variable. 
+### Object/Implicit Binding
+1. Implicit/Object
+    1. When the keyword `this` is inside of a declared object 
+    ```js 
+    var person = {
+        firstName: "Elie", 
+        sayHi: function() {
+            return "Hi " + this.firstName;
+        },
+        determineContext: function() {
+            return this === person;
+        }
+    }
+
+    person.sayHi(); // "Hi Elie" 
+    person.determineContext(); // true 
+    ```
+    1. A keyword `this` is defined when a function is run. There is not a function being run here to create a new value of the keyword `this`, so the value of `this` is still the window. 
+    ```js
+    var person = {
+        firstName: "Elie", 
+        determineContext: this; 
+    }
+    person.determineContext; // window 
+    ```
+    1. A nested object 
+    ```js
+    var person = {
+        firstName: "Colt", 
+        sayHi: function() {
+            return "Hi " + this.firstName;
+        },
+        determineContext: function() {
+            return this === person;
+        },
+        dog: {
+            sayHello: function() {
+                return "Hello " + this.firstName;
+            },
+            determineContext: function(){
+                return this === person;
+            }
+        }
+    }
+
+    person.sayHi(); // 'Hi Colt'
+    person.determineContaxt(); // true
+    person.dog.sayHello(); // 'Hello undefined' 
+    person.dog.determineContext(); // 'false'
+    ```
+
+### Explicit Binding
+1. Choose what we want the context of 'this' to be using `call`, `apply`, or `bind`. These methods can only be used on functions. 
+    ```js
+    var person = {
+        firstName: "Colt", 
+        sayHi: function(){
+            return "Hi " + this.firstName; 
+        },
+        determineContext: function(){
+            return this === person; 
+        },
+        dog: {
+            sayHello: function(){
+                return "Hello " + this.firstName;
+            },
+            determineContext: function(){
+                return this === person; 
+            }
+        }
+    }
+
+    person.dog.sayHello.call(person); // "Hello Colt" 
+    person.dog.determineContext.call(person); // true; 
+    ```
+    1. Refactor code to be more succinct. We can "borrow" the code from the other object 
+    ```js
+    var colt = {
+        firstName: 'Colt', 
+        sayHi: function(){
+            return "Hi " + this.firstName;
+        }
+    }
+
+    var elie = {
+        firstName: "Elie",         
+    }
+
+    colt.sayHi(); // Hi Colt
+    colt.sayHi.call(elie); // Hi Elie    
+    ```
+    1. Make a `sayHi` function for everyone.
+    ```js
+    function sayHi() {
+        return "Hi " + this.firstName;
+    }
+
+    var colt = {
+        firstName: "Colt"
+    }
+
+    var elie = {
+        firstName: "Elie"
+    }
+
+    sayHi.call(colt); // Hi Colt
+    sayHi.call(elie); // Hi Elie
+    ```
+### Call
+1. By using DOM, we can use `document.getElementsByTagName` method to select all `<div>` tags on the page. However, the returned object is an array-like list that we can't use array methods directly. In this case, we can use `.call()` method to turn the object into an `Array`. In this case, we try to get all the `<div>` tags that have text content 'Hello'.
+1. In ES6, we can use `Array.from()` to create or duplicate an `Array` from an `Array` or array-like objects. 
+    ```js
+    var divs = document.getElementsByTagName('div');
+    var divsArray = [].slice.call(divs);
+    divsArray.filter(function(val){
+        return val.innerText === 'Hello';
+    })
+    ```
+### Apply
+1. When a function does not accept an `Array`, `.apply()` will spread out values in an `Array` as the parameters to the function. 
+    ```js
+    var nums = [5,7,1,4,2];
+    Math.max(nums); // NaN
+
+    Math.max.apply(this, nums); // 7
+    function sumValues(a,b,c) {
+        return a+b+c;
+    }
+    var values = [4,1,2];
+    sumValues(values); // 4,1,2undefinedundefined 
+    sumValues.apply(this, [4,1,2]); // 7
+    sumValues.apply(null, values); // 7
+    ```
+
+### Bind 
+1. The parameters works like `.call()`, but `.bind()` returns a function with the context of `this` bound already.
+    ```js 
+    function addNumbers(a,b,c,d) {
+        return this.firstName + " just calculated " + (a+b+c+d);
+    }
+    var elie = {
+        firstName: "Elie"
+    }
+
+    var elieCalc = addNumbers.bind(elie,1,2,3,4); 
+    elieCalc(); // Elie just calculated 10
+
+    var elieCalc = addNumbers.bind(elie,1,2); 
+    elieCalc(3,4); // Elie just calculated 10
+    ```
+1. The `this` keyword in the async API `setTimeout` refers to the global object in the runtime rather than the object itself, as when the async function is actually called and executed in the global context after all the synchronous functions are executed. Therefore, we can use `.bind()` method to make it an function that can be called later at other time point. 
+    ```js
+    var colt = {
+        firstName: "Colt", 
+        sayHi: function() {
+            setTimeout(function(){
+                console.log('Hi ' + this.firstName);
+            }, 1000);
+        }
+    }
+
+    colt.sayHi(); // Hi undefined (1000 milliseconds later)
+    ```
+1. Use `.bind()` method to give the correct object for the function to refer. 
+    ```js
+    var colt = {
+        firstName: 'Colt', 
+        sayHi: function() {
+            setTimeout(function(){
+                console.log('Hi ' + this.firstName);
+            }.bind(this), 1000)
+        }
+    }
+
+    colt.sayHi(); // Hi Colt (1000 milliseconds later)
+    ```
 
 # Object Oriented Programming with JavaScript
 
