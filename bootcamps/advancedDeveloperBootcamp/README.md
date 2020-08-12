@@ -2264,6 +2264,9 @@ function guessingGame(amount){
     ```
 
 ### Exercise: Call, Apply, and Bind
+1. `.apply()` method can the an `Array` or `array-like object` to send the elements as parameters to the function. Therefore in a function of a function, we can use `function.apply(thisArg, arguments))` directly. 
+1. `Array.prototype.reverse()` method returns an `Array` in the reverse order. 
+1. We can check `length` property of an function which returns the number of arguments a function can take. 
 ```js
 /*
 Write a function called arrayFrom which converts an array-like-object into an array.
@@ -2398,8 +2401,12 @@ Examples:
 */
 
 function bind(fn, thisArg){
-    var restArgs = Array.from(arguments).slice(2);
-    return fn.bind(thisArg, restArgs);
+    var outerArgs = Array.from(arguments).slice(2);
+    return function() {
+        var innerArgs = Array.from(arguments);
+        var allArgs = outerArgs.concat(innerArgs);
+        return fn.apply(thisArg, allArgs);
+    }
 }
 
 /* 
@@ -2445,11 +2452,93 @@ Examples:
 
 
 function flip(fn, thisArg){
-    
+    var outerArgs = Array.from(arguments).slice(2);
+    return function(){
+        var innerArgs = Array.from(arguments);
+        var allArgs = outerArgs.concat(innerArgs).slice(0, fn.length);
+        return fn.apply(thisArg, allArgs.reverse());
+    }
 }
 ```
 
+### The 'new' keyword and section recap
+1. We can set the context of the keyword `this` using the `new` keyword - it does quite a bit more as well which we will discuss further when we talk about OOP. 
+    ```js 
+    function Person(firstName, lastName){
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    var elie = new Person("Elie", "Schoppik");
+    elie.firstName; // Elie
+    elie.lastName; // Schoppik
+    ```
+1. The keyword `this` is a reserved keyword in JavaScript and its value is determined at execution. 
+1. It is either set using the global context, object binding, explicit binding, or the `new` keyword. 
+1. When set in the global context in a function, it is either the global object (window if in the browser) or `undefined` (if we are using `"strict mode"`).
+1. To explicitly set the value of the keyword `this`, we use `.call()`, `.apply()`, `.bind()`.
+1. We can also use the `new` keyword to set the context of `this`, which we will discuss when we talk about Object Oriented Programming. 
+
 # Object Oriented Programming with JavaScript
+### Introduction to Object Oriented Programming with JavaScript
+1. Objectives 
+    1. Define what OOP (Object Oriented Programming) is 
+    1. Revisit the `new` keyword and understand the four things it does 
+    1. User constructor functions to reduce duplication in the code 
+    1. Use `.call()` and `.apply()` to refactor constructor functions 
+1. OOP Defined 
+    1. A programming model based around the idea of objects 
+    1. These objects are constructed from what are called `classes`, which we can think of like a blueprint. We call these objects created from classes `instances`.
+    1. We strive to make our classes abstract and modular. 
+1. Object Creation
+    1. Imagine we want to make a few house objects, they will all have `bedrooms`, `bathrooms`, and `numSqft`. The approach without classes is repetitive and redundant.
+    1. Instead of making an infinite number of different objects, let's see if we can create a function to construct these similar "house" objects. 
+    Constructor functions - Let's use a function as a blueprint for what each house should be - we call these kinds of functions `constructor` functions. 
+        1. Capitalization of the function name as convention
+        1. The keyword `this` is used to point to the object itself. 
+        1. We are attaching properties onto the keyword `this`. We would like the keyword `this` to refer to the object we will create from our constructor function, how might we do that?
+            1. If we call the function directly, we are not returning anything from the function so our `House` function returns `undefined`.
+            1. We are not explicitly binding the keyword `this` or placing it inside a declared object. This means the value of the keyword `this` will be the global object, which is not what we want. 
+    ```js 
+    function House(bedrooms, bathrooms, numSqft) {
+        this.bedroom = bedrooms;
+        this.bathrooms = bathrooms;
+        this.numSqft = numSqft; 
+    }
+    ```
+
+### The 'new' keyword 
+1. We can use `new` keyword and constructor `function` to create an `Object`. When the `new` keyword is used 
+    1. It first creates an empty object.
+    1. It then sets the keyword `this` to be that empty object. 
+    1. It adds the line `return this` to the end of the function, which follows it. 
+    1. It adds a property onto the empty object called `__proto__`, which links the prototype property on the constructor function to the empty object. 
+    ```js 
+    function House(bedrooms, bathrooms, numSqft) {
+        this.bedroom = bedrooms;
+        this.bathrooms = bathrooms;
+        this.numSqft = numSqft; 
+    }
+
+    var firstHouse = new House(2, 2, 1000);
+    ```
+1. Create a `Dog` class that has `name` and `age` property and a method `bark()`.
+    ```js 
+    function Dog(name, age){
+        this.name = name;
+        this.age = age;
+        this.bark = function(){
+            console.log(`${this.name} just barked`)
+        };
+    }
+
+    var rusty = new Dog('Rusty', 3);
+    var fido = new Dog('Fido', 3);
+    
+    rusty.bark();
+    fido.bark();
+    ```
+
 
 # Creating JSON API's with Node and Mongo
 
