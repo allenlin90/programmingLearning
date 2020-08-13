@@ -2539,6 +2539,139 @@ function flip(fn, thisArg){
     fido.bark();
     ```
 
+### Multiple Constructors 
+1. Let's create two constructor functions, one for Car and one for Motocycle and notice how much duplication is going on in the Motorcycle function. Is there any way to "borrow" the Car function and invoke it inside the Motorcycle function? 
+    ```js
+    function Car(make, model, year) {
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        // we can also set properties on the keyword this
+        // that are preset values
+        this.numWheels = 4;
+    }
+
+    function Motorcycle(make, model, year) {
+        this.make = make; 
+        this.model = model; 
+        this.year = year; 
+        this.numWheels = 2;
+    }
+    ```
+1. We can refactor the code with `.call()` and `.apply()`.
+    ```js 
+    function Car(make, model, year) {
+        this.make = make; 
+        this.model = model;
+        this.year = year;
+        this.numWheels = 4; 
+    }
+
+    function Motorcycle(make, model, year) {
+        // using call 
+        Car.call(this, make, model, year);
+        this.numWheels = 2;
+    }
+
+    function Motorcycle(make, model, year) { // we don't need to even pass in parameters!
+        // even better using apply with arguments 
+        Car.apply(this, arguments);
+        this.numWHeels = 2; 
+    }
+    ```
+
+### Constructor Function Recap 
+1. Object oriented programming is a model based on objects constructed from a blueprint. We use OOP to write more modular and shareable code. 
+1. In languages that have built-in support for OOP, we call these blueprints "classes" and the objects created from them "instances". 
+1. Since we don't have built-in class support in JavaScript, we mimic classes by using functions. These constructor functions create objects through the use of the `new` keyword. 
+1. We can avoid duplication in multiple constructor functions by using `.call()` or `.apply()`. 
+
+### Exercise: Constructor Functions 
+```js 
+// PART 1
+
+// Create a constructor function for a Person, each person should have a firstName, lastName, favoriteColor and favoriteNumber. Your function MUST be named Person. 
+
+// Write a method called multiplyFavoriteNumber that takes in a number and returns the product of the number and the object created from the Person functions' favorite number.
+
+function Person(firstName, lastName, favoriteColor, favoriteNumber){
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.favoriteColor = favoriteColor;
+    this.favoriteNumber = favoriteNumber;
+    this.multiplyFavoriteNumber = function(num){
+        return num * this.favoriteNumber; 
+    }
+}
+
+// PART 2
+
+// Given the following code - refactor the Child function to remove all the duplication from the Parent function. You should be able to remove 4 lines of code in the Child function and replace it with 1 single line.
+
+function Parent(firstName, lastName, favoriteColor, favoriteFood){
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.favoriteColor = favoriteColor;
+    this.favoriteFood = favoriteFood;
+}
+
+function Child(firstName, lastName, favoriteColor, favoriteFood){
+    Parent.apply(this, arguments);
+}
+```
+
+### Introduction to Prototypes 
+1. Objectives 
+    1. Understand what the prototype object is
+    1. Describe and diagram the relationship between `__proto__`, prototype, and constructor. 
+    1. Add methods and properties on the prototype object to write more efficient code. 
+    1. Explain the difference between adding methods and properties to the prototype versus the constructor function. 
+    1. Implement inheritance in JavaScript through the prototype object. 
+1. The `new` keyword 
+    1. Creates an object out of thin air 
+    1. Assigns the vlaue of `this` to be that object. 
+    1. Adds `return this` to the end of the function. 
+    1. Creates a link (which we can access as `__proto__`) between the object created and the prototype property of the constructor function. 
+1. Every constructor function has a property on it called `prototype`, which is an `Object`. 
+1. The prototype object has a property on it called `constructor`, which points back to the constructor function. 
+1. Anytime an object is created using the `new` keyword, a property called `__proto__` gets created, linking the object and the prototype property of the constructor function. 
+    ```js 
+    function Person(name) {
+        this.name = name;
+    }
+
+    // these are objects created from the Person constructor
+    var elie = new Person("Elie");
+    var colt = new Person("Colt");
+
+    elie.__proto__ === Person.prototype; // true 
+    Person.prototype.constructor = Person // true 
+    ```
+
+### The Prototype Chain 
+1. The `prototype` is shared among all objects created by the constructor function. 
+    ```js 
+    function Person(name) {
+        this.name = name;
+    }
+
+    // these are objects created from the Person constructor
+    var elie = new Person("Elie");
+    var colt = new Person("Colt");
+
+    Person.prototype.isInstructor = true; 
+    elie.isInstructor; // true
+    colt.isInstructor; // true
+    ```
+1. An instance create by `new` keyword and constructor function can inherit the properties from the prototype from `__proto__`. 
+    ```js 
+    var arr = new Array; 
+    arr.__proto__ = Array.prototype // true 
+    ```
+1. In JavaScript, every object has a method `.hasOwnProperty()` which returns `true` if the given string as the name of the property exists in the object. We can use `dir()` or `console.dir()` function to check the properties of a JavaScript object. For example, if we check an `Array` with `dir([])`, we can see the first `__proto__` includes the methods and properties as regular arrays. While in these array methods and properties, there is another `__proto__` that includes the methods and properties of an `Object`, as `Arrays` are a type of `Object` in JavaScript. 
+1. Since the object properties are the last layer of the prototype of an object, we will find `null`, if we try to access `__proto__` property of an `Object`.
+
+### Adding Methods to the Prototypes
 
 # Creating JSON API's with Node and Mongo
 
