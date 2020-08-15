@@ -2718,84 +2718,210 @@ function Child(firstName, lastName, favoriteColor, favoriteFood){
     ```
 
 ### Exercises: Prototypes
+1. We can use `Array.prototype.indexOf()` method to check if an element is in an `Array`. If the element doesn't exist, the method will return `-1`. We can use this feature as conditions to check if an element IS NOT in the array. For example, we can check if `1` is in array `arr` by `if (arr.indexOf(1) === -1) { [do something] }`.
+    ```js 
+    // 1 - Create a constructor function for a Person. Each person should have a firstName, lastName, favoriteColor, favoriteNumber)
+
+    function Person(firstName, lastName, favoriteColor, favoriteNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.favoriteColor = favoriteColor;
+        this.favoriteNumber = favoriteNumber;
+        this.family = [];
+    }
+
+    /* 2 - Add a function on the Person.prototype called fullName that returns the firstName and lastName property of an object created by the Person constructor concatenated together.
+        
+    Examples:    
+        var person = new Person("Elie", "Schoppik", "purple", 34)
+        person.fullName() // "Elie Schoppik"
+
+    */
+
+    Person.prototype.fullName = function(){
+        return this.firstName + " " + this.lastName;
+    }
+
+    // 3 -  Add a property on the object created from the Person function called family which is an empty array. This will involve you going back and adding an additional line of code to your Person constructor you previously created in exercise 1.
+
+    /* 4 - Add a function on the Person.prototype called addToFamily which adds an object constructed from the Person constructor to the family array. To make sure that the object you are adding is an object construced from the Person constructor (HINT - take a look at the instanceof keyword). Make sure that your family array does not include duplicates! This method should return the length of the family array.
+
+
+    Examples: 
+        
+        var person = new Person("Elie", "Schoppik", "purple", 34)
+        var anotherPerson = new Person()
+        person.addToFamily(anotherPerson); // 1
+        person.addToFamily(anotherPerson); // 1
+        person.family.length // 1
+        
+        person.addToFamily("test"); // 1
+        person.addToFamily({}); // 1
+        person.addToFamily([]); // 1
+        person.addToFamily(false); // 1
+        person.family.length // 1
+    */
+
+    Person.prototype.addToFamily = function(obj){
+        if (obj instanceof Person && !this.family.includes(obj)) {
+            this.family.push(obj);
+        }
+    }
+
+    // from the lecture, we can use .indexOf to check if the object is in the array. Besides, we should return the length of the array
+
+    Person.prototype.addToFamily = function(person) {
+        if (this.family.indexOf(person) === -1 && person instanceof Person) {
+            this.family.push(person);
+        }
+        return this.family.length; 
+    }
+
+    // PART II 
+
+    // 1 - Implement your own version of Array.prototype.map. The function should accept a callback and return a new array with the result of the callback for each value in the array. 
+
+    Array.prototype.map = function(callback){
+        const arr = [];
+        for (let i = 0; i < this.length; i++) {
+            arr.push(callback(this[i], i, this));
+        }
+        return arr;
+    }
+
+    /* 2 - Implement a function called reverse that reverses a string and place it on the String.prototype
+
+    Examples:
+        "test".reverse() // "tset"
+        "tacocat".reverse() // "tacocat"
+    */
+
+    String.prototype.reverse = function(){
+        const text = this.toString().split('');
+        const arr = [];
+        for (let i = text.length - 1; i >= 0; i--){
+            arr.push(text[i]);
+        }
+        return arr.join('');
+    }
+
+    // from the lecture, we can keep concatenate string with plus operator 
+    String.prototype.reverse = function() {
+        var newStr = '';
+        for(var i = this.legnth -1; i >= 0; i--) {
+            newStr += this[i];
+        }
+        return newStr; 
+    }
+    ```
+
+### Prototypal inheritance
+1. The passing of methods and properties from one class to another. Though we can assign `.prototype` property of 2 constructor functions, as it is not duplicating the object referencing to the same object, when one object is modified, the other will be affected as well. 
+1. We can use `Object.create()` function to inherit properties and methods from another `prototype` without referencing to the same object. Therefore, the newly created object is independant to the original one, and each object will not affect to each other. Besides, we don't use `new` keyword here, as `new` keyword will create a new `Object` instance from the prototype.  
+1. If we use `Object.create()` to inherit prototype from another constructor function, the new class will inherit the original constructor function as well, so we need to assign it back to what it should be
+    ```js
+    function Person(firstName, lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    function Student(firstName, lastName) {
+        return Person.apply(this, arguments);
+    }
+
+    Student.prototype = Person.prototype;
+
+    Student.prototype.status = function(){
+        return "I am currently a student";
+    }
+
+    var colt = new Person('Colt', 'Steele');
+    console.log(colt.status()) // I am currently a student
+    
+    delete Person.prototype.status;
+
+    Student.prototype.sayHi = function(){
+        return "Hello " + this.firstName + " " + this.lastName;
+    }
+
+    Student.prototype = Object.create(Person.prototype);
+    Student.prototype.constructor // Person
+    Student.prototype.constructor = Student;
+    ```
+1. Note that duplicating objects in JavaScript are using different methods 
+    1. Spread operator
+    1. `Object.assign()` method 
+    1. `JSON.parse(JSON.stringify(obj))`
+    ```js
+    const person = {
+        firstName: 'John',
+        lastName: 'Doe'
+    };
+
+    // using spread ...
+    let p1 = {
+        ...person
+    };
+
+    // using  Object.assign() method
+    let p2 = Object.assign({}, person);
+
+    // using JSON
+    let p3 = JSON.parse(JSON.stringify(person));
+    ```
+
+### Exercise: Inheritance 
 ```js 
-// 1 - Create a constructor function for a Person. Each person should have a firstName, lastName, favoriteColor, favoriteNumber)
+// 1 - Create a constructor function for a Vehicle. Each vehicle should have a make, model and year property.
 
-function Person(firstName, lastName, favoriteColor, favoriteNumber) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.favoriteColor = favoriteColor;
-    this.favoriteNumber = favoriteNumber;
-    this.family = [];
+function Vehicle (make, model, year) {
+    this.make = make; 
+    this.model = model;
+    this.year = year; 
 }
 
-/* 2 - Add a function on the Person.prototype called fullName that returns the firstName and lastName property of an object created by the Person constructor concatenated together.
-    
-Examples:    
-    var person = new Person("Elie", "Schoppik", "purple", 34)
-    person.fullName() // "Elie Schoppik"
+// 2 - Add a function to the Vehicle prototype called start which returns the string "VROOM!"
 
+Vehicle.prototype.start = function(){
+    return "VROOM!";
+}
+
+// 3 - Add a function to the Vehicle prototype called toString which returns the string "The make, model, and year are" concatenated with the make, model and year property
+
+Vehicle.prototype.toString = function(){
+    return `The make, model, and year are ${this.make} ${this.model} ${this.year}` 
+}
+
+/* Examples 
+    var vehicle = new Vehicle("Tractor", "John Deere", 1999)
+    vehicle.toString() // 'The make, model, and year are Tractor John Deere 1999'
 */
 
-Person.prototype.fullName = function(){
-    return this.firstName + " " + this.lastName;
+// 4 - Create a constructor function for a Car. Each object created from the Car function should also have a make, model, and year and a property called numWheels which should be 4. The Car prototype should inherit all of the methods from the Vehicle prototype
+
+function Car (make, model, year){
+    this.numWheels = 4;
+    return Vehicle.apply(this, arguments);
 }
 
-// 3 -  Add a property on the object created from the Person function called family which is an empty array. This will involve you going back and adding an additional line of code to your Person constructor you previously created in exercise 1.
+Car.prototype = Object.create(Vehicle.prototype);
+Car.prototype.constructor = Car; 
 
-/* 4 - Add a function on the Person.prototype called addToFamily which adds an object constructed from the Person constructor to the family array. To make sure that the object you are adding is an object construced from the Person constructor (HINT - take a look at the instanceof keyword). Make sure that your family array does not include duplicates! This method should return the length of the family array.
+// 5 - Create a constructor function for a Motorcycle. Each object created from the Motorcycle function should also have a make, model, and year and a property called numWheels which should be 2. The Motorcycle prototype should inherit all of the methods from the Vehicle prototype
 
-
-Examples: 
-    
-    var person = new Person("Elie", "Schoppik", "purple", 34)
-    var anotherPerson = new Person()
-    person.addToFamily(anotherPerson); // 1
-    person.addToFamily(anotherPerson); // 1
-    person.family.length // 1
-    
-    person.addToFamily("test"); // 1
-    person.addToFamily({}); // 1
-    person.addToFamily([]); // 1
-    person.addToFamily(false); // 1
-    person.family.length // 1
-*/
-
-Person.prototype.addToFamily = function(obj){
-    if (obj instanceof Person && !this.family.includes(obj)) {
-        this.family.push(obj);
-    }
+function Motorcycle(make, model, year){
+    this.numWheels = 2; 
+    return Vehicle.apply(this, arguments);
 }
-
-// PART II 
-
-// 1 - Implement your own version of Array.prototype.map. The function should accept a callback and return a new array with the result of the callback for each value in the array. 
-
-Array.prototype.map = function(callback){
-    const arr = [];
-    for (let i = 0; i < this.length; i++) {
-        arr.push(callback(this[i], i, this));
-    }
-    return arr;
-}
-
-/* 2 - Implement a function called reverse that reverses a string and place it on the String.prototype
-
-Examples:
-    "test".reverse() // "tset"
-    "tacocat".reverse() // "tacocat"
-*/
-
-String.prototype.reverse = function(){
-    const text = this.toString().split('');
-    const arr = [];
-    for (let i = text.length - 1; i >= 0; i--){
-        arr.push(text[i]);
-    }
-    return arr.join('');
-}
+Motorcycle.prototype = Object.create(Vehicle.prototype);
+Motorcycle.prototype.constructor = Motorcycle;
 ```
 
+### Recap 
+1. Every time the `new` keyword is used, a link between the object created and the prototype property of the constructor is established - this link can be accessed using `__proto__`. 
+1. The prototype object contains a property called constructor, which points back to the constructor function
+1. To share properties and methods for objects created by a constructor function, place them in the prototype as it is the most efficient. 
+1. To pass methods and properties from one prototype object to another, we can use inheritance which involves setting the prototype property to be a newly created object using `Object.create` and reseting the constructor property. 
 
 # Creating JSON API's with Node and Mongo
 
