@@ -2924,6 +2924,337 @@ Motorcycle.prototype.constructor = Motorcycle;
 1. To pass methods and properties from one prototype object to another, we can use inheritance which involves setting the prototype property to be a newly created object using `Object.create` and reseting the constructor property. 
 
 # Creating JSON API's with Node and Mongo
+### Preparing for React
+1. Build own JSON API
+1. Build a SPA (single page application) with the API
+
+### Defining the API Gameplan
+1. The API is created to make a todo app. 
+1. The data structure of a task in the todo list in `field` - `type`
+    1. name - `String`
+    1. completed - `Boolean`
+    1. created Date - `Date`
+1. The routes 
+    1. GET - /api/todos - List all todos 
+    1. POST - /api/todos - Create new todo
+    1. GET - /api/todos/:todoId - Retrieve a todo 
+    1. PUT - /api/todos/:todoId - Update a todo
+    1. DELETE - /api/todos/:todoId - Delete a todo 
+
+### Installing Node.js 
+### Installing Node.js locally
+### Creating Our Initial Express Application
+### Installing Mongo
+1. These sections are skipped as I have learnt from other lectures
+
+### Responding with JSON
+1. In a route in `express`, with `res.send()`, if we send text or `String` value, it returns HTML data. If we pass a JavaScript object, the program will return a JSON type data if a user uses the correct HTTP request method to access the endpoint. Besides, we can use `res.json()` to specify that the endpint is responding JSON to requests. Note that if we return a JSON-like String, the program will treat the data as `String`. 
+
+### Defining Schema 
+1. In the root directory, we create a new folder `models` to keep the schema and data model files for `mongoose` and MongoDB. 
+    1. Set up `debug` mode, which is not neccessary. This will allow `mongoose` printing the result of manipulate in the server console.
+    1. Connect to database at local host
+    1. Use `Promise` syntax, so we can use ES6 `Promise` rather than using callback functions. 
+    ```js
+    // ./models/index.js
+    var mongoose = require('mongoose');
+    mongoose.set('debug', true); // use debug mode 
+    mongoose.connect('mongodb://localhost/todo-api'); // connect to local database 
+
+    mongoose.Promise = Promise; // use Promise syntax rather than callback 
+    ```
+1. Update data schema in `todo.js`.
+    1. Use `new mongoose.Schema()` to create a schema in MongoDB. 
+    1. Use `mongoose.model()` to turn the schema into a model. 
+    ```js 
+    var mongoose = require('mongoose');
+
+    var todoSchema = new mongoose.Schema({
+        name: {
+            type: String,
+            required: 'Name cannot be blank!'
+        },
+        completed: {
+            type: Boolean,
+            default: false
+        },
+        created_date: {
+            type: Date,
+            default: Date.now
+        }
+    });
+
+    var Todo = mongoose.model('Todo', todoSchema);
+
+    module.exports = Todo;
+    ```
+1. Since mongoose will look in to `index.js` in the directory rather than the specific file model, we can use `export` to include `todo.js` in `index.js` in `models` folder. 
+    ```js 
+    module.exports.Todo = require('./todo');
+    ```
+
+### Defining the index route
+1. We'd categorize and keep all the routes in a separated module, so we can manage it easily. We create `routes` in root directory with a `todos.js`.
+    ```js 
+    var express = require('express');
+    var router = express.Router();
+
+    router.get('/', (req, res) => {
+        res.send("Hello From Todos Route")
+    });
+
+    module.exports = router;
+    ```
+1. We then update `index.js` in the root directory. 
+    1. Import todo routes from `./routes/todos`.
+    1. Use `app.use` to let `express` know that we are using another router module. In this case, by giving `/api/todos` the imported routes in the other modules will have a prefix by defualt. This is used to separated the main root directory and the sub-routers for certain functions. 
+        1. If we access the server without any route, we will get to the `root` of the program. 
+        1. If we access the server at `/api/todos`, we will get the root of `todos`. 
+    ```js 
+    var express = require('express');
+    var app = express();
+    var port = process.env.PORT || 3000;
+    var todoRoutes = require('./routes/todos'); // import routes 
+
+    app.get('/', (req, res) => {
+        res.send('Hi there from root Express')
+    });
+
+    app.use('/api/todos', todoRoutes); // allow express to use another module of route endpoints with prefix
+
+    app.listen(port, () => {
+        console.log(`App is running on port ${port}`);
+    });
+    ```
+1. We then can setup the `root` path in `todos.js` router. The program will try to find `index.js` in the folder, so we can simply import the correct directory for the models. 
+1. We then use `.find()` to retrieve all the data in the data base. Besides, since we have allowed using `Promise`, we can use `.then()` and `.catch()` rather than callback functions. 
+    ```js
+    var express = require('express');
+    var router = express.Router();
+    var db = require('../models'); // import models from ./models/index.js
+
+    router.get('/', (req, res) => {
+        db.Todo.find()
+            .then(function (todos) {
+                res.json(todos);
+            })
+            .catch(function (error) {
+                res.send(error);
+            });
+    });
+
+    module.exports = router;
+    ```
+
+### Defining the Create Route
+1. We need npm `body-parser` and use it with `express` to parse the body content of a request. Therefore, in the route handler, we can check the body contents sent with the request by `req.body`. 
+    ```js 
+    var express = require('express');
+    var app = express();
+    var bodyParser = require('body-parser');
+
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    ```
+1. After setting up `body-parser`, we update the hanlder for POST request in `todos.js`. Besides, we can specify the status code with `201` to indicate that a new data is created. We can use POSTMAN to test the endpoint. 
+    ```js
+    var express = require('express');
+    var router = express.Router();
+    var db = require('../models');
+
+    router.get('/', (req, res) => {
+        db.Todo.find()
+            .then(function (todos) {
+                res.json(todos);
+            })
+            .catch(function (error) {
+                res.send(error);
+            });
+    });
+
+    // add handler for post request
+    router.post('/', (req, res) => {
+        db.Todo.create(req.body)
+            .then(function (newTodo) {
+                res.status(201).json(newTodo);
+            })
+            .catch(function (error) {
+                res.send(error);
+            })
+    })
+
+    module.exports = router;
+    ```
+
+### Defining the Show Route
+1. In `todos.js`, we update the route for show case of a specific task. After root directory, we can add a placeholder to take the parameters that is passed to the URL. Note that it can be any, but it should be the same name for parameters to be retrieved in `req.params.[parameter]`.
+    ```js 
+    router.get('/:todoId', (req, res) => {
+        db.Todo.findById(req.params.todoId)
+            .then(foundTodo => {
+                res.json(foundTodo);
+            })
+            .catch(err => {
+                res.send(err);
+            })
+    });
+    ```
+
+### Defining the Update Route
+1. We set up a handler for PUT request on a sepcific task. We can pass `req.body` directly with the parameters to update the task object. However, if we use directly with `.findOneAndUpdate()` the endpoint will return the object which is "before" updated. 
+    ```js 
+    // ./routes/todos.js
+    router.put('/:todoId', (req, res) => {
+        db.Todo.findOneAndUpdate({ _id: req.params.todoId }, req.body) // this returns 
+            .then(function (todo) {
+                res.json(todo);
+            })
+            .catch(function (err) {
+                res.send(err);
+            });
+    });
+    ```
+1. Therefore, we add another parameter `{new: true}` for the `mongoose` method. 
+    ```js 
+    // ./routes/todos.js
+    router.put('/:todoId', (req, res) => {
+        db.Todo.findOneAndUpdate({ _id: req.params.todoId }, req.body, {new: true}) // allow endpoint to return updated data rather than old one
+            .then(function (todo) {
+                res.json(todo);
+            })
+            .catch(function (err) {
+                res.send(err);
+            });
+    });
+    ```
+
+### Defining the Delete Route 
+1. We set up a route handler for DELETE request. 
+    ```js 
+    router.delete('/:todoId', (req, res) => {
+        db.Todo.remove({ _id: req.params.todoId })
+            .then(function () {
+                res.json({ message: 'We deleted it!' });
+            })
+            .catch(function (error) {
+                res.send(error);
+            })
+    });
+    ```
+
+### Refactoring API
+1. We will separate the logic for data handler in the route handler into another module to keep the file clean and separated. 
+1. We create `todos.js` in folder `helpers` in the root directory. 
+    ```js 
+    // ./helpers/todos.js
+    var db = require('../models');
+
+    exports.getTodos = (req, res) => {
+        db.Todo.find()
+            .then(function (todos) {
+                res.json(todos);
+            })
+            .catch(function (error) {
+                res.send(error);
+            });
+    }
+
+    exports.createTodo = (req, res) => {
+        db.Todo.create(req.body)
+            .then(function (newTodo) {
+                res.status(201).json(newTodo);
+            })
+            .catch(function (error) {
+                res.send(error);
+            });
+    }
+
+    module.exports = exports;
+    ```
+1. Since the **GET** for retrieving all tasks and **POST** for creating new task are sharing the same path, we can use a shorthand syntax to handle both. This syntax can be used on other paths that requires task IDs as well. 
+    ```js 
+    // ./routes/todos.js
+    var helpers = require('../helpers/todos');
+
+    router.route('/')
+        .get(helpers.getTodos)
+        .post(helpers.createTodo)
+    ```
+1. `./routes/todos.js` is shortened to have only 15 lines to handle all the requests. 
+    ```js
+    var express = require('express');
+    var router = express.Router();
+    var db = require('../models');
+    var helpers = require('../helpers/todos');
+
+    router.route('/')
+        .get(helpers.getTodos)
+        .post(helpers.createTodo)
+
+    router.route('/:todoId')
+        .get(helpers.getTodo)
+        .put(helpers.updateTodo)
+        .delete(helpers.deleteTodo)
+
+    module.exports = router;
+    ```
+
+1. `./helpers/todos.js` has relatively simple structure to manage with. 
+    ```js
+    var db = require('../models');
+
+    exports.getTodos = (req, res) => {
+        db.Todo.find()
+            .then(function (todos) {
+                res.json(todos);
+            })
+            .catch(function (error) {
+                res.send(error);
+            });
+    }
+
+    exports.createTodo = (req, res) => {
+        db.Todo.create(req.body)
+            .then(function (newTodo) {
+                res.status(201).json(newTodo);
+            })
+            .catch(function (error) {
+                res.send(error);
+            });
+    }
+
+    exports.getTodo = (req, res) => {
+        db.Todo.findById(req.params.todoId)
+            .then(foundTodo => {
+                res.json(foundTodo);
+            })
+            .catch(err => {
+                res.send(err);
+            })
+    }
+
+    exports.updateTodo = (req, res) => {
+        db.Todo.findOneAndUpdate({ _id: req.params.todoId }, req.body, { new: true })
+            .then(function (todo) {
+                res.json(todo);
+            })
+            .catch(function (err) {
+                res.send(err);
+            });
+    }
+
+    exports.deleteTodo = (req, res) => {
+        db.Todo.remove({ _id: req.params.todoId })
+            .then(function () {
+                res.json({ message: 'We deleted it!' });
+            })
+            .catch(function (error) {
+                res.send(error);
+            });
+    }
+
+    module.exports = exports;
+    ```
 
 # Codealong: Single Page Todo List with Express, Mongo, and jQuery
 
