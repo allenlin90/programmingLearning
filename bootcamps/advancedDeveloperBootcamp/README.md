@@ -3257,6 +3257,300 @@ Motorcycle.prototype.constructor = Motorcycle;
     ```
 
 # Codealong: Single Page Todo List with Express, Mongo, and jQuery
+### Serving static files and Nodemon
+1. We can allow `express` framework to render a static HTML file. We create `index.html` in `views` folder in the root directory. Besides, we can create `public` folder to keep the css stylesheet. We can use `res.sendFile()` to render the static HTML file.
+    ```js 
+    app.use(express.static(__dirname + '/public'));
+    app.use(express.static(__dirname + '/views'));
+
+    app.get('/', (req, res) => {
+        res.sendFile('index.html');
+    });
+    ```
+1. We can import the front-end JS file and CSS into `index.html`
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="app.css" type="text/css">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <h1>This is the index page</h1>
+        <p>todo will go here</p>
+        <script src="app.js"></script>
+    </body>
+
+    </html>
+    ```
+
+### Adding jQuery and the Starter CSS 
+1. This is mainly about including jQuery CDN and use pre-built CSS given by the lectuerer. 
+    ```css
+    @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,700');
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background: #ecf0f1;
+    }
+
+    /* Header Styles */
+    header {
+        text-align: center;
+    }
+    header h1 {
+        font-size: 64px;
+        font-weight: 300;
+        margin: 80px 0 25px;
+        color: #2c3e50;
+    }
+    header h1 span {
+        font-weight: 700;
+    }
+    header h2 {
+        color: #bdc3c7;
+        font-weight: 300;
+    }
+
+    /* Form Styles */
+    .form {
+        width: 800px;
+        margin: 50px auto 20px;
+    }
+    #todoInput {
+        width: 100%;
+        height: 60px;
+        background: none;
+        border: none;
+        border-bottom: 1px solid #34495e;
+        outline: none;
+        font: 300 28px 'Ubuntu', sans-serif;
+        padding: 20px;
+        color: #34495e;
+    }
+
+    /* List Styles */
+    .list {
+        width: 800px;
+        margin: 0 auto;
+    }
+    .task {
+        width: 100%;
+        height: 60px;
+        line-height: 60px;
+        font-size: 20px;
+        padding: 0 20px;
+        color: #34495e;
+        transition: all .3s ease;
+    }
+    .task:hover {
+        background: rgba(0, 0, 0, .02);
+        cursor: pointer;
+    }
+    .task:hover span {
+        opacity: 1;
+    }
+    .done {
+        text-decoration: line-through;
+        color: #bdc3c7;
+    }
+    li span {
+        float: right;
+        color: #c0392b;
+        transition: all 0.3s;
+        opacity: 0;
+    }
+    li span:hover {
+        color: #e74c3c;
+    }
+    ```
+
+### Writing the Initial AJAX Call
+1. We use AJAX function in jQuery to make a GET request to the API endpoint. We add the function in the front-end code. 
+    1. Use `$().ready()` to ensure the function runs after the data is loaded. 
+    1. Use `$.getJSON()` to parse the data directly. 
+    1. Create a jQuery HTML element
+    1. Use `$().appned()` to add new elements to the list. 
+    ```js
+    // ./public/app.js
+    $(document).ready(function () {
+        $.getJSON('/api/todos')
+            .then(addTodos)
+    });
+
+    function addTodos(todos) {
+        // add todos to page here
+        todos.forEach(function (todo) {
+            var newTodo = $('<li class="task">' + todo.name + '</li>');
+            $('.list').append(newTodo);
+        });
+    }
+    ```
+
+### Displaying Todos correctly
+1. We can add effect on the tasks that are completed by adding class `done` which is prebuilt in CSS sheet. 
+    ```js
+    $(document).ready(function () {
+        $.getJSON('/api/todos')
+            .then(addTodos)
+    });
+
+    function addTodos(todos) {
+        // add todos to page here
+        todos.forEach(function (todo) {
+            var newTodo = $('<li class="task">' + todo.name + '</li>');
+            if (todo.completed) {
+                newTodo.addClass('done');
+            }
+            $('.list').append(newTodo);
+        });
+    }
+    ```
+
+### Connecting the Form to our API
+1. We add an event listener for `keypress` and check if the key pressed is <kbd>Enter</kbd>. Besides, as we can use `addTodo` function in different part such as retrieving all tasks or creating a new task, we can use another function to modulize the code. 
+    ```js 
+    // ./public/app.js
+    function addTodos(todos) {
+        // add todos to page here
+        todos.forEach(function (todo) {
+            addTodo(todo)
+        });
+    }
+
+    function addTodo(todo) {
+        var newTodo = $('<li class="task">' + todo.name + '</li>');
+        if (todo.completed) {
+            newTodo.addClass('done');
+        }
+        $('.list').append(newTodo);
+    }
+
+    function createTodo() {
+        // send request to create new todo
+        var userInput = $('#todoInput').val();
+        $.post('/api/todos', { name: userInput })
+            .then(function (newTodo) {
+                $('#todoInput').val('');
+                addTodo(newTodo);
+            })
+            .catch(function (err) {
+                console.log(err);
+            })
+    }
+    ```
+
+### Making the Delete Button work 
+1. We can add a `<span>` tag with character X as a delete button. Besides, we need an event listener to manipulate the elements when the button is clicked. However, we can't add the event listener on the `<span>` tag directly, as it may not be loaded and add with the listener when the page is loaded. 
+    ```js 
+    // ./public/app.js
+    function addTodo(todo) {
+        var newTodo = $('<li class="task">' + todo.name + ' <span>X</span></li>');
+        if (todo.completed) {
+            newTodo.addClass('done');
+        }
+        $('.list').append(newTodo);
+    }
+    ```
+1. As to retrive the task ID correctly, we can either add the attribute to the element or use jQuery `.data()` to add extra info to an object. The ID of an instance is in its `_id` according to MongoDB model. 
+    ```js 
+    function addTodo(todo) {
+        var newTodo = $('<li class="task">' + todo.name + ' <span>X</span></li>');
+        newTodo.data('id', todo._id); // add extra info to the object by jQuery 
+        if (todo.completed) {
+            newTodo.addClass('done');
+        }
+        $('.list').append(newTodo);
+    }
+    ```
+1. Since `<ul>` tag is in the static page file renedered when the page is loaded, we can add listener on it directly. Besides, we can specify by giving an extra parameter to indicate that we'd like the listener only affect to the `span` element in the `ul` tag. There are other methods we can use, such as checking the `event` argument in the callback function with `.match` to check either `attribute` or type of the element. 
+    ```js 
+    // add a listener to manipulate span after event .on() method
+    $('.list').on('click', 'span', function () {
+        var clickedId = $(this).parent().data('id'); // parse the id added to the object 
+        var deleteUrl = '/api/todos/' + clickedId;
+        $.ajax({
+            method: 'DELETE', 
+            url: deleteUrl,
+        })
+        .then(function(data){
+            console.log(data);
+        })
+    });
+    ```
+1. Besides, we can refactor and put the logic in another function to be called. 
+    ```js 
+    $(document).ready(function () {
+        $.getJSON('/api/todos')
+            .then(addTodos)
+        $('#todoInput').keypress(function (event) {
+            if (event.which === 13) {
+                createTodo();
+            }
+        });
+
+        $('.list').on('click', 'span', function () {
+            removeTodo($(this).parent());
+        });
+    });
+    
+    function removeTodo(todo) {
+        var clickedId = todo.data('id');
+        var deleteUrl = '/api/todos/' + clickedId;
+        $.ajax({
+            method: 'DELETE',
+            url: deleteUrl
+        })
+            .then(function (data) {
+                todo.remove();
+            })
+            .catch(function (err) {
+                console.log(err);
+            })
+    }
+    ```
+
+### Toggling Todo Completion
+1. In this section, we will change the state of the task by toggling its completion status and add `done` class on the element if it's completed. 
+1. `event.stopPropagation()` (jQuery method) is similar to `event.preventDefault()` (vanilla JS method). These methods are used to prevent event bubbling, so the event handler can focus precisely on the same object in different layer. 
+    ```js 
+    $(document).ready(function () {
+        $.getJSON('/api/todos')
+            .then(addTodos)
+        $('#todoInput').keypress(function (event) {
+            if (event.which === 13) {
+                createTodo();
+            }
+        });
+
+        $('.list').on('click', 'li', function () {
+            updateTodo($(this));
+        });
+
+        $('.list').on('click', 'span', function (event) {
+            event.stopPropagation();
+            removeTodo($(this).parent());
+        });
+    });
+    
+    function updateTodo(todo) {
+        var updateUrl = '/api/todos/' + todo.data('id');
+        var isDone = todo.data('completed');
+        var udpateData = { completed: !isDone }
+        $.ajax({
+            method: 'PUT',
+            url: updateUrl,
+            data: udpateData
+        })
+            .then(function (updatedTodo) {
+                todo.toggleClass('done');
+            })
+    }
+    ```
 
 # ES2015 Part 1
 
