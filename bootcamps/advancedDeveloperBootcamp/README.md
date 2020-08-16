@@ -3553,6 +3553,311 @@ Motorcycle.prototype.constructor = Motorcycle;
     ```
 
 # ES2015 Part 1
+### Introduction to ES2015
+1. Objectives
+    1. Understand what ES2015 is and how the term cam to be. 
+    1. Refactor code to use `let` and `const` and explain the implications of using both.
+    1. Use template strings to avoid string concatenation in the JavaScript code.
+    1. Use arrow functions to write shorter functions and compare arrow functions and the `function` keyword. 
+    1. Explain what ES2015 default parameters are and how to use them. 
+    1. Compare and constrast the rest and spread operators.
+    1. Unpack values from arrays and objects using destructuring.
+1. ES2015 Additions
+    1. `let` and `const`
+    1. template strings
+    1. arrow functions
+    1. default parameters
+    1. rest and spread operators
+    1. for...of loops
+    1. object shorthand notation
+    1. computed property names
+    1. object destructuring
+    1. array destructuring
+    1. class keyword 
+    1. super and extends keywords
+    1. Maps / Sets
+    1. Promises 
+    1. Generators
+    1. Object, Number, Array methods
+
+### Const 
+1. A `const` variable can never redeclare. 
+1. A `cosnt` variable that is object or array can be mutated (only mutate the object rather than reassign), but can't not be declared again. 
+    ```js 
+    var firstInstructor = "Colt";
+    firstInstructor = "Elie"; 
+
+    const anotherInstructor = "Tim"; 
+    anotherInstructor = 'Elie'; // TypeError
+    const anotherInstructor = 'Elie'; // SyntaxError
+
+    const numbers = [1,2,3,4];
+    numbers.push(10); // 5
+    numbers; // [1,2,3,4,5];
+    numbers = "no!"; // TypeError
+    ```
+
+### Let 
+1. A variable declared by keyword `let` can be used only in the block scope (curly braces). 
+    ```js 
+    var instructor = 'Elie';
+    if (instructor === 'Elie') {
+        let funFact = 'Plays the cello';
+    }
+
+    funFact; // ReferenceError
+    ```
+1. `let` does hoist has `var`, but we can't access the value, as it's in a TDZ (Temporal Dead Zone).
+    ```js 
+    function helloInstructor(){
+        return elie; 
+        var elie = "ME!";
+    }
+    helloInstructor(); // undefined 
+
+    function helloSecondInstructor(){
+        return colt; 
+        let colt = 'HIM!';
+    }
+    helloSecondInstructor(); // ReferenceError
+    ```
+1. Use cases of `let`
+    1. If we use `var` to declare the counter variable and use async function as the example below, the function only prints `i` after the main execution stack is cleared which `i` has been at 5. The solution is to use IIFE to invoke the function directly. 
+    ```js 
+    for(var i = 0; i < 5; i++) {
+        setTimeout(function(){
+            console.log(i);
+        }, 1000)
+    }
+    // 5 (five times)
+
+    // solution with var declared counter is to use IIFE
+    for(var i = 0; i < 5; i++) {
+        (function(j){
+            setTimeout(function(){
+                console.log(j)
+            }, 1000)
+        })(i)
+    }
+    ```
+    1. However, if we use `let` to declare the counter, as the variable can exist in the limited scope, we can use the for loop directly. 
+    ```js 
+    for(let i = 0; i < 5; i++) {
+        setTimeout(function(){
+            console.log(i);
+        }, 1000)
+    }
+    ```
+
+### Template Strings 
+1. We can use backtick "**\`**" and dollar sign with curly braces `${}` to make String templates without using plus sign to concatenate strings. Besides, we can set multiple lines between backticks without using newline character `\n`. 
+
+### Introduction to Arrow Functions
+1. Arrow function replace the keyword `function` with `=>`.
+1. One-line arrow functions
+    1. We can put arrow functions on one line 
+    1. We can omit `return` keyword as well as curly braces
+    ```js 
+    var add = (a,b) => {
+        return a + b;
+    }
+
+    var add = (a,b) => a + b;
+    ```
+1. Refactoring with arrow functions (especially with higher-order functions for arrays)
+    ```js
+    // ES5 
+    [1,2,3].map(function(value){
+        return value * 2;
+    }); // [2,4,6]
+
+    // ES2015
+    [1,2,3].map(value => value * 2); // [2,4,6]
+
+    function doubleAndFilter(arr) {
+        return arr.map(function(value){
+            return value * 2;
+        }).filter(function(value){
+            return value % 3 === 0;
+        });
+    }
+
+    doubleAndFilter([5,10,15,20]); // [30]
+
+    var doubleAndFilter = arr => arr.map(val => val * 2).filter(num => num % 3 === 0);
+    doubleAndFilter([5,10,15,20]); // [30]
+    ```
+
+### Arrow functions continued 
+1. Arrow functions are not exactly the same as regular functions
+1. Arrow functions do not get their own `this` keyword. 
+1. Inside of an arrow function, the keyword `this` has its original meaning from the enclosing context. 
+1. The fact that arrow functions do not have their own `this` keyword can be quite helpful. 
+    ```js 
+    var instructor = {
+        firstName: 'Elie', 
+        sayHi: function(){
+            setTimeout(function(){
+                console.log('Hello ' + this.firstName);
+            }, 1000)
+        }
+    }
+    instructor.sayHi(); // Hello undefined 
+
+    var instructor = {
+        firstName: 'Elie', 
+        sayHi: function(){
+            setTimeout(function(){
+                console.log('Hello ' + this.firstName);
+            }.bind(this), 1000)
+        }
+    }
+    instructor.sayHi(); // Hello Elie
+    ```
+1. Arrow functions do not have their own keyword `this`. The keyword `this` refers to its enclosing context (the instructor object). However, we don't use arrow function to set up the method because if we use an arrow function, the `sayHi` function will not have its own keyword `this` - and the keyword `this` will not refer to the instructor object anymore. 
+    ```js 
+    // use arrow function 
+    var instructor = {
+        firstName: 'Elie',
+        sayHi: function(){
+            setTimeout(() => {
+                console.log('Hello ' + this.firstName);
+            }, 1000)
+        }
+    }
+    instructor.sayHi(); // Hello Elie
+    ```
+1. Arrow functions do not get their own keyword `arguments`. 
+    ```js 
+    var add = (a,b) => {
+        return arguments;
+    }
+
+    add(2,4); // ReferenceError: arguments is not defined 
+    ```
+1. An `arguments` keyword can be accessed if the arrow function is inside of another function (it will be the outer functions arguments). 
+    ```js 
+    function outer(){
+        return innerFunction = () => {
+            return arguments; 
+        }
+    }
+
+    outer(1)(2); // only prints out [1];
+    ```
+1. Arrow functions should **NEVER** be used as methods in objects since we will get the incorrect value of the keyword `this`. ES2015 provides a better alternative. 
+
+### Coding Exercise 12: Coding Exercise - Arrow Functions Exercises 
+```js 
+/* 1 - Refactor the following code to use ES2015 arrow functions - make sure your function is also called tripleAndFilter
+
+    function tripleAndFilter(arr){
+      return arr.map(function(value){
+        return value * 3;
+      }).filter(function(value){
+        return value % 5 === 0;
+      })
+    }
+
+*/
+
+const tripleAndFilter = (arr) => {
+    return arr.map(value => value * 3).filter(value => value % 5 === 0);
+}
+
+// according to the lecture, we can even make the function in one line 
+let tripleAndFilter = arr => arr.map(value => value * 3).filter(value => value % 5 === 0);
+
+/* 2 - Refactor the following code to use ES2015 arrow functions. Make sure your function is also called doubleOddNumbers
+
+    function doubleOddNumbers(arr){
+        return arr.filter(function(val){
+            return val % 2 !== 0;
+        }).map(function(val){
+            return val *2;
+        })
+    }
+
+*/
+
+const doubleOddNumbers = (arr) => {
+    return arr.filter(val => val % 2 !== 0).map(val => val * 2);
+}
+
+// according to the lecture, we can even make the function in one line 
+let doubleOddNumbers = arr => arr.filter(val => val % 2 !== 0).map(val => val * 2);
+
+/* 3 - Refactor the following code to use ES2015 arrow functions. Make sure your function is also called mapFilterAndReduce.
+
+    function mapFilterAndReduce(arr){
+      return arr.map(function(val){
+        return val.firstName
+      }).filter(function(val){
+        return val.length < 5;
+      }).reduce(function(acc,next){
+        acc[next] = next.length
+        return acc;
+      }, {})
+    }
+*/
+
+const mapFilterAndReduce = (arr) => {
+    return arr.map(val => val.firstName).filter(val => val.length < 5).reduce((acc, next) => {
+        acc[next] = next.length;
+        return acc;
+    }, {})
+}
+
+/* 4 - Write a function called createStudentObj which accepts two parameters, firstName and lastName and returns an object with the keys of firstName and lastName with the values as the parameters passed to the function.
+
+Example:
+    createStudentObj('Elie', 'Schoppik') // {firstName: 'Elie', lastName: 'Schoppik'}
+*/
+
+const createStudentObj = (firstName, lastName) => {
+    return {firstName, lastName};
+}
+
+/* 5 - Given the following code: 
+
+
+Refactor this code to use arrow functions to make sure that in 1000 milliseconds you console.log 'Hello Colt'
+    
+    var instructor = {
+      firstName: "Colt",
+      sayHi: function(){
+        setTimeout(function(){
+          console.log('Hello ' + this.firstName)
+        },1000)
+      }
+    }
+
+*/
+
+var instructor = {
+    firstName: 'Colt',
+    sayHi: function(){
+        setTimeout(() => {
+            console.log('Hello ' + this.firstName)
+        }, 1000)
+    }
+}
+```
+
+### Default parameters 
+1. Give default value to parameters if there's no given argument. 
+    ```js 
+    function add(a, b) {
+        return a + b;
+    }
+    add(); // NaN because both a and b are undefined, as there is no given value
+
+    function add(a = 10, b = 20) {
+        return a + b;
+    }
+    add(); // 30
+    add(20); // 40
+    ```
 
 # ES2015 Project - Guess the Password
 
