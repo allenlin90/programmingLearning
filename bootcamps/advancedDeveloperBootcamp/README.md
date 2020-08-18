@@ -2,6 +2,7 @@ Note:
 1. Start learning course on 2020/07/23
 1. Finished on
 1. As I just finished a course about HTML and CSS during June and July 2020, I will start the CSS session later to review the techniques and skills of HTML and CSS.
+1. `ES2015 Part 2` and `ES2016 and ES2017` are skipped, as to be reviewed again later. 
 
 # Structure
 1. [CSS Animation: Transforms and Transitions](#CSS-Animation:-Transforms-and-Transitions)
@@ -4383,12 +4384,230 @@ var instructor = {
 1. Array destructuring can also be used for swapping variables in an array without a separate swap function. 
 
 # ES2015 Project - Guess the Password
+1. The project to be refactored is a guessing game, which has a given list of potential passwords, try to guess the correct one. If you're wrong, we'll tell you how many letters are correct. 
+1. This part is mainly focusing on refactoring code from old ES5 with new features in ES2015. 
 
 # ES2015 Part 2
 
 # ES2016 and ES2017
 
 # D3 and the DOM
+1. We will use the following HTML to work and practice D3. 
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>D3 and the DOM</title>
+    </head>
+    <body>
+    <h1 id="page-title">This is my first D3 example!</h1>
+    <p class="first-paragraph">Here's my first paragraph.</p>
+    <p>Here are some reasons why d3 is cool:</p>
+    <ol>
+        <li>Makes data more engaging.</li>
+        <li>Has built-in math helpers.</li>
+        <li>Supports graph animations.</li>
+        <li>Makes drawing graph axes a breeze!</li>
+    </ol>
+    <div class="outer">
+        Here's an outer div.
+        <div>
+        Here's an inner div.
+        <div>
+            Here's the last div.
+        </div>
+        </div>
+    </div>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    </body>
+    </html>
+    ```
+### An introduction to D3 
+1. D3 stands for Data-Driven Documents, `D3.js`, which is a JavaScript library. This can be used for tableau and interactive charts on web. 
+
+### D3 Selections
+1. Objectives 
+    1. Select elements in the DOM using `d3.select` and `d3.selectAll`.
+    1. Set attributes, inner text, and style properties on D3 selections.
+    1. Get attribute and property values on D3 selections
+    1. Chain D3 methods together to make more complex changes to the DOM.
+    1. Pass callback functions into D3 selection methods for more dynamic behavior.
+    1. Add event listeners using the `on` method.
+    1. Use d3.event to access the event object inside of an event listener.
+    1. Add and remove DOM elements with D3. 
+1. Selection methods
+    1. `d3.select` - single element
+    1. `d3.selectAll` - multiple elements 
+    1. both accept a valid CSS selector
+1. By using the selector, we can access to the child of selected elements. For example, we select `<li>` tags in the `<ul`> list. We can use `d3.selectAll('li').nodes()` to get an array of the elements to loop through, or use `d3.selectAll('li').node()` which return the very first match of the element. 
+1. With d3 selector, we can use use `.style()` method on a d3 object and pass 2 arguments, the property to be modified and the value to the property. For example, we can use `d3.select('h1').style('background-color', #00feab)` to change the background color to <span style="background-color:#00feab; color: black">green</span>.
+1. Besides, we can manipualte on other attirbutes. On the other hand, we don't pass any argument, the methods will become getters that return the value of the selected element. 
+    1. `selection.style(property, [newValue])`
+    1. `selection.attr(attribute, [newValue])`
+    1. `selection.text([newValue])`
+    1. `selection.html([newValue])`
+    ```js
+    d3.select('#page-title')
+      .style('background-color', '#00feab')
+      .style('color', '#fff')
+      .attr('class', 'new-class')
+      .text('D3 is cool!');
+    d3.select('#page-title').text(); // return the text value in h1 tag
+    d3.select('#page-title').style('color') // return the text color of h1 element.
+    ```
+1. In d3, we can use `.classed()` method of a selector. The method takes a CSS `class` as the first argument and a boolean value to indicate that whether the CSS class should be added or removed. 
+    ```js
+    d3.select('#page-title')
+      .classed('new-class', true);
+    ```
+
+### Selections and Callbacks 
+1. We can pass a callback function to the selectors in D3. The callback will be invoked once for each element in the selection. For example, we can modify all the `<li>` tags on the page by giving a random size from 0 to 40 px. 
+    ```js 
+    d3.selectAll('li')
+    .style('font-size', function(){
+        return Math.random() * 40 + "px";
+    });    
+    ```
+    <img src="./images/d3RandomFontSize.gif">
+1. The callback function pass to the d3 methods has the following structure. The 1st argument will be introduced later, while the 2nd argument is the index of the current HTML element that is in the selection. For example, we can as the index of an array start from 0, we can set the odd elements in the list with <span style="background: lightgrey; color: black">lightgrey</span> background.
+    ```js
+    // callback structure
+    function(_, idx) {
+        // write the code here
+    }
+
+    d3.selectAll('li')
+    .style('background-color', function(_, idx){
+        return idx % 2 === 0 ? 'lightgrey': 'white';
+    })
+    ```
+1. d3 objects can also be chained. Therefore, we can manipulate on the same objects with different configuration multiple times.
+    ```js
+    d3.select('.outer')
+        .style('color', 'purple')
+      .select('div')
+        .style('font-size', '30px')
+        .style('background-color', 'oragne')
+      .select('div')
+        .style('border', '8px solid blue');
+    ```
+
+### Event Listeners in D3 
+1. We use the following HTML and CSS file from the lecture. 
+    1. HTML
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>Event Listeners in D3</title>
+    <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    <h1>My notes.</h1>
+    <div id="notes">
+        <p class="note">
+        Need to go to the store.
+        </p>
+        <p class="note">
+        What's the name of that movie with that guy?
+        </p>
+        <p class="note">
+        Here's another note.
+        </p>
+    </div>
+    <form id="new-note">
+        <input type="text">
+        <button>Add Note</button>
+    </form>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    </body>
+    </html>
+    ```
+    1. CSS
+    ```css
+    body {
+        background-color: #e4e4e4;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    #notes {
+        margin: 0 auto;
+        width: 75%;
+    }
+
+    .note {
+        background-color: #fdffb7;
+        border: 8px solid #d4daa7;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    form {
+        text-align: center;
+    }
+
+    input {
+        width: 50%;
+    }
+
+    input,
+    button {
+        padding: 10px;
+    }
+
+    button {
+        background-color: #ff9494;
+        border: none;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        cursor: pointer;
+        background-color: #fe2222;
+    }
+
+    button:focus {
+        outline: none;
+    }
+    ```
+1. We can add an event listener with D3 as `selection.on(eventType, callback)`. If we add multiple listener to an element, only the most recent listener will work, as the previous listeners are overwritten by the most recent one. Therefore, we can use such feature to remove a listener by passing `null` as the object for the callback function (2nd argument). 
+    ```js 
+    d3.select('h1').on('click', function(){
+        console.log('Event listeners are sweet!');
+    });
+
+    // remove the listener on h1 tag
+    d3.select('h1').on('click', null); 
+    ```
+1. In `D3`, if we'd like to access the `event` argument from the callback function in the event listener, we can't access the argument directly but access to `d3.event()`. For example, we'd like to access the `event` argument to prevent the default behavior of `form` tag to have a `submit` event that the page will reload. 
+    ```js
+    d3.select('#new-note').on('submit', function(){
+        d3.event.preventDefault();
+
+        var input = d3.select('input');
+    });
+    ```
+1. Adding element - In this case, we'd like to add a new `<p>` tag to the list, as the new added item. We can use `selection.append(tagName)` which method can append a new element of type `tagName` to every element in the selection. 
+1. To retrieve value from a `<input>` tag, we should access to its `value` property rather than the `text` itself, as an input tag doesn't have text inside. Besides, we can use the method to clear the input after submitting the value. 
+    ```js
+    d3.select('#new-note').on('submit', function(){
+        d3.event.preventDefault();
+
+        var input = d3.select('input');
+        d3.select('#notes')
+        .append('p')
+            .classed('note', true)
+            .text(input.property('value')); // retrieve input value from 'value' property of input tag 
+        input.property('value', '');
+    });
+    ```
+1. Removing element - D3 also provides method to remove element with `selection.remove()`. For example, we can use `d3.selectAll('p').remove()` to remove all `<p>` tags in the page. 
 
 # Data Joins and Update Patterns in D3
 
