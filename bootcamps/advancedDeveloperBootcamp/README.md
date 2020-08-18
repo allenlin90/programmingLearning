@@ -4109,6 +4109,279 @@ var instructor = {
     }
     ```
 
+### Object Enhancements
+1. Object shorthand notation 
+    ```js 
+    var firstName = 'Elie';
+    var lastName = 'Schoppik';
+
+    // ES5 
+    var instructor = {
+        firstName: firstName,
+        lastName: lastName
+    }
+
+    // ES2015
+    var instructor = {
+        firstName,
+        lastName
+    }
+    ```
+1. Succinct syntax to write Object method
+    ```js 
+    // ES5
+    var instructor = {
+        sayHello: function(){
+            return 'Hello!';
+        }
+    }
+
+    // ES2015 - do NOT use arrow functions here
+    var instructor = {
+        sayHello(){
+            return 'Hello!';
+        }
+    }
+    ```
+1. Computed property names 
+    ```js 
+    // ES5 
+    var firstName = 'Elie';
+    var instructor = {};
+    instructor[firstName] = "That's me!";
+
+    instructor.Elie; // That's me!
+
+    // ES2015
+    var firstName = 'Elie';
+    var instructor = {
+        [firstname]: "That's me!"
+    }
+
+    instructor.Elie; // That's me!
+    ```
+
+### Object Destructuring 
+1. Extracting values from data stored in objects and arrays
+    ```js     
+    var instructor = {
+        firstName: 'Elie',
+        lastName: 'Schoppik'
+    }
+
+    // ES5 
+    var firstName = instructor.firstName;    
+    var lastName = instructor.lastName;
+    firstName; // Elie
+    lastName; // Schoppik
+
+    // ES2015
+    var {firstName, lastName} = instructor; 
+    firstName; // Elie
+    lastName; // Schoppik
+
+    // ES2015 change variable names
+    var {firstName:first, lastName:last} = instructor; 
+    first; // Elie
+    last; // Schoppik
+    ```
+1. ES5 Default values with an object 
+    ```js 
+    function createInstructor(options){
+        var options = options || {};
+        var name = options.name || {first: 'Matt', last: 'Lane'};
+        var isHilarious = options.isHilarious || false; 
+        return [name.first, name.last, isHilarious];
+    }
+
+    createInstructor(); // ['Matt', 'Lane', false]
+    createInstructor({isHilarious: true}); // ['Matt', 'Lane', true]
+    createInstructor({name: {first: 'Time', last:'Garcia'}}); // ['Tim', 'Garcia', false]
+    ```
+1. ES2015 Destructuring
+    1. We are passing in a destructured object as a default parameter
+    1. We assign as a default value an empty object so ES2015 knows we are destructuring
+    1. If nothing is passed in, we default to the destructured object as the parameter
+    ```js 
+    function createInstructor({name = {first: 'Matt', last:'Lane'}, isHilarious = false} = {}) {
+        return [name.first, name.last, isHilarious];
+    }
+
+    createInstructor(); // ['Matt', 'Lane', false]
+    createInstructor({isHilarious: true}); // ['Matt', 'Lane', true]
+    createInstructor({name: {first: 'Time', last:'Garcia'}}); // ['Tim', 'Garcia', false]
+    ```
+1. Object fields as parameters ES5 
+    ```js 
+    function displayInfo(obj) {
+        return [obj.name, obj.favColor];
+    }
+
+    var instructor = {
+        name: 'Elie',
+        favColor: 'Purple'
+    };
+
+    displayInfo(instructor); // ['Elie', 'Purple']
+    ```
+1. Object fields as parameters ES2015
+    ```js 
+    function displayInfo({name, favColor}) {
+        return [name, favColor];
+    }
+
+    var instructor = {
+        name: 'Elie',
+        favColor: 'Purple' 
+    }
+
+    displayInfo(instructor); // ['Elie', 'Purple']
+    ```
+
+### Array Destructuring 
+1. ES5 
+    ```js 
+    var arr = [1,2,3];
+    var a = arr[0];
+    var b = arr[1];
+    var c = arr[2];
+
+    a; // 1 
+    b; // 2 
+    c; // 3
+
+    function returnNumbers(a, b) {
+        return [a, b]
+    }
+    var first = returnNumber(5, 10)[0];
+    var second = returnNumber(5, 10)[1];
+
+    first; // 5
+    second; // 10
+    ```
+1. ES2015 
+    ```js 
+    var arr = [1,2,3];
+    var [a,b,c] = arr;
+
+    a; // 1 
+    b; // 2 
+    c; // 3
+
+    function returnNumbers(a, b) {
+        return [a, b];
+    }
+
+    [first, second] = returnNumbers(5, 10); 
+
+    first; // 5
+    second; // 10
+    ```
+1. Swapping values 
+    ```js 
+    // ES5 
+    function swap(a, b) {
+        var temp = a;
+        a = b;
+        b = temp;
+        return [a, b];
+    }
+    swap(10, 5); // [5, 10]
+
+    // ES2015
+    function swap(a, b) {
+        return [a, b] = [b, a];
+    }
+
+    swap(10, 5) // [5, 10]
+    ```
+
+### Coding Exercise - Destructuring Exercises
+1. We must pass an empty `Object` as default parameter for functions taking destructuring and default values. Otherwise, the function will return a `TypeError` when there's nothing passed to the function. 
+    ```js
+    /* 
+    Write a function called displayStudentInfo which accepts an object and returns the string "Your full name is" concatenated with the value of the first key and a space and then the value of the last key. See if you can destructure this object inside of the function.
+
+    Examples:
+        displayStudentInfo({first: 'Elie', last:'Schoppik'}) // 'Your full name is Elie Schoppik')
+    */
+
+    function displayStudentInfo(obj){
+        return `Your full name is ${obj.first} ${obj.last}`;
+    }
+
+    /* 
+    Write a function called printFullName which accepts an object and returns the string "Your full name is" concatenated with the value of the first key and a space and then the value of the last key. See if you can destructure this object DIRECTLY from the parameters. The output of the printFullName function should be the exact same as the displayStudentInfo function. 
+
+    Examples:
+        printFullName({first: 'Elie', last:'Schoppik'}) // 'Your full name is Elie Schoppik'
+    */
+
+    // you will have to pass in the correct parameters for this function!
+    function printFullName({first, last}){
+        return `Your full name is ${first} ${last}`
+    }
+
+    /* 
+    Write a function called createStudent which accepts as a parameter, a default parameter which is a destructured object with the key of likesES2015 and value of true, and key of likesJavaScript and value of true. 
+
+        If both the values of likesJavaScript and likesES2015 are true, the function should return the string 'The student likes JavaScript and ES2015'. 
+        If the value of likesES2015 is false the function should return the string 'The student likes JavaScript!'
+        If the value of likesJavaScript is false the function should return the string 'The student likesES2015!'
+        If both the value of likesJavaScript and likesES2015 are false, the function should return the string 'The student does not like much...'
+
+    Examples:
+        createStudent() // 'The student likes JavaScript and ES2015')
+        createStudent({likesES2015:false}) // 'The student likes JavaScript!')
+        createStudent({likesJavaScript:false}) // 'The student likes ES2015!')
+        createStudent({likesJavaScript:false, likesES2015:false}) // 'The student does not like much...')
+    */
+
+    // you will have to pass in the correct parameters for this function!
+    function createStudent({likesES2015 = true, likesJavaScript = true} = {}){
+        if (likesES2015 && likesJavaScript) {
+            return `The student likes JavaScript and ES2015!`;
+        } else if (likesES2015) {
+            return `The student likes ES2015!`;
+        } else if (likesJavaScript) {
+            return `The student likes JavaScript!`;
+        } else {
+            return `The student does not like much...`
+        }
+    }
+
+    /* 
+    Write a function called reverseArray which accepts an array and returns the array with all values reversed. See if you can do this without creating a new array!
+
+    Examples:
+        reverseArray([1,2,3,4,5]) // [5,4,3,2,1]
+        reverseArray([1,2]) // [2,1]
+        reverseArray([]) // []
+        reverseArray([1,2,3,4,5,6,7,8,9,10]) // [10,9,8,7,6,5,4,3,2,1
+    */
+
+    function reverseArray(arr){
+        return arr.reverse();
+    }
+
+    // according to the lecture, it uses for loop to reverse the array
+    function reverseArray(arr) {
+        for (var i = 0; i < arr.legnth / 2; i++) {
+            [arr[i], arr[arr.length - 1 - i]] = [arr[arr.length - 1 - i], arr[i]];
+        }
+        return arr;
+    }
+    ```
+
+### ES2015 Part 1 Recap
+1. ES2015 gives us two new keywords for decalring variables `let`, `const`. `const` ensures we can't redeclare a variable and `let` gives us block scope. 
+1. Easily evaluate variables in `Strings` and create multi-line strings with ES2015 template `Strings`. Don't forget the backticks
+1. Create more concise functions using the `=>` syntax, but these functions do not get their own `this` and `arguments` keywords.
+1. Gather arguments to a function as an array using the rest operator and spread out values in an array to another value or function using `...`.
+1. Write more concise methods and property names using shorthand notation and computed property names. 
+1. Object destructuring is very useful for reducing duplication and passing in default parameters as a destructured object. 
+1. Array destructuring can also be used for swapping variables in an array without a separate swap function. 
+
 # ES2015 Project - Guess the Password
 
 # ES2015 Part 2
