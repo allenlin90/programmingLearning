@@ -30,7 +30,17 @@ Note: I started this course is mainly for learning PHP with related stacks of te
 # Planning a Website
 # Web Hosting and System Requirements
 # Domain Names
+
 # Testing Environment
+### Introduction to Testing Servers
+1. A testing server allows us to test web application locally rather than uploading to live production server.
+1. The testing server is important because any issue can be resolved without causing disruptions on the live server. 
+1. PHP and MySQL require a testing server to function
+1. Client side languages do not require a testing server (HTML, CSS, jQuery, JavaScript)
+1. Pre-Packaged Solutions: WAMP (Windows) MAMP (MAC). 
+
+### Installing WampServer - WAMP
+
 # Production Environment
 # FTP Setup
 # HTML Development
@@ -39,7 +49,11 @@ Note: I started this course is mainly for learning PHP with related stacks of te
 # JavaScript Development
 # jQuery Library
 # Bootstrap Framework
+
 # PHP Development
+### PHP Intoduction 
+1. 
+
 # MySQL Database Integration
 # XML | AJAX
 # Development Project
