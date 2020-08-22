@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script>
+        
+    </script>
 </head>
 <body>
     
-    <?php
-    $phrase = "Giraffe Academy";
-    // echo strtolower($phrase);
-    // echo strtoupper($phrase);
-    // echo strlen($phrase);
-    $phrase[0] = "C";
-    echo $phrase;
+    <form action="site.php" method="GET">
+        <input type="number" name="num1">
+        <br>
+        <input type="number" name="num2">
+        <br>
+        <input type="submit">
+    </form>
+
+    Answer: <?php
+        echo $_GET["num1"] + $_GET["num2"];
     ?>
 
 </body>

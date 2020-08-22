@@ -7,6 +7,7 @@ Length: 4:36:38
 1. [Data Types](#Data-Types)
 1. [Working with Strings](#Working-with-Strings)
 1. [Working with Numbers](#Working-with-Numbers)
+1. [Getting User Input](#Getting-User-Input)
 
 # Setting up PHP
 1. In WSL we can download the language with `sudo apt install php7.2-cli`. 
@@ -32,6 +33,7 @@ Length: 4:36:38
 1. At the end of every line of code, we should have a semi-column `;` to end the statement. 
 
 # Hello World and Setup
+1. `echo` is similar to `print()` function in Python and `console.log()` in JavaScript.
 1. We can use `echo()` to render text and HTML elemetns from the PHP file. 
     ```php
     echo "<h1>Allen's Site</h1>";
@@ -88,5 +90,76 @@ Length: 4:36:38
     substr($phrase, 8, 3); // Aca
     ```
 
-# Working Numbers 
+# Working with Numbers 
 1. We can give numbers directly without other characters. 
+1. PHP can handle negative numbers that is with a dash or minus sign `-`. 
+1. `Integers` and `Floats` are different types of value in PHP. 
+1. If we put expression in `echo` directly such as `echo 3 + 5`, PHP returns the result of the operation. 
+1. Percentage sign `%` in PHP works the same as it works in JavaScript that the operator means `mod` that it return the remainder after division. For example, `5 % 3` results in 2. 
+1. PHP math operations works as regular math that expression in parenthesis and mutiplication and division have higher priority than plus and minus operations. 
+1. We can assign number value to variables as well. The math operations in PHP is similar to those in JavaScript. 
+    ```php
+    $num = 10;
+    $num++ // adds 1 to num variable 
+    $num-- // substract 1 to num variable 
+    $num = $num + 25; // adds 25 to num 
+    $num += 25; // shorthand to add 25 to num 
+    $num *= 25; // shorthand to mutiply num by 25 
+    ```
+1. There are other math function such as `Math` module in JavaScript
+    1. Return the absolute number with `abs()`. Similar to `Math.abs()` method in JavaScript. 
+    1. Return the power of a base with `pow()`. Similar to `Math.pow()` method in JavaScript. 
+    1. Return the sqaure root of a number `sqrt()`. Similar to `Math.sqrt()` in JavaScript. 
+    1. Return the largest value from the given value `max()`. Similar to `Math.max()` in JavaScript. 
+    1. Return the lowest value from the given value `min()`. Similar to `Math.min()` in JavaScript. 
+    1. Return the rounded number `round()`. Similar to `Math.round()` in JavaScript. 
+    1. Return the rounded up number `ceil()`. Similar to `Math.ceil()` in JavaScript.
+    1. Return the rounded down number `floor()`. Similar to `Math.floor()` in JavaScript.
+    ```php
+    echo abs(-100); // 100 
+    echo pow(2, 4); // 16
+    echo sqrt(144); // 12
+    echo max(2, 10); // 10
+    echo min(2, 10); // 2
+    echo round(3.2); // 3
+    echo ceil(3.1); // 4
+    echo floor(3.9); // 3
+    ```
+
+# Getting User Input
+1. We can create a HTML `form` with `input` tag to collect input from users. `form` element has 2 attributes to be used here is the action that this `<form>` elemenet will be handled with `site.php` script with a HTTP method `GET`, as we are going to retrieve the data. In the `<input>` tag, we can specify the input value to be stored in the variable with attribute `name`. 
+1. In PHP script, we can use `$_GET[]` to get the variable from the HTML elements. 
+    ```php 
+    <form action="site.php" method="GET">
+        Name: <input type="text" name="userName">
+        <br>
+        Age: <input type="text" name="age">
+        <br>
+        <input type="submit">
+    </form>
+    <br>
+    Your name is <?php echo $_GET["userName"];?>
+    <br>
+    Your age is <?php echo $_GET["age"];?>
+    ```
+
+# Building a Basic Calculator
+1. Similar to get user input, we can have a calculating function to manipulate user input. 
+1. Note that user input will be sent to the server as parameters in the URL which is after question mark `?` in the URL. If we change it directly, we can modify the result printed on by the PHP function directly. 
+1. Every time a input given in the submit form, the key/value pair will be sent to the sever in the URL. 
+    ```php
+    <form action="site.php" method="GET">
+        <input type="number" name="num1">
+        <br>
+        <input type="number" name="num2">
+        <br>
+        <input type="submit">
+    </form>
+
+    Answer: <?php
+        echo $_GET["num1"] + $_GET["num2"];
+    ?>
+    ```
+    <img src="./images/parametersInURL.PNG">
+
+# Building a Mad Libs Game
