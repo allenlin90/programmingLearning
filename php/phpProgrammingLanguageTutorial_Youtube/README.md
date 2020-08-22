@@ -8,6 +8,7 @@ Length: 4:36:38
 1. [Working with Strings](#Working-with-Strings)
 1. [Working with Numbers](#Working-with-Numbers)
 1. [Getting User Input](#Getting-User-Input)
+1. [URL Parameters](#URL-Parameters)
 
 # Setting up PHP
 1. In WSL we can download the language with `sudo apt install php7.2-cli`. 
@@ -163,3 +164,24 @@ Length: 4:36:38
     <img src="./images/parametersInURL.PNG">
 
 # Building a Mad Libs Game
+1. The purpose is to collect user input from the `form` tag and render the collected input into the pre-built template. 
+1. Similar to the function for numbering operations, the input will be stored and passed to the PHP file through URL parameters. 
+    ```php
+    <form action="site.php" method="GET">
+        Color: <input type="text" name="color"> <br>
+        Plural Noun: <input type="text" name="pluralNoun"> <br>
+        Celebrity: <input type="text" name="celebrity"> <br>
+        <input type="submit">
+    </form>
+
+    <?php
+    $color = $_GET["color"];
+    $pluralNoun = $_GET["pluralNoun"];
+    $celebrity = $_GET["celebrity"];
+    echo "Roses are $color <br>";
+    echo "$pluralNoun are blue <br>";
+    echo "I love $celebrity <br>";
+    ?>
+    ```
+
+# URL Parameters 
