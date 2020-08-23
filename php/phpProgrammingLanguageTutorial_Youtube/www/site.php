@@ -6,22 +6,36 @@
     <title>Document</title>    
 </head>
 <body>
-    
+    <h1></h1>
     <?php 
-        $index = 6;
-        while($index <= 5){
-            echo "$index <br>";
-            $index++;
-        };
-
-        for($i = 1; $i <= 5; $i++) {
-            echo "$i <br>";
+        class Chef {
+            function makeChicken(){
+                echo "The chef makes chicken <br>";
+            }
+            function makeSalad(){
+                echo "The chef makes salad <br>";
+            }
+            function makeSpecialDish(){
+                echo "The chef makes bbq ribs <br>";
+            }
         }
 
-        $luckyNumbers = array(4, 8, 15, 16, 23, 42);
-        for ($i = 0; $i < count($luckyNumbers); $i++) {
-            echo "$luckyNumbers[$i] <br>";
+        class ItalianChef extends Chef {
+            function makePasta(){
+                echo "The chef makes pasta";
+            }
+            function makeSpecialDish(){
+                echo "The chef makes chicken parm";
+            }
         }
+
+        $chef = new Chef();
+        $chef->makeSpecialDish();
+
+        $italianChef = new ItalianChef();
+        $italianChef->makeSpecialDish();
+
+        // $chef->makePasta(); // error
     ?>
 
 </body>

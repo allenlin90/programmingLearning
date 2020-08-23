@@ -26,7 +26,7 @@ Length: 4:36:38
 1. [Include: PHP](#includ:-php)
 1. [Classes & Objects](#classes-&-objects)
 1. [Constructors](#constructors)
-1. [Object Functions - PHP - Tutorial 31](#object-functions---php---tutorial-31)
+1. [Object Functions](#object-functions)
 1. [Getters & Setters](#getters-&-setters)
 1. [Inheritance](#inheritance)
 
@@ -436,7 +436,7 @@ Length: 4:36:38
     ```
 
 # For Loops
-1. `for` loop in PHP works exactly the same as that in JavaScript. 
+1. `for` loop in PHP works exactly the same as that in JavaScript. We can declare a counter, set the condition, and operations ot the counter. 
     ```php
     for($i = 1; $i <= 5; $i++) {
         echo "$i <br>";
@@ -449,24 +449,246 @@ Length: 4:36:38
     ```
 
 # Comments
-
+1. Comments in PHP is the same as JavaScript that it uses 2 forward slashes `//`.
+1. We can use `/* comments */` to make muti-line comments which is using the same syntax as JavaScript. 
 
 # Including HTML
-
+1. We can use `include` keyword to import other HTML or PHP files to the current file. 
+1. For example, we can reuse header and footer of all the webpages for a website. In this case, we create `header.html` and `footer.html` in the `www` folder which is the same as `site.php`.
+    ```php
+    <?php include "header.html" ?>
+        <p>Hello World</p>
+    <?php include "footer.html" ?>
+    ```
+1. Therefore, we can only edit the header or footer file to modify all the header and footer of the webpages of the website. 
 
 # Include: PHP
+1. We can import not only include HTML but also PHP file. This feature is similar to client-side JavaScript that the imported files can be seem as a single script from top to bottom. 
+1. Therefore, we can separate the code in to different files and modules and imported to keep the files managed and simple. 
+    ```php
+    // article-header.php
+    <h2><?php echo $title; ?></h2>
+    <h4><?php echo $author; ?></h4>
+    word count: <?php echo $wordCount; ?>
 
+    // useful-tools.php
+    <?php 
+    $feetInMile = 5280;
+        function sayHi($name) {
+            echo "Hello $name";
+        }
+    ?>
+
+    // site.php 
+    <?php 
+        $title = "My First Post";
+        $author = "Allen";
+        $wordCount = 400;
+        include "article-header.php"
+    ?>
+
+    <?php 
+        include "useful-tools.php";
+        sayHi("Allen");
+        echo $feetInMile; 
+    ?>
+    ```
 
 # Classes & Objects
+1. In some cases, we can't use the primitive types in PHP to present the objects we need. Therefore, we can create a customized data type as a `class`. A class is similar to a blueprint that we can ensure the instances of a class will have certain attributes (properties).
+1. In convention (so as in JavaScript), a class name starts with a Capital letter. The object (an instance of a class) in PHP has attibutes (which is similar to property of an Object in JavaScript). In PHP, an object is an instance of a class. 
+1. A new instance is created with `new` keyword, which is much similar to that in JavaScript with `new` keyword and constructor functions. 
+1. We can use arrow sign with dash and greater than sign `->` to access an attribute of an object in PHP. Note that we can use square brackets to access properties of an Object in JavaScript. 
+1. The syntax is much similar to the `class` keyword in ES6 JavaScript. 
+    ```php
+    class Book {
+        var $title;
+        var $author; 
+        var $pages;
+    }
 
+    $book1 = new Book; 
+    $book1->title = "Harry Potter";
+    $book1->author = "JK Rowling";
+    $book1->pages = 400;
+
+    echo $book1->title; // Harry Potter
+    echo $book1->author; // JK Rowling
+    echo $book1->pages; // 400
+
+    $book2 = new Book; 
+    $book2->title = "Lord of the Rings";
+    $book2->author = "Tolkien";
+    $book2->pages = 700;
+
+    echo $book2->title; // Lord of the Rings
+    echo $book2->author; // Tolkien
+    echo $book2->pages; // 700
+    ```
 
 # Constructors
+1. Constructors are special functions that we can put in a class, so the instances can have default values. A constructor function must be declared with `function __construct(){}` in a class. Besides, it can take arguments when the object is created. 
+    ```php
+    class Book {
+        var $title;
+        var $author; 
+        var $pages;
 
+        function __construct($name){
+            echo $name;
+        }
+    }
 
-# Object Functions - PHP - Tutorial 31
+    $book1 = new Book("Mike"); // Mike 
+    $book1->title = "Harry Potter";
+    $book1->author = "JK Rowling";
+    $book1->pages = 400;
+    
+    $book2 = new Book("Tom"); // Tom
+    $book2->title = "Lord of the Rings";
+    $book2->author = "Tolkien";
+    $book2->pages = 700;
+    ```
+1. However, the method above that we create an object is very redendant. We can use constructor function to take arguments and pass them to the attributes of the object. `$this` in PHP refer to the current object that is created. This works almost the same as `this` keyword in JavaScript for `Objects`. 
+1. Similar to JavaScript, we can modify the attributes of an object after it is created. 
+    ```php
+    class Book {
+        var $title;
+        var $author; 
+        var $pages;
 
+        function __construct($aTitle, $aAuthor, $aPages){
+            $this->title = $aTitle;
+            $this->author = $aAuthor;
+            $this->pages = $aPages;
+        }
+    }
+
+    $book1 = new Book("Harry Potter", "JK Rowling", 400); 
+    $book2 = new Book("Lord of the Rings", "Tolkien", 700); 
+
+    echo $book1->title; // Harry Potter 
+    $book1->title = "Hunger Games";
+    echo $book1->title; // Hunger Games 
+    ```
+
+# Object Functions 
+1. We can build functions of an object, which is similar to create a method for objects in JavaScript. 
+    ```php
+    class Student {
+        var $name;
+        var $major; 
+        var $gpa;
+
+        function __construct($name, $major, $gpa){
+            $this->name = $name;
+            $this->major = $major;
+            $this->gpa = $gpa;
+        }
+
+        function hasHonors(){
+            if ($this->gpa >= 3.5) {
+                return "true"; 
+            } else {
+                return "false";
+            }
+        }
+    }
+
+    $student1 = new Student("Jim", "Business", 2.8);
+    $student2 = new Student("Pam", "Art", 3.6);
+
+    echo $student1->hasHonors(); // false (in string)
+    echo $student2->hasHonors(); // true (in string)
+    ```
 
 # Getters & Setters
+1. Visibility modifiers is to control whether an attribute of an object in PHP can be modified. Besides, `var`, we can use `public` to declare an attribute to set up attributes of instances of a class. `var` and `public` basically work the same. However, it has an issue that the attribute of the object can be modified and can't be limited. For example, we have a Movie class that each movie has a rating attribute. However, we can't limit it to the regular or standard rating terms. Besides, it could be modified to something else. Therefore, we'd like to limit the scope and only allow the attribute to be modified in the class constructor. 
+1. We can use `private` rather than `public` to declare the properties of an object in a class. 
+1. As the private property can be accessed and modified from the outside of `class` declaration, we can use "**getter function**" to retrive the property of the object. 
+1. On the other hand, we can use a "**setter function**" to modify the property of the object. 
+1. Besides, we can use `IF` statement to limit input from the user. In this case, if the given rating of the movie is not in the given conditions, the rating will be `NR` which is no rating.
+    ```php
+    class Movie {
+        public $title; // this property is accessible from the outside and can be modified 
+        private $rating; // this property can only be modified in the code block of class 
 
+        function __construct($title, $rating){
+            $this->title = $title;
+            $this->rating = $rating;
+        }
+
+        // getter function 
+        function getRating(){
+            return $this->rating;
+        }
+
+        // setter function 
+        function setRating($rating){
+            if ($rating == "G" || $rating == "PG" || $rating == "PG-13" || $rating == "R") {
+                $this->rating = $rating;
+            } else {
+                $this->rating = "NR"; 
+            }
+        }
+    }
+
+    $avengers = new Movie("Avengers", "PG-13");
+            // G, PG, PG-13, R, NR
+
+    echo $avengers->title; // Avengers
+    $avengers->title = "Justice League"; 
+    echo $avengers->title; // Justice League
+    echo $avengers->rating; // error as this property is priavte 
+    echo $avengers->getRating(); // PG-13
+    $avengers->setRating("R");
+    echo $avengers->getRating(); // R
+    ```
+1. However, we still have problems that users can give invalid property values when creating an object with `new` keyword and constructor. We can use the setter function to limit the value assigned to the property. Therefore, if user gives an invalid value to create an object, PHP will follow the condition in the "**setter function**" to handle the issue. 
+    ```php
+    function __construct($title, $rating){
+        $this->title = $title;
+        $this->setRating($rating); // use setter function 
+    }
+    ```
+1. In summary, to verify the given value to create an object of a class, we can 
+    1. Use `private` keyword for the property to prevent modification from the outside. 
+    1. Use "**getter function**" which is declared in the class to retrive the value of the property. 
+    1. Use "**setter function**" which is declared in the class to modify the value of the property. 
+    1. Use "**setter function**" to set up conditions to verify the given input to set up the object. 
+1. In addition, `var` is not a common keyword used to declare properties of an object. 
 
 # Inheritance
+1. We can use `extends` keyword to make a new class "**inherit**" properties from another class to its instances. Besides, we can overwrite the properties and functions of the new class though it has inherited the same property from its ancestor. 
+    ```php
+    class Chef {
+        function makeChicken(){
+            echo "The chef makes chicken <br>";
+        }
+        function makeSalad(){
+            echo "The chef makes salad <br>";
+        }
+        function makeSpecialDish(){
+            echo "The chef makes bbq ribs <br>";
+        }
+    }
+
+    class ItalianChef extends Chef {
+        function makePasta(){
+            echo "The chef makes pasta";
+        }
+        function makeSpecialDish(){
+            echo "The chef makes chicken parm";
+        }
+    }
+
+    $chef = new Chef();
+    $chef->makechicken(); // The chef makes chicken
+    $chef->makeSpecialDish();
+
+    $italianChef = new ItalianChef();
+    $italianChef->makePasta(); // The chef makes pasta 
+    $chef->makeSpecialDish(); // The chef makes chicken parm
+
+    $chef->makePasta(); // error
+    ```
