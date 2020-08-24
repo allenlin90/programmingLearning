@@ -34,7 +34,7 @@ Length: 4:36:38
 # Setting up PHP
 1. In WSL we can download the language with `sudo apt install php7.2-cli`. 
 1. We can following command to start a server. PHP will find the site code to run in the default directory, which is the path we type the code `php -S localhost:4000`. In this case, we create a `site.php` file in `www` folder in the root directory. 
-    ```html
+    ```php
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -45,7 +45,7 @@ Length: 4:36:38
     <body>
         
         <?php
-        echo("Hellow World");
+            echo("Hellow World");
         ?>
 
     </body>
