@@ -1,30 +1,33 @@
-<?php
-    // Create the class
-    class Person {
-        // Create properties - (Variables tied to objects)
-        public $firstname;
-        public $lastname;
-        public $age;
-
-        // Assigning values to the property variables 
-        public function __construct($firstname, $lastname, $age) {
-            $this->firstname = $firstname;
-            $this->lastname = $lastname;
-            $this->age = $age;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <?php
+        // Default argument value
+        function myAge($minage = 30) {
+            echo "My age is: $minage <br>";
         }
 
-        // Create a method (Function tied to an object)
-        public function hello(){
-            return "I am " . $this->firstname . " " . $this->lastname . ", my age is: " . $this->age . "";
+        myAge();
+        myAge(50);
+        myAge(60);
+        myAge(18);
+
+        echo "<hr />";
+
+        // Returning value
+        function add($x, $y) {
+            $x = $x + $y;
+            return $x;
         }
-    }
 
-    // Creating a new person named "John Smith", who is 25 years old 
-    $person1 = new Person('John', 'Smith', 25);
-    $person2 = new Person('Joe', 'Bob', 35);
-
-    // Print out what the hello method returns 
-    echo $person1->hello();
-    echo "<br>";
-    echo $person2->hello();
-?>
+        echo "1 + 2 = " . add(1,2) . "<br>";
+        echo "3 + 4 = " . add(3,4) . "<br>";
+        echo "5 + 5 = " . add(5,5) . "<br>";
+    ?>
+</body>
+</html>

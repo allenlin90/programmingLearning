@@ -256,7 +256,402 @@ Note: I started this course is mainly for learning PHP with related stacks of te
     ```
 
 ### PHP Strings
-1. 
+1. Use `str_word_count()` to count the number of words of a string.
+1. Use `strreve()` to reverse the order of a string. Note that there's no built-in function to reverse a string value in JavaScript directly. However, we can turn the string into an array and use `.reverse()` method to reverse the order.
+1. Use `strpos()` to find position index of a string. This function is similar to `String.indexOf()` method in JavaScript which returns the position of queried string or `-1` if the string is not found. However, `strpos()` returns nothing if the queried string is not found.
+1. Use `str_replace()` to replace a substring of a string value. This function is similar to `String.replace()` in JavaScript that the 1st argument is the value to be replaced and the 2nd is the value to replace. However, `str_replace()` is a function, so it has the 3rd argument, which is the whole value which to be parsed with 1st and 2nd arguments.
+    ```php
+    //Word count 
+    echo str_word_count('Hello world'); // 2
+    echo "<hr />";
+
+    //Reverse Words
+    echo strrev('Hello world!'); // dlrow olleH
+    echo "<hr />";
+
+    //Search for text inside a string
+    echo strpos('Hello world!', 'world!'); // 6
+    echo "<hr />";
+    
+    //Replace text inside a string 
+    echo str_replace('world', 'John', 'Hello world!'); // Hello John!
+    echo "<hr />";
+    ```
+
+### PHP Constant
+1. PHP constant is an identifier for a given value. A constant cannot be changed during the script, as a variable can. In PHP, a constant variable is `public` by default. 
+1. A constant doesn't require a dollar sign `$` as a regular variable and can be declared by `define()` function, which takes 3 arguments. 1st is the name for the variable, 2nd is the value, and 3rd takes a boolean value to indicate that whether this constant is case-sensitive. 
+    ```php
+    //Case-Sensitive
+    define('WELCOME', 'Hello my name is John Smith');
+    echo WELCOME;
+
+    echo "<hr />";
+    //Case-Insensitive
+    define('WELCOME2', 'Hello my name is John Smith', true);
+    echo welcome2;
+
+    echo "<hr />";
+    // Constants are Global
+    define('CAR', 'VOLVO');
+
+    function mycar() {
+        echo CAR;
+    }
+    mycar();
+    ```
+
+### PHP Operators
+1. PHP operators are used to perform various operations on variables and values. In PHP, operators are divided into several groups. 
+    1. Arithmetic operators - Providing mathematical operations.
+    1. Assignment operators - Using single equal sign `=` to assign a value to a variable. 
+    1. Comparison operators
+    1. Increament/Decrement operatros
+    1. Logical operators
+    1. String operators
+    1. Array operators
+    ```php
+    <h2> PHP Arithmetic Operators </h2>
+    <?php
+        $x = 50; 
+        $y = 20;
+
+        // Addition
+        echo $x + $y; // 70
+        echo "<hr />";
+
+        // Substraction
+        echo $x - $y; // 30
+        echo "<hr />";
+
+        // Multiplication 
+        echo $x * $y; // 1000
+        echo "<hr />";
+
+        // Division
+        echo $x / $y; // 2.5
+        echo "<hr />";
+
+        // Modulus
+        echo $x % $y; // 10
+    ?>
+
+    <h2> PHP Assignment Operator </h2>
+    <?php 
+        // The left operand is assigned the value on the right 
+        $x = 20;
+        echo $x;
+    ?>
+
+    <h2> Comparison Operator </h2>
+    <?php
+        // Equal
+        $x = 300;
+        $y = '300';
+        var_dump($x == $y); // true
+
+        // Identical
+        $x = 300;
+        $y = '300';
+        var_dump($x === $y); // false
+
+        // Not equal
+        $x = 300;
+        $y = '300';
+        var_dump($x != $y); // false
+
+        // Not equal
+        $x = 300;
+        $y = '300';
+        var_dump($x <> $y); // false
+
+        // Not identical
+        $x = 300;
+        $y = '300';
+        var_dump($x !== $y); // true
+
+        // Greater than 
+        $x = 300;
+        $y = 500;
+        var_dump($x > $y); // false
+
+        // Less than 
+        $x = 300;
+        $y = 500;
+        var_dump($x > $y); // true
+
+        // Greater than or equal to
+        $x = 300;
+        $y = 500;
+        var_dump($x >= $y); // false
+
+        // Less than or equal to
+        $x = 300;
+        $y = 500;
+        var_dump($x <= $y); // true
+    ?>
+
+    <h2> Increment/Decrement Operators </h2>
+    <?php 
+        // Post-increment - Return $x, then increments $x by 1
+        $x = 50;
+        echo $x++;
+        echo "<hr />";
+
+        // Pre-increment - Increments $x by 1, then returns $x
+        $x = 50;
+        echo $x++;
+        echo "<hr />";
+
+        // Pre-decrement - Decrements $x by 1, then returns $x
+        $x = 50;
+        echo --$x;
+        echo "<hr />";
+
+        // Post-decrement - Return $x, then decrements $x by 1
+        $x = 50;
+        echo $x--;
+    ?>
+
+    <h2> Logical Operators </h2>
+    <?php 
+        // And - True if both $x and $y are true
+        $x = 200; 
+        $y = 300;
+        if ($x == 200 and $y == 300){
+            echo "True";
+            echo "<hr />";
+        }
+
+        // Or - True if either $x or $y is true 
+        $x = 200; 
+        $y = 300;
+        if ($x == 200 or $y == 90) {
+            echo "True";
+            echo "<hr />";
+        }
+
+        // And - && - True if both $x and $y are true 
+        $x = 200; 
+        $y = 300;
+        if ($x == 200 && $y == 300){
+            echo "True";
+            echo "<hr />";
+        }
+
+        // Or - $x || $y - True if either $x or $y is true
+        $x = 200; 
+        $y = 300;
+        if ($x == 200 || $y == 90){
+            echo "True";
+            echo "<hr />";
+        }
+
+        // Not - !$x - True if $x is not true
+        $x = 200; 
+        if ($x != 100){
+            echo "True";
+            echo "<hr />";
+        }
+    ?>
+
+    <h2> PHP String Operators </h2>
+    <?php
+        // Concatenation - Concatenation of $x and $y
+        $x = "Hello";
+        $y = " world!";
+        echo $x . $y;
+        echo "<hr />";
+
+        // Concatenation assignment - Appends $txt2 to $txt1
+        $x = 'John';
+        $y = 'Smith';
+        $x .= $y;
+        echo $x;
+        echo "<hr />";
+    ?>
+
+    <h2> Array Operators </h2>
+    <?php 
+        // Union - Union of $x and $y
+        $x = array('a' => 'blue', 'b'=> 'red');
+        $y = array('c' => 'pink', 'd'=> 'brown');
+
+        print_r($x + $y); // union
+        echo "<hr />";
+
+        // Equality - Return true if $x and $y have the same key/value pairs
+        $x = array('a' => 'blue', 'b' => 'red');
+        $y = array('a' => 'pink', 'b' => 'brown');
+
+        var_dump($x == $y); // false
+        echo "<hr />";
+
+        // Identity - Return true if $x and $y have the same key/value pairs in the same order and of the same types
+        $x = array('a' => 'blue', 'b' => 'red');
+        $y = array('a' => 'pink', 'b' => 'brown');
+
+        var_dump($x === $y); // false 
+        echo "<hr />";
+
+        // Inequality - Returns true if $x is not equal to $y
+        $x = array('a' => 'blue', 'b' => 'red');
+        $y = array('a' => 'pink', 'b' => 'brown');
+
+        var_dump($x != $y); // true 
+        echo "<hr />";
+
+        // Inequality - Returns true if $x is not equal to $y
+        $x = array('a' => 'blue', 'b' => 'red');
+        $y = array('a' => 'pink', 'b' => 'brown');
+
+        var_dump($x <> $y); // true 
+        echo "<hr />";
+
+        // Non-identity - Return true if $x is not identical to $y 
+        $x = array('a' => 'blue', 'b' => 'red');
+        $y = array('a' => 'pink', 'b' => 'brown');
+
+        var_dump($x !== $y); // true 
+        echo "<hr />";
+    ?>
+    ```
+
+### Conditional Statements
+### PHP ElseIf Statement
+1. There are 4 types of conditional statements in PHP
+    1. `if`
+    1. `if-else`
+    1. `if-else-elseif`
+    1. `switch` - Compare the value of an expression against a set of predefined conditions, also referred to as cases. 
+    ```php
+    <?php 
+        $x = 49;
+        if ($x < 50) {
+            echo 'Condition Met'; 
+        } else {
+            echo 'Condition Not Met';
+        }
+    ?>
+
+    <?php 
+        $x = 90;
+        if ($x < 50) {
+            echo 'F'; 
+        } elseif ($x >= 50 && $x < 60) {
+            echo 'D';
+        } elseif ($x >= 60 && $x < 70) {
+            echo 'C';
+        } elseif ($x >= 70 && $x < 80) {
+            echo 'B';
+        } elseif ($x >= 80 && $x < 90) {
+            echo 'A';
+        } else {
+            echo 'A+';
+        }
+    ?>
+
+    <?php
+        $car = 'volvo';
+
+        switch ($car) {
+            case 'volvo':
+                echo 'You drive a Volvo!';
+                break;
+            case 'bmw':
+                echo 'You drive a BMW!';
+                break;
+            case 'honda':
+                echo 'YOu drive a Honda!';
+                break;
+            default: 
+                echo "You don't drive";
+        }
+    ?>
+    ```
+
+### PHP While Loops
+### PHP For Loops
+1. Loops allow us to run the same block of code multiple times. There are 4 types of loops in PHP
+    1. `while`
+    1. `do...while`
+    1. `for`
+    1. `forEach`
+    ```php
+    // While loop 
+    $x = 1; 
+
+    while($x < 10) {
+        echo "The number is $x <br>";
+        $x++;
+    }
+    echo "<hr />";
+
+    // Do while loop 
+    $x = 6; 
+    do {
+        echo "The number is: $x <br>";
+        $x++;
+    } while ($x <= 5);
+
+    // For Loop
+    for($x = 0; $x <= 10; $x++) {
+        echo "$x <br>";
+    }
+
+    echo "<hr />";
+
+    // Foreach Loop 
+    $cars = array('volvo', 'bmw', 'honda', 'ford');
+    foreach($cars as $value) {
+        echo "$value <br>";
+    }
+    ```
+
+### PHP Functions
+1. A function is a block of statements that can be called upon whenever they are required. 
+1. A function will not execute unless we specifically call the function in our script. 
+1. We can set default parameters for PHP function. Note that JavaScript only has this feature available after ES6.
+    ```php
+    // Basic Function 
+    function displaytxt() {
+        echo "My First Function";
+    }
+    displaytxt();
+
+    echo "<hr />";
+
+    // Function Arguments
+    function myCar($car, $color){
+        echo "$car, $color<br>";
+    }
+
+    myCar('Volvo', 'blue');
+    myCar('BMW', 'red');
+    myCar('Honda', 'green');
+
+    // Default argument value
+    function myAge($minage = 30) {
+        echo "My age is: $minage <br>";
+    }
+
+    myAge();
+    myAge(50);
+    myAge(60);
+    myAge(18);
+
+    echo "<hr />";
+
+    // Returning value
+    function add($x, $y) {
+        $z = $x + $y;
+        return $z;
+    }
+
+    echo "1 + 2 = " . add(1,2) . "<br>";
+    echo "3 + 4 = " . add(3,4) . "<br>";
+    echo "5 + 5 = " . add(5,5) . "<br>";
+    ```
 
 # MySQL Database Integration
 # XML | AJAX
