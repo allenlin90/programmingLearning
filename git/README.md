@@ -699,7 +699,21 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 1. Other developers can use `git fetch --all -tags` to download all tag objects and branchese from the remote repository. 
 
 ### Develop on different branches
-1. We can use `git branch -a` to check all branches, including remote ones`. 
+1. We can use `git branch -a` to check all branches, including remote ones.
 1. Though we don't have direct access to other branches in the remote repository, we still can checkout and work on them. After finishing development, we can use `git push origin [branchname]`.
 
+
+
 # Day 28 - Understanding fork and pull request on Github
+1. In regular GIT workflow, everyone who shares and are able to access a remote repository can edit and modify the repository. Besides, when clone the repository from remote to local, we will get the whole duplicate of the repository. Therefore, GitHub introduced `forks` and `pull request` for basic authorization and permissioncontrol.
+1. On GitHub, we can use set up `Teams` and authorize the members with `pull only`, `pull and push`, and `pull, push, and admin`. Note that this is only available for public repository and organizations with free plan. 
+1. `Fork` means to duplicate a repository from others to be our own. This works the same as `git clone`. Therefore, we can duplicate the repository and use or modify it by our own. Besides, we will also copy the git log that we can see how was the repository being built.
+1. We can use `pull request` to request to original owner of the repository to make a change. In this case, we can get back to the repository which we duplicate from and use `pull request` to the owner to make a change. 
+1. To send a pull request, we can check with `compare accross fork` on the page and select the branch of each repository (original and forked one). When do comparing, we should select the forked (the latest one) on the right to check what contents have been modified. Thus, we can send a pull requets by comapring the difference. Besides, we can leave a note or message to the owner for the request. 
+1. The owner can check the difference in the comparison and decide whether to `merge` the change from the pull request to the original repository. 
+
+
+
+# Day 29 - How to import subversion into Git repository
+
+
