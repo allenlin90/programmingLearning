@@ -653,6 +653,75 @@ Note: I started this course is mainly for learning PHP with related stacks of te
     echo "5 + 5 = " . add(5,5) . "<br>";
     ```
 
+### PHP Arrays 
+1. An array is a variable that can store multiple values. 
+    1. Indexed arrays
+    1. Associative arrays 
+    1. Multidimensional arrays
+    ```php
+    // Indexed Array
+    $colors = array('Blue', 'Green', 'Red');
+    echo 'My Favorite Colors are: ' . $colors[0] . ', ' . $colors[1] . ', ' . $colors[2] . "<hr />";
+
+    // Array Length
+    $arrlength = count($colors);
+
+    // Loop through an indexed array
+    for($x = 0; $x < $arrlength; $x++) {
+        echo $colors[$x];
+    }
+
+    echo "<hr />";
+
+    // Associative Arrays
+    $tscore = array('John'=>'60', 'Bill'=>'80', 'Dan'=>'75');
+    echo "Bill scored " . $tscore['Bill'] . ' /100.';
+
+    echo "<hr />";
+
+    // Loop through an associative array 
+    foreach($tscore as $x => $score) {
+        echo "Key=" . $x . ", Score=" . $score;
+        echo "<br>";
+    }
+    ```
+1. Note that in JavaScript, we can use `for...in` loop to iterate through each key of an object as using `foreach` loop for associative arrays in PHP. 
+    ```js
+    const tscore = {
+        john: 60,
+        bill: 80,
+        Dan: 75
+    }
+
+    const keys = Object.keys(tscore);
+    let index = 0;
+
+    for (player in tscore) {
+        console.log(keys[index] === player);
+        console.log(`${player} scores ${tscore[player]}`);
+        index++;
+    }
+    ```
+
+### PHP Multidimensional Arrays
+1. We can put an array as an element of another array, so the parent array becomes a 2 dimensional array. 
+    ```php
+    $grades = array
+        (
+            array('John', 50, 60),
+            array('Bob', 40, 25),
+            array('Sam', 35, 48),
+            array('Ted', 55, 26),
+        );
+
+        echo $grades[0][0] . ": Test 1: " . $grades[0][1] . ", Test 2: " . $grades[0][2] . ".<br>";
+        echo $grades[1][0] . ": Test 1: " . $grades[1][1] . ", Test 2: " . $grades[1][2] . ".<br>";
+        echo $grades[2][0] . ": Test 1: " . $grades[2][1] . ", Test 2: " . $grades[2][2] . ".<br>";
+        echo $grades[3][0] . ": Test 1: " . $grades[3][1] . ", Test 2: " . $grades[3][2] . ".<br>";
+    ```
+
+### PHP Sorting Array
+
 # MySQL Database Integration
 # XML | AJAX
 # Development Project
