@@ -60,6 +60,49 @@ End:
     ```
 
 ### Math
+1. We can use `+`, `-`, `*`, and `/` to do basic math operations.
+1. Rather than using integers and floats directly, we can use variable to keep the values and work on math operations. 
+
+### Arrays
+1. We can store multiple data in a single container. 
+1. PHP arrays can be declared with `array()` or square brackets `[]` (newer version).
+1. Position of elements in an array starts from index `0`.
+    ```php
+    $numberList = array(267,8765,345,'5345',345,'<h1>Hello</h1>');
+    print_r($numberList);
+    echo $numberList[0]; // 267
+    ```
+
+### Associative Arrays
+1. We can "label" by using a key to index a value rather than using numbers. 
+    ```php
+    // regular array
+    $number = array(10, 20, 49);
+    echo $number[2] . "<br>";
+
+    // associative array
+    $names = array('first_name' => 'Allen', 'last_name' => 'Lin');
+    print_r($names);
+    echo "<br>";
+    echo $names['first_name'] . ' ' . $names['last_name']; // Allen Lin
+    ```
+
+### Practice Section 2
+1. Make 2 variables called number1 and number2 and set 1 to value 10 and the other 20.
+1. Add the 2 variables and display the sum with `echo`.
+1. Make 2 arrays with the same values, one regular and the other associative.
+    ```php
+    $number1 = 10;
+    $number2 = 20;
+
+    echo $number1 + $number2 . "<br>"; // 30
+
+    $lists = array(1,2,3,4,5,6);
+    $assocLists = array("number"=>10);
+
+    echo $lists[0] . "<br>"; // 1
+    echo $assocLists['number'] . "<br>"; // 10
+    ```
 
 # Control Structures
 # Custom Functions
