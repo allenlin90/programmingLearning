@@ -48,6 +48,19 @@ End:
 1. [CMS Extra feature - Multi-Language Feature](#CMS-Extra-feature---Multi-Language-Feature)
 
 # Data Types and More
+### Variables in PHP
+1. Variables in PHP start with a dollar sign `$`. 
+1. In convention, variables are named in camelCase. 
+1. A dot `.` in PHP is for value concatenation.
+    ```php
+    $name = 'Allen';
+    $NUMBER = 100;
+
+    echo $name . " " . $NUMBER;
+    ```
+
+### Math
+
 # Control Structures
 # Custom Functions
 # PHP Built-in Functions
