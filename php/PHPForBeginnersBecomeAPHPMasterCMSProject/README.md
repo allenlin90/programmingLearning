@@ -105,6 +105,68 @@ End:
     ```
 
 # Control Structures
+### if Statement
+1. If statement can be used to control the state and the flow to decide what statement or expression will be executed in the given condition. 
+    ```php
+    if (3 > 10) {
+        echo 'three is less than ten';
+    } else if (4 < 5) {
+        echo 'of course four is less than five';
+    } else {
+        echo 'it is not';
+    }
+    ```
+
+### Comparison and Logical Operators
+1. Comparison Operators
+    1. equal `==`
+    1. identical `===`
+    1. compare `>`, `<`, `>=`, `<=`, `<>`
+    1. not equal `!=`
+    1. not identical `!==`
+1. Logical Operators
+    1. and `&&`
+    1. or `||`
+    1. not `!`
+    ```php
+    if (4 == '4' && 5 < 10) {
+        echo 'it is true';
+    }
+    ```
+
+### Switch Statements in PHP
+1. By using `switch` statements, we can use one condition to check mulitple values. 
+    ```php
+    $number = 24; 
+    switch($number) {
+        case 34: 
+            echo 'is it 34';
+            break;
+        case 37:
+            echo 'is it 37';
+            break;
+        case 35:
+            echo 'is it 35';
+            break;
+        case 24:
+            echo 'is it 24';
+            break;
+        default: 
+            echo 'we could not find anything';
+            break;
+    }
+    ```
+
+### While Loop in PHP
+1. We can create a loop and keep iterating through a function or code if the given condition is `true`. 
+    ```php
+    $counter = 0;
+    while ($counter <= 10) {
+        echo $counter . '<br>';
+        $counter++;
+    }
+    ```
+
 # Custom Functions
 # PHP Built-in Functions
 # How to Use Form Data in PHP
