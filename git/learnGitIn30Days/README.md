@@ -715,5 +715,33 @@ Note: Day 1 to Day 3 are skipped as I have learnt the part. This may be added in
 
 
 # Day 29 - How to import subversion into Git repository
+1. This part is skipped, as I haven't learnt SVN yet. 
 
 
+
+# Day 30 - Tips of using Git
+### Connect to remote repository with SSH
+1. In regular usage, we use HTTPS method to get and send data to and from Github. We can use SSH connection by uploading the key. If the local machine has the key, we can get and send data to and from Github without further authentication. The default path to store the key in Windows OS is `%USERPROFILE%\.ssh`. For example, the path would be `C:\Users\[userID]\.ssh`. There will have 2 files in the directory. `github_rsa` and `github_rsa.pub`. 
+1. If the key is not uploaded to Github, we can upload the key to `https://github.com/settings/ssh`. 
+1. We also need to change the remote URL for SSH connection.
+
+### Recover the change of a git rebase
+1. If we use `git merge` to merge branches into one, we can use `git reset --hard ORIG_HEAD` to return to the stage before merging. However, this is not working for `git rebase`. 
+1. To recover the repostiory after rebasing, we should check the git version (from `git reflog`) before rebasing. With `git reflog`, we will know how many tasks have the `git rebase` done, so we can locate the correct version, and use `git reset --hard [version]` to recover the version. 
+
+### Statistics and records of a remote repository
+1. After using `git clone` to copy the whole directory from the remote repository, we can use `git shortlog -sne` to check the number of commits from users. Besides, we can use `git shortlog` directly to check the most recent activities of each contributing user.
+1. On Github page, we can use check "Graphs" to get tabular graphs of contribution from users. The option has been moved to "insights" tab on the top of the page. Note that the categories and titles are changed when checking on 2020/08/31.
+
+### Clear files not staged or listed in the repository
+1. While using `.gitignore` we can prevent duplicate or redundant files to be staged to the repository. We can use `git clean -n` to check files that can be cleared from the current working directory. After checking, we can use `git clean -f` to clear all the unnecessary files. Note that we may put some environment variables or sensitive data locally. We should be aware when we try to clear the files with `git clean`.
+
+### Delete remote branch
+1. We can use `git push origin [branchName]` to create a new branch in the remote repository. We can use either `git push origin :[branchName]` or `git push origin --delete :[branchName]` to delete the branch in the remote repository. However, we should be careful that once the branch is removed, other users can't push changes or update to the branch. 
+
+### Check which user modify the code
+1. We can use `git blame [fileName]` to list the commits with user and timestamp for the modification to the file. With `-L` flag, we can check with a range of a certain file. `git blame -L startingLine,endingLine [fileName]`. 
+    ```bash
+    git blame -L 10,20 README.md 
+    # check commits from Ln 10 to 20 of README.md on the current working directory 
+    ```
