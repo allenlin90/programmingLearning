@@ -167,7 +167,127 @@ End:
     }
     ```
 
+### For Loop in PHP
+1. In a for loop, we can create a variable as the counter, a condition to scope the iterations, and the logic to execute the loop. 
+    ```php
+    for ($counter = 0; $counter < 10; $counter++) {
+        echo $counter . "<br>";
+    }
+    ```
+
+### ForEach Loop in PHP
+1. This is very similar to `Array.forEach()` method in JavaScript that we can use this function in PHP to iterate through the elements of an array.
+    ```php
+    $numbers = [1,2,3,4,5];
+    foreach($numbers as $number) {
+        echo $number . "<br>";
+    }
+    ```
+
+### Practice Section 3
+1. Make an `IF` statement with `elseif` and `else` to finally display string, I love PHP.
+1. Make a `for` loop that displays 10 numbers.
+1. Make a `switch` statement that test against one condition with 5 cases. 
+    ```php
+    $text = 'I love PHP';
+    if (true) {
+        echo $text;
+    } else if (true) {
+        echo $text;
+    } else {
+        echo $text;
+    }
+
+    echo "<br>";
+    
+    $numbers = [0,1,2,3,4,5,6,7,8,9];
+    foreach($numbers as $number) {
+        echo $number . "<br>";
+    }
+
+    echo "<br>";
+
+    $number = 10;
+    switch($number) {
+        case 10:
+            echo 'This is $number';
+        break;
+        case 20:
+            echo 'This is correct';
+        break;
+        case 30:
+            echo 'This is correct';
+        break;
+        case 1:
+            echo 'This is correct';
+        break;
+        case 0:
+            echo 'This is correct';
+        break;
+        default:
+            echo 'This is default';
+    }
+    ```
+
 # Custom Functions
+### Defining Functions
+1. We can group a block of code into a function and use it repeatly.
+1. Naming a function is critical that the name should reveal that what does the function do.
+1. We can model functions as smaller pieces in a bigger function.
+1. PHP also has hoisting as JavaScript that functions can be declared after they are called in the script.
+    ```php
+    init();
+    function init () {
+        sayHi();
+        echo "<br>";
+        calculate(1,2);
+    }
+
+    function sayHi() {
+        echo 'Hello World!';
+    }
+
+    function calculate($num1, $num2) {
+        echo $num1 + $num2;
+    }
+    ```
+
+### Function Parameters
+1. We can pass parameters to functions to make the function more flexible to be used.
+    ```php
+    function greeting($message){
+        echo $message;
+    }
+    greeting('Hello Everyone!');
+
+    echo "<br>";
+
+    function addNumbers($num1, $num2) {
+        $sum = $num1 + $num2;
+        echo $sum;
+    }
+    addNumbers(12, 24);
+    ```
+
+### Return Values From Functions
+1. By using `return` keyword, we can assign the returend value from a function to a variable for other use.
+    ```php
+    function addNumbers($num1, $num2) {
+        $sum = $num1 + $num2;
+        return $sum;
+    }
+
+    $result = addNumbers(12, 24);
+
+    echo $result . "<br>"; // 36
+
+    $result = addNumbers(13, $result);
+    echo $result; // 49
+    ```
+
+### Global Variable and Scope
+1. 
+
 # PHP Built-in Functions
 # How to Use Form Data in PHP
 # How to Use Databases in PHP
