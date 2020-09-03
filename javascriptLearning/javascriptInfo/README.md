@@ -1706,3 +1706,23 @@ Note: We should be very careful with the calculation by programming language due
     }
     console.log(counter === 5); // true 
     ```
+
+### Map and Set
+1. Map is a collection of keyed data items, just like an Object. But the main difference is that Map allows keys of any type. A regular object will turn its key into strings. For example, if we give a boolean `true` as the key of an object, the key will be turn into `true` as a string value. (Note that we can still use boolean `true` to access the value of the property of the object. However, the property can also be access with dotnotation or square brackets with string values). We can use following methods to manipulate `Map` objects in JavaScript.
+    1. `new Map()` - Create a new `Map` object
+    1. `map.set(key, value) - Set a value to the `Map` object according to the key.
+    1. `map.get(key)` - Retrieve the value of the given key on the `Map` object. This method returns `undefined` if the key doesn't exist.
+    1. `map.has(key)` - Check if a key has been used in the `Map` object. This method returns a boolean `true` or `false`.
+    1. `map.delete(key)` - Remove the value of the given key in the `Map` object.
+    1. `map.clear()` - Remove all the values of the `Map` object. 
+    1. `map.size` - This method is similar to `.length` property to check the number of elements of the `Map` object. 
+1. Therefore, a Number `1` and String `'1'` can be 2 different keys in a `Map` object. Besides, though we can use square brackets to set and retreive values of a key, JavaScript considers this method as regular Object method and manipulate the `Map` object as a regular object. In addition, a `Map` object can use not only  primitive types as its key but also `Arrays` and `Objects`.
+    
+    
+    
+    
+    
+    
+
+
+
