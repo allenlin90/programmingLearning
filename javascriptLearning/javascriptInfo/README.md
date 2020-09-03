@@ -1717,12 +1717,58 @@ Note: We should be very careful with the calculation by programming language due
     1. `map.clear()` - Remove all the values of the `Map` object. 
     1. `map.size` - This method is similar to `.length` property to check the number of elements of the `Map` object. 
 1. Therefore, a Number `1` and String `'1'` can be 2 different keys in a `Map` object. Besides, though we can use square brackets to set and retreive values of a key, JavaScript considers this method as regular Object method and manipulate the `Map` object as a regular object. In addition, a `Map` object can use not only  primitive types as its key but also `Arrays` and `Objects`.
-    
-    
-    
-    
-    
-    
+1. `Map` objects use `SameValueZero` algorithm to compare their keys for equivalence, which is similar to strict equality `===`. However, in this algorithm, `NaN` is considered equal to `NaN`. Besides, this algorithm can't be changed or customized. 
+1. We can chain the methods of a `Map` object to manipulate its keys and values.
+    ```js
+    map.set('1', 'str1')
+      .set(1, 'num1')
+      .set(true, 'bool1');
+    ```
 
+**Iteration over `Map`**
+1. There 3 methods to iterate through elements of a `Map` object. These methods are similar to those built-in methods of regular objects. However, all the iterables are array-like objects which can only be iterated through `for...of` loop. We can't use square brackets and position index to access elements. 
+    1. `map.keys()` returns an iterable for keys. This is similar to `Object.keys([object])` to create an array of keys of an object.
+    1. `map.values()` returns an iterable for values. This is similar to `map.keys()` while this method returns a list of values rather than keys.
+    1. `map.entries()` returns an array of `[key, value]`.
+    ```js
+    let recipeMap = new Map([
+        ['cucumber', 500],
+        ['tomatoes', 350],
+        ['onion',    50]
+    ]);
 
+    // iterate over keys (vegetables)
+    for (let vegetable of recipeMap.keys()) {
+        console.log(vegetable); // cucumber, tomatoes, onion
+    }
 
+    // iterate over values (amounts)
+    for (let amount of recipeMap.values()) {
+        console.log(amount); // 500, 350, 50
+    }
+
+    // iterate over [key, value] entries
+    for (let entry of recipeMap) { // the same as of recipeMap.entries()
+        console.log(entry); // cucumber,500 (and so on)
+    }
+    ```
+1. Elements in `Map` objects follow the order that each element is inserted. Note that elements (key/value) pairs don't follow certain order to be listed in an object. 
+1. Besides the 3 methods listed above `.keys()`, `.values()`, and `.entries()`, we can use `.forEach()` method to iterate through a `Map` object directly.
+    ```js
+    recipeMap.forEach((value, key, map) => {
+        console.log(`${key}: ${value}`); 
+    })
+    ```
+
+**Object.entries: Map from Object**
+1. We can pass two-dimension array to create a `Map` Object. The inner array should have 2 elements, 1st is the key, and the 2nd is the value. 
+    ```js
+    let map = new Map([['1', 'str1'], [1, 'num1'], [true, 'bool1']]);
+    console.log(map.get('1')); // str1
+    ```
+1. Since `Object.entries()` also return two-dimension arrays, we can turn a regular `Object` into a `Map` object by the method
+    ```js
+    let obj = {name: 'John', age: 30}
+    let map = new Map(Object.entries(obj));
+    console.log(map.get('name')); // John
+    ```
