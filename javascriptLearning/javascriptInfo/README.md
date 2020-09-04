@@ -1772,3 +1772,6 @@ Note: We should be very careful with the calculation by programming language due
     let map = new Map(Object.entries(obj));
     console.log(map.get('name')); // John
     ```
+
+**Object.fromEntries: Object from Map**
+1. We can use `Object.fromEntries` to create an object from a two-dimension array. 
