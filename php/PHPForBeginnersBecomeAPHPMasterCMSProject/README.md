@@ -569,16 +569,59 @@ End:
 
 # How to Use Databases in PHP
 ### Introduction to Databases
+1. A database is simply a collection of related data in a organized format.
+1. In this case, we use MYSQL database. A table in the database is created with columns and rows with a field (as a cell) in the table.
 
 ### Introduction to PHPmyadmin
+1. By opening xampp with Apache server and MySQL service to access phpMyAdmin at `http://localhost/phpmyadmin`.
 
 ### Creating a Database in PHPmyadmin
+1. We can either click the button on the top to create a table in the panel of the left or use SQL commands such as `CREATE DATABASE [databaseName]` to create a database. 
 
 ### Creating Tables and Inserting Data in PHPmyadmin
+1. We create a new table in `loginapp` database with 3 columns `id`, `username`, and `password`. 
+    1. `id` has type as `INT` which is integer and set to be auto incremented with maximum length at 11.
+    1. `username` has type as `VARCHAR` which can take all the characters as input and with length at 32. 
+    1. `password` has the same configuration as `username`.
+    <img src="./images/createFirstTable.png">
+1. We can use GUI with `insert` tab to create new input in the table, while we may also use SQL commands to insert new input to the table. 
+    ```sql
+    INSERT INTO `users` (`id`, `username`, `password`) VALUES (NULL, 'allen', 'password');
+    ```
+1. We can select a row of input and `drop` to remove it from the table. 
+1. Besides, we can also edit the input of each row in the table directly. 
 
 ### Markup for Login Page
+1. We make a simple markup page with login and password input with a submit button.
+    ```html
+    <div class="container">
+        <div class="col-xs-6">
+            <form action="login.php" method="post">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="" class="form-control">
+                </div>
+                <input class="btn btn-primary" type="submit" value="submit" name="submit">
+            </form>
+        </div>
+    </div>
+    ```
 
 ### Receiving Post Data From Check
+1. We can use global `POST` variable to manipulate the input sent through HTML `<form>` tag with `method` attribute which is `POST`. 
+    ```php
+    if(isset($_POST['submit'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        echo $username . "<br>";
+        echo $password . "<br>";
+    }
+    ```
 
 ### Connecting to the Database using PHP
 
