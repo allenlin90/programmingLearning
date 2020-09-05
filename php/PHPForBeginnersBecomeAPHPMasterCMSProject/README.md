@@ -579,7 +579,7 @@ End:
 1. We can either click the button on the top to create a table in the panel of the left or use SQL commands such as `CREATE DATABASE [databaseName]` to create a database. 
 
 ### Creating Tables and Inserting Data in PHPmyadmin
-1. We create a new table in `loginapp` database with 3 columns `id`, `username`, and `password`. 
+1. We create a new table `users` in `loginapp` database with 3 columns `id`, `username`, and `password`. 
     1. `id` has type as `INT` which is integer and set to be auto incremented with maximum length at 11.
     1. `username` has type as `VARCHAR` which can take all the characters as input and with length at 32. 
     1. `password` has the same configuration as `username`.
@@ -626,6 +626,28 @@ End:
 ### Connecting to the Database using PHP
 
 ### Creating Records into the database table with PHP
+    ```php
+    if(isset($_POST['submit'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        $connection = mysqli_connect('localhost', 'root', 'azkfg252', 'loginapp');
+        if ($connection) {
+            echo "DB is connected" . "<br>";
+        } else {
+            die("Database connection failed");
+        }
+
+        $query = "INSERT INTO users(username,password) ";
+        $query .= "VALUES ('$username', '$password')";
+
+        $result = mysqli_query($connection, $query);
+
+        if (!$result) {
+            die('Query failed' . mysqli_error());
+        }
+    }
+    ```
 
 ### Reading Information in the Database with PHP
 
