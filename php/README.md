@@ -38,3 +38,4 @@
 1. Modify 2 files `/etc/apt/sources.list` and remove the file in `/etc/apt/sources.list.d/` folder of repository from MariaDB.
 1. Handling errors of installing MySQL [https://blog.csdn.net/weixin_43530726/article/details/91303898](https://blog.csdn.net/weixin_43530726/article/details/91303898)
 1. Can't find PHPMyAdmin at localhost [https://stackoverflow.com/questions/26891721/phpmyadmin-not-found-after-install-on-apache-ubuntu](https://stackoverflow.com/questions/26891721/phpmyadmin-not-found-after-install-on-apache-ubuntu)
+1. How to set up PHPMyAdmin [https://www.how2shout.com/how-to/how-to-install-apache-mysql-php-phpmyadmin-on-windows-10-wsl.html](https://www.how2shout.com/how-to/how-to-install-apache-mysql-php-phpmyadmin-on-windows-10-wsl.html)
