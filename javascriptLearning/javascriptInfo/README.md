@@ -1774,4 +1774,122 @@ Note: We should be very careful with the calculation by programming language due
     ```
 
 **Object.fromEntries: Object from Map**
-1. We can use `Object.fromEntries` to create an object from a two-dimension array. 
+1. We can use `Object.fromEntries(map.entries())` to create an object from a two-dimension array. 
+
+**Set**
+1. A `Set` is a special type collection "set of values", where each value may occur only once.
+    1. `new Set([iterable])` - Creates the set, and if an `iterable` object is provided (usually an array), copies values from it into the set. 
+    1. `set.add(value)` - Adds a value, returns the set itself.
+    1. `set.delete(value)` - Removes the value, returns `true` if `value` existed at the moment of the call, otherwise `false`. 
+    1. `set.has(value)` - Returns `true` if the value exists in the set, otherwise `false`. 
+    1. `set.clear()` - Removes everything from the set. 
+    1. `set.size` - Returns the elements count, similar to `length` property of objects. 
+1. As a `Set` can take certain value once in the collection, `set.add(value)` does nothing if we call the function multiple times with the same value. 
+1. `Set` is usually used when we want to keep unique value once in the collection. Though we can use regular `Array` with `Array.find` method to perform the function, the performance won't be as good as using `Set`. 
+
+**Iteration over Set**
+1. We can use either `for...of` or `forEach` to iterat through a `Set`. 
+    ```js
+    let set = new Set(['oranges', 'apples', 'bananas']);
+
+    for (let value of set) console.log(value);
+
+    // the same with forEach
+    set.forEach((value, valueAgain, set) => {
+        console.log(value);
+    });
+    ```
+1. We can notice that the arguments in the callback function in `forEach` of a `Set` object has the value twice. This feature is to make converting a `Set` to `Map` easily when using the method. 
+1. We can also use those methods on `Map` objects to iterate through a `Set`.
+    1. `set.keys()` - Returns an iterable object for values.
+    1. `set.values()` - same as `set.keys()`, for compatibility with `Map`.
+    1. `set.entries()` - returns an iterable object for entries `[value, value]`, exists for compatibility with `Map`.
+
+#### Exercise 1 - Filter unique array members
+1. Let `arr` be an array.
+1. Create a function `unique(arr)` that should return an array with unique items of `arr`.
+    ```js
+    function unique(arr) {
+        let set = new Set();
+        arr.forEach(el=>{
+            set.add(el);
+        });
+        let list = [];
+        set.forEach(e=>{
+            list.push(e);
+        });
+        return list;    
+    }
+
+    let values = ["Hare", "Krishna", "Hare", "Krishna", "Krishna", "Krishna", "Hare", "Hare", ":-O"];
+
+    console.log(unique(values));
+    ```
+1. Solution 
+    ```js
+    function unique(arr) {
+        return Array.from(new Set(arr));
+    }
+    ```
+
+### Exercise 2 - Filter anagrams
+1. "**Anagrams**" are words that have the same number of same letters, but in different order.
+    1. nap - pan
+    1. ear - are - era
+    1. cheaters - hectares - teachers
+    ```js
+    let arr = ["nap", "teachers", "cheaters", "PAN", "ear", "era", "hectares"];
+
+    console.log(aclean(arr)); // "nap,teachers,ear" or "PAN,cheaters,era"
+    ```
+1. From every anagram group should remain only one word, no matter which one. From the concept of the solution, we can use object directly without using `Map` object.
+    ```js
+    function aclean(arr) {
+        let obj = {};
+        for (let word of arr) {
+            let text = word.toLowerCase().trim().split('').sort().join('');
+            obj[text] = word;
+        }
+        return Object.values(obj);
+    }
+
+    let arr = ["nap", "teachers", "cheaters", "PAN", "ear", "era", "hectares"];
+
+    console.log(aclean(arr));
+    ```
+1. Solution 
+    ```js
+    function aclean(arr) {
+        let map = new Map();
+        for (let word of arr) {
+            let text = word.toLowerCase().trim().split('').sort().join('');
+            map.set(text, word);
+        }
+        return Array.from(map.values());
+    }
+    ```
+
+#### Exercise 3 - Iterable keys
+1. We’d like to get an array of `map.keys()` in a variable and then do apply array-specific methods to it, e.g. `Array.push`, but that doesn't work. 
+    ```js
+    let map = new Map();
+
+    map.set("name", "John");
+
+    let keys = map.keys();
+
+    // Error: keys.push is not a function
+    keys.push("more");
+    ```
+1. `map.keys()` returns a Map iterable which is a array-like object rather than an array. However, we can use `Array.from()` to create an array from Map iterable. Besides, we can use spread operator `...` as well. 
+    ```js
+    let map = new Map();
+
+    map.set("name", "John");
+
+    // either of the followings work
+    let keys = Array.from(map.keys());
+    let keysArr = [...map.keys()];
+    keys.push('more');
+    keysArr.push('more');
+    ```
