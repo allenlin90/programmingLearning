@@ -43,7 +43,7 @@ End:
 1. [CMS Extra feature - Forget Password System](#CMS-Extra-feature---Forget-Password-System)
 1. [CMS Extra feature - Forget Password System - Sending Email](#CMS-Extra-feature---Forget-Password-System---Sending-Email)
 1. [CMS Extra feature - Realtime Notification with Pusher](#CMS-Extra-feature---Realtime-Notification-with-Pusher)
-1. [CMS Extra feature - POST LIKES](#CMS-Extra-feature---POST-LIKES)
+1. [CMS Extra feature - POST Likes](#CMS-Extra-feature---POST-Likes)
 1. [CMS Extra feature - Creating A Separate Admin for Logged In Users](#CMS-Extra-feature---Creating-A-Separate-Admin-for-Logged-In-Users)
 1. [CMS Extra feature - Multi-Language Feature](#CMS-Extra-feature---Multi-Language-Feature)
 
@@ -879,40 +879,742 @@ End:
     ```
 
 # PHP Security
+### SQL Injection - How to Prevent it
+1. SQL injection is that users intentionally give SQL commands as the input to send to Database. For example, a user can give `DROP TABLE` as the input for `username` and this SQL string may delete the table which we store user data in the database or cause other damages.
+1. We can use `mysqli_real_escape_string()` function to prevent SQL injection. Therefore, all the input will consider regular string input (characters and text) without affecting or abusing the database.
+    ```php
+    if (isset($_POST['submit'])) {
+        global $connection;
+
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        $username = mysqli_real_escape_string($connection, $username);
+        $password = mysqli_real_escape_string($connection, $password);
+
+        $query = "INSERT INTO users(username, password) ";
+        $query .= "VALUES ('$username', '$password')";
+
+        $result = mysqli_query($connection, $query);
+        if (!$result) {
+            die('Query Failed' . mysqli_error());
+        }
+    }
+    ```
+
+### Password Encryption
+1. It's very risky to store password directly in the database, so we can "encrypt" the code into something else, such as a string in more than 20 characters with letters, numbers, and special symbols.
+1. In PHPMyAdmin, we can change schema of a table by accessing `Struture` tab on the top. For example, we can change the type of data in `VARCHAR` with length `32` to `200` which means the input can be up to 200 characters.
+1. We can use PHP built-in function [`crypt()`](https://www.php.net/manual/en/function.crypt.php) to create hashed string. 
+1. Note that the hashed string by default is relatively weak. We can add `salt` to the hashing algorithm to make it stronger. According to PHP documentation, we can use `CRYPT_BLOWFISH` to encrypt the password. For example, the **salt** can be `$2y$10$` which means to run `$2y$` hashing 10 times.
+1. Note that the number of characters used for `salt` should be at least **22** characters.
+    ```php
+    if (isset($_POST['submit'])) {
+        global $connection;
+
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        // prevent SQL injection
+        $username = mysqli_real_escape_string($connection, $username);
+        $password = mysqli_real_escape_string($connection, $password);
+
+        // create the salt for hashing
+        $hashFormat = "$2y$10$";
+        // salt should have at least 22 characters for blowfish
+        $salt = "somethingWeMadeUpButShouldBeMuchLonger";
+        $hashF_and_salt = $hashFormat . $salt;
+
+        // use crypt() to hash password
+        $encrypt_password = crypt($password, $hashF_and_salt);
+        
+        $query = "INSERT INTO users(username, password) ";
+        $query .= "VALUES ('$username', '$password')";
+
+        $result = mysqli_query($connection, $query);
+        if (!$result) {
+            die('Query Failed' . mysqli_error());
+        }
+    }
+    ```
+
+### Practice Section 8
+1. Make a variable with some text as value
+1. Use `crypt()` function to encrypt it
+1. Assign the encrypted result to a variable
+1. Echo the variable
+    ```php
+    $password = "mysecretpassword";
+    $hashFormat = "$2y$10$";
+    $salt = "ThisIsASaltThatLengthShouldBeMoreThan22Characters";
+    $hashF_and_salt = $hashFormat . $salt;
+    $password_encrypted = crypt($password, $hashF_and_salt);
+
+    echo $password_encrypted . "<br>";
+    ```
+
+
 # PHP and the Web
+### Introduction to HTTP Requests and more
+
+### Using the GET Super lobal
+
+### About Cookies in PHP
+
+### Setting Cookies with PHP
+
+### Reading Cookies in PHP
+
+### How use Sessions in PHP
+
+### Practice Section 9
+
+
+
 # Object Oriented PHP Introduction
+### What are Classes and Objects Introduction
+
+### What are Classes and How to Define Them in PHP
+
+### What are Class Methods and How to Create Them
+
+### How to Instantiate a Class
+
+### Adding Properties to Our Class
+
+### Class Inheritance
+
+### Constructors 
+
+### Data Access
+
+### Static Data in Classes
+
+### Practice Section 10
+
+
+
 # Working with files
+### Opening and Creating Files
+
+### Writing to Files
+
+### Reading Files
+
+### Deleting Files
+
+
+
 # CMS Project / Blogging System - Front End and First Steps
+### Intro Tour of the CMS
+
+### Turning on Some Important Features
+
+### Adding our Assets / Working Structure
+
+### Creating database and Category Table for the CMS
+
+### Connecting to the Database with PHP
+
+### Making our Files Reuseable
+
+### Inserting Data into Category Table and Displaying it
+
+### Creating the Posts Table
+
+### Post Comment Count Update 
+
+### Inserting Data into the Posts Table and Displaying it
+
+### Inserting the Post Image and Displaying it
+
+### Creating a Custom Search Engine Part 1
+
+### Creating a Custom Search Engine Part 2
+
+### Creating a Custom Search Engine Part 3
+
+### Adding Categories to the Sidebar
+
+
+
 # CMS - Categories & More...
+### Creating Reuseable Code in the Admin
+
+### Creating the Navigation Links in Admin
+
+### Creating the Admin Category Page Part 1
+
+### Creating the Admin Category Page Part 2
+
+### Displaying data in Category Page
+
+### Adding Categories
+
+### Adding a Special Function to our Header File
+
+### Deleting Categories
+
+### Updating or Editing Categories Part 1
+
+### Updating or Editing Categories Part 2
+
+### Refactoring Category Code Part 1 
+
+### Refactoring Category Code Part 2
+
+
+
 # CMS - POSTS
+### Creating a HTML Table in Admin to Display a List of Posts
+
+### Displaying Posts List in Admin
+
+### Including Pages Based on Condition Technique
+
+### Creating Post HTML Form in Admin
+
+### Inserting Post Data From Admin
+
+### Deleting Posts in Admin
+
+### Creating the HTML Edit From Post Page
+
+### Displaying the Edit Data in Post Edit Page
+
+### Dynamic Category Editing / Image Display
+
+### Finally Updateing Posts
+
+### Relating Categories to Posts and Displaying it
+
+### Adding Category Dropdown to the Add Post Page
+
+### Adding Individual Post Page and Link
+
+### Creating the Category Page
+
+### Setting up Some Links and Making and Making an Excerpt
+
+
+
 # CMS - COMMENTS
+### Creating the Comments Table and Inserting Data
+
+### Creating the Comments Page and HTML Form in Admin
+
+### Creating the Query for Displaying Comments in Admin Part 1
+
+### Creating the Query for Displaying Comments in Admin Part 2
+
+### Inserting New Fields in Front End Comment Form and Testing it
+
+### Creating the Front End Comment Insert Query
+
+### Finishing the Query to Send Comment Data (Front End)
+
+### Relating Comments to Posts
+
+### Deleting Comments
+
+### Approving and Unapproving Comments
+
+### Displaying Comments Based on Approval
+
+### Increasing Comments Count
+
+### Adjustments to Visual for Comments
+
+### Adjustments for comments and Displaying Post Based on Status
+
+
+
 # CMS - USERS
+### Creating the Users Table and Data Insert
+
+### Creating Users Pages and Links
+
+### Modifying User Table Heading
+
+### Creating the Display Query for Users
+
+### Displaying Users in Admin
+
+### Adding Users in Admin Part 1
+
+### Adding Users in Admin Part 2
+
+### Adding Users in Admin Part 3
+
+### Adding Users in Admin Part 4 and Final
+
+### Deleting Users
+
+### Changing Users Roles
+
+### Setting Up the Edit User Page
+
+### Displaying User Values in Edit Page
+
+### Adding Select Options to User Role
+
+### Updating User
+
+
+
 # CMS - Login
+### Creating the Login Form 
+
+### Making the Login Page
+
+### Select User Query
+
+### Validating User Query Front End
+
+### Setting Values with Sesssions
+
+### Validating User Admin
+
+### Logout Page Improved Validation 
+
+### Login improved
+
+
+
 # CMS - Profile
+### Creating the Profile Page
+
+### Displaying User Data 
+
+### Updating User Data
+
+
+
 # CMS - Dashboard
+### Adding Widgets 
+
+### Posts Dynamic Data in Widget
+
+### Adjust Widget Links 
+
+### Adding an AWESOME Chart to Admin
+
+### Cleaning up the Chart a Little
+
+### Displaying Dynamic Data in Chart Part 1
+
+### Displaying Dynamic Data in Chart Part 2
+
+
+
 # Improving Our CMS
+### Adjusting Post Echo
+
+### Removing Read More Button
+
+### Adding Notification to Add User Page
+
+
+
 # CMS - Extra Features
+### Adding Dynamic Category Selection for Edit Post Page
+
+### Adding Extra Element to Dashboard 
+
+### Adding the WYSIWYG Editor
+
+### Adding Links to Post Images and Read More Button
+
+### Adding Post Update Notification
+
+### Adding Post Edit Link in Front End
+
+### Adding Bulk Options Posts, Part 1
+
+### Adding Bulk Options Posts, Part 2
+
+### Adding Bulk Options Posts, Part 3
+
+### Adding Bulk Options Posts, Part 4
+
+### Adding Bulk Options Posts, Part 5
+
+### Adding Bulk Options Posts, Part 6
+
+### Adding Dropdown Option for Add Post Page
+
+### Adding Post Creation Notice to Add Post Page
+
+### Adding Link to Add New Button in Post Page
+
+### Adding Link to View Posts from Admin
+
+### Adding Dynamic Personalization to Admin
+
+### Adding Validation to Comments in Post Page
+
+
+
 # CMS - Extra Features - Users Registration
+### Downloading & Placing Form Markup
+
+### Testing Registration Form
+
+### Extracting Form Values and Escaping
+
+### Starting Query and Default Tables Values
+
+### Fetching our Database for Default Values
+
+### Registering Users
+
+### Validating Fields
+
+### Encrypting User Passwords
+
+### Updating Our CMS due to Password Field
+
+### User Page Dropdown Default Value Change
+
+### PHP and JavaScript Confirm Before Action
+
+### Get Your Certificate
+
+### Wrapping this up! (IMPORTANT)
+
+### Make Your Feature Requests Here
+
+
+
 # CMS - Extra Features - Author related Posts
+### Relating Posts to Their Authors Part 1
+
+### Relating Posts to Their Authors Part 2
+
+### Cloning Posts NEW Feature
+
+### Adding a LOADER to CMS Admin
+
+### Adding Views Functionality to Posts
+
+### Reseting Views Feature
+
+
+
 # Pagination
+### Pagination Intro and Part 1
+
+### Pagination Intro and Part 2 - Links and Get Request
+
+### Pagination Intro and Part 3 - Get Request Processing
+
+### Pagination Intro and Part 4 - Assigning a Variable to the per Page Value
+
+### Pagination Intro and Part 5 - Adding Some Style to Current Page
+
+
+
 # CMS - Extra Feature - Users ONLINE
+### Creating the User Online Table and Setup
+
+### Creating the PHP Code and Queries
+
+### Displaying Users Online
+
+### Displaying Users Online in Navigation
+
+### Instant Users Online Count Without Refreshing Part 1
+
+### Instant Users Online Count Without Refreshing Part 2
+
+
+
 # CMS - Extra Feature - NEW Simple Password Encrypting and Login System
+### Explanation of New Functionand Implementation
+
+### Login in Users with New System
+
+### Adding New System to Add Users in Admin
+
+### Adding New Password System to Edit User Page Part 1
+
+### Adding New Password System to Edit User Page Part 2
+
+### Cleaning Up Edit User Page
+
+
+
 # CMS - Extra Feature - Improved Comment system count and display
+### Comment Count and Amount Display
+
+### Creating a Link in Comment Count and Sending a GET Request
+
+### Comments Page to Specific Posts
+
+### Deleting in the Same Page
+
+
+
 # CMS - Extra FEature - Post for Specific User in admin
+### Part 1 - Add Page
+
+### Part 2 - Insertion
+
+### Part 3 - Fixing User Display Issue
+
+### Part 4 - Edit Post Page Update
+
+### Part 5 - Upgrading Front End
+
+
+
 # CMS - More Security
+### URL and MySQL Injection Protection
+
+
+
 # Taking the Project to the Internet
+### WARNING BEFORE GOING ONLINE
+
+### Hosting Setup
+
+### Displaying Errors Online
+
+### Uploading Files
+
+### Creating the Online Database
+
+### Importing Database
+
+### Fixing Access to Application!
+
+### Getting the Right PHP Online Version
+
+
+
 # Sending Emails
+### Creating a Contact Page 
+
+### Uploading Contact Page
+
+### Sending Emails
+
+### Modifying Email Headers
+
+
+
 # Bootstrap Modal Delete Confirm Feature
+### Intro
+
+### Creating the Markup
+
+### Writing the Code
+
+
+
 # No posts or category message feature
+### Intro
+
+### No Posts Feature Home Page
+
+### No Categories Feature
+
+### Don't Show Draft to Visitors But Everything to Admin
+
+### Applying Funcitonality to Mayor Pages
+
+
+
 # Some miscellaneous features
+### Active Navigation Links
+
+### Login Form Visibility When Logged in or Logged Out
+
+
+
 # Having fun with bugs
+### Duplicate Category Improvement
+
+### Fixing Bug in Our Edit Post JavaScript Editor
+
+### Cloning Empty Fields and Table Shifting Fix
+
+
+
 # Refactoring part 1
+### Refactoring Index in Admin Part 1
+
+### Refactoring Index in Admin Part 2
+
+### Refactoring Our View All Posts by JOINING TABLES part 1
+
+### Refactoring Our View All Posts by JOINING TABLES part 2
+
+
+
 # New registration system
+### Create a Better Admin Detection Feature
+
+### Duplicate Username Function
+
+### Duplicate Email Function
+
+### Validation for Registration
+
+### Setting up our Login User Function
+
+### Adding Some User Friendly Code
+
+### Displaying Inline Errors in Form
+
+### Registration Users with the New Function
+
+### Login Users with the New Function
+
+### Deleting via POST
+
+
+
 # Adding prepare statements to our application for security
+### Fetching posts in the category page using prepared statements part 1
+
+### Fetching posts in the category page using prepared statements part 2
+
+### Fetching posts in the category page using prepared statements part 3
+
+### Inserting Categories with Prepare Statement
+
+### Updating Categories with Prepare Statement
+
+### Closing Statements
+
+
+
 # CMS Extra feature - Pretty URL's
+### Intro 
+
+### Turning on the Rewrite Engine
+
+### Rewriting Index, Contact and Registration
+
+### Rewriting Post Page and Query String
+
+### Rewriting Category Page and Fixing Links
+
+
+
 # CMS Extra feature - Forget Password System
+### Intro to What we are Building
+
+### Creating Some Helper Functions the New System
+
+### Restructuring Login Page
+
+### Creating the Forgot Password Page
+
+### Forgot Password - Checking Form Values
+
+### Updating Database with Token Values
+
+
+
 # CMS Extra feature - Forget Password System - Sending Email
+### Intro
+
+### Download all the Files Needed
+
+### Installing 3rd Part Library with Composer
+
+### New - How to Send Emails
+
+### Updated - Sending Email
+
+### Autoloading Classes and Setting up UTF-8 for Emails
+
+### Sending Code Over Email
+
+### Creating the Reset Page
+
+### Pulling Data and Testing It
+
+### Unique Database Values
+
+### Updating Password and Token Columns
+
+### Making it Everything Work
+
+### Update search feature to work with the forgot password system code
+
+### Data Based on Current User
+
+### Image Fallback and Comment Display Fix!
+
+
+
 # CMS Extra feature - Realtime Notification with Pusher
-# CMS Extra feature - POST LIKES
+### New - Real Time Notification Feature
+
+### Adding Styles to Notifications
+
+
+
+# CMS Extra feature - POST Likes
+### What we are Creating?
+
+### Creaing the Like Button
+
+### Attaching the Click Event to the Button
+
+### Setting up the Like AJAX Request
+
+### Fetching the Posts
+
+### Updating Post with Likes
+
+### Creating Our First Like
+
+### Unliking Posts
+
+### Creating a helper function to the get the Logged-in User id - part 1
+
+### Creating a helper function to the get the Logged-in User id - part 2
+
+### Creating a helper function to detect if the user Likes a specific post
+
+### Updating our Like button to be more dynamic
+
+### Fetching all Like in the Post
+
+### Finishing Likes
+
+### Let's Add a Tooltip Feature
+
+
+
 # CMS Extra feature - Creating A Separate Admin for Logged In Users
+### Intro
+
+### Refactoring Dashboard a Little with Some Helper Functions
+
+### Getting All the User's Posts
+
+### Getting All the User's Comments
+
+### Getting All the User's Categories
+
+### Getting All the User's Published and Draft Posts
+
+### Getting all the User's post approved and unapproved comments
+
+
+
 # CMS Extra feature - Multi-Language Feature
+### Intro
+
+### Creating Language Files
+
+### Creating the Form Part 1
+
+### Creating the Form Part 2
+
+### Creating the Form Part 3
