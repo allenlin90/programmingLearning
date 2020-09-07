@@ -624,14 +624,16 @@ End:
     ```
 
 ### Connecting to the Database using PHP
+1. We can use `mysqli_connect` to connect to the database.
 
 ### Creating Records into the database table with PHP
+1. We can put SQL commands as Strings in PHP script and allow the program to interact with the database. 
     ```php
     if(isset($_POST['submit'])) {
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        $connection = mysqli_connect('localhost', 'root', 'azkfg252', 'loginapp');
+        $connection = mysqli_connect('localhost', 'root', 'password', 'loginapp');
         if ($connection) {
             echo "DB is connected" . "<br>";
         } else {
@@ -650,26 +652,231 @@ End:
     ```
 
 ### Reading Information in the Database with PHP
+1. After connecting to the database, we can use `mysqli_fetch_row([variable])` to read the data as an array. 
+1. Besides, we can use `mysqli_fetch_assoc([variable])` to read the data as associative array where title of the column is the key of the object. 
+    ```php
+    $connection = mysqli_connect('localhost', 'root', 'password', 'loginapp');
+    if ($connection) {
+        echo "DB is connected" . "<br>";
+    } else {
+        die("Database connection failed");
+    }
+
+    $query = "INSERT INTO users(username,password) ";
+    $query .= "VALUES ('$username', '$password')";
+
+    $result = mysqli_query($connection, $query);
+
+    if (!$result) {
+        die('Query failed' . mysqli_error());
+    }
+
+    // read user data as regular array
+    while($row = mysqli_fetch_row($result)) {
+        print_r($row);
+    }
+
+    // read user data as associative array
+    while($row = mysqli_fetch_assoc($result)) {
+        print_r($row);
+    }
+    ```
+1. We can put each row from the result into `<pre>` tags
+    ```php
+    <?php
+        while($row = mysqli_fetch_assoc($result)) {
+    ?>
+    <pre>
+    <?php         
+            print_r($row);
+            ?>
+    </pre>
+    <?php        
+    }
+    ?>
+    ```
 
 ### Creating the Update Records Form
+1. We can take the connectoin code out to model the code. For example, we can create a `db.php` in the same directory. 
+    ```php
+    // db.php
+    $connection = mysqli_connect('localhost', 'root', 'password', 'loginapp');
+    if ($connection) {
+        echo "DB is connected" . "<br>";
+    } else {
+        die("Database connection failed");
+    }
+    ```
+1. We then use `include "[php file]"` right after `<?php include "db.php"` to import the code. Thus, we can reuse the code without duplicating it in every file. Besides, it will be easier to manage if we change the database.
+1. In this case, we can select the `id` of an user from the databsae and give new input to edit the values, such as username and password. We use `<select>` and `<option>` HTML elements to create a list for user to select the desirable user `id`.
+    ```php
+    <div class="container">
+        <div class="col-xs-6">
+        <form action="login.php" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="" class="form-control">
+            </div>
+            <select name="" id="">
+                <option value="">1</option>
+            </select>
+            <input class="btn btn-primary" type="submit" value="submit" name="submit">
+        </form>        
+        </div>
+    </div>
+    ```
 
 ### Fixing Name Attribute Value
+1. This part is only to add `name` attribute in `<select>` element from the last section.
 
 ### Query to Read Id's
+1. We can put a `while` loop in the `<select>` tag.
+    ```php
+    <select name="id" id="">
+        <?php
+            while($row = mysqli_fetch_assoc($result)) {
+                $id = $row['id'];
+                echo "<option value='$id'>$id</option>";
+            }
+        ?>
+    </select>
+    ```
+1. We then model the code into a separate file, `functios.php`. Note that we should also include `db.php` into this file. Besides, we need `$connection` from the global scope. We can use `global` keyword in this case. 
+    ```php
+    include "db.php";
+    function showAllData(){
+        global $connection;
+        $query = "SELECT * FROM users";
+        
+        $result = mysqli_query($connection, $query);
+        
+        if (!$result) {
+            die('Query failed' . mysqli_error());
+        }
+        
+        while($row = mysqli_fetch_assoc($result)) {
+            $id = $row['id'];
+            echo "<option value='$id'>$id</option>";
+        }
+    }
+    ```
 
 ### Query to Update Username and Password
+1. This section is the final step to update the username and password in to the data according to user's `id`.
+1. We can use `mysqli_error()` to check if there's any problem from the `$connection`. 
+1. Note that we should be careful about the SQL syntax by using `.=` to concatenate the command in one single line. The space and comma matters, because, after all, it is one single line command.
+    ```php
+    if(isset($_POST['submit'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $id = $_POST['id'];
+
+        // be aware with space and comma
+        $query = "UPDATE users SET ";
+        $query .= "username = '$username', ";
+        $query .= "password = '$password' ";
+        $query .= "WHERE id = $id";
+
+        $result = mysqli_query($connection, $query);
+        if(!$result) {
+            die("Query FAILED!" . mysqli_error($connection));
+        }
+    }
+    ```
 
 ### Refactoring The Update Query into a Function
+1. We can model the code into `functions.php` as well. 
+    ```php
+    // functions.php
+    function updateTable() {
+        global $connection;
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $id = $_POST['id'];
+
+        $query = "UPDATE users SET ";
+        $query .= "username = '$username', ";
+        $query .= "password = '$password' ";
+        $query .= "WHERE id = $id";
+
+        $result = mysqli_query($connection, $query);
+        if(!$result) {
+            die("Query FAILED!" . mysqli_error($connection));
+        }
+    }
+
+    // login_update.php
+    if(isset($_POST['submit'])) {
+        updateTable();
+    }
+    ```
 
 ### Delete Records From Database with PHP
+1. We create another PHP file `login_delete.php` and add a new function in `functions.php`.
+1. The overall structure of the page and PHP code is similar to `login_update.php`. The main differences between 2 are the SQL command changing from `SET` to `DELETE`. Besides, we don't actually need username and password in this case.
+1. We can change the `value` attribute of the last `<input>` tag from `update` to `delete` for a better UX.
+    ```php
+    // functions.php
+    function deleteRows() {
+        global $connection;
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $id = $_POST['id'];
+
+        $query = "DELETE from users ";
+        $query .= "WHERE id = $id";
+
+        $result = mysqli_query($connection, $query);
+        if(!$result) {
+            die("Query FAILED!" . mysqli_error($connection));
+        }
+    }
+
+    // call the function above in login_delete.php
+    ```
 
 ### Refactoring all Databases Query Code into Functions
-
 ### Making All Files Modular and Refactoring
+1. These sections are just refactoring and optimizing the code. 
+1. We separate `headers` and `footers` into separated file and use `include` to import to the page.
 
 ### Practice Section 7
+1. Create a database in PHPMyAdmin
+1. Create a table like the one from the lecture
+1. Insert some data
+1. Connect to database and read data
 
+**Solution**
+1. We can create a databse with a table in PHPMyAdmin directly by setting schema.
+1. Use `mysqli_connect('localhost', 'root', 'password', '[newCreatedList]')` to use PHP to connect to the database.
+1. Create a variable to hold the SQL query string after connecting to database.
+    ```php
+    // create a connection to the database
+    $connection = mysqli_connect('localhost', 'root', 'password', '[newCreatedList]');
+    if(!$connection) {
+        die("Database connection failed...") . mysqli_error($connection);
+    } else {
+        echo "The database is connected";
+    }
 
+    // create variable to hold SQL query string
+    $query = "SELECT * FROM [tableName]";
+
+    $result = mysqli_query($connect, $query);
+    if (!$result) {
+        die("Query Failed...");
+    }
+
+    // use while loop to check each row retrieved from the table
+    // use print_r or echo to render the result on the page
+    while($records = mysqli_fetch_assoc($result)) {
+        print_r($records);
+    }
+    ```
 
 # PHP Security
 # PHP and the Web
