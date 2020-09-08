@@ -1041,31 +1041,279 @@ End:
     <img src="./images/sessionPHP.PNG">
 
 ### Practice Section 9
+1. Create a link saying `Click Here` and set the link `href` attribute to pass some parameters and use the `GET` super global.
+1. Set a cookie that expires in one week.
+1. Start a session and set it to value.
+    ```php
+    <?php
+        // print out parameters from the anchor tag
+        print_r($_GET);
 
+        // set up, configure and print out the cookie
+        $name = "ThisIsACookie";
+        $value = "CookieValue";
+        $expireation = time() + (60*60*24*7);
+        setcookie($name, $value, $expireation);
+        print_r($_COOKIE);
 
+        // set up and print out the session
+        session_start();
+        $_SESSION['message'] = "How are you?";
+        print_r($_SESSION);
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <?php $params="value";?>
+        <a href="ps9.php?key=<?php echo $params;?>">Click Me</a>
+    </body>
+    </html>
+    ```
+1. For `$_GET` to retrieve the data from URL parameters, we can use `isset()` to check if the associative array is not empty.
+    ```php
+    if (isset($_GET)) {
+        print_r($_GET);
+    }
+    ```
 
 # Object Oriented PHP Introduction
 ### What are Classes and Objects Introduction
+1. A `class` is a "blue print", "definitio", or "description of something in the program" and defines two things, `Properties` and `Methods`.
+    1. `Property` can be variables, arrays, or data. 
+    1. `Method` are functions / behaviors.
+1. A class describe an object. An object can be a variable, a function, or a data structure in the program. For example, a `Car` object can have several properties and methods
+    1. Properties - Wheels, Seats, Radio
+    1. Methods - Move Wheel, Move Seats, Turn on Radio
 
 ### What are Classes and How to Define Them in PHP
+1. We can use `class` keyword to create a Class in PHP. Besides, we can use `class_exists()` function to check if a class exists.
+    ```php
+    class Car {
+        
+    }
+
+    if (class_exists("Car")) {
+        echo "Yes Car class exists";
+    } else {
+        echo "no";
+    }
+    ```
 
 ### What are Class Methods and How to Create Them
+1. We can use `method_exists()` to check if a method exists in the given class. This function takes 2 arguments, 1st is the class, while the 2nd if the method that we want to check.
+    ```php
+    class Car {
+        function moveWheels() {
+            echo "Wheels move";
+        }
+    }
+
+    if (method_exists("Car", "MoveWheels")) {
+        echo "The method exists";
+    } else {
+        echo "No the method doesn't exist";
+    }
+    ```
 
 ### How to Instantiate a Class
+1. We can use `new` keyword (the same as JavaScript) to create new instance (object) of a class. 
+1. To call a method of an object, we can use `->` arrow notation to call the method. 
+    ```php
+    class Car {
+        function moveWheels() {
+            echo "Wheels move";
+        }
+    }
+
+    $car1 = new Car();
+    $car1->moveWheels();
+    ```
 
 ### Adding Properties to Our Class
+1. We can use keyword `var` to create properties in a class. This syntax is similar to decalre a variable with `var` in JavaScript. However, to call the property, we don't put dollar sign but the variable name itself.
+1. Similar to JavaScript, we can change the property value of an instance of a class. Besides, we can use `$this` keyword to refer back to the object itself (as `this` keyword in JavaScript which refers to the current object) and change the property from its own method.
+    ```php
+    class Car {
+        var $wheels = 4;
+        var $hood = 1;
+        var $engine = 1;
+        var $doors = 4;
+
+        function moveWheels() {
+            $this->wheels = 10;
+            echo "Wheels move";
+        }
+
+        function createDoors() {
+            $this->doors = 6;
+        }
+    }
+
+    $sedan = new Car();
+    echo $sedan->wheels . "<br>"; // 4
+    $sedan->moveWheels() . "<br>";  // Wheels move
+    echo $sedan->wheels . "<br>"; // 10 
+    $sedan->wheels = 8;
+    echo $sedan->wheels . "<br>"; // 8
+
+    $truck = new Car();
+    echo $truck->wheels . "<br>"; // 4
+    echo $truck->wheels = 10 . "<br>"; // 10
+    $truck->createDoors();
+    echo $truck->doors . "<br>"; // 6
+    ```
 
 ### Class Inheritance
+1. Inheritance is very useful for extensions. Therefore, we can create a new class without rewriting all the properties and functions of a class. In PHP, we can use `extends` keyword to inherit properties and methods from another class. 
+    ```php
+    class Car {
+        var $wheels = 4;
+        var $hood = 1;
+        var $engine = 1;
+        var $doors = 4;
+
+        function moveWheels() {
+            $this->wheels = 10;
+            echo "Wheels move";
+        }
+
+        function createDoors() {
+            $this->doors = 6;
+        }
+    }
+    
+    $car = new Car();
+
+    class Plane extends Car {
+        var $wheels = 20;
+    }
+
+    $jet = new Plane();
+    echo $jet->MoveWheels() . "<br>"; // Wheels move
+    echo $jet->wheels . "<br>"; // 10 
+    ```
 
 ### Constructors 
+1. We can use `__construct` to create a method (function) in a class. This constructor function will be called and executed immediately when the instance is created. Besides, this method is usally set up to give default value to a new instance when the object is created. 
+    ```php
+    class Car {
+        var $wheels = 4;
+        var $hood = 1;
+        var $engine = 1;
+        var $doors = 4;
+
+        function __construct() {
+            echo $this->wheels = 10;
+        }
+
+    }
+    
+    $car = new Car(); // 10
+    ```
 
 ### Data Access
+1. Properties of a class can be declared by different keyword to work in different scopes, `var`, `public`, `protected`, and `private`.
+    1. `var` is the regular keyword to be used to declare the property of a class.
+    1. `public` will make the data accessible in the global scope through out the program. This keyword works similar to `var`.
+    1. `protected` will limit the property to be used on the class and sub-class, such as a class inherited properties and methods. For example, this property can only be accessed by calling a method that use `$this` to access the property.
+    1. `private` will limit the property to be accessible only in the current class. In the following example, `Truck` inherits properties and methods from `Car`, but can use `engine` property from `Car` class, as it `private`.
+    ```php
+    class Car {
+        public $wheels = 4;
+        protected $hood = 1;
+        private $engine = 1;
+        var $doors = 4;
+
+        // hood is protected, so can only be accessed by the method of the class
+        function showProperty() {
+            return $this->hood;
+        }
+
+    }
+    
+    $car = new Car();
+    echo "Car has " . $car->showProperty() . " hood <br>"; // Car has 1 hood
+
+    class Taxi extends Car {
+
+    }
+
+    $taxi = new Taxi();
+    echo "Taxi has " . $taxi->showProperty() . "hood <br>"; // Taxi has 1 hood 
+    
+    class Truck extends Car {
+        function showProperty() {
+            return $this->$engine;
+        }
+    }
+
+    $truck = new Truck();
+
+    echo "Truck has " . $truck->showProperty() . " engine <br>"; // Truck has  engine
+    ```
 
 ### Static Data in Classes
+1. We can use `static` rather tha `var` or other keywords to decalre a static property for the class and its instances. Note that we can't use regular arrow notation `->` to call the property, but call the class name directly with double column `::`. Besides, as the static becomes a variable, we need to put dollar sign to call it.
+    ```php
+    class Car {
+        static $wheels = 4;
+        var $doors = 4;
+
+        // hood is protected, so can only be accessed by the method of the class
+        function showProperty() {
+            Car::$wheels = 10;
+        }
+
+    }
+    
+    $car = new Car();
+    echo Car::$wheels . "<br>"; // 4
+
+    Car::showProperty();
+    
+    echo Car::$wheels . "<br>"; // 10
+    ```
 
 ### Practice Section 10
+1. Make a class called `Dog`
+1. Set some properties for `Dog`. For example, eye colors, nose, or fur color.
+1. Make a method named `showAll` that prints all the properties of `Dog` instance. 
+1. Instantiate the class and create a sub-class `Pitbull`.
+1. Call the method `showAll`
+    ```php
+    class Dog {
+        var $eyeColor = "brown";
+        var $nose = 1;
+        var $furColor = "white";
 
+        function showAll(){
+            echo "Eye color is " . $this->eyeColor . "<br>";
+            echo "This dog has " . $this->nose . " nose <br>";
+            echo "Fur color is " . $this->furColor . "<br>";
+            return [$this->eyeColor, $this->nose, $this->furColor];
+        }
+    }
 
+    $dog = new Dog();
+    $properties = $dog->showAll();
+    print_r($properties);
+    echo "<br>";
+
+    class Pitbull extends Dog {
+        var $furColor = "dark grey";
+    }
+
+    $pitbull = new Pitbull();
+    echo $pitbull->eyeColor . "<br>"; 
+    echo $pitbull->nose . "<br>"; 
+    echo $pitbull->furColor . "<br>"; 
+    print_r($pitbull->showAll());
+    ```
 
 # Working with files
 ### Opening and Creating Files
