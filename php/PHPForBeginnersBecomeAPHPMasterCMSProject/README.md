@@ -956,16 +956,89 @@ End:
 
 # PHP and the Web
 ### Introduction to HTTP Requests and more
+1. PHP is meant to be used for the web. We can use the following methods to collect information and data from users.
+    1. Forms
+    1. URL / Links
+    1. Cookies
+    1. Sessions
 
-### Using the GET Super lobal
+### Using the GET Super global
+1. We can pass parameters in URL and send to the server with question mark `?` with `[key]=[value]` pairs. For example, `http://localhost/webPHP/get.php?key=value`. We can use `$_GET` to read the parameters in the URL. Besides, we can use ampersand `&` to pass multiple parameters from client to server. 
+    ```php
+    <?php
+        print_r($_GET);
+    ?>
+    <a href="get.php?id=200">Click Me</a>
+    ```
+1. Besides, we can generate the parameters in the anchor tag dynamically. 
+    ```php
+    <?php
+        $id = 10;
+        $button = "Submit";
+    ?>
+    <a href="get.php?id=<?php echo $id;?>"><?php echo $button;?></a>
+    ```
+
+### Using the POST Super global
+1. We have been using this variable `$_POST` with `<form>` tag.
+    ```php
+    <?php
+        echo $_POST['name'];
+    ?>
+    <form action="post.php" method="POST">
+        <input type="text" name="name">
+        <input type="submit" value="Submit" name="submit">
+    </form>
+    ```
 
 ### About Cookies in PHP
+1. When a user use browser to visit a website, the server (of the website) may send a cookie to user and store locally at user's machine. For example, in Google Chrome, we can go to "settings" > "privacy" > "cookies and other site data" to check the cookies store in the machine.
+1. Servers can check cookies and verify the data such as the browsing and history records of the user to provide relative and personalized information to improve user experience or convert sales. 
 
 ### Setting Cookies with PHP
+1. We can check `$_COOKIE` variable which is an associative array that we can retreive data from cookies stored on user's machine.
+1. We can use `setcookie()` function to set up cookies on client side. The function takes 3 parameters, `name`, `value`, and `expiration`. Note that `expiration` is in seconds. We can use `time()` function to get current time in seconds since 1970/01/01 00:00 (a conventional benchmark time in computers.) and add up with duration for the cookie to be valid.
+    ```php
+    $name = "SomeName";
+    $value = 100;
+    // duration for a week in seconds
+    $expiration = time() + (60*60*24*7);
+
+    setcookie($name, $value, $expiration);
+    ```
+    <img src="./images/cookies.PNG">
 
 ### Reading Cookies in PHP
+1. From the last section, we can set up a cookie and be stored at user's machine. We can use `isset()` function to check if there is any `cookie` set. We then can use the info and data from the cookie and provide personalized user experience. 
+    ```php
+    $name = "SomeName";
+    $value = 100;
+    // duration for a week in seconds
+    $expiration = time() + (60*60*24*7);
+
+    setcookie($name, $value, $expiration);
+
+    if (isset($_COOKIE['SomeName'])) {
+        $someOne = $_COOKIE['SomeName']; 
+        echo $someOne;
+    } else {
+        $someOne = "";
+    }
+    ```
 
 ### How use Sessions in PHP
+1. We can start a session with `session_start()`. The function will set a cookie for the user as the reference for the session. However, this method saves much more storage and code for the purpose.
+1. Every page that uses session should call `session_start()` to be able to access `$_SESSION` variable. When users browsing from a page to another, server can keep the data when the user has done something to be able to track on user behavior.
+    ```php
+    // session1.php
+    session_start();
+    $_SESSION['greeting'] = "Hello World. This is some extra text";
+
+    // session2.php
+    session_start();
+    echo $_SESSION['greeting'];
+    ```
+    <img src="./images/sessionPHP.PNG">
 
 ### Practice Section 9
 
