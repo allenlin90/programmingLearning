@@ -3,6 +3,26 @@
 1. Instruction from [FreeCodeCamp](https://www.freecodecamp.org/news/setup-a-php-development-environment-on-windows-subsystem-for-linux-wsl-9193ff28ae83/)
 1. Instruction on [Medium](https://medium.com/@harshityadav95/installing-mysql-in-ubuntu-linux-windows-subsystem-for-linux-from-scratch-d5771a4a2496)
 
+### Set up default route of the server
+1. Create the directory which will be the root directory of the server.
+1. Set up alias for `sudo ln -s /mnt/c/Users/YOUR WINDOWS USERNAME/Documents/server /var/www/devroot` 
+1. Modify the route setting file `sudo nano /etc/apache2/sites-enabled/000-default.conf`
+    ```
+    <VirtualHost *:80>        
+    ServerName localhost        
+    ServerAdmin webmaster@localhost        
+    DocumentRoot  /var/www/devroot      
+    <Directory /var/www/>        
+    Options Indexes FollowSymLinks        
+    AllowOverride All        
+    Require all granted      
+    </Directory>        
+    ErrorLog ${APACHE_LOG_DIR}/error.log        
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>
+
+    ```
+
 ### Remove and clear current MySQL in the system
 1. Uninstall current MySQL in WSL
     1. `sudo apt-get remove --purge *mysql*`

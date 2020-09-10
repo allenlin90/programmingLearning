@@ -1317,45 +1317,101 @@ End:
 
 # Working with files
 ### Opening and Creating Files
-
 ### Writing to Files
+1. We can use `fopen()` function in PHP to run on apache2 server. Note that the instructor noticed there would be permission issues for Mac and Linux users. However, I have run the function on WSL which has no problem for the function to create and write in the file. 
+1. We can use `IF` statement to check if `fopen()` runs, and use `fwrite()` to modify the file. Note that the function will overwrite the whole content of the file with the 2nd argument rather than append new contents in the file.
+1. After writing into the file, we should use `fclose()` to close the file to release working memory of the server. 
+    ```php
+    $file = "example.txt";
+
+    if ($handle = fopen($file, 'w')) {
+        
+        fwrite($handle, "I love PHP, though it's very weird");
+
+        fclose($handle);
+    } else {
+        echo "The file could not be written.";
+    }
+    ```
 
 ### Reading Files
+1. We can use `fread()` to read a file in the same directory of the PHP file. Note that `fread()` function takes 2 arguments, 1st is the file, and the 2nd is the size of the file. 1 byte means 1 character of the file, if it's a text file. For exmaple, if we give the 2nd argument as `5`, the program returns only the first 5 characters of the text file.
+1. In addition, we can use `filesize()` function which takes the file to check its size, so we can get the whole file read and returned by the function. 
+1. We should close the file after reading as writing it to release working memory of the server. 
+    ```php
+    $file = "example.txt";
+
+    if ($handle = fopen($file, 'r')) {
+        
+        echo $content = fread($handle, filesize($file)); // Each bite equals a character
+
+        fclose($handle);
+    } else {
+        echo "The file could not be read.";
+    }
+    ```
 
 ### Deleting Files
-
+1. To delete a file, we can simply use `unlink([fileNameWithPath])` to delete the file.
+    ```php
+    unlink("[fileToDelete]");
+    ```
 
 
 # CMS Project / Blogging System - Front End and First Steps
 ### Intro Tour of the CMS
+1. We will build several functions on the bloging website which can also be used with content management. This site is as a CMS similar to WordPress. 
+1. Users can leave comments on each post of blog and articles, while the comments should be approved to be shown on the page. 
+1. A search function is available on the site for visitors to search for certain contents on the site. 
+1. An admin and management backend is available to manage the website in different sectors, such as posts, comments, users (writer), and media and graphics of the website.
+1. The website owner can write new posts and edit posts and manage categories to group articles.
+1. On the management, users can check comments, traffic, and other statistics of performance of the website.
+1. The data and information are genereated dynamically from the data from the database.
+1. The website is responsive and mobile friendly.
 
 ### Turning on Some Important Features
+1. We can turn on `display_errors` to show the issues of the code when we run it on apache2 server. In WSL the file `php.ini` is on `/etc/php/7.2/apache2/php.ini`. We can use `sudo nano php.ini` and search for `display_errors` in the file to turn the feature on. Note that it should be `On` with O in capital.
+1. After changing the setting, we can use `sudo service apache2 restart` to restart the server. 
+1. Besides, we can change `output_buffering=4096` to ensure its value is `4096`. The reason to turn this feature on is that, if we use `header()` to send data, it sometimes carry with several lines of whitespaces, which can cause error on the server.
 
 ### Adding our Assets / Working Structure
 
+
 ### Creating database and Category Table for the CMS
+
 
 ### Connecting to the Database with PHP
 
+
 ### Making our Files Reuseable
+
 
 ### Inserting Data into Category Table and Displaying it
 
+
 ### Creating the Posts Table
+
 
 ### Post Comment Count Update 
 
+
 ### Inserting Data into the Posts Table and Displaying it
+
 
 ### Inserting the Post Image and Displaying it
 
+
 ### Creating a Custom Search Engine Part 1
+
 
 ### Creating a Custom Search Engine Part 2
 
+
 ### Creating a Custom Search Engine Part 3
 
+
 ### Adding Categories to the Sidebar
+
 
 
 
