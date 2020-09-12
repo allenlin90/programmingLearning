@@ -6,6 +6,7 @@
 ### Set up default route of the server
 1. Create the directory which will be the root directory of the server.
 1. Set up alias for `sudo ln -s /mnt/c/Users/YOUR WINDOWS USERNAME/Documents/server /var/www/devroot` 
+1. Use `-sfn` flag to modify the symbol link if it's set up `sudo ln -sfn /mnt/c/Users/YOUR WINDOWS USERNAME/Documents/server /var/www/devroot`.
 1. Modify the route setting file `sudo nano /etc/apache2/sites-enabled/000-default.conf`
     ```
     <VirtualHost *:80>        

@@ -1375,13 +1375,26 @@ End:
 1. Besides, we can change `output_buffering=4096` to ensure its value is `4096`. The reason to turn this feature on is that, if we use `header()` to send data, it sometimes carry with several lines of whitespaces, which can cause error on the server.
 
 ### Adding our Assets / Working Structure
-
+1. This section is to download the files from the lecture.
+    1. `/admin`
+    1. `/css`
+    1. `/fonts`
+    1. `/js`
+    1. `index.php`
+    1. `post.php`
+1. We create an extra folder for `images` in both root directory and `admin` folder. 
 
 ### Creating database and Category Table for the CMS
-
+1. If the OS and environment is apache2 server and there's an index.php at the root directory, the server will use the file as the homepage, so we don't need to specify the file name on the URL. 
+1. In this lecture, we should check if the PHP version we are using supports `mysqli` API.
+1. We can create a new database `cms` and creat a table for categories with for 2 columns. 
+    1. `cat_id` is the primary key as `INT` and length up to `3`, which means we can create up to 999 categories in the database.
+    1. `cat_title` is the name in the category which we can set as `VARCHAR` with length up to `255`. 
 
 ### Connecting to the Database with PHP
-
+1. As the files and data will be on public server, we can use `PHP` program as the middleware to connect to the database to verify and validate the inputs from users before the info. are sent to the database to prevent potential risks such as SQL injection.
+1. In this case, we create a `includes` folder in the root directory and create a file `db.php` which is used to make connection between the main PHP program and the database.
+1. Note that we can set up environment variable in Linux and use `getenv('key')` to increase security of keeping password. Besides, the value of the envrionment variable will only be print in the terminal by using `php filePath`. It won't be printed on the browser.
 
 ### Making our Files Reuseable
 
