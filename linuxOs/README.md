@@ -55,4 +55,5 @@ from [Python-100-Days](https://github.com/jackfrued/Python-100-Days/blob/master/
 1. The editor is powerful that it can open and compare 2 documents at the same time and record macro as well. 
 Check more information at [VIM](https://github.com/jackfrued/Python-100-Days/blob/master/Day31-35/31-35.%E7%8E%A9%E8%BD%ACLinux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.md#%E7%BC%96%E8%BE%91%E5%99%A8---vim). 
 
-(Note there are other functions and commands that Linux can operate. However, some of them aren't used at the moment. The parts are skipped.)
+# Security
+1. Environment variabls `ENV` and `alias` can be set in `~/.bashrc` file. We can use keyword `alias` to set up alias as shorthand or `export` for environment variabls.
