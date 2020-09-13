@@ -1761,7 +1761,7 @@ End:
         ...
     </ul>
     ```
-1. We can also have files modeled and managed in `admin`, so we create an `includes` folder in `admin`. In this case, we create `header.php`, `footer.php`, and `navigation`.
+1. We can also have files modeled and managed in `admin`, so we create an `includes` folder in `admin`. In this case, we create `header.php`, `footer.php`, and `navigation.php`.
 
 ### Creating the Navigation Links in Admin
 
