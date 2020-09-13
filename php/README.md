@@ -2,6 +2,7 @@
 ### Reference
 1. Instruction from [FreeCodeCamp](https://www.freecodecamp.org/news/setup-a-php-development-environment-on-windows-subsystem-for-linux-wsl-9193ff28ae83/)
 1. Instruction on [Medium](https://medium.com/@harshityadav95/installing-mysql-in-ubuntu-linux-windows-subsystem-for-linux-from-scratch-d5771a4a2496)
+1. [Set up environment variable on Apache2 server](https://stackoverflow.com/questions/23915066/why-is-getenv-only-returning-a-variable-when-run-from-the-terminal-not-via-we/23915175)
 
 ### Set up default route of the server
 1. Create the directory which will be the root directory of the server.
@@ -9,8 +10,8 @@
 1. Use `-sfn` flag to modify the symbol link if it's set up `sudo ln -sfn /mnt/c/Users/YOUR WINDOWS USERNAME/Documents/server /var/www/devroot`.
 1. Modify the route setting file `sudo nano /etc/apache2/sites-enabled/000-default.conf`
     ```
-    <VirtualHost *:80>        
-    ServerName localhost        
+    <VirtualHost *:80>
+    ServerName localhost
     ServerAdmin webmaster@localhost        
     DocumentRoot  /var/www/devroot      
     <Directory /var/www/>        
@@ -21,8 +22,15 @@
     ErrorLog ${APACHE_LOG_DIR}/error.log        
     CustomLog ${APACHE_LOG_DIR}/access.log combined
     </VirtualHost>
-
     ```
+1. We can also set up environment variable in `/etc/apache2/sites-enabled/000-default.conf` by using `SetEnv` keyword. We then can use `getenv()` function, which parse the variables in configure file as an associative array. We then can use `getenv('Variable_Key')` to retrieve the value.
+    ```
+    <VirtualHost *:80>
+    SetEnv Variable_Key "Variable_Value"
+    </VirtualHost>
+    ```
+
+**Note that we should restart the server every time we have new configuration**
 
 ### Remove and clear current MySQL in the system
 1. Uninstall current MySQL in WSL

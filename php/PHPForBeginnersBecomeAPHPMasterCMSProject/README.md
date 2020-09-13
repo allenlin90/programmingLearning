@@ -22,7 +22,7 @@ End:
 1. [CMS - Dashboard](#CMS-Dashboard)
 1. [Improving Our CMS](#Improving-Our-CMS)
 1. [CMS - Extra Features](#CMS---Extra-Features)
-1. [CMS - Extra Features - Users Registration](#CMS---Extra Features---Users Registration)
+1. [CMS - Extra Features - Users Registration](#CMS---Extra-Features---Users-Registration)
 1. [CMS - Extra Features - Author related Posts](#CMS-Extra-Features-Author-related-Posts)
 1. [Pagination](#Pagination)
 1. [CMS - Extra Feature - Users ONLINE](#CMS---Extra-Feature---Users-ONLINE)
@@ -1387,46 +1387,368 @@ End:
 ### Creating database and Category Table for the CMS
 1. If the OS and environment is apache2 server and there's an index.php at the root directory, the server will use the file as the homepage, so we don't need to specify the file name on the URL. 
 1. In this lecture, we should check if the PHP version we are using supports `mysqli` API.
-1. We can create a new database `cms` and creat a table for categories with for 2 columns. 
+1. We can create a new database `cms` and creat a table for categories named `category` with for 2 columns. 
     1. `cat_id` is the primary key as `INT` and length up to `3`, which means we can create up to 999 categories in the database.
     1. `cat_title` is the name in the category which we can set as `VARCHAR` with length up to `255`. 
 
 ### Connecting to the Database with PHP
 1. As the files and data will be on public server, we can use `PHP` program as the middleware to connect to the database to verify and validate the inputs from users before the info. are sent to the database to prevent potential risks such as SQL injection.
 1. In this case, we create a `includes` folder in the root directory and create a file `db.php` which is used to make connection between the main PHP program and the database.
-1. Note that we can set up environment variable in Linux and use `getenv('key')` to increase security of keeping password. Besides, the value of the envrionment variable will only be print in the terminal by using `php filePath`. It won't be printed on the browser.
+1. Note that we can set up environment variable in Linux and use `getenv('key')` to increase security of keeping password. Besides, the value of the envrionment variable will only be print in the terminal by using `php filePath`. It won't be printed on the browser. Check how to set environment variable in WSL [here](https://github.com/allenlin90/programmingLearning/tree/master/linuxOs). However, this `getenv()` function is only available on the server side, so we can't use this to retrieve environment variable and render the value to our webpage. Therefore, we need to use `SetEnv` and setup the variable in `/etc/apache2/sites-enabled/000-default.conf`.
+1. We can use associative array to store the values and use `foreach` loop to create constants. Besides, we can use `strtoupper()` function to turn the string into uppercase. We can review how to create [constants](#Constants). Recalling that constants in PHP doesn't have dollar sign `$` as regular, mutable variables.
+    ```php
+    $db['db_host'] = 'localhost';
+    $db['db_user'] = 'root';
+    $db['db_name'] = 'cms';
+
+    foreach($db as $key => $value) {
+        define(strtoupper($key), $value);
+    }
+
+    $pw = getenv('mysqlpw');
+    // echo $pw."\n";
+    $connection = mysqli_connect(DB_HOST, DB_USER, $pw, DB_NAME);
+
+    if ($connection) {
+        echo "We are connected" . "\n";
+    }
+    ```
 
 ### Making our Files Reuseable
+1. We can make some repeatitive code and data in a separated file and be included if it is required. In this case, we can create `header`, `footer`, `sidebar`, and `navigation` for the webpage. We keep the files in the same directory with `db.php`.
+    ```php
+    <?php include "includes/header.php";?>
+    <!-- Navigation -->
+    <?php include "includes/navigation.php";?>
 
+    <!-- Page Content -->
+    <div class="container">
+
+    <div class="row">
+
+        <!-- Blog Entries Column -->
+        <div class="col-md-8">
+
+            <h1 class="page-header">
+                Page Heading
+                <small>Secondary Text</small>
+            </h1>
+
+            <!-- First Blog Post -->
+            <h2>
+                <a href="#">Blog Post Title</a>
+            </h2>
+            <p class="lead">
+                by <a href="index.php">Start Bootstrap</a>
+            </p>
+            <p><span class="glyphicon glyphicon-time"></span> Posted on August 28, 2013 at 10:00 PM</p>
+            <hr>
+            <img class="img-responsive" src="http://placehold.it/900x300" alt="">
+            <hr>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore, veritatis, tempora, necessitatibus inventore nisi quam quia repellat ut tempore laborum possimus eum dicta id animi corrupti debitis ipsum officiis rerum.</p>
+            <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+            <hr>
+
+        </div>
+
+        <!-- Blog Sidebar Widgets Column -->
+        <?php include "includes/sidebar.php";?>
+
+    </div>
+    <!-- /.row -->
+
+    <hr>
+    <!-- footer -->
+    <?php include "includes/footer.php";?>
+    ```
+    <img src="./images/restructuredIndexPHP.PNG">
 
 ### Inserting Data into Category Table and Displaying it
-
-
+1. We can create 2 new inputs to `categories` table in the database. Note that we can navigate to Ooperations' tab on the top after clicking the database or table we'd like to interact with and change its name. We then create 2 new inputs in the table. These input will be used to create items in the list of navigation on the webpage. 
+1. Besides, we can insert multiple inputs to the table. In this case, we put `Bootstrap`, `JavaScript`, `PHP`, and `Java`.
+    ```php
+    $query = "SELECT * FROM categories";
+    $selectAllCategoriesQuery = mysqli_query($connection, $query);
+    while($row = mysqli_fetch_assoc($selectAllCategoriesQuery)) {
+        $catTitle = $row['cat_title'];
+        echo "<li><a href='#'>{$catTitle}</a></li>";
+    }
+    ```
+    <img src="./images/navigationList.PNG">
+    
 ### Creating the Posts Table
-
+1. We create another table in `cms` database to store the data for posts in `index.php` with 10 columns
+    1. `post_id` is INT type with length at 3. 
+    1. `post_category_id` is INT type with length at 3 and will be alinged with the `category_id` in `categories` table.
+    1. `post_title` is VARCHAR type with length at 255.
+    1. `post_author` is VARCHAR type with length at 255.
+    1. `post_date` is DATE type.
+    1. `post_image` is TEXT type.
+    1. `post_content` is TEXT type.
+    1. `post_tag` is VARCHAR type with length at 255.
+    1. `post_comment_count` is VARCHAR type with length at 255.
+    1. `post_status` is VARCHAR type with length at 255 and `default` as "**draft**".
+    <img src="./images/postTableInCMS.PNG">
 
 ### Post Comment Count Update 
-
+1. This section is only to modify the type of `post_comment_count` field from VARCHAR to INT, as it's a incrementing number. Besides, we can set its length to be up to `11` as `255` is too much.
+1. We can go to the table and select `CHANGE` on the row to modify the schema.
 
 ### Inserting Data into the Posts Table and Displaying it
+1. We can create some input in `posts` table. For example, we follow the schema to create a post in `posts` table. We then can retrieve the data from database and render the information on `index.php`. We can use the HTML template as the layout and put PHP script in for the dynamic value that we retreive from the database. 
+    ```php
+    <?php include "includes/db.php";?>
+    <?php include "includes/header.php";?>
+    <!-- Navigation -->
+    <?php include "includes/navigation.php";?>
 
+    <!-- Page Content -->
+    <div class="container">
+
+    <div class="row">
+
+        <!-- Blog Entries Column -->
+        <div class="col-md-8">
+
+            <?php 
+                $query = "SELECT * FROM posts";
+
+                $selectAllPostsQuery = mysqli_query($connection, $query);
+
+                while($row = mysqli_fetch_assoc($selectAllPostsQuery)) {
+                    $postTitle = $row['post_title'];
+                    $postAuthor = $row['post_author'];
+                    $postDate = $row['post_date'];
+                    $postImage = $row['post_image'];
+                    $postContent = $row['post_content'];
+            ?>            
+
+            <h1 class="page-header">
+                Page Heading
+                <small>Secondary Text</small>
+            </h1>
+
+            <!-- First Blog Post -->
+            <h2>
+                <a href="#"><?php echo $postTitle?></a>
+            </h2>
+            <p class="lead">
+                by <a href="index.php"><?php echo $postAuthor?></a>
+            </p>
+            <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate?></p>
+            <hr>
+            <img class="img-responsive" src="http://placehold.it/900x300" alt="">
+            <hr>
+            <p><?php echo $postContent?></p>
+            <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+            <hr>
+
+            <?php }?>
+        </div>
+
+        <!-- Blog Sidebar Widgets Column -->
+        <?php include "includes/sidebar.php";?>
+
+    </div>
+    <!-- /.row -->
+
+    <hr>
+    <!-- footer -->
+    <?php include "includes/footer.php";?>
+    ```
 
 ### Inserting the Post Image and Displaying it
-
+1. We can create a new folder for `images` in the root directory. The `post_image` field in the `posts` table will keep the path of the file rather than the file itself. For example, we have an image `image_1.jpg` in `images`. We can update this value in the database for related folder
+1. We update the image tag in `index.php`.
+    ```php
+    <img class="img-responsive" src="<?php echo $postImage;?>" alt="">
+    ```
+    <img src="./images/postImageCMS.PNG">
 
 ### Creating a Custom Search Engine Part 1
-
+1. In this section, we will make a function to allow users to search for posts on the website. This part of HTML elements have been taken out and kept in `includes/sidebar.php`.
+    <img src="images/insiteSearchEngine.PNG">
+1. In this case, the target is just to enable the function on the frontend. We modify the section of Blog Search function by adding `<form>` tag with POST method, give `name` attribute to both `<input>` and `<button>` tag. Besides, we can use `isset()` function with `IF` statement to check if `$_POST['submit']` has been made.
+    ```php
+    <?php
+        if (isset($_POST['search'])) {
+            $search = $_POST['search'];
+        }
+    ?>
+    <!-- Blog Search Well -->
+    <div class="well">
+        <h4>Blog Search</h4>
+        <form action="" method="post">
+        <div class="input-group">
+            <input name="search" type="text" class="form-control">
+            <span class="input-group-btn">
+                <button name="submit" class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-search"></span>
+            </button>
+            </span>
+        </div>
+        <!-- /.input-group -->
+        </form>
+    </div>
+    ```
 
 ### Creating a Custom Search Engine Part 2
+1. Since the frontend UI is ready, we can enable it to interactive with database to manipulate the real data from the search.
+1. In this case, we use `LIKE` rather than `=` and followed with percentage `%` to find similar or related text in the database. We can look up for more details of how SQL works. 
+    ```php
+    if (isset($_POST['search'])) {
+        $search = $_POST['search'];
 
+        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%'";
+        $searchQuery = mysqli_query($connection, $query);
+
+        if(!$searchQuery) {
+            die("QUERY FAILED" . mysqli_error($connection));
+        }
+
+        $count = mysqli_num_rows($searchQuery);
+
+        if($count == 0) {
+            echo "<h1> NO RESULT </h1>";
+        } else {
+            echo "<h1> It's a valid search! </h1>";
+        }
+    }
+    ```
 
 ### Creating a Custom Search Engine Part 3
+1. We redirect the user from `index.php` to `search.php` with the search result. Therefore, we just copy and integrate the code from both `index.php` and `includes/sidebar.php` and make `search.php` in the root directory. Besides, we need to change the `action` attribute in `<form>` element in `sidebar.php` to use the function on `search.php`.
+1. In this case, we take the original `$query` with `SELECT * FROM posts` off, as we'd like the query to render only the searched results from the database. Therefore, the page will only render the results from query if there's any. If not, it returns the result in the `IF` statement as `NO RESULT`.
+    ```php
+    // search.php (a duplicate and integration with index.php and sidebar.php)
+    <?php include "includes/db.php";?>
+    <?php include "includes/header.php";?>
+    <!-- Navigation -->
+    <?php include "includes/navigation.php";?>
 
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Blog Entries Column -->
+            <div class="col-md-8">
+
+                <?php
+                    if (isset($_POST['search'])) {
+                        $search = $_POST['search'];
+
+                        $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%'";
+                        $searchQuery = mysqli_query($connection, $query);
+
+                        if(!$searchQuery) {
+                            die("QUERY FAILED" . mysqli_error($connection));
+                        }
+
+                        $count = mysqli_num_rows($searchQuery);
+
+                        if($count == 0) {
+                            echo "<h1> NO RESULT </h1>";
+                        } else {
+                            while($row = mysqli_fetch_assoc($searchQuery)) {
+                                $postTitle = $row['post_title'];
+                                $postAuthor = $row['post_author'];
+                                $postDate = $row['post_date'];
+                                $postImage = $row['post_image'];
+                                $postContent = $row['post_content'];
+                            ?>            
+
+                            <h1 class="page-header">
+                                Page Heading
+                                <small>Secondary Text</small>
+                            </h1>
+
+                            <!-- First Blog Post -->
+                            <h2>
+                                <a href="#"><?php echo $postTitle?></a>
+                            </h2>
+                            <p class="lead">
+                                by <a href="index.php"><?php echo $postAuthor?></a>
+                            </p>
+                            <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate?></p>
+                            <hr>
+                            <img class="img-responsive" src="<?php echo $postImage;?>" alt="">
+                            <hr>
+                            <p><?php echo $postContent?></p>
+                            <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+                            <hr>
+                        <?php }
+                        }
+                    }?>
+            </div>
+
+            <!-- Blog Sidebar Widgets Column -->
+            <?php include "includes/sidebar.php";?>
+
+        </div>
+        <!-- /.row -->
+
+        <hr>
+        <!-- footer -->
+        <?php include "includes/footer.php";?>
+    ```
 
 ### Adding Categories to the Sidebar
+1. After blog searching function, we work on `Blog Category Section` in `sidebar.php`.
+1. We can take the code to retrieve data of `categories` in `includes/navigation.php`. Besides, rather than keep replicating the whole `<ul>` list. we can put the `while` loop in the `<ul>` tag and generate `<li><a></a></li>` tags.
+1. In addition, we can limit the number of result of query in the database. For example, if we change the query statement to `SELECT * FROM categories LIMIT 2`, only 2 results will be returned from the query.
+    ```php
+    // sidebar.php
+    <!-- Blog Categories Well -->
+    <div class="well">
+        <?php
+            $query = "SELECT * FROM categories LIMIT 2"; // limit the results from query to be only 2
+            $selectCategoriesSidebar = mysqli_query($connection, $query);
+            
+        ?>
+        <h4>Blog Categories</h4>
+        <div class="row">
+            <div class="col-lg-6">
+                <ul class="list-unstyled">
+                    <?php 
+                        while($row = mysqli_fetch_assoc($selectCategoriesSidebar)) {
+                        $catTitle = $row['cat_title'];
+                        echo "<li><a href='#'>{$catTitle}</a></li>";
+                    }?>                    
+                </ul>
+            </div>
+            <!-- /.col-lg-6 -->
+            <div class="col-lg-6">
+                <ul class="list-unstyled">
+                    <li><a href="#">Category Name</a>
+                    </li>
+                    <li><a href="#">Category Name</a>
+                    </li>
+                    <li><a href="#">Category Name</a>
+                    </li>
+                    <li><a href="#">Category Name</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.col-lg-6 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    ```
+1. For the widget section below, we keep the code in a separated file `widget.php` in `includes` folder.
+    ```php
+    // sidebar.php
+    include "widget.php";
 
-
-
+    // widget.php
+    <div class="well">
+        <h4>Side Widget Well</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur nam odit reiciendis distinctio officia quisquam deleniti voluptate voluptatum consectetur est.</p>
+    </div>
+    ```
 
 # CMS - Categories & More...
 ### Creating Reuseable Code in the Admin
