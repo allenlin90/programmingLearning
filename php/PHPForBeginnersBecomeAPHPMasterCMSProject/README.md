@@ -1752,6 +1752,16 @@ End:
 
 # CMS - Categories & More...
 ### Creating Reuseable Code in the Admin
+1. In this case, we focus on the files in `admin` to enable admin management function of the website.
+1. In `navigation.php`, we can add another link to direct the user to the admin page. 
+1. In `admin/index.php`, we modify the items in the navigation bar of the top for user to direct back to homepage easily by adding an anchor tag. 
+    ```html
+    <ul class="nav navbar-right top-nav">
+        <li><a href="../index.php">Home</a></li>
+        ...
+    </ul>
+    ```
+1. We can also have files modeled and managed in `admin`, so we create an `includes` folder in `admin`. In this case, we create `header.php`, `footer.php`, and `navigation`.
 
 ### Creating the Navigation Links in Admin
 
