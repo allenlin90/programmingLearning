@@ -1764,18 +1764,311 @@ End:
 1. We can also have files modeled and managed in `admin`, so we create an `includes` folder in `admin`. In this case, we create `header.php`, `footer.php`, and `navigation.php`.
 
 ### Creating the Navigation Links in Admin
+1. This section is to modify `admin/includes/navigation.php` as the followings. This will affect to the side navigation bar in the admin page.
+    1. Dashboard
+    1. Posts (dropdown)
+    1. Categories
+    1. Comments
+    1. Users (dropdown)
+    1. Profile
+    ```html
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">CMS Admin</a>
+    </div>
+    <!-- Top Menu Items -->
+    <ul class="nav navbar-right top-nav">
+        <li><a href="../index.php">Home</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> <b class="caret"></b></a>
+            <ul class="dropdown-menu message-dropdown">
+                <li class="message-preview">
+                    <a href="#">
+                        <div class="media">
+                            <span class="pull-left">
+                                <img class="media-object" src="http://placehold.it/50x50" alt="">
+                            </span>
+                            <div class="media-body">
+                                <h5 class="media-heading">
+                                    <strong>John Smith</strong>
+                                </h5>
+                                <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="message-preview">
+                    <a href="#">
+                        <div class="media">
+                            <span class="pull-left">
+                                <img class="media-object" src="http://placehold.it/50x50" alt="">
+                            </span>
+                            <div class="media-body">
+                                <h5 class="media-heading">
+                                    <strong>John Smith</strong>
+                                </h5>
+                                <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="message-preview">
+                    <a href="#">
+                        <div class="media">
+                            <span class="pull-left">
+                                <img class="media-object" src="http://placehold.it/50x50" alt="">
+                            </span>
+                            <div class="media-body">
+                                <h5 class="media-heading">
+                                    <strong>John Smith</strong>
+                                </h5>
+                                <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="message-footer">
+                    <a href="#">Read All New Messages</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <b class="caret"></b></a>
+            <ul class="dropdown-menu alert-dropdown">
+                <li>
+                    <a href="#">Alert Name <span class="label label-default">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-primary">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-success">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-info">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-warning">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-danger">Alert Badge</span></a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="#">View All</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav side-nav">
+            <li>
+                <a href="index.html"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+            </li>
+            <li>
+                <a href="javascript:;" data-toggle="collapse" data-target="#posts_dropdown"><i class="fa fa-fw fa-arrows-v"></i> Posts <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="posts_dropdown" class="collapse">
+                    <li>
+                        <a href="#">View All Posts</a>
+                    </li>
+                    <li>
+                        <a href="#">Add Post</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="bootstrap-grid.html"><i class="fa fa-fw fa-wrench"></i> Categories</a>
+            </li>
+            <li class="active">
+                <a href="blank-page.html"><i class="fa fa-fw fa-file"></i> Comments</a>
+            </li>
+            <li>
+                <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Users <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="demo" class="collapse">
+                    <li>
+                        <a href="#">Dropdown Item</a>
+                    </li>
+                    <li>
+                        <a href="#">Dropdown Item</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="index-rtl.html"><i class="fa fa-fw fa-dashboard"></i> Profile</a>
+            </li>
+        </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+    </nav>
+    ```
 
 ### Creating the Admin Category Page Part 1
+1. As to connect to database, we can include the `db.php` file in `includes` folder in the `header.php` of the admin page, so we can use `"../includes/db.php"` in the header.
+1. We copy the code from `admin/index.php` to have a duplicate as `categories.php` and add a `<form>` tag to collect user input.
+    ```html
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Welcome to Admin
+                <small>Author</small>
+            </h1>
+            <div class="col-xs-6">                        
+                <form action="" method="post">
+                    <div class="form-group">
+                        <label for="cat_title">Add Category</label>
+                        <input class="form-control" type="text" name="cat_title">
+                    </div>
+                    <div class="form-group">
+                        <input class="btn btn-primary" type="submit" name="submit" value="Add Category">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    ```
+    <img src="./images/categoriesPhpPart1.PNG">
 
 ### Creating the Admin Category Page Part 2
+1. From the last section, we will make a table to show the data retrieved from the database for the categories that we have had. We add another half on the `<div class="row">` for the grid system and use some bootstrap classes `table`, `table-bordered`, and `table-hover` to decorate the `<table>` element.
+1. Note we are just making the structure and template of the file. We will use PHP to retrieve data from database and render into the table.
+    ```html
+    <div class="col-xs-6">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Category Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Baseball</td>
+                    <td>Basketball</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    ```
+    <img src="./images/categoriesPhpPart2.PNG">
 
 ### Displaying data in Category Page
+1. In this case, we copy the code from `sidebar.php` to retrieve the data of categories from the database and render the rows in the table.
+    ```php
+    <div class="col-xs-6">
+        <?php
+            $query = "SELECT * FROM categories";
+            $selectCategories = mysqli_query($connection, $query);
+        ?>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Category Title</th>
+                </tr>
+            </thead>
+            <tbody>                                
+                <?php 
+                    while ($row = mysqli_fetch_assoc($selectCategories)){
+                        $cat_id = $row['cat_id'];
+                        $cat_title = $row['cat_title'];
+                        echo "<tr>";
+                        echo "<td>{$cat_id}</td>";
+                        echo "<td>{$cat_title}</td>";
+                        echo "</tr>";
+                    }
+                ?>
+            </tbody>
+        </table>
+    </div>
+    ```
+    <img src="./images/displayCategories.PNG">
 
 ### Adding Categories
+1. We add the query function right before the `<form>` element on the page. 
+    ```php
+    if (isset($_POST['submit'])){
+        $cat_title = $_POST['cat_title'];
+        if($cat_title == "" || empty($cat_title)) {
+            echo "This field should not be empty";
+        } else {
+            $query = "INSERT INTO categories(cat_title) ";
+            $query .= "VALUE('{$cat_title}') ";
+
+            $createCategoryQuery = mysqli_query($connection, $query);
+            
+            if (!$createCategoryQuery) {
+                die("QUERY FAILED" . mysqli_error($connection));
+            }
+        }
+    }
+    ```
 
 ### Adding a Special Function to our Header File
+1. Use `ob_start()` is to send the data in the `header` of a request. This should be initiated if we'd like to send data through `body` of a `header` in a HTTP request.
+    ```php
+    // /admin/includes/header.php
+    <?php ob_start();?>
+    ```
 
 ### Deleting Categories
+1. In `categories.php`, we modify the code of category table and add a new column for delete button to remove category from from the table and database. In this case, we use GET request and set parameters through URL. 
+1. At this stage, if use only `mysqli_query()` with `<a>` tag, we have to click the hyper link twice to refresh the page. Therefore, we can use `header()` function to redirect the user to `categories.php`, so the parameters won't be shown in the URL search bar.
+    ```php
+    <tbody>                                
+        <?php // find all categories
+            $query = "SELECT * FROM categories";
+            $selectCategories = mysqli_query($connection, $query);
+            while ($row = mysqli_fetch_assoc($selectCategories)){
+                $cat_id = $row['cat_id'];
+                $cat_title = $row['cat_title'];
+                echo "<tr>";
+                echo "<td>{$cat_id}</td>";
+                echo "<td>{$cat_title}</td>";
+                echo "<td><a href='categories.php?delete={$cat_id}'>Delete</a></td>";
+                echo "</tr>";
+            }
+        ?>
+
+        <?php
+            if(isset($_GET['delete'])){
+                $catId = $_GET['delete'];
+                $query = "DELETE FROM categories WHERE cat_id = {$catId} ";
+                $deleteQuery = mysqli_query($connection, $query);
+                header("Location: categories.php");
+            }
+        ?>
+    </tbody>
+    ```
+    <img src="./images/deleteCategory.gif">
 
 ### Updating or Editing Categories Part 1
 
