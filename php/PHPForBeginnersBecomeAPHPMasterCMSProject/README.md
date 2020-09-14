@@ -2071,8 +2071,138 @@ End:
     <img src="./images/deleteCategory.gif">
 
 ### Updating or Editing Categories Part 1
+1. We add a new column in the category title table for "edit" button. This will show an input text bar on the left with adding new category when the user clicks "edit" button. Therefore, we can use the feature to update the category title. 
+1. Note that the update button doesn't work correctly in this stage, as we haven't updated with aligned code, as the `<form>` tag is using POST request, and the current code is actually adding a new item into the database. 
+    ```php
+    <div class="col-xs-6">
+        <?php 
+            if (isset($_POST['submit'])){
+                $cat_title = $_POST['cat_title'];
+                if($cat_title == "" || empty($cat_title)) {
+                    echo "This field should not be empty";
+                } else {
+                    $query = "INSERT INTO categories(cat_title) ";
+                    $query .= "VALUE('{$cat_title}') ";
+
+                    $createCategoryQuery = mysqli_query($connection, $query);
+                    
+                    if (!$createCategoryQuery) {
+                        die("QUERY FAILED" . mysqli_error($connection));
+                    }
+                }
+            }
+        ?>
+        <form action="categories.php" method="post">
+            <div class="form-group">
+                <label for="cat_title">Add Category</label>
+                <input class="form-control" type="text" name="cat_title">
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" name="submit" value="Add Category">
+            </div>
+        </form>
+        
+        <form action="categories.php" method="post">
+            <div class="form-group">
+                <label for="cat_title">Edit Category</label>
+                <?php 
+                    if(isset($_GET['edit'])) {
+                        $cat_id = $_GET['edit'];
+                        $query = "SELECT * FROM categories WHERE cat_id = $cat_id ";
+                        $selectCategoriesId = mysqli_query($connection, $query);
+
+                        while($row = mysqli_fetch_assoc($selectCategoriesId)) {
+                            $cat_id = $row['cat_id'];
+                            $cat_title = $row['cat_title'];
+                ?>
+                <input class="form-control" value="<?php if(isset($cat_title)){echo $cat_title;}?>" type="text" name="cat_title">
+                <?php }} ?>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" name="submit" value="Update Category">
+            </div>
+        </form>
+    </div>
+    <div class="col-xs-6">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Category Title</th>
+                </tr>
+            </thead>
+            <tbody>                                
+                <?php // find all categories
+                    $query = "SELECT * FROM categories";
+                    $selectCategories = mysqli_query($connection, $query);
+                    while ($row = mysqli_fetch_assoc($selectCategories)){
+                        $cat_id = $row['cat_id'];
+                        $cat_title = $row['cat_title'];
+                        echo "<tr>";
+                        echo "<td>{$cat_id}</td>";
+                        echo "<td>{$cat_title}</td>";
+                        echo "<td><a href='categories.php?delete={$cat_id}'>Delete</a></td>";
+                        echo "<td><a href='categories.php?edit={$cat_id}'>Edit</a></td>";
+                        echo "</tr>";
+                    }
+                ?>
+
+                <?php
+                    if(isset($_GET['delete'])){
+                        $catId = $_GET['delete'];
+                        $query = "DELETE FROM categories WHERE cat_id = {$catId} ";
+                        $deleteQuery = mysqli_query($connection, $query);
+                        header("Location: categories.php");
+                    }
+                ?>
+            </tbody>
+        </table>
+    </div>
+    ```
 
 ### Updating or Editing Categories Part 2
+1. We separate the update form into an another file `updateCategories.php`. Note that we should be aware of SQL syntax. If we'd like to pass a string as text value to SQL command in PHP, we should use single quote and curly braces `'{$phpStringVariable}'` to wrap the PHP variable.
+    ```php
+    // updateCategories.php
+    <form action="" method="post">
+        <div class="form-group">
+            <label for="cat_title">Edit Category</label>
+            <?php 
+                if(isset($_GET['edit'])) {
+                    $cat_id = $_GET['edit'];
+                    $query = "SELECT * FROM categories WHERE cat_id = $cat_id ";
+                    $selectCategoriesId = mysqli_query($connection, $query);
+
+                    while($row = mysqli_fetch_assoc($selectCategoriesId)) {
+                        $cat_id = $row['cat_id'];
+                        $cat_title = $row['cat_title'];
+            ?>
+            <input class="form-control" value="<?php if(isset($cat_title)){echo $cat_title;}?>" type="text" name="cat_title">
+            <?php }} ?>
+            <?php // update query
+                if(isset($_POST['update_category'])){
+                    $theCatTitle = $_POST['cat_title'];
+                    $query = "UPDATE categories SET cat_title = '{$theCatTitle}' WHERE cat_id = $cat_id ";
+                    $update_query = mysqli_query($connection, $query);
+                    if (!$update_query) {
+                        die($query . "QUERY FAILED " . mysqli_error($connection));
+                    }
+                }
+            ?>
+        </div>
+        <div class="form-group">
+            <input class="btn btn-primary" type="submit" name="update_category" value="Update Category">
+        </div>
+    </form>
+    ```
+1. In `categories.php`, we can use include and keep the code succinct.
+    ```php
+    // categories.php
+    if(isset($_GET['edit'])){
+        $cat_id = $_GET['edit'];
+        include "includes/updateCategories.php";
+    }
+    ```
 
 ### Refactoring Category Code Part 1 
 
