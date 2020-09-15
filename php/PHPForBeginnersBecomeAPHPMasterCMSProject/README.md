@@ -2205,9 +2205,77 @@ End:
     ```
 
 ### Refactoring Category Code Part 1 
+1. We can take the code for submit function to add a new element to categories into a separated file `functions.php` in `admin` directory. We can `include` this file in header on the top of the file. Note that as the function needs the `$connection` variable from global scope, we need to use `global $connection` to declare the function.
+    ```php
+    // functions.php
+    function insert_categories() {
+        global $connection;
+        if (isset($_POST['submit'])){
+            $cat_title = $_POST['cat_title'];
+            if($cat_title == "" || empty($cat_title)) {
+                echo "This field should not be empty";
+            } else {
+                $query = "INSERT INTO categories(cat_title) ";
+                $query .= "VALUE('{$cat_title}') ";
+
+                $createCategoryQuery = mysqli_query($connection, $query);
+                
+                if (!$createCategoryQuery) {
+                    die("QUERY FAILED" . mysqli_error($connection));
+                }
+            }
+        }
+    }
+    ```
 
 ### Refactoring Category Code Part 2
+1. We refactor and organize some of the code to be functions in the `functions.php` file.
+    ```php
+    function insert_categories() {
+        global $connection;
+        if (isset($_POST['submit'])){
+            $cat_title = $_POST['cat_title'];
+            if($cat_title == "" || empty($cat_title)) {
+                echo "This field should not be empty";
+            } else {
+                $query = "INSERT INTO categories(cat_title) ";
+                $query .= "VALUE('{$cat_title}') ";
 
+                $createCategoryQuery = mysqli_query($connection, $query);
+                
+                if (!$createCategoryQuery) {
+                    die("QUERY FAILED" . mysqli_error($connection));
+                }
+            }
+        }
+    }
+
+    function findAllCategories(){
+        global $connection;
+        $query = "SELECT * FROM categories";
+        $selectCategories = mysqli_query($connection, $query);
+
+        while ($row = mysqli_fetch_assoc($selectCategories)){
+            $cat_id = $row['cat_id'];
+            $cat_title = $row['cat_title'];
+            echo "<tr>";
+            echo "<td>{$cat_id}</td>";
+            echo "<td>{$cat_title}</td>";
+            echo "<td><a href='categories.php?delete={$cat_id}'>Delete</a></td>";
+            echo "<td><a href='categories.php?edit={$cat_id}'>Edit</a></td>";
+            echo "</tr>";
+        }
+    }
+
+    function deleteCategories(){
+        if(isset($_GET['delete'])){
+            $catId = $_GET['delete'];
+            $query = "DELETE FROM categories WHERE cat_id = {$catId} ";
+            $deleteQuery = mysqli_query($connection, $query);
+            header("Location: categories.php");
+        }
+    }
+    ```
 
 
 # CMS - POSTS
