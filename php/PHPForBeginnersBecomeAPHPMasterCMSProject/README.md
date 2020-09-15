@@ -2630,7 +2630,47 @@ End:
     ```
 
 ### Finally Updateing Posts
+1. We update the SQL query with the specific post ID. The query string is updated as `SELECT * FROM posts WHERE post_id = $postIdToEdit`, which `$postIdToEdit` is retrieve from the parameter of the GET request.
+1. In this case, we should be aware that if we don't upload new image without setting condition, the image variable will be empty and updated. It means the that last image will be removed. We thus use an `IF` statement with query function to ensure the variable at least has its current variable if there's no new image updated.
+1. As to update the page with latest result immediately, we can use `header()` function to ensure the page is redirected and everything is updated.
+    ```php
+    if(isset($_POST['submit'])) {
+        $post_author = $_POST['post_author'];
+        $post_title = $_POST['post_title'];
+        $post_category_id = $_POST['post_category'];
+        $post_status = $_POST['post_status'];
+        $post_image = $_FILES['image']['name'];
+        $post_image_temp = $_FILES['image']['tmp_name'];
+        $post_content = $_POST['post_content'];
+        $post_tags = $_POST['post_tags'];
 
+        move_uploaded_file($post_image_temp, "../images/$post_image");
+
+        // prevent removing the image if there's no new image updated
+        if(empty($post_image)){
+            $query = "SELECT * FROM posts WHERE post_id = $postIdToEdit";
+            $selectImage = mysqli_query($connection, $query);
+            while($row = mysqli_fetch_assoc($selectImage)) {
+                $post_image = $row['post_image'];
+            }
+        }
+
+        $query = "UPDATE posts SET ";
+        $query .= "post_title = '{$post_title}', ";
+        $query .= "post_category_id = '{$post_category_id}', ";
+        $query .= "post_date = now(), ";
+        $query .= "post_author = '{$post_author}', ";
+        $query .= "post_status = '{$post_status}', ";
+        $query .= "post_tags = '{$post_tags}', ";
+        $query .= "post_content = '{$post_content}', ";
+        $query .= "post_image = '{$post_image}' ";
+        $query .= "WHERE post_id = {$postIdToEdit} ";
+
+        $updateQuery = mysqli_query($connection, $query);
+        confirmQuery($updateQuery);
+        header("Location: posts.php?source=edit_post&p_id=$postIdToEdit");
+    }
+    ```
 
 ### Relating Categories to Posts and Displaying it
 
