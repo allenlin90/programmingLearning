@@ -2629,7 +2629,7 @@ End:
     </select>
     ```
 
-### Finally Updateing Posts
+### Finally Updating Posts
 1. We update the SQL query with the specific post ID. The query string is updated as `SELECT * FROM posts WHERE post_id = $postIdToEdit`, which `$postIdToEdit` is retrieve from the parameter of the GET request.
 1. In this case, we should be aware that if we don't upload new image without setting condition, the image variable will be empty and updated. It means the that last image will be removed. We thus use an `IF` statement with query function to ensure the variable at least has its current variable if there's no new image updated.
 1. As to update the page with latest result immediately, we can use `header()` function to ensure the page is redirected and everything is updated.
