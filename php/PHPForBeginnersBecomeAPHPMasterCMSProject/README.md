@@ -2277,37 +2277,375 @@ End:
     }
     ```
 
-
 # CMS - POSTS
 ### Creating a HTML Table in Admin to Display a List of Posts
+1. We update the navigation bar in `admin` for the correct links of the anchor tags. We create another page to view all posts on the website (or of the account). We copy the layout to use the same pattern from `categories.php`. The main content of the page is the table as list of the posts of the account. 
+    ```php
+    // posts.php
+    <?php include "includes/header.php";?>
+
+        <div id="wrapper">
+
+            <!-- Navigation -->
+            <?php include "includes/navigation.php"?>
+
+            <div id="page-wrapper">
+
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1 class="page-header">
+                                Welcome to Admin
+                                <small>Author</small>
+                            </h1>
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Author</th>
+                                        <th>Title</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Image</th>
+                                        <th>Tags</th>
+                                        <th>Comments</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>10</td>
+                                        <td>John Doe</td>
+                                        <td>JavaScript Framework</td>
+                                        <td>JavaScript</td>
+                                        <td>Status</td>
+                                        <td>Image</td>
+                                        <td>Tags</td>
+                                        <td>Comments</td>
+                                        <td>Date</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- /#page-wrapper -->
+
+        </div>
+        <!-- /#wrapper -->
+    <?php include "includes/footer.php";?>
+    ```
+    <img src="./images/postList.PNG">
 
 ### Displaying Posts List in Admin
+1. We update the PHP code in `<tbody>` tag to return data from the data base in the table.
+    ```php
+    $query = "SELECT * FROM posts";
+    $selectPosts = mysqli_query($connection, $query); 
+
+    while ($row = mysqli_fetch_assoc($selectPosts)){
+        $postId = $row['post_id'];
+        $postAuthor = $row['post_author'];
+        $postTitle = $row['post_title'];
+        $postCategoryId = $row['post_category_id'];
+        $postStatus = $row['post_status'];
+        $postImage = $row['post_image'];
+        $postTags = $row['post_tags'];
+        $postCommentCount = $row['post_comment_count'];
+        $postDate = $row['post_date'];
+        
+        echo "<tr>";
+        echo "<td>$postId</td>";
+        echo "<td>$postAuthor</td>";
+        echo "<td>$postTitle</td>";
+        echo "<td>$postCategoryId</td>";
+        echo "<td>$postStatus</td>";
+        echo "<td><img width='100px' src='../$postImage' alt='image'></td>";
+        echo "<td>$postTags</td>";
+        echo "<td>$postCommentCount</td>";
+        echo "<td>$postDate</td>";
+        echo "</tr>";
+    }
+    ```
+    <img src="./images/postListWithData.PNG">
 
 ### Including Pages Based on Condition Technique
+1. We create a new file `viewAllPosts.php` in `includes` in `admin` that has the `<table>` element of the `posts.php`. We then use `IF` and `SWITCH` statement to decide what contents will be retrieved from the database and show to the user.
+1. Therefore, we can pass parameters in URL as GET request. For example, with the following code, if we pass `34` in the URL, the page shows only `It works` according to the `SWITCH` condition.
+    ```php
+    // posts.php    
+    if(isset($_GET['source'])){
+        $source = $_GET['source'];
+
+    } else {
+        $source = "";
+    }
+    switch($source) {
+        case '34';
+        echo "It works";
+        break;
+
+        default:
+            include "includes/viewAllPosts.php";
+        break;
+    }
+    ```
+    <img src="./images/postsSwitchSource.PNG">
 
 ### Creating Post HTML Form in Admin
+1. We create another file `addPost.php` in `includes` to return a pre-built `<form>` element if the GET request in `posts.php` has `source=add_post`.
+1. As we will upload an image here, we need to add an attribute `enctype` in `<form>` tag to indicate which type of encryption will we add to the file. In this case, we use `enctype="multipart/form-data"`.
+    ```html
+    <form action="" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">Post Title</label>
+            <input type="text" class="form-control" name="title">
+        </div>
+        <div class="form-group">
+            <label for="post_category">Post Category Id</label>
+            <input type="text" class="form-control" name="post_category_id">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Author</label>
+            <input type="text" class="form-control" name="author">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Image</label>
+            <input type="file" name="image">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Tags</label>
+            <input type="text" class="form-control" name="post_tags">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Content</label>
+            <textarea class="form-control" name="post_content" rows="10" cols="30"></textarea>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" name="create_post" value="Publish">
+        </div>
+    </form>
+    ```
+    <img src="./images/addPostForm.PNG">
+1. In this case, we use a global variable `$_FILES` to manipulate the uploaded image. The object has 2 dimension. 1st is the name of the input (which is the value of `name` attribute of the `<input>` tag.), and the 2nd is the name of the attribute (which is `name` in this case). The image will be stored in a temporary folder. 
+1. We can use `move_uploaded_file()` function to move the image from the temporary folder into the destination directory. The function takes 2 arguments which is the temporary file and the destination directory with the file name. In this case, the uploaded image will be stored in the `images` folder in the root directory.
+    ```php
+    // addPost.php
+    if(isset($_POST['submit'])){
+        $post_title = $_POST['title'];
+        $post_category_id = $_POST['post_category_id'];
+        $post_author = $_POST['author'];
+        $post_status = $_POST['post_status'];
+        
+        // use $_FILE super global
+        $post_image = $_FILES['image']['name'];
+        $post_image_temp = $_FILES['image']['tmp_name'];
+
+        $post_tags = $_POST['post_tags'];
+        $post_content = $_POST['post_content'];
+        $post_date = date('d-m-y');
+        $post_comment_count = 4;
+
+        // move image file from temporary folder to destination
+        move_uploaded_file($post_image_temp, "../images/$post_image");
+    }
+    ```
 
 ### Inserting Post Data From Admin
+1. From the last section, we can collect and manipulate the data collected. We then write a query function to send the data to the database. We put the `confirmQuery()` function in `functions.php`, so we can call to use the function directly without rewriting it all the time.
+    ```php
+    // functions.php
+    function confirmQuery($result){
+        global $connection;
+        if(!$result) {
+            die("QUERY FAILED" . mysqli_error($connection));
+        }
+    }
+    ```
+1. As the route wasn't set correctly, the path of the uploaded image can't be found on the homepage. Therefore, I added the string to ensure the path write into database is correct, so the image will also show on the homepage.
+    ```php
+    // addPost.php
+    $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tags, post_comment_count, post_status) ";
+    $query .= "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', now(), 'images/{$post_image}', '{$post_content}','{$post_tags}', '{$post_comment_count}', '{$post_status}') ";
+
+    $create_post_query = mysqli_query($connection, $query);
+
+    confirmQuery($create_post_query);
+    ```
 
 ### Deleting Posts in Admin
+1. In `viewAllPosts.php`, we add a new column for the `delete` button on the page for user to delete the content. Therefore, if the `while` loop which we render for the rows of table, we add 
+    ```php
+    $query = "SELECT * FROM posts";
+    $selectPosts = mysqli_query($connection, $query); 
+
+    while ($row = mysqli_fetch_assoc($selectPosts)){
+        $postId = $row['post_id'];
+        echo "<td><a href='posts.php?delete=$postId'>Delete</a></td>";
+    }
+    ```
+1. Since we have added the link with parameter, we can check with GET super global for conditions. If the user click the button, we can send a query commnad to the database and delete the content. Besides, we can use `header()` function to redirect the page to `posts.php`, so the contents on the page will be updated.
+    ```php
+    // viewAllPosts.php
+    if(isset($_GET['delete'])){
+        $thePostId = $_GET['delete'];
+        $query = "DELETE FROM posts WHERE post_id = $thePostId";
+        $deleteQuery = mysqli_query($connection, $query);
+        
+        confirmQuery($deleteQuery);
+        header("Location: posts.php");
+    }
+    ```
 
 ### Creating the HTML Edit From Post Page
+1. We can use the `<form>` tag that we made for `addPost.php` directly and create a new file `editPost.php` for editing contents in the database. We put `editPost.php` inside `includes` with `addPost.php`.
+1. We update the route with `SWITCH` statement in `posts.php` to decide which PHP file to be included to the page.
+    ```php
+    // posts.php
+    if(isset($_GET['source'])){
+        $source = $_GET['source'];
+
+    } else {
+        $source = "";
+    }
+    switch($source) {
+        case 'add_post';
+            include "includes/addPost.php";
+        break;
+
+        case 'edit_post';
+            include "includes/editPost.php";
+        break;
+
+        default:
+            include "includes/viewAllPosts.php";
+        break;
+    }
+    ```
 
 ### Displaying the Edit Data in Post Edit Page
+1. Since we have copied and made the HTML form in `editPost.php`, we can retrieve data from the database according to the id passed in the URL parameter. In this case, we add a new button `edit`, as we did for `delete` to allow users to remove a blog.
+    ```php
+    // viewAllPosts.php
+    $query = "SELECT * FROM posts";
+    $selectPosts = mysqli_query($connection, $query); 
+
+    while ($row = mysqli_fetch_assoc($selectPosts)){
+        $postId = $row['post_id'];        
+        echo "<td><a href='posts.php?source=edit_post&p_id=$postId'>Edit</a></td>";
+    }
+    ```
+1. We modify the `value` attribute in each `<input>` tag in the form with the data retreived from the database. Note that we leave image section to be blank and haven't given the solution in this section. Besides, the query actually retrieve all the posts from `posts` table and if we don't use `WHERE post_id = [post_id]`, the query will return the last input in the database.
+    ```php
+    <?php 
+        if(isset($_GET['p_id'])) {
+            $postIdToEdit = $_GET['p_id'];
+        }
+
+        $query = "SELECT * FROM posts";
+        $selectPostsById = mysqli_query($connection, $query); 
+
+        while ($row = mysqli_fetch_assoc($selectPostsById)){
+            $postId = $row['post_id'];
+            $postAuthor = $row['post_author'];
+            $postTitle = $row['post_title'];
+            $postCategoryId = $row['post_category_id'];
+            $postStatus = $row['post_status'];
+            $postImage = $row['post_image'];
+            $postContent = $row['post_content'];
+            $postTags = $row['post_tags'];
+            $postCommentCount = $row['post_comment_count'];
+            $postDate = $row['post_date'];
+        }
+    ?>
+
+    <form action="" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">Post Title</label>
+            <input value="<?php echo $postTitle;?>" type="text" class="form-control" name="title">
+        </div>
+        <div class="form-group">
+            <label for="post_category">Post Category Id</label>
+            <input value="<?php echo $postId;?>" type="text" class="form-control" name="post_category_id">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Author</label>
+            <input value="<?php echo $postAuthor;?>" type="text" class="form-control" name="author">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Status</label>
+            <input value="<?php echo $postStatus;?>" type="text" class="form-control" name="post_status">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Image</label>
+            <input type="file" name="image">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Tags</label>
+            <input value="<?php echo $postTags;?>" type="text" class="form-control" name="post_tags">
+        </div>
+        <div class="form-group">
+            <label for="title">Post Content</label>
+            <textarea class="form-control" name="post_content" rows="10" cols="30"><?php echo $postContent;?></textarea>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" name="submit" value="Publish">
+        </div>
+    </form>
+    ```
+    <img src="./images/editPageWithParams.PNG">
 
 ### Dynamic Category Editing / Image Display
+1. The solution for displaying the image is to use `<img>` tag directly. Therefore, we take off the `<label>` and `<input>` tag in `<div class="form-group">`.
+    ```php
+    // editPost.php
+    <div class="form-group">
+        <img width="100" src="../<?php echo $postImage;?>" alt="image">
+    </div>
+    ```
+1. Besides image, we can change category ID to `<select>` element to create a dropdown list which is according to the categories in the database. 
+    ```php
+    <select name="post_category" id="post_category">
+        <?php
+            $query = "SELECT * FROM categories ";
+            $select_categories = mysqli_query($connection, $query);
+
+            confirmQuery($select_categories);
+
+            while($row = mysqli_fetch_assoc($select_categories)) {
+                $cat_id = $row['cat_id'];
+                $cat_title = $row['cat_title'];
+
+                echo "<option value='$cat_id'>$cat_title</option>";
+            }
+        ?>
+    </select>
+    ```
 
 ### Finally Updateing Posts
 
+
 ### Relating Categories to Posts and Displaying it
+
 
 ### Adding Category Dropdown to the Add Post Page
 
+
 ### Adding Individual Post Page and Link
+
 
 ### Creating the Category Page
 
+
 ### Setting up Some Links and Making and Making an Excerpt
+
 
 
 
