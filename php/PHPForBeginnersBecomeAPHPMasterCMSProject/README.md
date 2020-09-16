@@ -2950,32 +2950,116 @@ End:
 
 # CMS - COMMENTS
 ### Creating the Comments Table and Inserting Data
+1. To store comments, we create a new table `comments` in `cms` database. In this case, a post has 7 fields.
+    1. `comment_id` is INT with length at 3 which is the primary key.
+    1. `comment_post_id` is INT with length at 3 which is aligned to the post which the comment is made for.
+    1. `comment_author` is VARCHAR with length at 255.
+    1. `comment_email` is VARCHAR with length at 255.
+    1. `comment_content` is TEXT.
+    1. `comment_status` is VARCHAR with length at 255.
+    1. `comment_date` is DATE.
 
 ### Creating the Comments Page and HTML Form in Admin
+1. After inserting data to `comments`, we can retrieve the data and render them on the page. The concept is similar to `viewAllPosts.php`.
+1. We create `comments.php` in `admin` folder and `includes/viewAllComments.php`. Besides, we fix the anchor tag in `admin/includes/navigation.php` for the hyperlink.
 
 ### Creating the Query for Displaying Comments in Admin Part 1
-
 ### Creating the Query for Displaying Comments in Admin Part 2
+1. This parts focus on refactoring the code which similar to `viewAllPosts.php`. However, for comments, we can "approve" or "unapprove" rather than editing the content of the comment.
+    ```php
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Author</th>
+                <th>Comment</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>In Response to</th>
+                <th>Date</th>
+                <th>Approve</th>
+                <th>Unapprove</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php 
+                $query = "SELECT * FROM comments" ;
+                $select_comments = mysqli_query($connection, $query); 
+
+                while ($row = mysqli_fetch_assoc($select_comments)){
+                    $comment_id = $row['comment_id'];
+                    $comment_post_id = $row['comment_post_id'];
+                    $comment_author = $row['comment_author'];
+                    $comment_email = $row['comment_email'];
+                    $comment_content = $row['comment_content'];
+                    $comment_status = $row['comment_status'];
+                    $comment_date = $row['comment_date'];
+                    
+                    echo "<tr>";
+                    echo "<td>$comment_id</td>";
+                    echo "<td>$comment_author</td>";
+                    echo "<td>$comment_content</td>";
+                    echo "<td>$comment_email</td>";
+                    echo "<td>$comment_status</td>";
+
+                    $query = "SELECT * FROM posts WHERE post_id = $comment_post_id ";
+                    $select_posts = mysqli_query($connection, $query);
+                    while ($row = mysqli_fetch_assoc($select_posts)) {
+                        $post_title = $row['post_title'];
+                        echo "<td>$post_title</td>";
+                    }
+
+                    echo "<td>$comment_date</td>";
+                    echo "<td><a href='posts.php?source=approve_comment&c_id=$comment_id'>Approve</a></td>";
+                    echo "<td><a href='posts.php?source=unapprove_comment&c_id=$comment_id'>Unapprove</a></td>";
+                    echo "<td><a href='posts.php?delete=$comment_id'>Delete</a></td>";
+                    echo "</tr>";
+                }
+            ?>
+        </tbody>
+    </table>
+    <?php 
+        if(isset($_GET['delete'])){
+            $thePostId = $_GET['delete'];
+            $query = "DELETE FROM posts WHERE post_id = $comment_id";
+            $deleteQuery = mysqli_query($connection, $query);
+            
+            confirmQuery($deleteQuery);
+            header("Location: comments.php");
+        }
+    ?>
+    ```
 
 ### Inserting New Fields in Front End Comment Form and Testing it
+1. 
 
 ### Creating the Front End Comment Insert Query
+1. 
 
 ### Finishing the Query to Send Comment Data (Front End)
+1. 
 
 ### Relating Comments to Posts
+1. 
 
 ### Deleting Comments
+1. 
 
 ### Approving and Unapproving Comments
+1. 
 
 ### Displaying Comments Based on Approval
+1. 
 
 ### Increasing Comments Count
+1. 
 
 ### Adjustments to Visual for Comments
+1. 
 
 ### Adjustments for comments and Displaying Post Based on Status
+1. 
 
 
 
