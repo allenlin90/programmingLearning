@@ -53,7 +53,8 @@
 
         $updateQuery = mysqli_query($connection, $query);
         confirmQuery($updateQuery);
-        header("Location: posts.php?source=edit_post&p_id=$postIdToEdit");
+        header("Location: posts.php");
+        // header("Location: posts.php?source=edit_post&p_id=$postIdToEdit");
     }
 ?>
 

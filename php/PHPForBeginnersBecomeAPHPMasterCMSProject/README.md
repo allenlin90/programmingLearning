@@ -2673,19 +2673,278 @@ End:
     ```
 
 ### Relating Categories to Posts and Displaying it
-
+1. In `viewAllPosts.php`, we add conditions to render `category` column, so we can have the `cat_title` of the category rather than only the category ID. Note that we can use the code in `updateCategories.php`. 
+1. Note that there's an issue at this stage that if we have single quote `'` in the string content, such as the `post_content`, the SQL query will fail due to syntax issue. 
+    ```php
+    // viewAllPosts.php
+    $query = "SELECT * FROM categories WHERE cat_id = $postCategoryId ";
+    $selectCategoriesId = mysqli_query($connection, $query);
+    while($row = mysqli_fetch_assoc($selectCategoriesId)) {
+        $cat_id = $row['cat_id'];
+        $cat_title = $row['cat_title'];
+    }
+    echo "<td>$cat_title</td>";
+    ```
 
 ### Adding Category Dropdown to the Add Post Page
+1. This is similar to edit post function to create a dropdown list for user to select when editing the post. 
+    ```php
+    // addPost.php
+    <select name="post_category">
+        <?php
+            $query = "SELECT * FROM categories ";
+            $select_categories = mysqli_query($connection, $query);
 
+            confirmQuery($select_categories);
+            while($row = mysqli_fetch_assoc($select_categories)) {
+                $cat_id = $row['cat_id'];
+                $cat_title = $row['cat_title'];
+
+                echo "<option value='$cat_id'>$cat_title</option>";
+            }
+        ?>
+    </select>
+    ```
 
 ### Adding Individual Post Page and Link
+1. We have almost done the admin page and functions. This section moves to every single post which can be accessed from the homepage. In this case, we copy the code from `index.php` and modify it to be used in `post.php`. Note that these 2 files both are in the root directory.
+1. When user (vistor) click "read more" of a post, the link should send a GET request for the `id` of the post and redirect the user to the page of the post. In `index.php`, we can add ID to the anchor tag, so when the user clicks it, it directs the user to `post.php` with a parameter.
+    ```php
+    // index.php
+    <!-- First Blog Post -->
+    <h2>
+        <a href="post.php?p_id=<?php echo $post_id;?>"><?php echo $postTitle;?></a>
+    </h2>
+    <p class="lead">
+        by <a href="index.php"><?php echo $postAuthor;?></a>
+    </p>
+    <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate;?></p>
+    <hr>
+    <img class="img-responsive" src="images/<?php echo $postImage;?>" alt="image">
+    <hr>
+    <p><?php echo $postContent;?></p>
+    <a class="btn btn-primary" href="post.php?p_id=<?php echo $post_id;?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
 
+    <hr>
+    ```
+1. In `post.php`, we can use the post id sent from the GET request in the URL to retrieve certain post and its data from database.
+    ```php
+    // post.php
+    <?php include "includes/db.php";?>
+    <?php include "includes/header.php";?>
+    <!-- Navigation -->
+    <?php include "includes/navigation.php";?>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Blog Entries Column -->
+            <div class="col-md-8">
+
+                <?php                
+                    if(isset($_GET['p_id'])) {
+                        $postId = $_GET['p_id'];
+                    }
+
+                    $query = "SELECT * FROM posts WHERE post_id = $postId";
+
+                    $selectAllPostsQuery = mysqli_query($connection, $query);
+
+                    while($row = mysqli_fetch_assoc($selectAllPostsQuery)) {
+                        $post_id = $row['post_id'];
+                        $postTitle = $row['post_title'];
+                        $postAuthor = $row['post_author'];
+                        $postDate = $row['post_date'];
+                        $postImage = $row['post_image'];
+                        $postContent = $row['post_content'];
+                ?>            
+
+                <h1 class="page-header">
+                    Page Heading
+                    <small>Secondary Text</small>
+                </h1>
+
+                <!-- First Blog Post -->
+                <h2>
+                    <a href="post.php?p_id=<?php echo $post_id;?>"><?php echo $postTitle;?></a>
+                </h2>
+                <p class="lead">
+                    by <a href="index.php"><?php echo $postAuthor;?></a>
+                </p>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate;?></p>
+                <hr>
+                <img class="img-responsive" src="images/<?php echo $postImage;?>" alt="">
+                <hr>
+                <p><?php echo $postContent;?></p>
+                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+                <hr>
+
+                <?php }?>
+
+                <div class="well">
+                    <h4>Leave a Comment:</h4>
+                    <form action="#" method="post" role="form">
+                        <div class="form-group">
+                            <label for="Author">Author</label>
+                            <input type="text" name="comment_author" class="form-control" name="comment_author">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Author">Email</label>
+                            <input type="email" name="comment_email" class="form-control" name="comment_email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comment">Your Comment</label>
+                            <textarea name="comment_content" class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="submit" name="create_comment" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+                <!-- Comment -->
+                <div class="media">
+                    <a class="pull-left" href="#">
+                        <img class="media-object" src="http://placehold.it/64x64" alt="">
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading">Start Bootstrap
+                            <small>August 25, 2014 at 9:30 PM</small>
+                        </h4>
+                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                    </div>
+                </div>
+
+                <!-- Comment -->
+                <div class="media">
+                    <a class="pull-left" href="#">
+                        <img class="media-object" src="http://placehold.it/64x64" alt="">
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading">Start Bootstrap
+                            <small>August 25, 2014 at 9:30 PM</small>
+                        </h4>
+                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                        <!-- Nested Comment -->
+                        <div class="media">
+                            <a class="pull-left" href="#">
+                                <img class="media-object" src="http://placehold.it/64x64" alt="">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">Nested Start Bootstrap
+                                    <small>August 25, 2014 at 9:30 PM</small>
+                                </h4>
+                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                            </div>
+                        </div>
+                        <!-- End Nested Comment -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Sidebar Widgets Column -->
+            <?php include "includes/sidebar.php";?>
+
+        </div>
+        <!-- /.row -->
+
+        <hr>
+        <!-- footer -->
+        <?php include "includes/footer.php";?>
+    ```
 
 ### Creating the Category Page
+1. We go to `includes/navigation.php` to change the link of the anchor tag in the navigation bar on the top. 
+    ```php
+    // modify destination of anchor tag in the navigation bar
+    <a class="navbar-brand" href="index.php">Start Bootstrap</a>
+    ```
+1. In this section, we can modify and enable the category section on the side. We go to `includes/siderbar.php` to change the link and create a new `category.php` in root directory.
+    ```php
+    // sidebar.php
+    while($row = mysqli_fetch_assoc($selectCategoriesSidebar)) {
+        $catTitle = $row['cat_title'];
+        $cat_id = $row['cat_id'];
+        echo "<li><a href='category.php?cateogry=$cat_id'>{$catTitle}</a></li>";
+    }
+    ```
+1. Create `category.php` in the root directory. This only shows the post in a certain category that the user clicks.
+    ```php
+    <?php include "includes/db.php";?>
+    <?php include "includes/header.php";?>
+    <!-- Navigation -->
+    <?php include "includes/navigation.php";?>
 
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Blog Entries Column -->
+            <div class="col-md-8">
+
+                <?php
+                    if (isset($_GET['category'])) {
+                        $post_category_id = $_GET['category'];
+                    }
+                    $query = "SELECT * FROM posts WHERE post_category_id = $post_category_id ";
+
+                    $selectAllPostsQuery = mysqli_query($connection, $query);              
+                    
+                    while($row = mysqli_fetch_assoc($selectAllPostsQuery)) {
+                        $post_id = $row['post_id'];
+                        $postTitle = $row['post_title'];
+                        $postAuthor = $row['post_author'];
+                        $postDate = $row['post_date'];
+                        $postImage = $row['post_image'];
+                        $postContent = $row['post_content'];
+                ?>            
+
+                <h1 class="page-header">
+                    Page Heading
+                    <small>Secondary Text</small>
+                </h1>
+
+                <!-- First Blog Post -->
+                <h2>
+                    <a href="post.php?p_id=<?php echo $post_id;?>"><?php echo $postTitle;?></a>
+                </h2>
+                <p class="lead">
+                    by <a href="index.php"><?php echo $postAuthor;?></a>
+                </p>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate;?></p>
+                <hr>
+                <img class="img-responsive" src="images/<?php echo $postImage;?>" alt="image">
+                <hr>
+                <p><?php echo $postContent;?></p>
+                <a class="btn btn-primary" href="post.php?p_id=<?php echo $post_id;?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+                <hr>
+
+                <?php }?>
+            </div>
+
+            <!-- Blog Sidebar Widgets Column -->
+            <?php include "includes/sidebar.php";?>
+
+        </div>
+        <!-- /.row -->
+
+        <hr>
+        <!-- footer -->
+        <?php include "includes/footer.php";?>
+    ```
 
 ### Setting up Some Links and Making and Making an Excerpt
-
+1. This section is just to fix anchor tags to direct user to the correct destination as it shows. We can fix this at `admin/includes/navigation.php`.
+    1. `CMS Admin`
+    1. `dashboard`
+1. We can also shorten the content of a post to be rendered on the homepage. Users can have a succinct page and check details by clicking "read more". In this case, we can use `substr()` function to split the text into chunks. This function takes 3 arguments, the 1st is the whole string to be sliced, the 2nd is the position index of the starting point to slice the string, the 3rd is the position index of the ending point. If we give `0` and `50`, it means the string will be sliced from the first character to the 50th. We can use this function at both `index.php` and `category.php`.
+    ```php
+    $post_content = substr($row['post_content'], 0, 50);
+    ```
 
 
 
