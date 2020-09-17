@@ -38,13 +38,13 @@
                 $select_posts = mysqli_query($connection, $query);
                 while ($row = mysqli_fetch_assoc($select_posts)) {
                     $post_title = $row['post_title'];
-                    echo "<td>$post_title</td>";
+                    echo "<td><a href='../post.php?p_id=$comment_post_id'>$post_title</a></td>";
                 }
 
                 echo "<td>$comment_date</td>";
-                echo "<td><a href='posts.php?source=approve_comment&c_id=$comment_id'>Approve</a></td>";
-                echo "<td><a href='posts.php?source=unapprove_comment&c_id=$comment_id'>Unapprove</a></td>";
-                echo "<td><a href='posts.php?delete=$comment_id'>Delete</a></td>";
+                echo "<td><a href='comments.php?source=approve_comment&c_id=$comment_id'>Approve</a></td>";
+                echo "<td><a href='comments.php?source=unapprove_comment&c_id=$comment_id'>Unapprove</a></td>";
+                echo "<td><a href='comments.php?delete=$comment_id'>Delete</a></td>";
                 echo "</tr>";
             }
         ?>
@@ -53,7 +53,7 @@
 <?php 
     if(isset($_GET['delete'])){
         $thePostId = $_GET['delete'];
-        $query = "DELETE FROM posts WHERE post_id = $comment_id";
+        $query = "DELETE FROM comments WHERE comment_id = $comment_id";
         $deleteQuery = mysqli_query($connection, $query);
         
         confirmQuery($deleteQuery);

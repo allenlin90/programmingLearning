@@ -52,17 +52,35 @@
 
             <?php }?>
 
+            <?php 
+                if(isset($_POST['create_comment'])) {
+                    $postId = $_GET['p_id'];
+                    $comment_author = $_POST['comment_author'];
+                    $comment_email = $_POST['comment_email'];
+                    $comment_content = $_POST['comment_content'];
+
+                    $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content, comment_status, comment_date) ";
+                    $query .= "VALUES($postId, '{$comment_author}', '{$comment_email}', '{$comment_content}', 'unapproved', now()) ";
+
+                    $create_comment_query = mysqli_query($connection, $query);
+
+                    if(!$create_comment_query) {
+                        die("QUERY FAILED " . myslqi_error($create_comment_query));
+                    };
+                }
+            ?>
+
             <div class="well">
                 <h4>Leave a Comment:</h4>
-                <form action="#" method="post" role="form">
+                <form action="" method="post" role="form">
                     <div class="form-group">
                         <label for="Author">Author</label>
-                        <input type="text" name="comment_author" class="form-control" name="comment_author">
+                        <input type="text" class="form-control" name="comment_author">
                     </div>
 
                     <div class="form-group">
                         <label for="Author">Email</label>
-                        <input type="email" name="comment_email" class="form-control" name="comment_email">
+                        <input type="email" class="form-control" name="comment_email">
                     </div>
 
                     <div class="form-group">

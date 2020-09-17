@@ -3032,19 +3032,77 @@ End:
     ```
 
 ### Inserting New Fields in Front End Comment Form and Testing it
-1. 
-
 ### Creating the Front End Comment Insert Query
-1. 
-
 ### Finishing the Query to Send Comment Data (Front End)
-1. 
+1. We create the form to collect comments from users and query string to send the POST request to the database.
+    ```php
+    <?php 
+        if(isset($_POST['create_comment'])) {
+            $postId = $_GET['p_id'];
+            $comment_author = $_POST['comment_author'];
+            $comment_email = $_POST['comment_email'];
+            $comment_content = $_POST['comment_content'];
+
+            $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content, comment_status, comment_date) ";
+            $query .= "VALUES($postId, '{$comment_author}', '{$comment_email}', '{$comment_content}', 'unapproved', now()) ";
+
+            $create_comment_query = mysqli_query($connection, $query);
+
+            if(!$create_comment_query) {
+                die("QUERY FAILED " . myslqi_error($create_comment_query));
+            };
+        }
+    ?>
+
+    <div class="well">
+        <h4>Leave a Comment:</h4>
+        <form action="" method="post" role="form">
+            <div class="form-group">
+                <label for="Author">Author</label>
+                <input type="text" class="form-control" name="comment_author">
+            </div>
+
+            <div class="form-group">
+                <label for="Author">Email</label>
+                <input type="email" class="form-control" name="comment_email">
+            </div>
+
+            <div class="form-group">
+                <label for="comment">Your Comment</label>
+                <textarea name="comment_content" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" name="create_comment" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    ```
 
 ### Relating Comments to Posts
-1. 
+1. We upate the content in the column "In Response To" to show a link to the post by the post id.
+    ```php
+    // viewAllComments.php
+    $query = "SELECT * FROM posts WHERE post_id = $comment_post_id ";
+    $select_posts = mysqli_query($connection, $query);
+    while ($row = mysqli_fetch_assoc($select_posts)) {
+        $post_title = $row['post_title'];
+        echo "<td><a href='../post.php?p_id=$comment_post_id'>$post_title</a></td>";
+    }
+    ```
 
 ### Deleting Comments
-1. 
+1. This part is similar to "delete" function in `viewAllPosts.php` to send parameter via GET request to delete certain comment in the database.
+    ```php
+    // viewAllComments.php
+    echo "<td><a href='comments.php?delete=$comment_id'>Delete</a></td>";
+
+    if(isset($_GET['delete'])){
+        $thePostId = $_GET['delete'];
+        $query = "DELETE FROM comments WHERE comment_id = $comment_id";
+        $deleteQuery = mysqli_query($connection, $query);
+        
+        confirmQuery($deleteQuery);
+        header("Location: comments.php");
+    }
+    ```
 
 ### Approving and Unapproving Comments
 1. 
