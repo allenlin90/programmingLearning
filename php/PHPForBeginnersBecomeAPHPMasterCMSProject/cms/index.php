@@ -12,7 +12,7 @@
         <div class="col-md-8">
 
             <?php
-                $query = "SELECT * FROM posts";
+                $query = "SELECT * FROM posts ";
 
                 $selectAllPostsQuery = mysqli_query($connection, $query);
 
@@ -23,7 +23,10 @@
                     $postDate = $row['post_date'];
                     $postImage = $row['post_image'];
                     $postContent = substr($row['post_content'], 0, 50);
-            ?>            
+                    $postStatus = $row['post_status'];
+                    
+                    if ($postStatus === 'published') {
+            ?>
 
             <h1 class="page-header">
                 Page Heading
@@ -46,8 +49,11 @@
 
             <hr>
 
-            <?php }?>
+            <?php 
+            }}?>
         </div>
+        
+        <hr>
 
         <!-- Blog Sidebar Widgets Column -->
         <?php include "includes/sidebar.php";?>

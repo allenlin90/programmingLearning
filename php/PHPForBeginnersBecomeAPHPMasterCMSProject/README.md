@@ -3105,19 +3105,141 @@ End:
     ```
 
 ### Approving and Unapproving Comments
-1. 
+1. We allow the link redirect the user with parameters to either approve or unapprove the comment on a post. 
+    ```php
+    echo "<td><a href='comments.php?approve=$comment_id'>Approve</a></td>";
+    echo "<td><a href='comments.php?unapprove=$comment_id'>Unapprove</a></td>";
+
+    if(isset($_GET['approve'])){
+        $comment_id = $_GET['approve'];
+        $query = "UPDATE comments SET comment_status = 'approved' WHERE comment_id = $comment_id ";
+        $approve_comment_query = mysqli_query($connection, $query);
+
+        confirmQuery($approve_comment_query);
+        header("Location: comments.php");
+    }
+
+    if(isset($_GET['unapprove'])){
+        $comment_id = $_GET['unapprove'];
+        $query = "UPDATE comments SET comment_status = 'unapproved' WHERE comment_id = $comment_id ";
+        $unapprove_comment_query = mysqli_query($connection, $query);
+
+        confirmQuery($unapprove_comment_query);
+        header("Location: comments.php");
+    }
+    ```
 
 ### Displaying Comments Based on Approval
-1. 
+1. The comments will only be shown on a post when it is approved. Therefore, we can check both the `comment_post_id` and `comment_status` to decide whether to render which comment on a post.
+    ```php
+    // post.php
+    <?php
+        $query = "SELECT * FROM comments WHERE comment_post_id = {$postId} ";
+        $query .= "AND comment_status = 'approved' ";
+        $query .= "ORDER BY comment_id DESC";
+
+        $select_comment_query = mysqli_query($connection, $query);
+        if(!$select_comment_query) {
+            die('QUERY FAILED' . mysqli_error($connection));
+        }
+
+        while($row = mysqli_fetch_assoc($select_comment_query)) {
+            $comment_date = $row['comment_date'];
+            $comment_content = $row['comment_content'];
+            $comment_author = $row['comment_author'];
+        ?>
+        <div class="media">
+        <a class="pull-left" href="#">
+            <img class="media-object" src="http://placehold.it/64x64" alt="">
+        </a>
+        <div class="media-body">
+            <h4 class="media-heading"><?php echo $comment_author;?>
+                <small><?php echo $comment_date;?></small>
+            </h4>
+            <?php echo $comment_content;?>
+        </div>
+    </div>
+    <?php }?>
+    ```
 
 ### Increasing Comments Count
-1. 
+1. We will udpate to the database directly everytime when a user leaves a comment on a post. Though the feature is not introduced in this lecture yet, we can reduce the number of commnet counts of a post when a comment is deleted.
+    ```php
+    // post.php
+    $query = "UPDATE posts SET post_comment_count = post_comment_count + 1 ";
+    $query .= "WHERE post_id = $postId";
+
+    $updateCommentCount = mysqli_query($connection, $query);
+
+    if(!$updateCommentCount) {
+        die("QUERY FAILED " . mysqli_error($connection));
+    }
+    ```
 
 ### Adjustments to Visual for Comments
-1. 
+1. This part is just to update `header()` function in `viewAllPosts.php` to ensure the page refreshes when the data is updated.
+    ```php
+    // viewAllPosts.php
+    if(isset($_GET['delete'])){
+        $thePostId = $_GET['delete'];
+        $query = "DELETE FROM posts WHERE post_id = $thePostId";
+        $deleteQuery = mysqli_query($connection, $query);
+        
+        confirmQuery($deleteQuery);
+        header("Location: posts.php");
+    }
+    ```
 
 ### Adjustments for comments and Displaying Post Based on Status
-1. 
+1. We update the query string `index.php` in the root directory to ensure the status of the post is `published` rather than `draft` or other status.
+    ```php
+    $query = "SELECT * FROM posts WHERE post_status = 'published'";
+    ```
+1. On the other hand, we can also retreive all the data from the database while using `post_status` in `IF` statement. Note that we can udpate the database for the options and allow user to select and update the status from a list rather than typing it.
+    ```php
+    <div class="col-md-8">
+        <?php
+            $query = "SELECT * FROM posts ";
+
+            $selectAllPostsQuery = mysqli_query($connection, $query);
+
+            while($row = mysqli_fetch_assoc($selectAllPostsQuery)) {
+                $post_id = $row['post_id'];
+                $postTitle = $row['post_title'];
+                $postAuthor = $row['post_author'];
+                $postDate = $row['post_date'];
+                $postImage = $row['post_image'];
+                $postContent = substr($row['post_content'], 0, 50);
+                $postStatus = $row['post_status'];
+                
+                if ($postStatus === 'published') {
+        ?>
+
+        <h1 class="page-header">
+            Page Heading
+            <small>Secondary Text</small>
+        </h1>
+
+        <!-- First Blog Post -->
+        <h2>
+            <a href="post.php?p_id=<?php echo $post_id;?>"><?php echo $postTitle;?></a>
+        </h2>
+        <p class="lead">
+            by <a href="index.php"><?php echo $postAuthor;?></a>
+        </p>
+        <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate;?></p>
+        <hr>
+        <img class="img-responsive" src="images/<?php echo $postImage;?>" alt="image">
+        <hr>
+        <p><?php echo $postContent;?></p>
+        <a class="btn btn-primary" href="post.php?p_id=<?php echo $post_id;?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+        <hr>
+
+        <?php 
+        }}?>
+    </div>
+    ```
 
 
 
