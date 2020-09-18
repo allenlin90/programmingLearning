@@ -25,7 +25,7 @@
                     $postContent = substr($row['post_content'], 0, 50);
                     $postStatus = $row['post_status'];
                     
-                    if ($postStatus === 'published') {
+                    if ($postStatus !== 'published') {
             ?>
 
             <h1 class="page-header">

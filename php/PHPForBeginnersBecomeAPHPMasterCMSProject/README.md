@@ -3245,39 +3245,112 @@ End:
 
 # CMS - USERS
 ### Creating the Users Table and Data Insert
+1. We create a new table `users` in `cms` which stores the registered users on the website.
+    1. `user_id` is INT with length at 3 which is the primary key. 
+    1. `username` is VARCHAR with length at 255 and is the account or the username of the user.
+    1. `user_password` is VARCHAR with length at 255 and is the password of the user account.
+    1. `user_firstname` is VARCHAR with length at 255. 
+    1. `user_lastname` is VARCHAR with length at 255. 
+    1. `user_email` is VARCHAR with length at 255. 
+    1. `user_image` is TEXT. 
+    1. `user_role` is VARCHAR with length at 255. 
+    1. `randSalt` is VARCHAR with length at 255. 
+
 
 ### Creating Users Pages and Links
+1. As this feature is very similar to posts and comments, we can duplicate the code from `comments.php`, `addPost.php`, and `editPost.php` to enable the admin accounts to modify and manage other registered users on the website. Besides, we need to update the dropdown list in `navigation.php`.
 
 ### Modifying User Table Heading
-
 ### Creating the Display Query for Users
-
 ### Displaying Users in Admin
+1. We modify `users.php` page to change the destination in `SWITCH` statement to add, edit, and for default to render all user information in the table.
+    ```php
+    // viewAllUsers.php
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php 
+                $query = "SELECT * FROM users" ;
+                $select_comments = mysqli_query($connection, $query); 
+
+                while ($row = mysqli_fetch_assoc($select_comments)){
+                    $user_id = $row['user_id'];
+                    $username = $row['username'];
+                    $user_password = $row['user_password'];
+                    $user_firstname = $row['user_firstname'];
+                    $user_lastname = $row['user_lastname'];
+                    $user_email = $row['user_email'];
+                    $user_image = $row['user_image'];
+                    $user_role = $row['user_role'];
+                    
+                    echo "<tr>";
+                    echo "<td>$user_id</td>";
+                    echo "<td>$username</td>";
+                    echo "<td>$user_firstname</td>";
+                    echo "<td>$user_lastname</td>";
+                    echo "<td>$user_email</td>";
+                    echo "<td>$user_role</td>";
+                    echo "<td><a href='users.php?source=edit_user&u_id=$user_id'>Edit</a></td>";
+                    echo "<td><a href='users.php?delete=$user_id'>Delete</a></td>";
+                    echo "</tr>";
+                }
+            ?>
+        </tbody>
+    </table>
+    <?php
+        if(isset($_GET['delete'])){
+            $user_id = $_GET['delete'];
+            $query = "DELETE FROM users WHERE user_id = $user_id";
+            $deleteQuery = mysqli_query($connection, $query);
+            
+            confirmQuery($deleteQuery);
+            header("Location: users.php");
+        }
+    ?>
+    ```
 
 ### Adding Users in Admin Part 1
-
 ### Adding Users in Admin Part 2
-
 ### Adding Users in Admin Part 3
-
 ### Adding Users in Admin Part 4 and Final
+1. 
+    ```php
+    
+    ```
 
 ### Deleting Users
 
+
 ### Changing Users Roles
+
 
 ### Setting Up the Edit User Page
 
+
 ### Displaying User Values in Edit Page
 
+
 ### Adding Select Options to User Role
+
 
 ### Updating User
 
 
 
+
 # CMS - Login
 ### Creating the Login Form 
+
 
 ### Making the Login Page
 
