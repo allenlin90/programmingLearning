@@ -3525,28 +3525,139 @@ End:
 
 # CMS - Login
 ### Creating the Login Form 
-
+1. We copy the form HTML elements in `includes/sidebar.php` and create `<form>` element to collect uesr input for accoutn and password to login.
+    ```html
+    <!-- includes/sidebar.php -->
+    <div class="well">
+        <h4>Login</h4>
+        <form action="includes/login.php" method="post">
+            <div class="form-group">
+                <div class="form-group">
+                    <input name="username" type="text" class="form-control" placeholder="Enter Username">
+                </div>
+                <div class="form-group">
+                    <input name="password" type="password" class="form-control" placeholder="Password">
+                </div>
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" name="login" type="submit">Login</button>
+                </span>
+            </div>
+        <!-- /.input-group -->
+        </form>
+    </div>
+    ```
 
 ### Making the Login Page
-
-
 ### Select User Query
-
-
 ### Validating User Query Front End
+1. We create `login.php` in `includes` which is in the root directory. In this case, if the user gives correct username and pasword, it redirect the user to the admin page. Otherwise, the user will be redirect to the current page `index.php`.
+    ```php
+    // ./includes/login.php
+    include "db.php";
 
+    if(isset($_POST['login'])){
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        // clean the string to prevent injection and security issues
+        $username = mysqli_real_escape_string($connection, $username);
+        $password = mysqli_real_escape_string($connection, $password);
+
+        $query = "SELECT * FROM users WHERE username = '{$username}' ";
+        $select_user_query = mysqli_query($connection, $query);
+
+        if (!$select_user_query) {
+            die("QUERY FAILED " . mysqli_error($connection));
+        }
+
+        while($row = mysqli_fetch_assoc($select_user_query)) {
+            $db_user_id = $row['user_id'];
+            $db_username = $row['username'];
+            $db_user_password = $row['user_password'];
+            $db_user_firstname = $row['user_firstname'];
+            $db_user_lastname = $row['user_lastname'];
+            $db_user_role = $row['user_role'];
+        }
+
+        if($username !== $db_username && $password !== $db_user_password) {
+            header("Location: ../index.php ");
+        } elseif ($username === $db_username && $password === $db_user_password) {
+            header("Location: ../admin");
+        } else {
+            header("Location: ../index.php ");
+        }
+    }
+    ```
 
 ### Setting Values with Sesssions
+1. In this case, in order to tracking on which user logged in with valid account, we can keep the record and data in `sessions` on server-side. To use session, we should use `session_start()` at the beginning of the code to enable the function. We then can assign desirable values and data when the user visits other directory on the website.
+    ```php
+    // include/login.php
+    session_start();
+    elseif ($username === $db_username && $password === $db_user_password) {
+        $_SESSION['username'] = $db_username;
+        $_SESSION['firstname'] = $db_user_firstname;
+        $_SESSION['lastname'] = $db_user_lastname;
+        $_SESSION['user_role'] = $db_user_role;
 
+        header("Location: ../admin");
+    }
+    ```
+1. To use the data in the session, we need to enable it in the other page. Since a logged in user will be redirected to admin page, we can udpate `admin/includes/header.php` with `session_start()` on the top of the file. Therefore, we can use data in the session for customized user experience. For example, we can udpate `admin/index.php` and print out the username when the user logged in.
+    ```php
+    // admin/includes/header.php
+    session_start();
+
+    // admin/index.php
+    echo $_SESSION['username'];
+    ```
 
 ### Validating User Admin
-
+1. In this CMS case, we have only 2 roles `admin` and `subscriber`. Therefore, we can set up a logic to check if the user can access admin page or not by its `user_role`.
+1. Until this point, there's still an issue that though we may edit/update the user information, the session still keeps the old data when the user logs in. For example, when the user logged in, the `user_role` can be `admin`, but this field can be changed on the admin page to be `subscriber`. However, the account can still access admin page because in the session data, the `user_role` is still `admin` which is not updated.
+    ```php
+    // admin/includes/header.php
+    session_start();
+    if(isset($_SESSION['user_role'])) {
+        if ($_SESSION['user_role'] !== 'admin') {
+            header("Location: ../index.php");
+        }
+    }
+    ```
 
 ### Logout Page Improved Validation 
+1. We update the anchor tag on the side bar for `admin/index.php`, so user may log out their account on the dropdown menu on the top right corner. Therefore, when the user goes to the page, it will assign `null` to all the properties that we set up on the `$_SESSION` object and use `header()` to redirect the user back to `index.php` on the root directory.
+    ```php
+    session_start();
 
+    $_SESSION['username'] = null;
+    $_SESSION['firstname'] = null;
+    $_SESSION['lastname'] = null;
+    $_SESSION['user_role'] = null;
+    header("Location: ../index.php")
+    ```
+1. However, we haven't limited the condition that admin pages can only be accessed when there's a session, as an admin user has logged in. We go back to `admin/includes/header.php` to update the condition that if there's no session is set at all, the program should redirect the user back to `index.php`. For example, if the property IS NOT set, we can redirect the visitor back to homepage.
+    ```php
+    // admin/includes/header.php
+    if(!isset($_SESSION['user_role'])) {
+        header("Location: ../index.php");
+    }
+    ```
 
 ### Login improved
+1. This section is only to simplify the code in `includes/login.php`.
+    ```php
+    if ($username === $db_username && $password === $db_user_password) {
+        $_SESSION['username'] = $db_username;
+        $_SESSION['firstname'] = $db_user_firstname;
+        $_SESSION['lastname'] = $db_user_lastname;
+        $_SESSION['user_role'] = $db_user_role;
 
+        header("Location: ../admin");
+    } else {
+        header("Location: ../index.php ");
+    }
+    ```
 
 
 
