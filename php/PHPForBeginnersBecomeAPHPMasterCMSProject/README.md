@@ -3804,20 +3804,382 @@ End:
 
 # CMS - Dashboard
 ### Adding Widgets 
+1. We just copy the following HTML elements into `admin/index.php`
+    ```html
+    <div class="row">
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-file-text fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                    <div class='huge'>12</div>
+                            <div>Posts</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="posts.php">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-green">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-comments fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                        <div class='huge'>23</div>
+                        <div>Comments</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="comments.php">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-yellow">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-user fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                        <div class='huge'>23</div>
+                            <div> Users</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="users.php">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-list fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class='huge'>13</div>
+                            <div>Categories</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="categories.php">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    ```
+    <img src="./images/adminWidget.PNG">
 
 ### Posts Dynamic Data in Widget
+1. Besides regualr query function, we can use `mysqli_num_rows()` to count number of posts managed by the CMS program. In this case, we only update the number of posts, while we can use the concept to apply on other useful information, such as number of comments, number of users, and number of categories.
+    ```php
+    // admin/index.php
+    $query = "SELECT * FROM posts";
+    $select_all_post = mysqli_query($connection, $query);
+    
+    // number of posts
+    $post_counts = mysqli_num_rows($select_all_post);
+    ```
 
+### Using Dynamic Data in all Wiedgets
 ### Adjust Widget Links 
+1. These sections are using the similar concept introduced to bring dynamic data on the website and change the `href` attribute to direct users to the correct destination.
+    ```php
+    <div class="row">
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-file-text fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <?php 
+                                $query = "SELECT * FROM posts";
+                                $select_all_posts = mysqli_query($connection, $query);
+                                
+                                // number of posts
+                                $post_counts = mysqli_num_rows($select_all_posts);
+
+                                echo "<div class='huge'>$post_counts</div>";
+                            ?>
+                            <div>Posts</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="posts.php">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-green">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-comments fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <?php 
+                                $query = "SELECT * from comments ";
+                                $select_all_comments = mysqli_query($connection, $query);
+                                $comment_count = mysqli_num_rows($select_all_comments);
+                                echo "<div class='huge'>$comment_count</div>";
+                            ?>
+                            <div>Comments</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="comments.php">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-yellow">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-user fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <?php 
+                                $query = "SELECT * from users ";
+                                $select_all_users = mysqli_query($connection, $query);
+                                $user_count = mysqli_num_rows($select_all_users);
+                                echo "<div class='huge'>$user_count</div>";
+                            ?>
+                            <div> Users</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="users.php">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-list fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <?php 
+                                $query = "SELECT * from categories ";
+                                $select_all_categories = mysqli_query($connection, $query);
+                                $category_count = mysqli_num_rows($select_all_categories);
+                                echo "<div class='huge'>$category_count</div>";
+                            ?>
+                            <div>Categories</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="categories.php">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    ```
 
 ### Adding an AWESOME Chart to Admin
+1. We will use template and code from [Google charts](https://developers.google.com/chart/interactive/docs/gallery/columnchart) in this case. 
+    ```html
+    <!-- admin/includes/header.php -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <div class="row">
+        <script type="text/javascript">
+            google.charts.load('current', {'packages':['bar']});
+            google.charts.setOnLoadCallback(drawChart);
 
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable([
+                ['Year', 'Sales', 'Expenses', 'Profit'],
+                ['2014', 1000, 400, 200],
+                ['2015', 1170, 460, 250],
+                ['2016', 660, 1120, 300],
+                ['2017', 1030, 540, 350]
+                ]);
+
+                var options = {
+                chart: {
+                    title: 'Company Performance',
+                    subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+                }
+                };
+
+                var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+                chart.draw(data, google.charts.Bar.convertOptions(options));
+            }
+        </script>
+        <!-- element to render the chart from the data -->
+        <div id="columnchart_material" style="width: 800px; height: 500px;"></div>
+    </div>
+    ```
 ### Cleaning up the Chart a Little
+1. As the width of the chart is set at `width: 800px`, we can change to `auto` to make the chart responsive to screen size of the user. Besides, we can modify the array and title of the chart. 
+    ```html
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['bar']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+            ['Data', 'Sales'],
+                // <?php // retrieve data from database?>
+            ['Posts', 1000],
+            ]);
+
+            var options = {
+            chart: {
+                title: '', // take off placeholder
+                subtitle: '', // take off placeholder
+            }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+        }
+    </script>
+    <div id="columnchart_material" style="width: 'auto'; height: 500px;"></div> // change width to auto
+    ```
 
 ### Displaying Dynamic Data in Chart Part 1
+1. As we look into the JavaScript code to render the column chart, we can see that the bars are created according to the 2-dimensional array. Therefore, we can use PHP to create JavaScript code dynamically. 
+    ```html
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['bar']});
+        google.charts.setOnLoadCallback(drawChart);
 
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+            ['Data', 'Count'],
+            <?php
+                $elements_text = ['Active Posts', 'Comments', 'Users', 'Categories'];
+                $elements_count = [$post_count, $comment_count, $user_count, $category_count];
+
+                for($i = 0; $i < count($elements_text); $i++) {
+                    echo "['{$elements_text[$i]}', $elements_count[$i]],";
+                }
+            ?>
+            ]);
+
+            var options = {
+            chart: {
+                title: '',
+                subtitle: '',
+            }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+        }
+    </script>
+    <div id="columnchart_material" style="width: 'auto'; height: 500px;"></div>
+    ```
 ### Displaying Dynamic Data in Chart Part 2
+1. In this section, we use query string to retrieve data from the database right before rendering the data to JavaScipt, so we can generate dynamic arrays to create the column chart.
+    ```php
+    // draft posts
+    $query = "SELECT * FROM posts WHERE post_status = 'draft' ";
+    $select_all_draft_posts = mysqli_query($connection, $query);
+    $post_draft_count = mysqli_num_rows($select_all_draft_posts);
+    
+    // unapproved comments
+    $query = "SELECT * FROM comments WHERE comment_status = 'unapproved' ";
+    $unapproved_comments_query = mysqli_query($connection, $query);
+    $unapproved_comment_count = mysqli_num_rows($unapproved_comments_query);
+    
+    // number of subscribers
+    $query = "SELECT * FROM users WHERE user_role = 'subscriber' ";
+    $select_all_subscribers = mysqli_query($connection, $query);
+    $subscriber_count = mysqli_num_rows($select_all_subscribers);
+    ```
+    ```html
+    <!-- column chart -->
+    <div class="row">
+        <script type="text/javascript">
+            google.charts.load('current', {'packages':['bar']});
+            google.charts.setOnLoadCallback(drawChart);
 
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable([
+                ['Data', 'Count'],
+                <?php 
+                    $elements_text = ['Active Posts', 'Draft Posts', 'Comments', 'Pending Comments', 'Users', 'Subscribers', 'Categories'];
+                    $elements_count = [$post_count, $post_draft_count, $comment_count, $unapproved_comment_count, $user_count, $subscriber_count, $category_count];
 
+                    for($i = 0; $i < count($elements_text); $i++) {
+                        echo "['{$elements_text[$i]}', $elements_count[$i]],";
+                    }
+                ?>
+                ]);
+
+                var options = {
+                chart: {
+                    title: '',
+                    subtitle: '',
+                }
+                };
+
+                var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+                chart.draw(data, google.charts.Bar.convertOptions(options));
+            }
+        </script>
+        <div id="columnchart_material" style="width: 'auto'; height: 500px;"></div>
+    </div>
+    ```
 
 # Improving Our CMS
 ### Adjusting Post Echo
