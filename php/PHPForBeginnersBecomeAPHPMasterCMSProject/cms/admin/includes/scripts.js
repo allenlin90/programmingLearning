@@ -7,4 +7,12 @@ $(document).ready(function () {
                 console.error(error);
             });
     }
+
+    $('#selectAllBoxes').change(function () {
+        if (this.checked) {
+            $('.checkBoxes').prop('checked', true);
+        } else {
+            $('.checkBoxes').prop('checked', false);
+        }
+    });
 })

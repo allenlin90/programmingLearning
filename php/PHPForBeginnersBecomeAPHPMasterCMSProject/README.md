@@ -4300,6 +4300,7 @@ End:
 ### Adding Bulk Options Posts, Part 2
 1. In order to select the items, we can put checkboxes before the items on the row. We therefore update the table as the following that we have a checkbox at the beginning as select all. Besides, we put a checkbox at the beginning of each row which `value` attribute is the id of the post.
 1. In this case, we can close the PHP code, put the HTML element in the while loop, and start the PHP code again to indicate the purpose to put a `<input type="checkbox">` at the beginning of each row. Note that in PHP, we can open PHP tag and close in the middle of HTML. If HTML elements are in the loop, either `FOR` or `WHILE` loop, the elements will be affected in the iterations.
+1. In addition, the most important structure we build here is to have an `Array` to collects the information of the "**value**" of each item in the table. Note that we can put an empty pair of square brackets `[]` after the variable in `name` attribute of `<input>` element to declare that the key contains an array.
     ```html
     <table class="table table-bordered table-hover">
         <thead>
@@ -4367,16 +4368,88 @@ End:
     ```
 
 ### Adding Bulk Options Posts, Part 3
-
-
 ### Adding Bulk Options Posts, Part 4
-
-
 ### Adding Bulk Options Posts, Part 5
+1. As we use create checkboxes with their `name` attribute with `array` to collect values as the `post_id` of the item on each row, we can use `foreach()` loop to iterate through the array.
+1. In this case, we can use `SWITCH` statement for the same statement to check on different conditions.
+    ```php
+    // viewAllPosts.php
+    if(isset($_POST['checkBoxArray'])){
+        foreach($_POST['checkBoxArray'] as $postValueId) {
+            $bulk_options = $_POST['bulk_options'];
+            switch($bulk_options) {
+                case 'published':
+                    $query = "UPDATE posts SET post_status = '{$bulk_options}' WHERE post_id = $postValueId ";
+                    $update_to_published_status = mysqli_query($connection, $query);
+                    confirmQuery($update_to_published_status);
+                    break;
+                case 'draft':
+                    $query = "UPDATE posts SET post_status = '{$bulk_options}' WHERE post_id = $postValueId ";
+                    $update_to_draft_status = mysqli_query($connection, $query);
+                    confirmQuery($update_to_draft_status);
+                    break;
+                case 'delete':
+                    $query = "DELETE FROM posts WHERE post_id = $postValueId ";
+                    $update_to_delete_status = mysqli_query($connection, $query);
+                    confirmQuery($update_to_delete_status);
+                    break;
+            }
+        }
+    }
+    ```
+1. We also need to update the HTML elements with their `name` attribute to ensure PHP can retrieve data correctly.
+    ```html
+    <!-- admin/includes/viewAllPosts.php -->
+    <!-- update value attribute -->
+    <div id="bulkOptionsContainer" class="col-xs-4">
+        <select class="form-control" name="bulk_options" id="">
+            <option value="">Select Options</option>
+            <option value="published">Publish</option>
+            <option value="draft">Draft</option>
+            <option value="delete">Delete</option>
+        </select>
+    </div>
 
+    <!-- Ensure php take this name attriburte in $_POST as an array -->
+    <td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='<?php echo $postId;?>'></td>
+    ```
+1. We modify `<div id="bulkOptionsContainer">` to make it aligns with the following elements on the page. Besides modifying the CSS, we can add the `<style>` tag in `header.php` directly.
+    ```html
+    <!-- admin/includes/header.php -->
+    <style>
+        #bulkOptionsContainer {
+            padding: 0px;
+        }
+    </style>
+    ```
 
 ### Adding Bulk Options Posts, Part 6
+1. This section is about the JavaScript that when we select the checkbox on the top, all the following checkboxes should be selected. We can design this feature as to "toggle" the state of checkboxes or "check" all the checkboxes below.
+    ```js
+    // admin/includes/scripts.js
+    $(document).ready(function(){
+        $('#selectAllBoxes').change(function () {
+            if (this.checked) {
+                $('.checkBoxes').prop('checked', true);
+            } else {
+                $('.checkBoxes').prop('checked', false);
+            }
+        });
+    });
 
+    // solution from the lecture
+    $('#selectAllBoxes').click(function(){
+        if($(this).checked) {
+            $('.checkBoxes').each(function(){
+                this.checked = true;
+            });
+        } else {
+            $('.checkBoxes').each(function(){
+                this.checked = false;
+            });
+        }
+    })
+    ``` 
 
 ### Adding Dropdown Option for Add Post Page
 
