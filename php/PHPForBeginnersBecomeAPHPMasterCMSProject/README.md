@@ -4183,47 +4183,215 @@ End:
 
 # Improving Our CMS
 ### Adjusting Post Echo
-
 ### Removing Read More Button
-
 ### Adding Notification to Add User Page
+1. These sections are just some adjustment to the CMS system such as the "Read More" button in a post and redirect user to `uesrs.php` page after a new user is created.
 
 
 
 # CMS - Extra Features
 ### Adding Dynamic Category Selection for Edit Post Page
+1. We can modify the code to allow users to change the status of a post accordingly. Besides, we can use `<select>` element to make a dropdown list for users to select.
+    ```php
+    // admin/includes/editPost.php
+    <div class="form-group">
+        <label for="title">Post Status</label>
+        <br>
+        <select name="post_status" id="">
+                <option value="<?php echo $postStatus;?>"><?php echo $postStatus;?></option>
+                <?php 
+                    if($postStatus !== 'draft'){
+                        echo "<option value='draft'>draft</option>";
+                    } else {
+                        echo "<option value='published'>published</option>";
+                    }
+                ?>
+        </select>
+    </div>
+    ```
 
-### Adding Extra Element to Dashboard 
+### Adding Extra Element to Dashboard
+1. We current have `All Posts`, `Draft Posts`, `Comments`, `Pending Comments`, `Users`, `Subscribers`, and `Categories` shown on the dashboard. In this case, we just update `admin/index.php` to add "published" posts which posts have their status as `published`.
+    ```php
+    // published posts
+    $query = "SELECT * FROM posts WHERE post_status = 'published' ";
+    $select_all_published_posts = mysqli_query($connection, $query);
+    $post_published_count = mysqli_num_rows($select_all_published_posts);
+
+    // update to generate JavaScript code
+    $elements_text = ['All Posts', 'Active Posts', 'Draft Posts', 'Comments', 'Pending Comments', 'Users', 'Subscribers', 'Categories'];
+    $elements_count = [$post_count, $post_published_count, $post_draft_count, $comment_count, $unapproved_comment_count, $user_count, $subscriber_count, $category_count];
+
+    for($i = 0; $i < count($elements_text); $i++) {
+        echo "['{$elements_text[$i]}', $elements_count[$i]],";
+    }
+    ```
 
 ### Adding the WYSIWYG Editor
+1. We can use WYSIWYG text editor widget for content editing when users create a post or edit the post. It gives an easy to use UI for users to work on posts. We can visit [ckeditor](https://ckeditor.com/) to use CDN and the HTML code to enable the feature. Besides, we need to create `scripts.js` and put it in `admin/includes/header.php`.
+    ```html
+    <!-- admin/includes/header.php -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/22.0.0/classic/ckeditor.js"></script>
+    <script type="text/javascript" src="includes/scripts.js"></script>
+    ```
+1. We can use jQuery method `.ready()` to ensure the code will be loaded only after the page is fully loaded.
+    ```js
+    // admin/includes/scripts.js
+    $(document).ready(function () {
+        // EDITOR CKEDITOR
+        ClassicEditor
+            .create(document.querySelector('#body')) // select the textarea element to enable texteditor features
+            .catch(error => {
+                console.error(error);
+            });
+    })
+    ```
+1. In the `<textarea>` elements in `addPost.php` and `editPost.php`, we should put `id` attribute to allow the editor feature enable on the 
 
 ### Adding Links to Post Images and Read More Button
+1. We can turn the picture of the post in `index.php` into link, so users can not only access the detail of the post from its title and "Read More" button below but by clicking the picture.
 
 ### Adding Post Update Notification
+1. This is to add links as status update after user edit/update and submit the post. The notification will have 2 links in green background on the top.
+    ```php
+    // admin/includes/editPost.php
+    echo "<p class='bg-success'>Post is updated. <a href='../post.php?p_id=$postId'>View Post</a> or <a href='posts.php'>Edit More Posts</a></p>";
+    ```
+    <img src="./images/postStatusUpdate.PNG">
 
 ### Adding Post Edit Link in Front End
+1. We can edit a post directly if user is logged in with an account which has role as `admin`. We can put this button on navigation to allow the user to edit the post directly without going to the backend admin management page. 
+1. Note that we may haven't use `session_start()` in the root `index.php`, so we can't find the variable `$_SESSION`.
+    ```php
+    if (isset($_SESSION['user_role'])) {
+        if ($_SESSION['user_role'] === 'admin'){
+            if (isset($_GET['p_id'])){
+                $post_id = $_GET['p_id'];
+                echo "<li><a href='admin/posts.php?source=edit_post&p_id=$post_id'>Edit Post</a></li>";
+            }                        
+        }
+    }
+    ```
 
 ### Adding Bulk Options Posts, Part 1
+1. In this case, we can add a form on the top of the page and modify multiple posts at the same time. For example, we can publish multiple posts if they are still in "draft" status, delete multiple posts at the same time, or hide published posts by turning their status into "draft".
+1. We use `<form>` tag to wrap up the whole table in `viewAllPosts.php`. 
+    ```html
+    <!-- viewAllPosts.php -->
+    <form action="" method="POST">
+        <div id="bulkOptionsContainer" class="col-xs-4">
+            <select class="form-control" name="" id="">
+                <option value="">Select Options</option>
+                <option value="">Publish</option>
+                <option value="">Draft</option>
+                <option value="">Delete</option>
+            </select>
+        </div>
+        <div class="col-xs-4">
+            <input type="submit" name="submit" class="btn btn-success" value="Apply">
+            <a class="btn btn-primary" href="add_post.php">Add New</a>
+        </div>
+        <table class="table table-bordered table-hover">
+    ...
+    ```
+    <img src="./images/bulkOptionsApplication.PNG">
 
 ### Adding Bulk Options Posts, Part 2
+1. In order to select the items, we can put checkboxes before the items on the row. We therefore update the table as the following that we have a checkbox at the beginning as select all. Besides, we put a checkbox at the beginning of each row which `value` attribute is the id of the post.
+1. In this case, we can close the PHP code, put the HTML element in the while loop, and start the PHP code again to indicate the purpose to put a `<input type="checkbox">` at the beginning of each row. Note that in PHP, we can open PHP tag and close in the middle of HTML. If HTML elements are in the loop, either `FOR` or `WHILE` loop, the elements will be affected in the iterations.
+    ```html
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAllBoxes"></th>
+                <th>Id</th>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Image</th>
+                <th>Tags</th>
+                <th>Comments</th>
+                <th>Date</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php 
+                $query = "SELECT * FROM posts";
+                $selectPosts = mysqli_query($connection, $query); 
+
+                while ($row = mysqli_fetch_assoc($selectPosts)){
+                    $postId = $row['post_id'];
+                    $postAuthor = $row['post_author'];
+                    $postTitle = $row['post_title'];
+                    $postCategoryId = $row['post_category_id'];
+                    $postStatus = $row['post_status'];
+                    $postImage = $row['post_image'];
+                    $postTags = $row['post_tags'];
+                    $postCommentCount = $row['post_comment_count'];
+                    $postDate = $row['post_date'];
+                    
+                    echo "<tr>";
+            ?>
+            
+            <td><input type='checkbox' class='checkBoxes' name='checkBoxArray' value='<?php echo $postId;?>'></td>
+            
+            <?php
+                    echo "<td>$postId</td>";
+                    echo "<td>$postAuthor</td>";
+                    echo "<td>$postTitle</td>";
+
+                    $query = "SELECT * FROM categories WHERE cat_id = $postCategoryId ";
+                    $selectCategoriesId = mysqli_query($connection, $query);
+                    while($row = mysqli_fetch_assoc($selectCategoriesId)) {
+                        $cat_id = $row['cat_id'];
+                        $cat_title = $row['cat_title'];
+                    }
+                    echo "<td>$cat_title</td>";
+                    
+                    echo "<td>$postStatus</td>";
+                    echo "<td><img width='100px' src='../images/$postImage' alt='image'></td>";
+                    echo "<td>$postTags</td>";
+                    echo "<td>$postCommentCount</td>";
+                    echo "<td>$postDate</td>";
+                    echo "<td><a href='posts.php?source=edit_post&p_id=$postId'>Edit</a></td>";
+                    echo "<td><a href='posts.php?delete=$postId'>Delete</a></td>";
+                    echo "</tr>";
+                }
+            ?>
+        </tbody>
+    </table>
+    ```
 
 ### Adding Bulk Options Posts, Part 3
 
+
 ### Adding Bulk Options Posts, Part 4
+
 
 ### Adding Bulk Options Posts, Part 5
 
+
 ### Adding Bulk Options Posts, Part 6
+
 
 ### Adding Dropdown Option for Add Post Page
 
+
 ### Adding Post Creation Notice to Add Post Page
+
 
 ### Adding Link to Add New Button in Post Page
 
+
 ### Adding Link to View Posts from Admin
 
+
 ### Adding Dynamic Personalization to Admin
+
 
 ### Adding Validation to Comments in Post Page
 

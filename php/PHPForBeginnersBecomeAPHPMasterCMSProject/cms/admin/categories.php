@@ -46,7 +46,9 @@
                                 <tbody>
                                     <?php findAllCategories();?>
 
-                                    <?php deleteCategories();?>
+                                    <?php 
+                                        deleteCategories();
+                                    ?>
                                 </tbody>
                             </table>
                         </div>

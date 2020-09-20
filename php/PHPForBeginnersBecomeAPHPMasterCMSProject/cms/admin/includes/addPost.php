@@ -9,7 +9,7 @@
         $post_image_temp = $_FILES['image']['tmp_name'];
 
         $post_tags = $_POST['post_tags'];
-        $post_content = $_POST['post_content'];
+        $post_content = mysqli_real_escape_string($connection, $_POST['post_content']);
         $post_date = date('d-m-y');
         // $post_comment_count = 4;
 
@@ -65,7 +65,7 @@
     </div>
     <div class="form-group">
         <label for="title">Post Content</label>
-        <textarea class="form-control" name="post_content" rows="10" cols="30"></textarea>
+        <textarea class="form-control" id="body" name="post_content" rows="10" cols="30"></textarea>
     </div>
     <div class="form-group">
         <input type="submit" class="btn btn-primary" name="submit" value="Publish">

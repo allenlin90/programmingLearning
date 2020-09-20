@@ -44,10 +44,12 @@
     }
 
     function deleteCategories(){
+        global $connection;
         if(isset($_GET['delete'])){
             $catId = $_GET['delete'];
-            $query = "DELETE FROM categories WHERE cat_id = {$catId} ";
+            $query = "DELETE FROM categories WHERE cat_id = $catId ";
             $deleteQuery = mysqli_query($connection, $query);
+            confirmQuery($deleteQuery);
             header("Location: categories.php");
         }
     }

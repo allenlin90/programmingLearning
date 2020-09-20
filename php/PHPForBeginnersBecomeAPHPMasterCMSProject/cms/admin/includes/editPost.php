@@ -26,7 +26,7 @@
         $post_status = $_POST['post_status'];
         $post_image = $_FILES['image']['name'];
         $post_image_temp = $_FILES['image']['tmp_name'];
-        $post_content = $_POST['post_content'];
+        $post_content = mysqli_real_escape_string($connection, $_POST['post_content']);
         $post_tags = $_POST['post_tags'];
 
         move_uploaded_file($post_image_temp, "../images/$post_image");
@@ -53,11 +53,10 @@
 
         $updateQuery = mysqli_query($connection, $query);
         confirmQuery($updateQuery);
-        header("Location: posts.php");
-        // header("Location: posts.php?source=edit_post&p_id=$postIdToEdit");
+
+        echo "<p class='bg-success'>Post is updated. <a href='../post.php?p_id=$postId'>View Post</a> or <a href='posts.php'>Edit More Posts</a></p>";
     }
 ?>
-
 <form action="" method="POST" enctype="multipart/form-data">
     <div class="form-group">
         <label for="title">Post Title</label>
@@ -85,10 +84,22 @@
         <label for="title">Post Author</label>
         <input value="<?php echo $postAuthor;?>" type="text" class="form-control" name="post_author">
     </div>
+
     <div class="form-group">
         <label for="title">Post Status</label>
-        <input value="<?php echo $postStatus;?>" type="text" class="form-control" name="post_status">
+        <br>
+        <select name="post_status" id="">
+                <option value="<?php echo $postStatus;?>"><?php echo $postStatus;?></option>
+                <?php 
+                    if($postStatus !== 'draft'){
+                        echo "<option value='draft'>draft</option>";
+                    } else {
+                        echo "<option value='published'>published</option>";
+                    }
+                ?>
+        </select>
     </div>
+    
     <div class="form-group">
         <img width="100" src="../images/<?php echo $postImage;?>" alt="image">
         <input type="file" name="image" id="">
@@ -99,7 +110,7 @@
     </div>
     <div class="form-group">
         <label for="title">Post Content</label>
-        <textarea class="form-control" name="post_content" rows="10" cols="30"><?php echo $postContent;?></textarea>
+        <textarea class="form-control" id="body" name="post_content" rows="10" cols="30"><?php echo $postContent;?></textarea>
     </div>
     <div class="form-group">
         <input type="submit" class="btn btn-primary" name="submit" value="Update">

@@ -25,7 +25,7 @@
                     $postContent = substr($row['post_content'], 0, 50);
                     $postStatus = $row['post_status'];
                     
-                    if ($postStatus !== 'published') {
+                    if ($postStatus === 'published') {
             ?>
 
             <h1 class="page-header">
@@ -42,7 +42,9 @@
             </p>
             <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate;?></p>
             <hr>
+            <a href="post.php?p_id=<?php echo $post_id;?>">
             <img class="img-responsive" src="images/<?php echo $postImage;?>" alt="image">
+            </a>
             <hr>
             <p><?php echo $postContent;?></p>
             <a class="btn btn-primary" href="post.php?p_id=<?php echo $post_id;?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
