@@ -34,7 +34,7 @@
     </div>
     <div class="col-xs-4">
         <input type="submit" name="submit" class="btn btn-success" value="Apply">
-        <a class="btn btn-primary" href="add_post.php">Add New</a>
+        <a class="btn btn-primary" href="posts.php?source=add_post">Add New</a>
     </div>
     <table class="table table-bordered table-hover">
         <thead>
@@ -77,7 +77,7 @@
             <?php
                     echo "<td>$postId</td>";
                     echo "<td>$postAuthor</td>";
-                    echo "<td>$postTitle</td>";
+                    echo "<td><a href='../post.php?p_id=$postId'>$postTitle</a></td>";
 
                     $query = "SELECT * FROM categories WHERE cat_id = $postCategoryId ";
                     $selectCategoriesId = mysqli_query($connection, $query);
@@ -86,7 +86,6 @@
                         $cat_title = $row['cat_title'];
                     }
                     echo "<td>$cat_title</td>";
-                    
                     echo "<td>$postStatus</td>";
                     echo "<td><img width='100px' src='../images/$postImage' alt='image'></td>";
                     echo "<td>$postTags</td>";

@@ -4452,23 +4452,90 @@ End:
     ``` 
 
 ### Adding Dropdown Option for Add Post Page
-
-
 ### Adding Post Creation Notice to Add Post Page
-
+1. We can use `<select>` to create a dropdown list for users to choose.
+    ```html
+    <div class="form-group">
+        <label for="title">Post Status</label>
+        <select name="post_status" id="">
+                <option value="draft">Select Options</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+        </select>
+    </div>
+    ```
+1. We can also create a notification as in edit post that users can go to view the post directly after the new post is created. We can use `mysqli_insert_id()` to check the latest insert to the database.
+    ```php
+    $postId = mysqli_insert_id($conneciton);
+    echo "<p class='bg-success'>Post is updated. <a href='../post.php?p_id=$postId'>View Post</a> or <a href='posts.php'>Edit More Posts</a></p>";
+    ```
 
 ### Adding Link to Add New Button in Post Page
-
+1. This is just to update the anchor tag `href` attribute to direct user to post adding page. 
+    ```html
+    <!-- admin/includes/viewAllPosts.php -->
+    <a class="btn btn-primary" href="posts.php?source=add_post">Add New</a>
+    ```
 
 ### Adding Link to View Posts from Admin
-
+1. This section is to add the link in `viewAllPosts.php` to generate anchor tags for users to view the post directly from the table. In this case, rather than add a new column to the table, I turn the title of the post into a link to direct the user to view the post. 
+    ```php
+    // admin/includes/viewAllPosts.php
+    echo "<td><a href='../post.php?p_id=$postId'>$postTitle</a></td>";
+    ```
 
 ### Adding Dynamic Personalization to Admin
-
+1. This section is to use the username in `$_SESSION` to have a dynamic value printed on the navigation bar.
+    ```html
+    <?php 
+        if(issset($_SESSION['username'])) {
+            $username = $_SESSION['username'];
+        }
+    ?>
+    <ul class="nav navbar-right top-nav">
+        <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $username;?> <b class="caret"></b></a>
+            <ul>
+                <li>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    ```
 
 ### Adding Validation to Comments in Post Page
+1. We add JavaScript with `<script>` tag on the page directly. Note that 
+    ```php
+    // post.php
+    if(isset($_POST['create_comment'])) {
+        $postId = $_GET['p_id'];
+        $comment_author = $_POST['comment_author'];
+        $comment_email = $_POST['comment_email'];
+        $comment_content = $_POST['comment_content'];
+        
+        if(!empty($comment_author) && !empty($comment_email && !empty($comment_content))){
+            $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content, comment_status, comment_date) ";
+            $query .= "VALUES($postId, '{$comment_author}', '{$comment_email}', '{$comment_content}', 'unapproved', now()) ";
 
+            $create_comment_query = mysqli_query($connection, $query);
 
+            if(!$create_comment_query) {
+                die("QUERY FAILED " . mysqli_error($connection));
+            }
+        
+            $query = "UPDATE posts SET post_comment_count = post_comment_count + 1 ";
+            $query .= "WHERE post_id = $postId";
+
+            $updateCommentCount = mysqli_query($connection, $query);
+
+            if(!$updateCommentCount) {
+                die("QUERY FAILED " . mysqli_error($connection));
+            }
+        } else {
+            echo "<script>alert('Fields cannot be empty')</script>";
+        }
+    }
+    ```
 
 # CMS - Extra Features - Users Registration
 ### Downloading & Placing Form Markup

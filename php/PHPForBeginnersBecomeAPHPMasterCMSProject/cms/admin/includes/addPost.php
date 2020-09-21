@@ -19,8 +19,10 @@
         $query .= "VALUES({$post_category_id}, '{$post_title}', '{$post_author}', now(), '{$post_image}', '{$post_content}','{$post_tags}', '{$post_status}') ";
 
         $create_post_query = mysqli_query($connection, $query);
-
         confirmQuery($create_post_query);
+
+        $postId = mysqli_insert_id($conneciton);
+        echo "<p class='bg-success'>Post is updated. <a href='../post.php?p_id=$postId'>View Post</a> or <a href='posts.php'>Edit More Posts</a></p>";
     }
 ?>
 
@@ -53,7 +55,11 @@
     </div>
     <div class="form-group">
         <label for="title">Post Status</label>
-        <input type="text" class="form-control" name="post_status">
+        <select name="post_status" id="">
+                <option value="draft">Select Options</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+        </select>
     </div>
     <div class="form-group">
         <label for="title">Post Image</label>
