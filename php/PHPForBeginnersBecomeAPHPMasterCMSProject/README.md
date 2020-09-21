@@ -697,7 +697,7 @@ End:
     ```
 
 ### Creating the Update Records Form
-1. We can take the connectoin code out to model the code. For example, we can create a `db.php` in the same directory. 
+1. We can take the connection code out to model the code. For example, we can create a `db.php` in the same directory. 
     ```php
     // db.php
     $connection = mysqli_connect('localhost', 'root', 'password', 'loginapp');
@@ -4797,7 +4797,7 @@ End:
             $post_status = $row['post_status'];
             $post_image = $row['post_image'];
             $post_tags = $row['post_tags'];
-            $post_content = mysqli_escape_string($connectoin, $row['post_content']);
+            $post_content = mysqli_escape_string($connection, $row['post_content']);
             $post_date = $row['post_date'];
         }
         
@@ -4868,7 +4868,20 @@ End:
     ```
 
 ### Reseting Views Feature
+1. We can set the views as a link to send parameters, so we can set a query string to reset the number of views if the user clicks it.
+    ```php
+    echo "<td><a onClick=\"javascript: return confirm('Are you sure you want to reset views?');\" href='posts.php?reset=$postId'>{$postViewCount}</a></td>";
 
+    if(isset($_GET['reset'])){
+        $thePostId = $_GET['reset'];
+        $thePostId = mysqli_escape_string($connection, $thePostId);
+        $query = "UPDATE posts SET post_view_count = 0 WHERE post_id = $thePostId";
+
+        $resetQuery = mysqli_query($connection, $query);
+        confirmQuery($resetQuery);
+        header("Location: posts.php");
+    }
+    ```
 
 
 

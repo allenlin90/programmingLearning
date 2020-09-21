@@ -28,7 +28,7 @@
                         $post_status = $row['post_status'];
                         $post_image = $row['post_image'];
                         $post_tags = $row['post_tags'];
-                        $post_content = mysqli_escape_string($connectoin, $row['post_content']);
+                        $post_content = mysqli_escape_string($connection, $row['post_content']);
                         $post_date = $row['post_date'];
                     }
                     
@@ -119,7 +119,7 @@
                     echo "<td>$postDate</td>";
                     echo "<td><a href='posts.php?source=edit_post&p_id=$postId'>Edit</a></td>";
                     echo "<td><a onClick=\"javascript: return confirm('Are you sure you want to delete?');\" href='posts.php?delete=$postId'>Delete</a></td>";
-                    echo "<td>{$postViewCount}</td>";
+                    echo "<td><a onClick=\"javascript: return confirm('Are you sure you want to reset views?');\" href='posts.php?reset=$postId'>{$postViewCount}</a></td>";
                     echo "</tr>";
                 }
             ?>
@@ -129,10 +129,21 @@
 <?php 
     if(isset($_GET['delete'])){
         $thePostId = $_GET['delete'];
+        $thePostId = mysqli_escape_string($connection, $thePostId);
         $query = "DELETE FROM posts WHERE post_id = $thePostId";
         $deleteQuery = mysqli_query($connection, $query);
         
         confirmQuery($deleteQuery);
+        header("Location: posts.php");
+    }
+
+    if(isset($_GET['reset'])){
+        $thePostId = $_GET['reset'];
+        $thePostId = mysqli_escape_string($connection, $thePostId);
+        $query = "UPDATE posts SET post_view_count = 0 WHERE post_id = $thePostId";
+
+        $resetQuery = mysqli_query($connection, $query);
+        confirmQuery($resetQuery);
         header("Location: posts.php");
     }
 ?>
