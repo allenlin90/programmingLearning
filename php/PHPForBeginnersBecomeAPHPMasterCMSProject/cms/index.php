@@ -12,8 +12,27 @@
         <div class="col-md-8">
 
             <?php
-                $query = "SELECT * FROM posts ";
+                $per_page = 5;
+                if(isset($_GET['page'])) {
+                    $page = mysqli_escape_string($connection, $_GET['page']);
+                    $page = intval($page);
+                } else {
+                    $page = "";
+                }
 
+                if ($page === "" || $page === 1) {
+                    $page_1 = 0;
+                } else {
+                    $page_1 = ($page * $per_page) - $per_page;
+                }
+            
+                $post_query_count = "SELECT * FROM posts ";
+                $find_count = mysqli_query($connection, $post_query_count);
+                $count = mysqli_num_rows($find_count);
+                $count = ceil($count / $per_page); 
+                
+
+                $query = "SELECT * FROM posts ORDER BY post_id DESC LIMIT $page_1, $per_page ";
                 $selectAllPostsQuery = mysqli_query($connection, $query);
 
                 while($row = mysqli_fetch_assoc($selectAllPostsQuery)) {
@@ -32,7 +51,6 @@
                 Page Heading
                 <small>Secondary Text</small>
             </h1>
-
             <!-- First Blog Post -->
             <h2>
                 <a href="post.php?p_id=<?php echo $post_id;?>"><?php echo $postTitle;?></a>
@@ -64,5 +82,21 @@
     <!-- /.row -->
 
     <hr>
+
+    <ul class="pager">
+    <?php 
+        for ($i = 1; $i <= $count; $i++) {
+            if ($i === 1 && !$page) {
+                echo "<li><a class='active_link' href='index.php?page={$i}'>{$i}</a></li>";
+            } else {
+                if($i === $page) {
+                    echo "<li><a class='active_link' href='index.php?page={$i}'>{$i}</a></li>";
+                } else {
+                    echo "<li><a href='index.php?page={$i}'>{$i}</a></li>";
+                }
+            }
+        }
+    ?>
+    </ul>
     <!-- footer -->
     <?php include "includes/footer.php";?>

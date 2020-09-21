@@ -4887,15 +4887,78 @@ End:
 
 # Pagination
 ### Pagination Intro and Part 1
+1. We can add `LIMIT` to query string to limit the rendered results. Besides, we can use `mysqli_num_rows()` function to check number of instances returned from the query. For example, we can `LIMIT 5, 10` which means the result can start from the 5th and 10 instances will be returned from this query.
+    ```sql
+    SELECT * FROM posts LIMIT 5, 10;
+    ```
 
 ### Pagination Intro and Part 2 - Links and Get Request
+1. We can set pagination as limited result on the page. For example, we'd like every page to render only 5 posts. We can dived the total number of posts by `5` and use `ceil` to get the minimum number of pages we need to divide those posts in the database. 
+    ```php
+    $post_query_count = "SELECT * FROM posts ";
+    $find_count = mysqli_query($connection, $post_query_count);
+    $count = mysqli_num_rows($find_count);
+    $count = ceil($count / 5); // return 5 instance every page
+
+    for ($i = 1; $i < $count; $i++) {
+        echo "<li><a href='index.php?page={$i}'>{$i}</a></li>";
+    }
+    ```
 
 ### Pagination Intro and Part 3 - Get Request Processing
+1. We retrieve the paramter while using `mysqli_escape_string` to prevent injection. In this case, we give the number to start the results from the database with. We therefore can have a dynamic results according to the page we are at.
+    ```php
+    $per_page = 5;
+    if(isset($_GET['page'])) {
+        $page = mysqli_escape_string($connection, $_GET['page']);
+        $page = intval($page);
+    } else {
+        $page = "";
+    }
+
+    if ($page === "" || $page === 1) {
+        $page_1 = 0;
+    } else {
+        $page_1 = ($page * $per_page) - $per_page;
+    }
+
+    $query = "SELECT * FROM posts ORDER BY post_id DESC LIMIT $page_1, $per_page ";
+    $selectAllPostsQuery = mysqli_query($connection, $query);
+    ```
 
 ### Pagination Intro and Part 4 - Assigning a Variable to the per Page Value
+1. This section is the recap to the code we have done so far on the pagination function. 
 
 ### Pagination Intro and Part 5 - Adding Some Style to Current Page
-
+1. This feature is to give a better UX that CSS decoration can style on the current page that the visitor at.
+    ```css 
+    .pager li .active_link {
+        background: #ddd !important;
+    }
+    ```
+1. Besides, we can use `IF` statement to check which page to assign the class. However, this solution doesn't style the homepage without any parameter when the user just access the page.
+    ```php
+    // index.php
+    for ($i = 1; $i <= $count; $i++) {
+        if($i === $page) {
+            echo "<li><a class='active_link' href='index.php?page={$i}'>{$i}</a></li>";
+        } else {
+            echo "<li><a href='index.php?page={$i}'>{$i}</a></li>";
+        }
+    }
+    ```
+1. We can add another `IF` statement if there's no parameter set yet. 
+    ```php
+    if ($i === 1 && !$page) {
+        echo "<li><a class='active_link' href='index.php?page={$i}'>{$i}</a></li>";
+    } else {
+        if($i === $page) {
+            echo "<li><a class='active_link' href='index.php?page={$i}'>{$i}</a></li>";
+        } else {
+            echo "<li><a href='index.php?page={$i}'>{$i}</a></li>";
+        }
+    }
+    ```
 
 
 # CMS - Extra Feature - Users ONLINE
