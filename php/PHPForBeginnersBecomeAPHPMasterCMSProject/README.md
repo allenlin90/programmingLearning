@@ -4539,32 +4539,165 @@ End:
 
 # CMS - Extra Features - Users Registration
 ### Downloading & Placing Form Markup
+1. We download and include a PHP file from the lecturer. This page is to allow users to register an account on the website.
+    ```html
+    // registration.php
+    <?php  include "includes/db.php"; ?>
+    <?php  include "includes/header.php"; ?>
+
+        <!-- Navigation -->
+        
+        <?php  include "includes/navigation.php"; ?>       
+    
+        <!-- Page Content -->
+        <div class="container">
+        
+    <section id="login">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-6 col-xs-offset-3">
+                    <div class="form-wrap">
+                    <h1>Register</h1>
+                        <form role="form" action="registration.php" method="post" id="login-form" autocomplete="off">
+                            <div class="form-group">
+                                <label for="username" class="sr-only">username</label>
+                                <input type="text" name="username" id="username" class="form-control" placeholder="Enter Desired Username">
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="sr-only">Email</label>
+                                <input type="email" name="email" id="email" class="form-control" placeholder="somebody@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="sr-only">Password</label>
+                                <input type="password" name="password" id="key" class="form-control" placeholder="Password">
+                            </div>
+                    
+                            <input type="submit" name="submit" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Register">
+                        </form>
+                    
+                    </div>
+                </div> <!-- /.col-xs-12 -->
+            </div> <!-- /.row -->
+        </div> <!-- /.container -->
+    </section>
+
+            <hr>
+
+    <?php include "includes/footer.php";?>
+    ```
 
 ### Testing Registration Form
-
 ### Extracting Form Values and Escaping
-
 ### Starting Query and Default Tables Values
-
 ### Fetching our Database for Default Values
-
 ### Registering Users
-
 ### Validating Fields
+1. We can look up the secuirty section or go visit on [PHP](https://www.php.net/manual/en/function.crypt.php). In this case, we use blowfish method to encrypt user password which requires 22 character as the "**salt**". Besides, we need to go to the database to give default value to `randSalt`. In this case, we set `$2y$10$iusesomecrazystrings22`. 
+    <img src="./images/updateDefaultValueRandSalt.PNG">
+1. We put query string to insert the new registered account into data. Note that here's a problem that the new account is not logged and the session is not updated. So here is actually no difference with the add user page in admin yet. Besides, there's no validation to the value that if we submit empty data, this will create a new user with empty string in the database.
+1. We put some validation methods with `IF` statement. 
+    ```php
+    if(isset($_POST['submit'])){
+        $username = mysqli_real_escape_string($connection, $_POST['username']);
+        $email = mysqli_real_escape_string($connection, $_POST['email']);
+        $password = mysqli_real_escape_string($connection, $_POST['password']);
+
+        if(!empty($username) && !empty($email) && !empty($password)) {
+            $query = "SELECT randSalt from users";
+            $select_randsalt_query = mysqli_query($connection, $query);
+            
+            if(!$select_randsalt_query) {
+                die("QUERY FAILED " . mysqli_error($connection));
+            }
+            
+            $row = mysqli_fetch_array($select_randsalt_query);
+            
+            $salt = $row['randSalt'];
+            
+            $query = "INSERT INTO users (username, user_email, user_password, user_role) ";
+            $query .= "VALUES('{$username}', '{$email}', '{$password}', 'subscriber') ";
+            $register_user_query = mysqli_query($connection, $query);
+            if (!$register_user_query) {
+                die("QUERY FAILED " . mysqli_error($connection));
+            }
+
+            $message = "Your account is registered.";
+
+        } else {
+            $message = "Fields cannot be empty!";
+        }
+    } else {
+        $message = "";
+    }
+    ``` 
 
 ### Encrypting User Passwords
+1. We can use `crypt()` and add salt to encrypt the password.
+    ```php
+    $row = mysqli_fetch_array($select_randsalt_query);
+    $salt = $row['randSalt'];
+    $password = crypt($password, $salt);
+    ```
 
 ### Updating Our CMS due to Password Field
+1. Since we encrypt the password with hashing method, we must adjust the login function and transfer user password to our encrypting method to allow users to login. We can use `crypt()` function with the password from the database, so it will be return to be the password that the user gives, so the program can allow validate the user and allow the user to login.
+1. However, the accounts that we create before hashing can't be converted directly. We can either update the password manually after they are hashed or use PHP logic to avoid encrypting the accounts.
+1. In addition, in edit account, we haven't updated the method to encrypt the new given password, so the program will still store the direct input from the user. 
+    ```php
+    // includes/login.php
+    $password = crypt($password, $db_user_password);
+
+    // encrypt the password
+    $saltFormat = "$2y$10$";
+    $salt = "iusesomecrazystrings22";
+    $password = crypt("password", $saltFormat.$salt);
+    ```
+
+### User Page Display Shorter Password Field
+1. This section is to ensure the new given password to update a user account will be encrypted. 
+    ```php
+    // admin/includes/editUser.php
+    $query = "SELECT randSalt FROM users";
+    $select_randsalt_query = mysqli_query($connection, $query);
+    confirmQuery($select_randsalt_query);
+    $row = mysqli_fetch_array($select_randsalt_query);
+    $salt = $row['randSalt'];
+    $user_password = crypt($user_password, $salt); // update this to database
+    ```
 
 ### User Page Dropdown Default Value Change
+1. This part just use PHP to render dynamic value from the database. 
+    ```php
+    // admin/includes/editUser.php    
+    <div class="form-group">
+        <label for="post_category">Role</label>
+        <br>
+        <select name="user_role">
+            <option value="<?php echo $user_role;?>"><?php echo $user_role;?></option>
+            <?php 
+                if ($user_role === 'admin') {
+                    echo "<option value='subscriber'>subscriber</option>";
+                } else {
+                    echo "<option value='admin'>admin</option>";
+                }
+            ?>
+        </select>
+    </div>
+    ```
 
 ### PHP and JavaScript Confirm Before Action
+1. This is to provide a double confirm with JavaScript to ensure the user really wants to take certain action such as deleting a post or user. In this case, we use `onClick` attribute in anchor tag and use `confirm` function to check if the user really wants to proceed.
+1. Besides the posts, we can add this to `viewAllUsers.php`, `viewAllComments.php`, and `admin/functions.php` to ensure the user really wants to delete the instance from the database.
+    ```php
+    // viewAllPosts.php
+    echo "<td><a onClick=\"javascript: return confirm('Are you sure you want to delete?');\" href='posts.php?delete=$postId'>Delete</a></td>";
+    ```
 
 ### Get Your Certificate
-
 ### Wrapping this up! (IMPORTANT)
-
 ### Make Your Feature Requests Here
+1. This is just about how to get the certificate from Udemy.
+
 
 
 
