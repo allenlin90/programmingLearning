@@ -4703,16 +4703,172 @@ End:
 
 # CMS - Extra Features - Author related Posts
 ### Relating Posts to Their Authors Part 1
+1. This feature will allow users to click on the name of the author and check all the posts from the same author on the website.
+1. We modify the anchor tag on the author of a post.
+    ```html
+    <!-- index.php -->
+    <p class="lead">
+        by <a href="authorPosts.php?author=<?php echo $postAuthor;?>&p_id=<?php echo $post_id;?>"><?php echo $postAuthor;?></a>
+    </p>
+    ```
 
 ### Relating Posts to Their Authors Part 2
+1. We copy and create a new file `authorPosts.php` for the new feature which query all the posts of an author. 
+    ```php
+    // authorPosts.php
+    <?php include "includes/db.php";?>
+    <?php include "includes/header.php";?>
+    <!-- Navigation -->
+    <?php include "includes/navigation.php";?>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Blog Entries Column -->
+            <div class="col-md-8">
+
+                <?php                
+                    if(isset($_GET['p_id'])) {
+                        $postId = $_GET['p_id'];
+                        $post_author = $_GET['author'];
+                    }
+
+                    $query = "SELECT * FROM posts WHERE post_author = '{$post_author}' ";
+
+                    $selectAllPostsQuery = mysqli_query($connection, $query);
+
+                    while($row = mysqli_fetch_assoc($selectAllPostsQuery)) {
+                        $post_id = $row['post_id'];
+                        $postTitle = $row['post_title'];
+                        $postAuthor = $row['post_author'];
+                        $postDate = $row['post_date'];
+                        $postImage = $row['post_image'];
+                        $postContent = $row['post_content'];
+                ?>            
+
+                <h1 class="page-header">
+                    Page Heading
+                    <small>Secondary Text</small>
+                </h1>
+
+                <!-- First Blog Post -->
+                <h2>
+                    <a href="post.php?p_id=<?php echo $post_id;?>"><?php echo $postTitle;?></a>
+                </h2>
+                <p class="lead">
+                    by <a href="index.php"><?php echo $postAuthor;?></a>
+                </p>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate;?></p>
+                <hr>
+                <img class="img-responsive" src="images/<?php echo $postImage;?>" alt="">
+                <hr>
+                <p><?php echo $postContent;?></p>
+
+                <br>
+
+                <?php }?>
+            </div>
+
+            <!-- Blog Sidebar Widgets Column -->
+            <?php include "includes/sidebar.php";?>
+
+        </div>
+        <!-- /.row -->
+
+        <hr>
+        <!-- footer -->
+        <?php include "includes/footer.php";?>
+    ```
 
 ### Cloning Posts NEW Feature
+1. This is extension on the bulk udpate option on `viewAllPosts.php`. We current has 3 options and will add another one `clone` which is used to allow users to duplicate singel or multiple posts at the same time. 
+1. As user may have single quote in the post contents, we need to use `mysqli_escape_string()` to escape the special characters in the content. 
+    ```php
+    // viewAllPosts.php
+    case 'clone':
+        $query = "SELECT * FROM posts WHERE post_id = $postValueId ";
+        $select_post_query = mysqli_query($connection, $query);
+        while ($row = mysqli_fetch_assoc($select_post_query)) {
+            $post_author = $row['post_author'];
+            $post_title = $row['post_title'];
+            $post_category_id = $row['post_category_id'];
+            $post_status = $row['post_status'];
+            $post_image = $row['post_image'];
+            $post_tags = $row['post_tags'];
+            $post_content = mysqli_escape_string($connectoin, $row['post_content']);
+            $post_date = $row['post_date'];
+        }
+        
+        $query = "INSERT INTO posts(post_author, post_title, post_category_id, post_status, post_image, post_tags, post_content, post_date) ";
+        $query .= "VALUES('{$post_author}', '{$post_title}', $post_category_id, '{$post_status}', '{$post_image}', '{$post_tags}', '{$post_content}', '{$post_date}') ";
+
+        $copy_query = mysqli_query($connection, $query);
+        if(!$copy_query) {
+            die("QUERY FAILED " . mysqli_error($connection));
+        }
+
+        break;
+    ```
+1. In addition, we can modify the query string to have an descending order to render the table with the latest post on the top and the oldest at the bottom in the table.
+    ```sql
+    SELECT * FROM posts ORDER BY post_id DESC
+    ```
 
 ### Adding a LOADER to CMS Admin
+1. This is using ajax and have a circle image to rotate during tranmitting between pages.
+1. We create a new style sheet `styles.css` in `admin/css` folder. Note that we should include this CSS sheet in `admin/header.php` as well. 
+1. Note that we should be aware of the file path. In this case, it should be `../../images/[image.png]`
+    ```css
+    /* background of the animation */
+    #load-screen {
+        background: url(../../images/header-back.png);
+        position: fixed;
+        z-index: 10000;
+        top:0px;
+        width: 100%;
+        height: 1600px;
+    }
+    
+    /* the animation itself */
+    #loading {   
+        width: 500px;
+        height: 500px;
+        margin: 10% auto;
+        background: url(../../images/loader.gif);
+        background-size: 40%;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    ```
+1. We can use jQuery method `.prepend()` to put new elements right before the `<body>` element and use `.delay()` and `.fadeOut()` to create animated effects for page transmission.
+    ```js
+    // admin/includes/scripts.js
+    const div_box = "<div id='load-screen'><div id='loading'></div></div>";
+    $('body').prepend(div_box);
+    $('#load-screen').delay(700).fadeOut(600, function () {
+        $(this).remove();
+    });
+    ```
+    <img src="./images/pageLoaderAnimation.gif">
 
 ### Adding Views Functionality to Posts
+1. We can add an extra column to collect number of views of a certain post. In this case, we can go to database and add a new column `post_view_count` which is an INT with length at `11`.
+    ```php
+    // post.php
+    $view_query = "UPDATE posts SET post_view_count = post_view_count + 1 WHERE post_id = $postId";
+    $send_query = mysqli_query($connection, $view_query);
+    ```
+1. We then update `viewAllPosts.php` to render the data from the database as well. 
+    ```php
+    // admin/includes/viewAllPosts.php
+    $postViewCount = $row['post_view_count'];
+    echo "<td>{$postViewCount}</td>";
+    ```
 
 ### Reseting Views Feature
+
 
 
 

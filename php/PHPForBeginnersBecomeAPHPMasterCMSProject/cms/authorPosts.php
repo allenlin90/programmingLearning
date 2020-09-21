@@ -11,8 +11,13 @@
         <!-- Blog Entries Column -->
         <div class="col-md-8">
 
-            <?php
-                $query = "SELECT * FROM posts ";
+            <?php                
+                if(isset($_GET['p_id'])) {
+                    $postId = $_GET['p_id'];
+                    $post_author = $_GET['author'];
+                }
+
+                $query = "SELECT * FROM posts WHERE post_author = '{$post_author}' ";
 
                 $selectAllPostsQuery = mysqli_query($connection, $query);
 
@@ -22,11 +27,8 @@
                     $postAuthor = $row['post_author'];
                     $postDate = $row['post_date'];
                     $postImage = $row['post_image'];
-                    $postContent = substr($row['post_content'], 0, 50);
-                    $postStatus = $row['post_status'];
-                    
-                    if ($postStatus === 'published') {
-            ?>
+                    $postContent = $row['post_content'];
+            ?>            
 
             <h1 class="page-header">
                 Page Heading
@@ -38,24 +40,18 @@
                 <a href="post.php?p_id=<?php echo $post_id;?>"><?php echo $postTitle;?></a>
             </h2>
             <p class="lead">
-                by <a href="authorPosts.php?author=<?php echo $postAuthor;?>&p_id=<?php echo $post_id;?>"><?php echo $postAuthor;?></a>
+                All posts by <?php echo $postAuthor;?>
             </p>
             <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate;?></p>
             <hr>
-            <a href="post.php?p_id=<?php echo $post_id;?>">
-            <img class="img-responsive" src="images/<?php echo $postImage;?>" alt="image">
-            </a>
+            <img class="img-responsive" src="images/<?php echo $postImage;?>" alt="">
             <hr>
             <p><?php echo $postContent;?></p>
-            <a class="btn btn-primary" href="post.php?p_id=<?php echo $post_id;?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
 
-            <hr>
+            <br>
 
-            <?php 
-            }}?>
+            <?php }?>
         </div>
-        
-        <hr>
 
         <!-- Blog Sidebar Widgets Column -->
         <?php include "includes/sidebar.php";?>

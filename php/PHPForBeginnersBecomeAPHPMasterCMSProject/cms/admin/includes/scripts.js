@@ -8,11 +8,19 @@ $(document).ready(function () {
             });
     }
 
+    // select all checkboxes on posts
     $('#selectAllBoxes').change(function () {
         if (this.checked) {
             $('.checkBoxes').prop('checked', true);
         } else {
             $('.checkBoxes').prop('checked', false);
         }
+    });
+
+    // run page transfer animation
+    const div_box = "<div id='load-screen'><div id='loading'></div></div>";
+    $('body').prepend(div_box);
+    $('#load-screen').delay(700).fadeOut(600, function () {
+        $(this).remove();
     });
 })
