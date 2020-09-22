@@ -1,4 +1,6 @@
-# Install MySQL and database on WSL
+# Install Laravel framework
+
+# Install MySQL and phpMyAdmin on WSL
 ### Reference
 1. Instruction from [FreeCodeCamp](https://www.freecodecamp.org/news/setup-a-php-development-environment-on-windows-subsystem-for-linux-wsl-9193ff28ae83/)
 1. Instruction on [Medium](https://medium.com/@harshityadav95/installing-mysql-in-ubuntu-linux-windows-subsystem-for-linux-from-scratch-d5771a4a2496)
