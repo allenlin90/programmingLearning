@@ -4961,19 +4961,123 @@ End:
     ```
 
 
+
 # CMS - Extra Feature - Users ONLINE
 ### Creating the User Online Table and Setup
+1. This section it about creating a function to show how many users are online, so web admin can check the number on the admin page. 
+1. We create a new table `users_online` in CMS.
+    1. `id` is the primary key as INT.
+    1. `session` is VACHAR with length at `255`. 
+    1. `time` is INT with length at `11`. This is number of times of this `id` and `session` that visits the website rather than the timestamp. 
 
 ### Creating the PHP Code and Queries
-
 ### Displaying Users Online
+1. We can use PHP function `session_id()` and `time()` to check the session id and timestamp when the user logged in. We give another variable `$time_out_in_seconds` to check if a user have been at the page for certain duration. For example, we can set it as `300`, which means the user will be "**timeout**" after staying at the page without any action but just being idle. Therefore, we can check how many users are active on the page.
+    ```php
+    // admin/index.php
+    $session = session_id();
+    $time = time();
+    $time_out_in_seconds = 30; // this feature takes active users who has just logged in in the last 30 seconds
+    $time_out = $time - $time_out_in_seconds;
+
+    $query = "SELECT * FROM users_online WHERE session = '{$session}'";
+    $send_query = mysqli_query($connection, $query);
+    $count = mysqli_num_rows($send_query);
+
+    // check if the user has logged in
+    if($count === 0) {
+        mysqli_query($connection, "INSERT INTO users_online(session, time) VALUES('{$session}', '{$time}') ");
+    } else {
+        mysqli_query($connection, "UPDATE users_online SET time = '$time' WHERE session = '{$session}' ");
+    }
+
+    // check other active user on the site.
+    $users_online_query = mysqli_query($connection, "SELECT * FROM users_online WHERE time > '$time_out' ");
+    $count_user = mysqli_num_rows($users_online_query);
+    ```
 
 ### Displaying Users Online in Navigation
+1. We can put the code into `functions.php` to model the code. Besides, we can create a new `<li>` element in `admin/includes/navigation.php`.
+    ```php
+    // admin/functions.php
+    function users_online() {
+        global $connection;
+        $session = session_id();
+        $time = time();
+        $time_out_in_seconds = 30;
+        $time_out = $time - $time_out_in_seconds;
+
+        $query = "SELECT * FROM users_online WHERE session = '{$session}'";
+        $send_query = mysqli_query($connection, $query);
+        $count = mysqli_num_rows($send_query);
+
+        if($count === 0) {
+            mysqli_query($connection, "INSERT INTO users_online(session, time) VALUES('{$session}', '{$time}') ");
+        } else {
+            mysqli_query($connection, "UPDATE users_online SET time = '$time' WHERE session = '{$session}' ");
+        }
+
+        $users_online_query = mysqli_query($connection, "SELECT * FROM users_online WHERE time > '$time_out' ");
+        return $count_user = mysqli_num_rows($users_online_query);
+    }
+
+    // admin/includes/navigation.php
+    <li><a href="#">Users Online: <?php echo users_online();?></a></li>
+    ```
 
 ### Instant Users Online Count Without Refreshing Part 1
-
 ### Instant Users Online Count Without Refreshing Part 2
+1. The number of users is not updated when a users comes as the code is on the backend side. Therefore, we can use `ajax` to update the number directly. However, we need to modify the HTML element to enable jQuery to select the correct element. 
+    ```html
+    <!-- admin/includes/navigation -->
+    <li><a href="#">Users Online: <span class="usersonline"></span></a></li>
+    ```
+1. We use `.get()` method to send a GET request via jQuery. The return `data` can be set on the HTML element with `.text()` method. Besides, we can use `setInterval()` API to run the function every 0.5 second (or 500 ms). 
+    ```js
+    // admin/includes/scripts.js
+    function loadUsersOnline() {
+        $.get('functions.php?onlineusers=result', function (data) {
+            $('.usersonline').text(data);
+        });
 
+    }
+    setInterval(function () {
+        loadUsersOnline();
+    }, 500);
+    ```
+1. Note that this PHP script doesn't include and connect to the database through `db.php`, so we can check if the `$connection` is ready. Besides, this will be the page that AJAX send GET request to, so we should use `echo` to print out the result rather than use `return`, as JavaScript can't receive data returned by PHP script. 
+1. This solution is similar to create a local API endpoint with PHP, generate data for the front, and use AJAX at the front to parse the data and use it. 
+    ```php
+    // admin/functions
+    function users_online() {
+        if(isset($_GET['onlineusers'])){
+            global $connection;
+            if(!$connection) {
+                session_start();
+                include("../includes/db.php");
+
+                $session = session_id();
+                $time = time();
+                $time_out_in_seconds = 600;
+                $time_out = $time - $time_out_in_seconds;
+
+                $query = "SELECT * FROM users_online WHERE session = '{$session}'";
+                $send_query = mysqli_query($connection, $query);
+                $count = mysqli_num_rows($send_query);
+
+                if($count === 0) {
+                    mysqli_query($connection, "INSERT INTO users_online(session, time) VALUES('{$session}', '{$time}') ");
+                } else {
+                    mysqli_query($connection, "UPDATE users_online SET time = '$time' WHERE session = '{$session}' ");
+                }
+
+                $users_online_query = mysqli_query($connection, "SELECT * FROM users_online WHERE time > '$time_out' ");
+                echo $count_user = mysqli_num_rows($users_online_query);
+            }
+        }
+    }
+    users_online();
+    ```
 
 
 # CMS - Extra Feature - NEW Simple Password Encrypting and Login System
