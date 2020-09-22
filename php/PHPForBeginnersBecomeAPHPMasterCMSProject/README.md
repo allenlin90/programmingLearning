@@ -5080,18 +5080,99 @@ End:
     ```
 
 
+
 # CMS - Extra Feature - NEW Simple Password Encrypting and Login System
 ### Explanation of New Functionand Implementation
+1. This section is to update the login system.
+1. IF we use PHP version after 5.2, we can use [`password_hash()`](https://www.php.net/manual/en/function.password-hash.php) function to encrypt user passwrod instead of using `crypt()`.The function takes 3 parameters.
+    1. The password as string
+    1. The encrypting method
+    1. Options for the function. This is the number of times that the string will be hashed. The bigger the secure but takes much longer time as well. 
+    ```php
+    password_hash('password', PASSWORD_DEFAULT, array('cost' => 12));
+    password_hash('password', PASSWORD_BCRYPT, array('cost' => 12));
+    ```
+1. We can use `PASSWORD_BCRYPT` as the 2nd parameter to use the same `blowfish` algorithm to hash the password.
+1. Note that we have learnt how to hash but haven't learnt how to decrypt the password. 
+    ```php
+    if(isset($_POST['submit'])){
+        $username = mysqli_real_escape_string($connection, $_POST['username']);
+        $email = mysqli_real_escape_string($connection, $_POST['email']);
+        $password = mysqli_real_escape_string($connection, $_POST['password']);
+
+        if(!empty($username) && !empty($email) && !empty($password)) {
+            $password = password_hash($password, PASSWORD_BCRYPT, array('cost' => 12));
+            
+            $query = "INSERT INTO users (username, user_email, user_password, user_role) ";
+            $query .= "VALUES('{$username}', '{$email}', '{$password}', 'subscriber') ";
+            $register_user_query = mysqli_query($connection, $query);
+            if (!$register_user_query) {
+                die("QUERY FAILED " . mysqli_error($connection));
+            }
+
+            $message = "Your account is registered.";
+
+        } else {
+            $message = "Fields cannot be empty!";
+        }
+    } else {
+        $message = "";
+    }
+    ```
 
 ### Login in Users with New System
+1. In the `login.php`, we can use `password_verify` to check if the password and the hased password in the database can be verified. We change the `IF` statement to check the password. 
+1. Note that this function should be added to add user function in admin page as well. 
+    ```php
+    // includes/login.php
+    if (password_verify($password, $db_user_password)){}
+
+    // previous methods to decrypt the password and check
+    $password = crypt($password, $db_user_password);
+    if(!empty($username) && !empty($email) && !empty($password)){}
+    ```
 
 ### Adding New System to Add Users in Admin
+1. This is just the update to `addUser.php` in admin page. We need to use `password_hash()` function to encrypt the password when creating a new user account. Note that we can reduce the cost to 10. 
+    ```php
+    // admin/includes/addUser.php
+    $user_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 10));
+    ```
 
 ### Adding New Password System to Edit User Page Part 1
-
 ### Adding New Password System to Edit User Page Part 2
+1. We can add to check if new password is given to run the following code. If the given password is updated (not equal to what it was in the database), the password will be encrypted. Though this is the best solution, as the user may give wrong password and just add characters to the current password which is a hashed one. 
+    ```php
+    // admin/includes/editUser.php
+    if(!empty($user_password)){
+        $query_password = "SELECT user_password from users WHERE user_id = $userIdToEdit ";
+        $get_user = mysqli_query($connection, $query_password);
+        confirmQuery($get_user);
+        $row = mysqli_fetch_array($get_user);
+
+        $db_user_password = $row['user_password'];
+        
+        if($db_user_password !== $user_password) {
+            $user_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
+        }
+        $query = "UPDATE users SET ";
+        $query .= "username = '{$username}', ";
+        $query .= "user_password = '{$user_password}', ";
+        $query .= "user_firstname = '{$user_firstname}', ";
+        $query .= "user_lastname = '{$user_lastname}', ";
+        $query .= "user_email = '{$user_email}', ";
+        $query .= "user_role = '{$user_role}', ";
+        $query .= "user_image = '{$user_image}' ";
+        $query .= "WHERE user_id = {$userIdToEdit} ";
+
+        $updateQuery = mysqli_query($connection, $query);
+        confirmQuery($updateQuery);
+        header("Location: users.php");
+    }
+    ```
 
 ### Cleaning Up Edit User Page
+1. Note that since we use `empty()` function to check if new password is given, we can get rid of returning password value from database to the user, as if the user doesn't give any new value to the database. Besides, we can update the attribute `autocomplete` of an `<input>` tag to be `off`, so the browser won't ask the user to autofill the field. 
 
 
 

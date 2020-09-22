@@ -11,6 +11,9 @@
         $user_image_temp = $_FILES['image']['tmp_name'];
         move_uploaded_file($user_image_temp, "../images/$user_image");
 
+        // encrypt user password
+        $user_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 10));
+
         $query = "INSERT INTO users(username, user_password, user_firstname, user_lastname, user_email, user_role, user_image) ";
         $query .= "VALUES('{$username}', '{$user_password}', '{$user_firstname}', '{$user_lastname}', '{$user_email}','{$user_role}', '{$user_image}') ";
 

@@ -37,26 +37,39 @@
             }
         }
 
-        $query = "SELECT randSalt FROM users";
-        $select_randsalt_query = mysqli_query($connection, $query);
-        confirmQuery($select_randsalt_query);
-        $row = mysqli_fetch_array($select_randsalt_query);
-        $salt = $row['randSalt'];
-        $user_password = crypt($user_password, $salt);
+        // $query = "SELECT randSalt FROM users";
+        // $select_randsalt_query = mysqli_query($connection, $query);
+        // confirmQuery($select_randsalt_query);
+        // $row = mysqli_fetch_array($select_randsalt_query);
+        // $salt = $row['randSalt'];
+        // $user_password = crypt($user_password, $salt);
+        if(!empty($user_password)){
+            $query_password = "SELECT user_password from users WHERE user_id = $userIdToEdit ";
+            $get_user = mysqli_query($connection, $query_password);
+            confirmQuery($get_user);
+            $row = mysqli_fetch_array($get_user);
 
-        $query = "UPDATE users SET ";
-        $query .= "username = '{$username}', ";
-        $query .= "user_password = '{$user_password}', ";
-        $query .= "user_firstname = '{$user_firstname}', ";
-        $query .= "user_lastname = '{$user_lastname}', ";
-        $query .= "user_email = '{$user_email}', ";
-        $query .= "user_role = '{$user_role}', ";
-        $query .= "user_image = '{$user_image}' ";
-        $query .= "WHERE user_id = {$userIdToEdit} ";
+            $db_user_password = $row['user_password'];
+            
+            if($db_user_password !== $user_password) {
+                $user_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
+            }
+            $query = "UPDATE users SET ";
+            $query .= "username = '{$username}', ";
+            $query .= "user_password = '{$user_password}', ";
+            $query .= "user_firstname = '{$user_firstname}', ";
+            $query .= "user_lastname = '{$user_lastname}', ";
+            $query .= "user_email = '{$user_email}', ";
+            $query .= "user_role = '{$user_role}', ";
+            $query .= "user_image = '{$user_image}' ";
+            $query .= "WHERE user_id = {$userIdToEdit} ";
 
-        $updateQuery = mysqli_query($connection, $query);
-        confirmQuery($updateQuery);
-        header("Location: users.php");
+            $updateQuery = mysqli_query($connection, $query);
+            confirmQuery($updateQuery);
+            header("Location: users.php");
+        } else {
+            header("Location: index.php");
+        }
     }
 ?>
 
@@ -67,7 +80,7 @@
     </div>
     <div class="form-group">
         <label for="title">Password</label>
-        <input value="<?php echo $user_password;?>" type="password" class="form-control" name="user_password">
+        <input autocomplete="off" value="" type="password" class="form-control" name="user_password">
     </div>
     <div class="form-group">
         <label for="post_category">Role</label>
