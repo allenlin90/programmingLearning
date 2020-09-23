@@ -1,5 +1,17 @@
 # Install Laravel framework
 
+# Generate artisan app key
+1. `env` is the local file which is used to keep sensitive and secret key such as token or API key.
+1. Download `env` from server management page.
+1. Rename the file to `.env` (ensure it's in .gitignore) in the root directory.
+1. Run the following script to generate app key. Make sure the path is correct.
+    ```shell
+    php artisan key:generate
+    php artisan config:clear
+    php artisan cache:clear
+    ```
+1. Run XAMPP to start local server.
+
 # Install MySQL and phpMyAdmin on WSL
 ### Reference
 1. Instruction from [FreeCodeCamp](https://www.freecodecamp.org/news/setup-a-php-development-environment-on-windows-subsystem-for-linux-wsl-9193ff28ae83/)
