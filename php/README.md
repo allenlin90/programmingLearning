@@ -1,4 +1,5 @@
 # Install Laravel framework
+1. If composer can't download dependencies or JSON file correctly, we can run `composer config -g repo.packagist composer https://packagist.org` to change the global link of git for composer to download the master repo.
 
 # Generate artisan app key
 1. `env` is the local file which is used to keep sensitive and secret key such as token or API key.
