@@ -27,6 +27,7 @@
     # remove the installation package
     php -r "unlink('composer-setup.php');"
     ```
+1. We may need to change authorization to the composer folder by using `sudo chown 777 -R ~/.composer`, so composer can create cache and edit the JSON file for the dependency list.
 
 # Generate artisan app key
 1. `env` is the local file which is used to keep sensitive and secret key such as token or API key.
