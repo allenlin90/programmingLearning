@@ -61,6 +61,8 @@ End:
 1. When [installing Laravel](https://laravel.com/docs/7.x/installation#installing-laravel), we can direct the working directory to the folder that we want to create the project and use `composer create-project --prefer-dist laravel/laravel:^7.0 blog`. We have to ensure php and composer have been installed on the machine. Note that we can use "**GitBash**" to create a Laravel project on Windows machine.
 1. On the other hand, we may use `composer global require laravel/installer` to install Laravel globally on the machine, so we can simply use `laravel new [projectName]` to start a new Laravel project in any directory.
 1. If composer can't download the dependencies correctly, we can use `composer config -g repo.packagist composer https://packagist.org` to change the repo and try to create the project again.
+1. On the other hand, we may refer to [this post](https://dev.to/tylerwel/setting-up-laravel-and-react-in-wsl-1l42) to install Composer and Laravel in WSL, or check [the note](https://github.com/allenlin90/programmingLearning/tree/master/php).
+1. After the project is created, we MUST `cd` into the project directory and run `php artisan serve` to run a local server on `http://127.0.0.1:8000`.
 
 # MAC - Local Environment Setup
 1. This part is skipped

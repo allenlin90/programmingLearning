@@ -1,5 +1,32 @@
 # Install Laravel framework
+1. Ensure the followings are installed in WSL
+    1. PHP 7.2 
+    1. Apache2
+    1. Composer
+1. Ensure composer system-wide bin is in the path, so Laravel can use it to run install
+    1. macOS: `$HOME/.composer/vendor/bin`
+    1. Windows: `%USERPROFILE%\AppData\Roaming\Composer\vendor\bin`
+1. At the time of learning, Laravel 8.x is released, so we can use `composer create-project --prefer-dist laravel/laravel:^7.0 blog` to install Laravel 7.x. 
 1. If composer can't download dependencies or JSON file correctly, we can run `composer config -g repo.packagist composer https://packagist.org` to change the global link of git for composer to download the master repo.
+1. One way to install composer is to use `sudo apt-get install composer` directly.
+1. On the other hand, we may refer to [this post](https://dev.to/tylerwel/setting-up-laravel-and-react-in-wsl-1l42) to install Composer and Laravel in WSL. 
+    ```shell
+    # update all package on the machine
+    sudo apt update && sudo apt upgrade
+    # install apache2, git, and nodejs
+    sudo apt install apache2 curl openssl zip unzip git libonig-dev nodejs npm
+    # install php7.2
+    sudo apt install php7.2 libapache2-mod-php php-cli php-cgi php-mbstring php-zip php7.2-gd php-xml php7.2-sqlite
+    # install composer
+    # download install package
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    # check and verify the package if it's safe
+    php -r "if (hash_file('sha384', 'composer-setup.php') === 'e0012edf3e80b6978849f5eff0d4b4e4c79ff1609dd1e613307e16318854d24ae64f26d17af3ef0bf7cfb710ca74755a') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+    # install after verifying the package
+    php composer-setup.php --install-dir=~/.composer/vendor/bin/ --filename=composer
+    # remove the installation package
+    php -r "unlink('composer-setup.php');"
+    ```
 
 # Generate artisan app key
 1. `env` is the local file which is used to keep sensitive and secret key such as token or API key.
@@ -80,6 +107,8 @@
 ### Note
 1. There are 2 types of MySQL can be used on WSL, one is MariaDB, and the other is the version from Ubuntu repository. [https://unix.stackexchange.com/questions/561454/ubuntu-18-04-mysql-installation-error-error-dpkg-dependency-problems-prevent](https://unix.stackexchange.com/questions/561454/ubuntu-18-04-mysql-installation-error-error-dpkg-dependency-problems-prevent)
 1. Modify 2 files `/etc/apt/sources.list` and remove the file in `/etc/apt/sources.list.d/` folder of repository from MariaDB.
+
+### Reference
 1. Handling errors of installing MySQL [https://blog.csdn.net/weixin_43530726/article/details/91303898](https://blog.csdn.net/weixin_43530726/article/details/91303898)
 1. Can't find PHPMyAdmin at localhost [https://stackoverflow.com/questions/26891721/phpmyadmin-not-found-after-install-on-apache-ubuntu](https://stackoverflow.com/questions/26891721/phpmyadmin-not-found-after-install-on-apache-ubuntu)
 1. How to set up PHPMyAdmin [https://www.how2shout.com/how-to/how-to-install-apache-mysql-php-phpmyadmin-on-windows-10-wsl.html](https://www.how2shout.com/how-to/how-to-install-apache-mysql-php-phpmyadmin-on-windows-10-wsl.html)
