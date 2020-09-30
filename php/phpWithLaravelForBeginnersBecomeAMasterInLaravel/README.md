@@ -135,6 +135,141 @@ End:
 
 
 # Laravel Fundamentals - Controllers
+### Creating Controllers
+1. The controllers are stored in `./app/Http/Controllers` by default. We can create sub directory in the folder to categorize and manage the controllers.
+1. In this case, we have 2 keywords `namepsace` and `use` to be used to manipulate the controllers. 
+1. `namespace` is used to separate the functions if they have the same name. For exmaple, we may have `query` function in multiple controllers and files, so we can use `namespace` to separate them.
+1. `use` is used to import certain "Class" which file is declared by `namespace`. 
+1. Note that as the controllers to be created here are "**Classes**". We can name the classes with camelCase while keep the first letter in capital. We can create a new controller by simply creating a new PHP file with a proper name in the directory. Besides, at the project directory, we may also use `php artisan make:controller [ControllerName]` to create a controller in the terminal. 
+    ```php
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+
+    class PostsController extends Controller
+    {
+        //
+    }
+    ```
+1. In addition, we can add on `--resource` so that Laravel with creat a new controller that has CRUD (create, remove, update, and delete) methods to manipulate with the database. The whole command will be `php artisan make:controller --resource PostsController`
+    ```php
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+
+    class PostsController extends Controller
+    {
+        /**
+        * Display a listing of the resource.
+        *
+        * @return \Illuminate\Http\Response
+        */
+        public function index()
+        {
+            //
+        }
+
+        /**
+        * Show the form for creating a new resource.
+        *
+        * @return \Illuminate\Http\Response
+        */
+        public function create()
+        {
+            //
+        }
+
+        /**
+        * Store a newly created resource in storage.
+        *
+        * @param  \Illuminate\Http\Request  $request
+        * @return \Illuminate\Http\Response
+        */
+        public function store(Request $request)
+        {
+            //
+        }
+
+        /**
+        * Display the specified resource.
+        *
+        * @param  int  $id
+        * @return \Illuminate\Http\Response
+        */
+        public function show($id)
+        {
+            //
+        }
+
+        /**
+        * Show the form for editing the specified resource.
+        *
+        * @param  int  $id
+        * @return \Illuminate\Http\Response
+        */
+        public function edit($id)
+        {
+            //
+        }
+
+        /**
+        * Update the specified resource in storage.
+        *
+        * @param  \Illuminate\Http\Request  $request
+        * @param  int  $id
+        * @return \Illuminate\Http\Response
+        */
+        public function update(Request $request, $id)
+        {
+            //
+        }
+
+        /**
+        * Remove the specified resource from storage.
+        *
+        * @param  int  $id
+        * @return \Illuminate\Http\Response
+        */
+        public function destroy($id)
+        {
+            //
+        }
+    }
+    ```
+
+### Routing Controllers
+1. Note that since Laravel 8, the route must be given in the whole Windows style path (with backslash `\` for the path). For example, we should put the controller path as `\App\Http\Controller\[ControllerFile@function]`.
+1. However, this is not required in Laravel 7. For example, we create a `./app/Http/Controller/PostsController.php` with `php artisan make:controller --resource PostsController`. We then can set up a route and include and use the controller. Note that the controller file must be in the default directory, which is `./app/Http.Controller/`.
+    ```php
+    Route::get('/post', 'PostsController@index');
+    ```
+
+### Passing data
+1. We can pass parameters through URL and modify the controller to parse it. 
+    ```php
+    // routes/web.php
+    Route::get('/post/{id}', 'PostsController@index');
+
+    // ./app/Http/Controller/PostsController
+    class PostsController extends Controller {
+        public function index($id) {
+            return "It's working " . $id;
+        }
+    }
+    ```
+
+### Resources and Controllers
+1. Besides regualr methods, we can use `resource` which will create path for the methods according to the controller automatically. We therefore can look up the routes and methods and edit the methods of `PostsController` class accordingly. We can use `php artisan route:list` to check available routes in the program.
+    1. `http://losthost:8000/posts/create`
+    1. `http://losthost:8000/posts/id`
+    ```php
+    // ./routes/web.php
+    Route::resource('posts', 'PostsController');
+    ```
+    <img src="artisanRouteList2.PNG">
+
+
+
 # Laravel Fundamentals - Views
 # Laravel Fundamentals - Laravel Blade Templating Engine
 # Laravel Fundamentals - Database - Laravel Migration
