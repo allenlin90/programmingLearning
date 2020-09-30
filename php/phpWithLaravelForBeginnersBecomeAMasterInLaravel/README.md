@@ -68,6 +68,8 @@ End:
 1. This part is skipped
 
 # Laravel Fundamentals - Routes
+1. We can set up `homestead` or `valet` depending on requirements. Both of those provide simulated environment for developing purpose. Note that `valet` is only available for Mac or Linux users.
+
 # Laravel Fundamentals - Controllers
 # Laravel Fundamentals - Views
 # Laravel Fundamentals - Laravel Blade Templating Engine
