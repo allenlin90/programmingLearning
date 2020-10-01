@@ -271,7 +271,63 @@ End:
 
 
 # Laravel Fundamentals - Views
+### Creating Views and Custom Method
+1. Views are the files that presents the front and image that users interact with. The files are stored at `./resources/views`. Note that all the files should be named `[fileName.blade.php]`.
+1. In a `.blade.php` file, we can use double curly braces `{{$variable}}` to `echo` a PHP variable. 
+1. `blade` is the template rendering system that Laravel used. This is similar to `hbs` or `ejs` in JavaScript framework that is used to generate HTML pages.
+    ```php
+    // ./routes/web.php
+    Route::get('/contact', 'PostsController@show_my_view');
+
+    // ./app/Http/Controllers/PostsControllers.php
+    public function show_my_view() {
+        return view('pages/contact');
+    }
+
+    // resources/views/pages/contact.blade.php
+    <body>
+        <?php $var = 'Contact';?>
+        <h1>{{$var}} Page</h1>
+    </body>
+    ```
+
+### Passing Data to Views
+1. We can put parameters in the URL and pass it to the view page. 
+1. A `view` function used in controller is with a `with` method that can pass the argument sent through the function. `with` method takes first argument as the name of the variable, and the 2nd is the argument from the function.
+1. In the `blade` tempalte, we can use double cruly braces to manipulate the variable.
+    ```php
+    // ./routes/web.php
+    Route::get('/post/{id}', 'PostsController@show_post');
+
+    // ./Http/Controllers/PostsController.php
+    public function show_post($id, $username){
+        return view('pages/post')->with('id', $id);
+    }
+
+    // ./resources/views/pages/post.blade.php
+    <h1>Post {{$id}}</h1>
+    ```
+1. In addition, we can use `compact` function as the 2nd argument in `view` function. With `compact` function, we can pass the name for the variable directly, and we can pass it to the view file.
+    ```php
+    // ./Http/Controllers/PostsController.php
+    public function show_post($id, $username){
+        return view('pages/post', compact('id', 'username'));
+    }
+
+    // ./resources/views/pages/post.blade.php
+    <h1>Post {{$id}} From {{$username}}</h1>
+    ```
+    <img src="./images/passVariablesFromURL.PNG">
+
+
+
 # Laravel Fundamentals - Laravel Blade Templating Engine
+### Master Layout Setup
+
+
+### Some More Blade Features 
+
+
 # Laravel Fundamentals - Database - Laravel Migration
 # Laravel Fundamentals - Raw SQL Queries
 # Laravel Fundamentals - Database - Eloquent/ORM
