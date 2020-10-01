@@ -323,9 +323,85 @@ End:
 
 # Laravel Fundamentals - Laravel Blade Templating Engine
 ### Master Layout Setup
+1. If we have a main layout or HTML elements for the website, such as the navigation that can be used on every page, we can keep the layout and styling in a separated file. For example, we can create `app.blade.php` in `layout` folder in the `views` directory.
+1. In `app.blade.php`, we can use `@yield()` to create the section on the page. In the pages in `views`, we can use `@section()` to import the section that will be applied to the layout.
+    ```php
+    // ./resources/views/layout/app.blade.php
+    <div class="container">
+    
+        @yield('content')
 
+    </div>
+
+    @yield('footer')
+    ```
+1. We then can update `contact.blade.php` with the template. We can use `@extends` to use the templated layout. 
+    ```php
+    // ./resources/views/pages/contact.blade.php
+    @extends('layouts.app')
+
+    @section('content')
+
+        <h1>Contact Page</h1>
+
+    @stop
+    ```
+1. We can use different `@yields` and `@section` on the page to include different parts on the page. For example, we have JavaScript code in `post.blade.php` but not in `contact.blade.php`.
+    ```php
+    // ./resources/views/pages/post.blade.php
+    @extends('layouts.app')
+
+    @section('content')
+
+        <h1>Post {{$id}} from {{$username}}</h1>
+
+    @stop
+
+    @section('footer')
+
+        <script>
+            alert('Hello World');
+        </script>
+
+    @stop
+    ```
 
 ### Some More Blade Features 
+1. We can not only use `@yield` and `@section` in the blade templating system but also `@if` and `@foreach` or other PHP statements. Note that we should use `@endif` or `@endforeach` to close the statement. For example, we can pass an array in the controller. Therefore, we can use `foreach` loop to iterate through the array and render all the elements as in the list.
+    ```php
+    // ./routes/web.php
+    Route::get('/contact', 'PostsController@contact');
+
+    // ./app/Http/Controller/PostsController.php
+    public function contact(){
+        $people = ['Edwin', 'Jose', 'James', 'Peter', 'Maria'];
+
+        return view('pages/contact', compact('people'));
+    }
+
+    // ./resources/views/pages/contact.blade.php
+    @extends('layouts.app')
+
+    @section('content')
+
+        <h1>Contact Page</h1>
+
+        @if (count($people))
+            <ul>
+            @foreach($people as $person)
+                <li>{{$person}}</li>
+            @endforeach
+            </ul>
+        @endif
+
+    @stop
+
+    @section('footer')
+
+    @stop
+    ```
+    <img src="./images/bladeTemplating.PNG">
+
 
 
 # Laravel Fundamentals - Database - Laravel Migration
