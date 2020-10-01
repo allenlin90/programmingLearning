@@ -405,46 +405,200 @@ End:
 
 
 # Laravel Fundamentals - Database - Laravel Migration
+### Environment Configurations
+1. This section is introducing about `.env` in the root directory and some of the environment variables will be imported into `config/database.php`, so we can make connection to the database.
+1. We have multiple ways to interact with different database systems. For example, we can use `sqlite` which creates `.sqlite` files that contains data. We may also connect to `mysql` or `pgsql`.
+
+### Migrations in OS
+1. Note that before making connection to db, we must ensure `apache2` and `mysql` is running in the background either in the terminal or through xampp.
+1. In `.env`, we can change the value of `DB_DATABASE` to the database we create in MySQL. For example, we can create a new database for the new CMS system in Laravel.
+    ```
+    .env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=new_cms
+    DB_USERNAME=root
+    DB_PASSWORD=[password]
+    ```
+1. In the project directory, we can use `php artisan migrate` to migrate the database with the application. We can also run `php artisan` to check all the commands that `artisan` can perform. For example, if we look into the `migrate` section, we can find there's `php artisan migrate:refresh`.
+1. The tables created follow the code and schema set in `./database/migration/`. In this case, the tables are created by `2014_10_12_000000_create_users_table.php` and other files in `./database/migration/`. We can go to check on [laravel.com](https://laravel.com/docs/5.0/schema) for more information about using schema to build the table.
+
+### Creating Migrations and Dropping them 
+
+
+### Adding Columns to Existing Tables Using Migrations
+
+
+### Some More Migration Commands
+
+
 # Laravel Fundamentals - Raw SQL Queries
+
+
+
 # Laravel Fundamentals - Database - Eloquent/ORM
+
+
+
 # Laravel Fundamentals - Database - Eloquent Relationship
+
+
+
 # Laravel Fundamentals - Database - Tinker
+
+
+
 # Database - Eloquent One to One Relationship CRUD
+
+
+
 # Database - Eloquent One to Many Relationship CRUD
+
+
+
 # Database - Eloquent Many to Many Relationship CRUD
+
+
+
 # Database - Eloquent Polymorphic Relationship CRUD
+
+
+
 # Database - Eloquent Polymorphic Many to Many Relationship CRUD
+
+
+
 # Forms and Validation
+
+
+
 # Forms - Package and Validation
+
+
+
 # Database - Some More Model Manipulation
+
+
+
 # Forms - Uploading Files
+
+
+
 # Forms - Login
+
+
+
 # Middleware - Security/Protection
+
+
+
 # Laravel Sessions
+
+
+
 # Laravel - Sending Email/API
+
+
+
 # Git and Github - Version Control
+
+
+
 # New - Laravel 7 - Front-End
+
+
+
 # Laravel Data Seeding
+
+
+
 # New - Laravel Components
+
+
+
 # New Application - Laravel 7
+
+
+
 # New Application - Laravel 7 - Roles and Permissions - Migrations & Relationships
+
+
+
 # New Application - Laravel 7 - Admin Users
+
+
+
 # New Application - Laravel 7 - User Profile Roles
+
+
+
 # New Application - Laravel 7 - Permissions & Roles - CRUD
+
+
+
 # Application - Legacy Version 5.2
+
+
+
 # Application - Posts - Legacy Version 5.2
+
+
+
 # Application - Categories - Legacy Version 5.2
+
+
+
 # Application - Media - Legacy Version 5.2
+
+
+
 # Application - Comments - Legacy Version 5.2
+
+
+
 # Extra Features - Legacy Version 5.2
+
+
+
 # Upgrade to Laravel 5.3
+
+
+
 # Extra Feature - WYSIWYG and File Management Installation
+
+
+
 # Extra Feature - Disqus Comment System
+
+
+
 # Extra Feature - Bulk Media Delete
+
+
+
 # Extra Feature: Deploying Our App to a Shared Hosting Account
+
+
+
 # Upgrade to Laravel 5.4
+
+
+
 # Upgrade to Laravel 5.5
+
+
+
 # Extra - Adjustments And More Features
+
+
+
 # Upgrade to Laravel 5.6
+
+
+
 # Upgrade from 5.6 to 5.7 & 5.7 to 5.8
+
+
+
 # Upgrade from 5.8 to 6.0
