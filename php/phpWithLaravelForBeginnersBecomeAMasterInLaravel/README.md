@@ -510,7 +510,49 @@ End:
 1. On the other hand, if we run `php artisan migrate:reset` which rolls back all the migrations we have made, the status will be `NO` when we use `php artisan migrate:status`.
 
 
+
 # Laravel Fundamentals - Raw SQL Queries
+### Inserting Data
+1. We can create a route that create data in the database. In the following example, if the user visit path at `/insert`, the program will create a new input with `title` as `PHP with Laravel` and `content` as `Laravel is PHP framework` in the database.
+    ```php
+    // ./routes/web.php
+    Route::get('/insert', function(){
+        DB::insert('insert into posts(title, content) values(?, ?)', ['PHP with Laravel', 'Laravel is PHP framework']);
+    });
+    ```
+
+### Reading Data
+1. We can use `DB::select` as `SELECT` in SQL to retrieve data from database. Note that as using `insert` we have to put placeholder for the input, such as question mark `?` in the query string. Note that `DB::select` returns an array of results parsed from the database. Therefore, we can use `foreach` to loop through each element or `var_dump` to read the results from the database.
+    ```php
+    // ./routes/web.php
+    Route::get('/read', function(){
+        $results = DB::select('select * from posts where id = ?', [1]);
+        return var_dump($results);
+        // foreach($results as $post) {
+        //     return $post->title;
+        // }
+    });
+    ```
+
+### Updating Data
+1. We can use `update` function to update the data of an exsiting item in the database. Note that the function will return the value.
+    ```php
+    // ./routes/web.php
+    Route::get('/update', function(){
+        $updated = DB::update('update posts set title = "Laravel 7.x" where id = ?', [1]);
+        return $updated;
+    });
+    ```
+
+### Deleting Data
+1. Similar to other CRUD methods, we can use `delete` to remove an instance from the database.
+    ```php
+    // ./routes/web.php
+    Route::get('/delete', function(){
+        $deleted = DB::delete('delete from posts where id = ?', [1]);
+        return $deleted;
+    });
+    ```
 
 
 
