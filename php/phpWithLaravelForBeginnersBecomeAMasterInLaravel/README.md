@@ -407,6 +407,7 @@ End:
 # Laravel Fundamentals - Database - Laravel Migration
 ### Environment Configurations
 1. This section is introducing about `.env` in the root directory and some of the environment variables will be imported into `config/database.php`, so we can make connection to the database.
+1. The purpose of using migration is to automate the process of creating tables with pre-built schema, so team can work on the project in an easier way.
 1. We have multiple ways to interact with different database systems. For example, we can use `sqlite` which creates `.sqlite` files that contains data. We may also connect to `mysql` or `pgsql`.
 
 ### Migrations in OS
@@ -425,12 +426,88 @@ End:
 1. The tables created follow the code and schema set in `./database/migration/`. In this case, the tables are created by `2014_10_12_000000_create_users_table.php` and other files in `./database/migration/`. We can go to check on [laravel.com](https://laravel.com/docs/5.0/schema) for more information about using schema to build the table.
 
 ### Creating Migrations and Dropping them 
+1. We can type `php artisan` to check the list of artisan functions and commands and use `php artisan make:migration create_posts_table --create="posts"` to create a migration, so we can get a new migration file in `./database/migrations/` folder. In this case, the file name is `2020_10_02_041724_create_posts_table.php`.
+1. We then can access the migration file and update the table schema. In this case, we'd like to create a table to store post data. There are several methods we can use on each column, such as `unique`, `nullable`, and `default`. After setting the migration file, we can run `php artisan migrate` in the project folder to create the table in database.
+    ```php
+    // 2020_10_02_041724_create_posts_table.php
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
 
+    class CreatePostsTable extends Migration
+    {
+        /**
+        * Run the migrations.
+        *
+        * @return void
+        */
+        public function up()
+        {
+            Schema::create('posts', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('title');
+                $table->text('body');
+                $table->timestamps();
+            });
+        }
+
+        /**
+        * Reverse the migrations.
+        *
+        * @return void
+        */
+        public function down()
+        {
+            Schema::dropIfExists('posts');
+        }
+    }
+    ```
+1. If we'd like to edit or manipulate the table, we can use `php artisan` commands without editing them in database interface. For example, we can use `php artisan migrate:rollback` to cancel the latest action for migration. Therefore, we can update the migration file in `./database/migration` and use `php artisan migrate` again to update the table in the database.
 
 ### Adding Columns to Existing Tables Using Migrations
+1. If we want to modify a table which has had data in use, we can use `php artisan make:migration` to create a new migration file to modify it. For example, we'd like to add one more column in `posts` table which we created in the last section. We can use command `php artisan make:migration add_is_admin_column_to_posts_table --table="posts"`. Thus, a new migration file `2020_10_02_044101_add_is_admin_column_to_posts_table.php` is created in `database/migration/`. We therefore can edit the migration file to add the new column into the table.
+    ```php
+    // ./database/migration/2020_10_02_044101_add_is_admin_column_to_posts_table.php
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
 
+    class AddIsAdminColumnToPostsTable extends Migration
+    {
+        /**
+        * Run the migrations.
+        *
+        * @return void
+        */
+        public function up()
+        {
+            Schema::table('posts', function (Blueprint $table) {
+                //
+                $table->integer('is_admin')->unsigned();
+            });
+        }
+
+        /**
+        * Reverse the migrations.
+        *
+        * @return void
+        */
+        public function down()
+        {
+            Schema::table('posts', function (Blueprint $table) {
+                //
+                $table->dropColumn('is_admin');
+            });
+        }
+    }
+    ```
+1. We then run `php artisan migrate` to update the table. We can check [Laravel migrations](https://laravel.com/docs/8.x/migrations#creating-columns) for other commands. In addition, if we'd like to update the table, we can use the similar method with `php artisan migrate:rollback` to cancel the latest migration, update schema in migration file, and run `php artisan migrate` again.
 
 ### Some More Migration Commands
+1. We can also remove all the tables created through migration with `php artisan migrate:reset`. This command will rollback all the tables that we create with `php artisan migrate`. The only thing left will be the `migration` table, as it will store the batch of migration.
+1. Besides `migrate:reset`, we can use `php artisan migrate:refresh` which command is to run both `php artisan migrate:reset` and `php artisan migrate` at the same time.
+1. We can run `php artisan migrate:status` to check if the migration files in the `./database/migration/` have run. For example, as we have run `php artisan migrate` with all the migrations files in the folder, their status will be `YES`.
+1. On the other hand, if we run `php artisan migrate:reset` which rolls back all the migrations we have made, the status will be `NO` when we use `php artisan migrate:status`.
 
 
 # Laravel Fundamentals - Raw SQL Queries
