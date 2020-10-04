@@ -508,6 +508,40 @@ End:
 1. Besides `migrate:reset`, we can use `php artisan migrate:refresh` which command is to run both `php artisan migrate:reset` and `php artisan migrate` at the same time.
 1. We can run `php artisan migrate:status` to check if the migration files in the `./database/migration/` have run. For example, as we have run `php artisan migrate` with all the migrations files in the folder, their status will be `YES`.
 1. On the other hand, if we run `php artisan migrate:reset` which rolls back all the migrations we have made, the status will be `NO` when we use `php artisan migrate:status`.
+    ```php
+    // database/migrations/2020_10_04_154123_add_is_admin_column_to_posts_table.php
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
+
+    class AddIsAdminColumnToPostsTable extends Migration
+    {
+        /**
+        * Run the migrations.
+        *
+        * @return void
+        */
+        public function up()
+        {
+            Schema::table('posts', function (Blueprint $table) {
+                //
+                $table->tinyInteger('is_admin');
+            });
+        }
+
+        /**
+        * Reverse the migrations.
+        *
+        * @return void
+        */
+        public function down()
+        {
+            Schema::table('posts', function (Blueprint $table) {
+                //
+            });
+        }
+    }
+    ```
 
 
 
@@ -557,7 +591,66 @@ End:
 
 
 # Laravel Fundamentals - Database - Eloquent/ORM
+### Reading Data 
+1. We can use `php artisan make:model ModelName` in the project directory. Note that in convention the name for the mode should start with capital letter. For example, we can create a `Post` model in this case. Therefore, we can find `./app/Post.php` after using the `make:model` command.
+    ```php
+    // ./app/Post.php
+    namespace App;
 
+    use Illuminate\Database\Eloquent\Model;
+
+    class Post extends Model
+    {
+        //
+    }
+    ```
+1. Every time we create a new model, we should declare and let Laravel framework knows the real name of the table in the database, usually in all lowercase letters. Note that when declaring the table name in variable, we should use keyword `protected`. Besides, we have to notice the column name for primary key of the table as well, in case that the name for primary key is other from `id`.
+    ```php
+    // ./app/Post.php
+    class Post extends Model {
+        protected $table = 'posts';
+        protected $primaryKey = 'id';
+    }
+    ```
+1. We can then update the function in route to return the result from Eloquent model. When import the model, we follow the style of Windows path which uses backslash `\`. As we have used `use` keyword to import the model, we can call it with Captial letter `Post` and use double columns `::` to use the method. For example, `all()` will return all rows from the table as an array, and `find()` will check the primary key of the table, such as `id`. In this case, we have only 1 instance in the table which has `id` as `1`. Therefore, we can use `find(1)` to retrive the instance as an object from the database.
+    ```php
+    // ./routes/web.php
+    use Illuminate\Support\Facades\Route;
+    use App\Post;
+
+    Route::get('/read', function(){
+        $posts = Post::all();
+        foreach($posts as $post) {
+            return $post->title;
+        }
+    });
+
+    Route::get('/find', function(){
+        $post = Post::find(1);
+        return $post->title;
+    });
+    ```
+
+### Reading/Finding with Constraints
+1. If we have more than 1 instance in the table, we can use other methods with conditions to retrieve data from the database. For example, 
+    1. `where` method takes 2 arguments. 1st is the column name, and the 2nd is the value that we want to query. 
+    1. `orderBy` takes 2 arguments that the first is the field to order the results, and the 2nd is the way, either `asc` or `desc`, to order the results.
+    1. `take` takes an argument which is the number of results that we want to retrieve from the table. Note that by using `take` method, the result will be array even the result has only one or none.
+    1. `get` is simply indicating that we want to retrieve the data from the table.
+    ```php
+    Route::get('/findwhere', function(){
+        $posts = Post::where('is_admin', 0)->orderBy('id', 'desc')->take(2)->get();
+        return $posts;
+    });
+    ```
+
+### More ways to retrieve data 
+
+
+### Inserting/Saving Data
+
+
+### Creating data and configuring mass 
 
 
 # Laravel Fundamentals - Database - Eloquent Relationship
