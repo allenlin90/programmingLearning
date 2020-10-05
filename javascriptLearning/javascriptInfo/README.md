@@ -2028,4 +2028,126 @@ Note: We should be very careful with the calculation by programming language due
     ```
 
 **WeakSet**
-1. 
+1. It is analogous to `Set`, but we may only add objects to `WeakSet` (not primitives).
+1. An object exists in the set while it is reachable from somewhere else.
+1. Like `Set`, it supports `add`, has and `delete`, but not `size`, `keys()` and no iterations.
+    ```js
+    let visitedSet = new WeakSet();
+
+    let john = { name: "John" };
+    let pete = { name: "Pete" };
+    let mary = { name: "Mary" };
+
+    visitedSet.add(john); // John visited us
+    visitedSet.add(pete); // Then Pete
+    visitedSet.add(john); // John again
+
+    // visitedSet has 2 users now
+
+    // check if John visited?
+    alert(visitedSet.has(john)); // true
+
+    // check if Mary visited?
+    alert(visitedSet.has(mary)); // false
+
+    john = null;
+
+    // visitedSet will be cleaned automatically
+    ```
+
+#### Exercise 1 - Store "Unread" Flags
+1. There’s an array of messages:
+    1. Your code can access it, but the messages are managed by someone else’s code. New messages are added, old ones are removed regularly by that code, and you don’t know the exact moments when it happens.
+    1. When a message is removed from messages, it should disappear from your structure as well.
+    1. We shouldn’t modify message objects, add our properties to them. As they are managed by someone else’s code, that may lead to bad consequences.
+    ```js
+    let messages = [
+        {text: "Hello", from: "John"},
+        {text: "How goes?", from: "John"},
+        {text: "See you soon", from: "Alice"}
+    ];
+    ```
+1. The solution is to loop through the items of the messages array and check if each item (a message in the array) is read. In this case, I set the status of the message with `false` by default.
+    ```js 
+    let readMessages = new WeakMap();
+
+    readMessage(messages);
+    function readMessage(messages) {
+        messages.forEach(function(message){
+            if (readMessages.get(message)) {
+                let status = readMessages.get(message);
+                readMessages.set(message, status);
+            } else {
+                readMessages.set(message, false);
+            }
+        });
+        return readMessages;
+    }
+    ```
+1. Solution
+    ```js
+    let messages = [
+        {text: "Hello", from: "John"},
+        {text: "How goes?", from: "John"},
+        {text: "See you soon", from: "Alice"}
+    ];
+
+    let readMessages = new WeakSet();
+
+    // two messages have been read
+    readMessages.add(messages[0]);
+    readMessages.add(messages[1]);
+    // readMessages has 2 elements
+
+    // ...let's read the first message again!
+    readMessages.add(messages[0]);
+    // readMessages still has 2 unique elements
+
+    // answer: was the message[0] read?
+    alert("Read message 0: " + readMessages.has(messages[0])); // true
+
+    messages.shift();
+    // now readMessages has 1 element (technically memory may be cleaned later)
+    ```
+1. In addition, we can add `isRead` property to each instance, though it's not encouraged, as the data is managed by other code. Therefore, we can use `Symbol` which will only be recognized by current code. 
+    ```js
+    // the symbolic property is only known to our code
+    let isRead = Symbol("isRead");
+    messages[0][isRead] = true;
+    ```
+
+#### Exercise 2 - Store Read Dates
+1. There’s an array of messages as in the previous task. The situation is similar.
+    1. The question now is: which data structure you’d suggest to store the information: “when the message was read?”.
+    1. In the previous task we only needed to store the “yes/no” fact. Now we need to store the date, and it should only remain in memory until the message is garbage collected.
+    1. Dates can be stored as objects of built-in `Date` class, that we’ll cover later.
+    ```js
+    let messages = [
+        {text: "Hello", from: "John"},
+        {text: "How goes?", from: "John"},
+        {text: "See you soon", from: "Alice"}
+    ];
+
+    let weakMap = new WeakMap();
+
+    addMessageReadDate(messages[0], messages);
+    function addMessageReadDate(message, messages){
+        weakMap.set(message, new Date());
+        messages.forEach(function(message){
+            weakMap.set(message, new Date());
+        });
+        return weakMap;
+    }
+    ```
+1. Solution
+    ```js
+    let messages = [
+        {text: "Hello", from: "John"},
+        {text: "How goes?", from: "John"},
+        {text: "See you soon", from: "Alice"}
+    ];
+
+    let readMap = new WeakMap();
+
+    readMap.set(messages[0], new Date(2017, 1, 1));
+    ```
