@@ -1832,7 +1832,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### Exercise 2 - Filter anagrams
+#### Exercise 2 - Filter anagrams
 1. "**Anagrams**" are words that have the same number of same letters, but in different order.
     1. nap - pan
     1. ear - are - era
@@ -1893,3 +1893,139 @@ Note: We should be very careful with the calculation by programming language due
     keys.push('more');
     keysArr.push('more');
     ```
+
+### WeakMap and WeakSet
+**WeakMap**
+1. In JavaScript, `Arrays` and `Objects` are reference (pointer) to the data in memory. If we assign the variable a `null` to overwrite its previous value, the object will be removed. However, if we keep the `Object` in another `Object`, though the variable thats keeps the object can be overwritten by other value, the `Object` will still be in the `Object`.
+    ```js
+    let john = {name: 'John'};
+    let array = [john];
+
+    john = null;
+    console.log(array[0]); // {name: 'John'}    
+    ```
+1. We can also keep an `Object` in a `Map`, so the object will be stored though its reference variable is overwritten. 
+    ```js 
+    let john = { name: "John" };
+    let map = new Map();
+    map.set(john, "...");
+
+    john = null;
+    console.log(Array.from(map.keys())[0]); // { name: "John" }
+    ```
+1. On the other hand, a `WeakMap` works in the other way that the `Object` as the key will be garbage-collected if the variable is removed. In addition, a `WeakMap` doesn't take a `String` value as its key. 
+    ```js
+    let weakMap = new WeakMap();
+    let obj = {};
+    weakMap.set(obj, "ok"); 
+
+    // can't use a string as the key
+    weakMap.set("test", "Whoops"); // Error, because "test" is not an object
+
+    let john = { name: "John" };
+    weakMap.set(john, "...");
+    john = null; // overwrite the reference
+    // john is removed from memory!
+    ```
+1. A `WeakMap` object has only few methods and doesn't support iteration methods `.keys()`, `.values()`, and `.entries()` method as a regular `Map`. 
+    1. `weakMap.get(key)`
+    1. `weakMap.set(key, value)`
+    1. `weakMap.delete(key)`
+    1. `weakMap.has(key)`
+
+**Use case: additional data**
+1. If we are working with an `Object` that is belonged to other code and would like to store data associate with it, `WeakMap` is good for the purpose, as if the object from a 3rd party is expired or gone, the associated data will be removed. 
+1. For instance, we have code that keeps a visit count for users. The information is stored in a `Map`: a user object is the key and the visit count is the value. When a user leaves (its object gets garbage collected), we don’t want to store their visit count anymore.
+    ```js
+    // 📁 visitsCount.js
+    let visitsCountMap = new Map(); // map: user => visits count
+
+    // increase the visits count
+    function countUser(user) {
+        let count = visitsCountMap.get(user) || 0;
+        visitsCountMap.set(user, count + 1);
+    }
+
+    // 📁 main.js
+    let john = { name: "John" };
+
+    countUser(john); // count his visits
+
+    // later john leaves us
+    john = null;
+    ```
+1. We need to clean visitsCountMap when we remove users, otherwise it will grow in memory indefinitely. Such cleaning can become a tedious task in complex architectures. Now we don’t have to clean `visitsCountMap`. After `john` object becomes unreachable by all means except as a key of `WeakMap`, it gets removed from memory, along with the information by that key from `WeakMap`.
+    ```js
+    // 📁 visitsCount.js
+    let visitsCountMap = new WeakMap(); // weakmap: user => visits count
+
+    // increase the visits count
+    function countUser(user) {
+        let count = visitsCountMap.get(user) || 0;
+        visitsCountMap.set(user, count + 1);
+    }
+    ```
+**Use case: caching**
+1. Another common example is caching: when a function result should be remembered (“cached”), so that future calls on the same object reuse it. 
+    ```js
+    // 📁 cache.js
+    let cache = new Map();
+
+    // calculate and remember the result
+    function process(obj) {
+    if (!cache.has(obj)) {
+        let result = /* calculations of the result for */ obj;
+
+        cache.set(obj, result);
+    }
+
+    return cache.get(obj);
+    }
+
+    // Now we use process() in another file:
+
+    // 📁 main.js
+    let obj = {/* let's say we have an object */};
+
+    let result1 = process(obj); // calculated
+
+    // ...later, from another place of the code...
+    let result2 = process(obj); // remembered result taken from cache
+
+    // ...later, when the object is not needed any more:
+    obj = null;
+
+    alert(cache.size); // 1 (Ouch! The object is still in cache, taking memory!)
+    ```
+1. For multiple calls of `process(obj)` with the same object, it only calculates the result the first time, and then just takes it from `cache`. The downside is that we need to clean `cache` when the object is not needed any more. If we replace `Map` with `WeakMap`, then this problem disappears: the cached result will be removed from memory automatically after the object gets garbage collected.
+    ```js
+    // 📁 cache.js
+    let cache = new WeakMap();
+
+    // calculate and remember the result
+    function process(obj) {
+    if (!cache.has(obj)) {
+        let result = /* calculate the result for */ obj;
+
+        cache.set(obj, result);
+    }
+
+    return cache.get(obj);
+    }
+
+    // 📁 main.js
+    let obj = {/* some object */};
+
+    let result1 = process(obj);
+    let result2 = process(obj);
+
+    // ...later, when the object is not needed any more:
+    obj = null;
+
+    // Can't get cache.size, as it's a WeakMap,
+    // but it's 0 or soon be 0
+    // When obj gets garbage collected, cached data will be removed as well
+    ```
+
+**WeakSet**
+1. 
