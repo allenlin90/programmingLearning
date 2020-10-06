@@ -2232,3 +2232,359 @@ Note: We should be very careful with the calculation by programming language due
         return Object.keys(obj).length;
     }
     ```
+
+### Destructuring Assignment
+1. `Destructuring assignment` is a special syntax that allows us to "unpack" arrays or objects into a bunch of variables, as sometimes that’s more convenient. Destructuring also works great with complex functions that have a lot of parameters, default values, and so on.
+
+**Array Destructuring**
+1. We can use destructuring assignment for arrays
+    ```js
+    let arr = ["Ilya", "Kantor"];
+
+    // destructuring assignment
+    // sets firstName = arr[0]
+    // and surname = arr[1]
+    let [firstName, surname] = arr;
+
+    console.log(firstName); // Ilya
+    console.log(surname);  // Kantor
+
+    let [firstName, surname] = "Ilya Kantor".split(' ');
+    console.log(firstName); // Ilya
+    console.log(surname);  // Kantor
+    ```
+1. Note that Destructuring doesn't mean destructive. This way of assigning is a shorthand rather than affecting the original objects.
+    ```js
+    let arr = ["Ilya", "Kantor"];
+    // let [firstName, surname] = arr;
+    let firstName = arr[0];
+    let surname = arr[1];
+    ```
+1. Besides, we can ignore unwanted elements in the array with extra comma. 
+    ```js
+    let [firstName, , title] = ["Julius", "Caesar", "Consul", "of the Roman Republic"];
+    console.log(title);
+    ```
+1. `Destructuring Assignment` works with any iterable, which object may not be an `Array`, on the right-side.
+    ```js
+    let [a, b, c] = "abc"; // ["a", "b", "c"]
+    let [one, two, three] = new Set([1, 2, 3]);
+    ```
+1. We can assign to anything at the left-side
+    ```js
+    let user = {};
+    [user.name, user.surname] = "Ilya Kantor".split(' ');
+
+    console.log(user.name); // Ilya
+    ```
+1. With destructuring assignment, we can work on `.entries()` with objects with shorted code. This is also available for `Map` objects.
+    ```js
+    let user = {
+        name: "John",
+        age: 30
+    };
+
+    // loop over keys-and-values
+    for (let [key, value] of Object.entries(user)) {
+        console.log(`${key}:${value}`); // name:John, then age:30
+    }
+
+    user = new Map();
+    user.set("name", "John");
+    user.set("age", "30");
+
+    for (let [key, value] of user) {
+        console.log(`${key}:${value}`); // name:John, then age:30
+    }
+    ```
+1. This feature can be used to swap values of variables
+    ```js
+    let guest = "Jane";
+    let admin = "Pete";
+
+    // Swap values: make guest=Pete, admin=Jane
+    [guest, admin] = [admin, guest];
+
+    console.log(`${guest} ${admin}`); // Pete Jane (successfully swapped!)
+    ```
+
+**The rest `...`**
+1. If we want not just to get first values, but also to gather all that follows – we can add one more parameter that gets "the rest" using three dots `...`. In the following example, the value of `rest` is the array of the remaining array elements. We can use any other variable name in place of `rest`, just make sure it has three dots before it and goes last in the destructuring assignment.
+    ```js
+    let [name1, name2, ...rest] = ["Julius", "Caesar", "Consul", "of the Roman Republic"];
+
+    console.log(name1); // Julius
+    console.log(name2); // Caesar
+
+    // Note that type of `rest` is Array.
+    console.log(rest[0]); // Consul
+    console.log(rest[1]); // of the Roman Republic
+    console.log(rest.length); // 2
+    ```
+
+**Default Values**
+1. If there are fewer values in the array than variables in the assignment, there will be no error. Absent values are considered `undefined`. If we want a "**default**" value to replace the missing one, we can provide it using `=`
+    ```js
+    let [firstName, surname] = [];
+
+    console.log(firstName); // undefined
+    console.log(surname); // undefined
+
+    // default values
+    let [name = "Guest", surname = "Anonymous"] = ["Julius"];
+
+    console.log(name);    // Julius (from array)
+    console.log(surname); // Anonymous (default used)
+    ```
+1. Default values can be more complex expressions or even function calls. They are evaluated only if the value is not provided. For instance, here we use the `prompt` function for two defaults. But it will run only for the missing one.
+    ```js
+    let [name = prompt('name?'), surname = prompt('surname?')] = ["Julius"];
+
+    console.log(name);    // Julius (from array)
+    console.log(surname); // whatever prompt gets
+    ```
+
+**Object Destructuring**
+1. The basic syntax for object destructuring is `let {var1, var2} = {var1:…, var2:…}`. We have an existing object at the right side, that we want to split into variables. The left side contains a “pattern” for corresponding properties. In the simple case, that’s a list of variable names in the curly bracse `{}`. Besides, the order does not matter.
+    ```js
+    let options = {
+        title: "Menu",
+        width: 100,
+        height: 200
+    };
+
+    let {width, height, title} = options;
+
+    console.log(title);  // Menu
+    console.log(width);  // 100
+    console.log(height); // 200
+    ```
+1. If we want to assign a property to a variable with another name, for instance, `options.width` to go into the variable named `w`, then we can set it using a colon `:`.
+    ```js
+    let options = {
+        title: "Menu",
+        width: 100,
+        height: 200
+    };
+
+    // { sourceProperty: targetVariable }
+    let {width: w, height: h, title} = options;
+
+    // width -> w
+    // height -> h
+    // title -> title
+
+    console.log(title);  // Menu
+    console.log(w);      // 100
+    console.log(h);      // 200
+    ```
+1. For object destructuring assignment, we can also assign default value if the value is given to be assigned. Besides, this can be combined with column `:` if we'd like to change the name of the variable.
+    ```js
+    let options = {
+        title: "Menu"
+    };
+
+    let {width: w = 100, height = 200, title} = options;
+
+    console.log(title);  // Menu
+    console.log(w);  // 100
+    console.log(height); // 200
+    ```
+1. Just like with arrays or function parameters, default values can be any expressions or even function calls. They will be evaluated if the value is not provided. For example, `prompt` asks for `width`, but not for `title`. 
+    ```js
+    let options = {
+        title: "Menu"
+    };
+
+    let {width = prompt("width?"), title = prompt("title?")} = options;
+
+    console.log(title);  // Menu
+    console.log(width);  // (whatever the result of prompt is)
+    ```
+1. We can only extract the values we need from the object rather than all the properties of it.
+    ```js
+    let options = {
+        title: "Menu",
+        width: 100,
+        height: 200
+    };
+
+    // only extract title as a variable
+    let { title } = options;
+
+    console.log(title); // Menu
+    ```
+
+**The rest pattern `...`**
+1. What if the object has more properties than we have variables? Can we take some and then assign the "rest" somewhere? We can use the rest pattern, just like we did with arrays. It’s not supported by some older browsers (IE, use Babel to polyfill it), but works in modern ones.
+    ```js
+    let options = {
+        title: "Menu",
+        height: 200,
+        width: 100
+    };
+
+    // title = property named title
+    // rest = object with the rest of properties
+    let {title, ...rest} = options;
+
+    // now title="Menu", rest={height: 200, width: 100}
+    console.log(rest.height);  // 200
+    console.log(rest.width);   // 100
+    ```
+1. There's a special catch when using object destructuring assignment that we can use the variables that are accessible in the current working context. However, JavaScript assume elements in curly braces `{}` as running in a code block if there's no clear specification for the statement, such as declaring an object. Therefore, we should put the code into parenthesis, so JavaScript will treat it as destructuring assignment for objects.
+    ```js
+    let title, width, height;
+
+    try { 
+        ({title, width, height} = {title: "Menu", width: 200, height: 100});
+    } 
+    
+    console.log(title); // Menu
+
+    // this doesn't work as runtime report syntax error
+    {title, width, height} = {title: "Menu", width: 200, height: 100};
+    ```
+
+**Nested Destructuring**
+1. If an object or an array contain other nested objects and arrays, we can use more complex left-side patterns to extract deeper portions. In the code below `options` has another object in the property `size` and an array in the property `items`. The pattern at the left side of the assignment has the same structure to extract values from them. Note that there are no variables for size and items, as we take their content instead. 
+    ```js
+    let options = {
+        size: {
+            width: 100,
+            height: 200
+        },
+        items: ["Cake", "Donut"],
+        extra: true
+    };
+
+    // destructuring assignment split in multiple lines for clarity
+    let {
+        size: { // put size here
+            width,
+            height
+        },
+        items: [item1, item2], // assign items here
+        title = "Menu" // not present in the object (default value is used)
+    } = options;
+
+    console.log(title);  // Menu
+    console.log(width);  // 100
+    console.log(height); // 200
+    console.log(item1);  // Cake
+    console.log(item2);  // Donut
+    ```
+
+**Smart Function Parameters**
+1. We can pass parameters as an object, and the function immediately destructurizes them into variables. In this case, we can use both default value and destructuring assignment at the same time. Besides, we can also use more complex destructuring with nested objects and colon mappings. 
+    ```js
+    let options = {
+        title: "My menu",
+        items: ["Item1", "Item2"]
+    };
+
+    function showMenu({
+        title = "Untitled",
+        width: w = 100,  // width goes to w
+        height: h = 200, // height goes to h
+        items: [item1, item2] // items first element goes to item1, second to item2
+    }) {
+    console.log( `${title} ${w} ${h}` ); // My Menu 100 200
+    console.log( item1 ); // Item1
+    console.log( item2 ); // Item2
+    }
+
+    showMenu(options);
+    ```
+1. Note that such destructuring assumes that `showMenu()` does have an argument. If we want all values by default, then we should specify an empty object. In addition, we can give an empty object as the default value as well.  
+    ```js
+    showMenu({}); // ok, all values are default
+    showMenu(); // this would give an error
+
+    function showMenu({ title = "Menu", width = 100, height = 200 } = {}) {
+        console.log( `${title} ${width} ${height}` );
+    }
+    showMenu(); // Menu 100 200
+    ```
+
+#### Destructuring Assignment
+1. We have an `user` object. Write the destructuring assignment that reads:
+    1. `name` property into the variable `name`.
+    1. `years` property into the variable `age`.
+    1. `isAdmin` property into the variable `isAdmin` (false, if no such property)
+    ```js
+    let user = {
+        name: "John",
+        years: 30
+    };
+
+    let {
+        name,
+        years: age,
+        isAdmin = false,
+    } = user;
+
+    console.log(name); // John
+    console.log(age); // 30
+    console.log(isAdmin); // false
+    ```
+1. Solution
+    ```js
+    let user = {
+        name: "John",
+        years: 30
+    };
+
+    let {name, years: age, isAdmin = false} = user;
+
+    console.log(name); // John
+    console.log(age); // 30
+    console.log(isAdmin); // false
+    ```
+
+#### The Maximal Salary
+1. We have a `salaries` object. Create the function `topSalary(salaries)` that returns the name of the top-paid person.
+    1. If `salaries` is empty, it should return `null`.
+    1. If there are multiple top-paid persons, return any of them.
+    1. Use `Object.entries` and destructuring to iterate over key/value pairs.
+    ```js
+    let salaries = {
+        "John": 100,
+        "Pete": 300,
+        "Mary": 250,
+    };
+
+    function topSalary(salaries = {}) {
+        if (Object.keys(salaries).length === 0) {
+            return null;
+        }
+        let topMan = [];
+        let topSalary = Math.max.apply(null, Object.values(salaries));
+        for (let [key, value] of Object.entries(salaries)) {
+            if (value >= topSalary) {
+                topSalary = value;
+                topMan.push(key);
+            }
+        }
+        let random = Math.floor(Math.random() * topMan.length);
+        return topMan[random];
+    }
+    console.log(topSalary(salaries));
+    ```
+1. Solution
+    ```js
+    function topSalary(salaries) {
+
+    let max = 0;
+    let maxName = null;
+
+    for(const [name, salary] of Object.entries(salaries)) {
+        if (max < salary) {
+            max = salary;
+            maxName = name;
+        }
+    }
+
+    return maxName;
+    }
+    ```
