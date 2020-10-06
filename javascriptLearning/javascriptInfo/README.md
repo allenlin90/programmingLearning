@@ -2588,3 +2588,323 @@ Note: We should be very careful with the calculation by programming language due
     return maxName;
     }
     ```
+
+### Date and Time 
+1. A Date object is a built-in class which can store the date and time and provide methods for date/time management. 
+
+**Creation**
+1. We can use `new` keyword to create a new `Date` object as `new Date()`. If we create a date object without any argument, the object will be created with current date and time.
+1. The argument for `Date` object should be milliseconds since 1970/01/01 00:00 UTC+0. 
+    ```js
+    let now = new Date();
+    console.log(now); //shows current date and time
+
+    let Jan01_1970 = new Date(0);
+    console.log(Jan01_1970);
+
+    // now add 24 hours
+    let Jan02_1970 = new Date(24 * 3600 * 1000);
+    cnosole.log(Jan02_1970);
+    ```
+1. An integer number representing the number of milliseconds that has passed since the beginning of 1970 is called a "**timestamp**". If we'd like to get the date and time before 1970/01/01, we can pass negative argument (in milliseconds to Date object).
+    ```js
+    // 31 Dec 1969
+    let Dec31_1969 = new Date(-24 * 3600 * 1000);
+    cnosole.log(Dec31_1969);
+    ```
+1. We can use `.getTime()` method on a `Date` object which will the total number of milliseconds since 1970/01/01 until the time of the date object. In addition, we can pass a date string in `yyyy-mm-dd` to create a `Date` object on the given date. Besides, we can use `Date.parse()` to check the total amount of time since 1970/01/01 as `.getTime()`. 
+1. Note that we should be aware of the time zone when using the methods. `getTime()` returns the timestamp for the date – a number of milliseconds passed from the January 1st of 1970 UTC+0.
+    ```js
+    // beware of the time zone 
+    new Date('2020-10-01').getTime() === Date.parse('2020-10-01'); // true 
+    ```
+1. We can use create a `Date` object by passing several arguments in `Number` type. This will create the time with local time zone. 
+    1. `year` must have 4 digits. Abbreviations such as `20` for `2020` is not available.
+    1. `month` count starts from `0` (January), up to `11` (December).
+    1. `date` parameter is actually the day of a month, if this is not given, it will have `1` by default. 
+    1. If `hour/minute/second/ms` is absent, they are assumed to be `0`.
+    ```js
+    new Date(year, month, date, hours, minutes, seconds, ms);
+    new Date(2011, 0, 1, 0, 0, 0, 0); // 1 Jan 2011, 00:00:00
+    new Date(2011, 0, 1); // the same, hours etc are 0 by default
+    ```
+
+**Access Date Components**
+1. We can use the following methods to access the details of a `Date` object.
+    1. `.getFullYear()` returns the year in 4 digits.
+    1. `.getMonth()` returns the month which starts from `0` to `11`. 
+    1. `.getDate()` returns the day from 1 to 31.
+    1. `.getHours()`, `getMinutes()`, `.getSeconds()`, and `getMilliseconds()` return the corresponding time components.
+1. In addition, we can use `.getDay()` which returns the day of a week on the given date. Note that this starts from `0` which is Sunday to `6` (Saturday).
+1. Note that all the methods above returns corresponding time components according to local time zone of the machine. There are also their UTC-counterparts, that return day, month, year and so on for the time zone UTC+0: `getUTCFullYear()`, `getUTCMonth()`, `getUTCDay()`. Just insert the "`UTC`" right after "`get`".
+1. `.getTimezoneOffset()` returns the difference between UTC and the local time zone, in "**minutes**".
+    ```js
+    // current date
+    let date = new Date();
+
+    // the hour in your current time zone
+    console.log(date.getHours());
+
+    // the hour in UTC+0 time zone (London time without daylight savings)
+    console.log(date.getUTCHours());
+
+    // if you are in timezone UTC+7, outputs -420
+    console.log(new Date().getTimezoneOffset());
+    ```
+
+**Setting Date Components**
+1. The following methods allow to set date/time components. Every one of them except `setTime()` has a UTC-variant, for instance: `setUTCHours()`.
+    1. `.setFullYear(year, [month], [date])`
+    1. `.setMonth(month, [date])`
+    1. `.setDate(date)`
+    1. `.setHours(hour, [min], [sec], [ms])`
+    1. `.setMinutes(min, [sec], [ms])`
+    1. `.setSeconds(sec, [ms])`
+    1. `.setMilliseconds(ms)`
+    1. `.setTime(milliseconds)` (sets the whole date by milliseconds since 01.01.1970 UTC)
+    ```js
+    let today = new Date();
+
+    today.setHours(0);
+    console.log(today); // still today, but the hour is changed to 0
+
+    today.setHours(0, 0, 0, 0);
+    console.log(today); // still today, now 00:00:00 sharp.
+    ```
+
+**Autocorrection**
+1. The autocorrection is a very handy feature of Date objects. We can set out-of-range values, and it will auto-adjust itself.
+    ```js
+    let date = new Date(2013, 0, 32); // January has only 31 days
+    console.log(date); // the date becomes February 1st
+    ```
+1. This feature is convenient that we can simply add 2 days to the `Date` object to find the date 2 days later. Besides, we can also set zero or even negative values.
+    ```js
+    let date = new Date(2020, 1, 28);
+    date.setDate(date.getDate() + 2);
+
+    console.log(date); // 1 Mar 2020
+
+    date = new Date(2020, 0, 2); // 2 Jan 2020
+
+    date.setDate(1); // set day 1 of month
+    console.log(date);
+
+    date.setDate(0); // min day is 1, so the last day of the previous month is assumed
+    console.log(date); // 31 Dec 2020
+    ```
+
+**Date to Number, Date Diff**
+1. When a `Date` object is converted to number, it becomes the timestamp same as `date.getTime()`. Note that we can also use `Date.now()` to check current time in milliseconds.
+    ```js
+    +(new Date()) === new Date().getTime(); // true
+    new Date().getTime() === Date.now(); // true
+    ```
+1. The important side effect: dates can be subtracted, the result is their difference in ms. This can be used for time measurements. For example, the following loop takes around `20` ms to finish iteration.
+    ```js
+    let start = new Date(); // start measuring time
+
+    // do the job
+    for (let i = 0; i < 100000; i++) {
+        let doSomething = i * i * i;
+    }
+
+    let end = new Date(); // end measuring time
+
+    console.log( `The loop took ${end - start} ms` );
+    ```
+**Date.now()**
+1. If we only want to measure time, we don’t need the Date object. There’s a special method `Date.now()` that returns the current timestamp. It is semantically equivalent to `new Date().getTime()`, but it doesn’t create an intermediate Date object. So it’s faster and doesn’t put pressure on garbage collection.
+    ```js
+    let start = Date.now(); // milliseconds count from 1 Jan 1970
+
+    // do the job
+    for (let i = 0; i < 100000; i++) {
+    let doSomething = i * i * i;
+    }
+
+    let end = Date.now(); // done
+
+    console.log( `The loop took ${end - start} ms` ); // subtract numbers, not dates
+    ```
+
+**Benchmarking**
+1. We can measure two functions that calculate the difference between two dates. Such performance measurements are often called "**benchmarks**". These two do exactly the same thing, but one of them uses an explicit date.getTime() to get the date in ms, and the other one relies on a date-to-number transform.
+    ```js
+    function diffSubtract(date1, date2) {
+        return date2 - date1;
+    }
+
+    function diffGetTime(date1, date2) {
+        return date2.getTime() - date1.getTime();
+    }
+
+    function bench(f) {
+        let date1 = new Date(0);
+        let date2 = new Date();
+
+        let start = Date.now();
+        for (let i = 0; i < 100000; i++) f(date1, date2);
+        return Date.now() - start;
+    }
+
+    console.log( 'Time of diffSubtract: ' + bench(diffSubtract) + 'ms' ); // around 70 ms
+    console.log( 'Time of diffGetTime: ' + bench(diffGetTime) + 'ms' ); // around 20 ms
+    ```
+1. From the testing, `diffSubtract` takes around `70` ms, while `diffGetTime` takes only around `20` ms. However, if we want a reliable benchmark of CPU-hungry function, we should be careful. Imagine that at the time of running `bench(diffSubtract)` CPU was doing something in parallel, and it was taking resources. And by the time of running `bench(diffGetTime)` that work has finished. A pretty real scenario for a modern multi-process OS. As a result, the first benchmark will have less CPU resources than the second. That may lead to wrong results.
+1. Modern JavaScript engines start applying advanced optimizations only to “hot code” that executes many times (no need to optimize rarely executed things). So, in the example above, first executions are not well-optimized. We may want to add a heat-up run.
+    ```js
+    function diffSubtract(date1, date2) {
+        return date2 - date1;
+    }
+
+    function diffGetTime(date1, date2) {
+        return date2.getTime() - date1.getTime();
+    }
+
+    function bench(func) {
+        let date1 = new Date(0);
+        let date2 = new Date();
+
+        let start = Date.now();
+        for (let i = 0; i < 100000; i++) func(date1, date2);
+        return Date.now() - start;
+    }
+
+    let time1 = 0;
+    let time2 = 0;
+
+    // added for "heating up" prior to the main loop
+    bench(diffSubtract);
+    bench(diffGetTime);
+
+    // run bench(upperSlice) and bench(upperLoop) each 10 times alternating
+    for (let i = 0; i < 10; i++) {
+        time1 += bench(diffSubtract);
+        time2 += bench(diffGetTime);
+    }
+
+    console.log('Total time for diffSubtract: ' + time1 ); // around 660 ms
+    console.log('Total time for diffGetTime: ' + time2 ); // around 70 ms
+    ```
+
+**Date.parse from a String**
+1. `Date.parse(str)` can read a date from a string. The string format should be `YYYY-MM-DDTHH:mm:ss.sssZ`.
+    1. `YYYY-MM-DD` – is the date: year-month-day.
+    1. The character "`T`" is used as the delimiter.
+    1. `HH:mm:ss.sss` – is the time: hours, minutes, seconds and milliseconds.
+    1. The optional '`Z`' part denotes the time zone in the format `+-hh:mm`. A single letter `Z` that would mean UTC+0.
+1. Shorter variants are also possible, like `YYYY-MM-DD` or `YYYY-MM` or even `YYYY`. The call to `Date.parse(str)` parses the string in the given format and returns the timestamp (number of milliseconds from 1 Jan 1970 UTC+0). If the format is invalid, returns `NaN`.
+    ```js
+    let ms = Date.parse('2020-01-26T13:51:50.417-07:00');
+    console.log(ms); // 1580071910417
+
+    Date.parse('2020-10-06:23:59:59.999') === new Date(2020,9,6,23,59,59,999).getTime() // true 
+    ```
+
+**Summary**
+1. Note that unlike many other systems, timestamps in JavaScript are in milliseconds, not in seconds.
+1. Sometimes we need more precise time measurements. JavaScript itself does not have a way to measure time in microseconds (1 millionth of a second), but most environments provide it. For instance, browser has performance.now() that gives the number of milliseconds from the start of page loading with microsecond precision (3 digits after the point)
+1. Node.js has `microtime` module and other ways. Technically, almost any device and environment allows to get more precision, it’s just not in `Date`.
+
+#### Exercise 1 - Create a Day
+1. Create a Date object for the date: Feb 20, 2012, 3:12am. The time zone is local. Show it using `console.log`.
+    ```js
+
+    ```
+1. Solution
+    ```js
+    ```
+
+#### Exercise 2 - Show a Weekday
+1. Write a function getWeekDay(date) to show the weekday in short format: ‘MO’, ‘TU’, ‘WE’, ‘TH’, ‘FR’, ‘SA’, ‘SU’.
+    ```js
+    let date = new Date(2012, 0, 3);  // 3 Jan 2012
+    function getWeekDay(date){
+
+    }
+    console.log(getWeekDay(date)); // should output "TU"
+    ```
+1. Solution
+    ```js
+    ```
+
+#### Exercise 3 - European Weekday
+1. European countries have days of week starting with Monday (number 1), then Tuesday (number 2) and till Sunday (number 7). Write a function `getLocalDay(date)` that returns the “European” day of week for `date`.
+    ```js
+    let date = new Date(2012, 0, 3);  // 3 Jan 2012
+    function getLocalDay(date) {
+
+    }
+    console.log(getLocalDay(date)); // tuesday, should show 2
+    ```
+1. Solution
+    ```js
+    ```
+
+#### Exercise 4 - Which Day of Month Was Many Days Ago?
+1. Create a function `getDateAgo(date, days)` to return the day of month `days` ago from the `date`. 
+1. For instance, if today is 20th, then `getDateAgo(new Date(), 1)` should be 19th and `getDateAgo(new Date(), 2)` should be 18th. Should work reliably for days=365 or more. 
+1. The function should not modify the given `date`.
+    ```js
+    let date = new Date(2015, 0, 2);
+
+    console.log getDateAgo(date, 1)); // 1, (1 Jan 2015)
+    console.log getDateAgo(date, 2)); // 31, (31 Dec 2014)
+    console.log getDateAgo(date, 365)); // 2, (2 Jan 2014)
+    ```
+1. Solution
+    ```js
+    ```
+
+#### Exercise 5 - Last Day of Month?
+1. Write a function `getLastDayOfMonth(year, month)` that returns the last day of month. Sometimes it is 30th, 31st or even 28/29th for Feb.
+1. Parameters:
+    1. `year` – four-digits year, for instance 2012.
+    1. `month` – month, from 0 to 11.
+1. For instance, `getLastDayOfMonth(2012, 1) = 29` (leap year, Feb).
+    ```js
+    function getLastDayOfMonth(year, month){
+
+    }
+    ```
+1. Solution
+    ```js
+    ```
+
+#### Exercise 6 - How Many Seconds Have Passed Today?
+1. Write a function `getSecondsToday()` that returns the number of seconds from the beginning of today.
+1. For instance, if now were `10:00 am`, and there was no daylight savings shift, then `getSecondsToday() == 36000 // (3600 * 10)`.
+    ```js
+    function getSecondstoday(){
+
+    }
+    ```
+1. Solution
+    ```js
+    ```
+
+#### Exercise 7 - How Many Seconds Till Tomorrow?
+1. Create a function `getSecondsToTomorrow()` that returns the number of seconds till tomorrow.
+1. For instance, if now is `23:00`, then `getSecondsToTomorrow() == 3600`.
+    ```js
+    function getSecondsToTomorrow(){
+
+    }
+    ```
+1. Solution
+    ```js
+    ```
+
+#### Exercise 8 - Format the Relative Date
+1. Write a function `formatDate(date)` that should format date as follows
+    1. If since `date` passed less than 1 second, then "`right now`".
+    1. Otherwise, if since `date` passed less than 1 minute, then "`n sec. ago`".
+    1. Otherwise, if less than an hour, then "`m min. ago`".
+    1. Otherwise, the full date in the format "`DD.MM.YY HH:mm`". That is: "`day.month.year hours:minutes`", all in 2-digit format, e.g. `31.12.16 10:00`.
+    ```js
+
+    ```
+1. Solution
+    ```js
+    ```
