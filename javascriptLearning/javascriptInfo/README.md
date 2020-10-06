@@ -2151,3 +2151,84 @@ Note: We should be very careful with the calculation by programming language due
 
     readMap.set(messages[0], new Date(2017, 1, 1));
     ```
+
+### Object.keys, values, entries
+1. We have been using `.keys()`, `.values()`, and `.entreis()` methods for `Map` objects in previous sections. These methods are generic and can be used for other types of data, such as `Map`, `Set`, and `Array`. 
+    1. `Object.keys(obj)` returns an array of keys of the `obj`.
+    1. `Object.values(obj)` returns an array of values of the `obj`.
+    1. `Object.entries(obj)` returns an array of `[key, value]` of the `obj`.
+1. Note that to use the methods on `Objects`, we should use it on the `Object` class and pass the object that we want to check. The main reason for the design is that we can use the methods as the object's own methods. Besides, the methods return a real `Array` rather than an iterable object.
+1. In addition, if the object property uses `Symbol` as the key, these keys will be ingnored when using these methods. 
+1. Though we don't have iteration methods such as `.map()`, `.reduce()`, and `.filter()` as `Array` for `Objects`, we can use `Object.entries(obj)` to create key/value pair array or use `Object.fromEntries(array)` to create a new object from the key/value pairs.
+    ```js
+    let prices = {
+        banana: 1,
+        orange: 2,
+        meat: 4,
+    };
+
+    let doublePrices = Object.fromEntries(
+    // convert to array, map, and then fromEntries gives back the object
+    Object.entries(prices).map(([key, value]) => [key, value * 2])
+    );
+
+    console.log(doublePrices.meat);
+    ```
+
+#### Exercise 1 - Sum the Properties
+1. There is a `salaries` object with arbitrary number of salaries. Write the function `sumSalaries(salaries)` that returns the sum of all salaries using `Object.values` and the `for..of` loop. If `salaries` is empty, then the result must be 0.
+    ```js
+    let salaries = {
+        "John": 100,
+        "Pete": 300,
+        "Mary": 250
+    };
+
+    function sumSalaries(salaries){
+        const allSalaries = Object.values(salaries);
+        let totalSalaries = 0;
+        for (let salary of allSalaries){
+            totalSalaries += salary;
+        }
+        return totalSalaries;
+    }
+    ```
+1. Solution
+    ```js
+    function sumSalaries(salaries) {
+        let sum = 0;
+        for (let salary of Object.values(salaries)) {
+            sum += salary;
+        }
+        return sum; // 650
+    }
+
+    let salaries = {
+        "John": 100,
+        "Pete": 300,
+        "Mary": 250
+    };
+
+    console.log(sumSalaries(salaries)); // 650
+    ```
+
+#### Exercise 2 - Count Properties
+1. Write a function `count(obj)` that returns the number of properties in the object:
+    ```js
+    let user = {
+        name: 'John',
+        age: 30
+    };
+
+    function count(obj){
+        return Object.keys(obj).length;
+    }
+
+    console.log(count(user)); // 2
+    ```
+1. Solution
+    ```js
+    function count(obj) {
+        return Object.keys(obj).length;
+    }
+    ```
