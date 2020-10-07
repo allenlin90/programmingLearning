@@ -2810,23 +2810,72 @@ Note: We should be very careful with the calculation by programming language due
 #### Exercise 1 - Create a Day
 1. Create a Date object for the date: Feb 20, 2012, 3:12am. The time zone is local. Show it using `console.log`.
     ```js
-
+    let date = new Date('2012-02-20T03:12');
+    console.log(date);
     ```
-1. Solution
+1. Solution. Note that if we use string for `Date` object to parse, we can use the regular month number directly which starts from `1` for January.
     ```js
+    //new Date(year, month, date, hour, minute, second, millisecond)
+    let d1 = new Date(2012, 1, 20, 3, 12);
+    console.log(d1);
+
+    //new Date(datastring)
+    let d2 = new Date("February 20, 2012 03:12:00");
+    console.log(d2);
     ```
 
 #### Exercise 2 - Show a Weekday
 1. Write a function getWeekDay(date) to show the weekday in short format: ‘MO’, ‘TU’, ‘WE’, ‘TH’, ‘FR’, ‘SA’, ‘SU’.
     ```js
     let date = new Date(2012, 0, 3);  // 3 Jan 2012
-    function getWeekDay(date){
 
+    function getWeekDay(date) {
+        let day = date.getDay();
+        let week = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+        return week[day];
+    }
+
+    function getWeekDayBySwitch(date){
+        let day = date.getDay();
+        switch (day) {
+            case 0:
+                return 'SU';
+            break;
+            case 1:
+                return 'MO';
+            break;
+            case 2:
+                return 'TU';
+            break;
+            case 3:
+                return 'WE';
+            break;
+            case 4:
+                return 'TH';
+            break;
+            case 5:
+                return 'FR';
+            break;
+            case 6:
+                return 'SA';
+            break;
+            default:
+            break;
+        }
     }
     console.log(getWeekDay(date)); // should output "TU"
+    console.log(getWeekDayBySwitch(date)); // should output "TU"
     ```
 1. Solution
     ```js
+    function getWeekDay(date) {
+    let days = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+
+    return days[date.getDay()];
+    }
+
+    let date = new Date(2014, 0, 3); // 3 Jan 2014
+    console.log( getWeekDay(date) ); // FR
     ```
 
 #### Exercise 3 - European Weekday
@@ -2834,12 +2883,22 @@ Note: We should be very careful with the calculation by programming language due
     ```js
     let date = new Date(2012, 0, 3);  // 3 Jan 2012
     function getLocalDay(date) {
-
+        const weekNum = [7,1,2,3,4,5,6];
+        return weekNum[date.getDay()];
     }
     console.log(getLocalDay(date)); // tuesday, should show 2
     ```
-1. Solution
+1. Solution. This solution is also valid in easier concept, as besides Sunday, other numbers have been alinged.
     ```js
+    let date = new Date(2012, 0, 3);  // 3 Jan 2012
+    function getLocalDay(date) {
+        let day = date.getDay();
+        if (day == 0) { // weekday 0 (sunday) is 7 in european
+            day = 7;
+        }
+        return day;
+    }
+    console.log(getLocalDay(date));
     ```
 
 #### Exercise 4 - Which Day of Month Was Many Days Ago?
@@ -2849,12 +2908,29 @@ Note: We should be very careful with the calculation by programming language due
     ```js
     let date = new Date(2015, 0, 2);
 
-    console.log getDateAgo(date, 1)); // 1, (1 Jan 2015)
-    console.log getDateAgo(date, 2)); // 31, (31 Dec 2014)
-    console.log getDateAgo(date, 365)); // 2, (2 Jan 2014)
+    function getDateAgo(date, days){
+        let duplicateDate = new Date(date);
+        duplicateDate.setDate(date.getDate() - days);
+        return duplicateDate.getDate();
+    }
+
+    console.log(getDateAgo(date, 1)); // 1, (1 Jan 2015)
+    console.log(getDateAgo(date, 2)); // 31, (31 Dec 2014)
+    console.log(getDateAgo(date, 365)); // 2, (2 Jan 2014)
     ```
-1. Solution
+1. Solution. Note that we avoid modifying the given date object, so we can use `new Date()` to duplicate another one. As we are using the built-in date class, we can ingore the minor conditions such as the leap year.
     ```js
+    function getDateAgo(date, days) {
+        let dateCopy = new Date(date);
+        dateCopy.setDate(date.getDate() - days);
+        return dateCopy.getDate();
+    }
+
+    let date = new Date(2015, 0, 2);
+
+    console.log(getDateAgo(date, 1)); // 1, (1 Jan 2015)
+    console.log(getDateAgo(date, 2)); // 31, (31 Dec 2014)
+    console.log(getDateAgo(date, 365)); // 2, (2 Jan 2014)
     ```
 
 #### Exercise 5 - Last Day of Month?
@@ -2865,23 +2941,59 @@ Note: We should be very careful with the calculation by programming language due
 1. For instance, `getLastDayOfMonth(2012, 1) = 29` (leap year, Feb).
     ```js
     function getLastDayOfMonth(year, month){
-
+        let date = new Date(year, month + 1);
+        return new Date(date.setDate(date.getDate()-1)).getDate();
+        //date1 = new Date(year, month+1).setDate(date.getDate() - 1);
+        //return (new Date(date1).getDate());
     }
+
+    console.log(getLastDayOfMonth(2012, 1)); // 29
     ```
-1. Solution
+1. Solution. Normally, dates start from 1, but technically we can pass any number, the date will autoadjust itself. So when we pass 0, then it means "one day before 1st day of the month", in other words: "the last day of the previous month". This feature is by autocorretion.
     ```js
+    function getLastDayOfMonth(year, month) {
+        let date = new Date(year, month + 1, 0);
+        return date.getDate();
+    }
+
+    console.log(getLastDayOfMonth(2012, 0)); // 31
+    console.log(getLastDayOfMonth(2012, 1)); // 29
+    console.log(getLastDayOfMonth(2013, 1)); // 28
     ```
 
 #### Exercise 6 - How Many Seconds Have Passed Today?
 1. Write a function `getSecondsToday()` that returns the number of seconds from the beginning of today.
 1. For instance, if now were `10:00 am`, and there was no daylight savings shift, then `getSecondsToday() == 36000 // (3600 * 10)`.
     ```js
-    function getSecondstoday(){
-
+    function getSecondsToday(){
+        let yearToday = new Date().getFullYear();
+        let monthToday = new Date().getMonth();
+        let dateToday = new Date().getDate();
+        return Math.round((Date.now() - new Date(yearToday, monthToday, dateToday))/1000);
     }
+    console.log(getSecondsToday());
     ```
 1. Solution
     ```js
+    function getSecondsToday() {
+        let now = new Date();
+
+        // create an object using the current day/month/year
+        let today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        let diff = now - today; // ms difference
+        return Math.round(diff / 1000); // make seconds
+    }
+
+    console.log(getSecondsToday());
+
+    // an alternative
+    function getSecondsToday() {
+        let d = new Date();
+        return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+    }
+
+    console.log(getSecondsToday());
     ```
 
 #### Exercise 7 - How Many Seconds Till Tomorrow?
@@ -2889,11 +3001,36 @@ Note: We should be very careful with the calculation by programming language due
 1. For instance, if now is `23:00`, then `getSecondsToTomorrow() == 3600`.
     ```js
     function getSecondsToTomorrow(){
-
-    }
+        let yearToday = new Date().getFullYear();
+        let monthToday = new Date().getMonth();
+        let dateToday = new Date().getDate();
+        return Math.round((new Date(yearToday, monthToday, dateToday+1) - Date.now()) / 1000);
+    } 
+    console.log(getSecondsToTomorrow());
     ```
 1. Solution
     ```js
+    function getSecondsToTomorrow() {
+        let now = new Date();
+
+        // tomorrow date
+        let tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
+
+        let diff = tomorrow - now; // difference in ms
+        return Math.round(diff / 1000); // convert to seconds
+    }
+
+    // an alternative
+    function getSecondsToTomorrow() {
+        let now = new Date();
+        let hour = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+        let totalSecondsToday = (hour * 60 + minutes) * 60 + seconds;
+        let totalSecondsInADay = 86400;
+
+        return totalSecondsInADay - totalSecondsToday;
+    }
     ```
 
 #### Exercise 8 - Format the Relative Date
@@ -2903,8 +3040,98 @@ Note: We should be very careful with the calculation by programming language due
     1. Otherwise, if less than an hour, then "`m min. ago`".
     1. Otherwise, the full date in the format "`DD.MM.YY HH:mm`". That is: "`day.month.year hours:minutes`", all in 2-digit format, e.g. `31.12.16 10:00`.
     ```js
+    function formatDate(date){
+        let diff = (Date.now() - date);
+        if (diff < 1000) {
+            return new Date();
+        } else if ((diff >= 1000) && (diff < 60 * 1000)) {
+            return `${date.getSeconds()} sec. ago`;
+        } else if ((diff >= 60 * 1000) && (diff < 60 * 60 * 1000)) {
+            return `${date.getSeconds()} min. ago`;
+        } else {
+            let year2 = date.getFullYear().toString().slice(2);
+            let month2 = date.getMonth() + 1;
+            let date2 = date.getDate();
+            let hour2 = date.getHours();
+            let mins = date.getMinutes();
+            return `${date2}.${month2}.${year2} ${hour2}:${mins}`;
+        }
+    }
 
+    console.log(formatDate(new Date(new Date - 1))); // "right now"
+    console.log(formatDate(new Date(new Date - 30 * 1000))); // "30 sec. ago"
+    console.log(formatDate(new Date(new Date - 5 * 60 * 1000))); // "5 min. ago"
+    // yesterday's date like 31.12.16 20:00
+    console.log(formatDate(new Date(new Date - 86400 * 1000)));
     ```
 1. Solution
     ```js
+    function formatDate(date) {
+        let diff = new Date() - date; // the difference in milliseconds
+
+        if (diff < 1000) { // less than 1 second
+            return 'right now';
+        }
+
+        let sec = Math.floor(diff / 1000); // convert diff to seconds
+
+        if (sec < 60) {
+            return sec + ' sec. ago';
+        }
+
+        let min = Math.floor(diff / 60000); // convert diff to minutes
+        if (min < 60) {
+            return min + ' min. ago';
+        }
+
+        // format the date
+        // add leading zeroes to single-digit day/month/hours/minutes
+        let d = date;
+        d = [
+            '0' + d.getDate(),
+            '0' + (d.getMonth() + 1),
+            '' + d.getFullYear(),
+            '0' + d.getHours(),
+            '0' + d.getMinutes()
+        ].map(component => component.slice(-2)); // take last 2 digits of every component
+
+        // join the components into date
+        return d.slice(0, 3).join('.') + ' ' + d.slice(3).join(':');
+    }
+
+    // an alternative solution 
+    function formatDate(date) {
+        let dayOfMonth = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        let hour = date.getHours();
+        let minutes = date.getMinutes();
+        let diffMs = new Date() - date;
+        let diffSec = Math.round(diffMs / 1000);
+        let diffMin = diffSec / 60;
+        let diffHour = diffMin / 60;
+
+        // formatting
+        year = year.toString().slice(-2);
+        month = month < 10 ? '0' + month : month;
+        dayOfMonth = dayOfMonth < 10 ? '0' + dayOfMonth : dayOfMonth;
+        hour = hour < 10 ? '0' + hour : hour;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        if (diffSec < 1) {
+            return 'right now';
+        } else if (diffMin < 1) {
+            return `${diffSec} sec. ago`
+        } else if (diffHour < 1) {
+            return `${diffMin} min. ago`
+        } else {
+            return `${dayOfMonth}.${month}.${year} ${hour}:${minutes}`
+        }
+    }
+
+    console.log(formatDate(new Date(new Date - 1))); // "right now"
+    console.log(formatDate(new Date(new Date - 30 * 1000))); // "30 sec. ago"
+    console.log(formatDate(new Date(new Date - 5 * 60 * 1000))); // "5 min. ago"
+    // yesterday's date like 31.12.2016 20:00
+    console.log(formatDate(new Date(new Date - 86400 * 1000)));
     ```
