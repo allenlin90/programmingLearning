@@ -1,3 +1,4 @@
+# The JavaScript language
 # JavaScript Fundamentals 
 ### **Interaction in browser** - alert, prompt, confirm 
 1. `prompt()` takes 2 arguments, the 1st is the message to hint the user for the inpout, while the 2nd is the default value given in the input bar. Note that in WINDOWS IE, the default value will be undefined if the user doesn't give any input. Therefore, it's suggested to have `prompt("Test", '')`, so it will return an empty string. 
@@ -3464,3 +3465,168 @@ Note: We should be very careful with the calculation by programming language due
     }
     */
     ```
+
+# Advanced working with functions
+## Recursion and Stack
+## Rest Parameters and Spread Syntax
+## Variable Scope, Closure
+## The Old "var"
+## Global Object
+## Function Object, NFE
+## The "new Function" Syntax
+## Scheduling: setTimeout and setInterval
+## Decorators and Forwarding, call/apply
+## Function binding
+## Arrow Functions Revisited
+
+# Object Properties Configuration
+## Property Flags and Descriptors
+## Property Getters and Setters
+
+# Prototypes, Inheritance
+## Prototypal Inheritance
+## F.Prototype
+## Native Prototypes
+## Prototype Methods, Object without __proto__
+
+# Classes 
+## Class Basic Syntax
+## Class Inheritance
+## Static Properties and Methods
+## Private and Protected Properties and Methods
+## Extending Built-in Classes
+## Class checking: "instanceof"
+## Mixins
+
+# Promises, async/await
+## Introduction: callbacks
+## Promise
+## Promises Chaining
+## Error Handling with Promises
+## Promisification
+## Microtasks
+## Async/await
+
+# Generators, advanced iteration
+## Generators 
+## Async iteration and generators
+
+# Modules
+## Modules, Introduction
+## Export and Import
+## Dynamic Imports
+
+# Miscellaneous
+## Proxy and Reflect
+## Eval: run a code string
+## Currying
+## Reference Type
+## BigInt
+
+# Browser: Document, Events, Interfaces
+# Document
+## Browser Environment, Specs
+## DOM Tree
+## Searching: getElement*, querySelector*
+## Node Properties: Type, Tag and Contents
+## Attributes and Properties
+## Modifying the Document
+## Styles and Classes
+## Element Size and Scrolling
+## Window Sizes and Scrolling
+## Coordinates
+
+# Introduction to Events
+## Introduction to Browser Events
+## Bubbling and Capturing
+## Event Delegation
+## Browser Default Actions
+## Dispatching Custom Events
+
+# UI Events
+## Mouse Events
+## Moving the Mouse: mouseover/out, mouseenter/leave
+## Drag'n'Drop with mouse events
+## Pointer Events
+## Keyboard: keydown and keyup
+## Scrolling
+
+# Forms, Controls
+## Form Properties and Methods
+## Focusing: focus/blur
+## Events: change, input, cut, copy, paste
+## Forms: event and method submit
+
+# Document and Resource Loading
+## Page: DOMContentLoaded, load, beforeunload, unload
+## Scripts: async, defer
+## Resource Loading: onload and onerror
+
+# Miscellaneous
+## Mutation Observer
+## Selection and Range
+## Event Loop: Microtasks and Macrotasks
+
+# Additional Articles
+# Frames and Windows
+## Popups and Window Methods
+## Cross-window Communication
+## The Clickjacking Attack
+
+# Binary Data, Files
+## ArrayBuffer, Binary Arrays
+## TextDecoder and TextEncoder
+## Blob
+## File and FileReader
+
+# Network Requests
+## Fetch 
+## FormData
+## Fetch: Download progress
+## Fetch: Abort
+## Fetch: Cross-Origin Requests
+## Fetch API
+## URL objects
+## XMLHttpRequest
+## Resumable File Upload
+## Long Polling
+## WebSocket
+## Server Sent Events
+
+# Storing Data in the Browser
+## Cookies, document.cookie
+## LocalStorage, sessionStorage
+## IndexedDB
+
+# Animation
+## Bezier Curve
+## CSS-animations
+## JavaScript animations
+
+# Web Components
+## From the Orbital Height
+## Custom Elements
+## Shadow DOM
+## Template Element
+## Shadow DOM Slots, Composition
+## Shadow DOM Styling
+## Shadow DOM and Events
+
+# Regular Expressions
+## Patterns and Flags
+## Character Classes
+## Unicode: flag "u" and class \p{...}
+## Anchors: string start ^ and end $
+## Multiline Mode of Anchors ^ $, flag "m"
+## Word Boundary: \b
+## Escaping, Special Characters
+## Sets and Ranges [...]
+## Quantifiers +, *, ? and {n}
+## Greedy and Lazy Quantifiers
+## Capturing Groups
+## Backreferences in Pattern: \N and \k<name>
+## ALternation (OR) |
+## Lookahead and lookbehind
+## Catastrophic backgtracking
+## Sticky Flag "y", Searching at Position
+## Methods of RegExp and String
