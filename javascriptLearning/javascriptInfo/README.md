@@ -3468,6 +3468,66 @@ Note: We should be very careful with the calculation by programming language due
 
 # Advanced working with functions
 ## Recursion and Stack
+1. Recursion is a programming pattern that is useful in situations when a task can be naturally split into several tasks of the same kind, but simpler. Or when a task can be simplified into an easy action plus a simpler variant of the same task. Or, as we’ll see soon, to deal with certain data structures. 
+1. When a function solves a task, in the process it can call many other functions. A partial case of this is when a function calls itself. That’s called recursion.
+
+### Two Ways of Thinking
+1. For something simple to start with – let’s write a function `pow(x, n)` that raises `x` to a natural power of `n`. In other words, multiplies x by itself n times.
+1. Iterative thinking: the `for` loop
+    ```js
+    function pow(x, n) {
+        let result = 1;
+        // multiply result by x n times in the loop
+        for (let i = 0; i < n; i++) {
+            result *= x;
+        }
+    return result;
+    }
+
+    console.log(pow(2, 2)) // 4
+    console.log(pow(2, 3)) // 8
+    console.log(pow(2, 4)) // 16
+    ```
+1. Recursive thinking: simplify the task and call self
+    1. If `n == 1`, then everything is trivial. It is called the base of recursion, because it immediately produces the obvious result: `pow(x, 1)` equals `x`. 
+    1. Otherwise, we can represent `pow(x, n)` as `x * pow(x, n - 1)`. In maths, one would write `x^n = x * x^(n-1)`. This is called a recursive step: we transform the task into a simpler action (multiplication by `x`) and a simpler call of the same task (`pow` with lower `n`). Next steps simplify it further and further until `n` reaches `1`.
+    ```js
+    function pow(x, n) {
+        if (n == 1) {
+            return x;
+        } else {
+            return x * pow(x, n - 1);
+        }
+    }
+
+    console.log(pow(2, 2)) // 4
+    console.log(pow(2, 3)) // 8
+    console.log(pow(2, 4)) // 16
+    ```
+1. For example, to calculate `pow(2, 4)` the recursive variant does these steps:
+    1. pow(2, 4) = 2 * pow(2, 3)
+    1. pow(2, 3) = 2 * pow(2, 2)
+    1. pow(2, 2) = 2 * pow(2, 1)
+    1. pow(2, 1) = 2
+1. Recursion is usually shorter. A recursive solution is usually shorter than an iterative one. 
+    ```js
+    function pow(x, n) {
+        return (n == 1) ? x : (x * pow(x, n - 1));
+    }
+    ```
+1. The maximal number of nested calls (including the first one) is called recursion depth. In our case, it will be exactly `n`. 
+1. The maximal recursion depth is limited by JavaScript engine. We can rely on it being 10000, some engines allow more, but 100000 is probably out of limit for the majority of them. There are automatic optimizations that help alleviate this (“tail calls optimizations”), but they are not yet supported everywhere and work only in simple cases. 
+1. That limits the application of recursion, but it still remains very wide. There are many tasks where recursive way of thinking gives simpler code, easier to maintain.
+
+### The Execution Context and Stack
+1. The information about the process of execution of a running function is stored in its "**execution context**". The execution context is an internal data structure that contains details about the execution of a function: where the control flow is now, the current variables, the value of `this`, and few other internal details.
+1. When a function makes a nested call, the following happens:
+    1. The current function is paused.
+    1. The execution context associated with it is remembered in a special data structure called "**execution context stack**".
+    1. The nested call executes.
+    1. After it ends, the old execution context is retrieved from the stack, and the outer function is resumed from where it stopped.
+
+
 ## Rest Parameters and Spread Syntax
 ## Variable Scope, Closure
 ## The Old "var"
