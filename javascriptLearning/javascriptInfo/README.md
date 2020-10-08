@@ -3526,7 +3526,333 @@ Note: We should be very careful with the calculation by programming language due
     1. The execution context associated with it is remembered in a special data structure called "**execution context stack**".
     1. The nested call executes.
     1. After it ends, the old execution context is retrieved from the stack, and the outer function is resumed from where it stopped.
+1. Note the memory requirements. Contexts take memory. In the case above, raising to the power of `n` actually requires the memory for `n` contexts, for all lower values of `n`. A loop-based algorithm is more memory-saving. The iterative `pow` uses a single context changing `i` and `result` in the process. Its memory requirements are small, fixed and do not depend on `n`.
+    ```js
+    function pow(x, n) {
+        let result = 1;
+        for (let i = 0; i < n; i++) {
+            result *= x;
+        }
+        return result;
+    }
+    ```
+1. Any recursion can be rewritten as a loop. The loop variant usually can be made more effective. However, sometimes the rewrite is non-trivial, especially when function uses different recursive subcalls depending on conditions and merges their results or when the branching is more intricate. And the optimization may be unneeded and totally not worth the efforts. Recursion can give a shorter code, easier to understand and support. Optimizations are not required in every place, mostly we need a good code, that’s why it’s used.
 
+### Recursive Traversals
+1. Another great application of the recursion is a recursive traversal. For example, we have a company. The staff structure can be presented as an object. In other words, a company has departments.
+    1. A department may have an array of staff. For instance, `sales` department has 2 employees, John and Alice.
+    1. Or a department may split into subdepartments, like `development` has two branches, `sites` and `internals`. Each of them has their own staff.
+    1. It is also possible that when a subdepartment grows, it divides into subsubdepartments (or teams).
+    1. For instance, the `sites` department in the future may be split into teams for `siteA` and `siteB`. And they, potentially, can split even more. 
+    ```js
+    let company = {
+        sales: [{
+            name: 'John',
+            salary: 1000
+        }, {
+            name: 'Alice',
+            salary: 1600
+        }],
+
+        development: {
+            sites: [{
+            name: 'Peter',
+            salary: 2000
+            }, {
+            name: 'Alex',
+            salary: 1800
+            }],
+
+            internals: [{
+            name: 'Jack',
+            salary: 1300
+            }]
+        }
+    };
+    ```
+1. In this case, it's not easy to summarize the total salary of all the employees in the company by using iterative solutions because the data strcutrue is not simple. Besides, we have to rewrite the loop every time the `company` objects have further sub-departments. 
+1. With recursive solution, we can check the only 2 possible cases in this data structure.
+    1. Either it’s a "**simple**" department with an `array` of people – then we can sum the salaries in a simple loop.
+    1. Or it’s an object with `N` subdepartments – then we can make N recursive calls to get the sum for each of the subdeps and combine the results.
+1. The 1st case is the base of recursion, the trivial case, when we get an `array`.
+1. The 2nd case when we get an `object` is the recursive step. A complex task is split into subtasks for smaller departments. They may in turn split again, but sooner or later the split will finish at (1). It also works for any level of subdepartment nesting.
+    1. Method `arr.reduce` is to get the sum of the array.
+    1. Loop `for(val of Object.values(obj))` to iterate over object values. `Object.values` returns an array of them.
+    ```js
+    let company = { // the same object, compressed for brevity
+        sales: [{name: 'John', salary: 1000}, {name: 'Alice', salary: 1600 }],
+        development: {
+            sites: [{name: 'Peter', salary: 2000}, {name: 'Alex', salary: 1800 }],
+            internals: [{name: 'Jack', salary: 1300}]
+        }
+    };
+
+    // The function to do the job
+    function sumSalaries(department) {
+        if (Array.isArray(department)) { // case (1)
+            return department.reduce((prev, current) => prev + current.salary, 0); // sum the array
+        } else { // case (2)
+            let sum = 0;
+            for (let subdep of Object.values(department)) {
+                sum += sumSalaries(subdep); // recursively call for subdepartments, sum the results
+            }
+            return sum;
+        }
+    }
+
+    console.log(sumSalaries(company)); // 7700
+    ```
+
+### Recursive Structures
+1. A recursive (recursively-defined) data structure is a structure that replicates itself in parts. In the example of the `company` departments above. A company department is 
+    1. Either an array of people.
+    1. Or an object with departments.
+
+### Linked list
+1. Linked list is also a type of recursive structure which is useful in certain cases. For example, we want to store an ordered list of objects. 
+    ```js
+    let arr = [obj1, obj2, obj3];
+    ```
+1. But there’s a problem with arrays. The "delete element" and "insert element" operations are expensive. For instance, `arr.unshift(obj)` operation has to renumber all elements to make room for a new obj, and if the array is big, it takes time. Same with `arr.shift()`. The only structural modifications that do not require mass-renumbering are those that operate with the end of array: `arr.push/pop`. So an array can be quite slow for big queues, when we have to work with the beginning.
+1. Alternatively, if we really need fast insertion/deletion, we can choose another data structure called a linked list. The linked list element is recursively defined as an object with the followings.
+    1. `value` which is the `obj` that we want to keep.
+    1. `next` is the property that referencing the next `linked list` element or `null` if that's the end.
+    ```js
+    let list = {
+        value: 1,
+        next: {
+            value: 2,
+            next: {
+                value: 3,
+                next: {
+                    value: 4,
+                    next: null
+                }
+            }
+        }
+    };
+
+    // an alternative code for creation
+    let list = { value: 1 };
+    list.next = { value: 2 };
+    list.next.next = { value: 3 };
+    list.next.next.next = { value: 4 };
+    list.next.next.next.next = null;
+    ```
+1. In this case, the `list` variable is the first object in the chain, so following `next` pointers from it we can reach any element. The list can be easily split into multiple parts and later joined back. 
+    1. We can insert or remove items in any place. For instance, to prepend a new value, we need to update the head of the list. 
+    1. To remove a value from the middle, change next of the previous one.
+    ```js
+    let list = { value: 1 };
+    list.next = { value: 2 };
+    list.next.next = { value: 3 };
+    list.next.next.next = { value: 4 };
+    list.next.next.next.next = null;
+
+    let secondList = list.next.next;
+    list.next.next = null;
+
+    // to join 
+    list.next.next = secondList;
+
+    // prepend the new value to the list
+    list = { value: "new item", next: list };
+
+    // to remove a value from the middle, change next of the previous one
+    list.next = list.next.next;
+    ```
+1. Unlike arrays, there’s no mass-renumbering, we can easily rearrange elements.
+1. Naturally, lists are not always better than arrays. Otherwise everyone would use only lists.
+1. The main drawback is that we can’t easily access an element by its number. In an array that’s easy: `arr[n]` is a direct reference. But in the list we need to start from the first item and go `next N` times to get the Nth element.
+1. Lists can be enhanced.
+    1. We can add property `prev` in addition to `next` to reference the previous element, to move back easily.
+    1. We can also add a variable named `tail` referencing the last element of the list (and update it when adding/removing elements from the end).
+
+### Exercise 1 - Sum all numbers till the given one
+1. Write a function `sumTo(n)` that calculates the sum of numbers `1 + 2 + ... + n`. Make 3 solution variants:
+    1. Using a for loop.
+    1. Using a recursion, cause `sumTo(n) = n + sumTo(n-1) for n > 1`.
+    1. Using the arithmetic progression formula.
+1. P.S. Which solution variant is the fastest? The slowest? Why?
+1. P.P.S. Can we use recursion to count `sumTo(100000)`?
+    ```js
+    // recursion
+    function sumTo(n) { 
+        if (n === 1) {
+            return n;
+        } else {
+            return n + sumTo(n-1);
+        }
+    }
+    console.log(sumTo(100)); // 5050
+
+    function sumToFor(n) {
+        let num = 0;
+        for (let i = 0; i <= n; i++) {
+            num += i;
+        }
+        return num;
+    }
+    console.log(sumToFor(100)); // 5050
+    
+    /*
+    sumTo(1) = 1
+    sumTo(2) = 2 + 1 = 3
+    sumTo(3) = 3 + 2 + 1 = 6
+    sumTo(4) = 4 + 3 + 2 + 1 = 10
+    ...
+    sumTo(100) = 100 + 99 + ... + 2 + 1 = 5050
+    */
+    ```
+1. Solution
+    ```js
+    // solution with loop 
+    function sumTo(n) {
+        let sum = 0;
+        for (let i = 1; i <= n; i++) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    // solution with recursion
+    function sumTo(n) {
+        if (n == 1) return 1;
+        return n + sumTo(n - 1);
+    }
+
+    // solution with math formula 
+    function sumTo(n) {
+       return n * (n + 1) / 2;
+    }    
+    ```
+
+#### Exercise 2 - Calculate factorial
+1. The factorial of a natural number is a number multiplied by "number minus one", then by "number minus two", and so on till 1. The factorial of `n` is denoted as `n!`. 
+1. P.S. Hint: `n!` can be written as `n * (n-1)!` For instance, `3! = 3*2! = 3*2*1! = 6`.
+    ```js 
+    function factorial(n) {
+        if (n === 1) {
+            return n;
+        } else {
+            return n * factorial(n - 1);
+        }
+    }
+
+    console.log(factorial(5)); // 120
+
+    function factorialFor(n) {
+        let total = 1;
+        for (let i = 1; i <= n; i++) {
+            total *= i;
+        }
+        return total;
+    }
+    console.log(factorialFor(5)); // 120
+    /*
+    n! = n * (n - 1) * (n - 2) * ...*1
+    1! = 1
+    2! = 2 * 1 = 2
+    3! = 3 * 2 * 1 = 6
+    4! = 4 * 3 * 2 * 1 = 24
+    5! = 5 * 4 * 3 * 2 * 1 = 120
+    */
+    ```
+1. Solution
+    ```js
+    // recursion 
+    function factorial(n) {
+        return (n != 1) ? n * factorial(n - 1) : 1;
+    }
+
+    // allow 0 as input 
+    function factorial(n) {
+        return n ? n * factorial(n - 1) : 1;
+    }
+    ```
+
+#### Exercise 3 - Fibonacci numbers
+1. The sequence of Fibonacci numbers has the formula Fn = Fn-1 + Fn-2. In other words, the next number is a sum of the two preceding ones.
+    1. First two numbers are `1`, then `2(1+1)`, then `3(1+2)`, `5(2+3)` and so on: `1, 1, 2, 3, 5, 8, 13, 21...`.
+    1. Fibonacci numbers are related to the Golden ratio and many natural phenomena around us.
+    1. Write a function `fib(n)` that returns the `n-th` Fibonacci number.
+    1. P.S. The function should be fast. The call to `fib(77)` should take no more than a fraction of a second.
+    ```js
+    function fib(n) {
+        if (n <= 2){
+            return 1;
+        } else {
+            return (fib(n - 1) + fib(n - 2));
+        }
+    }
+    console.log(fib(3)); // 2
+    console.log(fib(7)); // 13
+    // this is very slow because there are many sub-calls
+    console.log(fib(77)); // 5527939700884757
+
+    function fibFor(n){
+        let a = 1;
+        let b = 1;
+        for (let i = 3; i <= n; i++) {
+            let c = a + b;
+            a = b;
+            b = c;
+        }
+        return b;
+    }
+    
+    console.log(fibFor(3)); // 2
+    console.log(fibFor(7)); // 13
+    console.log(fibFor(77)); // 5527939700884757
+    ```
+1. Solution
+    ```js
+    function fib(n) {
+        return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+    }
+    console.log(fib(3)); // 2
+    console.log(fib(7)); // 13
+    console.log(fib(77)); // 5527939700884757
+
+    function fib(n){
+        let a = 1;
+        let b = 1;
+        for (let i = 3; i <= n; i++) {
+            let c = a + b;
+            a = b;
+            b = c;
+        }
+        return b;
+    }
+    
+    console.log(fib(3)); // 2
+    console.log(fib(7)); // 13
+    console.log(fib(77)); // 5527939700884757
+    ```
+
+#### Exercise 4 - Output a single-linked list
+1. Output a single-linked list from the previous task Output a single-linked list in the reverse order.
+1. Write a function `printList(list)` that outputs list items one-by-one.
+1. Make two solutions: using a loop and using a recursion.
+    ```js
+    let list = {
+        value: 1,
+        next: {
+            value: 2,
+            next: {
+                value: 3,
+                next: {
+                    value: 4,
+                    next: null
+                }
+            }
+        }
+    };
+
+    function printList(list) {
+
+    }
+    ```
 
 ## Rest Parameters and Spread Syntax
 ## Variable Scope, Closure
