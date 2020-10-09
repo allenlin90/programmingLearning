@@ -4005,6 +4005,123 @@ Note: We should be very careful with the calculation by programming language due
     ```
 
 ## Rest Parameters and Spread Syntax
+### Rest Parameters
+1. A function can be called with any number of arguments, no matter how it is defined. There will be no error because of "excessive" arguments. But of course in the result only the first two will be counted.
+1. The rest of the parameters can be included in the function definition by using three dots `...` followed by the name of the array that will contain them. The dots literally mean "gather the remaining parameters into an array".
+    ```js
+    // only the first 2 count
+    function sum(a, b) {
+        return a + b;
+    }
+
+    // all arguments can be manipulated from the array
+    function sumAll(...args) { // args is the name for the array
+        let sum = 0;
+        for (let arg of args) sum += arg;
+        return sum;
+    }
+
+    console.log(sumAll(1)); // 1
+    console.log(sumAll(1, 2)); // 3
+    console.log(sumAll(1, 2, 3)); // 6
+    ```
+1. The rest parameters must be at the end. The rest parameters gather all remaining arguments, so the following does not make sense and causes an error.
+    ```js
+    function f(arg1, ...rest, arg2) { // arg2 after ...rest ?!
+        // error
+    }
+    ```
+
+### The "arguments" variable
+1. There is also a special array-like object named `arguments` that contains all arguments by their index.
+1. In old times, rest parameters did not exist in the language, and using `arguments` was the only way to get all arguments of the function. And it still works, we can find it in the old code.
+1. But the downside is that although `arguments` is both array-like and iterable, it’s not an array. It does not support array methods, so we can’t call `arguments.map(...)` for example.
+    ```js
+    function showName() {
+        console.log(arguments.length);
+        console.log(arguments[0]);
+        console.log(arguments[1]);
+
+        // it's iterable
+        // for(let arg of arguments) alert(arg);
+    }
+
+    // shows: 2, Julius, Caesar
+    showName("Julius", "Caesar");
+
+    // shows: 1, Ilya, undefined (no second argument)
+    showName("Ilya");
+    ```
+1. Arrow functions do not have `arguments`. If we access the `arguments` object from an arrow function, it takes them from the outer "normal" function. As we remember, arrow functions don’t have their own `this`. Now we know they don’t have the special `arguments` object either.
+    ```js
+    function f() {
+        let showArg = () => console.log(arguments[0]);
+        showArg();
+    }
+
+    f(1); // 1
+    ```
+
+### Spread Syntax
+1. This is opposite to use `...rest` to retrieve all parameters from function arguments except the declared ones or `arguments` to retrieve all parametesr as a single array. We can use spread syntax to pass an array to a function that takes multiple arguments. 
+    1. We can pass multiple iterables to a function. 
+    1. We can even combine the spread syntax with normal values.
+    1. The spread syntax can be used to merge or duplicate arrays.
+    ```js
+    let arr = [3, 5, 1];
+    console.log(Math.max(...arr));
+
+    let arr1 = [1, -2, 3, 4];
+    let arr2 = [8, 3, -8, 1];
+    // pass multiple iterables
+    console.log(Math.max(...arr1, ...arr2)); // 8
+
+    // combine spread syntax with normal values
+    console.log(Math.max(1, ...arr1, 2, ...arr2, 25)); // 25 
+
+    let arr = [3, 5, 1];
+    let arr2 = [8, 9, 15];
+    let merged = [0, ...arr, 2, ...arr2];
+    console.log(merged); // 0,3,5,1,2,8,9,15 (0, then arr, then 2, then arr2)
+    ```
+1. Spread syntax can not only work with `Array` but any iterables such as `String`. This is similar to `Array.from()` taht we can use it to convert iterable, such as `String` to an `Array`.
+    ```js
+    let str = 'Hello';
+    console.log([...str]); // H,e,l,l,o
+
+    console.log(Array.from(str));
+    ```
+1. Note that there's a subtle difference between `Array.from(obj)` and `[..obj]`. `Array.from` operates on both array-like and iterables, while spread syntax works only with iterables.
+
+### Get a new copy of an array/object
+1. In the pervious chapter about `Object`, we learnt how to use `Object.assign` to duplicate an object. We can also use spread syntax to copy it.
+    ```js
+    let obj = {
+        a: 1, 
+        b: 2, 
+    }
+
+    let obj1 = Object.assign({}, obj);
+    console.log(obj1); // {a: 1, b:2}
+    console.log(obj1 === obj) // false
+
+    let arr = [1,2,3];
+    let arrCopy = [...arr];
+    console.log(arr === arrCopy) // false
+    arr.push(4);
+    console.log(arr); // 1,2,3,4
+    console.log(arrCopy); // 1,2,3
+
+    let obj = { a: 1, b: 2, c: 3 };
+    let objCopy = { ...obj }; 
+    // spread the object into a list of parameters
+    // then return the result in a new object
+    obj.d = 4;
+    console.log(JSON.stringify(obj)); // {"a":1,"b":2,"c":3,"d":4}
+    console.log(JSON.stringify(objCopy)); // {"a":1,"b":2,"c":3}
+    ```
+1. This way of copying an object is much shorter than `let objCopy = Object.assign({}, obj);` or for an array `let arrCopy = Object.assign([], arr);` so we prefer to use it whenever we can. 
+
 ## Variable Scope, Closure
 ## The Old "var"
 ## Global Object
