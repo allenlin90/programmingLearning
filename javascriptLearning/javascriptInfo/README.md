@@ -3850,8 +3850,158 @@ Note: We should be very careful with the calculation by programming language due
     };
 
     function printList(list) {
-
+        if (!list.next){
+            console.log(list.value);
+            return;
+        } else {
+            console.log(list.value);
+            return printList(list.next);
+        }
     }
+
+    // this can be rewrite to be more succinct
+    function printList(list) {
+        console.log(list.value);
+        if(list.next) {
+            print(list.next);
+        }
+    }
+
+    printList(list);
+
+    function printListFor(list) {
+        let temp = list; 
+        while (temp) {
+            console.log(temp.value);
+            temp = temp.next;
+        }
+    }
+
+    printListFor(list);
+    ```
+1. Solution 
+    ```js
+    let list = {
+        value: 1,
+        next: {
+            value: 2,
+            next: {
+                value: 3,
+                next: {
+                    value: 4,
+                    next: null
+                }
+            }
+        }
+    };
+
+    function printList(list) {
+        console.log(list.value); // output the current item
+        if (list.next) {
+            printList(list.next); // do the same for the rest of the list
+        }
+    }
+
+    printList(list);
+
+    function printListFor(list) {
+        let temp = list; 
+        while (temp) {
+            console.log(temp.value);
+            temp = temp.next;
+        }
+    }
+
+    printListFor(list);
+    ```
+
+#### Exercise 5 - Output a single-linked list in the reverse order
+1. Output a single-linked list from the previous task Output a single-linked list in the reverse order.
+1. Make two solutions: using a loop and using a recursion.
+    ```js
+    let list = {
+        value: 1,
+        next: {
+            value: 2,
+            next: {
+                value: 3,
+                next: {
+                    value: 4,
+                    next: null
+                }
+            }
+        }
+    };
+
+    // this solution is over complicated. We can simple change the order of execution logic
+    function printReverseList(list, values = []) {
+        if (list.next){
+            values.unshift(list.value);
+            return printReverseList(list.next, values);
+        } else {
+            values.unshift(list.value);
+            for (let value of values) {
+                console.log(value);
+            }
+        }
+    }
+
+    printReverseList(list);
+
+    function printReverseListFor(list) {
+        let temp = list; 
+        let values = [];
+        while (temp) {
+            values.unshift(temp.value);
+            temp = temp.next;
+        }
+        for (let value of values) {
+            console.log(value);
+        }
+    }
+
+    printReverseListFor(list);
+    ```
+1. Solution. 
+    1. For recusive solution, it is relatively simple that we can just change the order of execution to let the `IF` statement goes first.
+    1. For iterative solution by looping, we can use another array to store the data of each layer. We can use either `.push()` or `.unshift` to create the array. Note that `.unshift` will put the new element at the beginning of the array which will shift all the other elements by 1 order. This method consumes much computing power.
+    ```js
+    let list = {
+        value: 1,
+        next: {
+            value: 2,
+            next: {
+                value: 3,
+                next: {
+                    value: 4,
+                    next: null
+                }
+            }
+        }
+    };
+
+    function printReverseList(list) {
+        if (list.next) {
+            printReverseList(list.next);
+        }
+        console.log(list.value);
+    }
+
+    printReverseList(list);
+
+    function printReverseListFor(list) {
+        let arr = [];
+        let tmp = list;
+        while (tmp) {
+            arr.push(tmp.value);
+            tmp = tmp.next;
+        }
+        for (let i = arr.length - 1; i >= 0; i--) {
+            console.log(arr[i]);
+        }
+    }
+
+    printReverseListFor(list);
     ```
 
 ## Rest Parameters and Spread Syntax
