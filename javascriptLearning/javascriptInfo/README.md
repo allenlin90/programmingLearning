@@ -4640,6 +4640,114 @@ Note: We should be very careful with the calculation by programming language due
     ```
 
 ## The Old "var"
+1. Since there are several ways to declare variables, we can use `let`, `const` or `var` to declare a variable. Though `var` and `let` are very similar, they actually work very differently by defining the context and scope of the declared variable.
+
+### "var" has no block scope
+1. Variables, declared with `var`, are either "**function-scoped**" or "**global-scoped**". They are visible through blocks. The same thing for loops. `var` cannot be block- or loop-local.
+1. var pierces through `if`, `for` or other **code blocks**. That’s because a long time ago in JavaScript, blocks had no Lexical Environments, and `var` is a remnant of that.
+    ```js
+    if (true) {
+        var test = true; // use "var" instead of "let"
+    }
+    console.log(test); // true, the variable lives after if
+
+    for (var i = 0; i < 10; i++) {
+        var one = 1;
+        // ...
+    }
+    console.log(i);   // 10, "i" is visible after loop, it's a global variable
+    console.log(one); // 1, "one" is visible after loop, it's a global variable
+
+    function sayHi() {
+        if (true) {
+            var phrase = "Hello";
+        }
+
+        console.log(phrase); // works
+    }
+
+    sayHi();
+    console.log(phrase); // Error: phrase is not defined (Check the Developer Console)
+    ```
+
+### "var" tolerates redeclarations
+1. If we declare the same variable with `let` twice in the same scope, that’s an error. With `var`, we can redeclare a variable any number of times. If we use `var` with an already-declared variable, it’s just ignored.
+
+### "var" variables can be declared below their use
+1. `var` declarations are processed when the function starts (or script starts for globals).
+1. In other words, `var` variables are defined from the beginning of the function, no matter where the definition is (assuming that the definition is not in the nested function).
+1. This behavior "hoisting" (raising), because all `var` are "hoisted" (raised) to the top of the function. In the example, `if (false)` branch never executes, but that doesn’t matter. The `var` inside it is processed in the beginning of the function, so at the moment of `(*)` the variable exists.
+    ```js
+    // all the declaration below work the same 
+    function sayHi() {
+        phrase = "Hello";
+        console.log(phrase);
+        var phrase;
+    }
+    sayHi();
+
+    function sayHi() {
+        var phrase;
+        phrase = "Hello";
+        console.log(phrase);
+    }
+    sayHi();
+
+    function sayHi() {
+        phrase = "Hello"; // (*)
+        if (false) {
+            var phrase;
+        }
+        console.log(phrase);
+    }
+    sayHi();
+    ```
+1. Declarations are hoisted, but assignments are not. The line `var phrase = "Hello"` has two actions in it:
+    1. Variable declaration `var`
+    1. Variable assignment `=`.
+1. Because all `var` declarations are processed at the function start, we can reference them at any place. But variables are undefined until the assignments.
+1. In the examples, `console.log` runs without an error, because the variable `phrase` exists. But its value is not yet assigned, so it shows `undefined`.
+    ```js
+    function sayHi() {
+        console.log(phrase);
+        var phrase = "Hello";
+    }
+
+    sayHi(); // undefined
+    ```
+
+### IIFE
+1. In the past, as there was only `var`, and it has no block-level visibility, programmers invented a way to emulate it. What they did was called "**immediately-invoked function expressions**" (abbreviated as IIFE).
+1. A Function Expression is created and immediately called. So the code executes right away and has its own private variables.
+    ```js
+    (function() {
+        var message = "Hello";
+        console.log(message); // Hello
+    })();
+    ```
+1. The Function Expression is wrapped with parenthesis `(function {...})`, because when JavaScript engine encounters "`function`" in the main code, it understands it as the start of a Function Declaration. But a Function Declaration must have a name, so this kind of code will give an error. 
+1. Even if we say: “okay, let’s add a name”, that won’t work, as JavaScript does not allow Function Declarations to be called immediately.
+1. the parentheses around the function is a trick to show JavaScript that the function is created in the context of another expression, and hence it’s a Function Expression: it needs no name and can be called immediately.
+1. There exist other ways besides parentheses to tell JavaScript that we mean a Function Expression.
+    ```js
+    (function() {
+        console.log("Parentheses around the function");
+    })();
+
+    (function() {
+        console.log("Parentheses around the whole thing");
+    }());
+
+    !function() {
+        console.log("Bitwise NOT operator starts the expression");
+    }();
+
+    +function() {
+        console.log("Unary plus starts the expression");
+    }();
+    ```
+
+
 ## Global Object
 ## Function Object, NFE
 ## The "new Function" Syntax
