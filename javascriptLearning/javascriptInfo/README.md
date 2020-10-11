@@ -4123,6 +4123,522 @@ Note: We should be very careful with the calculation by programming language due
 1. This way of copying an object is much shorter than `let objCopy = Object.assign({}, obj);` or for an array `let arrCopy = Object.assign([], arr);` so we prefer to use it whenever we can. 
 
 ## Variable Scope, Closure
+1. There are 3 keywords can be used to declare, `let`, `const`, and `var`.
+
+### Code Blocks
+1. If a variable is declared inside a code block `{...}`, it’s only visible inside that block. However, this is not the case for `var`. Further details will be introduced in the next section. There’d be an error without blocks. 
+    ```js
+    {
+        // do some job with local variables that should not be seen outside
+
+        let message = "Hello"; // only visible in this block
+
+        console.log(message); // Hello
+    }
+
+    console.log(message); // Error: message is not defined
+
+    {
+        // show message
+        let message = "Hello";
+        console.log(message);
+    }
+
+    {
+        // show another message
+        let message = "Goodbye";
+        console.log(message);
+    }
+
+    // show message
+    let message = "Hello";
+    console.log(message);
+
+    // show another message
+    let message = "Goodbye"; // Error: variable already declared
+    console.log(message);
+    ```
+1. The code block scope is applied to `if` statement and `for` and `while` loop. This feature is useful that we won't create the counter for `for` loop in the global context.
+    ```js
+    for (let i = 0; i < 3; i++) {
+        // the variable i is only visible inside this for
+        console.log(i); // 0, then 1, then 2
+    }
+
+    console.log(i); // Error, no such variable
+    ```
+
+### Nested Functions
+1. A function is called "**nested**" when it is created inside another function. This feature is easy to use in JavaScript. A nested function can be returned either as a property of a new object or as a result by itself. It can then be used somewhere else. No matter where, it still has access to the same outer variables.
+    ```js
+    function sayHiBye(firstName, lastName) {
+        // helper nested function to use below
+        function getFullName() {
+            return firstName + " " + lastName;
+        }
+        console.log("Hello, " + getFullName());
+        console.log("Bye, " + getFullName());
+    }
+
+    // a closure is created that only the inner declared function can modify the variable.
+    function makeCounter() {
+        let count = 0;
+
+        return function() {
+            return count++;
+        };
+    }
+
+    let counter = makeCounter();
+
+    console.log(counter()); // 0
+    console.log(counter()); // 1
+    console.log(counter()); // 2
+    ```
+
+### Lexical Environment
+**Step 1. Variables**
+1. In JavaScript, every running function, code block `{...}`, and the script as a whole have an internal (hidden) associated object known as the "**_Lexical Environment_**". The Lexical Environment object consists of two parts:
+    1. Environment Record – an object that stores all local variables as its properties (and some other information like the value of `this`).
+    1. A reference to the "**_outer lexical environment_**", the one associated with the outer code.
+1. A "**variable**" is just a property of the special internal object, "**Environment Record**". "To get or change a variable" means "to get or change a property of that object". For example, all the variables in the current **_global_** Lexical Environment is a property of global object, which varies according to the environment, such as if it is browser or Nodejs.
+    1. When the script starts, the Lexical Environment is pre-populated with all declared variables. Initially, they are in the "**_Uninitialized_**" state. That’s a special internal state, it means that the engine knows about the variable, but it cannot be referenced until it has been declared with `let`. It’s almost the same as if the variable didn’t exist.
+    1. Then let phrase definition appears. There’s no assignment yet, so its value is undefined. We can use the variable from this point forward.
+    1. `phrase` is assigned a value.
+    1. `phrase` changes the value.
+    ```js
+    let phrase = 'Hello';
+        phrase = 'Bye';
+    ```
+
+**Step 2. Function Declarations**
+1. A function is also a value, like a variable. The difference is that a Function Declaration is instantly fully initialized. When a Lexical Environment is created, a Function Declaration immediately becomes a ready-to-use function (unlike let, that is unusable till the declaration). This feature is called "**hoisting**".
+1. Note that this behavior only applies to "**_Function Declarations_**", not "**_Function Expression_**" where we assign a funciton to a variable, such as `let say = function(){}`.
+
+**Step 3. Inner and outer Lexical Enviornment**
+1. When a function runs, at the beginning of the call, a new Lexical Environment is created automatically to store local variables and parameters of the call. During the function call we have two Lexical Environments: the inner one (for the function call) and the outer one (global). 
+    1. The inner Lexical Environment corresponds to the current execution of `say`. It has a single property: name, the function argument. We called `say("John")`, so the value of the `name` is `"John"`.
+    1. The outer Lexical Environment is the global Lexical Environment. It has the `phrase` variable and the function itself.
+    ```js
+    let phrase = 'Hello';
+    function say(name){
+        console.log(`${phrase}, ${name}`);
+    }
+
+    say('John'); // Hello, John
+    ```
+1. When the code wants to access a variable – the inner Lexical Environment is searched first, then the outer one, then the more outer one and so on until the global one.
+    1. For the `name` variable, the `console.log` inside say finds it immediately in the inner Lexical Environment.
+    1. When it wants to access `phrase`, then there is no `phrase` locally, so it follows the reference to the outer Lexical Environment and finds it there.
+
+**Step 4. Returning a function**
+1. At the beginning of each `makeCounter()` call, a new Lexical Environment object is created, to store variables for this `makeCounter` run.
+    1. `counter.[[Environment]]` has the reference to `{count: 0}` Lexical Environment. That’s how the function remembers where it was created, no matter where it’s called. The `[[Environment]]` reference is set once and forever at function creation time.
+    1. Later, when `counter()` is called, a new Lexical Environment is created for the call, and its outer Lexical Environment reference is taken from `counter.[[Environment]]`.
+    1. Now when the code inside `counter()` looks for `count` variable, it first searches its own Lexical Environment (empty, as there are no local variables there), then the Lexical Environment of the outer `makeCounter()` call, where it finds and changes it.
+    ```js
+    function makeCounter() {
+        let count = 0;
+        return function() {
+            return count++;
+        };
+    }
+
+    let counter = makeCounter(); 
+    counter(); // 1
+    counter(); // 2
+    counter(); // 3
+    ```
+1. A variable is updated in the Lexical Environment where it lives. If we call `counter()` multiple times, the `count` variable will be increased to 2, 3 and so on, at the same place.
+
+### Closure
+1. A closure is a function that remembers its outer variables and can access them. In some languages, that’s not possible, or a function should be written in a special way to make it happen. But as explained above, in JavaScript, all functions are naturally closures (there is only one exception, to be covered in The "**`new Function`**" syntax, which is used for "**classes**"). 
+1. In JavaScript, functions automatically remember where they were created using a hidden `[[Environment]]` property, and then their code can access outer variables.
+
+### Garbage Collection
+1. Usually, a Lexical Environment is removed from memory with all the variables after the function call finishes. That’s because there are no references to it. As any JavaScript object, it’s only kept in memory while it’s reachable. However, if there’s a nested function that is still reachable after the end of a function, then it has `[[Environment]]` property that references the lexical environment. In that case the Lexical Environment is still reachable even after the completion of the function, so it stays alive.
+    ```js
+    function f() {
+        let value = 123;
+        return function() {
+            console.log(value);
+        }
+    }
+
+    let g = f(); // g.[[Environment]] stores a reference to the Lexical Environment
+    // of the corresponding f() call
+    g(); // 123
+    ```
+1. Note that if `f()` is called many times, and resulting functions are saved, then all corresponding Lexical Environment objects will also be retained in memory. In the code below, all 3 of them:
+    ```js
+    function f() {
+        let value = Math.random();
+        return function() {console.log(value);};
+    }
+
+    // 3 functions in array, every one of them links to Lexical Environment
+    // from the corresponding f() run
+    let arr = [f(), f(), f()];
+    // a random number generated from Math.random() but has been stored in this array
+    arr[0](); // a random number 
+    arr[0](); // same random number 
+    arr[1](); // another random number 
+    arr[2](); // another random number 
+
+    ```
+1. A Lexical Environment object dies when it becomes unreachable (just like any other object). In other words, it exists only while there’s at least one nested function referencing it. In the code below, after the nested function is removed, its enclosing Lexical Environment (and hence the value) is cleaned from memory.
+    ```js
+    function f() {
+        let value = 123;
+        return function() {
+            alert(value);
+        }
+    }
+    let g = f(); // while g function exists, the value stays in memory
+    g = null; // ...and now the memory is cleaned up
+    ```
+
+### Real-life Optimization
+1. In theory while a function is alive, all outer variables are also retained. But in practice, JavaScript engines try to optimize that. They analyze variable usage and if it’s obvious from the code that an outer variable is not used – it is removed. 
+    1. An important side effect in V8 (Chrome, Edge, Opera) is that such variable will become unavailable in debugging. 
+    ```js
+    function f() {
+        let value = Math.random();
+        function g() {
+            debugger; // in console: type alert(value); Error! No such variable!
+        }
+        return g;
+    }
+
+    let g = f();
+    g();
+    ```
+    1. The debugger will return the value of the variable in global context rather than the closest value in the direct outter one.
+    ```js
+    let value = "Surprise!";
+
+    function f() {
+        let value = "the closest value";
+        function g() {
+            debugger; // in console: type alert(value); 'Surprise!' not 'the closest value'
+        }
+        return g;
+    }
+
+    let g = f();
+    g();
+    ```
+
+#### Exercise 1 - Does function pickup latest changes
+1. The function sayHi uses an external variable name. When the function runs, which value is it going to use? Such situations are common both in browser and server-side development. A function may be scheduled to execute later than it is created, for instance after a user action or a network request.
+    ```js
+    let name = "John";
+
+    function sayHi() {
+        console.log("Hi, " + name);
+    }
+
+    name = "Pete";
+
+    sayHi(); // what will it show: "John" or "Pete"?
+    ```
+1. Solution. The function should return `'Pete'` as in the execution context, variable `name` has been changed from `'John'` to `'Pete'`.
+
+#### Exercise 2 - Which variables are available?
+1. The function `makeWorker` below makes another function and returns it. That new function can be called from somewhere else. Will it have access to the outer variables from its creation place, or the invocation place, or both?
+    ```js
+    function makeWorker() {
+        let name = "Pete";
+
+        return function() {
+            console.log(name);
+        };
+    }
+
+    let name = "John";
+
+    // create a function
+    let work = makeWorker();
+
+    // call it
+    work(); // what will it show?
+    ```
+1. Solution. The function will return `'Pete'` because the closest variable to the executed lexical context is in the direct outter scope. The value will only become `'John'` if there's no `name` variable in the function declaration. 
+
+#### Exercise 3 - Are counters independent?
+1. Here we make two counters: `counter` and `counter2` using the same makeCounter function. Are they independent? What is the second counter going to show? `0,1` or `2,3` or something else?
+    ```js
+    function makeCounter() {
+        let count = 0;
+        return function() {
+            return count++;
+        };
+    }
+
+    let counter = makeCounter();
+    let counter2 = makeCounter();
+
+    console.log(counter()); // 0
+    console.log(counter()); // 1
+
+    console.log(counter2()); // ?
+    console.log(counter2()); // ?
+    ```
+1. Solution. The 2nd section for function execution with variable `counter2` will have its own lexical environment which is separated from the other `counter`. Therefore, the result will be `0,1`.
+
+#### Exercise 4 - Counter object
+1. Here a counter object is made with the help of the constructor function. Will it work? What will it show?
+    ```js
+    function Counter() {
+        let count = 0;
+        this.up = function() {
+            return ++count;
+        };
+        this.down = function() {
+            return --count;
+        };
+    }
+
+    let counter = new Counter();
+
+    console.log(counter.up()); // ?
+    console.log(counter.up()); // ?
+    console.log(counter.down()); // ?
+    ```
+1. Solution. Both nested functions are created within the same outer Lexical Environment, so they share access to the same `count` variable. Note that we can only use `new` keyword to create a new object that as both functions as its methods.
+
+#### Exercise 5 - Function in if
+1. Look at the code. What will be the result of the call at the last line?
+    ```js
+    let phrase = "Hello";
+    if (true) {
+        let user = "John";
+        function sayHi() {
+            console.log(`${phrase}, ${user}`);
+        }
+    }
+
+    sayHi();
+    ```
+1. Solution. `sayHi()` function should return `'Hello, John'`. This part is a bit weird, as by theory, the function is declared in the code block which shouldn't be visible in global context. However, we still can execute `sayHi` function in both chrome, edge, firefox and Node.js runtime. Tested on 2020/OCT/11.
+
+#### Exercise 6 - Sum with closures
+1. Write function `sum` that works like this: `sum(a)(b) = a+b`. Yes, exactly this way, using double parentheses (not a mistype).
+    ```js
+    function sum(n){
+        return function (num){
+            return n + num;
+        }
+    }
+
+    sum(1)(2) // 3
+    sum(5)(-1) // 4
+    ```
+1. Solution.
+    ```js
+    function sum(a) {
+        return function(b) {
+            return a + b; // takes "a" from the outer lexical environment
+        };
+    }
+    ```
+
+#### Exercise 7 - Is variable visible?
+1. What will be the result of this code?
+    ```js
+    let x = 1;
+    function func() {
+        console.log(x); // ?
+        let x = 2;
+    }
+
+    func();
+    ```
+1. Solution. The result is an "Error" of `ReferenceError` as the function can't access variable `x` before it's declared. A variable starts in the "**_uninitialized_**" state from the moment when the execution enters a code block (or a function). And it stays uninitalized until the corresponding `let` statement. In other words, a variable technically exists, but can’t be used before `let`. 
+1. This zone of temporary unusability of a variable (from the beginning of the code block till `let`) is sometimes called the "**_dead zone_**".
+    ```js
+    function func() {
+        // the local variable x is known to the engine from the beginning of the function,
+        // but "unitialized" (unusable) until let ("dead zone")
+        // hence the error
+        console.log(x); // ReferenceError: Cannot access 'x' before initialization
+        let x = 2;
+    }
+    ```
+
+#### Exercise 8 - Filter through function
+1. We have a built-in method `arr.filter(f)` for arrays. It filters all elements through the function `f`. If it returns `true`, then that element is returned in the resulting array.
+1. Make a set of “ready to use” filters:
+    1. `inBetween(a, b)` – between a and b or equal to them (inclusively).
+    1. `inArray([...])` – in the given array.
+1. The usage must be like this:
+    1. `arr.filter(inBetween(3,6))` – selects only values between 3 and 6.
+    1. `arr.filter(inArray([1,2,3]))` – selects only elements matching with one of the members of `[1,2,3]`.
+    ```js
+    /* .. your code for inBetween and inArray */
+    let arr = [1, 2, 3, 4, 5, 6, 7];
+    function inBetween(a, b){
+        return function(num) {
+            if (num >= a && num <=b) {
+                return num;
+            }
+        }
+    }
+
+    function inArray(arr){
+        return function(num){
+            for (let e of arr) {
+                if (num === e) {
+                    return num
+                }
+            }
+        }
+    }
+
+    console.log(arr.filter(inBetween(3, 6))); // 3,4,5,6
+    console.log(arr.filter(inArray([1, 2, 10]))); // 1,2
+    ```
+1. Solution. Though the tentative solutions are also available, `Array.filter` method takes a callback function which has condition to return the element if it returns `true`. The exercise is to input another value as the parameter to be the filter. The tentative solutions also work simply because the returned value is considered boolean `true`. However, if there's empty string `""` or `0` as part of the elements, it wouldn't work correctly. For example, if there's `0` in the array, the callback function does return `0`, but as JavaScript consider `Boolean(0)` as `false`, `0` is not in the returned array.
+    ```js
+    function inBetween(a, b) {
+        return function(x) {
+            return x >= a && x <= b;
+        };
+    }
+
+    let arr = [1, 2, 3, 4, 5, 6, 7];
+    console.log(arr.filter(inBetween(3, 6))); // 3,4,5,6
+
+    function inArray(arr) {
+        return function(x) {
+            return arr.includes(x);
+        };
+    }
+
+    let arr = [1, 2, 3, 4, 5, 6, 7];
+    console.log(arr.filter(inArray([1, 2, 10]))); // 1,2
+
+    // 
+    function inBetween(a, b){
+        return function(num) {
+            if (num >= a && num <=b) {
+                return num;
+            }
+        }
+    }
+    let arr = [0, 1, 2, 3, 4, 5, 6, 7];
+    // this is not correct because 0 should also be returned
+    console.log(arr.filter(inBetween(0, 2))); // 1,2 
+    ```
+
+#### Exercise 9 - Sort by field
+1. We’ve got an array of objects to sort:. 
+    ```js
+    let users = [
+        { name: "John", age: 20, surname: "Johnson" },
+        { name: "Pete", age: 18, surname: "Peterson" },
+        { name: "Ann", age: 19, surname: "Hathaway" }
+    ];
+
+    // The usual way
+    // by name (Ann, John, Pete)
+    users.sort((a, b) => a.name > b.name ? 1 : -1);
+
+    // by age (Pete, Ann, John)
+    users.sort((a, b) => a.age > b.age ? 1 : -1);
+
+    function byField(prop){
+        return function(a, b) {
+            return a[prop] > b[prop] ? 1 : -1;
+        }
+    }
+
+    let users = [
+        { name: "John", age: 20, surname: "Johnson" },
+        { name: "Pete", age: 18, surname: "Peterson" },
+        { name: "Ann", age: 19, surname: "Hathaway" }
+    ];
+    users.sort(byField('name'));
+    users.sort(byField('age'));
+    ```
+1. Solution
+    ```js
+    function byField(fieldName){
+       return (a, b) => a[fieldName] > b[fieldName] ? 1 : -1;
+    }
+    ```
+
+#### Exercise 10 - Army of functions
+1. The following code creates an array of `shooters`. Every function is meant to output its number. But something is wrong...
+1. Why do all of the shooters show the same value? Fix the code so that they work as intended.
+    ```js
+    function makeArmy() {
+        let shooters = [];
+
+        let i = 0;
+        while (i < 10) {
+            let shooter = function() { // create a shooter function,
+                console.log(i); // that should show its number
+            };
+            shooters.push(shooter); // and add it to the array
+            i++;
+        }
+
+        // ...and return the array of shooters
+        return shooters;
+    }
+
+    function makeArmy(){
+        let shooters = [];
+        for (let i = 0; i < 10; i++){
+            let shooter = function(){
+                console.log(i);
+            }
+            shooters.push(shooter);
+        }
+        return shooters;
+    }
+
+    function makeArmy(){
+        let shooters = [];
+        let i = 0;
+        while (i < 10) {
+            let j = i; // a new j is created and holds the current value of i in every iteration
+            let shooter = function() { 
+                console.log(j); // j is different in every iteration
+            };
+            shooters.push(shooter); 
+            i++;
+        }
+        return shooters;
+    }
+
+    let army = makeArmy();
+
+    // all shooters show 10 instead of their numbers 0, 1, 2, 3...
+    army[0](); // 10 from the shooter number 0
+    army[1](); // 10 from the shooter number 1
+    army[2](); // 10 ...and so on.
+    ```
+1. Solution. In the `while` loop, as the counter variable `i` is 2 layers away from the function that refers the variable. Therefore, the variable keeps changing from 0 to 9 and after the `while` loop ends, all the `i` refer to the last number which is `9`. Therefore, we have 2 solutions 
+    1. We can either use `for` loop and use `let` to declare the counter `i` or use another function to limit the scope for the counter.
+    1. We can use another varible to hold the current value of counter `i`, which will disappear every time the `while` loop iterates. The concept of using `for` loop is similar to this that every time the counter `i` is recreated and holds a different number, so the inner function can hold a different value from it.
+    ```js
+    function makeArmy(){
+        let shooters = [];
+        let i = 0;
+        while (i < 10) {
+            let j = i;
+            let shooter = function() { // create a shooter function,
+                console.log(j); // that should show its number
+            };
+            shooters.push(shooter); // and add it to the array
+            i++;
+        }
+        return shooters;
+    }
+    ```
+
 ## The Old "var"
 ## Global Object
 ## Function Object, NFE
