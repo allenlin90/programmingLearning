@@ -4749,6 +4749,53 @@ Note: We should be very careful with the calculation by programming language due
 
 
 ## Global Object
+1. The global object provides variables and functions that are available anywhere. By default, those that are built into the language or the environment.
+1. In a browser it is named `window`, for Node.js it is `global`, for other environments it may have another name.
+1. Recently, `globalThis` was added to the language, as a standardized name for a global object, that should be supported across all environments. It’s supported in all major browsers.
+    ```js
+    console.log("Hello");
+    // is the same as
+    window.console.log("Hello");
+    ```
+1. In a browser, global functions and variables declared with var (not let/const!) become the property of the global object.
+    ```js
+    var gVar = 5;
+    console.log(window.gVar); // 5 (became a property of the global object)
+    ```
+1. If we used `let` instead, such thing wouldn’t happen.
+    ```js
+    let gLet = 5;
+    console.log(window.gLet); // undefined (doesn't become a property of the global object)
+    ```
+1. If a value is so important that you’d like to make it available globally, write it directly as a property.
+    ```js
+    // make current user information global, to let all scripts access it
+    window.currentUser = {
+        name: "John"
+    };
+
+    // somewhere else in code
+    console.log(currentUser.name);  // John
+
+    // or, if we have a local variable with the name "currentUser"
+    // get it from window explicitly (safe!)
+    console.log(window.currentUser.name); // John
+    ```
+1. Using global variables is generally discouraged. There should be as few global variables as possible. The code design where a function gets “input” variables and produces certain “outcome” is clearer, less prone to errors and easier to test than if it uses outer or global variables.
+
+### Using for Polyfills
+1. We use the global object to test for support of modern language features. For instance, test if a built-in `Promise` object exists (it doesn’t in really old browsers).
+1. If there’s none (say, we’re in an old browser), we can create "**polyfills**": add functions that are not supported by the environment, but exist in the modern standard.
+    ```js
+    if (!window.Promise) {
+        console.log("Your browser is really old!");
+    }
+
+    if (!window.Promise) {
+        window.Promise = ... // custom implementation of the modern language feature
+    }
+    ```
+
 ## Function Object, NFE
 ## The "new Function" Syntax
 ## Scheduling: setTimeout and setInterval
