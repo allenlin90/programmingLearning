@@ -4797,6 +4797,302 @@ Note: We should be very careful with the calculation by programming language due
     ```
 
 ## Function Object, NFE
+1. a function in JavaScript is a value. Every value in JavaScript has a type. In JavaScript, functions are `objects`. A good way to imagine functions is as callable "action objects". We can not only call them, but also treat them as objects: add/remove properties, pass by reference etc.
+
+### The "name" property
+1. Function objects contain some useable properties. The name-assigning logic is smart. It also assigns the correct name to a function even if it’s created without one, and then immediately assigned. In the specification, this feature is called a “contextual name”. If the function does not provide one, then in an assignment it is figured out from the context. 
+    ```js
+    function sayHi(){
+        console.log('Hi');
+    }
+
+    console.log(sayHi.name); // sayHi
+
+    let sayHi = function(){
+        console.log('Hi');
+    }
+
+    console.log(sayHi.name); // sayHi
+
+    function f(sayHi = function() {}) {
+        console.log(sayHi.name); // sayHi
+    }
+
+    f();
+    ```
+1. Object methods have `name` property too.
+    ```js
+    let user = {
+        sayHi() {
+            // ...
+        },
+        sayBye: function() {
+            // ...
+        }
+    }
+
+    console.log(user.sayHi.name); // sayHi
+    console.log(user.sayBye.name); // sayBye
+    ```
+1. There’s no magic though. There are cases when there’s no way to figure out the right name. In that case, the name property is empty.
+    ```js
+    // function created inside array
+    let arr = [function() {}];
+
+    console.log(arr[0].name); // <empty string>
+    // the engine has no way to set up the right name, so there is none
+    ```
+
+### The "length" property
+1. There is another built-in property "length" that returns the number of function parameters. Note that rest parameters are not counted in `many` function of the example below.
+    ```js
+    function f1(a) {}
+    function f2(a, b) {}
+    function many(a, b, ...more) {}
+
+    console.log(f1.length); // 1
+    console.log(f2.length); // 2
+    console.log(many.length); // 2
+    ```
+1. The `length` property is sometimes used for introspection in functions that operate on other functions. For instance, in the code below the `ask` function accepts a `question` to ask and an arbitrary number of handler functions to call. Once a user provides their answer, the function calls the handlers. We can pass two kinds of handlers.
+    1. A zero-argument function, which is only called when the user gives a positive answer.
+    1. A function with arguments, which is called in either case and returns an answer.
+1. To call `handler` the right way, we examine the `handler.length` property.
+1. The idea is that we have a simple, no-arguments handler syntax for positive cases (most frequent variant), but are able to support universal handlers as well.
+    ```js
+    function ask(question, ...handlers) {
+        let isYes = confirm(question);
+
+        for(let handler of handlers) {
+            if (handler.length == 0) {
+                if (isYes) handler();
+            } else {
+                handler(isYes);
+            }
+        }
+    }
+
+    // for positive answer, both handlers are called
+    // for negative answer, only the second one
+    ask("Question?", () => console.log('You said yes'), result => console.log(result));
+    ```
+1. This is a particular case of so-called "**polymorphism**" – treating arguments differently depending on their type or, in our case depending on the length. The idea does have a use in JavaScript libraries.
+
+### Custom Properties
+1. We can also add properties of our own. Here we add the `counter` property to track the total calls count.
+    ```js
+    function sayHi() {
+        console.log("Hi");
+        // let's count how many times we run
+        sayHi.counter++;
+    }
+    sayHi.counter = 0; // initial value
+    sayHi(); // Hi
+    sayHi(); // Hi
+    console.log( `Called ${sayHi.counter} times` ); // Called 2 times
+    ```
+1. A property is not a variable. A property assigned to a function like `sayHi.counter = 0` does not define a local variable `counter` inside it. In other words, a property `counter` and a variable `let counter` are two unrelated things.
+1. We can treat a function as an object, store properties in it, but that has no effect on its execution. Variables are not function properties and vice versa. These are just parallel worlds.
+1. Function properties can replace closures sometimes. For instance, we can rewrite the counter function example from the chapter [Variable scope, closure](#variable-scope,-closure) to use a function property.
+    ```js
+    function makeCounter() {
+        // instead of:
+        // let count = 0
+        function counter() {
+            return counter.count++;
+        };
+        counter.count = 0;
+        return counter;
+    }
+
+    let counter = makeCounter();
+    console.log(counter()); // 0
+    console.log(counter()); // 1
+    ```
+1. The count is now stored in the function directly, not in its outer Lexical Environment. The main difference is that if the value of `count` lives in an outer variable, then external code is unable to access it. Only nested functions may modify it. And if it’s bound to a function, then such a thing is possible.
+    ```js
+    function makeCounter() {
+        function counter() {
+            return counter.count++;
+        };
+        counter.count = 0;
+        return counter;
+    }
+
+    let counter = makeCounter();
+
+    counter.count = 10;
+    console.log(counter()); // 10
+    ```
+
+### Named Function Expression
+1. Named Function Expression, or NFE, is a term for Function Expressions that have a name. 
+1. Note that for function expression, we can still can add a name on it. We still have a Function Expression. Adding the name "`func`" after function did not make it a _Function Declaration_, because it is still created as a part of an assignment expression. Adding such a name also did not break anything. The function is still available as `sayHi()`.
+    ```js
+    let sayHi = function(who){
+        console.log(`Hello, ${who}`);
+    }
+
+    // add function name to the expression
+    let sayHi = function func(who) {
+        console.log(`Hello, ${who}`);
+    };
+    ```
+1. 1. There are two special things about the name `func`, that are the reasons for it. 
+    1. It allows the function to reference itself internally.
+    1. It is not visible outside of the function.
+1. For instance, the function `sayHi` below calls itself again with "`Guest`" if no `who` is provided.
+    ```js
+    let sayHi = function func(who) {
+        if (who) {
+            console.log(`Hello, ${who}`);
+        } else {
+            func("Guest"); // use func to re-call itself
+        }
+    };
+
+    sayHi(); // Hello, Guest
+
+    // But this won't work:
+    func(); // Error, func is not defined (not visible outside of the function)
+    ```
+1. This feature brings a benefit that if the variable that takes function expression is modified or refers to something else, the inner function call to itself won't work.
+    ```js
+    // function expression can call itself in a inner call
+    let sayHi = function(who) {
+        if (who) {
+            console.log(`Hello, ${who}`);
+        } else {
+            sayHi("Guest");
+        }
+    };
+
+    let welcome = sayHi;
+    sayHi = null;
+
+    welcome(); // Error, the nested sayHi call doesn't work any more!
+    ````
+1. Therefore, if we give a name to function expression, we can assign it to another variable though the original one is modified or removed.
+    ```js
+    let sayHi = function func(who) {
+        if (who) {
+            alert(`Hello, ${who}`);
+        } else {
+            func("Guest"); // Now all fine
+        }
+    };
+
+    let welcome = sayHi;
+    sayHi = null;
+
+    welcome(); // Hello, Guest (nested call works)
+    ```
+1. The "internal name" feature described here is only available for Function Expressions, not for Function Declarations. For Function Declarations, there is no syntax for adding an "internal" name.
+1. Sometimes, when we need a reliable internal name, it’s the reason to rewrite a Function Declaration to Named Function Expression form.
+1. If the function is declared as a Function Expression (not in the main code flow), and it carries the name, then it is called a Named Function Expression. The name can be used inside to reference itself, for recursive calls or such. 
+1. Functions may carry additional properties. Many well-known JavaScript libraries make great use of this feature.
+1. They create a "main" function and attach many other "helper" functions to it. For instance, the **jQuery** library creates a function named `$`. The **lodash** library creates a function `_`, and then adds `_.clone`, `_.keyBy` and other properties to it (see the docs when you want learn more about them). Actually, they do it to lessen their pollution of the global space, so that a single library gives only one global variable. That reduces the possibility of naming conflicts.
+
+#### Exercise 1 - Set and decrease for counter
+1. Modify the code of `makeCounter()` so that the counter can also decrease and set the number:
+    1. `counter()` should return the next number (as before).
+    1. `counter.set(value)` should set the counter to value.
+    1. `counter.decrease()` should decrease the counter by 1.
+    1. See the sandbox code for the complete usage example.
+1. P.S. You can use either a closure or the function property to keep the current count. Or write both variants.
+    ```js
+    function makeCounter() {
+        function counter() {
+            return counter.count++;
+        };
+        counter.count = 0;
+        counter.set = function(value) {
+            counter.count = value;
+            return counter.count;
+        }
+        counter.decrease = function(){
+            return counter.count--;
+        }
+        return counter;
+    }
+
+    let counter = makeCounter();
+
+    counter.count = 10;
+    console.log(counter()); // 10
+
+    function makeCounterClosure() {
+        let count = 0;
+        function counter() {
+            return count++;
+        };
+        counter.set = function(value) {
+            count = value;
+            return count;
+        }
+        counter.decrease = function(){
+            return count--;
+        }
+        return counter;
+    }
+
+    let counter = makeCounterClosure();
+
+    counter.count = 10;
+    console.log(counter()); // 10
+    ```
+1. Solution
+    ```js
+    function makeCounter() {
+        let count = 0;
+        function counter() {
+            return count++;
+        }
+        counter.set = value => count = value;
+        counter.decrease = () => count--;
+        return counter;
+    }
+    ```
+
+#### Exercise 2 - Sum with an arbitrary amount of brackets
+1. Write function sum that would work that it can be called multiple times. 
+1. P.S. Hint: you may need to setup custom object to primitive conversion for your function.
+    ```js
+    let sum = function (){}
+
+    sum(1)(2) == 3; // 1 + 2
+    sum(1)(2)(3) == 6; // 1 + 2 + 3
+    sum(5)(-1)(2) == 6
+    sum(6)(-1)(-2)(-3) == 0
+    sum(0)(1)(2)(3)(4)(5) == 15
+    ```
+1. Solution. 
+1. For the whole thing to work anyhow, the result of `sum` must be function.
+1. That function must keep in memory the current value between calls.
+1. According to the task, the function must become the number when used in `==`. Functions are objects, so the conversion happens as described in the chapter Object to primitive conversion, and we can provide our own method that returns the number.
+1. Please note that the `sum` function actually works only once. It returns function `f`.
+1. Then, on each subsequent call, `f` adds its parameter to the sum `currentSum`, and returns itself.
+    ```js
+    function sum(a) {
+
+        let currentSum = a;
+
+        function f(b) {
+            currentSum += b;
+            return f;
+        }
+
+        // we can use either toString or valueOf to convert the value
+        f.toString = function() {
+            return currentSum;
+        };
+
+        return f;
+    }
+
+    +sum(1)(2)(3) === 6; // true
+    ```
+
 ## The "new Function" Syntax
 ## Scheduling: setTimeout and setInterval
 ## Decorators and Forwarding, call/apply
