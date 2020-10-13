@@ -5094,6 +5094,48 @@ Note: We should be very careful with the calculation by programming language due
     ```
 
 ## The "new Function" Syntax
+1. There’s one more way to create a function. It’s rarely used, but sometimes there’s no alternative.
+
+### Syntax
+1. The function is created with the arguments `arg1...argN` and the given `functionBody`.
+
+    ```js
+    // syntax
+    let func = new Function ([arg1, arg2, ...argN], functionBody);
+
+    let sum = new Function('a', 'b', 'return a + b');
+    console.log(sum(1, 2)); // 3
+
+    // 
+    let sayHi = new Function('console.log("Hello")');
+    sayHi(); // Hello
+    ```
+1. The major difference from other ways we’ve seen is that the function is created literally from a string, that is passed at run time. All previous declarations required us, programmers, to write the function code in the script. But `new Function` allows to turn any string into a function. For example, we can receive a new function from a server and then execute it.
+1. It is used in very specific cases, like when we receive code from a server, or to dynamically compile a function from a template, in complex web-applications.
+    ```js
+    let str = ... receive the code from a server dynamically ...
+
+    let func = new Function(str);
+    func();
+    ```
+
+### Closure
+1. Usually, a function remembers where it was born in the special property `[[Environment]]`. It references the Lexical Environment from where it’s created (we covered that in the chapter [Variable scope, closure](#variable,-closure)).
+1. But when a function is created using new Function, its `[[Environment]]` is set to reference not the current Lexical Environment, but the global one. So, such function doesn’t have access to outer variables, only to the global ones.
+    ```js
+    function getFunc() {
+        let value = "test";
+        let func = new Function('alert(value)');
+        return func;
+    }
+
+    getFunc()(); // error: value is not defined
+    ```
+1. This feature is useful in certain circumstances. Imagine that we must create a function from a string. The code of that function is not known at the time of writing the script (that’s why we don’t use regular functions), but will be known in the process of execution. We may receive it from the server or from another source.
+1. Before JavaScript is published to production, it’s compressed using a minifier – a special program that shrinks code by removing extra comments, spaces and – what’s important, renames local variables into shorter ones.
+1. For instance, if a function has `let userName`, minifier replaces it `let a` (or another letter if this one is occupied), and does it everywhere. That’s usually a safe thing to do, because the variable is local, nothing outside the function can access it. And inside the function, minifier replaces every mention of it. Minifiers are smart, they analyze the code structure, so they don’t break anything. They’re not just a dumb find-and-replace.
+1. So if `new Function` had access to outer variables, it would be unable to find renamed `userName`. If `new Function` had access to outer variables, it would have problems with minifiers. Besides, such code would be architecturally bad and prone to errors. To pass something to a function, created as `new Function`, we should use its arguments.
+
 ## Scheduling: setTimeout and setInterval
 ## Decorators and Forwarding, call/apply
 ## Function binding
