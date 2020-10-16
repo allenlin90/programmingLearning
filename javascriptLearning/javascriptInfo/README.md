@@ -5137,6 +5137,274 @@ Note: We should be very careful with the calculation by programming language due
 1. So if `new Function` had access to outer variables, it would be unable to find renamed `userName`. If `new Function` had access to outer variables, it would have problems with minifiers. Besides, such code would be architecturally bad and prone to errors. To pass something to a function, created as `new Function`, we should use its arguments.
 
 ## Scheduling: setTimeout and setInterval
+1. We may decide to execute a function not right now, but at a certain time later. That’s called "**scheduling a call**".
+    1. `setTimeout` allows us to run a function once after the interval of time.
+    1. `setInterval` allows us to run a function repeatedly, starting after the interval of time, then repeating continuously at that interval.
+1. These methods are not a part of JavaScript specification. But most environments have the internal scheduler and provide these methods. In particular, they are supported in all browsers and Node.js.
+
+### setTimeout
+1. The syntax of `setTimeout`.
+    1. `func | code` - Function or a string of code to execute. Usually, that’s a function. For historical reasons, a string of code can be passed, but that’s not recommended.
+    1. `delay` - The delay before run, in milliseconds (1000 ms = 1 second), by default 0.
+    1. `arg1, arg2, ...` - Arguments for the function (not supported in IE9-)
+    ```js
+    let timerId = setTimeout(func|code, [delay], [arg1], [arg2], ...)
+
+    // run sayHi after 1 second
+    function sayHi() {
+        console.log('Hello');
+    }
+
+    setTimeout(sayHi, 1000);
+
+    // with arguments
+    function sayHi(phrase, who) {
+        console.log( phrase + ', ' + who );
+    }
+
+    setTimeout(sayHi, 1000, "Hello", "John"); // Hello, John
+    ```
+1. If the first argument for `setTimeout` is a string, JavaScript will create a function from it. However, in modern JavaScript engine, `eval` methods are closed by default. Besides, it's not suggested to create functions from strings.
+1. Novice developers sometimes make a mistake by adding brackets `()` after the function. This is similar to put callback function to high order functions such as array methods that we declare anonymous functions or pass a declared function without running it.
+    ```js
+
+    ```
+1. That doesn’t work, because `setTimeout` expects a reference to a function. And here `sayHi()` runs the function, and the result of its execution is passed to `setTimeout`. In our case the result of `sayHi()` is `undefined` (the function returns nothing), so nothing is scheduled.
+
+### Canceling with clearTimeout
+1. A call to `setTimeout` returns a "timer identifier" `timerId` that we can use to cancel the execution.
+    ```js
+    let timerId = setTimeout(...);
+    clearTimeout(timerId);
+    
+    let timerId = setTimeout(() => console.log("never happens"), 1000);
+    console.log(timerId); // timer identifier
+
+    clearTimeout(timerId);
+    console.log(timerId); // same identifier (doesn't become null after canceling)
+    ```
+1. As we can see from `console.log` output, in a browser the timer identifier is a number. In other environments, this can be something else. For instance, Node.js returns a timer object with additional methods.
+1. Again, there is no universal specification for these methods, so that’s fine.
+1. For browsers, timers are described in the timers section of HTML5 standard.
+
+### setInterval
+1. The `setInterval` method has the same syntax as `setTimeout`. 
+    1. All arguments have the same meaning. But unlike `setTimeout` it runs the function not only once, but regularly after the given interval of time.
+    1. To stop further calls, we should call `clearInterval(timerId)`.
+    ```js
+    let timerId = setInterval(func|code, [delay], [arg1], [arg2], ...);
+    ```
+1. If we use `alert` to show the message in browser, time goes on while alert is shown. In most browsers, including Chrome and Firefox the internal timer continues "ticking" while showing `alert/confirm/prompt`. 
+1. So if you run the code above and don’t dismiss the `alert` window for some time, then in the next `alert` will be shown immediately as you do it. The actual interval between `alert`s will be shorter than 2 seconds.
+
+### Nested setTimeout
+1. There are two ways of running something regularly. One is `setInterval`. The other one is a nested `setTimeout`.
+    ```js
+    /** instead of:
+    let timerId = setInterval(() => alert('tick'), 2000);
+    */
+
+    let timerId = setTimeout(function tick() {
+        console.log('tick');
+        timerId = setTimeout(tick, 2000); // (*)
+    }, 2000);
+    ```
+1. The `setTimeout` above schedules the next call right at the end of the current one (*).
+1. The nested `setTimeout` is a more flexible method than `setInterval`. This way the next call may be scheduled differently, depending on the results of the current one.
+1. For instance, we need to write a service that sends a request to the server every 5 seconds asking for data, but in case the server is overloaded, it should increase the interval to 10, 20, 40 seconds...
+    ```js
+    // pseudocode
+    let delay = 5000;
+
+    let timerId = setTimeout(function request() {
+        //...send request...
+
+    if (/*request failed due to server overload*/) {
+        // increase the interval to the next run
+        //delay *= 2;
+    }
+
+    timerId = setTimeout(/*request*/, delay);
+
+    }, delay);
+    ```
+1. If the functions that we’re scheduling are CPU-hungry, then we can measure the time taken by the execution and plan the next call sooner or later.
+
+**Nested `setTimeout` allows to set the delay between the executions more precisely than setInterval**
+1. We can compare `setTimeout` and `setInterval`.
+    ```js
+    let i = 1;
+    setInterval(function() {
+        func(i++);
+    }, 100);
+
+    let j = 1;
+    setTimeout(function run() {
+        func(j++);
+        setTimeout(run, 100);
+    }, 100);
+    ```
+1. For `setInterval` the internal scheduler will run `func(i++)` every 100ms. The real delay between func calls for setInterval is less than in the code!
+1. That's normal, because the time taken by `func`'s execution "consumes" a part of the interval. It is possible that `func`'s execution turns out to be longer than we expected and takes more than 100ms.
+In this case the engine waits for `func` to complete, then checks the scheduler and if the time is up, runs it again **_immediately_**. 
+1. In the edge case, if the function always executes longer than delay ms, then the calls will happen without a pause at all.
+    <img src="./setInterval.PNG">
+
+**The nested setTimeout guarantees the fixed delay (here 100ms)**
+    <img src="./setTimeout.PNG">
+#### Garbage collection and setInterval/setTimeout callback
+1. When a function is passed in `setInterval/setTimeout`, an internal reference is created to it and saved in the scheduler. It prevents the function from being garbage collected, even if there are no other references to it.
+    ```js
+    // the function stays in memory until the scheduler calls it
+    setTimeout(function() {...}, 100);
+    ```
+1. For `setInterval` the function stays in memory until `clearInterval` is called.
+1. There’s a side-effect. A function references the outer lexical environment, so, while it lives, outer variables live too. They may take much more memory than the function itself. So when we don’t need the scheduled function anymore, it’s better to cancel it, even if it’s very small.
+
+### Zero delay setTimeout
+1. There’s a special use case: `setTimeout(func, 0)`, or just `setTimeout(func)`. This schedules the execution of `func` as soon as possible. But the scheduler will invoke it only after the currently executing script is complete.
+1. So the function is scheduled to run "right after" the current script. For instance, this outputs "Hello", then immediately "World". This feature is often used to represent the contact of executing asynchronous JavaScript.
+    ```js
+    setTimeout(() => console.log("World"));
+    console.log("Hello");
+    // Hello
+    // World
+    ```
+1. The first line “puts the call into calendar after 0ms”. But the scheduler will only “check the calendar” after the current script is complete, so `"Hello"` is first, and `"World"` – after it.
+There are also advanced browser-related use cases of zero-delay timeout, that we'll discuss in the chapter [Event loop: microtasks and macrotasks](#event-loop:-microtasks-and-macrotasks).
+
+**Zero delay is in fact not zero (in a browser)**
+1. In the browser, there’s a limitation of how often nested timers can run. The HTML5 standard says: "after five nested timers, the interval is forced to be at least 4 milliseconds.".
+1. Let’s demonstrate what it means with the example below. The `setTimeout` call in it re-schedules itself with zero delay. Each call remembers the real time from the previous one in the `times` array.
+    ```js
+    let start = Date.now();
+    let times = [];
+
+    setTimeout(function run() {
+    times.push(Date.now() - start); // remember delay from the previous call
+
+    if (start + 100 < Date.now()) alert(times); // show the delays after 100ms
+    else setTimeout(run); // else re-schedule
+    });
+
+    // an example of the output:
+    // 1,1,1,1,9,15,20,24,30,35,40,45,50,55,59,64,70,75,80,85,90,95,100
+    ```
+1. First timers run immediately (just as written in the spec), and then we see `9, 15, 20, 24...`. The 4+ ms obligatory delay between invocations comes into play.
+1. The similar thing happens if we use `setInterval` instead of `setTimeout: setInterval(f)` runs `f` few times with zero-delay, and afterwards with 4+ ms delay.
+1. That limitation comes from ancient times and many scripts rely on it, so it exists for historical reasons.
+1. For server-side JavaScript, that limitation does not exist, and there exist other ways to schedule an immediate asynchronous job, like setImmediate for Node.js. So this note is browser-specific.
+1. All scheduling methods do not guarantee the exact delay. For example, the in-browser timer may slow down for a lot of reasons:
+    1. The CPU is overloaded.
+    1. The browser tab is in the background mode.
+    1. The laptop is on battery.
+
+#### Exercise 1 - Output every second
+1. Write a function `printNumbers(from, to)` that outputs a number every second, starting from `from` and ending with `to`.
+    1. Using `setInterval`.
+    1. Using nested `setTimeout`.
+    ```js
+    // setInterval
+    function printNumbers(from, to) {
+        let number = from;
+        let interval = setInterval(function(){
+            if (number === to) {
+                clearInterval(interval);
+            }
+            console.log(number);
+            number++;
+        }, 1000);
+    }
+
+    printNumbers(1, 10);
+
+    // setTimeout
+    function printNumber(from, to) {
+        let number = from;
+        let setTime = setTimeout(function repeat(num, to){
+            if (num < to) {
+                setTimeout(repeat, 1000);
+            } else {
+                clearTimeout(repeat);
+            }
+        }, 1000, number++, to);
+    }
+
+    printNumbers(1, 10);
+    ```
+1. Solution
+    1. Use `setInterval`
+    ```js
+    function printNumbers(from, to) {
+        let current = from;
+
+        let timerId = setInterval(function() {
+            console.log(current);
+            if (current == to) {
+                clearInterval(timerId);
+            }
+            current++;
+        }, 1000);
+    }
+
+    // usage:
+    printNumbers(5, 10);
+    ```
+    1. Use `setTimeout`. We actually don't need to use `clearTimeout` in the `else` statement because there's no `setTimeout` called in the context.
+    ```js
+    function printNumbers(from, to) {
+        let current = from;
+
+        setTimeout(function go() {
+            console.log(current);
+            if (current < to) {
+                setTimeout(go, 1000);
+            }
+            current++;
+        }, 1000);
+    }
+
+    // usage:
+    printNumbers(5, 10);
+    ```
+1. Note that in both solution has an initial delay before teh first output. The function is called after `1000ms` the first time.
+    ```js
+    function printNumbers(from, to) {
+        let current = from;
+
+        function go() {
+            console.log(current);
+            if (current == to) {
+                clearInterval(timerId);
+            }
+            current++;
+        }
+
+        go();
+        let timerId = setInterval(go, 1000);
+    }
+
+    printNumbers(5, 10);
+    ```
+
+#### Exercise 2 - What will setTimeout show?
+1. In the code below there’s a `setTimeout` call scheduled, then a heavy calculation is run, that takes more than 100ms to finish. When will the scheduled function run?
+    1. After the loop.
+    1. Before the loop.
+    1. In the beginning of the loop.
+1. What is `console.log` going to show?
+    ```js
+    let i = 0;
+
+    setTimeout(() => console.log(i), 100); // ?
+
+    // assume that the time to execute this function is >100ms
+    for(let j = 0; j < 100000000; j++) {
+        i++;
+    }
+    ```
+1. Solution. `setTimeout` only runs after the current context finishes execution. However, the function will refer to the current lexical after the current context finishes running. Therefore, in the example above, the variable `i` will refer to the latest one which is `100000000`. 
+
 ## Decorators and Forwarding, call/apply
 ## Function binding
 ## Arrow Functions Revisited
