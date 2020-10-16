@@ -5405,7 +5405,129 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     ```
 1. Solution. `setTimeout` only runs after the current context finishes execution. However, the function will refer to the current lexical after the current context finishes running. Therefore, in the example above, the variable `i` will refer to the latest one which is `100000000`. 
 
+
+
 ## Decorators and Forwarding, call/apply
+1. JavaScript gives exceptional flexibility when dealing with functions. They can be passed around, used as objects, and now we’ll see how to **_forward_** calls between them and **_decorate_** them.
+
+### Transparent caching
+1. If we have a function `slow(x)` which is CPU-heavy, but its results are stable. In other words, for the same `x` it always returns the same result.
+1. If the function is called often, we may want to cache (remember) the results to avoid spending extra-time on recalculations.
+1. But instead of adding that functionality into `slow()` we’ll create a wrapper function, that adds caching. As we’ll see, there are many benefits of doing so.
+    ```js
+    function slow(x) {
+        // there can be a heavy CPU-intensive job here
+        console.log(`Called with ${x}`);
+        return x;
+    }
+
+    function cachingDecorator(func) {
+        let cache = new Map();
+
+        return function(x) {
+            if (cache.has(x)) {    // if there's such key in cache
+                return cache.get(x); // read the result from it
+            }
+
+            let result = func(x);  // otherwise call func
+
+            cache.set(x, result);  // and cache (remember) the result
+            return result;
+        };
+    }
+
+    slow = cachingDecorator(slow);
+
+    console.log(slow(1)); // slow(1) is cached
+    console.log("Again: " + slow(1)); // the same
+
+    console.log(slow(2)); // slow(2) is cached
+    console.log("Again: " + slow(2)); // the same as the previous line
+    ```
+1. In the code above `cachingDecorator` is a decorator: a special function that takes another function and alters its behavior.
+1. The idea is that we can call `cachingDecorator` for any function, and it will return the caching wrapper. That’s great, because we can have many functions that could use such a feature, and all we need to do is to apply `cachingDecorator` to them.
+1. By separating caching from the main function code we also keep the main code simpler.
+1. The result of `cachingDecorator(func)` is a "wrapper": `function(x)` that "wraps" the call of `func(x)` into caching logic. 
+1. From an outside code, the wrapped `slow` function still does the same. It just got a caching aspect added to its behavior. To summarize, there are several benefits of using a separate `cachingDecorator` instead of altering the code of `slow` itself. 
+    1. The `cachingDecorator` is reusable. We can apply it to another function.
+    1. The caching logic is separate, it did not increase the complexity of `slow` itself (if there was any).
+    1. We can combine multiple decorators if needed (other decorators will follow).
+
+### Using "func.call" for the context
+1. The caching decorator mentioned above is not suited to work with object methods. For instance, in the code below `worker.slow()` stops working after the decoration.
+    ```js
+    // we'll make worker.slow caching
+    let worker = {
+        someMethod() {
+            return 1;
+        },
+
+        slow(x) {
+            // scary CPU-heavy task here
+            console.log("Called with " + x);
+            return x * this.someMethod(); // (*)
+        }
+    };
+
+    // same code as before
+    function cachingDecorator(func) {
+        let cache = new Map();
+        return function(x) {
+            if (cache.has(x)) {
+                return cache.get(x);
+            }
+            let result = func(x); // (**)
+            cache.set(x, result);
+            return result;
+        };
+    }
+
+    console.log(worker.slow(1)); // the original method works
+
+    worker.slow = cachingDecorator(worker.slow); // now make it caching
+
+    console.log(worker.slow(2)); // Whoops! Error: Cannot read property 'someMethod' of undefined
+    ```
+1. The error occurs in the line `(*)` that tries to access `this.someMethod` and fails. 
+1. The reason is that the wrapper calls the original function as `func(x)` in the line `(**)`. And, when called like that, the function gets `this = undefined`.
+1. Similar problem will occur when we assign the method to a variable and try to call the method because there's no object for `this` to refer to.
+    ```js
+    let func = worker.slow;
+    func(2); // Uncaught TypeError: this.someMethod is not a function
+    ```
+1. There’s a special built-in function method `func.call(context, ...args)` that allows to call a function explicitly setting `this`. The syntax is as the following.
+1. It runs `func` providing the first argument as `this`, and the next as the arguments.
+    ```js
+    func.call(context, arg1, arg2, ...)
+
+    // these 2 calls do almost the same while the 'this' each of them refer to is different.
+    func(1, 2, 3);
+    func.call(obj, 1, 2, 3)
+    ```
+1. As an example, in the code below we call `sayHi` in the context of different objects: `sayHi.call(user)` runs `sayHi` providing `this=user`, and the next line sets `this=admin`.
+    ```js
+    function sayHi() {
+        console.log(this.name);
+    }
+
+    let user = {name: "John"};
+    let admin = {name: "Admin"};
+
+    // use call to pass different objects as "this"
+    sayHi.call(user); // John
+    sayHi.call(admin); // Admin
+
+    function say(phrase) {
+        console.log(this.name + ': ' + phrase);
+    }
+
+    let user = {name: "John"};
+
+    // user becomes this, and "Hello" becomes the first argument
+    say.call(user, "Hello"); // John: Hello
+    ```
+
+
 ## Function binding
 ## Arrow Functions Revisited
 
