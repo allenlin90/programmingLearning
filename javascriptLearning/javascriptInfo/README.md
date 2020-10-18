@@ -5526,7 +5526,139 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     // user becomes this, and "Hello" becomes the first argument
     say.call(user, "Hello"); // John: Hello
     ```
+1. When `this` is passed along: 
+    1. After the decoration `worker.slow` is now the wrapper `function (x) { ... }`.
+    1. So when `worker.slow(2)` is executed, the wrapper gets 2 as an argument and this=worker (it’s the object before dot).
+    1. Inside the wrapper, assuming the result is not yet cached, `func.call(this, x)` passes the current `this (=worker)` and the current argument (`=2`) to the original method.
+    ```js
+    let worker = {
+        someMethod() {
+            return 1;
+        },
 
+        slow(x) {
+            console.log("Called with " + x);
+            return x * this.someMethod(); // (*)
+        }
+    };
+
+    function cachingDecorator(func) {
+        let cache = new Map();
+        return function(x) {
+            if (cache.has(x)) {
+                return cache.get(x);
+            }
+            let result = func.call(this, x); // "this" is passed correctly now
+            cache.set(x, result);
+            return result;
+        };
+    }
+
+    worker.slow = cachingDecorator(worker.slow); // now make it caching
+
+    console.log(worker.slow(2)); // works
+    console.log(worker.slow(2)); // works, doesn't call the original (cached)
+    ```
+
+### Going multi-argument
+1. In this case, we have a method that takes multiple arguments.
+    ```js
+    let worker = {
+        slow(min, max) {
+            return min + max; // scary CPU-hogger is assumed
+        }
+    };
+
+    // should remember same-argument calls
+    worker.slow = cachingDecorator(worker.slow);
+    ```
+1. We have several solutions for such case.
+    1. Implement a new (or use a third-party) map-like data structure that is more versatile and allows multi-keys.
+    1. Use nested maps: `cache.set(min)` will be a Map that stores the pair `(max, result)`. So we can get `result` as `cache.get(min).get(max)`.
+    1. Join two values into one. In our particular case we can just use a string `"min, max"` as the `Map` key. For flexibility, we can allow to provide a hashing function for the decorator, that knows how to make one value from many.
+1. Also we need to pass not just `x`, but all arguments in `func.call`. Let’s recall that in a `function()` we can get a pseudo-array of its arguments as `arguments`, so `func.call(this, x)` should be replaced with `func.call(this, ...arguments)`.
+    1. In the line `(*)` it calls hash to create a single key from `arguments`. Here we use a simple “joining” function that turns arguments `(3, 5)` into the key `"3,5"`. More complex cases may require other hashing functions.
+    1. Then `(**)` uses `func.call(this, ...arguments)` to pass both the context and all arguments the wrapper got (not just the first one) to the original function.
+    ```js
+    let worker = {
+        slow(min, max) {
+            console.log(`Called with ${min},${max}`);
+            return min + max;
+        }
+    };
+
+    function cachingDecorator(func, hash) {
+        let cache = new Map();
+        return function() {
+            let key = hash(arguments); // (*)
+            if (cache.has(key)) {
+                return cache.get(key);
+            }
+
+            let result = func.call(this, ...arguments); // (**)
+
+            cache.set(key, result);
+            return result;
+        };
+    }
+
+    function hash(args) {
+        return args[0] + ',' + args[1];
+    }
+
+    worker.slow = cachingDecorator(worker.slow, hash);
+
+    console.log(worker.slow(3, 5)); // works
+    console.log("Again " + worker.slow(3, 5)); // same (cached)
+    ```
+
+### func.apply
+1. Instead of `func.call(this, ...arguments)` we could use `func.apply(this, arguments)`.
+    ```js
+    func.apply(context, args)
+    ```
+1. It runs the func setting this=context and using an array-like object args as the list of arguments.
+1. The only syntax difference between call and apply is that call expects a list of arguments, while apply takes an array-like object with them.
+    ```js
+    func.call(context, ...args); // pass an array as list with spread syntax
+    func.apply(context, args);   // is same as using call
+    ```
+1. There’s only a subtle difference:
+    1. The spread syntax `...` allows to pass iterable `args` as the list to `call`.
+    1. The `apply` accepts only array-like `args`.
+1. So, where we expect an iterable, `call` works, and where we expect an array-like, `apply` works. And for objects that are both iterable and array-like, like a real array, we can use any of them, but `apply` will probably be faster, because most JavaScript engines internally optimize it better. Passing all arguments along with the context to another function is called call forwarding.
+
+### Borrowing a method
+1. If we'd like to glue any number of arguments passed to a function, we can use `Array.join()` method. Therefore, we can use `arguments` keyword to take the arguments as array-like object and run `.join()` method. However, `arguments` doesn't really create an array, so `.join()` methods can't be used directly.
+    ```js
+    function hash() {
+        console.log(arguments.join()); // error, as 'arguments' doesn't create an array
+    }
+
+    hash(1,2);
+    ```
+1. If we can turn `arguments` into an array, we can run `join` method on the object. In this case, we can use `Array.from` to turn `arguments` into a real array, or use `call` which bind to an empty array as the type of object which has the `join` method and pass the object that we want to run into it.
+    ```js
+    function hash() {
+        console.log([].join.call(arguments)); // 1,2
+    }
+
+    hash(1, 2);
+    ```
+1. In addition, we can also look into the mechanism of how does a regular `array.join` method work.
+    1. Let `glue` be the first argument or, if no arguments, then a comma `","`.
+    1. Let `result` be an empty string.
+    1. Append `this[0]` to `result`.
+    1. Append `glue` and `this[1]`.
+    1. Append `glue` and `this[2]`.
+    1. …Do so until `this.length` items are glued.
+    1. Return `result`.
+
+### Decorators and function properties
+1. It is generally safe to replace a function or a method with a decorated one, except for one little thing. If the original function had properties on it, like `func.calledCount` or whatever, then the decorated one will not provide them. Because that is a wrapper. So one needs to be careful if one uses them.
+1. E.g. in the example above if `slow` function had any properties on it, then `cachingDecorator(slow)` is a wrapper without them.
+1. Some decorators may provide their own properties. E.g. a decorator may count how many times a function was invoked and how much time it took, and expose this information via wrapper properties.
+1. There exists a way to create decorators that keep access to function properties, but this requires using a special `Proxy` object to wrap a function. We’ll discuss it later in the article [Proxy and Reflect](#Proxy-and-Reflect).
 
 ## Function binding
 ## Arrow Functions Revisited
