@@ -5669,7 +5669,12 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     }
 
     function spy(func) {
-
+        let array = [];
+        return function spied(){
+            spied.calls = array;
+            spied.calls.push([...arguments]);
+            return func(...arguments);
+        }
     }
 
     work = spy(work);
@@ -5681,9 +5686,20 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
         console.log('call:' + args.join()); // "call:1,2", "call:4,5"
     }
     ```
-1. Solution
+1. Solution. The critical point to solve this problem is to modify the returned fucntion as an object and assign a property in array to store the arguments when the function is called.
     ```js
+    function spy(func) {
 
+        function wrapper(...args) {
+            // using ...args instead of arguments to store "real" array in wrapper.calls
+            wrapper.calls.push(args);
+            return func.apply(this, args);
+        }
+
+        wrapper.calls = [];
+
+        return wrapper;
+    }
     ```
 
 #### Exercise 2 - Delaying Decorator
