@@ -5707,8 +5707,25 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 1. In other words, `delay(f, ms)` returns a "delayed by `ms`" variant of `f`.
 1. In the code above, `f` is a function of a single argument, but your solution should pass all arguments and the context `this`.
     ```js
-    function f(x) {
-        console.log(x);
+    // delay function with single argument
+    function delay(func, ms) {
+        function delayed (...args){
+            setTimeout(delayedFunc, ms, ...args);
+        }
+
+        return delayed;
+    }
+
+    function f(...args) {
+        console.log(...args);
+    }
+
+    function delay(func, ms){
+        function delayed (...args){
+            return setTimeout.apply(this, [func, ms, ...args]);
+        }
+
+        return delayed;
     }
 
     // create wrappers
@@ -5717,6 +5734,18 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 
     f1000("test"); // shows "test" after 1000ms
     f1500("test"); // shows "test" after 1500ms
+    ```
+1. Solution
+    ```js
+    function delay(f, ms) {
+        return function() {
+            setTimeout(() => f.apply(this, arguments), ms);
+        };
+    }
+
+    let f1000 = delay(alert, 1000);
+
+    f1000("test"); // shows "test" after 1000ms
     ```
 
 #### Exercise 3 - Debounce decorator
