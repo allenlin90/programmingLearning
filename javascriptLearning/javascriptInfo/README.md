@@ -5888,6 +5888,136 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     ```
 
 ## Function binding
+1. When passing object methods as callbacks, for instance to `setTimeout`, there’s a known problem: "losing `this`" because the execution context goes into the lexical scope of `setTimeout`.
+
+### Losing `this`
+1. We’ve already seen examples of losing `this`. Once a method is passed somewhere separately from the object – `this` is lost.
+    ```js
+    let user = {
+        firstName: "John",
+        sayHi() {
+            console.log(`Hello, ${this.firstName}!`);
+        }
+    };
+
+    setTimeout(user.sayHi, 1000); // Hello, undefined!
+
+    let f = user.sayHi;
+    setTimeout(f, 1000); // lost user context
+    ```
+1. The method `setTimeout` in-browser is a little special: it sets `this=window` for the function call (for Node.js, `this` becomes the timer object, but doesn’t really matter here). So for `this.firstName` it tries to get `window.firstName`, which does not exist. In other similar cases, usually `this` just becomes `undefined`.
+
+### Solution 1: a wrapper
+1. We can use a wrapping function. Now it works, because it receives `user` from the outer lexical environment, and then calls the method normally. 
+    ```js
+    let user = {
+        firstName: "John",
+        sayHi() {
+            console.log(`Hello, ${this.firstName}!`);
+        }
+    };
+
+    setTimeout(function() {
+        user.sayHi(); // Hello, John!
+    }, 1000);
+
+    // shorter version with arrow function
+    setTimeout(() => user.sayHi(), 1000); // Hello, John!
+    ```
+1. However, the solution above has problems that `setTimeout` runs as async function which only executes after the current execution context finishes. Therefore, if the `user` object is modifed before async execution starts, the method will refer to wrong object. 
+    ```js
+    let user = {
+        firstName: "John",
+        sayHi() {
+            console.log(`Hello, ${this.firstName}!`);
+        }
+    };
+
+    setTimeout(() => user.sayHi(), 1000);
+
+    // ...the value of user changes within 1 second
+    user = {
+        sayHi() { console.log("Another user in setTimeout!"); }
+    };
+
+    // Another user in setTimeout!
+    ```
+
+### Solution 2: bind
+1. Functions provide a built-in method bind that allows to fix `this`.
+    ```js
+    // more complex syntax will come a little later
+    let boundFunc = func.bind(context);
+    ```
+1. The result of `func.bind(context)` is a special function-like "exotic object", that is callable as function and transparently passes the call to `func` setting `this=context`.
+1. In other words, calling `boundFunc` is like `func` with fixed `this`.
+1. For instance, here `funcUser` passes a call to func with `this=user`. Here `func.bind(user)` as a "bound variant" of `func`, with fixed `this=user`. All arguments are passed to the original `func` "as is", for instance.
+    ```js
+    let user = {
+        firstName: "John"
+    };
+
+    function func(phrase) {
+        console.log(phrase + ', ' + this.firstName);
+    }
+
+    // bind this to user
+    let funcUser = func.bind(user);
+
+    funcUser("Hello"); // Hello, John (argument "Hello" is passed, and this=user)
+    ```
+1. In the line `(*)` we take the method `user.sayHi` and bind it to `user`. The `sayHi` is a "bound" function, that can be called alone or passed to `setTimeout` – doesn’t matter, the context will be right.
+    ```js
+    let user = {
+        firstName: "John",
+        sayHi() {
+            console.log(`Hello, ${this.firstName}!`);
+        }
+    };
+
+    let sayHi = user.sayHi.bind(user); // (*)
+
+    // can run it without an object
+    sayHi(); // Hello, John!
+
+    setTimeout(sayHi, 1000); // Hello, John!
+
+    // even if the value of user changes within 1 second
+    // sayHi uses the pre-bound value which is reference to the old user object
+    user = {
+        sayHi() { console.log("Another user in setTimeout!"); }
+    };
+    ```
+1. If an object has many methods and we plan to actively pass it around, then we could bind them all in a loop. 
+    ```js
+    for (let key in user) {
+        if (typeof user[key] == 'function') {
+            user[key] = user[key].bind(user);
+        }
+    }
+    ```
+
+### Partial functions
+1. Until now we have only been talking about binding `this`. Let’s take it a step further.
+1. We can bind not only `this`, but also arguments. That’s rarely done, but sometimes can be handy.
+    ```js
+    // full bind method syntax
+    let bound = func.bind(context, [arg1], [arg2], ...);
+    ```
+
+### Going partial without context
+
+#### Exercise 1 - Bound function as a method
+
+#### Exercise 2 - Second bind
+
+#### Exercise 3 - Function property after bind
+
+#### Exercise 4 - Fix a function that loses `this`
+
+#### Exercise 5 - Partial application for login
+
+
 ## Arrow Functions Revisited
 
 # Object Properties Configuration
