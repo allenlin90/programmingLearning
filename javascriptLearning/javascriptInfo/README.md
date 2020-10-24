@@ -6004,19 +6004,168 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     // full bind method syntax
     let bound = func.bind(context, [arg1], [arg2], ...);
     ```
+1. It allows to bind context as `this` and starting arguments of the function.
+1. For instance, we have a multiplication function `mul(a, b)`. The call to `mul.bind(null, 2)` creates a new function `double` that passes calls to `mul`, fixing `null` as the context and `2` as the first argument. Further arguments are passed "as is".
+1. That’s called partial function application – we create a new function by fixing some parameters of the existing one. Please note that here we actually don’t use `this` here. But `bind` requires it, so we must put in something like null.
+    ```js
+    function mul(a, b) {
+        return a * b;
+    }
+
+    let double = mul.bind(null, 2);
+    ```
+1. The benefit is that we can create an independent function with a readable name (`double`, `triple`). We can use it and not provide the first argument every time as it’s fixed with bind.
+1. In other cases, partial application is useful when we have a very generic function and want a less universal variant of it for convenience.
+1. For instance, we have a function `send(from, to, text)`. Then, inside a user object we may want to use a partial variant of it: `sendTo(to, text)` that sends from the current user.
 
 ### Going partial without context
+1. We can fix some arguments without fixing the context `this` for an object method. We can use a function to wrap and return another function which fixes the arguments fromthe wrapper.
+1. The result of `partial(func[, arg1, arg2...])` call is a wrapper `(*)` that calls `func` with.
+    1. Same `this` as it gets (for `user.sayNow` call it’s `user`)
+    1. Then gives it `...argsBound` – arguments from the `partial` call (`"10:00"`)
+    1. Then gives it `...args` – arguments given to the wrapper (`"Hello"`)
+    ```js
+    function partial(func, ...argsBound) {
+        return function(...args) { // (*)
+            return func.call(this, ...argsBound, ...args);
+        }
+    }
+
+    // Usage:
+    let user = {
+        firstName: "John",
+        say(time, phrase) {
+            console.log(`[${time}] ${this.firstName}: ${phrase}!`);
+        }
+    };
+
+    // add a partial method with fixed time
+    user.sayNow = partial(user.say, new Date().getHours() + ':' + new Date().getMinutes());
+
+    user.sayNow("Hello");
+    // Something like:
+    // [10:00] John: Hello!
+    ```
 
 #### Exercise 1 - Bound function as a method
+1. What will be the output? 
+    ```js
+    function f() {
+        console.log( this ); // ?
+    }
 
+    let user = {
+        g: f.bind(null)
+    };
+
+    user.g();
+    ```
+1. Reasoned answer before checking solution. The output should be the same object which function `f` calls that is the execution context, which is `global object` in this case.
+1. Solution. It noticed that the context of a bound function is hard-fixed. There’s just no way to further change it. So even while we run `user.g()`, the original function is called with `this=null`. Note that we will get `this=null` as the answer if we use in strict mode. Otherwise, `this` of a regular function object will refer to the global object of the runtime.
 #### Exercise 2 - Second bind
+1. Can we change `this` by additional binding? What will be the output?
+    ```js
+    function f() {
+        console.log(this.name);
+    }
+
+    f = f.bind( {name: "John"} ).bind( {name: "Ann" } );
+
+    f();
+    ```
+1. Reasoned answer before checking solution. The output should be `Ann`.
+1. Solution. The exotic bound function object returned by f.bind(...) remembers the context (and arguments if provided) only at creation time. A function cannot be re-bound.
+1. The function created by the first `bind` call has turned its `this` into `this.name` with `John`. Since the `this` is fixed, we can't modify it with the 2nd object which is `Ann` in this case.
 
 #### Exercise 3 - Function property after bind
+1. There’s a value in the property of a function. Will it change after bind? Why, or why not?
+    ```js
+    function sayHi() {
+        console.log( this.name );
+    }
+    sayHi.test = 5;
+
+    let bound = sayHi.bind({
+        name: "John"
+    });
+
+    console.log(bound.test); // what will be the output? why?
+    ```
+1. Reasoned answer before checking solution. The output should be the same, as `bind` only modifies the context of the `this` without modifying other porperties of the duplicated object.
+1. The answer: `undefined`. The result of `bind` is another object. It does not have the `test` property.
+1. The object returned by `bind` is a regular function experssion as `let func = function(){}`. However, if we check its `name` property, it will show which function (or method of the object) does it bind to. 
+    ```js
+    let obj = {
+        name: 'Allen',
+        method(){
+            return this.name;
+        }
+    }
+
+    let g = obj.method.bind({name: 'Mai'});
+    console.log(g()); // Mai
+    console.log(g.name); // bound method    
+    ```
 
 #### Exercise 4 - Fix a function that loses `this`
+1. The call to `askPassword()` in the code below should check the password and then call `user.loginOk/loginFail` depending on the answer.
+1. But it leads to an error. Why?
+1. Fix the highlighted line for everything to start working right (other lines are not to be changed).
+    ```js
+    function askPassword(ok, fail) {
+        let password = prompt("Password?", '');
+        if (password == "rockstar") ok();
+        else fail();
+    }
+
+    let user = {
+        name: 'John',
+
+        loginOk() {
+            alert(`${this.name} logged in`);
+        },
+
+        loginFail() {
+            alert(`${this.name} failed to log in`);
+        },
+    };
+
+    // change only the following line
+    askPassword(user.loginOk.bind(user), user.loginFail.bind(user));
+    ```
+1. The reason that it doesn't show user name correctly is that when the method is called, it's not in function execution context of `askPassword` which object has no `name` property for the method to refer, so the name doesn't show in the `alert` prompt.
+1. Solution. Besides using `bind`, we can pass a function to let the object method execution refer to `user` object in the global scope, so it can refer to the `user` object itself and return with `name` property correctly.
+1. However, this solution is a bit less reliable though in more complex situations where `user` variable might change after `askPassword` is called, but before the visitor answers and calls `() => user.loginOk()`.
+    ```js
+    askPassword(() => user.loginOk(), () => user.loginFail());
+    ```
 
 #### Exercise 5 - Partial application for login
+1. The task is a little more complex variant of Fix a function that loses "this".
+1. The `user` object was modified. Now instead of two functions `loginOk/loginFail`, it has a single function `user.login(true/false)`.
+1. What should we pass `askPassword` in the code below, so that it calls `user.login(true)` as ok and `user.login(false)` as `fail`?
+    ```js
+    function askPassword(ok, fail) {
+        let password = prompt("Password?", '');
+        if (password == "rockstar") ok();
+        else fail();
+    }
 
+    let user = {
+        name: 'John',
+
+        login(result) {
+            alert( this.name + (result ? ' logged in' : ' failed to log in') );
+        }
+    };
+
+    askPassword(user.login.bind(user, true), user.login.bind(user, false)); // ?
+    ```
+1. This is similar to exercise 4, while this question is asking about passing an arugment as a function with default parameter(s).
+1. Solution. Either use a wrapper function, an arrow to be concise:
+    ```js
+    askPassword(() => user.login(true), () => user.login(false));
+    ```
 
 ## Arrow Functions Revisited
 
