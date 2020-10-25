@@ -6168,6 +6168,78 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     ```
 
 ## Arrow Functions Revisited
+1. In JavaScript, function objects are very special and becomes one of its uniqueness that they can be passed as values to other functions. 
+1. Arrow functions are not only shorthand to declare functions in JavaScript but have special feature for its execution context. 
+
+### Arrow functions have no `this`
+1. Arrow functions do not have `this`. If `this` is accessed, it is taken from the outside.
+1. Here in `forEach`, the arrow function is used, so this.title in it is exactly the same as in the outer method `showList`. That is `group.title`.
+    ```js
+    let group = {
+        title: "Our Group",
+        students: ["John", "Pete", "Alice"],
+
+        showList() {
+            this.students.forEach(
+                student => console.log(this.title + ': ' + student)
+            );
+        }
+    };
+
+    group.showList();
+    ```
+1. If we used a "regular" function, there would be an error. The error occurs because `forEach` runs functions with `this=undefined` by default, so the attempt to access `undefined.title` is made. That doesn’t affect arrow functions, because they just don’t have `this`.
+    ```js
+    let group = {
+        title: "Our Group",
+        students: ["John", "Pete", "Alice"],
+
+        showList() {
+            this.students.forEach(function(student) {
+            // Error: Cannot read property 'title' of undefined
+                console.log(this.title + ': ' + student)
+            });
+        }
+    };
+
+    group.showList();
+    ```
+**Arrow functions can't run with `new`**
+1. Not having `this` naturally means another limitation: arrow functions can’t be used as constructors. They can’t be called with `new`.
+**Arrow functions VS bind**
+1. There’s a subtle difference between an arrow function => and a regular function called with `.bind(this)`
+    1. `.bind(this)` creates a “bound version” of the function.
+    1. The arrow `=>` doesn’t create any binding. The function simply doesn’t have `this`. The lookup of `this` is made exactly the same way as a regular variable search: in the outer lexical environment.
+
+### Arrows have no "arguments"
+1. Arrow functions also have no `arguments` variable.
+1. That’s great for decorators, when we need to forward a call with the current `this` and `arguments`.
+1. For instance, `defer(f, ms)` gets a function and returns a wrapper around it that delays the call by `ms` milliseconds.
+    ```js
+    // with arrow function
+    function defer(f, ms) {
+        return function() {
+            setTimeout(() => f.apply(this, arguments), ms)
+        };
+    }
+
+    function sayHi(who) {
+        console.log('Hello, ' + who);
+    }
+
+    let sayHiDeferred = defer(sayHi, 2000);
+    sayHiDeferred("John"); // Hello, John after 2 seconds
+
+    // without arrow function
+    function defer(f, ms) {
+        return function(...args) {
+            let ctx = this;
+            setTimeout(function() {
+                return f.apply(ctx, args);
+            }, ms);
+        };
+    }
+    ```
 
 # Object Properties Configuration
 ## Property Flags and Descriptors
