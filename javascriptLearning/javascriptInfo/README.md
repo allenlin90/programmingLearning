@@ -6243,7 +6243,393 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 
 # Object Properties Configuration
 ## Property Flags and Descriptors
+1. For `Objects` in JavaScript, we can not only have regualr key/value pairs to store data but modify each property with different attributes. With the feature, we can configure each property in an object individually.
+1. Note that though we can use `const` to delcare objects and arrays in JavaScript, the objects (including arrays) are mutable. Therefore, we can use such feature to have a middleware function to filter the commands and requests for further requirements or advance features.
+### Property flags
+1. Object properties, besides a `value`, have three special attributes (so-called "flags"):
+    1. `writable` – if `true`, the value can be changed, otherwise it’s read-only.
+    1. `enumerable` – if `true`, then listed in loops, otherwise not listed.
+    1. `configurable` – if `true`, the property can be deleted and these attributes can be modified, otherwise not.
+1. We didn’t see them yet, because generally they do not show up. When we create a property "the usual way", all of them are `true`. But we also can change them anytime.
+1. The method `Object.getOwnPropertyDescriptor` allows to query the full information about a property. The returned value is a so-called "property descriptor" object: it contains the value and all the flags.
+    ```js
+    let descriptor = Object.getOwnPropertyDescriptor(obj, propertyName);
+    ```
+    1. `obj` - The object to get information from.
+    1. `propertyName` - The name of the property.
+    ```js
+    let user = {
+        name: "John"
+    };
+
+    let descriptor = Object.getOwnPropertyDescriptor(user, 'name');
+
+    console.log(JSON.stringify(descriptor, null, 2));
+    /* property descriptor:
+    {
+        "value": "John",
+        "writable": true,
+        "enumerable": true,
+        "configurable": true
+    }
+    */
+    ```
+1. To change the flags, we can use `Object.defineProperty`. If the property exists, `defineProperty` updates its flags. Otherwise, it creates the property with the given value and flags; in that case, if a flag is not supplied, it is assumed `false`.
+    ```js
+    Object.defineProperty(obj, propertyName, descriptor);
+    ```
+    1. `obj`, `propertyName` - The object and its property to apply the descriptor.
+    1. `descriptor` - Property descriptor object to apply.
+    ```js
+    let user = {};
+
+    Object.defineProperty(user, "name", {
+        value: "John", 
+        writable: true,
+    });
+
+    let descriptor = Object.getOwnPropertyDescriptor(user, 'name');
+
+    console.log(JSON.stringify(descriptor, null, 2));
+    /*
+    {
+        "value": "John",
+        "writable": true,
+        "enumerable": false,
+        "configurable": false
+    }
+    */
+    ```
+
+### Non-writable
+1. We can make `user.name` non-writable (can’t be reassigned) by changing `writable` flag.
+1. Now no one can change the name of our user, unless they apply their own `defineProperty` to override ours.
+    ```js
+    let user = {
+        name: "John"
+    };
+
+    Object.defineProperty(user, "name", {
+        writable: false
+    });
+
+    user.name = "Pete"; // Error: Cannot assign to read only property 'name'
+
+    let user = { };
+
+    Object.defineProperty(user, "name", {
+        value: "John",
+        // for new properties we need to explicitly list what's true
+        enumerable: true,
+        configurable: true
+    });
+
+    console.log(user.name); // John
+    user.name = "Pete"; // Error
+    ```
+**Errors appear only in strict mode**
+1. In the non-strict mode, no errors occur when writing to non-writable properties and such. But the operation still won’t succeed. Flag-violating actions are just silently ignored in non-strict. Besides, the command call returns the assigned value without modifying anything.
+
+### Non-enumerable
+1. We can add a custom `toString` method to `user` object.
+1. Normally, a built-in `toString` for objects is non-enumerable, it does not show up in `for..in`. But if we add a `toString` of our own, then by default it shows up in `for..in`.
+    ```js
+    let user = {
+        name: "John",
+        toString() {
+            return this.name;
+        }
+    };
+
+    // By default, both our properties are listed:
+    for (let key in user) console.log(key); // name, toString
+    ```
+1. If we don’t like it, then we can set `enumerable:false`. Then it won’t appear in a `for..in` loop, just like the built-in one. Non-enumerable properties are also excluded from `Object.keys`.
+    ```js
+    let user = {
+        name: "John",
+        toString() {
+            return this.name;
+        }
+    };
+
+    Object.defineProperty(user, "toString", {
+        enumerable: false
+    });
+
+    // Now our toString disappears:
+    for (let key in user) alert(key); // name
+
+    console.log(Object.keys(user)); // name
+    ```
+
+### Non-configurable
+1. The non-configurable flag (`configurable:false`) is sometimes preset for built-in objects and properties. A non-configurable property can not be deleted.
+1. For instance, `Math.PI` is non-writable, non-enumerable and non-configurable. 
+    ```js
+    let descriptor = Object.getOwnPropertyDescriptor(Math, 'PI');
+    console.log(JSON.stringify(descriptor, null, 2 ));
+    /*
+    {
+        "value": 3.141592653589793,
+        "writable": false,
+        "enumerable": false,
+        "configurable": false
+    }
+    */
+    ```
+1. Making a property non-configurable is a one-way road. We cannot change it back with `defineProperty`. To be precise, non-configurability imposes several restrictions on `defineProperty`. 
+    1. Can’t change `configurable` flag.
+    1. Can’t change `enumerable` flag.
+    1. Can’t change `writable`: `false` to `true` (the other way round works).
+    1. Can’t change `get/set` for an accessor property (but can assign them if absent).
+**The idea of "`configurable: false`" is to prevent changes of property flags and its deletion, while allowing to change its value.**
+1. Here `user.name` is non-configurable, but we can still change it (as it’s writable).
+    ```js
+    let user = {
+        name: "John"
+    };
+
+    Object.defineProperty(user, "name", {
+        configurable: false
+    });
+
+    user.name = "Pete"; // works fine
+    delete user.name; // Error
+    ```
+1. And here we make `user.name` a "forever sealed" constant.
+    ```js
+    let user = {
+        name: "John"
+    };
+
+    Object.defineProperty(user, "name", {
+        writable: false,
+        configurable: false
+    });
+
+    // won't be able to change user.name or its flags
+    // all this won't work:
+    user.name = "Pete";
+    delete user.name;
+    Object.defineProperty(user, "name", { value: "Pete" });
+    ```
+
+### Object.defineProperties
+1. There’s a method `Object.defineProperties(obj, descriptors)` that allows to define many properties at once.
+    ```js
+    Object.defineProperties(obj, {
+        prop1: descriptor1,
+        prop2: descriptor2
+        // ...
+    });
+
+    Object.defineProperties(user, {
+        name: { 
+            value: "John", 
+            writable: false 
+        },
+        surname: { 
+            value: "Smith", 
+            writable: false 
+        },
+        // ...
+    });
+    ```
+
+### Object.getOwnPropertyDescriptors
+1. To get all property descriptors at once, we can use the method `Object.getOwnPropertyDescriptors(obj)`.
+1. Together with `Object.defineProperties` it can be used as a "flags-aware" way of cloning an object.
+    ```js
+    let clone = Object.defineProperties({}, Object.getOwnPropertyDescriptors(obj));
+    ```
+1. Normally when we clone an object, we use an assignment to copy properties. But that does not copy flags. So if we want a "better" clone then `Object.defineProperties` is preferred.
+1. Another difference is that `for..in` ignores symbolic properties, but `Object.getOwnPropertyDescriptors` returns all property descriptors including symbolic ones.
+    ```js
+    for (let key in user) {
+        clone[key] = user[key]
+    }
+    ```
+
+### Sealing an object globally
+1. Property descriptors work at the level of individual properties. There are also methods that limit access to the whole object. However, These methods are rarely used in practice.
+    1. `Object.preventExtensions(obj)` - Forbids the addition of new properties to the object.
+    1. `Object.seal(obj)` - Forbids adding/removing of properties. Sets `configurable: false` for all existing properties.
+    1. `Object.freeze(obj)` - Forbids adding/removing/changing of properties. Sets `configurable: false, writable: false` for all existing properties.
+    1. `Object.isExtensible(obj)` - Returns `false` if adding properties is forbidden, otherwise `true`.
+    1. `Object.isSealed(obj)` - Returns `true` if adding/removing properties is forbidden, and all existing properties have `configurable: false`.
+    1. `Object.isFrozen(obj)` - Returns `true` if adding/removing/changing properties is forbidden, and all current properties are `configurable: false, writable: false`.
+
 ## Property Getters and Setters
+1. There are two kinds of object properties.
+    1. The first kind is **_data properties_**. We already know how to work with them. All properties that we’ve been using until now were data properties.
+    1. The second type of properties is something new. It’s **_accessor properties_**. They are essentially functions that execute on getting and setting a value, but look like regular properties to an external code.
+### Getters and setters
+1. Accessor properties are represented by "getter" and "setter" methods. In an object literal they are denoted by `get` and `set`. 
+    ```js
+    let obj = {
+        get propName() {
+            // getter, the code executed on getting obj.propName
+        },
+
+        set propName(value) {
+            // setter, the code executed on setting obj.propName = value
+        }
+    };
+    ```
+1. The **_getter_** works when `obj.propName` is read, the **_setter_** – when it is assigned. For instance, we have a `user` object with `name` and `surname`.
+    ```js
+    let user = {
+        name: "John",
+        surname: "Smith"
+    };
+    ```
+1. Now we want to add a `fullName` property, that should be `"John Smith"`. Of course, we don’t want to copy-paste existing information, so we can implement it as an **_accessor_**.
+1. From the outside, an accessor property looks like a regular one. That’s the idea of accessor properties. We don’t call user.fullName as a function, we read it normally: the getter runs behind the scenes. As of now, `fullName` has only a getter. If we attempt to assign `user.fullName=`, there will be an error:
+    ```js
+    let user = {
+        name: "John",
+        surname: "Smith",
+
+        get fullName() {
+            return `${this.name} ${this.surname}`;
+        }
+    };
+
+    console.log(user.fullName); // John Smith
+    user.fullName = "Test"; // Error (property has only a getter)
+    ```
+1. We can fix it by adding a **_setter_** for `user.fullName`. As the result, we have a "virtual" property `fullName`. It is readable and writable.
+    ```js
+    let user = {
+        name: "John",
+        surname: "Smith",
+
+        get fullName() {
+            return `${this.name} ${this.surname}`;
+        },
+
+        set fullName(value) {
+            [this.name, this.surname] = value.split(" ");
+        }
+    };
+
+    // set fullName is executed with the given value.
+    user.fullName = "Alice Cooper";
+
+    console.log(user.name); // Alice
+    console.log(user.surname); // Cooper
+    ```
+
+### Accessor descriptors
+1. Descriptors for accessor properties are different from those for data properties. For accessor properties, there is no `value` or `writable`, but instead there are `get` and `set` functions.
+    1. `get` – a function without arguments, that works when a property is read,
+    1. `set` – a function with one argument, that is called when the property is set,
+    1. `enumerable` – same as for data properties,
+    1. `configurable` – same as for data properties.
+1. For instance, to create an accessor `fullName` with `defineProperty`, we can pass a descriptor with `get` and `set`.
+    ```js
+    let user = {
+        name: "John",
+        surname: "Smith"
+    };
+
+    Object.defineProperty(user, 'fullName', {
+        get() {
+            return `${this.name} ${this.surname}`;
+        },
+
+        set(value) {
+            [this.name, this.surname] = value.split(" ");
+        }, 
+
+        enumerable: true
+    });
+
+    console.log(user.fullName); // John Smith
+
+    for(let key in user) console.log(key); // name, surname, fullName
+    ```
+1. Please note that a property can be either an accessor (has `get/set` methods) or a data property (has a `value`), not both.
+1. If we try to supply both `get` and `value` in the same descriptor, there will be an error. 
+    ```js
+    // Error: Invalid property descriptor.
+    Object.defineProperty({}, 'prop', {
+        get() {
+            return 1
+        },
+
+        value: 2
+    });
+    ```
+
+### Smarter getters/setters
+1. Getters/setters can be used as wrappers over "real" property values to gain more control over operations with them. For instance, if we want to forbid too short names for `user`, we can have a setter `name` and keep the value in a separate property `_name`.
+1. So, the name is stored in `_name` property, and the access is done via getter and setter.
+1. Technically, external code is able to access the name directly by using `user._name`. But there is a widely known convention that properties starting with an underscore `"_"` are internal and should not be touched from outside the object.
+    ```js
+    let user = {
+        get name() {
+            return this._name;
+        },
+
+        set name(value) {
+            if (value.length < 4) {
+                console.log("Name is too short, need at least 4 characters");
+                return;
+            }
+            this._name = value;
+        }
+    };
+
+    user.name = "Pete";
+    console.log(user.name); // Pete
+
+    user.name = ""; // Name is too short...
+    ```
+### Using for compatibility
+1. One of the great uses of accessors is that they allow to take control over a "regular" data property at any moment by replacing it with a **_getter_** and a **_setter_** and tweak its behavior.
+1. Imagine we started implementing user objects using data properties `name` and `age`.
+    ```js
+    function User(name, age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    let john = new User("John", 25);
+
+    console.log(john.age); // 25
+    ```
+1. But sooner or later, things may change. Instead of `age` we may decide to store `birthday`, because it’s more precise and convenient.
+    ```js
+    function User(name, birthday) {
+        this.name = name;
+        this.birthday = birthday;
+    }
+
+    let john = new User("John", new Date(1992, 6, 1));
+    ```
+1. Now what to do with the old code that still uses `age` property? We can try to find all such places and fix them, but that takes time and can be hard to do if that code is used by many other people. And besides, `age` is a nice thing to have in `user`, right? Adding a **_getter_** for age solves the problem.
+1. Now the old code works too and we’ve got a nice additional property.
+    ```js
+    function User(name, birthday) {
+        this.name = name;
+        this.birthday = birthday;
+
+        // age is calculated from the current date and birthday
+        Object.defineProperty(this, "age", {
+            get() {
+                let todayYear = new Date().getFullYear();
+                return todayYear - this.birthday.getFullYear();
+            }
+        });
+    }
+
+    let john = new User("John", new Date(1992, 6, 1));
+
+    console.log(john.birthday); // birthday is available
+    console.log(john.age);      // ...as well as the age
+    ```
 
 # Prototypes, Inheritance
 ## Prototypal Inheritance
