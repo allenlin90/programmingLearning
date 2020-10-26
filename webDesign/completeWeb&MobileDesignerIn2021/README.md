@@ -44,6 +44,30 @@ Finish Course on
 
 # Section 1: Getting started - Sketching, Inspiration, User Flows
 ## Sketching
+### The Sketching Process
+1. Be prepared
+    1. Prepare tools beforehand, such as simple paper or pencil and tablet
+    1. Define the goals
+    1. Define who is the audience
+    1. Time yourself by keeping a time limit and having little pressure
+1. Start sketching
+    1. Draw a frame for the device
+    1. Start with more simple and redundant elements
+    1. Move onto some more detailed interactions
+    1. Annotate the sketches and keep the file and information safe
+    1. Keep going
+    1. Share the sketches
+1. Refinement
+    1. Add titles to the sketches
+    1. Add annotations
+    1. Use numbers or arrows to create the flow of using
+        1. Page transition
+        1. Interaction transition
+    1. Add gestures if you want
+    <img src="./images/touchGestures.png">
+
+### Sketching User Flow
+
 ## Inspiration
 ## User Flows
 ## Sitemaps
