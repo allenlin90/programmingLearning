@@ -76,7 +76,7 @@ Finish Course on
 1. When we create the flow, it the flow wouldn't be one liner and straight forward. It may be presented as a flowchart which has many scenarios.
 
 ### Sketching User Flow 2
-
+1. We start to reason for the interactions that users may take with the pages and components.
 
 ### Sketching User Flow 3
 1. This part is about the structure and navigation of the product. For example, we can have a homepage or landing page for certain feature. 
@@ -142,6 +142,14 @@ Finish Course on
 1. We can rename multiple objects with <kbd>Ctrl + r</kbd> at the same time and use <kbd>Ctrl + g</kbd> to group them. 
 1. After grouping the objects, we can use <kbd>Ctrl + Alt + k</kbd> to create other groups of components.
 
+### Creating Our Own User Flows
+1. We start to build the user flow in this part. 
+1. Press <kbd>f</kbd> and drag to create a frame, which is the background/canvas and can be used to group components and smaller objects.
+1. Besids "layout" tab, we can check all the components in the "assests" tab to look the local components that we create. 
+1. Use detachment with <kbd>Ctrl + Alt + b</kbd>. This command will bundle all the objects we combine and create a new item. Besides, we can also save it as a component.
+1. Use mouse right click on a component and select "Go to Main Componenet". It will redirect us to the mother component in the file. 
+    <img src="./images/userflow1.png">
+    
 ## Sitemaps
 
 # Section 2: Explore & Iterate - Wireframes, Prototyping, and Feedback
