@@ -78,34 +78,6 @@ Finish Course on
 ### Sketching User Flow 2
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Sketching User Flow 3
 1. This part is about the structure and navigation of the product. For example, we can have a homepage or landing page for certain feature. 
 1. The main topic here is the relationship between different sections (such as pages) and functions with extendable features. The flow of the product introduced here is an e-commerce site.
