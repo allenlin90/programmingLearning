@@ -67,6 +67,15 @@ Finish Course on
     <img src="./images/touchGestures.png">
 
 ### Sketching User Flow
+1. We can use paper and pencil or tablets to map out and visualize the user flow. 
+1. The instructor introduced **_Concepts_** App which is available on iPad, Android, and Windows. However, by the time of learning, the cross platform synchronizing is not available yet. 
+1. To start the user flow, we can follow the following steps.
+    1. Understand what to be drawn with the scope of this work. This can be a large journey or a simple interaction.
+    1. Define starting point. This could be the exact starting point, middle of the journey, or the end of the process by reverse the workflow. 
+    1. Define the next step which is the action to go after the starting point of this work.
+1. When we create the flow, it the flow wouldn't be one liner and straight forward. It may be presented as a flowchart which has many scenarios.
+
+### Sketching User Flow 2
 
 ## Inspiration
 ## User Flows
