@@ -164,10 +164,31 @@ Finish Course on
 1. This part is to layout the user flow of searching a product. 
     <img src="./images/userflow2_searchingForProduct.png">
     
-
+### Creating Our Own User Flows 3
+1. This part is to layout the user flow of making a purchase. 
+1. If we select multiple objects, we can use <kbd>Ctrl + Alt + Shift + h</kbd> to distribute the selected objects in the space evenly. We can also select it in the "Design" tab on the right panel.
+    <img src="./images/userflow3_makingAPurchase.png">
 
 
 ## Sitemaps
+### Introduction to Sitemap
+1. Sitemaps are hierarchical diagrams that show how pages are organized.
+1. We can start to build the sitemap right after the beginning of the project which can give us an overview of the whole work.
+
+### Creating a Basic Sitemap
+1. A sitemap object includes several components.
+    1. Reference score - This is not neccessary, but could be useful when doing wireframe.
+    1. Label - This is the name of the webpage.
+        <img src="./images/basicSitemapitem.png">
+1. The map can start from top to bottom or from left to right.
+1. We can add legend to each page as tags or labels if it helps.
+        <img src="./images/legendForSitemap.png">
+1. There are mainly 2 types of sitemaps.
+    1. Flat Sitemaps - this good for small to medium size product, such as from 10 to 100 pages. It's suggested that we don't go too deep for the tiers, as within 4-level, unless it's necessary.
+        <img src="./images/flatSitemap.png">
+    1. Deep Sitemaps - this is more suitable of large sites, as for hundreds of hundreds of pages, such as e-commerce or blogging sites.
+        <img src="./images/deepSitemap.png">
+1. Sitemaps can help strategically place content where users can find it. It results in the creation of your navigation and hierarchies of the product.
 
 # Section 2: Explore & Iterate - Wireframes, Prototyping, and Feedback
 ## Wireframes
