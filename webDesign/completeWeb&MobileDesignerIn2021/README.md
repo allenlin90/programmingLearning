@@ -42,6 +42,11 @@ Finish Course on
     1. [Bonus: Boostrap, Templates, and Building Your Startup Landing Page](#Bonus:-Boostrap,-Templates,-and-Building-Your-Startup-Landing-Page)
     1. [Bonus: CSS Grid + CSS Layout](#Bonus:-CSS-Grid-+-CSS-Layout)
 
+
+
+
+
+
 # Section 1: Getting started - Sketching, Inspiration, User Flows
 ## Sketching
 ### The Sketching Process
@@ -94,6 +99,10 @@ Finish Course on
 1. Always be prepared
 1. Communicate and share to team
 
+
+
+
+
 ## Inspiration
 ### How to Stay Inspired
 1. Creativity should be contantly stimulated. <br> Everyone has and can train his/her creativity.
@@ -136,6 +145,7 @@ Finish Course on
 
 ### Speed up Workflow with Components
 1. In this section, we start to use **_Figma_** to create the art works and user flow. 
+1. In this case, we start with registration process for a user on the app. 
 1. We can use <kbd>Alt</kbd> and mouse left key on an object to duplicate it. 
 1. When selecting an object, we can choose to create a component by the button on the top, or <kbd>Ctrl + Alt + k</kbd>. Therefore, when the mother object is modified all the components created from that will be modified at the same time. 
 1. However, if we modified a child component, the one will not be synchronized when the mother componenet is modified. That is the mother component can only synchronize modification with components that are created from the object and identical to it.
@@ -148,8 +158,15 @@ Finish Course on
 1. Besids "layout" tab, we can check all the components in the "assests" tab to look the local components that we create. 
 1. Use detachment with <kbd>Ctrl + Alt + b</kbd>. This command will bundle all the objects we combine and create a new item. Besides, we can also save it as a component.
 1. Use mouse right click on a component and select "Go to Main Componenet". It will redirect us to the mother component in the file. 
-    <img src="./images/userflow1.png">
+    <img src="./images/userflow1_onboarding.png">
+
+### Creating Our Own User Flows 2
+1. This part is to layout the user flow of searching a product. 
+    <img src="./images/userflow2_searchingForProduct.png">
     
+
+
+
 ## Sitemaps
 
 # Section 2: Explore & Iterate - Wireframes, Prototyping, and Feedback
