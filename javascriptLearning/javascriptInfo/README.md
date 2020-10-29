@@ -6633,6 +6633,359 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 
 # Prototypes, Inheritance
 ## Prototypal Inheritance
+1. In JavaScript, objects have a special hidden property `[[Prototype]]` (as named in the specification), that is either `null` or references another object. That object is called "a prototype". 
+1. The prototype is a little bit "**magical**". When we want to read a property from object, and it’s missing, JavaScript automatically takes it from the prototype. 
+1. The property `[[Prototype]]` is internal and hidden, but there are many ways to set it. One of them is to use the special name `__proto__`.
+
+**`__proto__` is a historical getter/setter for `[[Prototype]]`**
+1. Please note that `__proto__` is not the same as `[[Prototype]]`. It’s a getter/setter for it. 
+1. It exists for historical reasons. In modern language it is replaced with functions `Object.getPrototypeOf`/`Object.setPrototypeOf` that also get/set the prototype. 
+1. By the specification, `__proto__` must only be supported by browsers, but in fact all environments including server-side support it. For now, as `__proto__` notation is a little bit more intuitively obvious, we’ll use it in the examples.
+1. In the following case, we use "**_dunder proto_**" `__proto__` in JavaScript to set `animal` to be a prototype of `rabbit`.
+1. Then, when `console.log` tries to read property `rabbit.eats` `(**)`, it’s not in rabbit, so JavaScript follows the `[[Prototype]]` reference and finds it in animal (look from the bottom up).
+    ```js
+    let animal = {
+        eats: true
+    };
+    let rabbit = {
+        jumps: true
+    };
+
+    rabbit.__proto__ = animal; // (*)
+    console.log(rabbit.jumps); 
+    console.log(rabbit.eats); // (**)
+    ```
+1. Here we can say that "`animal` is the prototype of `rabbit`" or "`rabbit` prototypically inherits from `animal`".
+1. So if `animal` has a lot of useful properties and methods, then they become automatically available in `rabbit`. Such properties are called "**_inherited_**".
+    ```js
+    let animal = {
+        eats: true,
+        walk() {
+            console.log("Animal walk");
+        }
+    };
+
+    let rabbit = {
+        jumps: true,
+        __proto__: animal
+    };
+
+    let longEar = {
+        earLength: 10,
+        __proto__: rabbit
+    };
+
+    // walk is taken from the prototype chain
+    longEar.walk(); // Animal walk
+    console.log(longEar.jumps); // true (from rabbit)
+    ```
+1. There are only two limitations:
+    1. The references can’t go in circles. JavaScript will throw an error if we try to assign `__proto__` in a circle.
+    1. The value of `__proto__` can be either an object or `null`. Other types are ignored.
+1. Also it may be obvious, but still: there can be only one `[[Prototype]]`. An object may not inherit from two others.
+
+### Writing doesn’t use prototype
+1. The prototype is only used for reading properties. Write/delete operations work directly with the object.
+1. In the example below, we assign its own walk method to rabbit.
+1. From now on, `rabbit.walk()` call finds the method immediately in the object and executes it, without using the prototype.
+    ```js
+    let animal = {
+        eats: true,
+        walk() {
+            /* this method won't be used by rabbit */
+            console.log('I have 4 feet');
+        }
+    };
+
+    let rabbit = {
+        __proto__: animal
+    };
+
+    rabbit.walk = function() {
+        console.log("Rabbit! Bounce-bounce!");
+    };
+
+    rabbit.walk(); // Rabbit! Bounce-bounce!
+
+    delete rabbit.walk;
+    rabbit.walk(); // I have 4 feet.
+    ```
+1. Accessor properties are an exception, as assignment is handled by a setter function. So writing to such a property is actually the same as calling a function.
+1. For that reason `admin.fullName` works correctly in the code below.
+1. Here in the line `(*)` the property `admin.fullName` has a getter in the prototype `user`, so it is called. And in the line `(**)` the property has a setter in the prototype, so it is called.
+    ```js
+    let user = {
+        name: "John",
+        surname: "Smith",
+
+        set fullName(value) {
+            [this.name, this.surname] = value.split(" ");
+        },
+
+        get fullName() {
+            return `${this.name} ${this.surname}`;
+        }
+    };
+
+    let admin = {
+        __proto__: user,
+        isAdmin: true
+    };
+
+    console.log(admin.fullName); // John Smith (*)
+
+    // setter triggers!
+    admin.fullName = "Alice Cooper"; // (**)
+
+    console.log(admin.fullName); // Alice Cooper, state of admin modified
+    console.log(user.fullName); // John Smith, state of user protected
+    ```
+
+### The value of "this"
+1. An interesting question may arise in the example above: what’s the value of this inside `set fullName(value)`? Where are the properties `this.name` and `this.surname` written: into `user` or `admin`?
+1. The answer is simple: `this` is not affected by prototypes at all.
+1. **No matter where the method is found: in an object or its prototype. In a method call, `this` is always the object before the dot.**
+1. So, the setter call `admin.fullName=` uses `admin` as `this`, not `user`.
+1. That is actually a super-important thing, because we may have a big object with many methods, and have objects that inherit from it. And when the inheriting objects run the inherited methods, they will modify only their own states, not the state of the big object.
+1. For instance, here `animal` represents a "method storage", and `rabbit` makes use of it.
+1. The call `rabbit.sleep()` sets `this.isSleeping` on the rabbit object.
+    ```js
+    // animal has methods
+    let animal = {
+        walk() {
+            if (!this.isSleeping) {
+                console.log(`I walk`);
+            }
+        },
+        sleep() {
+            this.isSleeping = true;
+        }
+    };
+
+    let rabbit = {
+        name: "White Rabbit",
+        __proto__: animal
+    };
+
+    // modifies rabbit.isSleeping
+    rabbit.sleep();
+
+    console.log(rabbit.isSleeping); // true
+    console.log(animal.isSleeping); // undefined (no such property in the prototype)
+    ```
+1. If we had other objects, like `bird`, `snake`, etc., inheriting from `animal`, they would also gain access to methods of `animal`. But `this` in each method call would be the corresponding object, evaluated at the call-time (before dot), not `animal`. So when we write data into `this`, it is stored into these objects.
+1. As a result, methods are shared, but the object state is not.
+
+### for...in loop
+1. The `for..in` loop iterates over inherited properties too.
+    ```js
+    let animal = {
+        eats: true
+    };
+
+    let rabbit = {
+        jumps: true,
+        __proto__: animal
+    };
+
+    // Object.keys only returns own keys
+    console.log(Object.keys(rabbit)); // jumps
+
+    // for..in loops over both own and inherited keys
+    for(let prop in rabbit) console.log(prop); // jumps, then eats
+    ```
+1. If that’s not what we want, and we'd like to exclude inherited properties, there’s a built-in method `obj.hasOwnProperty(key)`: it returns `true` if `obj` has its own (not inherited) property named `key`.
+1. So we can filter out inherited properties (or do something else with them). 
+1. Here we have the following inheritance chain: `rabbit` inherits from `animal`, that inherits from `Object.prototype` (because `animal` is a literal object `{...}`, so it’s by default), and then `null` above it.
+    ```js
+    let animal = {
+        eats: true
+    };
+
+    let rabbit = {
+        jumps: true,
+        __proto__: animal
+    };
+
+    for(let prop in rabbit) {
+        let isOwn = rabbit.hasOwnProperty(prop);
+
+        if (isOwn) {
+            console.log(`Our: ${prop}`); // Our: jumps
+        } else {
+            console.log(`Inherited: ${prop}`); // Inherited: eats
+        }
+    }
+    ```
+1. Note, there’s one funny thing. Where is the method `rabbit.hasOwnProperty` coming from? We did not define it. Looking at the chain we can see that the method is provided by `Object.prototype.hasOwnProperty`. In other words, it’s inherited.
+1. But why does `hasOwnProperty` not appear in the `for..in` loop like eats and jumps do, if `for..in` lists inherited properties?
+1. The answer is simple: it’s not enumerable. Just like all other properties of `Object.prototype`, it has `enumerable:false` flag. And `for..in` only lists enumerable properties. That’s why it and the rest of the `Object.prototype` properties are not listed.
+**Almost all other key/value-getting methods ignore inherited properties**
+1. Almost all other key/value-getting methods, such as `Object.keys`, `Object.values` and so on ignore inherited properties.
+1. They only operate on the object itself. Properties from the prototype are not taken into account.
+
+#### Exercise 1 - Working with prototype
+1. Here’s the code that creates a pair of objects, then modifies them.Which values are shown in the process?
+    ```js
+    let animal = {
+        jumps: null
+    };
+    let rabbit = {
+        __proto__: animal,
+        jumps: true
+    };
+
+    console.log(rabbit.jumps); // ? (1)
+
+    delete rabbit.jumps;
+
+    console.log(rabbit.jumps); // ? (2)
+
+    delete animal.jumps;
+
+    console.log(rabbit.jumps); // ? (3)
+    ```
+1. Reasoned answer before checking solution. 
+    1. `true`
+    1. `null`
+    1. `undefined`
+1. Solution.
+    1. `true`, taken from `rabbit`.
+    1. `null`, taken from `animal`.
+    1. `undefined`, there’s no such property any more.
+
+#### Exercise 2 - Searching Algorithm
+1. The task has two parts. Given the following objects.
+    1. Use `__proto__` to assign prototypes in a way that any property lookup will follow the path: `pockets` → `bed` → `table` → `head`. For instance, `pockets.pen` should be `3` (found in `table`), and `bed.glasses` should be `1` (found in `head`).
+    1. Answer the question: is it faster to get `glasses` as `pockets.glasses` or `head.glasses`? Benchmark if needed.
+    ```js
+    let head = {
+        glasses: 1,
+    };
+
+    let table = {
+        pen: 3,
+        __proto__: head
+    };
+
+    let bed = {
+        sheet: 1,
+        pillow: 2,
+        __proto__: table
+    };
+
+    let pockets = {
+        money: 2000,
+        __proto__: bed
+    };
+    
+    function benchmark(obj = {}) {
+        let result = {};
+        if (Object.keys(obj).length !== 0) {
+            let start = Date.now();
+            result.value = obj.glasses;
+            let end = Date.now();
+            result.duration = (end - start);
+            return result;
+        }
+        return 'empty obj';
+    }
+    benchmark(pockets);
+    benchmark(head);
+    ```
+1. Reasoned answer before checking solution. Results from both function calls show duration as 0, which means the execution time is the same.
+1. Solution. 
+    1. In modern engines, performance-wise, there's no difference whether we take a property from an object or its prototype. They remember where the property was found and reuse it in the next request.
+    1. For instance, for `pockets.glasses` they remember where they found `glasses` (in `head`), and next time will search right there. They are also smart enough to update internal caches if something changes, so that optimization is safe.
+
+#### Exercise 3 - Where does it write?
+1. We have `rabbit` inheriting from `animal`.
+1. If we call `rabbit.eat()`, which object receives the full property: `animal` or `rabbit`?
+    ```js
+    let animal = {
+        eat() {
+            this.full = true;
+        }
+    };
+
+    let rabbit = {
+        __proto__: animal
+    };
+
+    rabbit.eat();
+    ```
+1. Reasoned answer before checking solution. `rabbit` is the object that receives teh full property, as `this` is pointing to the object that executes it.
+1. Solution. Answer is `rabbit`
+    1. That’s because `this` is an object before the dot, so `rabbit.eat()` modifies `rabbit`.
+    1. Property lookup and execution are two different things.
+    1. The method `rabbit.eat` is first found in the prototype, then executed with `this=rabbit`.
+
+#### Exercise 4 - Why are hamsters full?
+1. We have two hamsters: `speedy` and `lazy` inheriting from the general `hamster` object.
+1. When we feed one of them, the other one is also full. Why? How can we fix it?
+    ```js
+    let hamster = {
+        stomach: [],
+
+        createStomach() {
+            this.stomach = [];
+        },
+
+        eat(food) {            
+            this.stomach.push(food);
+        }
+    };
+
+    let speedy = {
+        __proto__: hamster
+    };
+
+    let lazy = {
+        __proto__: hamster
+    };
+
+    // This one found the food
+    speedy.eat("apple");
+    console.log(speedy.stomach); // apple
+
+    // This one also has it, why? fix please.
+    console.log(lazy.stomach); // apple
+    ```
+1. Reasoned answer. 
+    1. Both hamsters `speedy` and `lazy` has no `stomach` property, as both the objects aren't assigned with the array, and both of them refer to the same property, `stomach`, which is from `hamster` prototype.
+    1. The solution is to use another method to create an empty array in each of the object by `this`.
+1. Solution.
+    1. The method `speedy.eat` is found in the prototype (`=hamster`), then executed with `this=speedy` (the object before the dot).
+    1. Then `this.stomach.push()` needs to find `stomach` property and call `push` on it. It looks for `stomach` in `this` (`=speedy`), but nothing found.
+    1. Then it follows the prototype chain and finds `stomach` in `hamster`.
+    1. Then it calls `push` on it, adding the food into the `stomach` of the prototype.
+    ```js
+    let hamster = {
+        stomach: [],
+
+        eat(food) {
+            this.stomach.push(food);
+        }
+    };
+
+    let speedy = {
+        __proto__: hamster,
+        stomach: []
+    };
+
+    let lazy = {
+        __proto__: hamster,
+        stomach: []
+    };
+
+    // Speedy one found the food
+    speedy.eat("apple");
+    console.log(speedy.stomach); // apple
+
+    // Lazy one's stomach is empty
+    console.log(lazy.stomach); // <nothing>
+    ```
+
 ## F.Prototype
 ## Native Prototypes
 ## Prototype Methods, Object without __proto__
