@@ -190,6 +190,15 @@ Finish Course on
         <img src="./images/deepSitemap.png">
 1. Sitemaps can help strategically place content where users can find it. It results in the creation of your navigation and hierarchies of the product.
 
+### Before you start
+1. This part is to refer back to the sketches that we have made when reasoning the user flow. 
+1. We can get most of the resources and recommended plugins from [here](https://github.com/allenlin90/programmingLearning/blob/master/webDesign/completeWeb%26MobileDesignerIn2021/zerotomastery.io%2B-%2BDesign%2BResources.pdf).
+1. There are some plugins can be very useful when doing design. 
+    1. Unsplash - One of the most well known open source image collection.
+    1. Logo Creator - Providing samples and collection from other companies for materials and inspiration.
+    1. Autoflow - Auto setting arrows by using <kbd>Shift</kbd> to select multiple objects and create arrows.
+    1. Wireframe - Providing templates for common use routes and functions, such as login page.
+
 # Section 2: Explore & Iterate - Wireframes, Prototyping, and Feedback
 ## Wireframes
 ## Prototyping
