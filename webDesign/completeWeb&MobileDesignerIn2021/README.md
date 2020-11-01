@@ -199,6 +199,20 @@ Finish Course on
     1. Autoflow - Auto setting arrows by using <kbd>Shift</kbd> to select multiple objects and create arrows.
     1. Wireframe - Providing templates for common use routes and functions, such as login page.
 
+### Create a Sitemap
+1. If we group items as an object in a "**frame**", we can modify "**Auto Layout**" on the right hand panel to rearrange the width and height of the frame and the space between the  objects or items in the frame.
+1. We can duplicate a single object in a group of objects by using <kbd>Ctrl + Alt + b</kbd> to "Detach Instance", so we can modify a single item in the group of objects. For example, we can copy one of items in "page container" template with <kbd>Ctrl + d</kbd>.
+1. Note since we are using the template which has pre-set instances in the object. We can change its attributes easily by switching the property in "**instance**" on the right panel.
+1. There are some useful hot keys and commands such as 
+    1. <kbd>f</kbd> to create a "**frame**" directly.
+    1. <kbd>h</kbd> to change mouse cursor to a hand that we can drag and move the view on the canvas.
+    1. <kbd>v</kbd> to change mouse cursor to an arrow which we can use to select items and objects on the canvas.
+    1. <kbd>Ctrl + d</kbd> to duplicate a selected item, object, or component. 
+    1. <kbd>t</kbd> to modify text in a textbox or object directly.
+1. After building the layout with multipel objects, we can select all of them and in "Design" tab on the upper right corner on the top to distribute the selected objects horizontally in the space. We can also use <kbd>Ctrl + Alt + Shift + h</kbd> after selecting the objects.
+1. In this case, we start to use the first plug-in `auto-flow` which allows users to create arrow flows between objects by simply selecting 2 objects with <kbd>shift</kbd>.
+    <img src="./images/sitemap1.png">
+
 # Section 2: Explore & Iterate - Wireframes, Prototyping, and Feedback
 ## Wireframes
 ## Prototyping
