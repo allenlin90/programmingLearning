@@ -213,9 +213,50 @@ Finish Course on
 1. In this case, we start to use the first plug-in `auto-flow` which allows users to create arrow flows between objects by simply selecting 2 objects with <kbd>shift</kbd>.
     <img src="./images/sitemap1.png">
 
+### Create a Sitemap 2
+1. When users start to use the application, they may start from onboarding process, such as registration, rather than going to home page directly. 
+1. In this case, we consider about the flows such as "login/registration" and "search" which are the main features of a e-commerce website.
+1. After reasoning the user flow and possible functino, we can go further at some point to fill up the gap between each requirements.
+    <img src="./images/sitemap2.png">
+
+### Tips for Getting Started
+1. Try to be focused on the main features.
+1. Consider sitemap with website userflow. 
+1. Use colors in sitemap to differentiate individual or separated components.
+1. In the intial stage, the sitemap no need to be finished and perfect.
+1. Sitemap is a visualized tool that helps to work on wireframes and accelerate the process.
+
 # Section 2: Explore & Iterate - Wireframes, Prototyping, and Feedback
 ## Wireframes
+### What is a Wireframe
+
+### How to Create a Wireframe
+
+### Wireframes in Figma
+
+### Creating our Home Page
+
+### Creating a Product Page
+
+### Creating a Checkout Page
+
+
+
 ## Prototyping
+### Prototyping Basics in Figma
+
+### Prototyping Basics in Figma 2
+
+### Prototyping Basics in Figma 3
+
+### Prototyping Basics in Figma 4
+
+### Linking Together a Quick User Flow
+
+### Working on Small Interactions
+
+
+
 ## Feedback
 
 # Section 3: Visual Design - Design Theory + Accessibility
