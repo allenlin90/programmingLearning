@@ -283,7 +283,127 @@ Finish Course on
 ## From Figma to Website: Building Our Landing Page
 ## Bonus: How the Internet Works
 ## Bonus: History of the Web
+
 ## Bonus: HTML5
+### Build Your First Website
+1. This section is introducing "sublime 3" and some basic configuration for using the text editor. 
+1. Some HTML tags are introduced. Note that modern HTML files will have more meta data to respond to various types of devices and screen size. Besides, most of the modern text editors have the shorthand that we can create HTML boilerplate very easily.
+    ```html
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title></title>
+        </head>
+        <body>
+        </body>
+    </html>
+    ```
+1. As we start to build a HTML file, we can open it in a browser such as "Chorme".
+
+### DEVELOPER FUNDEMENTALS: III
+1. This section is introducing `<!DOCTYPE html>` tag. This declaration is to indicate the browser that the file is a HTML file. 
+1. The lecturer also explains that how important the seaching and problem solving skill of programmers is.
+1. W3CSchool is one of the good websites that we can learn fundementals of HTML. 
+
+### HTML Tags
+1. Though there are many different HTML tags for use, we use part of them in regular development.
+1. `<h1></h1>` is `h1` header 1 tag. Note that header tags with different sizes are from **1** to **6**.
+1. `<p></p>` is for paragraph tag.
+1. We can use `lorem ipsum` for gibberish text to fill out the elements.
+1. `<b></b>` is to make the text in the element **bold**, while `<i></i>` can make text italic. However, this is a legacy element that some devices and browesers don't support. We can use `<strong></strong>` to make text bold and `<em></em>` to make text italic. 
+
+### HTML Tags 2
+1. `<ul></ul>` is to make unordered list which we can wrap `<li></li>`. We can use `<ol></ol>` for ordered list that is with numbers. Besides, we can make nested list as well.
+    ```html
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <ul>
+            <li>2.1</li>
+            <li>2.2</li>
+            <li>2.3</li>
+        </ul>
+    </ul>
+    ```
+
+### Self Closing HTML Tags
+1. Self closing tags are elements that has single element without a closing element with slash `/`.
+1. `<hr>` is horizontal line.
+1. `<br>` is a break that we can change the line of the content.
+1. `<img>` is to refer to a image URL that we can put image to the page. Besides, it has some attributes.
+    1. `src` is to link to the source of the image.
+    1. `alt` is the alternative that shows the text when the image or link is not available, or the "description" of the image.
+    1. `width` is to change the width of the image in case the size is too large to fit to the layout, element, or design.
+    1. `height` is to change the height of the image.
+
+### Anchor Tag
+1. `<a></a>` has `href` attribute which stands for hyper text reference that can redirect the user to the appointed URL or destination. For example, the following anchor tag direct the user to the other page `newpage.html` in the same directory.
+1. In addition, we can put other HTML elements in the anchor tag to create a special element to redirect users such as a button.
+    ```html
+    <a href="newpage.html">New Page</a>
+    <a href="link.html">
+        <h1>Link</h1>
+    </a>
+    ```
+
+### Q&A: index.html
+1. In convention, `index.html` is the default name of the homepage for the server to know that `index.html` is the homepage or the first page that the server should return when there's a request to the root directory which is the website URL. 
+
+### Q&A: Relative vs Absolute Path
+1. Relative page starts from the object that link to the other object, this is the shorthand rather than giving the whole path, which is the absolute path of the object. 
+1. A URL link with HTTP or HTTPs is an absolute path. 
+
+### HTML Forms
+1. `<form></form>` is the form element that we can use it to collect user inputs.
+1. There are several types of input and attributes we can use to build up the form tag. 
+    1. `<input>`
+        1. `text` is the regular input to collect text. 
+        1. `email` has the basic validator to check if there's an `@` sign in the input.
+        1. `password` will mask the input form the user with system default characters such as dots or asterisks `*`. Besides, we can use `min` attribute in this tag to indicate that how many characters are requried to set the password.
+        1. `date` is a date picker that will show a system default calendar for users to choose the date.
+        1. `radio` is single selection from multiple items. Note that we can use `name` attribute to group `inputs` that has the same `name` attribute.
+        1. `checkbox` is a checkbox that returns boolean value as `true` or `false`.
+        1. `submit` is to send the data in the form to the backend. 
+        1. `reset` is to clear out all the inputs in the form tag.
+    1. `name` is the attribute that we can use it to create variable to send requests to the backend, or group radio buttons so that the HTML file knows which radio buttons are in the same group. Thus, users can only select one of the options from the radio button list. 
+    ```html
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title></title>
+        </head>
+        <body>
+            <form>
+                First Name: <input type="text"><br>
+                Last Name: <input type="text"><br>
+                Email: <input type="email" required><br>
+                Password: <input type="password" min="8" required><br>
+                Birthday: <input type="date"><br>
+                Gender: <br>
+                <input type="radio" name="gender">Male<br>
+                <input type="radio" name="gender">Female<br>
+                <input type="radio" name="gender">Other<br>
+                Pets: <br>
+                <input type="checkbox"> Cat<br>
+                <input type="checkbox"> Dogs<br>
+                <input type="submit" value="Register">
+                <input type="reset" value="Reset">
+            </form>
+        </body>
+    </html>
+    ```
+
+### HTML Forms 2
+1. `<select></select>` tag can create a dropdown list for users to choose. There are some useful attributes on select tag as well. 
+    1. `multiple` can make the select tag becomes multiple selection.
+    ```html
+    Cars: <br>
+    <select multiple>
+        <option>Volve</option>
+        <option>Audi</option>
+    </select>
+    ```
+
 ## Bonus: CSS3
 ## Bonus: Boostrap, Templates, and Building Your Startup Landing Page
 ## Bonus: CSS Grid + CSS Layout
