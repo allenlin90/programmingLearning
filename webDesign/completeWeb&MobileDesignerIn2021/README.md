@@ -229,10 +229,25 @@ Finish Course on
 # Section 2: Explore & Iterate - Wireframes, Prototyping, and Feedback
 ## Wireframes
 ### What is a Wireframe
+1. Wireframe presents the information that will be displayed, provides more details than sketches and user flows, and gives the outline and structure of the page, and conveys the overall direction and description of the user interface. 
+1. Wireframes are a blue print of the product.
+1. Past artifacts should influence the way you create the wireframes.
+1. Wireframes help you understand how users will navigate the product.
+1. Use wireframes to learn for the loop as "**build**", "**measure**", and "**learn**".
+1. Wireframes can 
+    1. Provide clarity and common understanding amongst the team.
+    1. Test with users uncovers pain points and opportunities. For example, we can map the customer jounery to check users' conditions at different stages and pages on the website.
+    1. Present to clients and stakeholders to get feedback.
 
 ### How to Create a Wireframe
+1. Wireframes are good materials and resources that they can be polished and presented to clients. 
+1. Ask important questions for the product and user journey.
+1. Consult with the userflows and sitemap that have been defined. 
+1. Tackle risky features first. 
+1. Bring the working team into the process. 
 
 ### Wireframes in Figma
+1. This section is to introduce the materials that we can save time for building in Figma. We can check the [resources](https://www.figma.com/file/rpGL8FzsxDiRm233tuJjD8/Wireframes-Resource?node-id=29460%3A0).
 
 ### Creating our Home Page
 
@@ -404,6 +419,114 @@ Finish Course on
     </select>
     ```
 
+### Submitting a form
+1. We give all the `<input>` elements, which takes user input rather than `reset` or `submit`, a `name` attribute, which is used to collect the inputs from each element.
+1. If we don't specify the `method` attribute in `<form>` open tag, the default method will be `GET` which will collect all the inputs and send the parameters through URL, which key is given in the `name` attribute in the `<input>` tag, and the value is the input from the user. 
+1. Note that every any further setting the default behavior of submitting a form will send the collected inputs and reload the page.
+1. All the parameters sending through URL start with a question mark `?` and will be concatenated with ampersand `&` if there's multiple variables.
+1. In addition, the special characters which are out of ASCII will be encoded and represented with other characters. URL encoding replaces unsafe ASCII characters with a "`%`" followed by two hexadecimal digits. For example, `@` will become `%40`. We can look up more information at [W3Schools](https://www.w3schools.com/tags/ref_urlencode.ASP). 
+1. Besides many programming languages have pre-built function to turn an URL with special characters into valid URL links, such as JavaScript with `encodeURIComponent()` and PHP with `rawurlencode()`.
+1. The other usual method to send request is `POST` that the contents and data will be send in the body of the request itself. Besides, this method is more secure as the data won't be shown directly. 
+1. There's another attribute `action` which was used in PHP programs to send the data collected from the form to an appointed PHP file on the server. However, there are other methods for such purpose in modern development techniques.
+1. `value` attribute is another important components for HTMl elements that it provides value to selective elements such as `radio` and `select` with `option` when transmitting the data, as the elements didn't take any input directly from the user, while all the values are pre-built.
+1. In the example below, if we don't give value to each `input[radio]` element, the value of `gender` will be `on` if one of the `radio` elements is selected. This is similar to `input[checkbox]`, though such option has only `on` and `off` as boolean `true` and `false`.
+    ```html
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title></title>
+        </head>
+        <body>
+            <form>
+                First Name: <input type="text" name="firstname"><br>
+                Last Name: <input type="text" name="lastname"><br>
+                Email: <input type="email" name="email" required><br>
+                Password: <input type="password" min="8" name="password" required><br>
+                Birthday: <input type="date" name="birthday"><br>
+                Gender: <br>
+                <input type="radio" name="gender" value="male">Male<br>
+                <input type="radio" name="gender" value="female">Female<br>
+                <input type="radio" name="gender" value="other">Other<br>
+                Pets: <br>
+                <input type="checkbox" name="cat"> Cat<br>
+                <input type="checkbox" name="dog"> Dogs<br>
+                Cars: <br>
+                <select multiple>
+                    <option value="volve">Volve</option>
+                    <option value="audi">Audi</option>
+                </select><br>
+                <input type="submit" value="Register">
+                <input type="reset" value="Reset">
+            </form>
+        </body>
+    </html>
+    ```
+
+### HTML Tags 3
+1. To make a comment or share information in HTML file, we can use `<!-- comment -->` to wrap the message. Most of the text editors provides shortcuts such as <kbd>Ctrl + /</kbd> to turn a line or selected lines of text into comments. 
+1. The followings are 2 common elements to wrap elements in HTML. These elements are useful that we can give them `class`, `id`, or other attributes to provide certain features or simply group the contents and modify them at the same time. 
+    1. `<div></div>` is block element and creats blocks as sections in HTML. This block elements take defined space area in the layout. 
+    1. `<span></span>` is similar to `div` while it's an inline element which takes only the space of the contents that is wrapped by `span`. 
+
+### HTML vs HTML 5
+1. Though HTML evolves and has been added with multiple features, the modern browsers can still read the early versions of HTML to ensure that the website can still work. 
+1. The modern HTML is more semantic that the name of elements are more descriptive, so that seach engines or other programs can learn the layout of a website by the name of its elements. For example
+    1. `header` is the header area of the website.
+    1. `nav` is usually the navigation part on the website.
+    1. `footer` is the footer area of the website. 
+1. We can give other attributes to `input` elements for input restrictions such as set the `min` input from the user. We can check other attributes for [input restriction](https://www.w3schools.com/tags/tag_input.asp).
+
+### Copy a Website
+1. We can open the developer tool in brower and copy the elements which we use the code to duplicate any website on the internet. 
+1. In this case, we check out "[wait but why](https://waitbutwhy.com/)".
+
+
+
 ## Bonus: CSS3
+### Your First CSS
+1. We can use `<link rel="stylesheet" type="text/css" href="style.css">` tag in HTML to connect the HTML file with the CSS styling sheet. Note that `link` is a self closing tag.
+    ```html
+    <link rel="stylesheet" type="text/css" href="style.css">
+    ```
+1. CSS stands for "**cascading style sheet**" which means the selector will select the last match to apply. For example, if 2 styles are applied to the same element, only the last styling property will be applied. 
+    <img src="./images/styleInBrowserDeveloperTool.png">
+1. Though there are 2 ways that we can style the HTML file, these methods are not usually used. 
+    1. `<link>` tag, we can style the HTML elements in-line.
+        ```html
+        <header style="background-color: green; color: red">
+        ```
+    1. `<style></style>` can be used to wrap CSS code in HTML file directly. 
+        ```html
+        <style>
+            h1 {
+                background: red;
+            }
+        </style>
+        ```
+    
+### CSS properties
+1. [CSS tricks](https://css-tricks.com/almanac/) is a website that many developers refer to.
+1. Besides using `<img>` tag in HTML, we can use `background-image` property in CSS to link an image to the selected element. For example, we can select `body` element in HTML to put background on the whole page. 
+1. We can choose RGB and HEX color code from [Paletton](https://paletton.com/#uid=1000u0kllllaFw0g0qFqFg0w0aF).
+1. For colors, we can use mainly 3 types which are "text", "rgb code" and "hex code". Note there's a 4th property for `rgba` which is the transparency that is from 0 (transparent) to 1 (solid).
+    ```css
+    body {
+        background-image: url(https://images.unsplash.com/photo-1604432952064-38b878fda1bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=935&q=80);
+        background-size: cover;
+    }
+
+    h2 {
+        color: red;
+        text-align: center;
+        border: 5px solid rgba(255, 176, 170, 0.5);
+        cursor: pointer;
+    }
+
+    li {
+        list-style: none;
+        display: inline-block;
+    }
+    ```
+
 ## Bonus: Boostrap, Templates, and Building Your Startup Landing Page
 ## Bonus: CSS Grid + CSS Layout
