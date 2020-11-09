@@ -528,5 +528,36 @@ Finish Course on
     }
     ```
 
+### CSS Selectors
+1. We can put the element directly before curly brackets to select all the same type of elements on the HTML page. 
+1. `class` has notation with a dot `.` that is good for grouping elements with the same decoration.
+1. `id` has notation with poundsign `#` that is good for a single element on the page. 
+1. A asterisk `*` is like a wild card that it will select all the elements that match the selector conditions.
+1. We can use comma `,` to apply the styling to multiple elements that is separated by comma.
+1. If there's a space between elements, it will follow the nesting style that the selector goes from outter to inner from left to right. Note that this selector will apply to all the elements that is nested in the element no matter how many layers there are. 
+    ```css
+    div p {
+        color: red;
+    }
+    ````
+1. A greater sign is to select the element that is right nested in the element on the left. 
+1. We can use column for advanced selecting method or for elements to react to events. 
+    ```css
+    div:hover {
+        background: grey;
+    }
+
+    p:nth-child(even) {
+        background: blue;
+    }
+
+    li:last-of-type {
+        background: cyan;
+    }
+    ```
+1. We can add `!important` will make a certain styling in higher priority. However, this method is not recommended as when the styling sheet goes bigger, it maybe harder to notice if a styling is given the attribute and hard to be check if the styling goes wrong. 
+1. We can use some tools to check specificity of a CSS selector, such as [specificity calculator](https://specificity.keegan.st/).
+1. We can check [flukeout](https://flukeout.github.io) to practice on CSS selectors.
+
 ## Bonus: Boostrap, Templates, and Building Your Startup Landing Page
 ## Bonus: CSS Grid + CSS Layout
