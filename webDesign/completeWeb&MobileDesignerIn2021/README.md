@@ -565,5 +565,56 @@ Finish Course on
 1. We can use some tools to check specificity of a CSS selector, such as [specificity calculator](https://specificity.keegan.st/).
 1. We can check [flukeout](https://flukeout.github.io) to practice on CSS selectors.
 
+### Text and Font
+1. There are many decorators and properties we can use to modify the styles of fonts.
+1. We can import font styles to ensure all the users can view the page in certain style though the user may not install the font. For example, [Google Fonts](https://fonts.google.com/).
+    ```css
+    p {
+        text-decoration: line-through;
+        font-style: italic;
+        font-weight: bold;
+        font-size: 1.4rem;
+        font-family: "Arial";
+    }
+    ```
+
+### Images in CSS
+1. We can use `<img>` tag to import images from other source and render on the page. Note that an image tag is an inline element.
+1. We can use `float` property for image to be at the `left` or `right` that it will be wrapped by the elements around it.
+1. As `float` property sometimes create funny output, we can use `clear` property right after the element using `float` to separate them apart. However, modern CSS has flebox and grid system that it is much easier to make the layout of them page. 
+    ```css
+    img {
+        float: right;
+    }
+
+    footer {
+        clear: both;
+    }
+    ```
+
+### Box Model
+1. All HTML elements have margin, border, and padding. Besides, each of them can be added by 4 directions from top, right, bottom, and left in clockwise.
+1. We can change the size of the content of the element directly with `width` and `height`. 
+    ```css
+    div {
+        border: red solid 2px;
+        padding: 10px;
+        width: 40px;
+        height: 50px
+    }
+    ```
+
+### px vs em vs rem
+1. `px` is the absolute unit for the font size in a layout. 
+1. `em` is related to the size of the parent element. For example, if the font size of the parent element is `14px`, giving `2em` will make the fontsize twice as its parent element. 
+1. `rem` is related to the root font size which is usually 16px by default. This is better that the font size will always refer to the root font size rather than the parent element.
+
+### Critical Render Path
+1. When users use browser to browser websites, the browser sends request to the IP address which is repersented by URL. The request will then be sent to the server and respond with HTML.
+1. When the browser reading the HTML, if there's a `<link>` tag referring to a CSS file, the browser will make another request to the server to ask for the CSS file. 
+1. If the website use CDN or other links to import other files such as fonts, the browser will then make another request to the CDN endpoint. 
+1. Note that if the website is relative small, we may not notice the delay between each request that the broweser make. However, when the website becomes bigger, it may seriously affect to the user experience. 
+1. There are many methods to optimize the responding and reacting speed of the website, such as using preprocessor and minimizing the size of the files. 
+
 ## Bonus: Boostrap, Templates, and Building Your Startup Landing Page
 ## Bonus: CSS Grid + CSS Layout
