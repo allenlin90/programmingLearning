@@ -250,6 +250,12 @@ Finish Course on
 1. This section is to introduce the materials that we can save time for building in Figma. We can check the [resources](https://www.figma.com/file/rpGL8FzsxDiRm233tuJjD8/Wireframes-Resource?node-id=29460%3A0).
 
 ### Creating our Home Page
+1. On a page, we can select mutiple objects and click to create multiple components on the top navigation bar. 
+1. We can create styles in a library to be shared by projects and team members to prevent duplicating the work.
+1. A plug-in "Text Style Generator" is useful that we can create multiple text styles at the same time. Note that we can use slash `/` to group styles. For example, we can create mutliple `H1` header tags with different font weight. 
+    1. H1/Regular 38px
+    1. H1/Medium 38px
+    1. **H1/Bold 38px**
 
 ### Creating a Product Page
 
