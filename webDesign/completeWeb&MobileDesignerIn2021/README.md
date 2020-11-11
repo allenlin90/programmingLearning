@@ -256,6 +256,11 @@ Finish Course on
     1. H1/Regular 38px
     1. H1/Medium 38px
     1. **H1/Bold 38px**
+1. We can select the frame object on the canvas and choose to use "grid" in "Layout grid" option on the right panel. This can create a grid in the object for us to align items on it. The grid can be regular grid that covers the whole object or as columns which is similar to flexbox system in CSS. Besides, we can modify the margin and the thickness of each column in the layout. Note that we can use <kbd>Ctrl + Shirt + 4</kbd> to show/hide layout grid.
+    <img src="./images/layoutgrid.png">
+1. Since we have multiple small objects to create a large one, we can use <kbd>Ctrl + g</kbd> to group them and select or copy all of them at the same time.
+1. We have done the mock-up for homepage in this section.
+    <img src="./images/homepage.png">
 
 ### Creating a Product Page
 
