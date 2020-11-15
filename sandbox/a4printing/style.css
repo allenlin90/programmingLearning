@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font: 12pt "Roboto", "Georgia", "Times New Roman", "Times", "serif";
+    font: 12pt "Roboto", "serif", "Georgia", "Times New Roman", "Times";
     line-height: 1.3;
 }
 
@@ -22,6 +22,11 @@ body {
 
 hr {
     background: black;
+}
+
+p {
+    margin: 0;
+    line-height: 1.2rem;
 }
 
 img {
@@ -53,10 +58,11 @@ img {
 
 .receiver_info, .note, .empty {
     border-top: 2px solid black;
+    padding-top: 0.2cm;
 }
 
 .receiver_info {
-    font-size: 1.2rem;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -75,15 +81,74 @@ img {
 
 .right {
     display: grid;
-    grid-template-rows: 1fr 1fr 2fr 1fr;
+    grid-template-rows: 1fr 1/2fr 3fr 1fr;
 }
 
-.tracking, .extraService {
+.serviceDate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pickupDate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.serviceDate p {
+    font-size: 20px;
+}
+
+.tracking {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.qr_code {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr_code img {
+    width: 100%;
+}
+
+.qr_code p {
+    text-align: center;
+    font-size: 20px;
+}
+
+.parcels {
+    display: flex;    
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.parcels p {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin: 0.3cm auto;
+}
+
+.extraService {
     display: flex;
     justify-content: space-between;
 }
 
-.parcel {
-    display: flex;    
+.extraService div {
+    display: flex; 
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.cod_amount{
+    font-size: 20px;
+    font-weight: bold;
 }
