@@ -1,0 +1,88 @@
+* {
+    margin: 0; 
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header::before {
+    content: ''; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+}
+
+header * {
+    z-index: 5;
+}
+
+header div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-image: url('https://source.unsplash.com/1600x900/?nature,water');
+    height: 100vh;
+    color: #f4f4f4;
+}
+
+h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    padding: 0 4rem;
+}
+
+a {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.8);
+    color: #333;
+    width: 6rem;
+    padding: 10px 10px;
+    margin-top: 2rem;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+a:hover {
+    background: #333;
+    color: #fff;
+}
+
+section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+}
+
+section div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+section div:first-child {
+    background: #333;
+    color: #fff;
+}
+
+section div:nth-child(2){
+    background: coral;
+    color :#fff;
+    grid-column: 2 / span 3;
+}
+
+section div p {
+    display: block;
+    padding: 1rem;
+    text-align: left;
+}
