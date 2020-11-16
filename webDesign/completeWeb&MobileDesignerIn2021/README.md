@@ -621,5 +621,206 @@ Finish Course on
 1. Note that if the website is relative small, we may not notice the delay between each request that the broweser make. However, when the website becomes bigger, it may seriously affect to the user experience. 
 1. There are many methods to optimize the responding and reacting speed of the website, such as using preprocessor and minimizing the size of the files. 
 
+### Flexbox
+1. To use flexbox, we can start with a block element as container and use `display: flex` to apply flexbox styling to it and its descendants.
+1. `flex-wrap: wrap` will limit the space and alignment of elements in a row that if the width exceeds the width of the view port, the elements will be moved to the next row. 
+1. `justify-content` and `align-items` are the other 2 properties which are often used to locate the elements in the flexbox container. 
+    ```html
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        h1 {
+            font-family: fantasy;
+            font-size: 3em;
+            border-bottom: 2px solid pink;
+            border-right: 2px solid pink;
+            width: 400px;
+            text-align: center;
+        }
+
+        img {
+            width: 450px;
+            height: 300px;
+            margin: 10px;
+        }
+    </style>
+    <body>
+        <h1>Life in the Wild</h1>
+        <div class="container">
+            <img src="https://static.pexels.com/photos/52500/horse-herd-fog-nature-52500.jpeg" alt="">
+            <img src="https://static.pexels.com/photos/66898/elephant-cub-tsavo-kenya-66898.jpeg" alt="">
+            <img src="https://static.pexels.com/photos/213399/pexels-photo-213399.jpeg" alt="">
+            <img src="https://static.pexels.com/photos/158471/ibis-bird-red-animals-158471.jpeg" alt="">
+            <img src="https://static.pexels.com/photos/133459/pexels-photo-133459.jpeg" alt="">
+            <img src="https://static.pexels.com/photos/50988/ape-berber-monkeys-mammal-affchen-50988.jpeg" alt="">
+        </div>
+    </body>
+    ```
+
+### CSS3
+1. CSS3 is the latest version of CSS by the time of learning in yaer 2020. It has some useful properties that make animating styling becomes easier. For example, we can use `transition` to indicate that which "**property**" and "**duration**" of the transition from one to another. 
+    ```css
+    img {
+        transition: all 1s;
+    }
+
+    img:hover {
+        transform: scale(1.1);
+    }
+    ```
+1. Note that some of the properties are not fully supported by some of the browsers. Therefore, we can refer to [browser support](https://www.w3schools.com/cssref/css3_browsersupport.asp) to check if the property is compatible to certain browsers. Besides, we can use "prefix" to ensure certain properties can work on indicated browsers
+    ```css
+    p {
+        -ms-box-shadow: 4px 4px 5px #888888;
+        -moz-box-shadow: 4px 4px 5px #888888;
+        -webkit-box-shadow: 4px 4px 5px #888888;
+    }
+    ```
+1. We can check for more details and information about ["transition" and "transform"](https://thoughtbot.com/blog/transitions-and-transforms).
+
+### Responsive UI
+1. We can use developer tool in browser to check the view on different devices such as different resolution or mobile devices such as smart phone and tablet. The main topic here is to ensure that the website is user friendly and can be viewed with different screen size and resolution. 
+
+### Robot Animation
+    ```html
+    <style>
+        h1 {
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .robots {
+        }
+
+        .head, 
+        .left_arm, 
+        .torso, 
+        .right_arm, 
+        .left_leg, 
+        .right_leg {
+            background-color: #5f93e8;
+        }
+
+        .head { 
+            width: 200px; 
+            margin: 0 auto; 
+            height: 150px; 
+            border-radius: 200px 200px 0 0; 
+            margin-bottom: 10px;
+        } 
+
+        .eyes {
+            
+        }
+
+        .head:hover {
+            width: 300px;
+            transition: 1s ease-in-out;
+        }
+
+        .upper_body { 
+            width: 300px; 
+            height: 150px;
+            display: flex; 
+        } 
+
+        .left_arm, .right_arm { 
+            width: 40px; 
+            height: 125px;
+            border-radius: 100px; 
+        } 
+
+        .left_arm { 
+            margin-right: 10px; 
+        } 
+
+        .right_arm { 
+            margin-left: 10px; 
+        } 
+
+        .torso { 
+            width: 200px; 
+            height: 200px;
+            border-radius: 0 0 50px 50px; 
+        } 
+
+        .lower_body { 
+            width: 200px; 
+            height: 200px;
+            /* This is another useful property. Hmm what do you think it does?*/
+            margin: 0 auto;
+
+        } 
+
+        .left_leg, .right_leg { 
+            width: 40px; 
+            height: 120px;
+            border-radius: 0 0 100px 100px; 
+        } 
+
+        .left_leg { 
+            margin-left: 45px; 
+        } 
+
+        .left_leg:hover {
+            -webkit-transform: rotate(20deg);
+            -moz-transform: rotate(20deg);
+            -o-transform: rotate(20deg);
+            -ms-transform: rotate(20deg);
+            transform: rotate(20deg);
+        }
+
+        .right_leg { 
+            margin-left: 30px; 
+        }
+
+        .left_eye, .right_eye { 
+            width: 20px; 
+            height: 20px; 
+            border-radius: 15px; 
+            background-color: white;  
+        } 
+
+        .left_eye { 
+            /* These properties are new and you haven't encountered
+            in this course. Check out CSS Tricks to see what it does! */
+            position: relative; 
+            top: 100px; 
+            left: 40px; 
+        } 
+
+        .right_eye { 
+            position: relative; 
+            top: 100px; 
+            left: 120px; 
+        }
+    </style>
+
+    <h1>Robot Friend</h1>
+	<div class="robots">
+		<div class="android"> 
+			<div class="head"> 
+				<div class="eyes"> 
+					<div class="left_eye"></div> 
+					<div class="right_eye"></div>
+				</div> 
+			</div> 
+			<div class="upper_body"> 
+				<div class="left_arm"></div> 
+				<div class="torso"></div> 
+				<div class="right_arm"></div> 
+			</div> 
+			<div class="lower_body"> 
+				<div class="left_leg"></div> 
+				<div class="right_leg"></div> 
+			</div> 
+		</div>
+	</div>
+    ```
+
 ## Bonus: Boostrap, Templates, and Building Your Startup Landing Page
 ## Bonus: CSS Grid + CSS Layout
