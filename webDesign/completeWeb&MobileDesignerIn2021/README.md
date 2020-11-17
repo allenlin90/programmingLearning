@@ -270,9 +270,16 @@ Finish Course on
 1. This part is the cart page of the e-commerce app.
    <img src="./images/cartPage.png"> 
 
-
 ## Prototyping
 ### Prototyping Basics in Figma
+1. We can choose the "device" to work on prototype with on the right panel in "prototype" tab. 
+1. We can change the model of the device and background color for presentation, then we can click the "play" button on the top right corner. Note that the presentation will have multiple pages according to the frames created on the canvas. 
+1. In addition, we can also change the orientation of the device such as portrait or landscape.
+1. Interactions on elements can also be set up to simulate real-world user activities. For example, we can appoint the icons on the navigation bar and direct to another frame
+    <img src="./images/prototypeFigma.png">
+    <img src="./images/figmaPrototypePresentation.gif">
+1. We can put on other effects such as changing styles when mouse cursor hovering and pressing the component. This is similar to "**Mouse enter**" and "**Mouse leave**", as the effect will be applied when the mouse is on the object, while chang back when the mouse leave the object. Similar concenpt can be applied on "**Touch Down**" and "**Touch Up**".
+    <img src="./images/figmaHoverPressingEffect.gif">
 
 ### Prototyping Basics in Figma 2
 
