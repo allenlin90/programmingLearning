@@ -983,4 +983,20 @@ Finish Course on
     <img src="./images/startupLandingPage.png">
 1. We can use free plan on MailChimp to set up a [landing page](https://mailchi.mp/173a6a52fead/makesendusers) to collect emails and contacts from new users. We can make campaigns and alinged landing page through the backend system. 
 
+### Put the website online
+1. We can put the front end files in a Github repository and use Github Page to host it and create the website. Similar process can be used on Netlify to host a website with pure front-end files. 
+
+### Developer Fundementals
+1. [`animate`](https://animate.style/) CSS is a library similar to Bootstrap while providing many animation effects on HTML elements. We can simply import the CSS file and apply classes to animate different styles on the elements. 
+    ```html
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"/>
+     <h1 class="animated">Animate CSS</h1>
+    ```
+1. [Creative Tim](https://www.creative-tim.com/) is another source to find templates based on Bootstrap 4. 
+
+### Using Templates
+1. [Mashup Templates](http://www.mashup-template.com/) is one of the sources that provide HTML and CSS templates. 
+1. [Cruip.com](https://cruip.com/)
+1. [MD Boostrap](https://mdbootstrap.com/freebies/)
+
 ## Bonus: CSS Grid + CSS Layout
