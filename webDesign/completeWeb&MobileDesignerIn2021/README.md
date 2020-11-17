@@ -1000,3 +1000,16 @@ Finish Course on
 1. [MD Boostrap](https://mdbootstrap.com/freebies/)
 
 ## Bonus: CSS Grid + CSS Layout
+### CSS Grid vs Flexbox vs Bootstrap 
+1. CSS Grid is one latest method and property that allow developers to arrange layout easily. Grid and Flexbox can be used both to arrange layout in different scenario. Besides, as CSS Grid was just introduced, some of the old browsers may not support the technology while we may use Bootstrap for the issue. 
+
+### CSS Grid
+1. To start using CSS Grid, we need a "**container**" to wrap all elements that will be in the grid. We can use `display: grid` to start grid system and `gap` to place space between each element in the grid. 
+1. For `grid-template-columns`, we can use units such as `px` and `%`. However, to make the layout more responsive, we can use `fr` as fraction in the columns that the elements will be resized by the system with the given scale.
+    ```css
+    .container {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 1fr 1fr;
+    }
+    ```
