@@ -263,11 +263,12 @@ Finish Course on
     <img src="./images/homepage.png">
 
 ### Creating a Product Page
-1. This part is similar to previous sections that we use it for building product page in Figma.
+1. This part is the product page of the e-commerce app.
     <img src="./images/productPage.png">
 
 ### Creating a Checkout Page
-
+1. This part is the cart page of the e-commerce app.
+   <img src="./images/cartPage.png"> 
 
 
 ## Prototyping
