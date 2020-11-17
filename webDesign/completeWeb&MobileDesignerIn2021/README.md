@@ -833,4 +833,154 @@ Finish Course on
     ```
 
 ## Bonus: Boostrap, Templates, and Building Your Startup Landing Page
+### Bootstrap
+1. We can use CDN to import Bootstrap CSS and JavaScript file without storing the file locally. Note that we should put JavaScript file at the bottom of `<body>` tag, so users can see the HTML elements without waiting for all the files are loaded. 
+    ```html
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    ```
+1. Several components are also very useful to build up the website.
+    1. NavBar
+    1. Jumbotron
+    1. Modal
+
+### Bootstrap Grid
+1. Boostrap grid was introduced before grid system is brought to be used. With Bootstrap grid, it's much easier to arrange the layout of the page and make it responsive. 
+1. Bootstrap grid starts with the "**container**" and "**row**" that holds the elements. Note that a Bootstrap row can be divided up to "**12**" fractions. We then can put `col` and specify the screen width with the fraction for page layout. 
+    ```html
+    <div class="container">
+        <div class="row">
+            <div class="col col-sm-12 col-md-6 col-lg-12">
+                1 of 2
+            </div>
+            <div class="col col-3">
+                2 of 2
+            </div>
+            <div class="col col-3">
+                Extra
+            </div>
+        </div>
+    </div>
+    ```
+
+### Exercise: Startup Landing Page
+1. The startup website structure. The following is the initial structure. 
+    1. HTML
+        ```html
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Startup</title>
+            <!-- Google Fonts -->
+            <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+            <!-- Bootstrap CSS from a CDN. This way you don't have to include the bootstrap file yourself -->
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+                integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+            <!-- Your own stylesheet -->
+            <link rel="stylesheet" type="text/css" href="style.css">
+        </head>
+        <body>            
+        </body>
+        </html>
+        ```
+    1. CSS
+        ```css
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+        }
+        ```
+1. In the `<head>` tag, we can put more meta-data for the page. We can get more information on [`<meta>` tag](https://www.w3schools.com/tags/tag_meta.asp), [UTF-8](https://www.quora.com/What-is-UTF8), [viewport](https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag), [full-page-background-image](https://css-tricks.com/perfect-full-page-background-image/).
+1. THe `viewport` in `<meta>` tag is important that it indicates to the browser that the website is designed to be responsive and mobile-first. 
+    ```html
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ```
+1. Trick for full page background in CSS. We can make the background image responsive and alway stay at the center.
+    ```css
+    html { 
+        background: url(images/bg.jpg) no-repeat center center fixed; 
+        background-size: cover;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+    }
+    ```
+1. We can add on different styling on the Bootstrap styles to extend and customize them.
+    ```css
+    body,
+    html {
+        width: 100%;
+        height: 100%;
+        font-family: 'Montserrat', sans-serif;
+        background: url(./header.jpg) no-repeat center center fixed;
+        background-size: cover;
+    }
+
+    h1 {
+        font-size: 3rem;
+        color: #e2dbdb;
+    }
+
+    hr {
+        border-color: #f05f44;
+        border-width: 3px;
+        max-width: 65px;
+    }
+
+    .btn {
+        font-weight: 700;
+        border-radius: 300px;
+        text-transform: uppercase;
+    }
+
+    .btn-primary {
+        background-color: #f05f44;
+        border-color: #f05f44;
+    }
+
+    .btn-primary:hover {
+        background-color: #ee4b08;
+        border-color: #ee4b08;
+        border-width: 4px;
+    }
+
+    .btn-xl {
+        padding: 1rem 2rem;
+    }
+    ```
+1. Bootstrap has several classes that we can modify the layout and elements in the container without using CSS code.
+    1. `d-flex` works as CSS flexbox that we can also use `justify-content` and `align-items` to arrange the layout. 
+    1. `text-uppercase` is to turn the characters in the elements to uppercase. 
+    1. `text-center`
+    1. `h-100` is to strech the block element to take 100% height.
+    ```html
+    <div class="container d-flex align-items-center h-100">
+        <div class="row">
+            <header class="text-center col-12">
+                <h1 class="text-uppercase"><strong>The biggest startup event of the year</strong></h1>
+            </header>
+            <div class="buffer col-12"></div>
+            <section class="text-center col-12">
+                <hr>
+                <button class="btn btn-primary btn-xl">Find out more</button>
+            </section>
+        </div>
+    </div>
+    ```
+1. In this case, we'd like to put some buffer space bettwen `<header>` and `<section>` on the page. Though we can put a `<div>` tag, but without content, it doesn't take up any space. We can use CSS to give a `height` property with responsive unit such as `rem`.
+    <img src="./images/startupLandingPage.png">
+1. We can use free plan on MailChimp to set up a [landing page](https://mailchi.mp/173a6a52fead/makesendusers) to collect emails and contacts from new users. We can make campaigns and alinged landing page through the backend system. 
+
 ## Bonus: CSS Grid + CSS Layout
