@@ -263,6 +263,8 @@ Finish Course on
     <img src="./images/homepage.png">
 
 ### Creating a Product Page
+1. This part is similar to previous sections that we use it for building product page in Figma.
+    <img src="./images/productPage.png">
 
 ### Creating a Checkout Page
 
