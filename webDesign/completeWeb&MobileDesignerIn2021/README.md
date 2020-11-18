@@ -282,14 +282,31 @@ Finish Course on
     <img src="./images/figmaHoverPressingEffect.gif">
 
 ### Prototyping Basics in Figma 2
+1. We can use "**Overlay**" to use another frame to cover the main frame for animations. In the following example, we have 3 frames:
+    1. Main Page
+    1. Search Page
+    1. Keyboard
+    <img src="./images/prototype2Figma.png">
+1. We then can use 
+    1. "On tap" from main page to search page.
+    1. "Delay" to show with "Overlay" to show the keyboard on the search page after certain amount of time. 
+        1. In this case, we can set the overlay to be at "bottom center" where the keyboard is at, and "close when clicking outside".
+        1. Besides, we can add a background when the keyboard frame is overlaid.
+    1.  "Set the search bar in the search page with "On tap" to open the overlay again. 
+    1. "On tap" on the 
+    <img src="./images/overlayWithKeyboard.gif">
 
 ### Prototyping Basics in Figma 3
+1. This section is introducing "**Overflow**" behavior which is the interaction on a frame within the main frame. For example, we can have a frame that is smaller than its components, we can then choose for "**Overflow Behavior**" in Prototype. In this case, we can use "vertical scrolling".
 
 ### Prototyping Basics in Figma 4
 
+
 ### Linking Together a Quick User Flow
 
+
 ### Working on Small Interactions
+
 
 
 
