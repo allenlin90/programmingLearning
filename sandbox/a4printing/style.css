@@ -113,8 +113,8 @@ img {
     align-items: center;
 }
 
-.qr_code img {
-    width: 100%;
+#qr_code_img {
+    margin: 20px auto;
 }
 
 .qr_code p {
