@@ -1,7 +1,21 @@
 .container {
     display: grid;
     gap: 20px;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-rows: 1fr;
+}
+
+.green {
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
+.red {
+    grid-row: span 2;
+}
+
+.purple {
+    grid-column: 1/-1;
 }
 
 .zone {

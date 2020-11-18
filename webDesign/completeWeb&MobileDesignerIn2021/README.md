@@ -1023,10 +1023,34 @@ Finish Course on
 ### CSS Grid
 1. To start using CSS Grid, we need a "**container**" to wrap all elements that will be in the grid. We can use `display: grid` to start grid system and `gap` to place space between each element in the grid. 
 1. For `grid-template-columns`, we can use units such as `px` and `%`. However, to make the layout more responsive, we can use `fr` as fraction in the columns that the elements will be resized by the system with the given scale.
+1. Not only columns can we apply the template, we can define the size and scale for each `row` in the Grid system.
+1. For the template, we can use `auto` as the Grid system will resize the elements to fit the layout. 
+1. We can use `repeat()` which is a shorthand for typing the same unit for multiple times. 
+1. Besides hard coded styles or unit, we can give `auto-fill` to allow Grid system to decide how many items should it put in a row or column. In addition, we can put `minmax()` which gives the minimum size of the item. With `1fr`, we can ensure that all the elements will be in the same size in different screen size or resolution. 
     ```css
     .container {
         display: grid;
         gap: 20px;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-rows: 1fr;
+        /*grid-template-rows: repeat(3, 1fr);*/
     }
     ```
+    <img src="./images/cssGridRepeatMinmax.gif">
+1. For each element in the Grid system, we can use `grid-column` with `start/end` to indicate the starting and ending position. Note that it includes the starting position but ends at the ending position, which is not included. 
+1. If we give a negative number, it will stretch the element to fill up the whole viewport. The other way is to use `span` that it gives the width that how much width should the element get. 
+    ```css
+    .green {
+        grid-column-start: 1;
+        grid-column-end: 3;
+    }
+
+    .red {
+        grid-row: span 2;
+    }
+
+    .purple {
+        grid-column: 1/-1;
+    }
+    ```
+    <img src="./images/CSSGridColumn.png">
