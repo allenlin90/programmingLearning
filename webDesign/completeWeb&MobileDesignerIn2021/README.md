@@ -1054,3 +1054,12 @@ Finish Course on
     }
     ```
     <img src="./images/CSSGridColumn.png">
+1. We can use `justify-self` or `align-self` to locate an item in the grid system by its x or y-axis.
+1. We can use the followings to fix the positions of the navigavtion bar on the top of the webview. 
+    ```css
+    header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+    ```
