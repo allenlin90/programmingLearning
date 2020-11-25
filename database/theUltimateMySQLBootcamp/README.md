@@ -7,7 +7,15 @@ End Learning:
     1. [The Basic Datatypes](#The-Basic-Datatypes)
     1. [Creating Your Own Tables](#Creating-Your-Own-Tables)
     1. [Dropping Tables](#Dropping-Tables)
-    1. [Inserting Data](#Inserting-Data)
+1. [Inserting Data](#Inserting-Data)
+    1. [MySQL Warning](#MySQL-Warning)
+    1. [NULL and NOT_NULL](#null-and-not_null)
+    1. [Setting Default Values](#Setting-Default-Values)
+    1. [A Primer of Primary Key](#A-Primer-of-Primary-Key)
+1. [CRUD Commands](#CRUD-commands)
+    1. [Introduction to SELECT](#Introduction-to-SELECT)
+    1. [Introduction to WHERE](#Introduction-to-WHERE)
+    1. [Introduction to Aliases](#Introduction-to-Aliases)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -84,3 +92,94 @@ End Learning:
 
 # Inserting Data
 ## Inserting Data
+1. Starting with `INSERT INTO`, we can give `table_name` in the database with "headers" (columns) then `VALUES` for the data that we want to insert. Note that the order of the data matters and should be alinged with the order of given columns.
+    ```sql
+    INSERT INTO table_name (column, column) VALUES ('VARCHAR', INT);
+    ```
+1. To check the data in a table, we use `SELECT <columns> FROM <table_name>;`.
+    ```sql 
+    SELECT * FROM table_name;
+    ```
+1. We can use comma `,` to separate multiple insert sets.
+    ```sql
+    INSERT INTO table_name (VARCHAR, INT)
+    VALUES ('String', 11)
+          ,('String', 5);
+    ```
+
+## MySQL Warning
+1. If we give incorrect inputs such as exceeding the maximum length of `VARCHAR` or give text type data to a `INT` column, MySQL will return a warning back to the user for the issue. Note that if we have operate any command right after receiving the warning, the message will be removed and can't be checked again. 
+1. In some cases, we can set up the default value for a column if the input is missing or incorrect. For exmaple, if a column takes `INT` datatype but receive a text string, it may give `0` as the default value to the input. 
+
+## NULL and NOT_NULL
+1. In SQL `NULL` simply means "the value is not known".
+1. For example, in the inital schema setting for a table, we can configure that if the table accepts `NULL` as input. 
+    ```sql
+    CREATE TABLE table_name 
+    (
+        column1 VARCHAR(20) NOT NULL,
+        column2 INT NOT NULL
+    );
+    ```
+1. In this case, if we don't give any value to a column that can't be `NULL` through `INSERT INTO`, the data will be either empty string or 0 according to the default setting and the datatype. 
+    ```sql
+    INSERT INTO table_name (column1) VALUES ('test');
+
+    /* This will return a warning as the default value of the table can't be default */
+    ```
+
+## Setting Default Values
+1. We can use `NOT NULL` to specify that the column can't take `NULL` as input when creating the table. Note that 
+    ```sql
+    CREATE TABLE table_name
+    (
+        column1 VARCHAR(20) DEFAULT 'no name' NOT NULL,
+        column2 INT NOT NULL DEFAULT 10
+    );
+    ```
+
+## A Primer of Primary Key
+1. "**Primary Keys**" are unique identifier for the data in a table. This can be use to differentiate the inputs if the data is exactly the same. For example, we have a table with `name` and `age` column that 2 inputs can have exactly the same name and age. With this "Primary Key", we can easily know the inputs are different and not duplicated. 
+1. With `AUTO_INCREMENT`, we can avoid giving input for the column will the system will generate it automatically. 
+    ```sql
+    CREATE TABLE table_name 
+    (
+        cat_id INT NOT NULL AUTO_INCREMENT,
+        name VARCHAR(20),
+        age INT,
+        PRIMARY KEY (cat_id)
+    );
+    ```
+1. We can indicate a column as primary key when creating it.
+    ```sql
+    CREATE TABLE table_name
+    (
+        id NOT NULL AUTO_INCREMENT PRIMARY KEY
+    );
+    ```
+
+
+
+# CRUD Commands
+1. CRUD stands for "Create", "Read", "Update", and "Delete" (or Destroy). 
+
+## Introduction to SELECT
+1. In the previous section, we use `SELECT * FROM table_name` to read the data from a table. The asterisk `*` actually stands for the wild-card as to retrieve all the columns from the table.
+    ```sql
+    CREATE TABLE table_name (id INT PRIMARY KEY NOT NULL, name VARCHAR(50));
+
+    SELECT * FROM table_name;
+
+    SELECT name FROM table_name;
+    ```
+
+## Introduction to WHERE
+1. When selecting data from a table, we can use `WHERE` to specify the condition of data to be read. 
+1. We can also use the data in the column itself for the conditions. 
+    ```sql
+    SELECT * FROM table_name WHERE column >= 'condition';
+
+    SELECT * FROM table_name WHERE column1 = column2;
+    ```
+
+## Aliases
