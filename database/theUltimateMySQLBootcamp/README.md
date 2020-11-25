@@ -16,6 +16,8 @@ End Learning:
     1. [Introduction to SELECT](#Introduction-to-SELECT)
     1. [Introduction to WHERE](#Introduction-to-WHERE)
     1. [Introduction to Aliases](#Introduction-to-Aliases)
+    1. [The UPDATE command](#The-UPDATE-command)
+    1. [Introduction to DELETE](#Introduction-to-DELETE)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -154,7 +156,7 @@ End Learning:
     ```sql
     CREATE TABLE table_name
     (
-        id NOT NULL AUTO_INCREMENT PRIMARY KEY
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY
     );
     ```
 
@@ -182,4 +184,24 @@ End Learning:
     SELECT * FROM table_name WHERE column1 = column2;
     ```
 
-## Aliases
+## Introduction to Aliases
+1. We can specify how the header names are shown. The main syntax is to use `AS` to give the name of a specify column to show.
+    ```sql
+    SELECT column_id AS id, column FROM table_name;
+    ```
+
+## The UPDATE command
+1. Use `UPDATE` and `SET` keywords to edit the data in the table. 
+    ```sql
+    UPDATE table_name SET column1 = 'data1' WHERE column2 = 'data2';
+    ```
+1. To prevent accidents, always check the data before editing it. We can use `SELECT` to read and check if the data is the target one, then use `UPDATE` and `SET` to update it. 
+
+## Introduction to DELETE
+1. To delete data from database, we can use `DELETE FROM` to remove data. Note that if we don't use `WHERE` to specify the data to delete, all the data in the table will be removed. 
+    ```sql
+    DELETE FROM table_name WHERE column = 'data';
+
+    DELETE FROM table_name;
+    /* delete everything from the table */    
+    ```
