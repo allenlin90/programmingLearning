@@ -18,6 +18,8 @@ End Learning:
     1. [Introduction to Aliases](#Introduction-to-Aliases)
     1. [The UPDATE command](#The-UPDATE-command)
     1. [Introduction to DELETE](#Introduction-to-DELETE)
+1. [String Functions](#String-Functions)
+    1. [Running SQL Files](#Running-SQL-Files)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -205,3 +207,9 @@ End Learning:
     DELETE FROM table_name;
     /* delete everything from the table */    
     ```
+
+
+
+# String Functions
+## Running SQL Files
+1. In the termianl, we can mvoe the directory where we keep the SQL file, then start MySQL server at the directory. In the command prompt, we can use `source file_name.sql` to run SQL code. Therefore, we can run the preset script without worrying typo or syntax errors. 
