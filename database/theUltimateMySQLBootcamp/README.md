@@ -22,6 +22,8 @@ End Learning:
     1. [Running SQL Files](#Running-SQL-Files)
     1. [Working with CONCAT](#Working-with-CONCAT)
     1. [Introducing REPLACE](#Introducing-REPLACE)
+    1. [Using Reverse](#Using-Reverse)
+    1. [Changing Case with UPPER and LOWER](#Changing-Case-with-UPPER-and-LOWER)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -261,11 +263,104 @@ End Learning:
     ```
 
 ## Introducing REPLACE
-1. With `REPLACE`, we can replace the given character in the string value. Note that the function is case-sensitive. 
+1. With `REPLACE`, we can replace the given character in the string value. Note that the function is case-sensitive.
+1. Note that as most of the other string functions, `REPLACE()` only affects the query output and doesn't affect the actual data in the database.
     ```sql
     SELECT REPLACE('Hello World', 'l', '7');
     /* He77o World*/
     
     SELECT REPLACE('HellO World', 'o', '7');
     /* Hello W7rld*/
+
+    SELECT 
+        SUBSTRING(REPLACE(col, 'e', '3'),1,10)
+    FROM books;
+    /* return table that has only the first 10 characters of replaced data */
     ```
+
+## Using Reverse
+1. `REVERSE()` function is very straight forward that it reverse the sequence of the given string value. Besides, we can use it to use with other functions for different purposes. 
+    ```sql
+    SELECT REVERSE('string_text');
+    /* txet_gnirts */
+
+    SELECT CONCAT('woof', REVERSE('woof'));
+    /* wooffoow */
+    ```
+
+## Working with CHAR LENGTH
+1. `CHAR_LENGTH()` function is used to count the number of characters of a string value. 
+    ```sql
+    SELECT col1, CHAR_LENGTH(col1) AS header from table_name;
+
+    SELECT CONCAT(col1, ' is ', CHAR_LENGTH(col1), ' characters long') FROM table_name;
+    /* create a new table of results with text indication */
+    ```
+
+## Changing Case with UPPER and LOWER
+1. `UPPER()` and `LOWER()` are functions to change case of string. 
+    ```sql
+    SELECT UPPER('hello world');
+    /* HELLO WORLD */
+
+    SELECT LOWER('HELLO WORLD');
+    /* hello world */ 
+    ```
+
+## String Function Challenge
+```sql
+CREATE TABLE books 
+	(
+		book_id INT NOT NULL AUTO_INCREMENT,
+		title VARCHAR(100),
+		author_fname VARCHAR(100),
+		author_lname VARCHAR(100),
+		released_year INT,
+		stock_quantity INT,
+		pages INT,
+		PRIMARY KEY(book_id)
+	);
+
+INSERT INTO books (title, author_fname, author_lname, released_year, stock_quantity, pages)
+VALUES
+('The Namesake', 'Jhumpa', 'Lahiri', 2003, 32, 291),
+('Norse Mythology', 'Neil', 'Gaiman',2016, 43, 304),
+('American Gods', 'Neil', 'Gaiman', 2001, 12, 465),
+('Interpreter of Maladies', 'Jhumpa', 'Lahiri', 1996, 97, 198),
+('A Hologram for the King: A Novel', 'Dave', 'Eggers', 2012, 154, 352),
+('The Circle', 'Dave', 'Eggers', 2013, 26, 504),
+('The Amazing Adventures of Kavalier & Clay', 'Michael', 'Chabon', 2000, 68, 634),
+('Just Kids', 'Patti', 'Smith', 2010, 55, 304),
+('A Heartbreaking Work of Staggering Genius', 'Dave', 'Eggers', 2001, 104, 437),
+('Coraline', 'Neil', 'Gaiman', 2003, 100, 208),
+('What We Talk About When We Talk About Love: Stories', 'Raymond', 'Carver', 1981, 23, 176),
+("Where I'm Calling From: Selected Stories", 'Raymond', 'Carver', 1989, 12, 526),
+('White Noise', 'Don', 'DeLillo', 1985, 49, 320),
+('Cannery Row', 'John', 'Steinbeck', 1945, 95, 181),
+('Oblivion: Stories', 'David', 'Foster Wallace', 2004, 172, 329),
+('Consider the Lobster', 'David', 'Foster Wallace', 2005, 92, 343);
+
+/* Solutions for the challenge */
+SELECT UPPER(REVERSE('Why does my cat look at me with such hatred'));
+
+SELECT REPLACE(
+    CONCAT('I', ' ', 'like', ' ', 'cats'),
+    ' ',
+    '_'
+) AS 'replacement';
+
+SELECT REPLACE(title, ' ', '->') FROM books;
+
+SELECT author_lname AS forwards, REVERSE(author_lname) AS backwards FROM books;
+
+SELECT UPPER(CONCAT(author_fname, ' ', author_lname)) AS 'full name in caps' FROM books;
+
+SELECT CONCAT(title, ' was released in ', released_year) AS blurb FROM books;
+
+SELECT title, CHAR_LENGTH(title) AS 'character count' FROM books;
+
+SELECT CONCAT(SUBSTRING(title, 1, 10), '...') AS 'short title', 
+    CONCAT(author_lname, ',', author_fname) AS author, 
+    CONCAT(stock_quantity, ' in stock') AS quantity 
+FROM books;
+```
