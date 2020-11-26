@@ -20,6 +20,8 @@ End Learning:
     1. [Introduction to DELETE](#Introduction-to-DELETE)
 1. [String Functions](#String-Functions)
     1. [Running SQL Files](#Running-SQL-Files)
+    1. [Working with CONCAT](#Working-with-CONCAT)
+    1. [Introducing REPLACE](#Introducing-REPLACE)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -213,3 +215,57 @@ End Learning:
 # String Functions
 ## Running SQL Files
 1. In the termianl, we can mvoe the directory where we keep the SQL file, then start MySQL server at the directory. In the command prompt, we can use `source file_name.sql` to run SQL code. Therefore, we can run the preset script without worrying typo or syntax errors. 
+
+## Working with CONCAT
+1. `CONCAT` is to combine Data for cleaner output. The syntax is to use `CONCAT(col1, col2, col3...)`. Besides, this should be used with `SELECT FROM` which is to indicate the table which we get data from. 
+1. We can use `CONCAT_WS` in case that we want separator in between all columns. In this case, "separator" should be put as the first argument. 
+    ```sql
+    SELECT CONCAT (col1, 'separator', col2) from table_name;
+
+    SELECT col1 AS header1, col2 AS header2, CONCAT(col1, ' ', col2) AS full FROM table_name;
+    /* This returns 3 columns */
+
+    SELECT CONCAT_WS('-', col1, col2) from table_name;
+    /* This will give separator in between all columns */
+    ```
+
+## Introducing SUBSTRING
+1. To take part of a string value, we can use `SUBSTRING()` which takes the string value as the first argument which is followed with starting position and the ending position. Note that position of strings in SQL starts from 1 rather than 0. 
+1. If we give only the 2nd argument, which is the starting position, it returns the string since the given starting position to the end.
+1. The position index can negative that it starts backward from `-1`. 
+1. `SUBSTR()` is a shorthand for `SUBSTRING()`. Both of these functions work exactly the same. 
+    ```sql
+    SELECT SUBSTRING('text_string', starting_position, ending_position);
+    /* Note that position of SQL string starts from 1, not zero */
+
+    SELECT SUBSTRING('text_string', 1, 4);
+    /* text */
+
+    SELECT SUBSTRING('text_string', 6);
+    /* string */
+
+    SELECT SUBSTRING('text_string', -3);
+    /* ing */
+
+    SELECT SUBSTR(col1, 1, 6) AS new_header FROM table_name;
+    ```
+1. We can combine multiple functions together to create a new table. For example, we use `SUBSTR` to get short title from the table, use `CONCAT` to add triple dots `...` after each substring, and use `AS` to change header name of the new column. 
+    ```sql
+    SELECT 
+        CONCAT
+        (
+            SUBSTRING(title, 1, 10), 
+            '...'
+        ) AS 'short title' 
+    FROM books;
+    ```
+
+## Introducing REPLACE
+1. With `REPLACE`, we can replace the given character in the string value. Note that the function is case-sensitive. 
+    ```sql
+    SELECT REPLACE('Hello World', 'l', '7');
+    /* He77o World*/
+    
+    SELECT REPLACE('HellO World', 'o', '7');
+    /* Hello W7rld*/
+    ```
