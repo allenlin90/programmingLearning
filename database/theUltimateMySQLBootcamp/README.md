@@ -31,6 +31,9 @@ End Learning:
     1. [Using LIMIT](#Using-LIMIT)
     1. [Better Searches with LIKE](#Better-Searches-with-LIKE)
     1. [Selection Challenges](#Selection-Challenges)
+1. [Aggregate Functions](#Aggregate-Functions)
+    1. [The COUNT function](#The-COUNT-function)
+    1. [GROUP BY](#GROUP-BY)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -492,3 +495,38 @@ SELECT title, author_lname FROM books ORDER BY author_lname, title;
 
 SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM books ORDER BY author_lname;
 ```
+
+
+
+# Aggregate Functions
+## The COUNT function
+1. `COUNT()` function is to calculate the number of entities in the same row. 
+    ```sql
+    SELECT COUNT(*) FROM table_name;
+    /* return the number of rows in the table */
+
+    SELECT COUNT(DISTINCT col1, col2) FROM table_name;
+    /* return all unqiue values combined by col1 and col2 */
+
+    SELECT COUNT(*) FROM table_name WHERE col1 LIKE '%search%';
+    ```
+## GROUP BY
+1. `GROUP BY` summarize or aggregates identical data into single rows. In this case, if multiple entities have the same value in a field and is grouped, it will be returned as a row. This function is useful when counting the number of a certain type of entity in the table.
+    ```sql
+    SELECT col1, COUNT(*) FROM table_name GROUP BY col1; 
+    ```
+1. We can query data from the `books` table in `book_shop` database.
+    ```sql
+    SELECT 
+        CONCAT(
+            'In ', 
+            released_year, 
+            ' ', 
+            COUNT(*), 
+            ' book(s) released'
+        ) AS year 
+    FROM 
+        books 
+    GROUP BY 
+        released_year;
+    ```
