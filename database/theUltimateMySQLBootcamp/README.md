@@ -24,6 +24,13 @@ End Learning:
     1. [Introducing REPLACE](#Introducing-REPLACE)
     1. [Using Reverse](#Using-Reverse)
     1. [Changing Case with UPPER and LOWER](#Changing-Case-with-UPPER-and-LOWER)
+1. [Refining Selections](#Refining-Selections)
+    1. [Seed Data](#Seed-Data)
+    1. [Using DISTINCT](#Using-DISTINCT)
+    1. [Sorting Data with ORDER BY](#Sorting-Data-with-ORDER-BY)
+    1. [Using LIMIT](#Using-LIMIT)
+    1. [Better Searches with LIKE](#Better-Searches-with-LIKE)
+    1. [Selection Challenges](#Selection-Challenges)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -363,4 +370,125 @@ SELECT CONCAT(SUBSTRING(title, 1, 10), '...') AS 'short title',
     CONCAT(author_lname, ',', author_fname) AS author, 
     CONCAT(stock_quantity, ' in stock') AS quantity 
 FROM books;
+```
+
+
+
+# Refining Selections
+## Seed Data
+1. We put more data to the `book_shop` database. 
+    ```sql
+    CREATE DATABASE book_shop;
+
+    CREATE TABLE books 
+	(
+		book_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		title VARCHAR(100),
+		author_fname VARCHAR(100),
+		author_lname VARCHAR(100),
+		released_year INT,
+		stock_quantity INT,
+		pages INT,		
+	);
+
+    INSERT INTO books (title, author_fname, author_lname, released_year, stock_quantity, pages)
+    VALUES
+    ('The Namesake', 'Jhumpa', 'Lahiri', 2003, 32, 291),
+    ('Norse Mythology', 'Neil', 'Gaiman',2016, 43, 304),
+    ('American Gods', 'Neil', 'Gaiman', 2001, 12, 465),
+    ('Interpreter of Maladies', 'Jhumpa', 'Lahiri', 1996, 97, 198),
+    ('A Hologram for the King: A Novel', 'Dave', 'Eggers', 2012, 154, 352),
+    ('The Circle', 'Dave', 'Eggers', 2013, 26, 504),
+    ('The Amazing Adventures of Kavalier & Clay', 'Michael', 'Chabon', 2000, 68, 634),
+    ('Just Kids', 'Patti', 'Smith', 2010, 55, 304),
+    ('A Heartbreaking Work of Staggering Genius', 'Dave', 'Eggers', 2001, 104, 437),
+    ('Coraline', 'Neil', 'Gaiman', 2003, 100, 208),
+    ('What We Talk About When We Talk About Love: Stories', 'Raymond', 'Carver', 1981, 23, 176),
+    ("Where I'm Calling From: Selected Stories", 'Raymond', 'Carver', 1989, 12, 526),
+    ('White Noise', 'Don', 'DeLillo', 1985, 49, 320),
+    ('Cannery Row', 'John', 'Steinbeck', 1945, 95, 181),
+    ('Oblivion: Stories', 'David', 'Foster Wallace', 2004, 172, 329),
+    ('Consider the Lobster', 'David', 'Foster Wallace', 2005, 92, 343);
+
+    INSERT INTO books
+        (title, author_fname, author_lname, released_year, stock_quantity, pages)
+        VALUES ('10% Happier', 'Dan', 'Harris', 2014, 29, 256), 
+            ('fake_book', 'Freida', 'Harris', 2001, 287, 428),
+            ('Lincoln In The Bardo', 'George', 'Saunders', 2017, 1000, 367);
+    ```
+
+## Using DISTINCT
+1. `DISTINCT` can provide us unique values and avoid duplicates. Note that `DISTINCT` should follow right after `SELECT` keyword. 
+1. If we use DISTINCT to return multiple columns, MySQL will return only the rows that has unique data. Besides, we can use it with 
+    ```sql
+    SELECT DISTINCT col from table_name;
+    ```
+
+## Sorting Data with ORDER BY
+1. The default ordering sequence for the result is ascending. We can use `DESC` for "**descending**" which can order the result reversely.
+1. After `ORDER BY`, we can use number for the selected columns to order the result. Note that the position of columns starts at 1. 
+1. We can give multiple columns as filter to order the result. The given columns will be in different tiers. The 1st one will be the very first filter to order the results. 
+    ```sql
+    SELECT col1 FROM table_name ORDER BY col1;
+
+    SELECT col1 FROM table_name ORDER BY col1 DESC;
+    /* list results in descending order */ 
+
+    SELECT col1, col2 FROM table_name ORDER BY col3;
+    /* result will be ordred by col3 though it's not selected */
+
+    SELECT col1, col2, col3 FROM table_name ORDER BY 2;
+    /* result will be ordered by col2 ascending */
+
+    SELECT col1, col2 FROM table_name ORDER BY col1, col2;
+    /* result will be ordered by col1 and then col2 */
+    ```
+
+## Using LIMIT
+1. `LIMIT` allow us the limit the number of results returned. This function comes the last in the statement. 
+1. `LIMIT` can take another arugment which is the starting point of the result. For example, if we have 10 results in total, we can use `LIMIT 3, 6` to get from the 4rd result to the 9th which are 6 results in total. Note that the starting position is `0` rather than `1`. 
+1. There's no better way to select from a certain position till the last row in the database. We can only do it by hitting the limitation of a table in MySQL. We may give a random huge number which should be greater than the number of entities in the table. 
+    ```sql
+    SELECT col1, col2 FROM table_name ORDER BY col1 LIMIT 5;
+    /* return only 5 results ordred by col1 */
+
+    SELECT * FROM table_name LIMIT 1, 3;
+    /* return 3 results since the 2nd entity */
+
+    SELECT col1 FROM table_name LIMIT 1, 1;
+    /* return only the 2nd entity from the table */
+
+    SELECT * FROM table_name LIMIT 1, 999999999999999999999999999999999999;
+    /* return the 2nd entity till the last in the table */ 
+    ```
+
+## Better Searches with LIKE
+1. `LIKE` can be used for better searching to find similar entities in the table. 
+1. `%` is similar to regular expression that is a wildcard to be used as placeholder in searching. It basically means that there has or doesn't have the given value in between. Therefore, if the given value is at the start or end position, it will match the search with `%`. 
+1. Note that `LIKE` search is not case-sensitive.
+1. Besides percentage, we can use underscores `_` to search. Underscores are the placeholder for the character. It only matches when there's really character as value. For example, if we'd like to check the quantity of stock, the range could be 2 to 5 digits. Therefore, we can use `__` to search for stock with quantity in 2 digits and `____` for stock with quantity in 4 digits.
+1. We can use backslash `\` before `%` or `_` to secape the character, so we can search `%` as the character in the query. 
+    ```sql
+    WHERE col1 LIKE '%search%';
+    /* find any entity in the table that includes 'search' */
+
+    SELECT col1 FROM table_name WHERE col1 LIKE '__'; 
+    /* return entities that has exactly 2 characters as value in col1 */
+    ```
+
+## Selection Challenges
+```sql
+SELECT title FROM books WHERE title LIKE '%stories%';
+
+SELECT title, pages FROM books ORDER BY CHAR_LENGTH(title) DESC LIMIT 1;
+
+SELECT CONCAT(title, ' - ', released_year) AS summary FROM books ORDER BY released_year DESC LIMIT 3;
+
+SELECT title, author_lname FROM books WHERE author_lname LIKE '% %';
+
+SELECT title, released_year, stock_quantity FROM books ORDER BY stock_quantity LIMIT 3;
+
+SELECT title, author_lname FROM books ORDER BY author_lname, title;
+
+SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM books ORDER BY author_lname;
 ```
