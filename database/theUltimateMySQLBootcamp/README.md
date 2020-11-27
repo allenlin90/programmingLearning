@@ -34,6 +34,7 @@ End Learning:
 1. [Aggregate Functions](#Aggregate-Functions)
     1. [The COUNT function](#The-COUNT-function)
     1. [GROUP BY](#GROUP-BY)
+    1. [Min and Max Basics](#Min-and-Max-Basics)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -529,4 +530,31 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         books 
     GROUP BY 
         released_year;
+    ```
+
+## Min and Max Basics
+1. `MAX()` can return the maximum entity from the query results. However, when using with other functions, we should be careful that the row and the entity may not match.
+    ```sql
+    SELECT Max(col1) FROM table_name;
+
+    SELECT Max(col1), col2 FROM table_name;
+    /* col1 and col2 could be from different row!!! */
+    ```
+1. In the `book_shop` case, we can query for the book that has the most pages in the dataset with its title.
+1. One of the solutions is to use sub-query, which is an inner query for the case. The 2nd query, which is in the parenthesis will be executed first. However, this method is executing 2 queries which is slower than regular methods.
+1. The other way is to use `ORDER BY` with `LIMIT`.
+    ```sql
+    SELECT title,pages FROM books WHERE pages = (SELECT Max(pages) FROM books);
+    /*  */
+
+    SELECT title, pages FROM books ORDER BY pages ASC LIMIT 1;
+    ```
+1. In the other example, if we'd like to find the year each author published their first book. 
+1. Find the longest page count for each author in the dataset. 
+    ```sql
+    SELECT author_fname, author_lname, MIN(released_year) FROM books GROUP BY author_lname;
+
+    SELECT author_fname, author_lname, MAX(pages) FROM books GROUP BY author_lname ORDER BY MAX(pages);
+
+    SELECT CONCAT(author_fname, author_lname) AS author, MAX(pages) AS 'longest book' FROM books GROUP BY author_lname, author_fname;
     ```
