@@ -35,6 +35,8 @@ End Learning:
     1. [The COUNT function](#The-COUNT-function)
     1. [GROUP BY](#GROUP-BY)
     1. [Min and Max Basics](#Min-and-Max-Basics)
+    1. [The Sum Function](#The-Sum-Function)
+    1. [The Avg Function](#The-Avg-Function)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -557,4 +559,49 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
     SELECT author_fname, author_lname, MAX(pages) FROM books GROUP BY author_lname ORDER BY MAX(pages);
 
     SELECT CONCAT(author_fname, author_lname) AS author, MAX(pages) AS 'longest book' FROM books GROUP BY author_lname, author_fname;
+    ```
+
+## The Sum Function
+1. `SUM()` can be used to sum up the numbers of a given columns. This function can be useful when using with `GROUP BY`. For example, we can get the total pages of a author in the `book_shop` database. 
+    ```sql
+    SELECT CONCAT(author_fname, ' ', author_lname) AS author, SUM(pages) FROM books GROUP BY author ORDER BY author;
+    /* sum of pages that each author has written */
+
+    SELECT CONCAT(author_fname, ' ', author_lname) AS author, SUM(pages) FROM books GROUP BY author_lname, author_fname ORDER BY author;
+    /* This gives identical results as the query above */
+    ```
+
+## The Avg Function
+1. `Avg()` can be used to calculate the average number of a given column. In the example, we can calculate the average stock quantity for books released in the same year.
+1. Note that by default, the averaged nubmer will have 4 digits though the remainder is zero.
+    ```sql
+    SELECT AVG(col1) FROM table_name GROUP BY col1;
+
+    SELECT released_year, AVG(stock_quantity) FROM books GROUP BY released_year;
+    ```
+
+## Aggregate Functions Challenges
+1. Tentative solutions
+    ```sql
+    /* print the number of books in the database */
+    SELECT COUNT(DISTINCT title) FROM books;
+
+    /* print out how many books were released in each yaer */
+    SELECT released_year, COUNT(released_year) FROM books GROUP BY released_year;
+
+    /* print out the total number of books in stock */
+    SELECT SUM(stock_quantity) FROM books; 
+
+    /* Find the average released_year for each author */
+    SELECT AVG(released_year) FROM books GROUP BY author_lname, author_fname;
+
+    /* Find the full name of the author who wrote the longest book */
+    SELECT CONCAT(author_fname, ' ', author_lname) AS author, MAX(pages) FROM books GROUP BY author ORDER BY MAX(pages) DESC LIMIT 1;
+
+    SELECT released_year AS year, COUNT(released_year) AS '# books', AVG(pages) AS 'avg pages' FROM books GROUP BY released_year;
+    ```
+1. Solutions from the lecture
+    1. The last tentative answers is not correct, as it should be grouped by `released_year` rather than the author because we want the years to be distinctive rather than aggregated. 
+    ```sql
+    SELECT released_year AS year, COUNT(released_year) AS '# books', AVG(pages) AS 'avg pages' FROM books GROUP BY released_year;
     ```
