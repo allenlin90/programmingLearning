@@ -37,6 +37,9 @@ End Learning:
     1. [Min and Max Basics](#Min-and-Max-Basics)
     1. [The Sum Function](#The-Sum-Function)
     1. [The Avg Function](#The-Avg-Function)
+1. [Revisiting Datatypes](#Revisiting-Datatypes)
+    1. [CHAR and VARCHAR](#CHAR-and-VARCHAR)
+    1. [DECIMAL](#DECIMAL)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -604,4 +607,19 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
     1. The last tentative answers is not correct, as it should be grouped by `released_year` rather than the author because we want the years to be distinctive rather than aggregated. 
     ```sql
     SELECT released_year AS year, COUNT(released_year) AS '# books', AVG(pages) AS 'avg pages' FROM books GROUP BY released_year;
+    ```
+
+
+
+# Revisiting Datatypes
+## CHAR and VARCHAR
+1. The main difference between `CHAR` and `VARCHAR` is that `CHAR` type has fixed length for its values. The main point is that every value of `CHAR` type has the same size.
+1. If the given value is more than limitation, the exceeding characters will be truncated. On the other hand, if the characters haven't reached the limit, the database will give white spaces to fill the empty characters.
+1. `CHAR` is faster for fixed length text. It can be used as abbreviation system such as states in the USA.
+
+## DECIMAL
+1. We can declare a decimal number with 2 arguments such as `DECIMAL(5, 2)` which indicates that the number has 5 digits in total which has 2 numbers after decimal.
+    ```sql
+    DECIMAL(5, 2);
+    /* 999.99 has 5 digits in total with 2 digits after decimal */
     ```
