@@ -40,6 +40,9 @@ End Learning:
 1. [Revisiting Datatypes](#Revisiting-Datatypes)
     1. [CHAR and VARCHAR](#CHAR-and-VARCHAR)
     1. [DECIMAL](#DECIMAL)
+    1. [FLOAT and DOUBLE](#FLOAT-and-DOUBLE)
+    1. [DATE, TIME, and DATETIME](#DATE,-TIME,-and-DATETIME)
+    1. [Formatting DATE](#Formatting-DATE)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -619,7 +622,80 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
 
 ## DECIMAL
 1. We can declare a decimal number with 2 arguments such as `DECIMAL(5, 2)` which indicates that the number has 5 digits in total which has 2 numbers after decimal.
+1. If we insert a number that is greater than the limitation, the system will put the largest number that the column can store to it. 
+1. If we put digits over the limitation after decimal, the digits after limitation will be rounded to the closest digit.
     ```sql
     DECIMAL(5, 2);
     /* 999.99 has 5 digits in total with 2 digits after decimal */
+    INSERT INTO table_name (col1) VALUE (7);
+    INSERT INTO table_name (col1) VALUE (123456789);
+    INSERT INTO table_name (col1) VALUE (34.88);
+    INSERT INTO table_name (col1) VALUE (298.9999);
+    INSERT INTO table_name (col1) VALUE (1.9999);
+    INSERT INTO table_name (col1) VALUE (1.991);
+
+    /*
+    7.00
+    999.99
+    34.88
+    299.00
+    2.00
+    1.99
+    */
+    ```
+
+## FLOAT and DOUBLE
+1. `FLOAT` and `DOUBLE` can store larger numbers using less space. However, the constraint of using both of these are that the stored numbers will be precise.
+1. `FLOAT` takes 4 bytes to store the data in memory and has precision issues around 7 digits, while `DOUBLE` takes 8 bytes and has precision issues around 15 digits. A `DOUBLE` is larger and more precise than `FLOAT`. 
+1. Therefore, we should use `DECIMAL` most of the time. We can use `FLOAT` or `DOUBLE` only if we know that precision doesn't matter to the dataset. 
+    ```sql
+    USE new_testing_db;
+    CREATE TABLE thingies (price FLOAT);
+    INSERT INTO thingies (price) VALUES (8877665544.485);
+
+    SELECT * FROM thingies;
+    /* 8877670000 */
+    /* 8877665544.485 becomes 8877670000 which are very different */
+    ```
+
+## DATE, TIME, and DATETIME
+1. We can use `sudo dpkg-reconfigure tzdata` to configure the timezone of the server or the Linux OS we are using. Note that the default timezone is the UTC. 
+1. `DATE` are values with a date but no time. The format is `'YYYY-MM-DD'`.
+1. `TIME` are values with tmie but no date. The format is `'HH:MM:SS'`. However, in practice, this type of data is rarely used. 
+1. `DATETIME` are values with a `DATE` and `TIME`. The format is `'YYYY-MM-DD HH:MM:SS'`.
+    ```sql
+    USE new_testing_db;
+    CREATE TABLE people (name VARCHAR(100), birthdate DATE, birthtime TIME, birthdt DATETIME);
+    INSERT INTO people (name, birthdate, birthtime, birthdt) VALUES ('Padma', '1983-11-11', '10:07:35', '1983-11-11 10:07:35');
+    ```
+
+## CURDATE, CURTIME, and NOW
+1. `CURDATE` gives the current date (today); `CURTIME` gives current time (now); and `NOW` gives current date and time. This can be useful to give timestamp automatically when the data is created. 
+1. DATE and TIME are useful when checking time difference and calculate it for various of purposes. 
+    ```sql
+    USE new_testing_db;
+    SELECT CURDATE(), CURTIME(), NOW();
+    INSERT INTO people (name, birthdate, birthtime, birthdt) VALUES ('Microwave', CURDATE(), CURTIME(), NOW());
+    ```
+
+## Formatting DATE
+1. There are several functions for `DATE` that can be useful when querying data. 
+    1. `DAY()` can extract the day of the date. For example, `DAY('1990-01-01')` is `1`.
+    1. `DAYNAME()` gives the day of a week in text. For example, `DAYNAME('1990-01-01')` is `Monday`.
+    1. `DAYOFWEEK()` gives the day of a week like `DAYNAME()` but in number. Note that the number is from 1 to 7 which is from Sunday to Saturday.
+    1. `DAYOFYEAR()` gives the day of the year. For example, `DAYOFYEAR('1990-01-01')` is `1`, and `DAYOFYEAR('1990-02-01')` is `32`.
+1. If the function can't parse the date or time, it returns `NULL` rather than reporting an error. 
+    ```sql
+    USE new_testing_db;
+    SELECT name, birthdate, DAYNAME(birthdate) FROM people;
+    SELECT DAYNAME('1990-01-01'); /* Monday */
+    SELECT DAYOFWEEK('1990-01-01'); /* 2 */
+    SELECT DAYOFYEAR('1990-02-01'); /* 32 */
+    ```
+1. In addition, we can use [`DATE_FORMAT()`](https://www.w3schools.com/sql/func_mysql_date_format.asp) to change the format of the date and time. 
+    ```sql
+    SELECT DATE_FORMAT("2017-01-05", "%d/%M/%Y %r");
+    /* 05/January/2017 12:00:00 AM */
+    SELECT DATE_FORMAT(NOW(), "The time now is %D-%M-%Y %r");
+    /* The time now is 3rd-December-2020 10:54:20 PM */
     ```
