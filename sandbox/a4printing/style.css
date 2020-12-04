@@ -117,6 +117,10 @@ img {
     margin: 20px auto;
 }
 
+#qr_code_img img {
+    height: 100%;
+}
+
 .qr_code p {
     text-align: center;
     font-size: 20px;
