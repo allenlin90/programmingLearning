@@ -45,6 +45,13 @@ End Learning:
     1. [Formatting DATE](#Formatting-DATE)
     1. [DATE math](#DATE-math)
     1. [Date Type Exercises](#Date-Type-Exercises)
+1. [The Power of Logical Operators](#The-Power-of-Logical-Operators)
+    1. [Not Equal](#Not-Equal)
+    1. [Not Like](#Not-Like)
+    1. [Greater Than](#Greater-Than)
+    1. [Less Than](#Less-Than)
+    1. [Logical OR](#Logical-OR)
+    1. [Between](#Between)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -788,4 +795,136 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         username VARCHAR(20),
         created_at TIMESTAMP DEFAULT NOW()
     );
+    ```
+
+
+
+# The Power of Logical Operators
+## Not Equal
+1. Not equal `!=` is a logical operator that can be useful to work on different queries such as 
+    1. Select all books NOT published in 2017
+    1. Select all birthdays between 1990 and 1992
+    1. Select all items that are in stock AND priced below $19.99
+    ```sql
+    USE book_shop;
+
+    /* select all the books from the books table which are not released in 2017 */
+    SELECT title, released_year FROM books WHERE released_year != 2017;
+    ```
+
+## Not Like
+1. This works in the opposite way of using `LIKE` with placeholder. It works by simply put `NOT` right before `LIKE`.
+    ```sql
+    USE book_shop;
+
+    /* find all the book titles which has 'w' */
+    SELECT title FROM books WHERE title LIKE '%W%';
+
+    /* find all the book titles which does not have 'w' */
+    SELECT title FROM books WHERE title NOT LIKE '%W%';
+    ```
+
+## Greater Than
+1. `>` works as the regular math operator `greater than` which means the number should be greater and not include the given number. 
+1. In addition, we can use greater than sign with an equal sign, so the operations can be inclusive.
+1. In SQL, the boolean value is presented as `0` (false) and `1` (true).
+1. Besides, SQL is not case-sensitive in its query, which shows `'A'` is equal to `'a'`.
+    ```sql
+    USE book_shop;
+    SELECT * FROM books WHERE released_year >= 2000;
+
+    SELECT 100 > 5;
+    /* 1 */
+    
+    SELECT -15 > 15;
+    /* 0 */
+
+    SELECT 9 > -10;
+    /* 1 */
+
+    SELECT 1 > 1;
+    /* 0 */
+
+    SELECT 'a' > 'b';
+    /* 0 */
+
+    SELECT 'A' > 'a';
+    /* 0 */
+
+    SELECT 'A' = 'a';
+    /* 1 */
+    ```
+
+## Less Than
+1. `<` works similar to greater than but in the opposite way. 
+
+## Logical AND
+1. We can use `AND` operator `&&` to combine filters on queries. For example, from the book shop, we can select books written by certain author and is published in a certain year.
+1. By using `AND`, the `SELECT` only returns the data that is 
+    ```sql
+    USE book_shop;
+    SELECT * FROM books WHERE author_lname = 'Eggers' AND released_year > 2010;
+    SELECT * FROM books WHERE author_lname = 'Eggers' && released_year < 2010;
+    SELECT * FROM books WHERE author_lname = 'Eggers' AND released_year > 2010 AND title LIKE '%novel%';
+    ```
+
+## Logical OR
+1. OR operator can be used with `OR` or `||`. 
+    ```sql
+    USE book_shop;
+    SELECT * FROM books WHERE author_lname = 'Eggers' OR released_year > 2010;
+    SELECT title, author_lname, released_year, stock_quantity FROM books WHERE 
+    author_lname = 'Eggers' || 
+    released_year > 2010 OR 
+    stock_quantity > 100;
+
+    SELECT 40 <= 100 || -2 > 0;
+    SELECT 10 > 5 || 5 = 5;
+    SELECT 'a' = 5 || 3000 > 2000;
+    ```
+
+## Between
+1. Between allow us to search something in between 2 values. For example, select all books published between 2004 and 2015. However, this can also be achieved by using `AND` and `OR` logical operators. 
+1. Besides regular between, we can use `NOT BETWEEN val1 AND val2`
+    ```sql
+    USE book_shop;
+    SELECT title, released_year FROM books WHERE released_year BETWEEN 2004 AND 2015;
+    SELECT title, released_year FROM books WHERE released_year >= 2004 AND released_year <= 2015;
+
+    SELECT title, released_year FROM books WHERE released_year NOT BETWEEN 2004 AND 2015;
+    ``` 
+1. When comparing `DATE` values, we can use `CAST()` to convert the values to be compared in the same data type. 
+    ```sql
+    SELECT CAST('2017-05-02' AS DATETIME);
+
+    USE new_testing_db;
+    SELECT name, birthdt FROM people WHERE birthdt BETWEEN '1980-01-01' AND '2000-01-01';
+    /* Though MySQL engine can handle the query, it's still better to convert the data into the same datatype */
+    SELECT name, birthdt FROM people WHERE birthdt BETWEEN CAST('1980-01-01' AS DATETIME) AND CAST('2000-01-01' AS DATETIME);
+    ```
+
+## In and Not In
+1. In the previous lectures, we can use `OR` operator. However, the code is redudant and repetitive. Therefore, we can use `IN` and pass multiple filters as giving an array of values. 
+1. `IN` can use with `NOT` to work in the opposite way.
+    ```sql
+    USE book_shop;
+
+    SELECT title, author_lname FROM books
+    WHERE author_lname = 'Carver' OR
+          author_lname = 'Lahiri' OR
+          author_lname = 'Smith';
+
+    SELECT title, author_lname FROM books
+    WHERE author_lname IN ('Carver', 'Lahiri', 'Smith');
+
+    SELECT title, released_year FROM books
+    WHERE released_year >= 2000 
+    AND released_year NOT IN 
+    (2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016)
+    ORDER BY released_year;
+    ```
+1. In the previous query, we have all the even years from 2000 to 2016. In this case, rather than giving the years repetitively, we can use `%` to check if the remainder of the year to know if the year is even. 
+    ```sql
+    SELECT title, released_year FROM books
+    WHERE released_year >= 2000 AND released_year % 2 != 0;
     ```
