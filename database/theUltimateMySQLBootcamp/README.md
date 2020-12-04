@@ -43,6 +43,8 @@ End Learning:
     1. [FLOAT and DOUBLE](#FLOAT-and-DOUBLE)
     1. [DATE, TIME, and DATETIME](#DATE,-TIME,-and-DATETIME)
     1. [Formatting DATE](#Formatting-DATE)
+    1. [DATE math](#DATE-math)
+    1. [Date Type Exercises](#Date-Type-Exercises)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -698,4 +700,92 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
     /* 05/January/2017 12:00:00 AM */
     SELECT DATE_FORMAT(NOW(), "The time now is %D-%M-%Y %r");
     /* The time now is 3rd-December-2020 10:54:20 PM */
+    ```
+
+## DATE math
+1. `DATEDIFF(date1, date2)` can be used to calculate the difference between 2 given dates. 
+1. `DATE_ADD(date, INTERVAL 1 MONTH)` can be use to add seconds to years according to the given unit.
+1. Besides the functions above, we can simply use `+/-` plus or minus sign with `INTERVAL` to add or subtract numbers.
+    ```sql
+    SELECT DATEDIFF('2020-01-31', '2020-01-01'); /* 30 */
+    
+    USE new_testing_db;
+    SELECT birthdt, DATE_ADD(birthdt, INTERVAL 1 MONTH) FROM people;
+    /* add a month to the date */
+
+    SELECT birthdt, birthdt + INTERVAL 15 MONTH + INTERVAL 10 HOUR FROM people;
+    ```
+
+## Working with TIMESTAMP
+1. Though `DATETIME` and `TIMESTAMP` are mostly identical, `DATETIME` supports range from `1000-01-01 00:00:00` to `9999-12-31 23:59:59`. On the other hand, `TIMESTAMP` supports from `1970-01-01 00:00:00` to `2038-01-19 03:14:07.999999`.
+1. Therefore, `TIMESTAMP` is useful when we want to capture the current date and time, such as recording activity logs, as when a data is inserted to the database. 
+    ```sql
+    USE new_testing_db;
+    CREATE TABLE comments (
+        content VARCHAR(100),
+        created_at TIMESTAMP DEFAULT NOW();
+    );
+
+    INSERT INTO comments (content) VALUE('lol what a funny article');
+    INSERT INTO comments (content) VALUE('I found this offensive');
+    INSERT INTO comments (content) VALUE('abcdefghijklmnopqrstuvwxyz');
+    ```
+1. We can use `ON UPDATE` with `CURRENT_TIMESTAMP` to update the column when the row is updated. 
+    ```sql
+    CREATE TABLE comments2 (
+        content VARCHAR(100),
+        changed_at TIMESTAMP DEFAULT NOW() ON UPDATE CURRENT_TIMESTAMP
+    );
+
+    INSERT INTO comments2 (content) VALUE ('abcdefghijklmnopqrstuvwxyz');
+    UPDATE comments2 SET content = 'THIS IS NOT GIBBERISH' WHERE content = 'abcdefghijklmnopqrstuvwxyz';
+    /* changed at of content will be updated when it is changed from abcdefghijklmnopqrstuvwxyz to THIS IS NOT GIBBERISH */
+    ```
+
+## Date Type Exercises
+1. Create a case using `CHAR`
+1. Create a table for inventory 
+    ```sql
+    CREATE TABLE inventory (
+        item_name VARCHAR(100),
+        price DECIMAL(8, 2),
+        quantity INT
+    );
+    ```
+1. What's the difference between `DATETIME` and `TIMESTAMP`?
+1. Print out the currnet time in MySQL.
+1. Print out the current date but without time.
+1. Print out the current day of the week. 
+1. Print out the current day of the week in day name, such as `Monday`. 
+1. Print out the current day and time using `mm/dd/yyyy`.
+1. Print out the current day and time using the following format `January 2nd at 3:15` and `April 1st at 10:18`.
+1. Create a tweets table that stores `Tweet content`, `Username`, and `Time` is created. 
+    ```sql
+    /* Print out current time */
+    SELECT CURRENT_TIME();
+    SELECT NOW();
+
+    /* print out date without time */
+    SELECT CURRENT_DATE(NOW());
+
+    /* print out the current day of a week in number*/
+    SELECT DAYOFWEEK(NOW());
+    /* the following starts from Sunday which is 0 to Saturday which is 6 */
+    SELECT DATE_FORMAT(NOW(), "%w");
+
+    /* print out current day of a week in text*/
+    SELECT DAYNAME(NOW());
+    SELECT DATE_FORMAT(NOW(), "%W");
+
+    /* print out current day and time in mm/dd/yyyy */
+    SELECT DATE_FORMAT(NOW(), "%m/%d/%Y");
+
+    /* print out current day and time as January 2nd at 3:15 */
+    SELECT DATE_FORMAT(NOW(), "%M %D at %T");
+
+    CREATE TABLE tweets (
+        content VARCHAR(140),
+        username VARCHAR(20),
+        created_at TIMESTAMP DEFAULT NOW()
+    );
     ```
