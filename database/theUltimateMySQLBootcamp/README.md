@@ -53,6 +53,9 @@ End Learning:
     1. [Logical OR](#Logical-OR)
     1. [Between](#Between)
     1. [Case Statement](#Case-Statement)
+1. [One to Many](#One-to-Many)
+    1. [Real World Data is Messy](#Real-World-Data-is-Messy)
+    1. [Types of Data Relationship](#Types-of-Data-Relationship)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -1029,3 +1032,20 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         END AS COUNT
     FROM books GROUP BY author_lname, author_fname;
     ```
+
+# One to Many
+## Real World Data is Messy
+1. Real world data is messy and interrelated
+1. For example, we may have much more scenarios for the books in the previous sections. Considering the conditions for Amazon or real book shops, we may have other factors such as 
+    1. Authors
+    1. Orders
+    1. Versions
+    1. Reviews
+    1. Customers
+
+## Types of Data Relationship
+1. There are several types of data relationships. According to the book shop example, we can have 
+    1. One to One Relationship as reviews and customers that each review belongs to a single user in the usual case.
+    1. One to Many Relationship as revies and books that each book can have multiple reviews. 
+    1. Many to Many Relationship as authors and books that each author can write multiple books, while a book can be written by multiple authors.
+1. Though "one to one" relationship can happen sometimes, "one to many" type relationship is the most common one in databases.
