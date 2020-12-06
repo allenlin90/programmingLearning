@@ -56,6 +56,9 @@ End Learning:
 1. [One to Many](#One-to-Many)
     1. [Real World Data is Messy](#Real-World-Data-is-Messy)
     1. [Types of Data Relationship](#Types-of-Data-Relationship)
+    1. [One to Many](#One-to-Many)
+    1. [Working with Foreign Keys](#Working-with-Foreign-Keys)
+    1. [Cross Join](#Cross-Join)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -1049,3 +1052,64 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
     1. One to Many Relationship as revies and books that each book can have multiple reviews. 
     1. Many to Many Relationship as authors and books that each author can write multiple books, while a book can be written by multiple authors.
 1. Though "one to one" relationship can happen sometimes, "one to many" type relationship is the most common one in databases.
+
+## One to Many
+1. In order to show and manipulate the case for one to many, we can use the relationship between `orders` and `customers`. A customer can have multiple orders, while an order can be owned by a single customer (in a usual case).
+1. In this case, we can set the schema as the followings
+    1. A customer's first and last name
+    1. A customer's email
+    1. The date of the purchase (without time)
+    1. The price of the order
+1. For customer and order scenario, we can put all the data in a single table. However, it will be very redundant because a customer can have multiple orders and the same data can show in multiple rows as different orders. Therefore, we can try to separate the data into different tables. 
+    1. Customers
+        1. customer_id
+        1. first_name
+        1. last_name
+        1. email
+    1. Orders
+        1. order_id
+        1. order_date
+        1. amount
+        1. customer_id
+1. In the previous tables and their relationship, `customer_id` and `order_id` is the primary key of the table which stores each of them. 
+1. We can refer the `customer_id` from `customer` table to the `customer_id` in `orders` table. In this case, `customer_id` is the primary key in `customer` table and foreign key in `orders` table.
+1. The main purpose for `foreign key` in the schema is to prevent dumb or intended hack of data on certain column, as if the data should be related to the other table. 
+
+## Working with Foreign Keys
+1. Similar to primary key, we can indicate a column to relate it to other column in the other table that is in the same database. 
+1. The syntax to create foreign key is `FOREIGN KEY('column_in_this_table') REFERENCES table_name('column_name')`. Note that the convention to name the foreign key column in a table is to use the `table_name` with the column we are going to refer. 
+    ```sql
+    CREATE DATABASE orders_and_customers;
+    USE orders_and_customers;
+
+    CREATE TABLE customers (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        first_name VARCHAR(100),
+        last_name VARCHAR(100),
+        email VARCHAR(100)
+    )
+
+    CREATE TABLE orders (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        oreder_date DATE,
+        amount DECIMAL (8, 2),
+        customer_id INT, 
+        FOREIGN KEY(customer_id) REFERENCES customers(id)
+    )
+    ```
+
+## Cross Join
+1. Without using `JOIN` and other fitler clause or simply using `SELECT FROM` on all tables, the we can join tables as "cross join" which is not very useful in most of the cases. "Cross Join" basically works as multiplying the rows from each table. 
+    ```sql
+    USE customers_and_orders;
+    /* Finding Orders Placed By George: 2 Step Process */
+    SELECT id FROM customers WHERE last_name = 'George';
+    SELECT * FROM orders WHERE customer_id = 1;
+    
+    /* Finding Orders Placed By George: Using a subquery */
+    SELECT * FROM orders WHERE customer_id = (SELECT id FROM customers WHERE last_name = 'George');
+
+    /* cross join all the rows from the tables */
+    SELECT * FROM customers, orders;
+    SELECT * FROM customers JOIN orders;
+    ```
