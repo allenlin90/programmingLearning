@@ -52,6 +52,7 @@ End Learning:
     1. [Less Than](#Less-Than)
     1. [Logical OR](#Logical-OR)
     1. [Between](#Between)
+    1. [Case Statement](#Case-Statement)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -927,4 +928,104 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
     ```sql
     SELECT title, released_year FROM books
     WHERE released_year >= 2000 AND released_year % 2 != 0;
+    ```
+
+## Case Statement
+1. We can give statements (values) as in a new column (which is not stored in the DB) and give conditions for the values.  
+1. For logical operators, we can use `>`, `<`, `=`, or `BETWEEN AND` for the condition, Besides, as it works similr to regualr `IF/ELSE` statement, we can use multiple `WHEN` for different conditions.
+1. In the following case, we give the condition that if the `released_year` of a books is equal to or greater than year 2000, it is a `Modern Lit`. Otherwise, it will be `20th Century Lit`.
+1. The 2nd case is to show book in `STOCK` with single asterisk `*` if the `stock_quantity` is less than 50. Note that there's no comma `,` to separate each statement inline.
+1. In addition, the conditions works from top to down which is similar to inside out filter that the conditions on the top will be executed first. However, each of the syntax has benefits, as the regular `BETWEEN AND` syntax can be more readable.
+1. Note that we have to put comma `,` right after `SELECT` in the beginning of the statement. 
+    ```sql
+    USE book_shop;
+    SELECT title, released_year,
+        CASE
+            WHEN released_year >= 2000 THEN 'Modern Lit'
+            ELSE '20th Century Lit'
+        END AS GENRE
+    FROM books;
+
+    SELECT title, stock_quantity,
+        CASE
+            WHEN stock_quantity BETWEEN 0 AND 50 THEN '*'
+            WHEN stock_quantity BETWEEN 51 AND 100 THEN '**'
+            ELSE '***'
+        END AS STOCK
+    FROM books;
+
+    SELECT title, stock_quantity,
+        CASE
+            WHEN stock_quantity <= 50 THEN '*' /* if this condition is put after less or eqaul to 100, this will not be executed due to order of sequence */
+            WHEN stock_quantity <= 100 THEN '**' 
+            ELSE '***'
+        END AS STOCK
+    FROM books;
+    ```
+
+## Logical Opeartors Exericse
+1. Evaluate the following statements to be true or false. 
+1. Select all books written before 1980 (non-inclusive).
+1. Select all books written by `'Eggers'` or `'Chabon'`.
+1. Select all books written by `'Lahiri'`, published after `2000`.
+1. Select all books with page counts between `100` and `200`.
+1. Select all books where `author_lname` starts with a `C` or a `S`.
+1. If title contains `'stories'` -> Short Stories, `'Just kids'` and `'A heartbreaking Work'` -> Memoir, and everything else will be `'Novel'`.
+    ```sql
+    /* evaluate the following */
+    SELECT 10 != 10; /* 0 */
+    SELECT 15 > 14 && 99 - 5 <= 94; /* 1 */
+    SELECT 1 IN (5, 3) || 9 BETWEEN 8 AND 10; /* 1 */
+
+    /* select all books written before 1980 (non-inclusive) */
+    SELECT * FROM books WHERE released_year < 1980;
+
+    /* select all books written by `'Eggers'` or `'Chabon'` */
+    SELECT * FROM books WHERE author_lname IN ('Eggers', 'Chabon');
+
+    /* Select all books written by `'Lahiri'`, published after `2000` */
+    SELECT * FROM books WHERE author_lname = 'lahiri' && released_year > 2000;
+
+    /* Select all books with page counts between `100` and `200` */
+    SELECT * FROM books WHERE pages BETWEEN 100 AND 200;
+
+    /* Select all books where `author_lname` starts with a `C` or a `S` */
+    SELECT * FROM books WHERE author_lname LIKE 'C%' OR author_lname LIKE 'S%';
+
+    /* If title contains `'stories'` -> Short Stories, `'Just kids'` and `'A heartbreaking Work'` -> Memoir, and everything else will be `'Novel'` */
+    SELECT *, 
+        CASE
+            WHEN title LIKE '%stories%' THEN 'Short Stories'
+            WHEN title LIKE '%just kids%' OR title LIKE '%a hearbreaking work%' THEN 'Memoir'
+            ELSE 'Novel'
+        END AS genre
+    FROM books;
+
+    SELECT title, author_lname,
+    CASE 
+        WHEN COUNT(author_lname) = 1 THEN CONCAT(COUNT(author_lname), ' ', 'book')
+        ELSE CONCAT(COUNT(author_lname), ' ', 'books')
+    END AS 'COUNT'
+    FROM books GROUP BY CONCAT(author_lname, author_fname);
+    ```
+
+## Solution to exercises
+1. There some different solutions for 
+    1. Select all books where `author_lname` starts with a `C` or a `S`.    
+    ```sql
+    SELECT title, author_lname FROM books WHERE 
+    SUBSTR(author_lname, 1, 1) = 'c' OR
+    SUBSTR(author_lname, 1, 1) = 's';
+
+    SELECT title, author_lname FROM books
+    WHERE SUBSTR(author_lname, 1, 1) IN ('C', 'S');
+    ```
+    1. If title contains `'stories'` -> Short Stories, `'Just kids'` and `'A heartbreaking Work'` -> Memoir, and everything else will be `'Novel'`.
+    ```sql
+    SELECT author_fname, author_lname,
+        CASE 
+            WHEN COUNT(*) = 1 THEN '1 book'
+            ELSE CONCAT(COUNT(*), 'books')
+        END AS COUNT
+    FROM books GROUP BY author_lname, author_fname;
     ```
