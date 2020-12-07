@@ -61,6 +61,8 @@ End Learning:
     1. [Cross Join](#Cross-Join)
     1. [Inner Join](#Inner-Join)
     1. [Left Join](#Left-Join)
+    1. [Right Joins](#Right-Joins)
+    1. [Join exercises](#Join-exercises)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -1168,4 +1170,144 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         ON customers.id = orders.customer_id
     GROUP BY customers.id
     ORDER BY total_spent;
+    ```
+
+## Right Joins
+1. In the given example and dataset, we can't see any difference between `INNER JOIN` and `RIGHT JOIN`. Therefore, we can only see the difference between 2 `JOIN` tables when there are data in `orders` (which is the right table) that can't be matched with those in `customers`.
+    ```sql
+    USE customers_and_orders;
+    SELECT * FROM customers
+    RIGHT JOIN orders
+        ON customers.id = orders.customer_id
+    ```
+1. In addition, if we try to delete any row in `customers`, MySQL will prevent the removal of related data because when we created `orders` table, `customer_id` is set to be related to the `id` in `customers`. Therefore, we can use `DELETE FROM` to delete an entity from the table directly, and we can neither `DROP TABLE customers`.
+1. If we create a new dataset without referring foreign key and relate the tables, we can use `RIGHT JOIN` to check the dataset and see the issues. This could be happend in the datasets are from 2 different sources or are not designed in the same stage.
+    ```sql
+    SELECT 
+        IFNULL(first_name, 'Missing') AS first,
+        IFNULL(last_name, 'Missing') AS last,
+        order_date,
+        SUM(amount)
+    FROM customers
+    RIGHT JOIN orders
+        ON customers.id = orders.customer_id
+    GROUP BY first_name, last_name;
+    ```
+1. When creating tables and referring for foreign key, we can also indicate to delete the related data when one is removed with `ON DELETE CASCADE`. 
+    ```sql
+    CREATE TABLE customers(
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        first_name VARCHAR(100),
+        last_name VARCHAR(100),
+        email VARCHAR(100)
+    );
+
+    CREATE TABLE orders(
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_date DATE,
+        amount DECIMAL(8,2),
+        customer_id INT,
+        FOREIGN KEY(customer_id) 
+            REFERENCES customers(id)
+            ON DELETE CASCADE
+    );
+
+    INSERT INTO customers (first_name, last_name, email) 
+    VALUES ('Boy', 'George', 'george@gmail.com'),
+        ('George', 'Michael', 'gm@gmail.com'),
+        ('David', 'Bowie', 'david@gmail.com'),
+        ('Blue', 'Steele', 'blue@gmail.com'),
+        ('Bette', 'Davis', 'bette@aol.com');
+        
+    INSERT INTO orders (order_date, amount, customer_id)
+    VALUES ('2016/02/10', 99.99, 1),
+        ('2017/11/11', 35.50, 1),
+        ('2014/12/12', 800.67, 2),
+        ('2015/01/03', 12.50, 2),
+        ('1999/04/11', 450.25, 5);
+    ```
+1. `LEFT JOIN` and `RIGHT JOIN` are actually reversely identical to each other. By changing the order of joined tables, we can have the data presented in the same joined table with only different sequence of columns. Note that some systems even allows only `LEFT JOIN` without being able to use `RIGHT JOIN`.
+
+## Join exercises
+1. Create a table with the following schema. Note that `student_id` in `papers` table is related to `id` in `students`.
+    1. Students - id, first_name
+    1. Papers - title, grade, student_id
+    ```sql
+    CREATE TABLE students (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        first_name VARCHAR(100)
+    );
+
+    CREATE TABLE papers (
+        title VARCHAR(100),
+        grade INT,
+        student_id INT,
+        FOREIGN KEY (student_id)
+            REFERENCES students(id)
+            ON DELETE CASCADE
+    );
+
+    INSERT INTO students (first_name) VALUES 
+    ('Caleb'), 
+    ('Samantha'), 
+    ('Raj'), 
+    ('Carlos'), 
+    ('Lisa');
+    
+    INSERT INTO papers (student_id, title, grade ) VALUES
+    (1, 'My First Book Report', 60),
+    (1, 'My Second Book Report', 75),
+    (2, 'Russian Lit Through The Ages', 94),
+    (2, 'De Montaigne and The Art of The Essay', 98),
+    (4, 'Borges and Magical Realism', 89);
+    ```
+1. After getting the datasets ready 
+    1. Print a table that is with `first_name`, `title`, and `grade`. All the data in this sets should be related without any `NULL`.
+    1. Print a table that is with `first_name`, `title`, and `grade`. While in this case, we should show all the students if the names are in the database though no data can be related in `papers`. 
+    1. As the preveious version, change the `NULL` grade into `0` and `title` of `paper` to `MISSING` if there's no paper.
+    1. Print a table with `first_name` and `average` of the grade of the student. Note that all students should be shown in the able though they get `0` on their grades. 
+    1. Subjected to the previous table, add another column `passing_status`. If the average score of the student is over `75`, show `PASSING`. Otherwise, the student is `FAILING`. 
+    ```sql
+    /* join tables without showing unrelated dataset */
+    SELECT first_name, title, grade 
+    FROM students 
+    JOIN papers 
+        ON students.id = papers.student_id;
+
+    /* join tables showing all students */
+    SELECT first_name, title, grade 
+    FROM students 
+    LEFT JOIN papers 
+        ON students.id = papers.student_id;
+
+    /* turn NULL title into 'MISSING' and NULL grade into '0' */
+    SELECT first_name, 
+        IFNULL(title, 'MISSING'), 
+        IFNULL(grade, 0) 
+    FROM students 
+    LEFT JOIN papers 
+        ON students.id = papers.student_id;
+
+    /* show average grade of each student */
+    SELECT first_name, 
+        IFNULL(AVG(grade), 0) AS average 
+    FROM students 
+    LEFT JOIN papers 
+        ON students.id = papers.student_id 
+    GROUP BY first_name /* we can also use student.id to group the data */
+    ORDER BY average DESC;
+
+    /* show passing status of each student if each of their grade is greater than 75 */
+    SELECT first_name, 
+        IFNULL(AVG(grade), 0) AS average
+        CASE
+            WHEN AVG(grade) >= 75 THEN 'PASSING'
+            WHEN AVG(grade) IS NULL THEN 'FAILING' /* this is to prevent the edge case */
+            ELSE 'FAILING'
+        END AS 'passing_status'
+    FROM students 
+    LEFT JOIN papers 
+        ON students.id = papers.student_id 
+    GROUP BY first_name
+    ORDER BY AVG(grade) DESC;
     ```
