@@ -1,0 +1,58 @@
+* {
+    font-size: 10px;
+    font-family: roboto;
+    box-sizing: border-box;
+}
+
+body {    
+    background: rgb(204,204,204);
+}
+
+/* @page {
+    width: 300px;
+} */
+
+/* @media print {   
+    #printButton {
+        display: none;
+    }
+
+    hr {
+        background: black;
+    }
+} */
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.receipt {
+    background: #fff;
+    padding: 3mm;
+    width: 8cm;
+}
+
+.makesend_contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.makesend_contact p {
+    text-align: center;
+    margin: 0;
+}
+
+#makesend_logo {
+    display: inline-block;
+    padding-bottom: 2mm;
+    width: 100%;
+    /* max-width: inherit; */
+}
+
+hr {
+    background: black;
+}
