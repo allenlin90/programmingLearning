@@ -59,6 +59,8 @@ End Learning:
     1. [One to Many](#One-to-Many)
     1. [Working with Foreign Keys](#Working-with-Foreign-Keys)
     1. [Cross Join](#Cross-Join)
+    1. [Inner Join](#Inner-Join)
+    1. [Left Join](#Left-Join)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -1112,4 +1114,58 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
     /* cross join all the rows from the tables */
     SELECT * FROM customers, orders;
     SELECT * FROM customers JOIN orders;
+    ```
+
+## Inner Join
+1. When joining table, we can use **"implicit inner join"** to join the table. 
+1. Note that we need to indicate the name of table as the prefix. The table name and column can be combined with dot `.`.
+1. "Inner Join" is to select all the entities from tables where teh join condition is met. 
+    ```sql
+    /* by indicating the id is from which table, we can */
+    /* implicit inner join */
+    SELECT * FROM customers, orders WHERE customers.id = customer_id;
+
+    /* explicit inner join */
+    SELECT * FROM customers 
+    INNER JOIN orders
+        ON customers.id = customer_id;
+    ```
+1. In addition, we can also do arbitrary join such as matching `customers.id` and `orders.id`. However, this is not very useful in most of the cases.
+    ```sql
+    SELECT * FROM customers
+        JOIN orders customers.id = orders.id;
+    ```
+    <img src="./images/sql-joins.png">
+
+## Left Join
+1. "Left Join" allows us to select all the data from a table after joining it to the other. 
+1. This can be useful in certain scenarios.
+    1. Check the customers if each of them has made an order. If not, it shows `NULL` on the columns joined from the other table. 
+    ```sql
+    /* for customers who don't make any order yet, the columns joined from orders table will show NULL */
+    SELECT * FROM customers
+    LEFT JOIN orders
+        ON customers.id = orders.customer_id;
+    ```
+1. After joining the table, we can check which customer hasn't made any order yet. We can simply find those who has `NULl` in their `amount` column which is related from `order` table. 
+    ```sql
+    SELECT 
+        first_name,
+        last_name,
+        SUM(amount)
+    FROM customers
+    LEFT JOIN orders
+        ON customers.id = orders.customer_id
+    GROUP BY customers.id;
+
+    /* replace NULL to be 0 */
+    SELECT 
+        first_name,
+        last_name,
+        IFNULL(SUM(amount), 0) AS total_spent
+    FROM customers
+    LEFT JOIN orders
+        ON customers.id = orders.customer_id
+    GROUP BY customers.id
+    ORDER BY total_spent;
     ```
