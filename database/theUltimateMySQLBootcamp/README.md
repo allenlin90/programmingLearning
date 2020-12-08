@@ -66,6 +66,13 @@ End Learning:
 1. [Many to Many](#Many-to-Many)
     1. [Many to Many Basics](#Many-to-Many-Basics)
     1. [TV Join Challenges](#TV-Join-Challenges)
+1. [Instagram Database Clone](#Instagram-Database-Clone)
+    1. [Introduction to Instagram Clone Schema](#Introduction-to-Instagram-Clone-Schema)
+    1. [Cloning Instagram's DB: Users Schema](#Cloning-Instagram's-DB:-Users-Schema)
+    1. [Cloning Instagram's DB: Photos Schema](#Cloning-Instagram's-DB:-Photos-Schema)
+    1. [Cloning Instagram's DB: Comments Schema](#Cloning-Instagram's-DB:-Comments-Schema)
+    1. [Cloning Instagram's DB: Likes Schema](#Cloning-Instagram's-DB:-Likes-Schema)
+    1. [Cloning Instagram's DB: Followers Schema](#Cloning-Instagram's-DB:-Followers-Schema)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -1491,4 +1498,110 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         ON reviews.reviewer_id = reviewers.id 
     JOIN series
         ON reviews.series_id = series.id;
+    ```
+
+# Instagram Database Clone
+## Introduction to Instagram Clone Schema
+1. In a Instagram post, we can have several components. Each of them will be separated into an individual table.
+    1. Image URL
+    1. Users
+    1. Likes
+    1. Hash tags
+    1. Comments
+    1. Followers and followees
+
+## Cloning Instagram's DB: Users Schema
+1. We will have `id`, `username`, and `created_at` in this case.
+    ```sql
+    CREATE DATABASE ig_clone;
+    USE ig_clone;
+
+    CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+    );
+
+    INSERT INTO users (username) VALUES
+    ('BlueTheCat'),
+    ('CharlieBrown'),
+    ('AllenLin');
+    ```
+
+## Cloning Instagram's DB: Photos Schema
+1. This `photos` table is related to `users` because each images in the dataset is owned by a user in the application. 
+1. In `photos` table, we have `id`, `image_url`, `user_id`, and `created_at`.
+    ```sql
+    CREATE TABLE photos (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        image_url VARCHAR(255) NOT NULL,
+        user_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+            ON DELETE CASCADE;
+    );
+    ```
+
+## Cloning Instagram's DB: Comments Schema
+1. For comments, we have `id`, `comment_text`, `user_id`, `photo_id`, and `created_at`.
+    ```sql
+
+    ```
+
+## Cloning Instagram's DB: Likes Schema
+1. To track on the likes on each post, we may skip the unique id of each data, as it is combined by both `user_id` and `photo_id`. However, we have to ensure that a user can only like a photo once rather than multiple times.
+1. We can use `PRIMARY KEY (col1, col2)` that is combined by values from 2 columns to ensure the combination will always be unique. Therefore, we can skip setting and giving unique id to each entity.
+    ```sql
+    CREATE TABLE likes (
+        user_id INT NOT NULL,
+        photo_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        FOREIGN KEY(user_id) REFERENCES users(id),
+        FOREIGN KEY(photo_id) REFERENCES photos(id),
+        PRIMARY KEY (user_id, photo_id)
+    );
+    ```
+
+## Cloning Instagram's DB: Followers Schema
+1. In this case, we have 3 columns `follower_id`, `followee_id`, and `created_at`. However, we have to prevent a user follows him/herself. That is `follower_id` and `followee_id` on the same row can't be the same. 
+    ```sql
+    CREATE TABLE followers (
+        follower_id INT NOT NULL,
+        followee_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        FOREIGN KEY (follower_id) REFERENCES users(id),
+        FOREIGN KEY (followee_id) REFERENCES users(id),
+        PRIMARY KEY (follower_id, followee_id)
+    );
+    ```
+
+## Cloning Instagram's DB: Hashtags Schema
+1. For the case, we may have several solutions along with their pros and cons. 
+    1. `id`, `image_url`, and `tags`. In this case, tags are all concatenated and presented as a long string, such as `#tag1#tag2#tag3`.
+        1. This table is very easy to implement.
+        1. Limited number of tags can be stored. As tags data type can be `VARCHAR(225)` which is limited to only 255 characters, the tags that a post has can be only few.
+        1. We can't store additional information to the post, such as the meta data of each tag. For example, we don't know when and which user firstly used a certain tag.
+        1. We have to be careful when searching the post. For example, as all hashtags are concatenated with `#` as the delimeter, we may have a substring of a certain tag when using `LIKE`. `SELECT * FROM posts WHERE hashtags LIKE '%food%'` can also find posts tagged with `seafood`.
+    1. We can have 2 tables `photos` with `id` and `image_url` and `tags` with `tag_name` and `photo_id`.
+        1. We can have unlimited number of tags on each photo. A single `tag_name` can be assigned to multiple `photo_id`. 
+        1. However, the query can be much slower than the previous solution.
+    1. We can separate the data into 3 tables, as `id` and `image_url` in `photos`, `id` and `tag_name` in `tags`, and `photo_id` and `tag_id` in `photo_tags`.
+        1. In this case, we can also add unlimited numbers of tags to a photo.
+        1. We can have additional info for each data, as for `photos` and `tags`.
+        1. However, we will have more work when inserting or updating data to the tables. 
+1. After all, we choose to use the 3rd version.
+    ```sql
+    CREATE TABLE tags (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        tag_name VARCHAR(255) UNIQUE,
+        created_at TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE TABLE photo_tags (
+        photo_id INT NOT NULL,
+        tag_id INT NOT NULL,
+        FOREIGN KEY (photo_id) REFERENCES photos(id),
+        FOREIGN KEY (tag_id) REFERENCES tags(id),
+        PRIMARY KEY(photo_id, tag_id)
+    );
     ```
