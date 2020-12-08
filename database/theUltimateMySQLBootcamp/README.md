@@ -1605,3 +1605,90 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         PRIMARY KEY(photo_id, tag_id)
     );
     ```
+
+
+
+# Working with Lots of Instagram Data
+## Instagram Challenges
+1. We can use `source` in MySQL DBMS to create the database and import the dataset from `ig_clone_data.sql`.
+1. We want to reward our users who have been around the longest. In this case, we'd like to find the 5 oldest users.
+    ```sql
+    SELECT username 
+    FROM users 
+    ORDER BY created_at 
+    LIMIT 5;
+    ```
+1. What day of the week do most users register on? We need to figure out when to schedule an ad campaign.
+    ```sql
+    SELECT 
+        DAYNAME(created_at) AS day, 
+        COUNT(*) AS registered_users 
+    FROM users 
+    GROUP BY day 
+    ORDER BY COUNT(*) DESC;
+    ```
+1. We want to target our inactive users with an email campaign. Find the users who have never posted a photo.
+    ```sql
+    SELECT username 
+    FROM users 
+    LEFT JOIN photos 
+        ON photos.user_id = users.id 
+    WHERE photos.user_id IS NULL 
+    GROUP BY username;
+    ```
+1. We're running a new contest to see who can get the most likes on a single photo. Who won the competition. 
+1. The purpose of this case is to find the image and its owner who gets the most likes in the dataset. 
+    ```sql
+    SELECT username FROM users JOIN photos ON photos.user_id = users.id JOIN (SELECT photo_id, COUNT(user_id) AS likes FROM likes GROUP BY photo_id ORDER BY likes DESC LIMIT 1) AS joined WHERE photos.id = joined.photo_id;
+
+    /* solution from the course */
+    SELECT 
+        username,
+        COUNT(*) AS total
+    FROM photos
+    JOIN likes 
+        ON likes.photo_id = photos.id
+    JOIN users 
+        ON photos.user_id = users.id
+    GROUP BY photos.id
+    ORDER BY total DESC
+    LIMIT 1;
+    ```
+1. Our investors want to know how many times does the average user post?
+    ```sql
+    SELECT COUNT(id) / users.total AS average FROM photos JOIN (SELECT COUNT(id) AS total FROM users) AS users;
+    
+    /* solution from the course */
+    SELECT (SELECT Count(*) FROM photos) / (SELECT Count(*) FROM users) AS avg;
+    ```
+1. A brand wants to know which hashtags to use in a post. What are the top 5 most commonly used hashtags?
+    ```sql  
+    SELECT
+        tag_id,
+        tag_name,
+        count(*) AS total
+    FROM photo_tags 
+    JOIN tags
+        ON tags.id = photo_tags.tag_id
+    GROUP BY tag_id 
+    ORDER BY total DESC 
+    LIMIT 5;
+    ```
+1. We have a small problem with bots on our site. Find users who have liked every single photo on the site.
+1. We'd like to check which user has liked all the photos in the database, which is `257` in this case. However, `WHERE` statement should be placed before `GROUP BY`, so we can't use it.
+1. Therefore, we can use `HAVING` which works similar to `WHERE`, but can be used after `GROUP BY`. 
+    ```sql
+    /* tentative solution */
+    SELECT photo_id, COUNT(*) FROM likes GROUP BY photo_id;
+    SELECT user_id FROM likes JOIN (SELECT COUNT(photo_id) AS all_photos FROM likes) AS total WHERE count(*) > total.all_photos GROUP BY user_id;
+
+    /* solution from course */
+    SELECT 
+        username, 
+        Count(*) AS num_likes
+    FROM users 
+    INNER JOIN likes 
+        ON users.id = likes.user_id 
+    GROUP BY likes.user_id 
+    HAVING num_likes >= (SELECT Count(*) FROM photos);
+    ```
