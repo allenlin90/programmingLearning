@@ -8,19 +8,30 @@ body {
     background: rgb(204,204,204);
 }
 
-/* @page {
-    width: 300px;
-} */
-
-/* @media print {   
-    #printButton {
+@media print {   
+    #printButton,
+    br {
         display: none;
+    }
+
+    /* .makesend_contact {
+        transform: scale(0.8);
+    } */
+
+    .wrapper {
+        padding: 0;
     }
 
     hr {
         background: black;
+        border: 0.5px solid black;
     }
-} */
+}
+
+hr {
+    border: 0.5px solid black;
+    background: black;
+}
 
 .wrapper {
     display: flex;
@@ -34,6 +45,11 @@ body {
     background: #fff;
     padding: 3mm;
     width: 8cm;
+}
+
+.receipt_meta {
+    display: flex;
+    justify-content: space-between;
 }
 
 .makesend_contact {
@@ -50,9 +66,74 @@ body {
     display: inline-block;
     padding-bottom: 2mm;
     width: 100%;
-    /* max-width: inherit; */
 }
 
-hr {
-    background: black;
+.statements {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.user_details, #qr_code {
+    width: inherit;
+}
+
+#qr_code {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#qr_code img {
+    display: block;
+}
+
+.shipments p {
+    line-height: 0;
+}
+
+.makesend_address p {
+    margin: 0;
+}
+
+ol {
+    margin: 0;
+    padding-left: 15px;
+}
+
+.parcel_fee, 
+.express, 
+.temp_control, 
+.cod,
+.send_to_greater,
+.send_from_greater {
+    display: flex;
+    justify-content: space-between;
+}
+
+.parcel_fee p, 
+.express p, 
+.temp_control p, 
+.cod p, 
+.send_from_greater p,
+.send_to_greater p {
+    margin-right: 10px;
+}
+
+h4 {
+    font-size: 1.7em;
+    margin: 5px 0;
+    padding: 0;
+}
+
+ul {
+    margin: 10px 0;
+    padding: 0;
+}
+
+ul li {
+    list-style: none;
+}
+
+footer {
+    margin-bottom: 25px;
 }
