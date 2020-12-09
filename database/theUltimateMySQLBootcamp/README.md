@@ -78,6 +78,9 @@ End Learning:
     1. [Introduction to NPM and Faker](#Introduction-to-NPM-and-Faker)
     1. [Connecting Node to MySQL](#Connecting-Node-to-MySQL)
     1. [Creating Our User Table](#Creating-Our-User-Table)
+    1. [Some MySQL/Node Magic](#Some-MySQL/Node-Magic)
+    1. [Bulk Inserting 500 users](#Bulk-Inserting-500-users)
+    1. [500 Users Exercises](#500-Users-Exercises)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -1775,9 +1778,16 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         created_at TIMESTAMP DEFAULT NOW()
     );
     ```
-1. 
+
+## Selecting Using Node
+1. We can use `mysql` to connect and retreive and read the data from the database.
     ```js
     const mysql = requrie('mysql');
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        database: 'join_us'
+    });
 
     let q = 'SELECT * FROM users';
     connection.query(q, function(error, results, fields) {
@@ -1785,5 +1795,168 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         console.log(results);
     });
 
+    connection.end();
+    ```
+
+## Inserting Using Node
+1. We can use regular `INSERT INTO` syntax to have new data insert into the database. However, the data to be input is static
+    ```js
+    const mysql = requrie('mysql');
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        database: 'join_us'
+    });
+
+    let q = 'INSERT INTO users (email) VALUES ("wyatt_the_dog@gmail.com")';
+    connection.query(q, function(error, results, fields) {
+        if (error) throw error;
+        console.log(results);
+    });
+
+    connection.end();
+    ```
+1. On the other hand, we can end the SQL query string with a question mark `?` and give another variable between the query statement and the callback function. The SQL query statement is simple that `INSERT INTO users SET ?` with given objects that has `key` as column and `value` to insert into the database.
+    ```js
+    let person = {email: 'jenny467@gmail.com'};
+    connection.query('INSERT INTO users SET ?', person, function(error, results, fields) {
+        if (error) throw error;
+        console.log(results);
+    });
+    ```
+1. We then can use `faker` to create random data and insert them into the database.
+    ```js
+    const faker = require('faker');
+
+    let person = {email: faker.internet.email()};
+    connection.query('INSERT INTO users SET ?', person, function(error, results, fields){
+        if (error) throw error;
+        console.log(results);
+    });
+    ```
+
+## Some MySQL/Node Magic
+1. We can't directly insert a JavaScript date object into MySQL database directly. However, `mysql` npm package can help convert the date object into SQL format.
+1. We can keep the `connection.query` object in a variable and check the whole SQL statements with `connection.query.sql`.
+    ```js
+    const mysql = require('mysql');
+    const faker = require('faker');
+
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        database: 'join_us'
+    });
+
+    let person = {
+        email: faker.internet.email(),
+        created_at: faker.date.past()
+        }
+
+    let end_result = connection.query('INSERT INTO users SET ?', person, function(error, results, field){
+        if (error) throw error;
+        console.log(results);
+    });
+
+    console.log(end_result.sql);
+    connection.end();
+    ```
+
+## Bulk Inserting 500 users
+1. Though we can use loops to create queries and insert data to database multiple times, the process will be much light weighted and efficient by inserting dataset at once with bulk insert. 
+    ```js
+    const mysql = require('mysql');
+    const faker = require('faker');
+
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        database: 'join_us'
+    });
+
+    let data = [
+        [faker.internet.email(), faker.date.past()],
+        [faker.internet.email(), faker.date.past()],
+        [faker.internet.email(), faker.date.past()]
+    ];
+
+    let q = 'INSERT INTO users (email, created_at) VALUES ?';
+    connection.query(q, [data], function(error, results, field){
+        if (error) throw error;
+        console.log(results);
+    });
+
+    connection.end();
+    ```
+1. To create 500 instances from `faker`, we can use for loop to create the dataset.
+    ```js
+    let data = [];
+    for (let i = 0; i < 500; i++) {
+        data.push([faker.internet.email(), faker.date.past()]);
+    }
+    ```
+
+## 500 Users Exercises
+1. Find the earliest date a user joined.
+1. Find Email Of The First Earliest User.
+1. Users according to the month they joined.
+1. Count number of users with yahoo emails.
+1. Calculate total number of users for each email host.
+    ```js
+    const mysql = require('mysql');
+
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        database: 'join_us'
+    });
+    
+    let q = `SELECT DATE_FORMAT(created_at, '%M %D %Y') AS earliest_date FROM users ORDER BY created_at LIMIT 1`;
+    /* solution from the lecture */
+    q = `SELECT DATE_FORMAT(MIN(created_at), "%M %D %Y") AS earliest_date FROM users`;
+    connection.query(q, function(error, results, field){
+        if (error) throw error;
+        console.log('Time when the earliest joined user registered: ', results[0].created_at);
+    });
+
+    q = `SELECT email, DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_at FROM users ORDER BY created_at LIMIT 1`;
+    /* solution from the lecture */
+    q = `SELECT * FROM users WHERE created_at = (SELECT MIN(created_at) FROM users)`;
+    connection.query(q, function(error, results, field){
+        if (error) throw error;
+        console.log('Email of the earliest joined user: ', results[0].email);
+    });
+
+    q = `SELECT MONTHNAME(created_at) as month, COUNT(*) as count FROM users GROUP BY month ORDER BY MONTH(created_at)`;
+    /* solution from the lecture */
+    q = `SELECT MONTHNAME(created_at) as month, COUNT(*) as count FROM users GROUP BY month ORDER BY count DESC`;
+    connection.query(q, function(error, results, field){
+        if (error) throw error;
+        console.log('Users registered in each month: ', results);
+    });
+
+    q = `SELECT COUNT(email) AS yahoo_users FROM users WHERE email LIKE '%yahoo%'`;
+    connection.query(q, function(error, results, field){
+        if (error) throw error;
+        console.log('Users with Yahoo Email:', results);
+    });
+
+    q = `
+    SELECT 
+        CASE 
+            WHEN email LIKE '%yahoo%' THEN 'yahoo'
+            WHEN email LIKE '%gmail%' THEN 'gmail'
+            WHEN email LIKE '%hotmail%' THEN 'hotmail'
+            ELSE 'others'
+        END AS 'provider',
+        COUNT(*) AS 'total_users'
+    FROM users
+    GROUP BY provider
+    `;
+    connection.query(q, function(error, results, field){
+        if (error) throw error;
+        console.log('Users with Yahoo Email:', results);
+    });
+    
     connection.end();
     ```
