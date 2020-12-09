@@ -73,6 +73,11 @@ End Learning:
     1. [Cloning Instagram's DB: Comments Schema](#Cloning-Instagram's-DB:-Comments-Schema)
     1. [Cloning Instagram's DB: Likes Schema](#Cloning-Instagram's-DB:-Likes-Schema)
     1. [Cloning Instagram's DB: Followers Schema](#Cloning-Instagram's-DB:-Followers-Schema)
+1. [Introducing Node](#Introducing-Node)
+    1. [Introduction to JOIN US app](#Introduction-to-JOIN-US-app)
+    1. [Introduction to NPM and Faker](#Introduction-to-NPM-and-Faker)
+    1. [Connecting Node to MySQL](#Connecting-Node-to-MySQL)
+    1. [Creating Our User Table](#Creating-Our-User-Table)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -1691,4 +1696,94 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
         ON users.id = likes.user_id 
     GROUP BY likes.user_id 
     HAVING num_likes >= (SELECT Count(*) FROM photos);
+    ```
+
+# Introducing Node
+## Introduction to JOIN US app
+1. The application has some simple features which are based on `NodeJS` and `MySQL`.
+    1. Receiving emails from users.
+    1. Counting the number of total users who provide their emails.
+1. The table to store the data is simple that it only has `email` and `created_at`.
+
+## Introduction to NPM and Faker
+1. We use `npm` and `faker` package to create dummy data in the case.
+1. Use `npm init -y` to initiate the new app and use `npm i faker` to install `faker` package.
+    ```js
+    const faker = requrie('faker');
+
+    console.log(faker.internet.email()); // random email
+    console.log(faker.date.past()); // random timestamp in the past
+    console.log(faker.adderss.city()); // random city name
+    ```
+
+## Connecting Node to MySQL
+1. After installing `mysql` package through npm, we can require the package and connect our NodeJS app to the database. Note that database and the server can be at the same place.
+1. On Goorm IDE, our default user is `root`. Note that this container on Goorm IDE is builder by the shortcut which has skipped many process to configure and setup the environment. Besides, we can skip giving password to connect NodeJS app to MySQL.
+    ```js
+    var mysql = require('mysql');
+ 
+    var connection = mysql.createConnection({
+        host     : 'localhost',
+        user     : 'root',
+        database : 'join_us'
+    });
+    ```
+1. We can use `mysql-ctl start` to start MySQL on the server in the background, so we can free out the terminal for other purposes.
+1. Before we start the app, we should go to MySQL DBMS to create a new database `join_us`.
+1. The connection from the NodeJS app will be kept connecting until we use <kbd>Ctrl + c</kbd> to stop the app, or we can use `connection.end()` in the app to stop the connection at the end of the script.
+    ```js
+    const mysql = require('mysql');
+
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        database: 'join_us'
+    });
+
+    connection.query('SELECT CURDATE()', function(error, results, fields){
+        if (error) throw error;
+        console.log('The solution is: ', results);
+    })
+
+    connection.end();
+    ```
+1. With the concept of OOP, we can manipulate the data retreived from SQL query.
+    ```js
+    connection.query('SELECT 1 + 5 AS answer', function(error, results, fields){
+        if (error) throw error;
+        console.log(results);
+        console.log(results[0].answer);
+    });
+
+    let query = 'SELECT CURTIME() AS time, CURDATE() AS date, NOW() AS now';
+    connection.query(query, function(error, results, fields){
+        if (error) throw error;
+        console.log(results);
+        console.log(results[0].time);
+        console.log(results[0].date);
+        console.log(results[0].now);
+    });
+
+    connection.end();
+    ``` 
+
+## Creating Our User Table
+1. We create a table in the database through `mysql-ctl cli` directly. 
+    ```sql
+    CREATE TABLE users (
+        email VARCHAR(255) PRIMARY KEY,
+        created_at TIMESTAMP DEFAULT NOW()
+    );
+    ```
+1. 
+    ```js
+    const mysql = requrie('mysql');
+
+    let q = 'SELECT * FROM users';
+    connection.query(q, function(error, results, fields) {
+        if (error) throw error;
+        console.log(results);
+    });
+
+    connection.end();
     ```
