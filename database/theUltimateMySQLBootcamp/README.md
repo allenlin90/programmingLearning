@@ -81,6 +81,10 @@ End Learning:
     1. [Some MySQL/Node Magic](#Some-MySQL/Node-Magic)
     1. [Bulk Inserting 500 users](#Bulk-Inserting-500-users)
     1. [500 Users Exercises](#500-Users-Exercises)
+1. [Building Our Web App](#Building-Our-Web-App)
+    1. [Introduction to Database Triggers](#Introduction-to-Database-Triggers)
+    1. [Preventing Instagram Self-Follows with Triggers](#Preventing-Instagram-Self-Follows-with-Triggers)
+    1. [Managing Triggers and a Warning](#Managing-Triggers-and-a-Warning)
 
 # Creating Databases and Tables
 ## Creating Databases
@@ -1959,4 +1963,149 @@ SELECT UPPER(CONCAT('my favorite author is ', author_lname, '!')) AS yell FROM b
     });
     
     connection.end();
+    ```
+
+# Building Our Web App
+1. This section is skipped as the part is over simplified and much more details and info. are required to understand the topics. 
+
+# Database Triggers
+## Introduction to Database Triggers
+1. Database triggers are SQL statements that are automtically run when a specific table is changed.
+    ```sql
+    CREATE TRIGGER trigger_name
+        trigger_time trigger_event ON table_name FOR EACH ROW 
+        BEGIN
+        ...
+        END;
+    ```
+1. The syntax of the statements above have 3 main parts, `trigger_time`, `trigger_event`, and `table_name`.
+    1. `trigger_time` indicates that when should the code run. There are only 2 choices to have the code run before or after the event happens.
+        1. `BEFORE`
+        1. `AFTER`
+    1. `trigger_event` indicates that what event will the code do to the rows in the table.
+        1. `INSERT`
+        1. `UPDATE`
+        1. `DELETE`
+    1. `table_name` is the table in the database that we want the triggers to work on.
+1. These triggers can be useful to handle different scenarios. For example, in the Instagram case, when a user unlike a post from the other user, not only the related date is updated but also if there's a table count and store the number of likes of users in advance can be udpated.
+1. On the other hand, this trigger can also check the data to be inserted into tables as filters and give warning.
+1. However, in practice, it is better to use frontend code to prevent invalid input when the user giving data at the UI such as the website to enhance user experience. 
+
+## Writing our First Trigger
+1. In this case, we create a table `users` which has `username` and the `age`. We can put a trigger 
+    1. `CREATE TRIGGER` is to give a name to the trigger.
+    1. We can then use `BEFORE` or `AFTER` on the `table_name` to execute the trigger before or after the following event. 
+    1. We then put SQL statements for the trigger between `BEGING` and `END`.
+    1. `NEW` is a placeholder which pointing to the new input (new entity) that will be inserted to the table to be in the additinoal row. After dot `.`, we put the column name that we want to filter from the table. 
+    1. We then can use `SIGNAL SQLSTATE` to indicate the types of error that should be returned when the value meets certain conditions. In MySQL errors, there are 3 main components
+        1. A numeric `error code` (which is MySQL-specific that is different from the other DBMS). We can refer to [MySQL](https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html) for more info. For example, [ERROR 1146 (42S02)](https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html#error_er_no_such_table) means the table doesn't exist.
+        1. A five-character `SQLSTATE` value. The value are taken from ANSI SQL and ODBC and are more standardized.
+        1. A message string - textual description of the error. 
+    1. In this case, as we have multiple lines ended with semi-column and should indicate to MySQL that it's not the end of the code. Therefore, we can change `DELIMITER` from `;` to `$$` and put double dollar signs at the end of the code and then change `DELIMITER` back to semi-column.
+    ```sql
+    USE trigger_demo;
+
+    DROP TABLE users;
+
+    CREATE TABLE users (
+        username VARCHAR(100),
+        age INT
+    );
+
+    DELIMITER $$
+
+    CREATE TRIGGER must_be_adult
+        BEFORE INSERT ON users FOR EACH ROW
+        BEGIN
+            IF NEW.age < 18
+            THEN
+                SIGNAL SQLSTATE '45000'
+                        SET MESSAGE_TEXT = 'Must be an adult!';
+            END IF;
+        END;
+    $$
+
+    DELIMITER ;
+
+    INSERT INTO users(username, age) VALUES ('Bobby', 23);
+
+    SELECT * FROM users; 
+
+    INSERT INTO users(username, age) VALUES ('Sue', 54);
+    INSERT INTO users(username, age) VALUES ('Yang', 14);
+    ```
+
+## Preventing Instagram Self-Follows with Triggers
+1. In this case, we will use the users from instagram clone. We are trying to prevent users to follow themselves on the database side.
+    ```sql
+    USE ig_clons;
+
+    DELIMITER $$
+    CREATE TRIGGER prevent_self_follows
+        BEFORE INSERT ON follows FOR EACH ROW
+        BEGIN
+            IF NEW.follower_id = NEW.followee_id
+            THEN
+                SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'You cannot follow yourself';
+            END IF;
+        END;
+    $$
+
+    DELIMITER ;
+
+    INSERT INTO follows (follower_id, followee_id) VALUES (2, 2);
+    ```
+
+## Creating Logger Triggers
+1. In this case, we are trying to record the unlike log when users unfollow the other user. This info can be useful for business and marketing analysis to check if there's any problem for certain events or simply reveal the performance of an user. 
+    ```sql
+    USE ig_clone;
+
+    CREATE TABLE unfollows (
+        follower_id INT NOT NULL,
+        followee_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+        FOREIGN KEY(follower_id) REFERENCES (users.id),
+        FOREIGN KEY(followee_id) REFERENCES (users.id),
+        PRIMARY KEY (follower_id, followee_id)
+    );
+
+    DELIMITER $$
+    CREATE TRIGGER create_unfollow
+        AFTER DELETE ON follows FOR EACH ROW
+        BEGIN
+            INSERT INTO unfollows(follower_id, followee_id)
+            VALUES (OLD.follower_id, OLD.followee_id)
+        END;
+    $$
+
+    /* use SET syntax
+    DELIMITER $$
+    CREATE TRIGGER trigger_name
+        AFTER DELETE ON follows FOR EACH ROW
+        BEGIN
+            INSERT INTO unfollows
+            SET follower_id = OLD.follower_id,
+                followee_id = OLD.followee_id,
+        END;
+    $$
+    */
+
+    DELIMITER ;
+
+    DELETE FROM follows WHERE follower_id = 2 && followee_id = 1;
+
+    SELECT * FROM unfollows;
+    ```
+
+## Managing Triggers and a Warning
+1. We can use several commands to manage the triggers for tables. This is the main reason why we give all triggers a specific name.
+1. A note that using triggers can make debugging harder. As the tables are related with more logical actions, it will be more difficult to idenity what is the source of an issue or problem.
+    ```sql
+    /* list all the triggers on a table */
+    SHOW TRIGGERS;
+
+    /* remove trigger */
+    DROP TRIGGER trigger_name;
     ```
