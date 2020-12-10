@@ -1,0 +1,9 @@
+div {
+    display: flex;
+    height: 100vh;
+}
+
+h1 {
+    margin: auto;
+    text-align: center;
+}
