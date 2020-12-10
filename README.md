@@ -22,9 +22,14 @@
 
 1. [Modern HTML & CSS From The Beginning (Including Sass)](https://github.com/allenlin90/programmingLearning/tree/master/html/modernHTMLAndCSSFromTheBeginning) - [materials](https://www.udemy.com/course/modern-html-css-from-the-beginning/)
 
+# Database
+
+**<int>Materials</int>**
+1. [The Ultimate MySQL Bootcamp](https://github.com/allenlin90/programmingLearning/tree/master/database/theUltimateMySQLBootcamp#Managing-Triggers-and-a-Warning) - [materials](https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/)
+
 # PHP
 1. [PHP for Beginners - Become a PHP Master - CMS Project](https://github.com/allenlin90/programmingLearning/tree/master/php/PHPForBeginnersBecomeAPHPMasterCMSProject) - [materials](https://www.udemy.com/course/php-for-complete-beginners-includes-msql-object-oriented/)
-1. [PHP with Laravel for beginners - Become a Master in Laravel](#) - [materials](https://www.udemy.com/course/php-with-laravel-for-beginners-become-a-master-in-laravel/)
+1. [PHP with Laravel for beginners - Become a Master in Laravel](https://github.com/allenlin90/programmingLearning/tree/master/php/phpWithLaravelForBeginnersBecomeAMasterInLaravel) - [materials](https://www.udemy.com/course/php-with-laravel-for-beginners-become-a-master-in-laravel/)
 1. [PHP Programming Language Tutorial - Full Course](https://github.com/allenlin90/programmingLearning/tree/master/php/youtube_phpProgrammingLanguageTutorial) - [YouTube](https://youtu.be/OK_JCtrrv-c)
 
 # Integrated course
