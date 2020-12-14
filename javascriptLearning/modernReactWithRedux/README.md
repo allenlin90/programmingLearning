@@ -11,7 +11,20 @@ Finished
     1. [Displaying Content with Functional Components](#Displaying-Content-with-Functional-Components)
 1. [Building Content with JSX](#Building-Content-with-JSX)
     1. [What is JSX](#What-is-JSX)
-1. [Communicating with Props](#Communicating-with-Props) 
+    1. [Converting HTML to JSX](#Converting-HTML-to-JSX)
+    1. [Inline Styling with JSX](#Inline-Styling-with-JSX)
+    1. [Converting Styling to JSX Format](#Converting-Styling-to-JSX-Format)
+    1. [Class vs ClassName](#Class-vs-ClassName)
+    1. [Referencing JS Variables in JSX](#Referencing-JS-Variables-in-JSX)
+    1. [Values JSX Can't Show](#Values-JSX-Can't-Show)
+    1. [Finding Forbidden Property Name](#Finding-Forbidden-Property-Name)
+1. [Communicating with Props](#Communicating-with-Props)
+    1. [Three Tenets of Components](#Three-Tenets-of-Components)
+    1. [Getting Some Free Styling](#Getting-Some-Free-Styling)
+    1. [Specifying Images in JSX](#Specifying-Images-in-JSX)
+    1. [Duplicating a Single Component](#Duplicating-a-Single-Component)
+    1. [Extracting JSX to New Components](#Extracting-JSX-to-New-Components)
+    1. [React's Props System](#React's-Props-System)
 1. [Strucuturing Apps with Class-based Components](#Strucuturing-Apps-with-Class-based-Components) 
 1. [State in React Components](#State-in-React-Components) 
 1. [Understanding Lifecycle Methods](#Understanding-Lifecycle-Methods) 
@@ -279,6 +292,175 @@ Finished
 
 
 # Communicating with Props
+## Three Tenets of Components
+1. Component Nesting - A component can be shown in side of another
+1. Component Reusability - We want to make components that can be easily reused through out application.
+1. Component Configuration - We should be able to configure a component when it is created. 
+
+## Application Overview
+1. We are going to create a React component which has user profile, user name, date and time, and user comment.
+1. We will use `semantic` UI CDN, which is a CSS library similar to Bootstrap. We can use the cdn at [<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">](<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">).
+1. In this case, we create a new react project `components` with `npx create-react-app components`.
+
+## Getting Some Free Styling
+1. After creating the new react project, we remove all the files in `src` directory to get a clean start. 
+1. We then create `index.js` in `src` directory.
+1. In this case, we use the [comment](https://semantic-ui.com/views/comment.html) styling from semantic UI.
+
+## Naive Component Approach
+1. In the JSX, we use the follow HTML elements with semantic UI css to style it. 
+    ```js
+    <div className="comment">
+        <a href="/" className="avatar">
+            <img alt="avatar" />
+        </a>
+        <div className="content">
+            <a href="/" className="author">
+                Sam
+            </a>
+            <div class="metadata">
+                <span className="date">Today at 6:00PM</span>
+            </div>
+            <div className="text">Nice blog post!</div>
+        </div>
+    </div>
+    ```
+
+## Specifying Images in JSX
+1. In this case, we use a npm package `faker` which can provide mock up contents, data, and images. We can use `npm i faker --save` in the project directory.
+    ```js
+    import faker from 'faker';
+    const App = () => {
+        return (
+            <img alt="avatar" src={faker.image.image()} />
+        );
+    }
+    ```
+
+## Duplicating a Single Component
+## Extracting JSX to New Components
+1. From the previous case, if we'd like to duplicate the same components from the page, we can only copy the HTML elements to be rendered in JSX, which can be very confusing when the project goes larger. This is why we'd like to use reusable components.
+1. To create a reusable, configurable component, we can 
+    1. Identify the JSX taht appears to be duplicated.
+    ```js
+    <div className="comment">
+        <a href="/" className="avatar">
+            <img alt="avatar" src={faker.image.image()} />
+        </a>
+        <div className="content">
+            <a href="/" className="author">
+                Sam
+            </a>
+            <div class="metadata">
+                <span className="date">Today at 6:00PM</span>
+            </div>
+            <div className="text">Nice blog post!</div>
+        </div>
+    </div>
+    ```
+    1. What is the purpose of that block of JSX? Think of a descriptive name for what it does.    
+    1. Create a new file to house this new component - it should have the same name as the component. In convention, we can capitalize the first letter of each term of the name. 
+    1. Create a new component in the new file, paste the JSX into it.
+    1. Make the new component configurable by using React's "props" system.
+    ```js
+    // CommentDetail.js
+    import React from 'react';
+
+    const CommentDetail = () => {
+        return (
+            <div className="comment">
+                <a href="/" className="avatar">
+                    <img alt="avatar" src={faker.image.image()} />
+                </a>
+                <div className="content">
+                    <a href="/" className="author">
+                        Sam
+                    </a>
+                    <div class="metadata">
+                        <span className="date">Today at 6:00PM</span>
+                    </div>
+                    <div className="text">Nice blog post!</div>
+                </div>
+            </div>
+        );
+    };
+    ```
+
+## Component Nesting
+1. To use the component, we need to `export` to component from the JavaScript file
+    ```js
+    // CommentDetail.js
+    export default CommentDetail;
+    ```
+1. In the main `index.js` file, we can import the component with relative path.
+1. To use the component we can use it as HTML element in JSX directly. Note that we don't use curly braces to render them as regular JavaScript functions. 
+1. In this case, the components and contents of it are still static from hard code.
+1. After the structure and layout is settled, we can start working on "props" system.
+    ```js
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import CommentDetail from './CommentDetail';
+
+    const App = () => {
+        return (
+            <CommentDetail />
+            <CommentDetail />
+            <CommentDetail />
+        );
+    };
+    ```
+
+## React's Props System
+1. `Props` is the system for passing data from a "parent" component to a "child" compponent.
+1. The goal is to customize or configure a child component.
+1. In this case, each "comment" component has variables as `name`, `time`, `content` of comment.
+1. "Props" stands for properties.
+
+## Passing and Receiving Props
+1. We can pass the data or value for the variable through the parent component to child component.
+1. The parent component are those in `index.js`. In this case, we give each `CommentDetail` component with `author` attribute.
+    ```js
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import CommentDetail from './CommentDetail';
+
+    const App = () => {
+        return (
+            <div className="ui container comments">
+                <CommentDetail author="Sam" />
+                <CommentDetail author="Alex" />
+                <CommentDetail author="Jane" />
+            </div>
+        );
+    };
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
+1. If we check in the component JS file, we can give component function a argument, such as `props` and check what data is in the object.
+    ```js
+    // CommentDetail
+    const CommentDetail = (props) => {
+        console.log(props);
+        return (
+            <div className="comment">
+                <a href="/" className="avatar">
+                    <img alt="avatar" src={faker.image.image()} />
+                </a>
+                <div className="content">
+                    <a href="/" className="author">
+                        {props.author} // take data given from the parent component 
+                    </a>
+                    <div className="metadata">
+                        <span className="date">Today at 6:00PM</span>
+                    </div>
+                    <div className="text">Nice blog post!</div>
+                </div>
+            </div>
+        );
+    };
+    ```
 
 # Strucuturing Apps with Class-based Components
 
