@@ -9,7 +9,8 @@ Finished
     1. [Exploring a create-react-app project](#Exploring-a-create-react-app-project)
     1. [Starting and Stopping a React App](#Starting-and-Stopping-a-React-App)
     1. [Displaying Content with Functional Components](#Displaying-Content-with-Functional-Components)
-1. [Building Content with JSX](#Building-Content-with-JSX) 
+1. [Building Content with JSX](#Building-Content-with-JSX)
+    1. [What is JSX](#What-is-JSX)
 1. [Communicating with Props](#Communicating-with-Props) 
 1. [Strucuturing Apps with Class-based Components](#Strucuturing-Apps-with-Class-based-Components) 
 1. [State in React Components](#State-in-React-Components) 
@@ -162,7 +163,120 @@ Finished
     );
     ```
 
+
+
 # Building Content with JSX
+## What is JSX
+1. In React, we use `Babel` to tranform ES2015 or more modern JavaScript code into ES5 to ensure all the browser can run the JavaScript. 
+1. `Babel` can not only translate modern JavaScript code but also JSX code to work as JavaScript DOM.
+
+## Convert HTML to JSX
+1. JSX is special dialect of JS (which is not HTML).
+1. Browser don't understand JSX code. We write JSX then run tools to turn it into normal JS.
+1. JSX is very similar in form and function to HTML with a couple differences.
+1. In convention, we can put parenthesis to wrap the HTML in after the `return` keyword in `App` function. 
+1. However, in the following case, the code doesn't work and can't be rendered on React App.
+    ```js
+    // import the React and ReactDOM libraries
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+
+    // Create a react component
+    const App = () => {
+        return (
+            <div>
+                <label class="label" for="name">Enter name:</label>
+                <input id="name" type="text"/>
+                    <button style="background-color: blue; color: white;">Submit</button>
+            </div>
+        );
+    };
+
+    // Take the react component and show it on the screen
+    ReactDOM.render(
+                <App />,
+        document.querySelector('#root')
+    );
+    ```
+
+## Inline Styling with JSX
+1. In JSX, we can't use regular inline styling syntax to decorate HTML elements.
+1. In the naming convention in JSX, any properties that has dash `-` as delimeter between strings shall be converted into camel case. For example we turn `background-color` into `backgroundColor`.
+    ```html
+    <!-- html -->
+    <div style="background-color:red;"></div>
+    ```
+    ```js
+    <div style={{backgroundColor:'red'}}></div>
+    ```
+
+## Converting Styling to JSX Format
+## Class vs ClassName
+## Referencing JS variable in JSX
+1. The value of the property should be single-quoted and be put as JavaScript object. While single-line properties such as `class` and `for`, we can use double quotes to wrap them.
+1. The custom styling syntax to an element are different in JSX and HTML.
+1. JSX uses different syntax to add a class to an element.
+1. JSX can reference JS variables.
+1. In JSX, we use `className` for `class` property in HTML. The main reason is that `class` is a reserved keyword in JavaScript to create classes for OOP.
+1. We can easily insert a JavaScript variable in JSX by wrapping the JavaScript variable with curly braces `{}`. Note that this JavaScript variable reference has its limitation for certain data type or returned data value from the function.
+    ```js
+    // import the React and ReactDOM libraries
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+
+    function getButtonText() {
+        return 'Click Me!';
+    }
+    // Create a react component
+    const App = () => {
+        const labelName = 'Click Me!';
+        return (
+            <div>
+                <label className="label" for="name"> // use className rather than class in JSX
+                    {labelName} // use curly braces to wrap JavaScript variable 
+                </label>
+                <input id="name" type="text" />
+                <button style={{ backgroundColor: 'blue', color: 'white'}}> // use JavaScript object and change css property to camelCase
+                    {getButtonText()} // use curly braces to wrap JavaScript function
+                </button>
+            </div>
+        );
+    };
+
+    // Take the react component and show it on the screen
+    ReactDOM.render(
+        <App />,
+        document.querySelector('#root')
+    );
+    ```
+
+## Values JSX Can't Show
+## Finding Forbidden Property Names
+1. The JavaScript variable reference can take `Number` and `String` or an `Array` that has `Number` or `String` as its elements.
+1. The elements in the array will be concatenated 
+1. However, regular `Objects` are not available to be used as React child. However, if the value of a property in an object is string or number type of value, we can refer it in JSX directly. 
+1. `for` is also a reserved JavaScript keyword which is used in `for loop`. Therefore, in the following case, we can specify the `for` attribute for `label` element in HTML as `htmlFor` to prevent warnning message from React. 
+    ```js
+    const App = () => {
+        const buttonText = {text: 'Click Me'};
+        const style = {backgroundColor: 'blue', color: 'white'};
+        const labelText = 'Enter name:';
+
+        return (
+            <div>
+                <label className="label" for="name">
+                    {labelText}
+                </label>
+                <input id="name" type="text"/>
+                <button style={style}>
+                    {buttonText.text}
+                </button>
+            </div>
+        );
+    };
+    ```
+
+
 
 # Communicating with Props
 
