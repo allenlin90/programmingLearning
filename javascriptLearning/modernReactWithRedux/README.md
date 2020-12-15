@@ -462,6 +462,161 @@ Finished
     };
     ```
 
+## Passing Multiple Props
+1. In the last section, we pass autor name of each user who left a comment on the page. 
+1. We'd like to pass other variables to the component. We can reformat the component into multiple lines.
+    ```js
+    // CommentDetail
+    const CommentDetail = (props) => {
+        console.log(props);
+        return (
+            <div className="comment">
+                <a href="/" className="avatar">
+                    <img alt="avatar" src={props.avatar} />
+                </a>
+                <div className="content">
+                    <a href="/" className="author">
+                        {props.author}
+                    </a>
+                    <div className="metadata">
+                        <span className="date">{props.timeAgo}</span>
+                    </div>
+                    <div className="text">{props.comment}</div>
+                </div>
+            </div>
+        );
+    };
+
+    // index.js
+    const App = () => {
+        return (
+            <div className="ui container comments">
+                <CommentDetail 
+                    author="Sam" 
+                    timeAgo="Today at 4:45PM" 
+                    avatar={faker.image.image()} 
+                    comment={faker.lorem.slug()} 
+                />
+                <CommentDetail
+                    author="Alex"
+                    timeAgo="Today at 2:00AM"
+                    avatar={faker.image.image()}
+                    comment={faker.lorem.slug()}
+                />
+                <CommentDetail
+                    author="Jane"
+                    timeAgo="Yesterday at 5:00PM"
+                    avatar={faker.image.image()}
+                    comment={faker.lorem.slug()}
+                />
+            </div>
+        );
+    };
+    ```
+
+## Component Reuse
+## Implementing an Approval Card
+1. We'd like to add more features on the comment component. In this case, we'd like to add an "Approve" and "Reject".
+1. We create a new file in the same directory. In this case, we create `ApprovalCard.js`. In this case, we refer to the [cards](https://semantic-ui.com/views/card.html) in Semantic UI.
+    ```js
+    // ApprovalCard 
+    import React from 'react';
+
+    const ApprovalCard = () => {
+        return (
+            <div className="ui card">
+                <div className="content">Are you sure?</div>
+                <div className="extra content">
+                    <div className="ui two buttons">
+                        <div className="ui basic green button">Approve</div>
+                        <div className="ui basic red button">Reject</div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    export default ApprovalCard;
+    ```
+1. We then can put the new component in `index.js` directly to use. However, we haven't know how to make the `CommentDetail` component as the child element in the `ApprovalCard`. In the current layout the 2 components are parallel to each other in the same tier. 
+    ```js
+    // index.js
+    const App = () => {
+        return (
+            <div className="ui container comments">
+                <ApprovalCard />
+                <CommentDetail
+                    author="Sam"
+                    timeAgo="Today at 4:45PM"
+                    avatar={faker.image.image()}
+                    comment={faker.lorem.slug()}
+                />
+                <CommentDetail
+                    author="Alex"
+                    timeAgo="Today at 2:00AM"
+                    avatar={faker.image.image()}
+                    comment={faker.lorem.slug()}
+                />
+                <CommentDetail
+                    author="Jane"
+                    timeAgo="Yesterday at 5:00PM"
+                    avatar={faker.image.image()}
+                    comment={faker.lorem.slug()}
+                />
+            </div>
+        );
+    };
+    ```
+
+## Showing Custom Child
+1. To create relationship between the components, we can use opening and closing tags as regular HTML element to wrap the child compnent.
+    ```js
+    // index.js
+    <ApprovalCard>
+        <CommentDetail
+            author="Sam"
+            timeAgo="Today at 4:45PM"
+            avatar={faker.image.image()}
+            comment={faker.lorem.slug()}
+        />
+    </ApprovalCard>
+    ```
+1. If we go to `ApprovalCard.js` and add an argument to the render function, we can find that the `CommentDetail` has now become a child property in the object.
+1. Therefore, we can use JSX syntax to call the value from the property to have `CommentDetail` nested in the `ApprovalCard`. The property of the object is `children`. Note that if we don't call the `children` property in the parent component, the children won't show up.
+    ```js
+    const ApprovalCard = (props) => {
+        console.log(props) // check the child object in the parent component
+        return (
+            <div className="ui card">
+                <div className="content">{props.children}</div> // use the child object in the parent component
+                <div className="extra content">
+                    <div className="ui two buttons">
+                        <div className="ui basic green button">Approve</div>
+                        <div className="ui basic red button">Reject</div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+    ```
+1. Besides putting other comopnent as child or to be nested, we can use the `ApprovalCard` component with regualr HTML elements. Note that in the child component, we must put and refer to the properties that send from parent component.
+    ```js
+    // index.js
+    <ApprovalCard>
+        <div>
+            <h4>Warning!</h4>
+            Are you sure you want to do this?
+        </div>
+    </ApprovalCard>
+
+    // ApprovalCard
+    ApprovalCard = (props) => {
+        return (
+            {props.children}
+        );
+    };
+    ```
+
 # Strucuturing Apps with Class-based Components
 
 # State in React Components 
