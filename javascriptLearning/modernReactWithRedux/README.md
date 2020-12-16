@@ -26,6 +26,11 @@ Finished
     1. [Extracting JSX to New Components](#Extracting-JSX-to-New-Components)
     1. [React's Props System](#React's-Props-System)
 1. [Strucuturing Apps with Class-based Components](#Strucuturing-Apps-with-Class-based-Components) 
+    1. [Class-based Components](#Class-based-Components)
+    1. [Application Overview](#Application-Overview)
+    1. [Application Overview - Season Experiencing](#Application-Overview---Season-Experiencing)
+    1. [Handling Async Operations with Functional Components](#Handling-Async-Operations-with-Functional-Components)
+    1. [Refactoring from Functional to Class Components](#Refactoring-from-Functional-to-Class-Components)
 1. [State in React Components](#State-in-React-Components) 
 1. [Understanding Lifecycle Methods](#Understanding-Lifecycle-Methods) 
 1. [Handling User Input with Forms and Events](#Handling-User-Input-with-Forms-and-Events) 
@@ -618,6 +623,104 @@ Finished
     ```
 
 # Strucuturing Apps with Class-based Components
+## Class-based Components
+1. A component can be either a `Function` or `Class` that produces HTML to show the user (which is using JSX) and handles feedback from the user (which is using event handler).
+1. React used to work as the followings
+    1. Functional Components can product JSX to show content to the user
+    1. Class Components can produce JSX to show content to the user
+        1. Can use the "Lifecycle Method" system to run code at specific points in time.
+        1. Can use the "State" system to update content on the screen.
+    1. The main difference between `Function` and `Class` componenet is that the function one is more straight forward while the class one can access "lifecycle method system" and "state system".
+    1. In the past, `Class` components have more features than `Function` components.
+1. React is now working with `"Hook"` system, which makes `Function` components similar to `Class` components.
+1. In this case, companies with "established projects" are using class-based components, while companies with "newer projects" may be using class-based or function-based components.
+1. In this sense, we should learn both class-based and function-based components.
+
+## Application Overview - Season Experiencing
+1. This app requires
+    1. Needs to get the users physical location
+    1. Needs to determine the current month
+    1. Need to change text and styling based on location and month
+
+## Scaffoldingthe the App
+1. For this project, we use semantic UI at [<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">](<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">).
+1. The steps of building the app in 2 parts, `App` and `SeasonDisplay`.
+    1. Has the code to determine `location` and `month`.
+    1. Shows different text/icons based on props.
+    ```js
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+
+    const App = () => {
+        return <div>Hi there!</div>;
+    };
+
+    ReactDOM.render(
+        <App />,
+        document.querySelector('#root')
+    );
+
+
+    // SeasonDisplay
+    import React from 'react';
+
+    const SeasonDisplay = () => {
+        return <div>Season Display</div>;
+    };
+
+    export default SeasonDisplay;
+    ```
+
+## Getting a Users Physical Location
+1. We can use browser navigator API to fetch user's location under user permission.
+1. `windows.navigator.geoloaction.getCurrentPosition` takes 2 function arguments which is to return the `coords` object with users latitude and longitude with other metadata and the other callback function for returning error message.
+1. Therefore, we can check user's location or get the message to know that if the user deny for location access.
+    ```js
+    // index.js
+    window.navigator.geolocation.getCurrentPosition(
+        (position) => console.log(position),
+        (err) => console.log(err)
+    );
+    ``` 
+
+## Handling Async Operations with Functional Components
+1. After getting the location of the user from the API, it is challenging to use function component to render the data from async operations on the screen.
+1. When the app is working
+    1. JS file loaded by browser
+    1. App component get created
+    1. We call geolocation service
+    1. App returns JSX, gets rendered to page as HTML
+    1. We get result of geolocation
+1. In short, the page is rendered before we get the location data from the user. 
+
+## Refactoring from Functional to Class Components
+1. Rules of Class Components
+    1. Must be JavaScript class
+    1. Must extend (subclss) `React.Component`
+    1. Must define a `render` method that returns some amount of JSX
+    ```js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+
+    class App extends React.Component {
+        render() {
+            window.navigator.geolocation.getCurrentPosition(
+                (position) => console.log(position),
+                (err) => console.log(err)
+            );
+
+            return <div>Latitude: </div>;
+        }
+    }
+
+    ReactDOM.render(
+        <App />,
+        document.querySelector('#root')
+    );
+    ```
+
+
 
 # State in React Components 
 
