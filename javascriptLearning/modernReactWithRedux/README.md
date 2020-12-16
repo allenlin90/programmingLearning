@@ -32,6 +32,10 @@ Finished
     1. [Handling Async Operations with Functional Components](#Handling-Async-Operations-with-Functional-Components)
     1. [Refactoring from Functional to Class Components](#Refactoring-from-Functional-to-Class-Components)
 1. [State in React Components](#State-in-React-Components) 
+    1. [The Rules of State](#The-Rules-of-State)
+    1. [Initializing State Through Constructors](#Initializing-State-Through-Constructors)
+    1. [Updating State Properties](#Updating-State-Properties)
+    1. [Handling Error Gracefully](#Handling-Error-Gracefully)
 1. [Understanding Lifecycle Methods](#Understanding-Lifecycle-Methods) 
 1. [Handling User Input with Forms and Events](#Handling-User-Input-with-Forms-and-Events) 
 1. [Making API Requests with React](#Making-API-Requests-with-React) 
@@ -723,6 +727,163 @@ Finished
 
 
 # State in React Components 
+## The Rules of State
+1. Rules of State
+    1. Only useable with class component.
+    1. You will confuse `props` with state.
+    1. '`State`' is a JS object that contains data relevant to a component.
+    1. Updating '`state`' on a component causes the component to (almost) instantly rerender.
+    1. State must be initialized when a component is created. 
+    1. State can only be updated using the function `setState`!
+1. We should always remeber to update state of a component only through `setState` function.
+
+## Initializing State Through Constructors
+1. As learnt from the previous section, we know that the state of a react component must be initialized when it is created. Therefore, in JavaScript class, we can use `constructor` function which will be first initiated when an instance is created through the object. 
+    ```js
+    class App extends React.Component {
+        constructor (props) {
+            super(props);
+
+            this.state = { lat: null };
+        }
+
+        render() {
+            windows.navigator.geolocation.getCurrentPosition(
+                position => console.log(position),
+                err => console.log(err),
+            );
+
+            return <div>Latitude: </div>
+        }
+    }
+    ```
+1. In addition, a side note that we must declare a render method in `App` class, which is extended from `React.Component`. React will return an error if the method is not defined. 
+1. Besides, `constructor (props) {super(props);}` is like ceremonial process which must be done for react. 
+1. By initializing the state, we can firstly assign a default value. In this case, we'd like to have the "**latitude**" of the user. As we haven't got the data, we can give the inital value as `null`. 
+
+## Updating State Properties
+1. We then can put the `this.state.lat` to the JSX to allow it to be rendered on the screen. 
+1. Note that at this point, there's nothing will be rendered because the `state.lat` is set to be `null` by default. This is the only time we will use direct assignment to assign a value to the state.
+1. We should always remember that we should use `.setState` method to update the state only.
+    ```js
+    class App extends React.Component {
+        constructor (props) {
+            super(props);
+
+            this.state = { lat: null };
+
+            windows.navigator.geolocation.getCurrentPosition(
+                position => {
+                    // we update state only through .setState method
+                    this.setState({ lat = position.coords.latitude });
+                },
+                err => console.log(err),
+            );
+        }
+
+        render() {
+            return <div>Latitude: { this.state.lat }</div> // provide the value according to state
+        }
+    }
+    ```
+
+## App Lifecycle Walkthrough
+1. We can only use `this.state` property on `this` object. The state system doesn't work if we use other property other than `state`. 
+1. Note that every time when `state` is updated, react will almost instantly rerender the component. 
+1. When the react app is opened by browser
+    1. JS file loaded by browser.
+    1. Instance of App component is created.
+    1. App component `constructor` function gets called.
+    1. State object is created and assigned to the `this.state` property.
+    1. We call geolocation service.
+    1. React calls the components render method.
+    1. App returns JSX, gets rendered to page as HTML.
+    1. We get result of geolocation from the async request.
+    1. We update our state object that contains data with a call to `this.setState`.
+    1. React sees that we updated the state of a component.
+    1. React calls our `render` method a second time. 
+    1. Render method returns some (updated) JSX.
+    1. React takes that JSX and updates contents on the screen.
+1. An important take away is that the components are actually rendred twice in this case. 
+1. In this case, the `state` is firstly assigned with `null`, so that there's nothing shown after "**Latitude**".
+1. After we receive data from the geolocation API, the `state` is updated, so react created the view with the updated view with the same components again.
+
+## Handling Error Gracefully
+1. Though we may have multiple properties in the `state` object, we don't need to update all the properties when receiving the data.
+1. Besides, when we change returned JSX component from single line to multiple line, we would easily forget to take the semi-column at the last off, which can be hard to identify for the compiling error. 
+    ```js
+    class App extends React.Component {
+        constructor(props) {
+            super(props);
+
+            // assign a 2nd property on state object
+            this.state = { lat: null, errorMessage: '' };
+
+            window.navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    this.setState({ lat: position.coords.latitude });
+                    console.log(position);
+                },
+                (err) => {
+                    this.setState({ errorMessage: err.message });
+                    console.log(err);
+                }
+            );
+        }
+
+        // React says we have to define render
+        render() {
+            return (
+                <div>
+                    Latitude: {this.state.lat}
+                    <br />
+                    Error: {this.state.errorMessage}
+                </div> // don't forget to take semi-column off at the last line when changing from single line to multiple line
+            );
+        }
+    }
+    ```
+
+## Conditionally Rendering Content
+1. In this app, we'd like to show different content on the screen in different conditions.
+    1. If we have got the `latitude`, we can show `latitude`.
+    1. If we have error message, we should show the error message.
+    1. If we haven't had any change or update, we can show "loading...".
+1. Though there's another way to render contents on the screen by conditions, we can simply use `if` statements to decide what to be shown according to the properties in the `state` object.
+    ```js
+    class App extends React.Component {
+        constructor(props) {
+            super(props);
+
+            this.state = { lat: null, errorMessage: '' };
+
+            window.navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    this.setState({ lat: position.coords.latitude });
+                    console.log(position);
+                },
+                (err) => {
+                    this.setState({ errorMessage: err.message });
+                    console.log(err);
+                }
+            );
+        }
+
+        // React says we have to define render
+        render() {
+            if (this.state.errorMessage && !this.state.lat) {
+                return <div>Error: {this.state.errorMessage}</div>;
+            }
+
+            if (!this.state.errorMessage && this.state.lat) {
+                return <div>Latitude: {this.state.lat}</div>;
+            }
+
+            return <div>Loading!</div>;
+        }
+    }
+    ```
+
 
 # Understanding Lifecycle Methods
 
