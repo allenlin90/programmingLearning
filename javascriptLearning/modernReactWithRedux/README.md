@@ -37,6 +37,14 @@ Finished
     1. [Updating State Properties](#Updating-State-Properties)
     1. [Handling Error Gracefully](#Handling-Error-Gracefully)
 1. [Understanding Lifecycle Methods](#Understanding-Lifecycle-Methods) 
+    1. [Introducing Lifecycle Methods](#Introducing-Lifecycle-Methods)
+    1. [Why Lifecycle Methods](#Why-Lifecycle-Methods)
+    1. [Alternate State Initialization](#Alternate-State-Initialization)
+    1. [Passing State as Props](#Passing-State-as-Props)
+    1. [Showing Icons](#Showing-Icons)
+    1. [Specifying Default Props](#Specifying-Default-Props)
+    1. [Avoid Conditionals in Render](#Avoid-Conditionals-in-Render)
+    1. [Breather and Review](#Breather-and-Review)
 1. [Handling User Input with Forms and Events](#Handling-User-Input-with-Forms-and-Events) 
 1. [Making API Requests with React](#Making-API-Requests-with-React) 
 1. [Building Lists of Records](#Building-Lists-of-Records) 
@@ -885,7 +893,360 @@ Finished
     ```
 
 
+
 # Understanding Lifecycle Methods
+## Introducing Lifecycle Methods
+1. For the `App` class instance, we can give more methods other than `constructor` and `render`. We can have `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount`. 
+1. Each of those methods will be called in the different stage of the lifecycle of a component. 
+1. Besides, `render` will be called multiple times during the lifecycle to render the JSX w/n updated data and values.
+1. Component Lifecycle
+    1. `constructor`
+    1. `render` (which makes content visible on the screen)
+    1. `componentDidMount` (Sit and wait for updates)
+    1. `componentDidUpdate` (Sit and wait until this component is not longer shown)
+    1. `componentWillUnmount` 
+    ```js
+    class App extends React.Component {
+        constructor(props) {
+            // properties and states
+        }
+
+        componentDidMount() {
+            console.log('My component was rendered to the screen');
+        }
+
+        componentDidUpdate() {
+            console.log('My component was just updated - it rerendered!');
+        }
+
+        render() {
+            // render view to the screen
+        }
+    }
+    ```
+
+## Why Lifecycle Methods?
+1. `constructor`is a good place to do one-time setup.
+1. `render` can avoid doing anything besides returning JSX.
+1. `componentDidMount` is a good place to do data loading.
+1. `componentDidUpdate` is good place to do more data loading when state/props change.
+1. `componentWillUnmount` is good place to do cleanup (especially for non-React stuff).
+1. Though we can make API calls for asnyc request in `constructor` directly, it's not recommended to do so.
+1. By keeping the data request separated in constructor, we can make the code cleaner.
+1. In addition, there are other lifecycle methods avaiable but not in frequent use, such as `shouldComponentUpdate`, `getDerivedStateFromProps`, and `getSnapshotBeforeUpdate`.
+
+## Refactoring Data Loading to Lifecycle Methods
+1. We put the geolocation API which request for user location in `componentDidMount` method
+    ```js
+    // index.js in App class
+    componentDidMount() {
+        window.navigator.geolocation.getCurrentPosition(
+            position => this.setState({ lat: position.coords.latitude }),
+            err => this.setState({ errorMessage: err.message })
+        );
+    }
+    ```
+
+## Alternate State Initialization
+1. We can refactor the constructor function in the class. In this case, we can simply use `state = { lat: null, errorMessage: ''}` without using `constructor (props) { super(props) }`.
+1. The reason that it works because `Babel` compile the JavaScript into another form which is compatible with ES5 and older browsers.
+    ```js
+    class App extends React.Component {
+        // build state without constructor function
+        state = { lat: null, errorMessage: '' };
+
+        componentDidMount() {
+            // data that is mounted
+        }
+
+        componentDidUpdate() {
+            console.log('My component was just updated - it rerendered!');
+        }
+
+        // React says we have to define render
+        render() {
+            // render JSX on screen
+        }
+    }
+    ```
+    <img src="./images/buildWithoutConstructorInReact.png">
+
+## Passing State as Props
+1. If there's no error message and we have received the latitude from geolocation API, we can pass it to the component to be rendered on the screen.
+    ```js
+    render() {
+        if (!this.state.errorMessage && this.state.lat) {
+            return <SeasonDisplay lat={this.state.lat} />;
+        }
+    }
+    ```
+1. We can update in `SeasonDisplay` component to receive the data from state. 
+    ```js
+    // SeasonDisplay.js
+    import React from 'react';
+
+    const SeasonDisplay = (props) => {
+        console.log(props.lat);
+        return <div>Season Display</div>;
+    };
+
+    export default SeasonDisplay;
+    ```
+
+## Determing Season
+1. As we have got the latitude to know which part in the world (or area) is the user at, we can return the aligned weather or season according to the location.
+1. In this case, if the month is from March to October, the northern part will be in summer, while the southern part will be in winter and vice versa. 
+    ```js
+    const getSeason = (lat, month) => {
+        if (month > 2 && month < 9) {
+            return lat > 0 ? 'summer' : 'winter';
+        } else {
+            return lat > 0 ? 'winter' : 'summer';
+        }
+    }
+
+    const SeasonDisplay = (props) => {
+        const season = getSeason(props.lat, new Date().getMonth());
+        console.log(season);
+        return <div>Season Display: {season}</div>;
+    };
+    ```
+
+## Ternary Expresssion in JSX
+1. We then can show different contents based on the returned value from `getSeason` function.
+1. As the case is relatively simple, we can use ternary statement to return the desirable statement.
+    ```js
+    const SeasonDisplay = (props) => {
+        const season = getSeason(props.lat, new Date().getMonth());
+        const text = season === 'winter' ? 'Burr, it is chilly' : 'Lets hit the beach';
+
+        return (
+            <div>
+                <h1>{text}</h1>
+            </div>
+        );
+    };
+    ```
+
+## Showing Icons
+1. We can use the [icons](https://semantic-ui.com/elements/icon.html#/icon) from semantic UI. In this case, we can use `sun` and `snowflake`. The syntax for semantic UI is `<i class="icon_name icon"></i>`.
+1. We then can import the icon according to the data from `season`.
+    ```js
+    const SeasonDisplay = (props) => {
+        const season = getSeason(props.lat, new Date().getMonth());
+        const text = season === 'winter' ? 'Burr, it is chilly' : 'Lets hit the beach';
+        const icon = season === 'winter' ? 'snowflake' : 'sun';
+
+        return (
+            <div>
+                <i className={`${icon} icon`} />
+                <h1>{text}</h1>
+                <i className={`${icon} icon`} />
+            </div>
+        );
+    };
+    ```
+
+## Extracting Options to Config Objects
+1. For the required data as configurations, we can create another object in the file to serve the purpose for cleaner code. 
+1. We can also use ES6 distructure to create variables from object properties. 
+    ```js
+    // SeasonDisplay.js
+    const seasonConfig = {
+        summer: {
+            text: `Let's hit the beach`,
+            iconName: 'sun'
+        },
+        winter: {
+            text: `Burr, it is chilly`,
+            iconName: 'snowflake'
+        }
+    };
+
+    const getSeason = (lat, month) => {
+        if (month > 2 && month < 9) {
+            return lat > 0 ? 'summer' : 'winter';
+        } else {
+            return lat > 0 ? 'winter' : 'summer';
+        }
+    }
+
+    const SeasonDisplay = (props) => {
+        const season = getSeason(props.lat, new Date().getMonth());
+        // ES6 destructuring assignment
+        const { text, iconName } = seasonConfig[season];
+
+        return (
+            <div>
+                <i className={`${iconName} icon`} />
+                <h1>{text}</h1>
+                <i className={`${iconName} icon`} />
+            </div>
+        );
+    };
+    ```
+
+## Adding some styling
+1. For styling with CSS, we can create `SeasonDisplay.css` in the same directory (src) with `SeasonDisplay.js`.
+1. Note that we give each icon a class as `icon-left` and `icon-right`.
+    ```js
+    <div>
+        <i className={`icon-left massive ${iconName} icon`} />
+        <h1>{text}</h1>
+        <i className={`icon-right massive ${iconName} icon`} />
+    </div>
+    ```
+1. After creating the css file, we can import it into the JavaScript by using webpack. In react framework, we can simply import the css file.
+    ```js
+    // SeasonDisplay
+    import './SeasonDisplay.css';
+    ```
+1. It is suggested to have the component name as the class name of the wrapper (container) of the HTML element, so we can ensure the following HTML elements can be easily grouped and selected with CSS as well.
+    ```js
+    const SeasonDisplay = (props) => {
+        const season = getSeason(props.lat, new Date().getMonth());
+        const { text, iconName } = seasonConfig[season];
+
+        return (
+            <div className={`season-display ${season}`}> // use component name
+                <i className={`icon-left massive ${iconName} icon`} />
+                <h1>{text}</h1>
+                <i className={`icon-right massive ${iconName} icon`} />
+            </div>
+        );
+    };
+    ```
+1. We use the following css to style our page.
+    ```css
+    /* SeasonDisplay.css */
+    .icon-left {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+    .icon-right {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .season-display {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .season-display.winter i {
+        color: blue;
+    }
+
+    .season-display.summer i {
+        color: red;
+    }
+
+    .winter {
+        background-color: aliceblue;
+    }
+
+    .summer {
+        background-color: orange;
+    }
+    ```
+
+## Showing a Loading Snipper
+1. During the very first view when the page is rendered, as we haven't got the data of the location from the user because the browser is asking for user's permission, the page is blank in this case.
+1. We can add a loader to improve user experience and understand the state of the program that it is waiting to receive and load the contents after getting the data or permission from the user. 
+1. In this case, we can refer to the [loader](https://semantic-ui.com/elements/loader.html) element from semantic UI.
+1. As we should avoid using raw JSX in `App` directly and tend to create reusable components, we can create another file for `Spinner`.
+    ```js
+    // Spinner.js
+    import React from 'react';
+
+    const Spinner = () => {
+        return (
+            <div className="ui active dimmer">
+                <div className="ui big text loader">Loading...</div>
+            </div>
+        );
+    };
+
+    export default Spinner;
+    ```
+1. We then can import and use the component in `App`.
+    ```js
+    import Spinner from './Spinner';
+    render() {
+        return <Spinner />;
+    }
+    ```
+
+## Specifying Default Props
+1. Though we have installed a loader (spinner animation) to indicate that the page is loading, it will much clearer to users that what are the current requirements to them. 
+1. Therefore, we can use `props` to send `prop.message` variable from `App`.
+1. In the component file, we can use `||` logical operator to return a default message when there's nothing passed to the variable because we could forget to put variable in by chances. However, we can use another syntax for the case.
+    ```js
+    // Spinner.js
+    Spinner.defaultProps = {
+        message: 'Loading...'
+    }
+    ```
+
+## Avoid Conditionals in Render
+1. If we'd like to create a template-like styling feature to apply to all the JSX, we don't need to add raw JSX directly with classes to the components.
+1. We can use "helper function" that can apply all the elements with styling to the components. In this case, we create another method `renderContent` in `App` instance.
+1. We then can use single element to wrap the returned JSX and call the method by `this.renderContent()`.
+    ```js
+    renderContent() {
+        if (this.state.errorMessage && !this.state.lat) {
+            return <div>Error: {this.state.errorMessage}</div>;
+        }
+
+        if (!this.state.errorMessage && this.state.lat) {
+            return <SeasonDisplay lat={this.state.lat} />;
+        }
+
+        // return <Spinner />;
+        return <Spinner message="Please accept location request" />;
+    }
+
+    // React says we have to define render
+    render() {
+        return (
+            <div className="border red">
+                {this.renderContent()} // call the rednerContent function for JSX
+            </div>
+        );
+    };
+    ```
+
+## Breather and Review
+1. Benefits of using `class` components
+    1. Easier code organization.
+    1. Can use `state` (another React system) which makes it easier to handle user input.
+    1. Understands lifecycle events which makes it easier to do things when the app first starts.
+1. In convention, we should put components at the bottom of the code and put configure object and helper function above.
+1. Rules of `Class Components`
+    1. Must be a JavaScript class.
+    1. Must extend (subclass) from `React.Component`.
+    1. Must define a `render` method that returns some amount of JSX.
+1. Rules of `State`
+    1. Only useable with class components.
+    1. You will confuse `props` with `state`.
+    1. `State` is a JS object that contains data relevant to a component.
+    1. Updating `state` on a component causes the component to (almost) instantly rerender.
+    1. `State` must be initializd when a component is created.
+    1. `State` can be updated using the function `setState`.
+1. We should never assign the value to properties on `state` object.
+1. Component Lifecycle
+    1. `constructor`
+    1. `render`
+    1. `componentDidMount`
+    1. `componentDidUpdate`
+    1. `componentWillUnmount`
+
+
 
 # Handling User Input with Forms and Events 
 
