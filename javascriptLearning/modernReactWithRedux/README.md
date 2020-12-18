@@ -46,6 +46,12 @@ Finished
     1. [Avoid Conditionals in Render](#Avoid-Conditionals-in-Render)
     1. [Breather and Review](#Breather-and-Review)
 1. [Handling User Input with Forms and Events](#Handling-User-Input-with-Forms-and-Events) 
+    1. [App Overview](#App-Overview)
+    1. [Component Design](#Component-Design)
+    1. [Adding Some Project Structure](#Adding-Some-Project-Structure)
+    1. [Showing Forms to the User](#Showing-Forms-to-the-User)
+    1. [Creating Event Handlers](#Creating-Event-Handlers)
+    1. [Uncontrolled vs Controlled Elements](#Uncontrolled-vs-Controlled-Elements)
 1. [Making API Requests with React](#Making-API-Requests-with-React) 
 1. [Building Lists of Records](#Building-Lists-of-Records) 
 1. [Using Ref's for DOM Access](#Using-Ref's-for-DOM-Access) 
@@ -1249,6 +1255,214 @@ Finished
 
 
 # Handling User Input with Forms and Events 
+## App Overview
+1. The main tasks for the app to acheive 
+    1. How do we get feedback from the user?
+    1. How do we fetch data from some outside API or server?
+    1. How do we show lists of records?
+1. We will have several versions of app
+    1. Show a list of results that the user searches. Users can scroll down to check all the results.
+    1. Show a grid of results which images are in different sizes.
+
+## Component Design
+1. App Challenges
+    1. Need to get earch term from the user.
+    1. Need to use that search term to make a request to an outside API and fetch data.
+    1. Need to take the fetched images and show them on the screen in a list.
+1. In the 1st version app, we have 2 main components, `SearchBar` and `ImageList`. 
+
+## Adding Some Project Structure
+1. In this case, we'd like to strucutre and keep the files organized.
+1. As we will use several components, we can create another folder `components` in the `src` directory.
+1. In this case, we can keep `App` in a separate file.
+    ```js
+    // index.js 
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import App from './components/App'
+
+    ReactDOM.render(
+        <App />,
+        document.querySelector('#root')
+    );
+
+    // App.js
+    import React from 'react';
+
+    const App = (props) => {
+        return <div>App</div>;
+    }
+
+    export default App;
+    ```
+
+## Showing Forms to the User
+1. We can create a `SearchBar` component and import it into `App.js`.
+    ```js
+    // components/SearchBar.js
+    import React from 'react';
+
+    class SearchBar extends React.Component {
+        render() {
+            return (
+                <div>
+                    <form>
+                        <input />
+                    </form>
+                </div>
+            );
+        }
+    }
+
+    export default SearchBar;
+    ```
+
+## Adding a Touch Style
+1. We can use CDN and `<link>` tag to use semantic UI.
+1. After importing semantic UI, we can modify the sturecture of JSX.
+1. We then add some inline styling for the component for the magin on the top to give some space for the component.
+    ```js
+    // SearchBar.js
+    class SearchBar extends React.Component {
+        render() {
+            return (
+                <div className="ui segment">
+                    <form className="ui form">
+                        <div className="field">
+                            <label>Image Search</label>
+                            <input type="text" />
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+    }
+
+    // App.js
+    const App = (props) => {
+        return (
+            <div className="ui container" style={{ marginTop: '10px' }}>
+                <SearchBar />
+            </div>
+        );
+    };
+    ```
+    <img src="./images/picsSearchBar.png">
+
+## Creating Event Handlers
+1. We can use some event handling properties on the HTML element directly.
+1. In this case, we want to catch what the user has input to the `SearchBar` component.
+1. There are several frequent used event hanlders that we can use in the case.
+    1. `onClick` works when user clicks on something.
+    1. `onChange` works when user changes text in an input.
+    1. `onSubmit` works when user submits a form.
+1. In convention, we can name the event handling method starting with `on` or `handle` and starts with lowercase.
+1. Note that we should only pass the callback function for `onChange` or `onClick` rather than using parethesis because we don't want the function be fired every time when the page is loaded.
+    ```js
+    class SearchBar extends React.Component {
+        onInputChange(event) {
+            console.log(event.target.value);
+        }
+
+        render() {
+            return (
+                <div className="ui segment">
+                    <form className="ui form">
+                        <div className="field">
+                            <label>Image Search</label>
+                            // use onChange with callback function
+                            <input type="text" onChange={this.onInputChange} />
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+    }
+    ```
+
+## Alternate Event Handler Syntax
+1. Besides passing a method for the object to work on event handling, we can pass an anonymous function directly.
+    ```js
+    class SearchBar extends React.Component {
+        onInputChange(event) {
+            console.log(event.target.value);
+        }
+
+        render() {
+            return (
+                <div className="ui segment">
+                    <form className="ui form">
+                        <div className="field">
+                            <label>Image Search</label>
+                            // pass anonymous function rather than referring to object method
+                            <input type="text" onChange={e => console.log(e.target.value)} />
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+    }
+    ```
+
+## Uncontrolled vs Controlled Elements
+1. The component is not controlled so far, and we can create a `state` object to catch the value when the user is working with the `App`.
+1. In this case, we can use `value` property of `input` element to store the value that the user gives.
+    ```js
+    class SearchBar extends React.Component {
+        state = { term: '' }
+
+        render() {
+            return (
+                <div className="ui segment">
+                    <form className="ui form">
+                        <div className="field">
+                            <label>Image Search</label>
+                            <input
+                                type="text"
+                                value={this.state.term}
+                                onChange={e => this.setState({ term: e.target.value })}
+                            />
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+    }
+    ```
+
+## More on Controlled Elements
+1. Before we refactor the element to be controlled, we can use JavaScript and use DOM to check the value of the `input` element.
+1. In this case, the react app itself doesn't actually know the value that is given by the user. 
+1. This improve the preformance and efficiency for react app to manipulate the data, as the value is stored in the `state` and can be used instantly without fetching from the DOM (which is relatively slow) and use it somewhere else.
+1. After refactoring the component, the process is changing from "fetching the data and use it" to "create with it since the beginning". 
+1. When the component is rendered the data is stored in the `value` property at the beginning.
+1. Besides, we can apply filter when receiving data input from users. For example, we can turn all the input string into uppercase or lowercase. 
+    ```js
+    class SearchBar extends React.Component {
+        state = { term: '' }
+
+        render() {
+            return (
+                <div className="ui segment">
+                    <form className="ui form">
+                        <div className="field">
+                            <label>Image Search</label>
+                            <input
+                                type="text"
+                                value={this.state.term}
+                                // turn all the input into uppercase
+                                onChange={e => this.setState({ term: e.target.value.toUpperCase() })}
+                            />
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+    }
+    ```
+
+
+
 
 # Making API Requests with React 
 
