@@ -1461,6 +1461,118 @@ Finished
     }
     ```
 
+## Handling Form Submittal
+1. When user gives input in the input block and press <kbd>Enter</kbd>, the browser will send a request to the backend and refresh the page by default.
+1. In vanilla JavaScript, We can use JavaScript DOM to select the `<form>` element and prevent it to proceed default behavior. 
+1. In react, we can use `onSubmit` event handler in `<form>` tag and put the callback function in the object method to be called.
+    ```js
+    class SearchBar extends React.Component {
+        state = { term: '' }
+
+        onFormSubmit(event) {
+            event.preventDefault();
+
+            console.log(this.state.term);
+        }
+
+        render() {
+            return (
+                <div className="ui segment">
+                    // use onSubmit property and callback function to prevent default behavior
+                    <form className="ui form" onSubmit={this.onFormSubmit}>
+                        <div className="field">
+                            <label>Image Search</label>
+                            <input
+                                type="text"
+                                value={this.state.term}
+                                onChange={e => this.setState({ term: e.target.value })}
+                            />
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+    }
+    ```
+1. We can also put `console.log` in the `onFormSubmit` method to print what has the user gave to the app. However, at the current solution, it casues problems and turns the app collapse if we simply print the `state` in the method.
+    ```js
+    onFormSubmit() {
+        // only printing the state make the app crashes
+        console.log(this.state.term);
+    }
+    ```
+
+## Understanding 'this' in JavaScript
+1. The main reason that causes problems in the last section is the "**lexical scope**" where to call the method of the object. 
+1. As the `render` method is called in the regular condition, the method can access `this` correct from the object. 
+1. However, when we use callback in the method, the lexical scope changes, and `this` is pointing to the current lexical scope which doesn't have `this.state` property. This is the main reason why we get a reference error that the system prompts us that we are trying to fetch the value of a property from `undefined`.
+1. Therefore, one of the solution is to use `.bind` method and refer to `this` when assigning callback function in the `onSubmit` property.
+    ```js
+    // this solution is from experience and current knowledge rather than from the course
+    <form className="ui form" onSubmit={this.onFormSubmit.bind(this)}>
+    ```
+
+## Solving Context Issues
+1. One of the solutions is to use `.bind` to method to refere to `this` when building the constructor
+    ```js
+    class Car {
+        constructor() {
+            // use bind to assign this to ensure 'this' is referred to correct object
+            this.drive = this.drive.bind(this);
+        }
+
+        setDriveSound(sound) {
+            this.sound = sound;
+        }
+
+        drive() {
+            return this.sound;
+        }
+    }
+
+    const car = new Car;
+    car.setDriveSround('vroom');
+
+    const drive = car.drive;
+    ```
+1. The other solution is to use arrow function in which `this` will refer to the parent scope of the arrow function. In this case, we have 2 ways to use arrow function.
+    1. We can use arrow function to build the method when declaring the class.    
+    ```js
+    class SearchBar extends React.Component {
+        // use arrow function to prevent incorrect scope reference
+        onFormSubmit = (event) => {
+            event.preventDefault();
+            console.log(this.state.term);
+        }
+
+        render() {
+            return(
+                <form onSubmit={this.onFormSubmit}>
+                    // ...
+                </form>
+            );
+        }
+    }
+    ```
+    1. The other way is to use arrow function in `render` method to as passing an anonymous arrow function for `onSubmit` property.
+    ```js
+    class SearchBar extends React.Component {
+        onFormSubmit(event) {
+            event.preventDefault();
+            console.log(this.state.term);
+        }
+
+        render(){
+            return (
+                // pass an anonymous arrow function
+                <form onSubmit={(event) => this.onFormSubmit(event)} className="ui form">
+                    // ...
+                </form>
+            );
+        };
+    }
+    ``` 
+
 
 
 
