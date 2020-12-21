@@ -52,6 +52,12 @@ Finished
     1. [Showing Forms to the User](#Showing-Forms-to-the-User)
     1. [Creating Event Handlers](#Creating-Event-Handlers)
     1. [Uncontrolled vs Controlled Elements](#Uncontrolled-vs-Controlled-Elements)
+    1. [More on Controlled Elements](#More-on-Controlled-Elements)
+    1. [Handling Form Submittal](#Handling-Form-Submittal)
+    1. [Understanding 'this' in JavaScript](#Understanding-'this'-in-JavaScript)
+    1. [Solving Context Issues](#Solving-Context-Issues)
+    1. [Communicating Child to Parent](#Communicating-Child-to-Parent)
+    1. [Invoking Callbacks in Children](#Invoking-Callbacks-in-Children)
 1. [Making API Requests with React](#Making-API-Requests-with-React) 
 1. [Building Lists of Records](#Building-Lists-of-Records) 
 1. [Using Ref's for DOM Access](#Using-Ref's-for-DOM-Access) 
@@ -1571,8 +1577,60 @@ Finished
             );
         };
     }
-    ``` 
+    ```
 
+## Communicating Child to Parent
+1. In this project, the main purpose for `SearchBar` component is to collect user input and pass the data to `App` component to work on further functions such as making a API request.
+1. In the previous sections, we learnt usnig `props` system which only allows us to pass value from parent to child. 
+1. The solution in this case is to turn `App` into a "**class**" component which has method that can be called by `SearchBar` component, so the value can be passed and retreived from `SearchBar` to `App`.
+    ```js
+    // App.js
+    class App extends React.Component {
+        onSearchSubmit(term) {
+            console.log(term);
+        }
+
+        render() {
+            return (
+                <div className="ui container" style={{ marginTop: '10px' }}>
+                    // pass the method of the class with 'this'
+                    <SearchBar onSubmit={this.onSearchSubmit} />
+                </div>
+            );
+        }
+    };
+    ``
+
+## Invoking Callbacks in Children
+1. In class based components, we need to refer to `this` to use `.prop` from parent component.
+    ```js
+    class SearchBar extends React.Component {
+        state = { term: '' };
+
+        onFormSubmit = (event) => {
+            event.preventDefault();
+            // use this.props to get the methods from parent component
+            this.props.onSubmit(this.state.term);
+        };
+
+        render(props) {
+            return (
+                <div className="ui segment">
+                    <form className="ui form" onSubmit={this.onFormSubmit}>
+                        <div className="field">
+                            <label>Image Search</label>
+                            <input
+                                type="text"
+                                value={this.state.term}
+                                onChange={e => this.setState({ term: e.target.value })}
+                            />
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+    }
+    ```
 
 
 
