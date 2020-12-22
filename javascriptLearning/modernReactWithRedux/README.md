@@ -71,7 +71,15 @@ Finished
     1. [Rendering Lists of Components](#Rendering-Lists-of-Components)
     1. [The Purpose of Keys in Lists](#The-Purpose-of-Keys-in-Lists)
     1. [Implementing Keys in Lists](#Implementing-Keys-in-Lists)
-1. [Using Ref's for DOM Access](#Using-Ref's-for-DOM-Access) 
+1. [Using Ref's for DOM Access](#Using-Ref's-for-DOM-Access)
+    1. [Grid CSS](#Grid-CSS)
+    1. [Issues with Grid CSS](#Issues-with-Grid-CSS)
+    1. [Creating an Image Card Component](#Creating-an-Image-Card-Component)
+    1. [Accessing the DOM with Refs](#Accessing-the-DOM-with-Refs)
+    1. [Accessing Image Height](#Accessing-Image-Height)
+    1. [Callbacks on Image Load](#Callbacks-on-Image-Load)
+    1. [Dynamic Spans](#Dynamic-Spans)
+    1. [App Review](#App-Review)
 1. [Let's Test Your React Mastery!](#Let's-Test-Your-React-Mastery!) 
 1. [Understanding Hooks in React](#Understanding-Hooks-in-React) 
 1. [Navigation From Scratch](#Navigation-From-Scratch) 
@@ -1917,6 +1925,257 @@ Finished
 
 
 # Using Ref's for DOM Access
+## Grid CSS
+1. In `pics` project, the images responded by Unsplash API is too large to provide a decent UI. 
+1. For images, we can use CSS `Grid` system to create a layout. We create `ImageList.css` in comopnents directory.
+    ```css
+    .image-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-gap: 10px;
+    }
+
+    .image-list img {
+        width: 250px;
+    }
+    ```
+1. We need to assign class to the `<div>` tag which wraps all the images. Besides, we need to import the CSS file to use the style.
+    ```js
+    import './ImageList.css';
+    import React from 'react';
+
+    const ImageList = (props) => {
+        console.log(props.images)
+        const images = props.images.map(({ alt_description, id, urls }) => {
+            return <img key={id} src={urls.regular} alt={alt_description} />
+        });
+
+        return <div className="image-list">{images}</div>;
+    }
+
+    export default ImageList;
+    ```
+    <img src="./images/pics_first_grid.png">
+
+## Issues with Grid CSS
+1. Though we give a grid layout for all the images in the list, each image has different size with various width and height. Besides, the white space between each cell in the grid can be either too large or small. If the white space is not enough, the image will overflow its own cell and overlap then cover images in the nearby cells. 
+1. In this case, we can give a single CSS property `grid-row-end: span 2` which can span the space for the image. 
+1. However, we can't hard coded for the case because each image would require different number of span in the grid. For example, some images can be held by a single regular cell, while some may need up to 4 spans.
+1. Therefore, we can't simply solve the issue with only CSS. 
+    ```css
+    .image-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-gap: 10px;
+        grid-auto-rows: 150px;
+    }
+
+    .image-list img {
+        width: 250px;
+        grid-row-end: span 2;
+    }
+    ```
+
+## Creating an Image Card Component
+1. We will create a new React component which will render each individual image. Besides, it will adjust the component according to the height of the single image. 
+1. We then create a new JS file in `component` folder name `ImageCard.js`. We can use destructuring assignment to avoid retreiving data from object properties.
+    ```js
+    // src/components/ImageCard.js
+    import React from 'react';
+
+    class ImageCard extends React.Component {
+        render() {
+            const { alt_description, urls } = this.props.image;
+            return (
+                <div>
+                    <img
+                        alt={alt_description}
+                        src={urls.regular}
+                    />
+                </div>
+            );
+        };
+    }
+
+    export default ImageCard;
+    ```
+1. Besides, we need to refactor `ImageList.js` 
+    ```js
+    import './ImageList.css';
+    import React from 'react';
+    import ImageCard from './ImageCard';
+
+    const ImageList = (props) => {
+        console.log(props.images)
+        const images = props.images.map((image) => {
+            return <ImageCard key={image.id} image={image} />
+        });
+
+        return <div className="image-list">{images}</div>;
+    }
+
+    export default ImageList;
+    ``` 
+
+## Accessing the DOM with Refs
+1. The flow of how the components work
+    1. Let the `ImageCard` render itself and its image
+    1. Reach into the DOM and figure out the height of the image
+    1. Set the image height on state to get the component to rerender
+    1. When rerendering, assign a `grid-row-end` to make sure the image takes up the appropriate space. 
+1. Note that in vanilla JavaScript, we can use DOM such as `document.querySelector('img')` to select the first image element on the page. Then we can use `.clientHeight` to check the height of the image.
+1. In this case, we use "**React Reference System**" (`React Refs`) which can
+    1. Gives access to a single DOM element
+    1. We create `refs` in the constructor, assign them to instance variables, then pass to a particular JSX element as `props`.
+
+## Accessing Image Height
+1. To use `refs` in this case, we create `constructor` in `ImageCard` component.
+1. Besides, we need to refer to its parent properties by using `super`.
+1. Then we can declare the property for the object with `React.createRef()` to create a DOM node which selects the element.
+1. We put `ref` with the value from the property in the `img` tag. Note that this is a JSX tag rather than HTML. This tag will become a DOM selector that collects the node info.
+1. We then can use `componentDidMount` which will be triggered when the request has got the respond data. We can check the data that we select with `this.imageRef`. This will show the element that we select by the DOM.
+1. However, we can't actually access the data from the DOM at this step. If the data is given and updated from an API, at the moment when the DOM is checked, the data is actually not returned from the API yet. 
+1. Therefore, in the following case, we will see all `0`s printed in the console when we try to check `this.imageRef.current.clientHeight`. Note that we still can check the value from the object in the console directly because the web browser engine is fancy enough to get and show the data in the developer console. 
+1. Nevertheless, we have to understand that in this step, the data hasn't actually been returned and this is the reason why we will get `0` printed from the property of the DOM node. 
+    ```js
+    import React from 'react';
+
+    class ImageCard extends React.Component {
+        constructor(props) {
+            super(props);
+
+            this.imageRef = React.createRef();
+        }
+
+        componentDidMount() {
+            console.log(this.imageRef.current.clientHeight);
+        }
+
+        render() {
+            const { alt_description, urls } = this.props.image;
+            return (
+                <div>
+                    <img
+                        ref={this.imageRef}
+                        alt={alt_description}
+                        src={urls.regular}
+                    />
+                </div>
+            );
+        };
+    }
+
+    export default ImageCard;
+    ```
+
+## Callbacks on Image Load
+1. We then add an event listener on the node directly with an event `load`, which only fires when the image is loaded completely and call the callback function.
+1. Note that this callback function is a method from the same object. To avoid incorrect `this` scope reference, we should use arrow function to declare the method in the class. 
+    ```js
+    import React from 'react';
+
+    class ImageCard extends React.Component {
+        constructor(props) {
+            super(props);
+
+            this.imageRef = React.createRef();
+        }
+
+        // add event listener and only runs the callback function after the image is loaded
+        componentDidMount() {
+            this.imageRef.current.addEventListener('load', this.setSpans);
+        }
+
+        // use arrow function to prevent incorrect this reference
+        setSpans = () => {
+            console.log(this.imageRef.current.clientHeight);
+        }
+
+        render() {
+            const { alt_description, urls } = this.props.image;
+            return (
+                <div>
+                    <img
+                        ref={this.imageRef}
+                        alt={alt_description}
+                        src={urls.regular}
+                    />
+                </div>
+            );
+        };
+    }
+
+    export default ImageCard;
+    ```
+
+## Dynamic Spans
+1. In the callback function `setSpan`, we can decide how much `span` we are going to assign to the element according to its height. 
+1. We use `state` property to keep the updated and calculated number for `span` in `state.spans` and give the default value at `0`.
+1. We calculate the number of `spans` that should be given to the image according to the height of each row in the `grid`. In this case, we have default height for each row as `grid-auto-rows: 10px`. Note that the initila height at `150px` is way too much that it gives too much white space between the images.
+    ```js
+    // src/components/ImageCard.js
+    import React from 'react';
+
+    class ImageCard extends React.Component {
+        constructor(props) {
+            super(props);
+
+            this.state = { spans: 0 };
+
+            this.imageRef = React.createRef();
+        }
+
+        componentDidMount() {
+            this.imageRef.current.addEventListener('load', this.setSpans);
+        }
+
+        setSpans = () => {
+            const height = this.imageRef.current.clientHeight;
+            const spans = Math.ceil(height / 10);
+            this.setState({ spans });
+        }
+
+        render() {
+            const { alt_description, urls } = this.props.image;
+            return (
+                <div style={{ gridRowEnd: `span ${this.state.spans}` }}>
+                    <img
+                        ref={this.imageRef}
+                        alt={alt_description}
+                        src={urls.regular}
+                    />
+                </div>
+            );
+        };
+    }
+
+    export default ImageCard;
+    ```
+1. Note that we also need to adjust CSS to render the gap between the cells in the grid with `grid-gap`. Besides, we can give 2 values to the property, as the 1st one is for horizontal, and the 2nd one is for vertical. In this case, we only need gap between cells in the vertical way.
+    ```css
+    .image-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-gap: 0 10px;
+        grid-auto-rows: 10px;
+    }
+
+    .image-list img {
+        width: 250px;
+        grid-row-end: span 2;
+    }
+    ```
+    <img src="./images/picsGridFinal.png">
+
+
+## App Review
+1. As we learn from this project, in most of the cases to avoid incorrect `this` reference, we can use arrow function to declare functions.
+1. We can use `props` system to communicate and send data from parent to child component. 
+1. On the other hand, if we'd like to pass data from a child to its parent component, we can send a callback function for the child component to call and send the data back. 
+1. `.map` is a useful array method to create a list in React app. 
+1. To interact with DOM or individual element, we can use `refs` system to create a `ref` in the consturctor with `React.createRef()` then pass it as `ref` property into the tag of the element. We then can manipulate it as regular JavaScript DOM node.
+
+
 
 # Let's Test Your React Mastery! 
 
