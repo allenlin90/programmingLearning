@@ -66,6 +66,11 @@ Finished
     1. [Setting State After Async Requests](#Setting-State-After-Async-Requests)
     1. [Creating Custom Clients](#Creating-Custom-Clients)
 1. [Building Lists of Records](#Building-Lists-of-Records) 
+    1. [Rendering Lists](#Rendering-Lists)
+    1. [Review of Map Statements](#Review-of-Map-Statements)
+    1. [Rendering Lists of Components](#Rendering-Lists-of-Components)
+    1. [The Purpose of Keys in Lists](#The-Purpose-of-Keys-in-Lists)
+    1. [Implementing Keys in Lists](#Implementing-Keys-in-Lists)
 1. [Using Ref's for DOM Access](#Using-Ref's-for-DOM-Access) 
 1. [Let's Test Your React Mastery!](#Let's-Test-Your-React-Mastery!) 
 1. [Understanding Hooks in React](#Understanding-Hooks-in-React) 
@@ -1820,6 +1825,96 @@ Finished
 
 
 # Building Lists of Records
+## Rendering Lists
+1. We create a new component `ImageList` in component directory to render the list of images returned from unsplash API. Note that we can retreieve data passed from parent object 
+    ```js
+    // src/components/ImageList.js
+    import React from 'react';
+
+    const ImageList = (props) => {
+        return (
+            console.log(props.images);
+            <div>ImageList</div>;
+        );
+    };
+
+    export defualt ImageList;
+    ```
+1. We import the `ImageList` to `App` comopnent and pass the array of image URLs from parent to child component. Note that we should pass the fetched data from `App` to `ImageList`, so it can be retreived from `props` argument. 
+    ```js
+    import ImageList from './ImageList.js';
+
+    class App extends React.Component {
+        state = {images: []};
+
+        render() {
+            return (
+                <ImageList images={this.state.images} />
+            );
+        }
+    }
+    ```
+
+## Review of Map Statements
+1. `.map` is an array method for arrays in JavaScript that we can use the method to create a new array based on the elements of a given array.
+1. Without the array method, we have to declare a new empty array and use `for loop` to push 
+    ```js
+    const numbers = [0, 1, 2, 3, 4];
+
+    let newNumbers = [];
+
+    for (let i = 0; i < numbers.length; i++) {
+        newNumbers.push(numbers[i] * 10);
+    }
+
+    numbers.map( num => num * 10);
+
+    numbers.map(num => <div>{num}</div>);
+    ```
+
+## Rendering Lists of Components
+1. With `.map` array method, we can create a new array from the `props` which has an array of URLs and turn them into `<img>` tags that can show the images. 
+1. Note that we will get a warning about the `key` prop for each child element. Note that the app still works though there's warning for this.
+    ```js
+    // ImageList.js
+    import React from 'react';
+
+    const ImageList = (props) => {
+        const images = props.images.map((image) => {
+            return <img src={image.urls.regular} />
+        });
+
+        return <div>{images}</div>;
+    }
+
+    export default ImageList;
+    ```
+
+## The Purpose of Keys in Lists
+1. From the last section, we get warning noticed that "**Each child in an array or iterator should have a unique 'key' prop**".
+1. The main purpose of using `key` is to prevent React repeating the tasks that have been done. For example, we have a list of 3 tasks that have been rendered on the screen. If we have another new task added to the list, we only want the React App to be efficient that it only renders the latest one which hasn't been rendered to the screen rather tahn rerender all the items again. 
+1. Therefore, we use the `key` for each item that is iterated through an array.
+
+## Implementing Keys in Lists
+1. To give `key` to each item through iteration, we can give another property `key` to each `<img>` tag when creating the new array through `.map`.
+1. After we give `key` property to each element, React also prompted another warning to request `alt` property for each image. `alt` is used and shown when the image can't be imported correctly, so it can describe what's going on with the image. This property is good for SEO and impaired users when browsing the web.
+1. Besides, we can use destructuring assignment to create new arguments from the object directly.
+    ```js
+    import React from 'react';
+
+    const ImageList = (props) => {
+        console.log(props.images)
+        const images = props.images.map(({ alt_description, id, urls }) => { // use destructuring assignment
+            return <img key={id} src={urls.regular} alt={alt_description} />
+        });
+
+        return <div>{images}</div>;
+    }
+
+    export default ImageList;
+    ```
+
+
 
 # Using Ref's for DOM Access
 
