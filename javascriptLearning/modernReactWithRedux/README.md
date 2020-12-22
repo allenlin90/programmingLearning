@@ -59,6 +59,12 @@ Finished
     1. [Communicating Child to Parent](#Communicating-Child-to-Parent)
     1. [Invoking Callbacks in Children](#Invoking-Callbacks-in-Children)
 1. [Making API Requests with React](#Making-API-Requests-with-React) 
+    1. [Fetching Data](#Fetching-Data)
+    1. [Axios vs Fetch](#Axios-vs-Fetch)
+    1. [Viewing Request Results](#Viewing-Request-Results)
+    1. [Handling Requests with Async Await](#Handling-Requests-with-Async-Await)
+    1. [Setting State After Async Requests](#Setting-State-After-Async-Requests)
+    1. [Creating Custom Clients](#Creating-Custom-Clients)
 1. [Building Lists of Records](#Building-Lists-of-Records) 
 1. [Using Ref's for DOM Access](#Using-Ref's-for-DOM-Access) 
 1. [Let's Test Your React Mastery!](#Let's-Test-Your-React-Mastery!) 
@@ -1635,6 +1641,183 @@ Finished
 
 
 # Making API Requests with React 
+## Fetching Data
+1. In this project, we can use unsplash api which provides HD images. Our task is to send request from our App to unsplash endpoint which will return a JSON file with data. We firstly go to register at [Unsplash Developer](https://unsplash.com/developers).
+1. We can also check its [documentation](https://unsplash.com/documentation) to learn how to use unsplash endpoint.
+
+## Axios vs Fetch
+1. In React, we can use 3rd part package such as `axios` or `fetch` function that is built into modern browsers.
+1. The tradeoff of using `fetch` is that it is a reltative low-level function that there's much more code we have to write. 
+1. We can use `npm i axios --save` to install `axios` for the project. We then can use `import` syntax to use the package.
+    ```js
+    // App.js
+    import axios from 'axios';
+    ```
+
+## Viewing Request Results
+1. According to [Unsplash documentation](https://unsplash.com/documentation#search-photos), we can search for photos through `/search/photos` through `GET` request.
+1. Note that the [root location](https://unsplash.com/documentation#location) for unsplash API is `https://api.unsplash.com/`.
+1. To do [authentication](#https://unsplash.com/documentation#public-authentication), we can put the access key in the header of the request.
+1. Note that we should follow the syntax and requirements from unsplash for the request specifically. For example, according to documentation `Authorization: Client-ID YOUR_ACCESS_KEY` is with uppercase `A` and `Client-ID` as part of the value for the property. We then put this in `headers` object in the request.
+1. Besides, we can put the `term` which is the user input to `params` to send with the `GET` request.
+1. Note that we haven't handle the JSON returned by reponse. However, we can check the data in develop console in the browser in "network" tab. We can find that a big object is returned and find `urls` in the `results` array for the images.
+    ```js
+    import React from 'react';
+    import axios from 'axios';
+
+    class App extends React.Component {
+        onSearchSubmit(term) {
+            axios.get('https://api.unsplash.com/search/photos', {
+                params: {
+                    query: term
+                },
+                headers: {
+                    Authorization: 'Client-ID Aej6-RfDMJ9kg1hnpdUdDwgT9-A-HcEpol9FMj9ugn4'
+                }
+            });
+        }
+
+        render() {
+            return (
+                <div className="ui container" style={{ marginTop: '10px' }}>
+                    <SearchBar onSubmit={this.onSearchSubmit} />
+                </div>
+            );
+        }
+    }
+
+    export default App;
+    ```
+
+## Handling Requests with Async Await
+1. The process of React app when running on request
+    1. Component renders itself one time with no list of images
+    1. `onSearchSubmit` method is called
+    1. Request is made to `unspalsh`
+    1. Wait for response from the API
+    1. Request complete
+    1. Set image data on `state` of `App` component
+    1. `App` component rerenders and shows images
+1. There are 2 ways to handle async events, `Promise` or `Async Await`.
+    1. To use `Promise`, we can take off the semi-column after the `axios` request and put `.then()` method to handle the response data.
+    ```js
+    onSearchSubmit(term) {
+        axios.get('https://api.unsplash.com/search/photos', {
+            params: {
+                query: term
+            },
+            headers: {
+                Authorization: 'Client-ID Aej6-RfDMJ9kg1hnpdUdDwgT9-A-HcEpol9FMj9ugn4'
+            }
+        })
+        .then(response => {
+            console.log(response.data.results);
+        })
+    }
+    ```
+    1. For `Async Await`, we should mark `onSearchSubmit` as `async` function.
+    ```js
+    async onSearchSubmit(term) { // decalre for async function
+        const response = await axios.get('https://api.unsplash.com/search/photos', { // use await to put the function to event loop
+            params: {
+                query: term
+            },
+            headers: {
+                Authorization: 'Client-ID Aej6-RfDMJ9kg1hnpdUdDwgT9-A-HcEpol9FMj9ugn4'
+            }
+        });
+
+        // manipulate the response data in async function
+        console.log(response.data.results);
+    }
+    ```
+
+## Setting State After Async Requests
+1. We then declare a `state` property in `App` class and give `images` as a property with default value as an empty array. In convention, if the data structure is confirmed, we can give either an empty array or object according to the requirements.
+1. We will face the same issue for referring `this` to the correct object. According to previous sections, we can choose 1 of the 3 strategies to solve the issue.
+1. In this case, we choose to declare the method with async arrow function.
+1. In addition, we can modulize the `axios` API into another separated code to keep the code clean.
+    1. Use `constructor` with `.bind`.
+    ```js
+    class App extends React.Component {
+        constructor (props) {
+            super(props);
+            this.onSearchSubmit = this.onSearchSubmit.bind(this);
+        }
+
+        state = { images: [] };
+
+        async onSearchSubmit(term) {
+            const response = await axois.get('https://api.unsplash.com/search/photos', {
+                params: {
+                    query: term
+                },
+                headers: {
+                    Authorization: 'Client-ID Your_Accesss_Key'
+                }
+            });
+
+            this.setState({ images: response.data.results });
+        }
+    }
+    ```
+    1. Declare the method with arrow function in the class
+    ```js
+    onSearchSubmit = async (term) => {
+        const response = await axois.get('https://api.unsplash.com/search/photos', {
+            params: {
+                query: term
+            },
+            headers: {
+                Authorization: 'Client-ID Your_Accesss_Key'
+            }
+        });
+
+        this.setState({ images: response.data.results });
+    }
+    ```
+    1. Pass an anonymous arrow function for the callback function
+    ```js
+    class App extends React.Component {
+        render() {
+            return(
+                <SearchBar onSubmit={this.onSearchSubmit} />
+            );
+        }
+    }
+    ```
+
+## Creating Custom Clients
+1. We create `api` folder in `src` folder, which we use to keep the `axios` request to unsplash endpoint.
+1. In this case, we can separate the default parameters and keep them in a separate files to keep the main code cleaner.
+1. According to `axios` library, we can create an `axios` object with pre-defined parameters and endpoint.
+    ```js
+    // src/api/unsplash.js
+    import axios from 'axios';
+
+    export default axios.create({
+        baseURL: 'https://api.unsplash.com',
+        headers: {
+            Authorization: 'Client-ID Your_Unsplash_Access_Key'
+        }
+    });
+    ```
+1. We the can import the file and use it in the `App`.
+    ```js
+    // src/components/App.js
+    import unsplash from '../api/unsplash.js';
+
+    async onSearchSubmit(term) {
+        // make GET request through unsplash object that is an axios object with pre-defined params
+        const response = await unsplash.get('/search/photos', {
+            params: { query: term }
+        });
+
+        this.setState({ images: response.data.results });
+    }
+    ```
+
+
 
 # Building Lists of Records
 
