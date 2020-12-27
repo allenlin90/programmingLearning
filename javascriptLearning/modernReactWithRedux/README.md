@@ -80,7 +80,25 @@ Finished
     1. [Callbacks on Image Load](#Callbacks-on-Image-Load)
     1. [Dynamic Spans](#Dynamic-Spans)
     1. [App Review](#App-Review)
-1. [Let's Test Your React Mastery!](#Let's-Test-Your-React-Mastery!) 
+1. [Let's Test Your React Mastery!](#Let's-Test-Your-React-Mastery!)
+    1. [Component Design](#Component-Design)
+    1. [Scaffolding the App](#Scaffolding-the-App)
+    1. [Reminder on Event Handlers](#Reminder-on-Event-Handlers)
+    1. [Handling Form Submittal](#Handling-Form-Submittal)
+    1. [Searching for Videos](#Searching-for-Videos)
+    1. [Putting All Together](#Putting-All-Together)
+    1. [Updating State with Fetched Data](#Updating-State-with-Fetched-Data)
+    1. [Passing State as Props](#Passing-State-as-Props)
+    1. [Rendering a List of Videos](#Rendering-a-List-of-Videos)
+    1. [Rendering Video Thumbnails](#Rendering-Video-Thumbnails)
+    1. [Styling a List](#Styling-a-List)
+    1. [Communicating from Child to Parent](#Communicating-from-Child-to-Parent)
+    1. [Deeply Nested Callbacks](#Deeply-Nested-Callbacks)
+    1. [Conditional Rendering](#Conditional-Rendering)
+    1. [Styling the VideoDetail](#Styling-the-VideoDetail)
+    1. [Displaying a Video Player](#Displaying-a-Video-Player)
+    1. [Fixing a Few Warnings](#Fixing-a-Few-Warnings)
+    1. [Default Video Selection](#Default-Video-Selection)
 1. [Understanding Hooks in React](#Understanding-Hooks-in-React) 
 1. [Navigation From Scratch](#Navigation-From-Scratch) 
 1. [Hooks in Practice](#Hooks-in-Practice) 
@@ -2178,6 +2196,582 @@ Finished
 
 
 # Let's Test Your React Mastery! 
+## App Overview
+## Component Design
+1. In this case, we'd like to create a react app which allows users to search from YouTube open API to get a list of videos and have the video player at the middle of the page. 
+1. In this case, we may have several components
+    1. `SearchBar` is for users to input terms to search from YouTube open API.
+    1. `VideoDetail` which is the video player with video details.
+    1. `VideoList` contains VideoItems as a list.
+    1. `VideoItem` is the child component in the `VideoList`.
+
+## Scaffolding the App
+1. In this case, we initiate the project by removing all the pre-created files in the `src` directory.
+1. We create `App.js` and `SearchBar.js` in `components` folder in `src` and import them accordingly.
+    ```js
+    // SearchBar.js
+    import React from 'react';
+
+    class SearchBar extends React.Component {
+        render() {
+            return <div>SearchBar</div>;
+        }
+    }
+
+    export default SearchBar;
+
+    // App.js
+    import React from 'react';
+    import SearchBar from './SearchBar';
+
+    class App extends React.Component {
+        render() {
+            return(
+                <SearchBar />
+            );
+        }
+    }
+
+    export default App;
+
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import App from './component/App';
+
+    ReactDOM.render(
+        <App />,
+        document.querySelector('#root')
+    );
+    ```
+
+## Reminder on Event Handlers
+1. We can import Semantic CSS with `<link>` tag in the index.html in the `public` folder.
+1. Note that we'd like to change and trace on the value on the `input` element which user gives. Besides, we should be aware of the `this` scope that is referring, so we use arrow function to declare the method for the class.
+    ```js
+    import React from 'react';
+
+    class SearchBar extends React.Component {
+        state = { term: "" };
+
+        onInputChange = (event) => {
+            this.setState({term: event.target.value});
+        }
+
+        render() {
+            return (
+                <div className="search-bar ui segment">
+                    <form className="ui form">
+                        <label>Video Search</label>
+                        <input
+                            type="text"
+                            value={this.state.term}
+                            onChange={this.onInputChange}
+                        />
+                    </form>
+                </div>
+            );
+        }
+    }
+
+    export default SearchBar;
+    ```
+
+## Handling Form Submittal
+1. To handle and retrieve the value from the element, we can declare a method
+    ```js
+    class SearchBar extends React.Component {
+        state = {term: ''};
+
+        onInputChange = (event) => {
+            this.setState({term: event.target.value});
+        }
+
+        onFormSubmit = (event) => {
+            event.preventDefault();
+
+            // TODO: Make sure we call 
+            // callback from parent component
+        }
+
+        render() {
+            return (
+                <form onSubmit={this.onFormSubmit}>
+                <input
+                    type="text"
+                    value={this.state.term}
+                    onChange={this.onInputChange}
+                />
+                </form>
+            )
+        }
+    }
+    ```
+1. Note that we can also use an anonymous arrow function with `onChange` property to update the value of the `state`.
+    ```js
+    <input
+        type="text"
+        value={this.state.term}
+        onChange={ e => this.setState({term: e.target.value})}
+    />
+    ```
+
+## Accessing the YouTube API
+1. In this case, we can use YouTube Data API (which is v3 at the time of learning). We can create a new project and enable the API in Google Developer Console.
+1. We then create a new folder `apis` in `src` directory and create `youtube.js` to keep the credentials (the API key from Google). Besides, we can configure the usage of the key such as limiting domain to access the API and what API services can be called by using the key. 
+
+## Search for Videos
+1. According to YouTube API documentation, we can check the details for `list` in [`Search`](https://developers.google.com/youtube/v3/docs/search/list) section. 
+1. From here, we can check that what are the public data should we retreive from the API. The main parameters we will use are the followings 
+    ```js 
+    GET https://www.googleapis.com/youtube/v3/search
+
+    let params = {
+        part: String, // set as 'snippet'
+        maxResults: Number, // default is 5 and can range from 0 to 50
+        q: String,
+        type: String // channel, playlist, or video
+    }
+    ```
+1. We then update the `youtube.js`. Note that we only put part of the params here without `q`, as this parameter can be set in the other components. Besides, we only give the `baseURL` up to `v3` with a slash to close it because later we can use `axios.get('/search')` to make a GET request.
+1. In addition, to prevent warning for not having `key` property for child component in React, we can add `type: 'video'` in the `params` when setting up the `axios` object. This will ensure the API calls only request for video rather than platlist or channel. 
+    ```js
+    import axios from 'axios';
+
+    const KEY = 'AIzaSyBtvThRXE9n-l_Y1jIXhx_EtLitcWbb3kI';
+
+    export default axios.create({
+        baseURL: 'https://www.googleapis.com/youtube/v3',
+        params: {
+            part: 'snippet',
+            maxResults: 5,
+            key: KEY,
+            type: 'video'
+        }
+    });
+    ```
+
+## Putting All Together
+1. After configuring the `axios` object, we can use it in the `App` in a callback function and fire it every time when a user search for something. We add another method in `SearchBar` to pass data when a user search.
+    ```js
+    // SearchBar
+    onFormSubmit = event => {
+        event.preventDefault();
+        this.props.onFormSubmit(this.state.term);
+    }
+    ```
+1. We then configure the method in `App.js` to handle the request made by `axios`.
+    ```js
+    onTermSubmit = (term) => {
+        youtube.get('/search', {
+            params: {
+                q: term
+            }
+        });
+    }
+    ```
+1. We then can check if `axios` make a request to YouTube API. For example, in the developer console, we can check "Network" tab with `XHR` request. We can see if there's a request made to `search`. 
+
+## Updating State with Fetched Data
+1. Since we are expecting to use the data from a GET request, we should use async function to handle the respond data from the API call. In this case, we are going to use the `items` array from the response data. 
+1. Besides, we need to use `state` system to keep the data response from the API. 
+1. Note that we should always be careful with the inital data for the state properties. For example, we have a placeholder to show how many videos are in the list by using `.length` to check the number of elements in an array. Therefore, if we use `null` as the initial value for `state`, it will return an error as we can't check the `length` property of a `null` object.
+    ```js
+    import React from 'react';
+    import SearchBar from './SearchBar';
+    import youtube from '../apis/youtube';
+
+    class App extends React.Component {
+        state = { videos: new Array }; // this must be an empty array
+
+        onTermSubmit = async (term) => {
+            const response = await youtube.get('/search', {
+                params: {
+                    q: term
+                }
+            });
+
+            this.setState({ videos: response.data.items });
+        }
+
+        render() {
+            return (
+                <div className="ui container">
+                    <SearchBar onFormSubmit={this.onTermSubmit} />
+                    I have {this.state.videos.length} videos; // if we use null as initial value in state, this may cause error
+                </div>
+            );
+        };
+    }
+
+    export default App;
+    ```
+
+## Passing State as Props
+1. In this project, we have 3 main components, `SearchBar`, `VideoDetail`, `VideoList` with `VideoItem` as child components.
+    ```js
+    // VideoList.js
+    import React from 'react';
+
+    const VideoList = (props) => {
+        return (
+            <div>{props.videos.length}</div>
+        );
+    }
+
+    export default VideoList;
+    ```
+1. Besides, we need to update the `App` for the new data.
+    ```js
+    // App.js
+    class App extends React.Component {
+        state = { videos: new Array };
+
+        onTermSubmit = async (term) => {
+            const response = await youtube.get('/search', {
+                params: {
+                    q: term
+                }
+            });
+
+            this.setState({ videos: response.data.items });
+        }
+
+        render() {
+            return (
+                <div className="ui container">
+                    <SearchBar onFormSubmit={this.onTermSubmit} />
+                    <VideoList videos={this.state.videos} />
+                </div>
+            );
+        };
+    }
+    ```
+
+## Rendering a List of Videos
+1. We can use destructuring assignment for to get the array from `props` in `VideoList.js`.
+1. As we will repeatly render each video with its data, we can create a new component as `VideoItem`.
+    ```js
+    // VideoItem.js
+    import React from 'react';
+
+    const VideoItem = (props) => {
+        return <div>VideoItem</div>
+    }
+
+    export default VideoItem;
+    ```
+1. We use `.map()` method to create an array that has multiple `VideoItem` in it.
+    ```js
+    import React from 'react';
+    import VideoItem from './VideoItem';
+
+    const VideoList = ({ videos }) => {
+        const renderedList = videos.map((video) => { // create an array of 'VideoItem'
+            return <VideoItem />;
+        });
+
+        return (
+            <div>{renderedList}</div>
+        );
+    }
+
+    export default VideoList;
+    ```
+
+## Rendering Video Thumbnails
+1. In the last section, we can have a list of `VideoItem`s in the `VideoList`. We'd like to pass in fetched data from YouTube API to create the components with useful information.
+1. In this case, we just simply update the structure in `VideoItem` with an `<img>` tag and get the thumbnail from the fetched data. 
+    ```js
+    // VideoItem.js
+    import React from 'react';
+
+    const VideoItem = ({ video }) => {
+        return (
+            <div>
+                <img src={video.snippet.thumbnails.medium.url} />
+                {video.snippet.title}
+            </div>
+        );
+    }
+
+    export default VideoItem;
+    ```
+
+## Styling a List
+1. In this section, we will use [`list]`(https://semantic-ui.com/elements/list.html) styling from Semantic UI. Accroding to the document, the HTML structure should be as the following with classes.
+1. Besides, we will use the list with image from semantic ui. However, as we don't want the image becomes a circle for avatar, we can use `ui image` for the element.
+    ```html
+    <div class="ui relaxed divided list"> <!-- this should be the layer of VideoList -->
+        <div class="item"> <!-- this is the layer for VideoItem -->
+            <img class="ui avatar image" src="image.jpg">
+            <div class="content">
+                <a class="header">Header</a>
+                <div class="description">
+                    Here's the description
+                </div>
+            </div>
+        </div>
+    </div>
+    ```
+1. In this case, we'd have more custom styling on the elements, so we can create another CSS in `component directly. 
+1. Note that we can give a specific `class` named as the component, so we will ensure the CSS selector selects the correct component and elements in it. 
+    ```html
+    <div className="video-item item">
+        <img className="ui image" src={video.snippet.thumbnails.medium.url} />
+        <div className="content">
+            <a className="header" href="https://youtube.com/watch?v=${video.id.videoId}">{video.snippet.title}</a>
+            <div className="description">{video.snippet.description}</div>
+        </div>
+    </div>
+    ```
+1. Note that as we are using CSS library, some of the selector and styling would be applied to the elements. For example, the `max-width` wouldn't work if the selector is only `.video-item img`. We can only select and apply styling with more specific selector such as `.video-item.item img`.
+    ```css
+    /* VideoItem.css */
+    .video-item {
+        display: flex !important;
+        align-items: center !important;
+        cursor: pointer;
+    }
+
+    .video-item.item img {
+        max-width: 180px;
+    }
+    ```
+
+## Communicating from Child to Parent
+1. In this react app, we have 2 main property in `state` system which are the "**video list**" returned from the API called, and the "**selected video**" which the user picks from the rendered list. 
+    <img src="./images/videoAppStructure.png">
+1. Therefore, after the list is rendered, the user can choose one of the videos in the list. When the user click the list, the `state` is updated with the chosen one.
+1. As the state property should be updated and reflect the user interaction on the components in the child ones, we can pass a callback function from `App` through `VideoList` to `VideoItem`. Therefore, each of the `VideoItem` component in the very bottom layer of the app will have 2 `props`, `video` and `onVideoSelect`.
+1. When the user clicks one of the videos in the list, `onVideoSelect` callback is triggered and takes the value back to the `state` in `App`. This will cause `selectedVideo` on the very top in `App` also be fired and update the `state`.
+
+## Deeply Nested Callbacks
+1. We create a callback function in `App.js` to update the state when there's data caught by event handler and returend from child component. 
+    ```js
+    // App.js
+    class App extends React.Component {
+        state = { videos: new Array, selectedVideo: null };
+
+        onTermSubmit = async (term) => {
+            const response = await youtube.get('/search', {
+                params: {
+                    q: term
+                }
+            });
+
+            this.setState({ videos: response.data.items });
+        }
+
+        // catch data from event handler in child component
+        onVideoSelect = (video) => {
+            console.log('From the App!', video);
+        }
+
+        render() {
+            return (
+                <div className="ui container">
+                    <SearchBar onFormSubmit={this.onTermSubmit} />
+                    // pass callback function to the child component
+                    <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos} />
+                </div>
+            );
+        };
+    }
+    ```
+1. As the middleware, we receive the callback function `onVideoSelect` from `App`. We then pass this callback function into the child component `VideoItem` for the event handler.
+    ```js
+    // VideoList.js
+    const VideoList = ({ videos, onVideoSelect }) => {
+        const renderedList = videos.map((video) => {
+            // pass onVideoSelect callback function into VideoItem
+            return <VideoItem onVideoSelect={onVideoSelect} video={video} />;
+        });
+
+        return (
+            <div className="ui relaxed divided list">{renderedList}</div>
+        );
+    }
+    ```
+1. In `VideoItem`, we receive the callback function in `props`, while we use constructuring assignment to assign the callback function to a variable `onVideoSelect`. 
+1. However, we want to call the callback function with an argument. We need to use arrow function syntax to call the callback function with an argument.
+1. Therefore, when the user clicks the `VideoItem` component, it will trigger the callback function and send the data back to `App` layer and update the `state` object.
+    ```js
+    // VideoItem.js
+    const VideoItem = ({ video, onVideoSelect }) => {
+        return (
+            <div onClick={() => onVideoSelect(video)} className="video-item item">
+                <img className="ui image" src={video.snippet.thumbnails.medium.url} />
+                <div className="content">
+                    <div className="header">{video.snippet.title}</div>
+                </div>
+            </div>
+        );
+    }
+    ```
+
+## Conditional Rendering
+1. We can create another component to show the details of the video, so we have `VideoDetail.js` created in `component directory.
+    ```js
+    // VideoDetail.js
+    import React from 'react';
+
+    const VideoDetail = ({ video }) => {
+        if (!video) {
+            return <div>Loading...</div>
+        }
+        return (
+            <div>{video.snippet.title}</div>
+        );
+    }
+
+    export default VideoDetail;
+    ```
+1. We have to ensure that our `App` has updated its method to update its `state` when a video from the list is selected. Besides, we should render the `VideoDetial` component on the screen.
+    ```js
+    // App.js
+    import VideoDetail from './VideoDetail';
+    class App extends React.Component {
+        state = { videos: new Array, selectedVideo: null };
+        
+        onVideoSelect = (video) => {
+            this.setState({ selectedVideo: video });
+        }
+
+        render() {
+            return (
+                <div className="ui container">
+                    <SearchBar onFormSubmit={this.onTermSubmit} />
+                    <VideoDetail video={this.state.selectedVideo} />
+                    <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos} />
+                </div>
+            );
+        };
+    }
+    ```
+
+## Styling the VideoDetail
+1. In this case, we use some classes from Semantic UI to style `VideoDetail`
+    ```html
+    <div>
+        <div className="ui segment">
+            <h4 className="ui header">
+                {video.snippet.title}
+            </h4>
+            <p>{video.snippet.description}</p>
+        </div>
+    </div>
+    ```
+    <img src="./images/videoDetail.png">
+
+## Displaying a Video Player
+1. In thic case, we can use `iframe` to show the YouTube player in the list. 
+1. To embed the video from YouTube, we can refer to the "share" button in each video to check how does `iframe` work with it. For very basic we can give the embeding URL from YouTube in the `iframe` tag.
+    ```html
+    <iframe src="https://www.youtube.com/embed/{videoId}" />    
+    ```
+1. There are some issues that we haven't fixed at this moment that 
+    1. The video list should be on the side of the embeded video rather than downbelow in a regualr screen size. 
+    1. The `state` is not updated when the user searches another video that the selected video shown in `VideoDetail` can be very different from those in the `VideoList` after giving another search.
+    1. Some warnings are given by React that `key` property is not given to each component in the list. 
+    1. `alt` property is not given to `img` element.
+    1. `title` property to `iframe` tag.
+    ```js
+    // VideoDetails
+    import React from 'react';
+
+    const VideoDetail = ({ video }) => {
+        if (!video) {
+            return <div>Loading...</div>
+        }
+
+        const videoSrc = `https://www.youtube.com/embed/${video.id.videoId}`;
+
+        return (
+            <div>
+                <div className="ui embed">
+                    <iframe src={videoSrc} />
+                </div>
+                <div className="ui segment">
+                    <h4 className="ui header">
+                        {video.snippet.title}
+                    </h4>
+                    <p>{video.snippet.description}</p>
+                </div>
+            </div>
+        );
+    }
+
+    export default VideoDetail;
+    ```
+
+## Fixing a Few Warnings
+1. We add `title` property in `iframe` in `VideoDetail`. In this case, we can just specify what is inside the `iframe`, and it is `video player`.
+1. Add `alt` property in `VideoItem` for each image tag. We can use `video.snippet.title` to indicate what is the image.
+1. In `VideoList` each of the `VideoItem` in the list, which is rendered by an array of components, should have a `key` property. Therefore, we can use `video.id.videoId` from each video object to have unique for each of them.
+    ```js
+    // VideoDetail.js
+    <iframe title="video player" src={videoSrc} />
+    // VideoItem.js
+    <img alt={video.snippet.title} className="ui image" src={video.snippet.thumbnails.medium.url} />
+    // VideoList.js
+    const renderedList = videos.map((video) => {
+        return <VideoItem key={video.id.videoId} onVideoSelect={onVideoSelect} video={video} />;
+    });
+    ```
+1. After fixing the warnings and issues prompted from developer console, we can adjust the layout to have `VideoDetail` and `VideoList` stay side by side on the same position on the page. In this case, we can use "[grid system](https://semantic-ui.com/collections/grid.html)" from Semantic UI.
+    ```html
+    <!-- app.js -->
+    <div className="ui container">
+        <SearchBar onFormSubmit={this.onTermSubmit} />
+        <div className="ui grid">
+            <div className="ui row">
+                <div className="eleven wide column">
+                    <VideoDetail video={this.state.selectedVideo} />
+                </div>
+                <div className="five wide column">
+                    <VideoList
+                        onVideoSelect={this.onVideoSelect}
+                        videos={this.state.videos} />
+                </div>
+            </div>
+        </div>
+    </div>
+    ```
+    <img src="./images/semanticUIGrid.png">
+
+## Default Video Selection
+1. In the last optimization, we'd like to give a default search term when users firstly start to use the React App, so it can show the appropriate prompt to let users know what to do. 
+1. Besides, an issue that after the user selects one of the video from the video list, the `state` is updated but doesn't go along when the user searches something else which can give an awkward user experience.
+1. To have the default video rendered in the `VideoDetail`, we can update the `state` when we get response from a new search from YouTube API. We can update the video with the very first element in the returned array, so the video player will show the video by default when the user search for a topic.
+1. After that we can use `componentDidMount` as a method in `App` class. We can call `this.onTermSubmit('default searching term')` in this case. Therefore, when users open the App, they will see the `Loading` in a moment, then after the App get response from AJAX call, the content will be udpated to the default search term that we give in `componentDidMount`. 
+    ```js
+    // App.js
+    componentDidMount() {
+        this.onTermSubmit('Thailand Travel');
+    }
+
+    onTermSubmit = async (term) => {
+        const response = await youtube.get('/search', {
+            params: {
+                q: term
+            }
+        });
+
+        this.setState({
+            videos: response.data.items,
+            selectedVideo: response.data.items[0]
+        });
+    }
+    ```
+
+
+
+
+
+
+
+
 
 # Understanding Hooks in React 
 
