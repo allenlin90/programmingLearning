@@ -99,19 +99,235 @@ Finished
     1. [Displaying a Video Player](#Displaying-a-Video-Player)
     1. [Fixing a Few Warnings](#Fixing-a-Few-Warnings)
     1. [Default Video Selection](#Default-Video-Selection)
-1. [Understanding Hooks in React](#Understanding-Hooks-in-React) 
-1. [Navigation From Scratch](#Navigation-From-Scratch) 
-1. [Hooks in Practice](#Hooks-in-Practice) 
-1. [Deploying a React App](#Deploying-a-React-App) 
-1. [On We Go...To Redux!](#On-We-Go...To-Redux!) 
+1. [Understanding Hooks in React](#Understanding-Hooks-in-React)
+    1. [React Hooks](#React-Hooks)
+    1. [App Architecture ](#App-Architecture)
+    1. [Communicating the Items Prop](#Communicating-the-Items-Prop)
+    1. [Building and Styling the Accordion](#Building-and-Styling-the-Accordion)
+    1. [Helper Functinos in Function Components](#Helper-Functinos-in-Function-Components)
+    1. [Introducing useState](#Introducing-useState)
+    1. [Understanding useState](#Understanding-useState)
+    1. [Setter Functions](#Setter-Functions)
+    1. [Expanding the Accordion](#Expanding-the-Accordion)
+    1. [Creating Additional Widgets](#Creating-Additional-Widgets)
+    1. [The Search Widget Architecture](#The-Search-Widget-Architecture)
+    1. [Scaffolding the Widget](#Scaffolding-the-Widget)
+    1. [Text Inputs with Hooks](#Text-Inputs-with-Hooks)
+    1. [When do we Search?](#When-do-we-Search?)
+    1. [The useEffect Hook](#The-useEffect-Hook)
+    1. [Testing Execution](#Testing-Execution)
+    1. [Async Code in useEffect](#Async-Code-in-useEffect)
+    1. [Executing the Request from useEffect](#Executing-the-Request-from-useEffect)
+    1. [Default Search Terms](#Default-Search-Terms)
+    1. [List Building](#List-Building)
+    1. [XSS Attacks in React](#XSS-Attacks-in-React)
+    1. [XSS Server Code](#XSS-Server-Code)
+    1. [Linking to a Wikipedia Page](#Linking-to-a-Wikipedia-Page)
+    1. [Only Search with a Term](#Only-Search-with-a-Term)
+    1. [Throttling API Requests](#Throttling-API-Requests)
+    1. [Reminder on setTimeout](#Reminder-on-setTimeout)
+    1. [useEffect's Cleanup Function](#useEffect's-Cleanup-Function)
+    1. [Implementing a Delayed Request](#Implementing-a-Delayed-Request)
+    1. [Searching on Initial Render](#Searching-on-Initial-Render)
+    1. [Edge Case When Clearing Out Input Form](#Edge-Case-When-Clearing-Out-Input-Form)
+    1. [Optional Video - Fixing a Warning](#Optional-Video---Fixing-a-Warning)
+    1. [Dropdown Architecture](#Dropdown-Architecture)
+    1. [Scaffolding the Dropdown](#Scaffolding-the-Dropdown)
+    1. [A Lot of JSX](#A-Lot-of-JSX)
+    1. [Selection State](#Selection-State)
+    1. [Filtering the Option List](#Filtering-the-Option-List)
+    1. [Hiding and Showing the Option List](#Hiding-and-Showing-the-Option-List)
+    1. [Err... Why is this Hard?](#Err...-Why-is-this-Hard?)
+    1. [Reminder on Event Bubbling](#Reminder-on-Event-Bubbling)
+    1. [Applying What We've Learned](#Applying-What-We've-Learned)
+    1. [Binding an Event Handler](#Binding-an-Event-Handler)
+    1. [Why Stay Open](#Why-Stay-Open)
+    1. [Which Element Was Clicked?](#Which-Element-Was-Clicked?)
+    1. [Making use of useRef](#Making-use-of-useRef)
+    1. [Body Event Listener Cleanup](#Body-Event-Listener-Cleanup)
+    1. [The Translate Widget](#The-Translate-Widget)
+    1. [Scaffolding the Translate Component](#Scaffolding-the-Translate-Component)
+    1. [Adding the Language Input](#Adding-the-Language-Input)
+    1. [Understanding the Convert Component](#Understanding-the-Convert-Component)
+    1. [Google Translate API Key](#Google-Translate-API-Key)
+    1. [Building the Convert Component](#Building-the-Convert-Component)
+    1. [Using the Google Translate API](#Using-the-Google-Translate-API)
+    1. [Displaying Translated Text](#Displaying-Translated-Text)
+    1. [Debouncing Translation Updates](#Debouncing-Translation-Updates)
+    1. [Reviewing useState and useEffect](#Reviewing-useState-and-useEffect)
+1. [Navigation From Scratch](#Navigation-From-Scratch)
+    1. [Navigation in React](#Navigation-in-React)
+    1. [Basic Component Routing](#Basic-Component-Routing)
+    1. [Building a Reusable Route Component](#Building-a-Reusable-Route-Component)
+    1. [Implementing a Header for Navigation](#Implementing-a-Header-for-Navigation)
+    1. [Handling Navigation](#Handling-Navigation)
+    1. [Building a Link](#Building-a-Link)
+    1. [Changing the URL](#Changing-the-URL)
+    1. [Detecting Navigation](#Detecting-Navigation)
+    1. [Updating the Route](#Updating-the-Route)
+    1. [Handling Command Clicks](#Handling-Command-Clicks)
+1. [Hooks in Practice](#Hooks-in-Practice)
+    1. [Project Overview](#Project-Overview)
+    1. [Refactoring the SearchBar](#Refactoring-the-SearchBar)
+    1. [Refactoring the App](#Refactoring-the-App)
+    1. [Removing a Callback](#Removing-a-Callback)
+    1. [Overview on Custom Hooks](#Overview-on-Custom-Hooks)
+    1. [Process for Building Custom Hooks](#Process-for-Building-Custom-Hooks)
+    1. [Extracting Video Logic](#Extracting-Video-Logic)
+    1. [Using the Custom Hook](#Using-the-Custom-Hook)
+1. [Deploying a React App](#Deploying-a-React-App)
+    1. [Deployment Overview](#Deployment-Overview)
+    1. [Deployment with Vercel](#Deployment-with-Vercel)
+    1. [Deployment with Netlify](#Deployment-with-Netlify)
+1. [On We Go...To Redux!](#On-We-Go...To-Redux!)
+    1. [Introduction to Redux](#Introduction-to-Redux)
+    1. [Redux by Analogy](#Redux-by-Analogy)
+    1. [A Bit More Analogy](#A-Bit-More-Analogy)
+    1. [Finishing the Analogy](#Finishing-the-Analogy)
+    1. [Mapping the Analogy to Redux](#Mapping-the-Analogy-to-Redux)
+    1. [Modeling with Redux](#Modeling-with-Redux)
+    1. [Creating Reducers](#Creating-Reducers)
+    1. [Rules of Reducers](#Rules-of-Reducers)
+    1. [Testing Our Example](#Testing-Our-Example)
+    1. [Important Redux Notes](#Important-Redux-Notes)
 1. [Integrating React with Redux](#Integrating-React-with-Redux) 
-1. [Async Actions with Redux Thunk](#Async-Actions-with-Redux-Thunk) 
-1. [Redux Store Design](#Redux-Store-Design) 
-1. [Navigation with React Router](#Navigation-with-React-Router) 
-1. [Handling Authenitcation with React](#Handling-Authenitcation-with-React) 
-1. [Reducx Dev Tools](#Reducx-Dev-Tools) 
-1. [Handling Forms with Redux Form](#Handling-Forms-with-Redux-Form) 
-1. [REST-based React Apps](#REST-based-React-Apps) 
+    1. [React Cooperating with Redux](#React-Cooperating-with-Redux)
+    1. [React, Redux, and React-Redux](#React,-Redux,-and-React-Redux)
+    1. [Design of the Redux App](#Design-of-the-Redux-App)
+    1. [How React-Redux Works](#How-React-Redux-Works)
+    1. [Redux Project Structure](#Redux-Project-Structure)
+    1. [Named vs Default Exports](#Named-vs-Default-Exports)
+    1. [Building Reducers](#Building-Reducers)
+    1. [Wiring Up the Provider](#Wiring-Up-the-Provider)
+    1. [The Connect Function](#The-Connect-Function)
+    1. [Configuring Connect with MapStateToProps](#Configuring-Connect-with-MapStateToProps)
+    1. [Building a List with Redux Data ](#Building-a-List-with-Redux-Data)
+    1. [Calling Action Creators from Components](#Calling-Action-Creators-from-Components)
+    1. [Redux is Not Magic](#Redux-is-Not-Magic)
+    1. [Functional Components with Connect](#Functional-Components-with-Connect)
+    1. [Conditional Rendering](#Conditional-Rendering)
+1. [Async Actions with Redux Thunk](#Async-Actions-with-Redux-Thunk)
+    1. [App Overview and Goals](#App-Overview-and-Goals)
+    1. [Initial App Setup](#Initial-App-Setup)
+    1. [Tricking Redux with Dummy Reducers](#Tricking-Redux-with-Dummy-Reducers)
+    1. [A Touch More Setup](#A-Touch-More-Setup)
+    1. [How to Fetch Data in a Redux App](#How-to-Fetch-Data-in-a-Redux-App)
+    1. [Wiring Up an Action Creator](#Wiring-Up-an-Action-Creator)
+    1. [Making a Request From an Action Creator](#Making-a-Request-From-an-Action-Creator)
+    1. [Understanding Async Action Creators](#Understanding-Async-Action-Creators)
+    1. [More on Async Action Creators](#More-on-Async-Action-Creators)
+    1. [Middlewares in Redux](#Middlewares-in-Redux)
+    1. [Behind the Scenes of Redux Thunk](#Behind-the-Scenes-of-Redux-Thunk)
+    1. [Shortened Syntax with Redux Thunk](#Shortened-Syntax-with-Redux-Thunk)
+1. [Redux Store Design](#Redux-Store-Design)
+    1. [Rules of Reducers](#Rules-of-Reducers)
+    1. [Return Values from Reducers](#Return-Values-from-Reducers)
+    1. [Argument Values](#Argument-Values)
+    1. [Pure Reducers](#Pure-Reducers)
+    1. [Mutations in JavaScript](#Mutations-in-JavaScript)
+    1. [Equality of Arrays and Objects](#Equality-of-Arrays-and-Objects)
+    1. [A Misleading Rule](#A-Misleading-Rule)
+    1. [Safe State Updates in Reducers](#Safe-State-Updates-in-Reducers)
+    1. [Switch Statements in Reducers](#Switch-Statements-in-Reducers)
+    1. [Dispatching Correct Values](#Dispatching-Correct-Values)
+    1. [List Building](#List-Building)
+    1. [Displaying Users](#Displaying-Users)
+    1. [Fetching Singular Records](#Fetching-Singular-Records)
+    1. [Displaying the User Header](#Displaying-the-User-Header)
+    1. [Finding Relevant Users](#Finding-Relevant-Users)
+    1. [Extracting Logic to MapStateToProps](#Extracting-Logic-to-MapStateToProps)
+    1. [That's the Issue](#That's-the-Issue)
+    1. [Memoizing Functions](#Memoizing-Functions)
+    1. [Memoization Issues](#Memoization-Issues)
+    1. [One Time Memoization](#One-Time-Memoization)
+    1. [Alternate Overfecthing Solution](#Alternate-Overfecthing-Solution)
+    1. [Action Creators in Action Creators](#Action-Creators-in-Action-Creators)
+    1. [Finding Unique User Ids](#Finding-Unique-User-Ids)
+    1. [Quick Refactor with Chain](#Quick-Refactor-with-Chain)
+    1. [App Wrapup](#App-Wrapup)
+1. [Navigation with React Router](#Navigation-with-React-Router)
+    1. [App Outline](#App-Outline)
+    1. [Mockups in Details](#Mockups-in-Details)
+    1. [App Challenges](#App-Challenges)
+    1. [Inital Setup](#Inital-Setup)
+    1. [Introducing React Router](#Introducing-React-Router)
+    1. [How React Router Works](#How-React-Router-Works)
+    1. [How Paths Get Matched](#How-Paths-Get-Matched)
+    1. [How to "Not" Navigate with React Router](#How-to-"Not"-Navigate-with-React-Router)
+    1. [Navigating with React Router](#Navigating-with-React-Router)
+    1. [Different Router Types](#Different-Router-Types)
+    1. [Component Scaffolding](#Component-Scaffolding)
+    1. [Wiring Up Routes](#Wiring-Up-Routes)
+    1. [Always Visible Components](#Always-Visible-Components)
+    1. [Connecting the Header](#Connecting-the-Header)
+    1. [Links Inside Routers](#Links-Inside-Routers)
+1. [Handling Authenitcation with React](#Handling-Authenitcation-with-React)
+    1. [OAuth-Based Authentication](#OAuth-Based-Authentication)
+    1. [OAuth for Servers vs Browser Apps](#OAuth-for-Servers-vs-Browser-Apps)
+    1. [Creating OAuth Credentials](#Creating-OAuth-Credentials)
+    1. [Wiring Up the Google API Library](#Wiring-Up-the-Google-API-Library)
+    1. [Sending a User Into the OAuth Flow](#Sending-a-User-Into-the-OAuth-Flow)
+    1. [Rendering Authentication Status](#Rendering-Authentication-Status)
+    1. [Updating Auth State](#Updating-Auth-State)
+    1. [Displaying Sign in and Sign Out](#Displaying-Sign-in-and-Sign-Out)
+    1. [On-Demand Sign in and Sign Out](#On-Demand-Sign-in-and-Sign-Out)
+    1. [Redux Architecture Design](#Redux-Architecture-Design)
+    1. [Redux Setup](#Redux-Setup)
+    1. [Connecting Auth with Action Creators](#Connecting-Auth-with-Action-Creators)
+    1. [Building the Auth Reducer](#Building-the-Auth-Reducer)
+    1. [Handling Auth Status Through Redux](#Handling-Auth-Status-Through-Redux)
+    1. [Fixed Action Types](#Fixed-Action-Types)
+    1. [Recording the User's ID](#Recording-the-User's-ID)
+1. [Reducx Dev Tools](#Reducx-Dev-Tools)
+    1. [Using Redux Dev Tools to Inspect the Store](#Using-Redux-Dev-Tools-to-Inspect-the-Store)
+    1. [Debug Sessions with Redux Dev Tools](#Debug-Sessions-with-Redux-Dev-Tools)
+1. [Handling Forms with Redux Form](#Handling-Forms-with-Redux-Form)
+    1. [Forms with Redux Form](#Forms-with-Redux-Form)
+    1. [Useful Redux Form Examples](#Useful-Redux-Form-Examples)
+    1. [Conencting Reux Form](#Conencting-Reux-Form)
+    1. [Creating Forms](#Creating-Forms)
+    1. [Automatically Handling Events](#Automatically-Handling-Events)
+    1. [Customizing Form Fields](#Customizing-Form-Fields)
+    1. [Handling Form Submission](#Handling-Form-Submission)
+    1. [Validation of Form Inputs](#Validation-of-Form-Inputs)
+    1. [Displaying Validation Messages](#Displaying-Validation-Messages)
+    1. [Showing Errors on Touch](#Showing-Errors-on-Touch)
+    1. [Highlighting Errored Fields](#Highlighting-Errored-Fields)
+1. [REST-based React Apps](#REST-based-React-Apps)
+    1. [Creating Streams ](#Creating-Streams)
+    1. [REST-ful Conventions](#REST-ful-Conventions)
+    1. [Setting Up an API Server](#Setting-Up-an-API-Server)
+    1. [Creating Streams Through Action Creators](#Creating-Streams-Through-Action-Creators)
+    1. [Creating a Stream with REST Conventions](#Creating-a-Stream-with-REST-Conventions)
+    1. [Dispatching Actions After Stream Creation](#Dispatching-Actions-After-Stream-Creation)
+    1. [Bulk Action Creators](#Bulk-Action-Creators)
+    1. [Object-Based Reducers](#Object-Based-Reducers)
+    1. [Key Interpolation Syntax](#Key-Interpolation-Syntax)
+    1. [Handling Fetching, Creating, and Updating](#Handling-Fetching,-Creating,-and-Updating)
+    1. [Deleting Properties with Omit](#Deleting-Properties-with-Omit)
+    1. [Merging Lists of Records](#Merging-Lists-of-Records)
+    1. [Fetching a List of All Streams](#Fetching-a-List-of-All-Streams)
+    1. [Rendering All Streams](#Rendering-All-Streams)
+    1. [Associating Streams with Users](#Associating-Streams-with-Users)
+    1. [Conditionally Showing Edit and Delete](#Conditionally-Showing-Edit-and-Delete)
+    1. [Linking to Stream Creation](#Linking-to-Stream-Creation)
+    1. [When to Navigate Users](#When-to-Navigate-Users)
+    1. [History Reference](#History-Reference)
+    1. [Creating a Browser History Object](#Creating-a-Browser-History-Object)
+    1. [Implementing Programmatic Navigation](#Implementing-Programmatic-Navigation)
+    1. [Manually Changing API Records](#Manually-Changing-API-Records)
+    1. [URL-Based Selection](#URL-Based-Selection)
+    1. [Wildcard Navigation](#Wildcard-Navigation)
+    1. [More on Route Params](#More-on-Route-Params)
+    1. [Selecting Records from State](#Selecting-Records-from-State)
+    1. [Component Isolation with React Router](#Component-Isolation-with-React-Router)
+    1. [Fetching a Stream for Edit Stream](#Fetching-a-Stream-for-Edit-Stream)
+    1. [Real Code Reuse](#Real-Code-Reuse)
+    1. [Refactoring Stream Creation](#Refactoring-Stream-Creation)
+    1. [Setting Initial Values](#Setting-Initial-Values)
+    1. [Avoiding Changes to Properties](#Avoiding-Changes-to-Properties)
+    1. [Edit Form Submission](#Edit-Form-Submission)
+    1. [PUT vs PATCH Requests](#PUT-vs-PATCH-Requests)
 1. [Using React Portals](#Using-React-Portals) 
 1. [Implementing Streaming Video](#Implementing-Streaming-Video) 
 1. [The Context System with React](#The-Context-System-with-React) 
@@ -2767,37 +2983,475 @@ Finished
 
 
 
-
-
-
-
-
-
 # Understanding Hooks in React 
+## React Hooks
+
+## App Architecture 
+
+## Communicating the Items Prop
+
+## Building and Styling the Accordion
+
+## Helper Functinos in Function Components
+
+## Introducing useState
+
+## Understanding useState
+
+## Setter Functions
+
+## Expanding the Accordion
+
+## Creating Additional Widgets
+
+## The Search Widget Architecture
+
+## Scaffolding the Widget
+
+## Text Inputs with Hooks
+
+## When do we Search?
+
+## The useEffect Hook
+
+## Testing Execution
+
+## Async Code in useEffect
+
+## Executing the Request from useEffect
+
+## Default Search Terms
+
+## List Building
+
+## XSS Attacks in React
+
+## XSS Server Code
+
+## Linking to a Wikipedia Page
+
+## Only Search with a Term
+
+## Throttling API Requests
+
+## Reminder on setTimeout
+
+## useEffect's Cleanup Function
+
+## Implementing a Delayed Request
+
+## Searching on Initial Render
+
+## Edge Case When Clearing Out Input Form
+
+## Optional Video - Fixing a Warning
+
+## Dropdown Architecture
+
+## Scaffolding the Dropdown
+
+## A Lot of JSX
+
+## Selection State
+
+## Filtering the Option List
+
+## Hiding and Showing the Option List
+
+## Err... Why is this Hard?
+
+## Reminder on Event Bubbling
+
+## Applying What We've Learned
+
+## Binding an Event Handler
+
+## Why Stay Open
+
+## Which Element Was Clicked?
+
+## Making use of useRef
+
+## Body Event Listener Cleanup
+
+## The Translate Widget
+
+## Scaffolding the Translate Component
+
+## Adding the Language Input
+
+## Understanding the Convert Component
+
+## Google Translate API Key
+
+## Building the Convert Component
+
+## Using the Google Translate API
+
+## Displaying Translated Text
+
+## Debouncing Translation Updates
+
+## Reviewing useState and useEffect
+
+
 
 # Navigation From Scratch
+## Navigation in React
+
+## Basic Component Routing
+
+## Building a Reusable Route Component
+
+## Implementing a Header for Navigation
+
+## Handling Navigation
+
+## Building a Link
+
+## Changing the URL
+
+## Detecting Navigation
+
+## Updating the Route
+
+## Handling Command Clicks
+
+
 
 # Hooks in Practice
+## Project Overview
 
-# Deploying a React App 
+## Refactoring the SearchBar
+
+## Refactoring the App
+
+## Removing a Callback
+
+## Overview on Custom Hooks
+
+## Process for Building Custom Hooks
+
+## Extracting Video Logic
+
+## Using the Custom Hook
+
+
+
+# Deploying a React App
+## Deployment Overview
+
+## Deployment with Vercel
+
+## Deployment with Netlify
+
+
 
 # On We Go...To Redux!
+## Introduction to Redux
+
+## Redux by Analogy
+
+## A Bit More Analogy
+
+## Finishing the Analogy
+
+## Mapping the Analogy to Redux
+
+## Modeling with Redux
+
+## Creating Reducers
+
+## Rules of Reducers
+
+## Testing Our Example
+
+## Important Redux Notes
+
+
 
 # Integrating React with Redux
+## React Cooperating with Redux
+
+## React, Redux, and React-Redux
+
+## Design of the Redux App
+
+## How React-Redux Works
+
+## Redux Project Structure
+
+## Named vs Default Exports
+
+## Building Reducers
+
+## Wiring Up the Provider
+
+## The Connect Function
+
+## Configuring Connect with MapStateToProps
+
+## Building a List with Redux Data 
+
+## Calling Action Creators from Components
+
+## Redux is Not Magic
+
+## Functional Components with Connect 
+
+## Conditional Rendering
+
+
 
 # Async Actions with Redux Thunk
+## App Overview and Goals
 
-# Redux Store Design 
+## Initial App Setup
+
+## Tricking Redux with Dummy Reducers
+
+## A Touch More Setup
+
+## How to Fetch Data in a Redux App
+
+## Wiring Up an Action Creator
+
+## Making a Request From an Action Creator
+
+## Understanding Async Action Creators
+
+## More on Async Action Creators
+
+## Middlewares in Redux
+
+## Behind the Scenes of Redux Thunk
+
+## Shortened Syntax with Redux Thunk
+
+
+
+# Redux Store Design
+## Rules of Reducers
+
+## Return Values from Reducers
+
+## Argument Values
+
+## Pure Reducers
+
+## Mutations in JavaScript
+
+## Equality of Arrays and Objects
+
+## A Misleading Rule
+
+## Safe State Updates in Reducers
+
+## Switch Statements in Reducers
+
+## Dispatching Correct Values
+
+## List Building
+
+## Displaying Users
+
+## Fetching Singular Records
+
+## Displaying the User Header
+
+## Finding Relevant Users
+
+## Extracting Logic to MapStateToProps
+
+## That's the Issue
+
+## Memoizing Functions
+
+## Memoization Issues
+
+## One Time Memoization
+
+## Alternate Overfecthing Solution
+
+## Action Creators in Action Creators
+
+## Finding Unique User Ids
+
+## Quick Refactor with Chain
+
+## App Wrapup
+
+
 
 # Navigation with React Router
+## App Outline
+
+## Mockups in Details
+
+## App Challenges
+
+## Inital Setup
+
+## Introducing React Router
+
+## How React Router Works
+
+## How Paths Get Matched
+
+## How to "Not" Navigate with React Router
+
+## Navigating with React Router
+
+## Different Router Types
+
+## Component Scaffolding
+
+## Wiring Up Routes
+
+## Always Visible Components
+
+## Connecting the Header
+
+## Links Inside Routers
+
+
 
 # Handling Authenitcation with React
+## OAuth-Based Authentication
+
+## OAuth for Servers vs Browser Apps
+
+## Creating OAuth Credentials
+
+## Wiring Up the Google API Library
+
+## Sending a User Into the OAuth Flow
+
+## Rendering Authentication Status
+
+## Updating Auth State
+
+## Displaying Sign in and Sign Out
+
+## On-Demand Sign in and Sign Out
+
+## Redux Architecture Design
+
+## Redux Setup
+
+## Connecting Auth with Action Creators
+
+## Building the Auth Reducer
+
+## Handling Auth Status Through Redux
+
+## Fixed Action Types
+
+## Recording the User's ID
+
+
 
 # Reducx Dev Tools
+## Using Redux Dev Tools to Inspect the Store
+
+## Debug Sessions with Redux Dev Tools
+
 
 # Handling Forms with Redux Form
+## Forms with Redux Form
+
+## Useful Redux Form Examples
+
+## Conencting Reux Form
+
+## Creating Forms
+
+## Automatically Handling Events
+
+## Customizing Form Fields
+
+## Handling Form Submission
+
+## Validation of Form Inputs
+
+## Displaying Validation Messages
+
+## Showing Errors on Touch
+
+## Highlighting Errored Fields
+
+
 
 # REST-based React Apps 
+## Creating Streams 
+
+## REST-ful Conventions
+
+## Setting Up an API Server
+
+## Creating Streams Through Action Creators
+
+## Creating a Stream with REST Conventions
+
+## Dispatching Actions After Stream Creation
+
+## Bulk Action Creators
+
+## Object-Based Reducers
+
+## Key Interpolation Syntax
+
+## Handling Fetching, Creating, and Updating
+
+## Deleting Properties with Omit
+
+## Merging Lists of Records
+
+## Fetching a List of All Streams
+
+## Rendering All Streams
+
+## Associating Streams with Users
+
+## Conditionally Showing Edit and Delete
+
+## Linking to Stream Creation
+
+## When to Navigate Users
+
+## History Reference
+
+## Creating a Browser History Object
+
+## Implementing Programmatic Navigation
+
+## Manually Changing API Records
+
+## URL-Based Selection
+
+## Wildcard Navigation
+
+## More on Route Params
+
+## Selecting Records from State
+
+## Component Isolation with React Router
+
+## Fetching a Stream for Edit Stream
+
+## Real Code Reuse
+
+## Refactoring Stream Creation
+
+## Setting Initial Values
+
+## Avoiding Changes to Properties
+
+## Edit Form Submission
+
+## PUT vs PATCH Requests
+
+
 
 # Using React Portals 
 
