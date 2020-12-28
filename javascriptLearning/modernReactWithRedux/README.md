@@ -3058,30 +3058,281 @@ Finished
     ```
 
 ## Building and Styling the Accordion
+1. In this case, we use Semantic UI for styling. However, as the CSS library is very strict on the HTML element structure, if we use a `<div>` tag to wrap the contents inside, it will has 2 broder overlapping on the top.
+1. We can use `React.Fragment` as the JSX componont to prevent it returning another `<div>` tag. This is because all the child component to be rendered in a component shall be wrapped by a `<div>` tag. This is also useful when we have component in a HTML table. 
+1. According to new official [React documentation](https://zh-hant.reactjs.org/docs/fragments.html), we can even use an empty `<>` brackets to represent `React.Fragment`.
+    ```js
+    import React from 'react';
+    const Accordion = ({ items }) => {
+        const renderedItems = items.map(item => {
+            return (
+                <React.Fragment key={item.title}> // use React.Fragment to prevent border overlapping on the top
+                    <div className="title active">
+                        <i className="dropdown icon"></i>
+                        {item.title}
+                    </div>
+                    <div className="content active">
+                        <p>{item.content}</p>
+                    </div>
+                </React.Fragment>
+            );
+        });
+
+        return (
+            <div className="ui styled accordion">
+                {renderedItems}
+            </div>)
+            ;
+    }
+
+    export default Accordion;
+    ```
 
 ## Helper Functinos in Function Components
+1. In function-based component, we can't add a method and call it as class-based component directly. However, in JavaScript, we can declare a function in nearly any scope. This function is a "helper function".
+1. We then pass the function in an anonymous arrow function for `onClick` event handler.
+1. Therefore, when the user clicks any of the item in the list, it will print the prompt and index of the item in the developer console.
+    ```js
+    // Accordion.js 
+    const Accordion = ({ items }) => {
+        const onTitleClick = (index) => {
+            console.log('Title clicked', index);
+        }
+
+        const renderedItems = items.map((item, index) => {
+            return (
+                <React.Fragment key={item.title}>
+                    <div
+                        className="title active"
+                        onClick={() => onTitleClick(index)} // use arrow function for the correct function scope and prevent the function is called when the app startup
+                    >
+                        <i className="dropdown icon"></i>
+                        {item.title}
+                    </div>
+                    <div className="content active">
+                        <p>{item.content}</p>
+                    </div>
+                </React.Fragment>
+            );
+        });
+
+        return (
+            <div className="ui styled accordion">
+                {renderedItems}
+            </div>)
+            ;
+    }
+    ```
 
 ## Introducing useState
-
 ## Understanding useState
+1. In class-based component, the flow can go as the followings
+    1. Declare a `state` in the class and assign it an initial value.
+    1. Declare a method that uses `setState` to update the property in `state`.
+    1. Refer value of the `state` from `this.state`. 
+1. To use React Hook, we firstly use destructuring assignment to get `useState` from React library. Remember that `useState` in React Hook system is to enable use to use `state` system in functional component.
+1. We then declare 2 variables `activeIndex` and `setActiveIndex` by initiate `useState` as `null` with desctructuring assignment. Note that `useState` returns an array. Besides, as the desctructuring assignment are creating new variables, we can actually change the name for `activeIndex`, `setActiveIndex`, and the initial value for the `state` according to the scenario.
+1. In the helper function `onTitleClick`, we call `setActiveIndex` with the lastest value send with `onClick` event handler. Note that `setActiveIndex` is a setter function. When it is called, React will render the component. 
+    ```js
+    import React, { useState } from 'react';
+
+    const Accordion = ({ items }) => {
+        const [activeIndex, setActiveIndex] = useState(null);
+
+        const onTitleClick = (index) => {
+            setActiveIndex(index);
+        }
+
+        const renderedItems = items.map((item, index) => {
+            return (
+                <React.Fragment key={item.title}>
+                    <div
+                        className="title active"
+                        onClick={() => onTitleClick(index)}
+                    >
+                        <i className="dropdown icon"></i>
+                        {item.title}
+                    </div>
+                    <div className="content active">
+                        <p>{item.content}</p>
+                    </div>
+                </React.Fragment>
+            );
+        });
+
+        return (
+            <div className="ui styled accordion">
+                {renderedItems}
+                <h1>{activeIndex}</h1>
+            </div>)
+            ;
+    }
+
+    export default Accordion;
+    ```
+    <img src="./images/compareFlowClassAndFunctionalComponent.png">
+1. In this case, the downside of functional component is obvious that functional component can't set or change multiple `state` properties at the same time as class-based components do.
+    <img src="./images/flowClassAndFunctionalComponentMultipleState.png">
 
 ## Setter Functions
+1. The setter function, which is the 2nd function variable declare from the destructuring array assignment, will update the property in the `state` as `setState` method for class-based component. 
+1. In this case, `activeIndex` will be updated after `setActiveIndex` is called with an argument.
 
 ## Expanding the Accordion
+1. As `activeIndex` state will be updated all the time when the user clicks on any of the item in the list, we want the CSS styling be updated aligned with the value change. 
+1. With Semantic UI, the component will be shrinked or expanded with the class name `active` in this HTML structure.
+1. Therefore, when `renderedItems` is rendered, the App should check if `index` matches `activeIndex` and assign the `active` class to the element. 
+    ```js
+    // Accordion.js
+    const renderedItems = items.map((item, index) => {
+        const active = index === activeIndex ? 'active' : ''; // check if index is equal to activeIndex. If yes, assign active class to the element 
+
+        return (
+            <React.Fragment key={item.title}>
+                <div
+                    className={`title ${active}`}
+                    onClick={() => onTitleClick(index)}
+                >
+                    <i className="dropdown icon"></i>
+                    {item.title}
+                </div>
+                <div className={`content ${active}`}>
+                    <p>{item.content}</p>
+                </div>
+            </React.Fragment>
+        );
+    });
+    ```
 
 ## Creating Additional Widgets
+1. `Accordion` is only one of the widgets we create for this App. In this project, we have 4 main components. Each of them uses different functions in React Hook System.
+    1. Accordion uses `useState`
+    1. Search with a list of results uses `useState` and `useEffect`
+    1. A dropdown input uses `useState`, `useEffect`, and `useRef`
+    1. Translation function with a text input, dropdown input, and an output that uses `useState`, `useEffect`, and `useRef`.
 
 ## The Search Widget Architecture
+1. The main feature of the "**search widget**" is to allow users to give input for a topic from Wikipedia API. Then the App will render a list of results.
+1. Wikipedia API is relatively easy to use as it doesn't require authentication. We can just give a request with the topic that we want to search in `srsearch` property. Wikipedia will send us back a JSON.
+    ```
+    en.wikipedia.org/w/api.php?action=query&list=search&format=json&srsearch={SEARCHTERM}
+    ```
 
 ## Scaffolding the Widget
+1. We create another component `Search.js` in the directory. 
+1. In this case, as we haven't built the navigation bar on the top, users can't switch between the widgets in the App, so we just comment `<Accordion>` component in `App.js`.
+    ```js
+    // /component/Search.js
+    import React from 'react';
+    const Search = () => {
+        return <h1>Search</h1>;
+    }
+    export default Search;
+    ```
 
 ## Text Inputs with Hooks
+1. Note that we **DO NOT** have any submit button for users to click for the search term. Therefore, we will make API call every time when there's a changing event in the input element. Though this is very inefficient for API calls, we will optimize and solve this problem later.
+1. In this case, we just ensure that we have the inital setup for the App and doesn't have any error returned. 
+1. There are 2 ways we can make to make API calls to the endpoint.
+    ```js
+    import React, { useState } from 'react';
+
+    const Search = () => {
+        const [term, setTerm] = useState('');
+
+        return (
+            <div>
+                <div className="ui form">
+                    <div className="field">
+                        <label>Enter Search Term</label>
+                        <input
+                            className="input"
+                            value={term}
+                            onChange={(e) => setTerm(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    export default Search;
+    ```
 
 ## When do we Search?
+1. There are 2 options to make API calls.
+    1. Option 1
+        1. User types in input
+        1. `onChange` event handler called
+        1. We take value from input and make request to API
+        1. **Wait for response from the endponit**
+        1. Get response from the endpoint
+        1. Update '`results`' piece of `state`
+        1. Component rerenders, we show list of results
+    2. Option 2
+        1. User types in input
+        1. `onChange` event handler called
+        1. Update '`term`' piece of `state`
+        1. Component rerenders
+        1. We add code to detect that '`term`' has changed
+        1. Make request to API
+        1. **Wait for response from the endpoint**
+        1. Get response
+        1. Update '`results`' piece of state
+        1. Component rerenders, we show list of results
+1. In Option 1, 
+    1. Search instantly when `onChange` event triggers
+    1. Tightly couples '`onChange`' event with search
+1. In option 2, 
+    1. Search when `'term'` piece of state changes
+    1. Can easily trigger a search when other parameters change
+    1. Easier to extract code out into a more reusable function
+1. By using option 1, the search when fire every time when the user put some thing in the input, even though it is just a single character. This is not really efficient and can give too many requests to the endpoint that can affect user experience.
+1. Therefore, we can use option 2 and check if everything is ready and make the API call. 
 
 ## The useEffect Hook
+1. `useEffect` hook allows function components to use _something like_ lifecycle methods
+1. We configure the hook to run some code automatically in one of three scenarios
+    1. When the component is rendered **for the first time only**
+    1. When the component is rendered **for the first time and whenever it rerenders**
+    1. When the component is rendred **for the first time and whenever it rerenders and some piece of data has changed**
+1. Note that though `useEffect` hook is similar to lifecycle methods such as `componentDidMount`, it doesn't work exactly the same that this pre-set methods, such as `componentWillMount` have no meaning to functional components. 
+1. We then can use destructuring assignemnt to import it as `useState`. Then we can pass an anonymous arrow function that is code we want to run in the scenarios.
+1. The 2nd argument for `useEffect` for the 3 scenarios are 
+    1. `[]` that is an "empty array" that runs only at initial render.
+    1. "nothing" (which means there's no 2nd argument) to run at inital render and run after eery rerender.
+    1. "an array of elements" to run at initial render and run after every rerender if data has changed since last render.
+    <img src="./images/useEffect2ndArg.png">
+    ```js
+    const Search = () => {
+        const [term, setTerm] = useState('');
+
+        useEffect(() => {
+            console.log('useEffect');
+        }, []);
+
+        return (
+            <div>
+                <div className="ui form">
+                    <div className="field">
+                        <label>Enter Search Term</label>
+                        <input
+                            className="input"
+                            value={term}
+                            onChange={(e) => setTerm(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    ```
 
 ## Testing Execution
+1. In this case, as `term` is the `state` set for the component, it will change every time when the user gives something to the input. 
+1. Therefore, giving no 2nd argument and give the array with `[term]` actually work the same in this case.
+1. On the other hand, if we pass an empty array as the 2nd argument, the code will only be trigerred once. 
+1. In most of the cases, we will use scenarios with an empty array or array of elements. We rarely don't pass any argument. 
 
 ## Async Code in useEffect
 
