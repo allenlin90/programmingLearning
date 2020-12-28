@@ -2985,10 +2985,77 @@ Finished
 
 # Understanding Hooks in React 
 ## React Hooks
+1. Hook System
+    1. `useState` is a function that lets you use `state` in a functional component.
+    1. `useEffect` is a function that lets you use something like "**lifecycle methods**" in a functional component.
+    1. `useRef` is a function that lets you create a `ref` in a function component.
+1. Hooks are a way to write resuable code, instead of more classic techniques like Inheritance.
+1. There is a list of 10 "**Primitive**" Hooks (which are defined by the lecturer and not officially called primitive hooks in React).
+    1. `useState`
+    1. `useEffect`
+    1. `useContext`
+    1. `useRender`
+    1. `useCallback`
+    1. `useMemo`
+    1. `useRef`
+    1. `useImperativeHandle`
+    1. `useLayoutEffect`
+    1. `useDebugValue`
+1. We can use the pre-defined hooks and use `useTranslate` to create "**custom**" hooks for repeatable and reuseable code.
 
-## App Architecture 
+## App Architecture
+1. The architecture of this App includes the followings components
+    1. Accordion component
+    1. Wikipedia API search component
+    1. Dropdown item selection component
+    1. Google Translate API component
+1. In this case, we can send `items` props from `App` to `Accordion` to render the item on the screen. This `items` can be an array of `item` that includes `title` and `content` for the topic.
+1. For `State`, as we have only a question and answer opened at the same time. When the user click a question, only an answer section will be expanded. 
+1. Therefore, we can have a single `state` as `activeIndex` to show which `item` is activated (which the user selects or clicks). However, this `state` can be used in `Accordion` directly because no other component really cares the state of the expansion of component. We then set up 2 files in `src`, `App.js` and `index.js`.
+    ```js
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import App from './App';
+    ReactDOM.render(<App />, document.querySelector('#root'));
+
+    // App.js
+    import React from 'react';
+    export default () => {
+        return <h1>Widgets App</h1>;
+    }
+    ```
 
 ## Communicating the Items Prop
+1. We create a mockup array in `App.js` and send it to `Accordion` component to render it on screen.
+    ```js
+    // App.js
+    import React from 'react';
+    import Accordion from './components/Accordion';
+
+    const items = [
+        {
+            title: 'What is React?',
+            content: 'React is a front end JavaScript framework'
+        },
+        {
+            title: 'why use React?',
+            content: 'React is a favorite JS library among engineers'
+        },
+        {
+            title: 'How do you use React?',
+            content: 'You use React by creating components'
+        }
+    ]
+
+    export default () => {
+        return (
+            <div>
+                <Accordion items={items} />
+            </div>
+        );
+    }
+    ```
 
 ## Building and Styling the Accordion
 
