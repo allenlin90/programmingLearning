@@ -3335,34 +3335,391 @@ Finished
 1. In most of the cases, we will use scenarios with an empty array or array of elements. We rarely don't pass any argument. 
 
 ## Async Code in useEffect
+1. We can use `axios` to make API request in this case. The purpose of this `Search` widget it to fire a GET request to Wikipedia endpoint every time the user gives value to input. 
+1. For functional component in React, we can't mark a function `async` if it is to be passed to `useEffect` as a callback function. However, we have several solutions for the case. In this case, we will use the fist option that is have a function variable.
+    1. Have another function variable and declare it as `async`.
+        ```js
+        useEffect(() => {
+            const search = async() => {
+                await axios.get('url');
+            }
+            search();
+        }, [term])
+        ```
+    1. Use JavaScript `IIFE` to execute an anonymous function immediately after it's declared. 
+        ```js
+        useEffect(() => {
+            (async () => {
+                await axios.get()
+            })();
+        }, [term]);
+        ```
+    1. Use regular `Promise` syntax to work on the response.
+        ```js
+        useEffect(() => {
+            axios.get('url')
+                .then((response) => {
+                    console.log(response.data);
+                });
+        }, [term]);
+        ```
 
 ## Executing the Request from useEffect
+1. We use `axios` to make GET request to Wikipedia endpoint. Note that in the 2nd parameter as the object that passed to `axios` to make the call, we only need to have `params` to send the parameters as those in URLs if we access it from browser search bar. This is tricky that as modern website as `CORS` security that if the configure isn't correct, the request will be blocked and somehow it's now easy to figure out the issue. 
+    ```js
+    // components/Search.js
+    useEffect(() => {
+        const search = async () => {
+            await axios.get('https://en.wikipedia.org/w/api.php', {
+                params: {
+                    action: 'query',
+                    list: 'search',
+                    origin: '*',
+                    format: 'json',
+                    srsearch: term,
+                },
+            });
+        }
+        search();
+    }, [term]);
+    ```
 
 ## Default Search Terms
+1. With an array that has element in it, the setter function from React Hook system will render when the component is rendred **for the first time and whenever it rerenders and some piece of data has changed**.
+1. Therefore, we may have 2 options for the inital value for `term` state. 
+    1. Give a string value as default, so users can see a search result of a given term by default.
+    1. Use `if` statement to check if `term` is given by the user and not empty, so the `axios` request won't be triggered in the initial stage when there's no thing given for `term`.
+1. In this case, we can set a default string for users to check when they firstly access the App.
 
 ## List Building
+1. After we get the response from the API call, we can create an array with `.map` method and render it on teh screen.
+1. Note that when creating array of components in a list, we need to add `key` property.
+1. However, Wikipedia API gives another feature to provide HTML tags in its contents, which can't be used directly and doesn't look good. 
+    ```js
+    // Search.js
+    const Search = () => {
+        const [term, setTerm] = useState('programming');
+        const [results, setResults] = useState([]);
+
+        console.log(results);
+
+        useEffect(() => {
+            const search = async () => {
+                const { data } = await axios.get('https://en.wikipedia.org/w/api.php', {
+                    params: {
+                        action: 'query',
+                        list: 'search',
+                        origin: '*',
+                        format: 'json',
+                        srsearch: term,
+                    },
+                });
+
+                setResults(data.query.search);
+            }
+            search();
+        }, [term]);
+
+        const renderedResults = results.map((result) => {
+            return (
+                <div key={result.pageid} className="item">
+                    <div className="content">
+                        <div className="header">
+                            {result.title}
+                        </div>
+                        {result.snippet}
+                    </div>
+                </div>
+            );
+        })
+
+        return (
+            <div>
+                <div className="ui form">
+                    <div className="field">
+                        <label>Enter Search Term</label>
+                        <input
+                            className="input"
+                            value={term}
+                            onChange={(e) => setTerm(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <div className="ui celled list">{renderedResults}</div>
+            </div>
+        );
+    }
+    ```
 
 ## XSS Attacks in React
+1. As the endpoint returning us contents with HTML tags, we can consider render the content as HTML directly.
+1. In React, we actually have a way to render the HTML content received from another endpoint directly though this **IS NOT** recommended because this will be a security hole for the App. This is called `XSS` attack which stands for "**Cross Site Scripting**". This will allow others to run JavaScript in the App.
+1. The syntax is to use `<span>` tag with a property `dangerouslySetInnerHTML` and give it an object with `__html` property.
+    ```js
+    // Search.js
+    const renderedResults = results.map((result) => {
+        return (
+            <div key={result.pageid} className="item">
+                <div className="content">
+                    <div className="header">
+                        {result.title}
+                    </div>
+                    // use dangerouslySetInnerHTML to render HTML contents directly
+                    <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>
+                </div>
+            </div>
+        );
+    })
+    ```
+1. Therefore, we can only use this if the source of code is trustworthy. However, this is still not recommended to use.
 
 ## XSS Server Code
+1. This is the code to set up a simple server to simulate XSS attack to the website. 
+1. If you run the mini server and connect to the endpoint, we can press "t" in the search bar and see the result that the endpoint can inject code to control over the website or App which can steal sensitive user info.
 
 ## Linking to a Wikipedia Page
+1. As we import and render teh snippet from Wikipedia endpoint, we'd like to create a button on the right to allow users to click and direct to Wikipedia for the full contents.
+    ```js
+    // Search.js
+    const renderedResults = results.map((result) => {
+        return (
+            <div key={result.pageid} className="item">
+                <div className="right floated content">
+                    // add a new button
+                    <a
+                        className="ui button"
+                        href={`https://en.wikipedia.org?curid=${result.pageid}`}
+                    >
+                        Go
+                    </a>
+                </div>
+                <div className="content">
+                    <div className="header">
+                        {result.title}
+                    </div>
+                    <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>
+                </div>
+            </div>
+        );
+    });
+    ```
+1. However, at this point, the App still has some issue that when the user delete all the value in the input search bar, this React app will return an error because nothing can be searched or rendered. 
+1. Remember that we fire the search request to Wikipedia all the time when user is typing something in the input search bar. 
+1. Therefore, we'd like to improve the App that it only fire a request when the user has finished typing to improve efficiency, reduce workload, and prevent possible issues.
 
 ## Only Search with a Term
+1. We can apply a relatively easy solution to prevent `search()` function fires when there's no text in the search bar.
+1. However, this still hasn't prevent the app fire search request every time when the user types something in the search bar.
+    ```js
+    useEffect(() => {
+        const search = async () => {
+            const { data } = await axios.get('https://en.wikipedia.org/w/api.php', {
+                params: {
+                    action: 'query',
+                    list: 'search',
+                    origin: '*',
+                    format: 'json',
+                    srsearch: term,
+                },
+            });
+
+            setResults(data.query.search);
+        }
+
+        // fire search function only when term is not empty
+        if (term) {
+            search();
+        }
+    }, [term]);
+    ```
 
 ## Throttling API Requests
+1. In this case, we can set a function to check and wait for every `500ms` to fire the search request if the user does typing and stop. Note that this time gap for waiting can be set arbitrarily.
+    <img src="./images/setTimerFlowThrottle.png">
 
 ## Reminder on setTimeout
+1. We can use `setTimeout` API in JavaScript to delay the search request. 
+1. Every time the user types something, `setTimeout` API will create an async task in queue. Besides, we will cancel the time delay if this `setTimeout` is called again.
+1. When execute `setTimeout`, it will return a number that we can use it with `clearTimeout` to cancel the execution.
+1. Note that there are 2 ways we can solve this issue,
+    1. We can use `state` to track on the condition of execution.
+    1. We can use `useEffect` hook to cancel it.
 
 ## useEffect's Cleanup Function
+1. Remember that `useEffect` works as lifecycle methods for components. In the current setting, we pass the 2nd argument as an array with element(s). Therefore, this `useEffect` will be trigerred when the App initiates and every time the element(s) in the given array is changed.
+1. In addition, this `useEffect` function is only allowed to "**execute functions inside**" (as to fire search request and update `state`) or return another function.
+1. Keep in mind that `useEffect` is only allowed to return a "**function**" rather than any other type of value. This returned function will be handled by React and be called sometime in the future in certain condition.
+1. This returned function will be trigerred when the `state` is updated again. Then the `useEffect` will be executed once again. The flow is as 
+    1. App initate and run `useEffect` first time for initial render. The returned function from `useEffect` is held and does nothing.
+    1. When the user gives any input or change in the search bar, which update the `state` and rerender the component, returned function will be fired.
+    1. After the returned function executed, `useEffect` will run and return the function to standby once again (as the feature of server that standing by and listening to request all the time).
+    <img src="./images/useEffectReturnFunction.png">
 
 ## Implementing a Delayed Request
+1. We then can add and return an arrow function to cancel the `setTimeout` by `clearTimeout`. Note that as the functions are in the same scope, we can catch the `setTimeoutId` directly. 
+1. Therefore, this will cause an delay to fire the search request every time when users type in the search bar. 
+1. This can reduce number of times that the App sending request to the endpoint, as it only works when the user finishes typing or if the user types slowly. Besides, we can even increase the delay time from `500ms` to `1000ms` as 1 second.
+    ```js
+    // Search.js
+    useEffect(() => {
+        const search = async () => {
+            const { data } = await axios.get('https://en.wikipedia.org/w/api.php', {
+                params: {
+                    action: 'query',
+                    list: 'search',
+                    origin: '*',
+                    format: 'json',
+                    srsearch: term,
+                },
+            });
+
+            setResults(data.query.search);
+        }
+
+        const timeoutId = setTimeout(() => {
+            if (term) {
+                search();
+            }
+        }, 500);
+
+        return () => {
+            clearTimeout(timeoutId);
+        }
+    }, [term]);
+    ```
+1. Though this has solved the problem and prevent sending requests to the endpoint very often, we have another issue that this will give another delay when the App initiates. The App will be delayed for the initial search at the beginning as well.
 
 ## Searching on Initial Render
+1. We can use an `if` statement to check if the App is on the initla run. For example, if `term` has value and `results.length` is 0, it means we haven't got any response from the request call. Therefore, we can consider this as the inital stage of the App and do not run `setTimeout`. 
+    ```js
+    // Search.js
+    useEffect(() => {
+        const search = async () => {
+            const { data } = await axios.get('https://en.wikipedia.org/w/api.php', {
+                params: {
+                    action: 'query',
+                    list: 'search',
+                    origin: '*',
+                    format: 'json',
+                    srsearch: term,
+                },
+            });
+
+            setResults(data.query.search);
+        }
+
+        if (term && !results.length) {
+            search();
+        } else {
+            const timeoutId = setTimeout(() => {
+                if (term) {
+                    search();
+                }
+            }, 500);
+
+            return () => {
+                clearTimeout(timeoutId);
+            }
+        }
+    }, [term]);
+    ```
 
 ## Edge Case When Clearing Out Input Form
-
 ## Optional Video - Fixing a Warning
+1. From the previous section, we get a warning from React that "**React Hook `useEffect` has a missing dependency: 'results.length'**".
+1. This is because when we decalre `useEffect` function, we didn't pass `results` as an element in the 2nd argument which is the array.
+1. Without referring the `state` properties properly, the App may have some hard to debug issues or problems which are not easy to find. Therefore, the `ESlint` in React warns the programmer to correctly refer to the dependecies when using `useEffect`. 
+    ```js
+    // Search.js
+    useEffect (() => {
+    }, [term]);
+    ```
+1. We could consider to add `results.length` in this case to resolve the warning in developer console. However, this leads us to another bug that having 2 elements in the array will make the app fires request twice.
+1. In this app, we have an `if` statement to check and fire the initial search when `term` has value and `results.length` is `0`. However, after we get the response from the request call, `results` is updated, so the `useEffect` is trigerred and run the code with `setTimeout` once which makes another request to the endpoint. 
+    <img src="./images/componentRenderingFlowWithUseEffect.png">
+1. Therefore, if we'd like to solve the issue by preventing sending the 2nd request and provide the dependency in the array, we need to restructure the search code.
+1. In this case, we will set up 2 `useEffect` functions and create another `state` as `debouncedTerm`. Each of the `useEffect` function focus and run on different `state`. One watches over `term`, and the other watches over `devouncedTerm`. However, we are now going to modify the workflow of the app. 
+    1. For the `useEffect` that watches over `debouncedTerm`, it will proceed on the data fetching request to the endpoint and will be initiated when the app starts.
+    1. When the user types something, `term` in the `state` will be updated by the other `useEffect`. Besides, this `useEffect` function will set a timer to upadte `debouncedTerm`.
+    1. If the user hasn't finished typing and before the timer stops, this `useEffect` will be trigerred and cancel the previous timer, updates `term` in `state`, and set a new timer to `debouncedTerm` again.
+    1. When the user stops for `500ms`, or the timer runs out, `debouncedTerm` in state will be updated and be set to the same value as that in `term`. 
+    1. When `state` updates, the component will be rerendered. 
+1. As we have initial value for `term` state from the beginning, `term` is assigned to `debouncedTerm`, so `useEffect` for `debouncedTerm` can fire immediately and send a request to fetch data when the app initiates. After that, the app works as the flow shown below that `debouncedTerm` will only be updated if the user change the vaule in input search bar and stop typing for more than `1000ms`, which is the given time gap in this case.
+    <img src="./images/useDebounceTerm169.png">
+    <img src="./images/useDebounceTerm169_2.png">
+    ```js
+    // Search.js
+    const Search = () => {
+        const [term, setTerm] = useState('programming');
+        const [debouncedTerm, setDebouncedTerm] = useState(term);
+        const [results, setResults] = useState([]);
+
+        useEffect(() => { // useEffect for term state
+            const timerId = setTimeout(() => { // delay the function if the user is still styping
+                setDebouncedTerm(term);
+            }, 1000);
+
+            return () => { // return a function and cancel setTimeout if the user keeps typing
+                clearTimeout(timerId);
+            }
+        }, [term]); // initiate when the component is firstly rendered and whenever 'term' is udpated
+
+        useEffect(() => { // useEffect for debouncedTerm state
+            const search = async () => { // request to wikipedia endpoint with axios 
+                const { data } = await axios.get('https://en.wikipedia.org/w/api.php', {
+                    params: {
+                        action: 'query',
+                        list: 'search',
+                        origin: '*',
+                        format: 'json',
+                        srsearch: term,
+                    },
+                });
+
+                setResults(data.query.search); // update results state
+            }
+
+            search();
+        }, [debouncedTerm]); // initiate when the component is firstly rendered and whenever 'debouncedTerm' is udpated
+
+        const renderedResults = results.map((result) => {
+            return (
+                <div key={result.pageid} className="item">
+                    <div className="right floated content">
+                        <a
+                            className="ui button"
+                            href={`https://en.wikipedia.org?curid=${result.pageid}`}
+                        >
+                            Go
+                        </a>
+                    </div>
+                    <div className="content">
+                        <div className="header">
+                            {result.title}
+                        </div>
+                        <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>
+                    </div>
+                </div>
+            );
+        });
+
+        return (
+            <div>
+                <div className="ui form">
+                    <div className="field">
+                        <label>Enter Search Term</label>
+                        <input
+                            className="input"
+                            value={term}
+                            onChange={(e) => setTerm(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <div className="ui celled list">{renderedResults}</div>
+            </div>
+        );
+    }
+    ```
 
 ## Dropdown Architecture
 
