@@ -3303,6 +3303,7 @@ Finished
     1. "nothing" (which means there's no 2nd argument) to run at inital render and run after eery rerender.
     1. "an array of elements" to run at initial render and run after every rerender if data has changed since last render.
     <img src="./images/useEffect2ndArg.png">
+
     ```js
     const Search = () => {
         const [term, setTerm] = useState('');
@@ -3331,7 +3332,7 @@ Finished
 ## Testing Execution
 1. In this case, as `term` is the `state` set for the component, it will change every time when the user gives something to the input. 
 1. Therefore, giving no 2nd argument and give the array with `[term]` actually work the same in this case.
-1. On the other hand, if we pass an empty array as the 2nd argument, the code will only be trigerred once. 
+1. On the other hand, if we pass an empty array as the 2nd argument, the code will only be triggered once. 
 1. In most of the cases, we will use scenarios with an empty array or array of elements. We rarely don't pass any argument. 
 
 ## Async Code in useEffect
@@ -3546,10 +3547,10 @@ Finished
     1. We can use `useEffect` hook to cancel it.
 
 ## useEffect's Cleanup Function
-1. Remember that `useEffect` works as lifecycle methods for components. In the current setting, we pass the 2nd argument as an array with element(s). Therefore, this `useEffect` will be trigerred when the App initiates and every time the element(s) in the given array is changed.
+1. Remember that `useEffect` works as lifecycle methods for components. In the current setting, we pass the 2nd argument as an array with element(s). Therefore, this `useEffect` will be triggered when the App initiates and every time the element(s) in the given array is changed.
 1. In addition, this `useEffect` function is only allowed to "**execute functions inside**" (as to fire search request and update `state`) or return another function.
 1. Keep in mind that `useEffect` is only allowed to return a "**function**" rather than any other type of value. This returned function will be handled by React and be called sometime in the future in certain condition.
-1. This returned function will be trigerred when the `state` is updated again. Then the `useEffect` will be executed once again. The flow is as 
+1. This returned function will be triggered when the `state` is updated again. Then the `useEffect` will be executed once again. The flow is as 
     1. App initate and run `useEffect` first time for initial render. The returned function from `useEffect` is held and does nothing.
     1. When the user gives any input or change in the search bar, which update the `state` and rerender the component, returned function will be fired.
     1. After the returned function executed, `useEffect` will run and return the function to standby once again (as the feature of server that standing by and listening to request all the time).
@@ -3635,13 +3636,13 @@ Finished
     }, [term]);
     ```
 1. We could consider to add `results.length` in this case to resolve the warning in developer console. However, this leads us to another bug that having 2 elements in the array will make the app fires request twice.
-1. In this app, we have an `if` statement to check and fire the initial search when `term` has value and `results.length` is `0`. However, after we get the response from the request call, `results` is updated, so the `useEffect` is trigerred and run the code with `setTimeout` once which makes another request to the endpoint. 
+1. In this app, we have an `if` statement to check and fire the initial search when `term` has value and `results.length` is `0`. However, after we get the response from the request call, `results` is updated, so the `useEffect` is triggered and run the code with `setTimeout` once which makes another request to the endpoint. 
     <img src="./images/componentRenderingFlowWithUseEffect.png">
 1. Therefore, if we'd like to solve the issue by preventing sending the 2nd request and provide the dependency in the array, we need to restructure the search code.
 1. In this case, we will set up 2 `useEffect` functions and create another `state` as `debouncedTerm`. Each of the `useEffect` function focus and run on different `state`. One watches over `term`, and the other watches over `devouncedTerm`. However, we are now going to modify the workflow of the app. 
     1. For the `useEffect` that watches over `debouncedTerm`, it will proceed on the data fetching request to the endpoint and will be initiated when the app starts.
     1. When the user types something, `term` in the `state` will be updated by the other `useEffect`. Besides, this `useEffect` function will set a timer to upadte `debouncedTerm`.
-    1. If the user hasn't finished typing and before the timer stops, this `useEffect` will be trigerred and cancel the previous timer, updates `term` in `state`, and set a new timer to `debouncedTerm` again.
+    1. If the user hasn't finished typing and before the timer stops, this `useEffect` will be triggered and cancel the previous timer, updates `term` in `state`, and set a new timer to `debouncedTerm` again.
     1. When the user stops for `500ms`, or the timer runs out, `debouncedTerm` in state will be updated and be set to the same value as that in `term`. 
     1. When `state` updates, the component will be rerendered. 
 1. As we have initial value for `term` state from the beginning, `term` is assigned to `debouncedTerm`, so `useEffect` for `debouncedTerm` can fire immediately and send a request to fetch data when the app initiates. After that, the app works as the flow shown below that `debouncedTerm` will only be updated if the user change the vaule in input search bar and stop typing for more than `1000ms`, which is the given time gap in this case.
@@ -3722,32 +3723,354 @@ Finished
     ```
 
 ## Dropdown Architecture
+1. We will use `useState`, `useEffect`, and `useRef` hooks for this widget. 
+1. The widget has a dropdown list for users to select a desirable color which will change the color of the content below.
+1. This feature should be reuseable that it accepts `props` rather than `state` which will update and rerender the components.
+1. In this project, we will pass down 
+    1. `options` as `props` which is an array of objects that has `label` and `value` that provides options for users to select from `App` to `Dropdown`.
+    1. A `selection` as `state` from `App` to `Dropdown` to tell what the user selects.
+    ```js
+    const options = {
+        label: 'The Color Red', 
+        value: 'red'
+    }
+    ```
 
 ## Scaffolding the Dropdown
+1. We create `Dropdown.js` in components directory and have it with simple boilerplate.
+    ```js
+    // Dropdown.js
+    import React from 'react';
+
+    const Dropdown = () => {
+        return <h1>Dropdown</h1>
+    }
+
+    export default Dropdown; 
+
+    // App.js
+    import React from 'react';
+    import Dropdown from './components/Dropdown';
+    const options = [
+        {
+            label: 'The Color Red',
+            value: 'red'
+        },
+        {
+            label: 'The Color Green',
+            value: 'green'
+        },
+        {
+            label: 'A Shade of Blue',
+            value: 'blue'
+        }
+    ];
+
+    export default () => {
+        return (
+            <div>
+                <Dropdown options={options} />
+            </div>
+        );
+    }
+    ```
 
 ## A Lot of JSX
+1. We create the layout with Semantic UI classes for the user interface as a dropdown list. 
+1. Note that part of the HTML structure can be refined such as in `<label>` tag, the content is hard coded that this list can only be used with selecting colors. 
+1. Besides, the dropdown list is opened by default.
+    ```js
+    // Dropdown.js
+    const Dropdown = ({ options }) => {
+        const renderedOptions = options.map((option) => {
+            return (
+                <div key={option.value} className="item">
+                    {option.label}
+                </div>
+            );
+        });
+        return (
+            <div className="ui form">
+                <div className="field">
+                    <label className="label">Select a Color</label>
+                    <div className="ui selection dropdown visible active">
+                        <i className="dropdown icon"></i>
+                        <div className="text">Select Color</div>
+                        <div className="menu visible transition">
+                            {renderedOptions}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    ```
+    <img src="./images/dropdownJSX173.png">
 
 ## Selection State
+1. We create a `state` in `App` to keep tracking that which color is selected by the user.
+1. Having this structure is because that we may have multiple dropdown lists for users to select different properties. For example, one `Dropdown` is used for selecting `color`, while the other can be used for `size` or `country` according to the App requirements.
+1. We use `useState` in App to create `state` to collect what users has selected and pass it to `Dropdown` component as `props`.
+    ```js
+    // App.js
+    import React, { useState } from 'react';
+    export default () => {
+        const [selected, setSelected] = useState(options[0]);
+
+        return (
+            <div>
+                <Dropdown
+                    selected={selected}
+                    onSelectedChange={setSelected}
+                    options={options}
+                />
+            </div>
+        );
+    }
+    ```
+1. In `Dropdown` component, we can import `props` with destructuring assignments.
+1. In each item in the list, we can use `onClick` event handler to hire `onSelectedChange` to send the value back to `App`, which will then update `selected` `state` and rerender the component.
+1. Note that we can refine the UI as in this case, the list will still show have the user has selected. It would be confusing for users to see the same option and think it can be selected twice. Therefore, we can make a filter to remove the selected item from the options if it's selected.
+    ```js
+    // Dropdown.js
+    const Dropdown = ({options, selected, onSelectedChange}) => {
+        const renderedOptions = options.map((option) => {
+            return (
+                <div
+                    key={option.value}
+                    className="item"
+                    onClick={() => onSelectedChange(option)} // handling click event when the user selects any item from the list and send it back to App
+                >
+                    {option.label}
+                </div>
+            );
+        });
+
+        return (
+            <div className="ui form">
+                <div className="field">
+                    <label className="label">Select a Color</label>
+                    <div className="ui selection dropdown visible active">
+                        <i className="dropdown icon"></i>
+                        <div className="text">{selected.label}</div> // change hard-coded label with options for users to select
+                        <div className="menu visible transition">
+                            {renderedOptions}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    ```
 
 ## Filtering the Option List
+1. To filter the selected option and remove it from the list, we can use an `if` statement to check the current `selected` and return `null` in the array through `.map` method, so the item will be "removed" as the element becomes `null`.
+    ```js
+    const renderedOptions = options.map((option) => {
+        if (option.value === selected.value) { // return null when creating the new array if the item is the same as selected value
+            return null;
+        }
+
+        return (
+            <div
+                key={option.value}
+                className="item"
+                onClick={() => onSelectedChange(option)}
+            >
+                {option.label}
+            </div>
+        );
+    });
+    ```
 
 ## Hiding and Showing the Option List
+1. In the current state, the dropdown list is opened by default. The `dropdown` menu current has `visible`, `active`, and `trasition` class which make the list opens.
+    ```html
+    <div className="ui form">
+        <div className="field">
+            <label className="label">Select a Color</label>
+            <div className="ui selection dropdown visible active"> <!-- this makes the dropdown list open -->
+                <i className="dropdown icon"></i>
+                <div className="text">{selected.label}</div>
+                <div className="menu visible transition"> <!-- this makes the dropdown list open -->
+                    {renderedOptions}
+                </div>
+            </div>
+        </div>
+    </div>
+    ```
+1. To enable toggling the dropdown list, we can create another state to track on the status of the dropdown list. In this case, the `state` can be simple that just be `true` when the list opens, and `false` when it is closed.
+1. We then use ternary operator to return the classes according to the `state`, so it will be either with the aligned classes or just empty string as to cancel the styling on the element. 
+1. Note that we can improve the user experience to allow users to close the dropdown list out of the whole list element. In this case, the list can only be toggled by clicking on the list element directly. 
+1. However, in convention, most of the apps will allow users to close the list container if they click or tap somewhere else out of the element. Note that this is an advanced feature which is a little bit challenging.
+    ```js
+    // Dropdown.js
+    import React, { useState } from 'react';
+    const Dropdown = () => {
+        const [open, setOpen] = useState(false);
+
+        return (
+            <div className="ui form">
+                <div className="field">
+                    <label className="label">Select a Color</label>
+                    <div
+                        onClick={() => setOpen(!open)}
+                        // use ternary operator to check the state and return aligned classes
+                        className={`ui selection dropdown ${open ? 'visible active' : ''}`}
+                    >
+                        <i className="dropdown icon"></i>
+                        <div className="text">{selected.label}</div>
+                        // use ternary operator to check the state and return aligned classes
+                        <div className={`menu ${open ? 'visible transition' : ''}`}>
+                            {renderedOptions}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    ``` 
 
 ## Err... Why is this Hard?
+1. In this section, we are going to reason about how to allow users to click any area out of the list component and close the expanded dropdown list. 
+1. One of the challenge is that event handlers can only be added to the component and its child element, while it can't add event handler to its parent or parallel elements or components.
+1. Therefore, we can't add event listener to other elements on the screen to handle the click event directly. 
 
 ## Reminder on Event Bubbling
+1. When a event handler catches an event to an element that has the event listener, JavaScript will create an event object which will travel up to its parents until the root element, which usually is the `<html>` tag. This event is called `event bubbling`. Along the way, if any of the element has event handler for '`click`', it will also be triggered. 
+1. This event bubbling phenomenon occurs in the current app, as if a user clicks any item in the dropdown list to select a color, the dropdown list will close.
+1. This is because the event objects floats up and trigger the `onClick` event handler of the dropdown list. As the handler is triggered, the dropdown list is toggled. 
+    <img src="./images/eventBubbling177.png">
 
 ## Applying What We've Learned
+1. The `Dropdown` needs to detect a click event on **_any element besides one_** it created.
+1. The `Dropdown` has a hardtime setting up event handlers on elements that it does not create.
+1. Event bubbling can be used in the case. 
+1. Therefore, the Dropdown can set up a manual event listener (without React) on the `body` element. Note that a "click" on **_any element_**  will bubble up to the boddy. 
 
 ## Binding an Event Handler
+1. We set up event handler for body with `useEffect` and the function to add an event listener to body in the initial case. Therefore, we use `useEffect` with an empty array as the 2nd argument. Note that after React v17, we need to have 2nd argument, an object `{ capture: true }` to `addEventListener` method. We can check more information at [JavaScript Info](https://javascript.info/bubbling-and-capturing#capturing)
+1. However, the current solution is still buggy that the dropdown list won't be closed after users select an item from the list. 
+    ```js
+    import React, {useState, useEffect} from 'react';
+    
+    useEffect(() => {
+        document.body.addEventListener('click', () => { // add an event listener to body
+            setOpen(false);
+        }, { capture: true }); // add { capture: true } if using react v17
+    }, []);
+    ```
 
 ## Why Stay Open
+1. The manually added event listener is added to the `<body>` tag directly and will be triggered before event handlers created in React app. We can add `console.log()` in each event handler to check the order that each event handler is executed. 
+1. When click on the dropdown list directly, we can check from developer console that the order of the execution is 
+    1. body
+    1. item 
+    1. list
+    <img src="./images/OrderEventHandlerExecution180.png">
+    ```js
+    // Dropdown.js
+    const Dropdown = ({ options, selected, onSelectedChange }) => {
+        const [open, setOpen] = useState(false);
+
+        useEffect(() => {
+            document.body.addEventListener('click', () => {
+                console.log('body click');
+                setOpen(false);
+            }, { capture: true });
+        }, []);
+    }
+    ```
 
 ## Which Element Was Clicked?
+1. In the current stage, we have 2 main scenarios to focus
+    1. Scenarios 1
+        1. User clicks on an element that is created by the `Dropdown` component.
+        1. If a user clicks on one of these elements, then we probably **_don't want the body event listener to do anything_**.
+    1. Scenario 2
+        1. User clicks on any element besides the ones created by the `Dropdown`.
+        1. If a user clicks on any of these elements, we **_do want the body event listener to close the dropdown_**.
+1. In the callback function of the event listener, we can have an argument as the `event` object. We then can check with `event.target` to learn which element in the HTML document does the user click. 
+1. Therefore, we can use `useRef` hook which is similar to `ref` system for class-based React components.
+1. In this case, we will add a `ref` to `<div className="ui form">`, then we can check if the element we click on is inside the referred element or not to decide whether to trigger a function to close the dropdown list. 
 
 ## Making use of useRef
+1. We can use `console.log(ref.current)` to check what's the current object that `ref` refers to. Note that console will print `undefined` when the app firstly renders because at the time the component is not on the screen yet. After that, every time the `state` changes (when the component is rerendered), the console will print the whole `Dropdown` component.
+1.  We then can give the condition with `if` statement in `useEffect` to check if the clicked object is in the `Dropdown component`. If yes, we can use `return` to stop the function immediately before it turn `open` state into `false`. After the component is toggled, the dropdown list will work as expected.
+    ```js
+    // Dropdown.js
+    const Dropdown = ({ options, selected, onSelectedChange }) => {
+        const [open, setOpen] = useState(false);
+        const ref = useRef();
+
+        useEffect(() => {
+            document.body.addEventListener('click', (event) => {
+                // use both ref.current && ref.current.contains(event.target) if using React v17
+                if (ref.current && ref.current.contains(event.target)) {
+                    return;
+                }
+                setOpen(false);
+            }, { capture: true });
+        }, []);
+
+        // console.log(ref.current); // check what's the object that ref refers to
+        return (
+            <div ref={ref} className="ui form"></div>
+        );
+    }
+    ```
 
 ## Body Event Listener Cleanup
+1. In the case that if we want to toggle the whole `Dropdown` component in `App`, we can add a button and refactor the `App`.
+1. We create a new `state` `showDropdown` and set its default to be `true`, as we want the `Dropdown` component show on the screen by default. 
+1. When users click the button, the `showDropdown` state will be toggled, and we can use ternary operator to decide whether to show `Dropdown` component.
+1. However, this will cause an error that after we click the button to hide the whole `Dropdown` component, if we click anywhere on the screen it will cause an error says "`TypeError: Cannot read property 'contains' of null`".
+1. This is beacause when we hide the component, the manual event listener is still added to body. However, its callback function is checking to `ref.current` which has nothing, as `Dropdown` component is not rendered in `App`. 
+    ```js
+    // App.js
+    () => {
+        const [selected, setSelected] = useState(options[0]);
+        const [showDropdown, setShowDropdown] = useState(true);
+
+        return (
+            <div>
+                <button onClick={() => setShowDropdown(!showDropdown)}>Toggle Dropdown</button>
+                {/* <Accordion items={items} /> */}
+                {/* <Search /> */}
+                {showDropdown ?
+                    <Dropdown
+                        selected={selected}
+                        onSelectedChange={setSelected}
+                        options={options}
+                    /> : null
+                }
+            </div>
+        );
+    }
+    ```
+1. In this case, we need to refactor the `useEffect` and return a function to remove the event listener added to document body. 
+1. Assign the callback function as a variable, so we can use `removeEventListener` method to delete it. In this case, we create a variable `onBodyClick`. 
+1. Return a function with `useEffect` which can be triggered in 2 scenario according to React official doc about [Using the Effect Hook](https://reactjs.org/docs/hooks-effect.html#example-using-hooks-1).
+    1. React performs the cleanup when the component unmounts.
+    1. The function runs both after the first render and after every update.
+1. Therefore, when the component is removed, the returned function will fire and remove the event listener on `body`. 
+    ```js
+    // Dropdown.js
+    useEffect(() => {
+        const onBodyClick = (event) => {
+            if (ref.current && ref.current.contains(event.target)) {
+                return;
+            }
+            setOpen(false);
+        }
+
+        document.body.addEventListener('click', onBodyClick, { capture: true });
+
+        return () => { // this function will be triggered when the component is going to be rerendered or when the component is removed
+            document.body.removeEventListener('click', onBodyClick);
+        };
+    }, []);
+    ```
 
 ## The Translate Widget
 
