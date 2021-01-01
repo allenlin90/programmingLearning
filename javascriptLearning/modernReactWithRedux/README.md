@@ -4073,22 +4073,243 @@ Finished
     ```
 
 ## The Translate Widget
+1. In this widget, the user can 
+    1. Input some text into the text bar to search.
+    1. Select a language from dropdown list to translate the given text.
+1. The app will then render the translated text as the output. 
+1. In this case, we have `Translate` as the main component which is the responsible to handle all the views, take the input and render the output. 
+1. In `Translate`, we will have a `Dropdown` that gives the `options` for language translation. The `options` is an array of `objects` (similar to the color object in the previous widget).
+1. For this widget, we can use the same exact `Dropdown` component that we made for color changing widget.
+    <img src="./images/translateWidgetStructure185.png">
 
 ## Scaffolding the Translate Component
+1. Since we are going to use language translation API, the `value` from the `options` array is important that we should refer to the requiremetns and syntax of the API.q
+1. We firstly build up the structure of the `Translate` component. As we are using `Dropdown` component here directly, we should follow its syntax and pass `state` and `setState` functions accordingly.
+    1. `selected` will be the `language` `state` which we set as the first element in the array by default.
+    1. `onSelectedChange` is the callback function to update `state` when the user selects any item from the `Dropdown` menu, so it can send the `state` back to its parent component. 
+1. Note that we still have some issues here that the label for `Dropdown` component was hard-coded for color changing widget, so it still shows "select a color" by default. 
+    ```js
+    // /components/Translate.js
+    import React, { useState, useEffect, useRef } from 'react';
+    import Dropdown from './Dropdown';
+
+    const options = [
+        {
+            label: 'Afrikaans',
+            value: 'af'
+        },
+        {
+            label: 'Arabic',
+            value: 'ar'
+        },
+        {
+            label: 'Hindi',
+            value: 'hi'
+        }
+    ]
+
+    const Translate = () => {
+        const [language, setLanguage] = useState(options[0]);
+
+        return (
+            <div>
+                <Dropdown selected={language} onSelectedChange={setLanguage} options={options} />
+            </div>
+        );
+    };
+
+    export default Translate;
+    ```
+    <img src="./images/scaffoldingTranslateComponent186.png">
 
 ## Adding the Language Input
+1. We create `text` `state` to track on the user' input from the `input` tag and use some HTML elements from semantic UI to style the elements.
+1. As in other projects, we can pass an anonymous arrow function to handle the event and take the user input every time there's new value given in the tag. 
+    ```js
+    const Translate = () => {
+        const [language, setLanguage] = useState(options[0]);
+        const [text, setText] = useState('');
+
+        return (
+            <div>
+                <div className="ui form">
+                    <div className="field">
+                        <label>Enter Text</label>
+                        <input value={text} onChange={(e) => setText(e.target.value)} type="text" />
+                    </div>
+                </div>
+                <Dropdown
+                    label="Select a Language"
+                    selected={language}
+                    onSelectedChange={setLanguage}
+                    options={options}
+                />
+            </div>
+        );
+    };
+    ```
 
 ## Understanding the Convert Component
-
 ## Google Translate API Key
+1. In `Translate` widget, we will pass both `text` and the `language` that the user wants to translate to the sub component `Convert`. Therefore, we can use `useEffect` hook to handle the request.
+    1. A new value for `language` or `text` has appeared! We should convert it and show the output.
+    1. Make request to Google Translate API
+    1. Update `state` with data from response 
+    1. Show data from response on the screen
+1. For the parameters, we can refer to [Google Cloud Translate API and Reference](https://cloud.google.com/translate/docs/reference/rest/v2/translate). In this case, we will use the following parameters and send it to Google Translate API endpoint with `POST` request. 
+    1. `q` is the term that we want to translate
+    1. `target` is the language that we want to translate to
+    1. `key` is the authentication key to use the API. 
+1. The authentication key is given by the course and can only be used to call from `localhost:3000`.
 
 ## Building the Convert Component
+1. We create another component `Convert`. 
+    ```js
+    // component/Convert.js
+    import React, { useState, useEffect } from 'react';
+
+    const Convert = ({ language, text }) => {
+        useEffect(() => {
+            console.log("new language or text");
+        }, [language, text]);
+
+        return (
+            <div></div>
+        );
+    }
+
+    export default Convert
+    ```
+1. We need to pass `language` and `text` through property system from `Translate` to `Convert`.
+    ```html
+    <!-- Translate.js -->
+    <div>
+        <div className="ui form">
+            <div className="field">
+                <label>Enter Text</label>
+                <input value={text} onChange={(e) => setText(e.target.value)} type="text" />
+            </div>
+        </div>
+        <Dropdown
+            label="Select a Language"
+            selected={language}
+            onSelectedChange={setLanguage}
+            options={options}
+        />
+        <hr />
+        <h3 className="ui header">Output</h3>
+        <Convert text={text} language={language} />
+    </div>
+    ```
 
 ## Using the Google Translate API
+1. We can use `axios` to make a request to Google Translate API endpoint. Then we can check from "network" tab in deverlop console that the app makes a request every time we type something and got a response from Google's API endpoint.
+1. Note that we need to pass an empty object as the 2nd argument in `axios` call. The 2nd object is the `body` or `params` that passed as to make request. We can check more information about [how `axios` call works](https://github.com/axios/axios#axiosposturl-data-config).
+1. However, according to Google Translate API, we need to pass the parameters as "**[query string](https://en.wikipedia.org/wiki/Query_string)**". Therefore, we will leave the 2nd object empty as we don't have parameters.
+1. The query parameters will be send through query string, we will set them up in `config` which is the 3rd argument for `axios`, and we set them up in the `params` property.
+    ```js
+    // component/Convert.js
+    import React, {useState, useEfect} from 'react';
+    import axios from 'axios';
+
+    const googleTranslateAPI = `AIzaSyCHUCmpR7cT_yDFHC98CZJy2LTms-IwDlM`;
+
+    const Convert = ({language, text}) => {
+        useEffect(() => {
+            axios.post('', {}, {
+                params: {
+                    q: text,
+                    target: langauge,
+                    key: googleTranslateAPI
+                }
+            });
+        }, [text, language])
+    }
+    ```
 
 ## Displaying Translated Text
+1. We create a new state `translated` to keep the translated output responded from Google API.
+1. The solution here is similar to what we did for the `Search` component that making request to and API. 
+1. Note that we get `data` from the response object by `axios`. There's another `data` property which holds the data we need from Google API that can be confusing. 
+1. However, the current function will have the same problem that every time the user types someting, the App will make a call to the endpoint. This can be pricy if the API service charges every time we make a request. 
+1. Therefore, we can use another `state` and `useEffect` to have a "delay" and wait for user finsihing typing.
+    ```js
+    const Convert = ({ language, text }) => {
+        const [translated, setTranslated] = useState('');
+
+        useEffect(() => {
+            const doTranslation = async () => {
+                const { data } = await axios.post('https://translation.googleapis.com/language/translate/v2', {}, {
+                    params: {
+                        q: debouncedText,
+                        target: language.value,
+                        key: googleTranslateAPI
+                    }
+                });
+
+                // this data structure can be confusing 
+                setTranslated(data.data.translations[0].translatedText);
+            };
+
+            doTranslation();
+        }, [language, text]);
+
+        return (
+            <div>
+                <h1 className="ui header">
+                    {translated}
+                </h1>
+            </div>
+        );
+    }
+    ```
 
 ## Debouncing Translation Updates
+1. The solution uses here is the same as the widget we did for `Search` component. 
+1. We use 2 `state` and `useEffect` to track on user input.
+    1. One `state` and `useEffect` has a timer and will be cancel if the user keeps typing in 500ms. 
+    1. After the user finishes typing, the 2nd `state` will be updatd and triggered the other `useEffect` to make API request.
+1. Note that in the 2nd `useEffect` we should put `language` in the 2nd array argument to have better user experience. As users won't switch languages as often as typing something in the `input` tag. Besides, this feature will allow users to switch translation for the same input. Without it, the user must switch the language and change the input and type it back again. 
+    ```js
+    const Convert = ({ language, text }) => {
+        const [translated, setTranslated] = useState('');
+        const [debouncedText, setDeboucedtext] = useState('');
+
+        useEffect(() => {
+            const timerId = setTimeout(() => {
+                setDeboucedtext(text);
+            }, 500);
+
+            return () => {
+                clearTimeout(timerId);
+            }
+        }, [language, text]);
+
+        useEffect(() => {
+            const doTranslation = async () => {
+                const { data } = await axios.post('https://translation.googleapis.com/language/translate/v2', {}, {
+                    params: {
+                        q: debouncedText,
+                        target: language.value,
+                        key: googleTranslateAPI
+                    }
+                });
+
+                setTranslated(data.data.translations[0].translatedText);
+            };
+
+            doTranslation();
+        }, [language, debouncedText]) // put language will allow users to swtich translation between languages with the same input
+
+        return (
+            <div>
+                <h1 className="ui header">
+                    {translated}
+                </h1>
+            </div>
+        );
+    }
+    ```
 
 ## Reviewing useState and useEffect
 
