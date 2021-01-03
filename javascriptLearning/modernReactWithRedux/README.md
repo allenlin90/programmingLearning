@@ -4311,31 +4311,338 @@ Finished
     }
     ```
 
-## Reviewing useState and useEffect
-
 
 
 # Navigation From Scratch
 ## Navigation in React
+1. In this section, we will work on "**Navigation**" which shows different sets of components when the URL changes.
+1. In last sections, we create `Accordion`, `Dropdown` (color changing), `Translate`, and `Search`. We will create a navigation bar on the top for users to switch between the widgets.
+    1. At the `root` route, we will show `Accordion` by default.
+    1. `dropdown` for color changing feature
+    1. `translate` for `Translate` component
+1. For the purpose, we will use a library `React-Router`. However, there's some features we should be aware of.
+    1. React Router has frequent breaking changes
+    1. **More important to learn the ideas and theory of navigation**
+    1. We are going to build some navigation stuff from scratch
+    1. React-Router will be covered later in the course
 
 ## Basic Component Routing
+1. Firstly we draw out the route mappings to understand the structure of the routes
+    1. `/` shows `Accordion` 
+    1. `/list` shows `Search`
+    1. `/dropdown` shows `Dropdown`
+    1. `/translaet` shows `Translate`
+1. `window.location` is a global object that we can keep track on the user's route, which is the URL in the search bar. There are several properties that we can check of current user's state, such as `href` for the full URL, `port` for the port that the user is visiting and fetching data, and `host` for the domain name. 
+1. In this case, we can check the route from `pathname` property, which is the route where the user locates.
+    ```js
+    window.location.href
+    window.location.pathname
+    window.location.port
+    window.location.host
+    ```
+1. In `App.js`, we can add functions to check routes to find where is the current user. If the `pathname` matches the setting, we will show the ailgned components. 
+1. Howeer, the current approach is not optimized as the logic to check each route and show components is repetitive.
+    ```js
+    // App.js
+    const showAccordion = () => {
+        if (window.location.pathname === '/') {
+            return <Accordion items={items} />;
+        }
+    }
+
+    const showList = () => {
+        if (window.location.pathname === '/list') {
+            return <Search />;
+        }
+    }
+
+    const showDropdown = () => {
+        if (window.location.pathname === '/dropdown') {
+            return <Dropdown />;
+        }
+    }
+
+    const showTranslate = () => {
+        if (window.location.pathname === '/translate') {
+            return <Translate />;
+        }
+    }
+
+    export default () => {
+        return (
+            <div>
+                {showAccordion()}
+                {showList()}
+                {showDropdown()}
+                {showTranslate()}
+            </div>
+        );
+    }
+    ```
 
 ## Building a Reusable Route Component
+1. Though we can make a standalone function to check the current route and decide what components to render, we can create another component for the case.
+1. We create `Route.js` to check the `pathname` and decide what to show on the screen. Note that we didn't use `React` component, so we don't need to import `React` in this case. 
+1. Besides, we get 2 arguments from `App` component that check the path and return `children` which is the child component of another component. We can check the structure in `App.js`. 
+    ```js
+    // comopnents/Route.js
+    const Route = ({ path, children }) => {
+        return window.location.pathname === path
+            ? children
+            : null;
+    }
+
+    export default Route;
+    ```
+1. In `App`, we can use `Route` to wrap which component we created and pass the `path` to check which component should React render. 
+    ```js
+    // App.js
+    export default () => {
+        const [selected, setSelected] = useState(options[0]);
+        return (
+            <div>
+                <Route path="/"> // parent component 
+                    <Accordion items={items} /> // children of a component
+                </Route>
+                <Route path="/list">
+                    <Search />
+                </Route>
+                <Route path="/dropdown">
+                    <Dropdown
+                        label="Select a color"
+                        options={options}
+                        selected={selected}
+                        onSelectedChange={setSelected}
+                    />
+                </Route>
+                <Route path="/translate">
+                    <Translate />
+                </Route>
+            </div>
+        );
+    }
+    ```
 
 ## Implementing a Header for Navigation
+1. After setting the route, we can create `Header` which is the navigation bar for users to switch between widgets. We then create `Header.js` in components directory.
+    ```js
+    // comopnents/Header.js
+    import React from 'react';
+
+    const Header = () => {
+        return (
+            <div className="ui secondary pointing menu">
+                <a href="/" className="item">
+                    Accordion
+                </a>
+                <a href="/list" className="item">
+                    Search
+                </a>
+                <a href="/dropdown" className="item">
+                    Dropdown
+                </a>
+                <a href="/translate" className="item">
+                    Translate
+                </a>
+            </div>
+        )
+    }
+
+    export default Header;
+    ```
+1. We then can just put the `Header` component right above the other `Route` component.
+1. Though this solution works at the moment, there's a downside for this and we will discuss in the later section.
+    ```js
+    // App.js
+    import Header from './components/Header';
+
+    return () => {
+        return 
+        <div>
+            <Header />
+        </div>
+    }
+    ```
+    <img src="./images/reactNavigation199.gif">
 
 ## Handling Navigation
+1. The current solution has an issue that every time the user switches between widgets, the browser will make request too various resources for the event. This is consider bad approach because this can dramatically slow down the process and affect user experience. 
+1. For regular web app, every time the user clicks on a hyper link (anchor tag) or switch between routes, the browser will make a request by the route to the server, and the server will respond will aligned HTML documents and its JavaScript and CSS file.
+1. Therefore, in the current React structure with the `Header` component, every time user switch the route, the whole React App is rerendered and request for all the resources from server. This includes all the components, media, and CSS file. This can be a huge drag down when the App goes bigger. 
+1. In summary, we'd like to request for part of the files and components we need when the user switches between widgets rather than requesting for the whole web app.
+1. The App can be modified to adpat the following workflow.
+    1. User clicks on `List`.
+    1. Change the URL, but don't do a **_full page refresh_**!
+    1. Each Route could detect the URL has changed.
+    1. Route could update piece of `state` tracking the current pathname.
+    1. Each Route rerenders, showing/hiding comopnents appropriately.
 
 ## Building a Link
+1. We create `Link` component to handle each event when the user click on the links to switch between routes. Therefore, we replace all the anchor tags in `Header` with `Link` component.
+    ```js
+    // components/Header.js
+    import Link from './Link.js';
+    const Header = () => {
+        return (
+            <div className="ui secondary pointing menu">
+                <Link href="/" className="item">
+                    Accordion
+                </Link>
+                <Link href="/list" className="item">
+                    Search
+                </Link>
+                <Link href="/dropdown" className="item">
+                    Dropdown
+                </Link>
+                <Link href="/translate" className="item">
+                    Translate
+                </Link>
+            </div>
+        )
+    }
+    ```
+1. Besides, we should import and use `className`, `href`, and `children` properties sending from `Header` component. Note that `children` is the content or element that wrapped by the component. It can be regular value or other HTML elements or components. 
+1. To handle the `click` event, we create a helper function `onClick` and use `preventDefault()` to prevent the App from reloading the resources when switching between routes.
+    ```js
+    // components/Link.js
+    import React from 'react';
+    const Link = ({ className, href, children }) => {
+        const onClick = (event) => {
+            event.preventDefault();
+        }
+
+        return (
+            <a onClick={onClick} className={className} href={href}>
+                {children}
+            </a>
+        );
+    };
+
+    export default Link;
+    ```
 
 ## Changing the URL
+1. In browsers, we can use `window.history.pushState({}, '', '/route')` to change URL in the search bar without redirect the user and reload the page. 
+1. Therefore, we can update `Header` component and change URL when users clicks any item in the navigation. 
+1. However, we should be careful with the content and component rendered by each route, as users can save the link as bookmark and access it again in the future. We should persist and return the same content on the same route.
+    ```js
+    // Header.js
+    const Link = ({ className, href, children }) => {
+        const onClick = (event) => {
+            event.preventDefault();
+            window.history.pushState({}, '', href);
+        }
+
+        return (
+            <a onClick={onClick} className={className} href={href}>
+                {children}
+            </a>
+        );
+    };
+    ```
 
 ## Detecting Navigation
+1. In this case, we'd like to track on the changes on URL and render the components accordingly. 
+1. In `onClick` helper event, we put `new PopstateEvent('popstate')` and pass this object to `window.dispatchEvent(navEvent)`. What this basically does is that it indicates to the `Route` component that the URL is changed.
+1. However, there's no explanation from the browser that why and how to use `PopstateEvent()` and `window.dispatchEvent()`.
+    ```js
+    // Links.js
+    const Link = ({ className, href, children }) => {
+        const onClick = (event) => {
+            event.preventDefault();
+            window.history.pushState({}, '', href);
+
+            const navEvent = new PopStateEvent('popstate');
+            window.dispatchEvent(navEvent);
+        }
+
+        return (
+            <a onClick={onClick} className={className} href={href}>
+                {children}
+            </a>
+        );
+    };
+    ```
+1. In `Route` component, we need to catch the `popstate` event when it changes. Besides, we only want this `useEffect` happens when the component rerenders, so we pass an empty array, as the 2nd argument.
+1. Besides, we can return a clean up function to remove the event listener `onLocationChange`.
+1. After the update, we can find `onLocationChange` is triggered 4 times when we click on the anchor tag. 
+    ```js
+    // Route.js
+    import { useEffect } from 'react';
+
+    const Route = ({ path, children }) => {
+        useEffect(() => {
+            const onLocationChange = () => { // fires when the user clicks on any Link component in Header and switch the URL
+                console.log('Location Change');
+            };
+
+            window.addEventListener('popstate', onLocationChange);
+
+            return () => {
+                window.removeEventListener('popstate', onLocationChange);
+            }
+        }, []);
+
+        return window.location.pathname === path
+            ? children
+            : null;
+    }
+
+    export default Route;
+    ```
 
 ## Updating the Route
+1. To let `Route` component rerender only itself, we create a specific state `currentPath` which is only used to check if the route is updated. 
+1. We then updaet `onLocationChange` helper function and make it update `currentPath` state. Down below for the object to return, we can change to check if `currentPath` is equal to the `path` to show the component or return `null` to keep it empty.
+1. Note that we can still use `window.location.pathname` as if it equals to the `path`. 
+    ```js
+    //Route.js
+    const Route = ({ path, children }) => {
+        const [currentPath, setCurrentPath] = useState(window.location.path);
+        useEffect(() => {
+            const onLocationChange = () => {
+                setCurrentPath(window.location.pathname);
+            };
+
+            window.addEventListener('popstate', onLocationChange);
+
+            return () => {
+                window.removeEventListener('popstate', onLocationChange);
+            }
+        }, []);
+
+        return currentPath === path
+            ? children
+            : null;
+    }
+    ```
+1. Note that there's one last feature missing here is that in regular condition, users can press <kbd>Ctrl</kbd> and click a link and create a new tab in the browser. However, this feature is not available in the current configuration, as we have use `event.preventDefault()` in an event handler to prevent the scenario.
 
 ## Handling Command Clicks
+1. Note that when users press <kbd>Ctrl</kbd> and click a link, we should track on the event and ensure that we return the correct components as users want to see. Besides, as it's in the new tab, all the resources should be loaded again.
+1. Therefore, we can update `Link.js` and check the `event` argument with its `.metaKey` and `.ctrlKey` from user request. If the user does press <kbd>Ctrl</kbd> on Windows system or <kbd>Commend</kbd> on Mac, we use `return` to bypass the event handler, so the page on the given route will be loaded as a new page.
+    ```js
+    // components/Link.js
+    const Link = ({ className, href, children }) => {
+        const onClick = (event) => {
+            if (event.metaKey || event.ctrlKey) { // allow users to create a new tab in the browser when press Ctrl and click the link
+                return;
+            }
 
+            event.preventDefault();
+            window.history.pushState({}, '', href);
+
+            const navEvent = new PopStateEvent('popstate');
+            window.dispatchEvent(navEvent);
+        }
+
+        return (
+            <a onClick={onClick} className={className} href={href}>
+                {children}
+            </a>
+        );
+    };
+    ```
 
 
 # Hooks in Practice
