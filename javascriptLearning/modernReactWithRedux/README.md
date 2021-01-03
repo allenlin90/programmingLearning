@@ -4645,20 +4645,230 @@ Finished
     ```
 
 
+
 # Hooks in Practice
 ## Project Overview
+1. The target of this section is to "**rebuild YouTube Video App with Hooks**".
+1. We are going to use files from `video` project which as 3 main components, `SearchBar`, `VideoList` with `VideoItem` in it, and `VideoDetail`.
 
 ## Refactoring the SearchBar
+1. This section is to refactor `SearchBar.js` component and turn it from class-based to functional component.
+    ```js
+    // SearchBar.js
+    import React, { useState } from 'react';
+
+    const SearchBar = ({ onFormSubmit }) => {
+        const [term, setTerm] = useState('');
+
+        const onSubmit = (event) => { // as we have had 'onFormSubmit' passed from props system, so we change the helper function to 'onSubmit'
+            event.preventDefault();
+            onFormSubmit(term);
+        }
+
+        return (
+            <div className="search-bar ui segment">
+                <form onSubmit={onSubmit} className="ui form">
+                <div className="field">
+                    <label>Video Search</label>
+                    <input 
+                        type="text"
+                        value={term}
+                        // pass an anonymous arrow function here rather than declaring another function
+                        onChange={(event) => setTerm(event.target.value)}
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    export default SearchBar;
+    ```
 
 ## Refactoring the App
+1. In `App` component, we found 2 states, `videos` and `selectedVideo`. Therefore, we can use `useState` twice for each of them. 
+1. Besides, we use `componentDidMount` which is a lifecycle method, so we can use `useEffect` to replace the function. Besides, `componentDidMount` only runs the callback function passed to it once when the component is rendered. Therefore, we pass an empty array as the 2nd argument.
+    ```js
+    // App.js
+    import React, {useState, useEffect} from 'react';
+
+    const App = () => {
+        const [videos, setVideos] = useState([]);
+        const [selectedVideo, setSelectedVideo] = useState(null);
+
+        useEffect(() => {
+            onTermSubmit('buildings');
+        }, []);
+
+        const onTermSubmit = async (term) => {
+            const response = await youtube.get('/search', {
+                params: {
+                    q: term
+                }
+            });
+
+            setVideo(response.data.items);
+            setSelectedVideos(response.data.items[0]);
+        };
+
+        const onVideoSelect = (video) => {
+            setSelectedVideo(video);
+        };
+
+        return (
+            <div className="ui container">
+                <SearchBar onFormSubmit={onTermSubmit} />
+                <div className="ui grid">
+                    <div className="ui row">
+                        <div className="eleven wide column">
+                            <VideoDetail video={selectedVideo} />
+                        </div>
+                        <div className="five wide column">
+                            <VideoDetail 
+                                onVideoSelect{onVideoSelect}
+                                videos={videos}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+    ```
 
 ## Removing a Callback
+1. We can notice that every time we find a one line function, we can consider to use anonymous function to pass it to event handler rather than declare a new function variable.
+1. Besides, if the function take a single argument and pass it to the callback function, we can consider to remove the whole function and pass the callback function as variable directly. 
+    ```js
+    // App.js
+    <VideoList 
+        onVideoSelect={(video) => setSelected(video)} 
+        videos={videos} 
+    />
+
+    // we can refactor it to
+    <VideoList 
+        onVideoSelect={onVideoSelect} 
+        videos={videos} 
+    />
+    ```
 
 ## Overview on Custom Hooks
+1. In some cases, we may use the same or similar functions on different components, such as fetching data from URL. This can be used to render data and contents to users or provide insights in the user backend system.
+1. For example, in this project, we have logic for video fetching in `App` component, while this can be used on `Analytic` component which is to show the list of videos that the user uploads. Though the endpoint to fetch data can b different, the logic is similar and we can make this function in component to make it reusable.
+1. In this case, we can create "**_Custom Hook_**" to be used for both `App` and `Analytics` components.
+1. There are some feature and advantages from custom hooks
+    1. Best way to create reusable code in a React project (besides components).
+    1. Created by extracting hook-related code out of a function component.
+    1. Custom hooks always make use of at least one primitive hook internally.
+    1. Each custom hook should have "**_only one purpose_**". 
+    1. Kind of an art form. (This concept is abstract and not easy to understand)
+    1. Data-fetching is a great thing to try to make reusable.
+1. Note that `custom hooks` are not related to `JSX`. If we want to make JSX reusable, we just create another component.
 
 ## Process for Building Custom Hooks
+1. To create a `custom hook`
+    1. Identify each line of code related to some single purpose.
+    1. Identify the `inputs` to that code.
+    1. Identify the `outputs` to that code.
+    1. Extract all the code into a separate function, receiving the inputs as arguments, and returning the outputs.
+1. By summarizing the process into a sentence, we get "If you give me a `default search term`, I will give you `a way to search for videos` (and `a list of videos`).
+1. In this project, we focus on the part that is not JSX. There are 2 main purpose in the following code.
+    1. Managing a list of videos in the current state.
+    1. Managing the selected video.
+    ```js
+    // App.js
+    const [videos, setVideos] = useState([]); // an updated videos state is the output from custom hook
+    const [selectedVideo, setSelectedVideo] = useState(null);
+
+    useEffect(() => {
+        // this is the input for custom hook 
+        onTermSubmit('buildings');
+    }, []);
+
+    const onTermSubmit = async (term) => { // an api calling method is the output from the custom hook
+        const response = await youtube.get('/search', {
+        params: {
+            q: term,
+        },
+        });
+
+        // data responded from the endpoint is the output from the custom hook
+        setVideos(response.data.items);
+        setSelectedVideo(response.data.items[0]);
+    };
+    ```
 
 ## Extracting Video Logic
+1. We create a new directory in `src` as `hooks` to put the `custom hooks` we create. 
+1. In convention, we will set the name similar to `useState` and `useEffect`. Therefore, we can use `useVideo` for the purpose. 
+1. We start to copy the code from `App.js` to `useVideos` custom hook. Note that we only transfer the code that handles "**videos**" state.
+    1. We take off the default search term `buildings` because this custom hook can be used in other components. We'd like to make a default search according to the component using it. This is consider the `input` from this custom hook.
+    1. For `output`, we'd like to get a list after the user searchs a specific topic or term. In this case, we can return 2 data, which is the "**videos list**" generated from the API call, and "**a function that can be used to search for new videos**".
+    1. To return the `outputs`, we can use pattern similar to other hooks, such as `useState` that an array of `data` and the `set function`.
+    1. On the other hand, we can use an object to wrap the outputs as well. 
+    1. Note that `onTermSubmit` makes sense to be used in the original component. However, to make this more reusable, we can rename it as `search`, as the callback function simply does an API fetch request to the endpoint and a list of videos from it. 
+    ```js
+    // src/hooks/useVideos.js
+    import { useState, useEffet } from 'react';
+    import youtube from '../apis/youtube';
+
+    const useVideos = (defaultSearchTerm) => { // take argument from component
+        const [videos, setVideos] = useState([]);
+
+        useEffect(() => {
+            search(defaultSearchTerm); // the default search term is given from the component using this hook 
+        }, [defaultSearchTerm]); // put defaultSearchTerm here to track on and ensure everytime the argument changes, the function will be called
+
+        // rename the setter function
+        const search = async (term) => {
+            const response = await youtube.get('/search', {
+                params: {
+                    q: term,
+                },
+            });
+
+            setVideos(response.data.items);
+        };
+
+        return [videos, search];
+        // return { videos, search };
+    };
+
+    export default useVideos;
+    ```
+1. We then import the custom hook as other hooks in React.
+    1. Pass a term as the default search term. 
+    1. Change the callback function pass to `SearchBar` component as the setter function from the custom hook, which is `search`. 
+    1. Use `useEffect` hook to check everytime the custom hook get updated from the API fetch and updates the video list from the fetched results. 
+    ```js
+    // App.js
+    import useVideos from '../hooks/useVideos';
+
+    const App = () => {
+        const [selectedVideo, setSelectedVideo] = useState(null);
+        const [videos, search] = useVideos('building');
+
+        useEffect(() => {
+            setSelectedVideo(videos[0]);
+        }, [videos]);
+
+        return (
+            <div className="ui container">
+            <SearchBar onFormSubmit={search} /> // use setter function from the custom hook
+            <div className="ui grid">
+                <div className="ui row">
+                <div className="eleven wide column">
+                    <VideoDetail video={selectedVideo} />
+                </div>
+                <div className="five wide column">
+                    <VideoList onVideoSelect={setSelectedVideo} videos={videos} />
+                </div>
+                </div>
+            </div>
+            </div>
+        );
+    };
+    ```
 
 ## Using the Custom Hook
 
