@@ -4799,6 +4799,7 @@ Finished
     ```
 
 ## Extracting Video Logic
+## Using the Custom Hook
 1. We create a new directory in `src` as `hooks` to put the `custom hooks` we create. 
 1. In convention, we will set the name similar to `useState` and `useEffect`. Therefore, we can use `useVideo` for the purpose. 
 1. We start to copy the code from `App.js` to `useVideos` custom hook. Note that we only transfer the code that handles "**videos**" state.
@@ -4870,7 +4871,6 @@ Finished
     };
     ```
 
-## Using the Custom Hook
 
 
 
