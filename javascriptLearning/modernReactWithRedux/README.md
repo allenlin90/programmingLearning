@@ -4873,13 +4873,29 @@ Finished
 
 
 
-
 # Deploying a React App
 ## Deployment Overview
+1. When we run `create-react-app`, the preset `npm` package will create and handle all the required files and structure for us. During development, we use `npm start` to run a local development server.
+1. After finishing development, we can bundle the file and generate 4 main static files and deploy it a web server.
+    1. `index.html`
+    1. `bundle.js`
+    1. `image.jpg`
+    1. `index.css`
+    <img src="./images/reactDeploymentFlow216.png">
+1. Note that we don't need a virtual machine to run the app because the files are actually static as we are only creating the user interface that are static files. 
+1. In the case, we will use [`vercel`](https://vercel.com/) for the case. We can install the tool with `npm -g install vercel` to install the package globally on the machine. Note that to deploy the project on vercel, we have to change directory at the path of the project.
 
 ## Deployment with Vercel
+1. We register an account on Vercel first and run `vercel` in the project directory.
+1. Vercel will ask for the first login. We can give the email that we register for the account and verify the email to login.
+1. Then vercel will ask for the initial configuration for the project. After that, it will run `npm run build` by itself to bundle the files.
+1. If we update the project and want to redeploy the app, we can use `vercel --prod` in the same project directory. Vercel will bundel the project again and deploy the app itself.
 
 ## Deployment with Netlify
+1. To deploy on Netlify, we should put the app in a separated repo on Github (or other git hosting cloud service).
+1. We then choose the repository that is hosted on Github that we want to deploy.
+1. For Netlify, the process is relatively simple that every time we does commit on the branch to deploy, such as `master`, it will be deployed to Netlify automatically. 
+1. Note that we may see error after deployment on Netlify as we have limited the Youtube API to be accessible only via `localhost`. Therefore, if we go checking in the developer console, we can find that the request to YouTube endpoint gets a `403` error.
 
 
 
