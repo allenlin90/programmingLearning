@@ -5084,20 +5084,131 @@ Finished
 
 # Integrating React with Redux
 ## React Cooperating with Redux
+1. We are going to create an project with simpel integration of `React` and `Redux`. We will create a list of songs with their title. When the user click any of the songs in the list, there's details of the song rendered on the side of the page. 
 
 ## React, Redux, and React-Redux
+1. The `songs` app has 2 main components.
+    1. `SongList` is a list of songs with their titles.
+    1. `SongDetail` is the detail of the selected song when the user selects one of the songs.
+1. To work with both `React` and `Redux`, we will use 3 libraries `React`, `Redux`, and `React-Redux` which is the library to allow React and Redux work together.
+1. Note that `Redux` is not developed to work with `React` only and it can be used in the other cases as well.
+1. In this case, we work similar to other projects that we take the boilerplates off from the `src` folder.
+1. Besides, we will use `Semantic UI` CSS library.
+    ```js
+    // components/App.js
+    import React from 'react';
+
+    const App = () => {
+        return (
+            <div>App</div>
+        );
+    };
+
+    export default App;
+
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
 
 ## Design of the Redux App
+1. In many cases, if we use `Redux` to manage `state`, we will skip `useState` from `React` library. However, in some scenarios, we will use both to manage the `state`.
+1. For the structure, if we'd like to use without `Redux`, we may have `state` as the following structure.
+    <img src="./images/reactStructureWithoutRedux232.png">
+1. On the other hand, we can use `Redux` and simplify the structure.
+    <img src="./images/reactStructureWithRedux232.png">
 
 ## How React-Redux Works
+1. We will use `React-Redux` to create 2 new components to work on both `React` and `Redux`.
+    1. `Provider`
+    1. `Connect`
+    <img src="./images/howReactReduxWork233.png">
+1. By using `Redux`, we will get a `store` object which stores all the `states`. Therefore, we will pass the `store` object as a `prop` to `Provider` which is derived from `React-Redux`. 
+1. Note that `Provider` component will be rendered at the very top hierarchy in the application, which is even higher than `App`. Thus, `App` is actually showing inside of the `Provider` component. By meaning of its name, the `Provider` will provide the information to all the components in the app. 
+1. The `Connect` component allows the child component inside of it communicate with `Provider` directly that it can bypass all the parent comopnents in between. The system these components used to communicte is the `context` system.
+1. When the `Connect` component receives data from `Provider` it passes it to the child component with `prop` system.
+1. To modify the data in `Redux`, we need to use `Action Creators` which uses `store.dispatch(action)` method to update the `states`.
 
 ## Redux Project Structure
+1. Under `src` directory, we have several folders
+    1. `/actions` contains files related to action creators
+    1. `/components` has files related to components
+    1. `/reducers` has files related to reducers
+    1. `/index.js` sets up both the react and redux sides of the app. As we have more configuration in this file, we have moved `App.js` as a component to `/component` directory.
+1. We then create `actions` and `reducers` directory in `src` folder. Besides, in `actions` folder, we create a new file `index.js`. 
+1. Note that in vast majority of React app, this is the naming convention, and we will see many files in a directory is named `index.js`. This is because that when webpack bundle the code, if we don't provide the file name but the directory directly, it will find file name `index.js` as default. Therefore, we can have a shorthand for the case and pass only the dierctory rather than the whole route with the file name.
 
 ## Named vs Default Exports
+1. In this course, we are using `export default` all the time. However, we can also use "**named exports**" for the case. Note that to import named exports in the other file, we can use destructuring assignment with curly braces to assign new variable. 
+1. Named export is one way to export multiple variables from a file. 
+1. We can simply notice that if a JS file is using `export default`, we can import the single variable without using curly braces. Otherwise, we can use destructuring assigment as the shorthand to import multiple variables from the file at the same time.
+    ```js
+    // src/actions/index.js
+    // Action creator
+    export const selectSong = song => {
+        // Return an action
+        return {
+            type: 'SONG_SELECTED',
+            payload: song
+        };
+    };
+    ```
 
 ## Building Reducers
+1. We create `index.js` in `reducers` directory. Note that we are returning a static array with no argument given to the reducer function in this case. This is just a demo app to show how to integrate using React and Redux.
+    ```js
+    // src/reducers/index.js
+    const songsReducer = () => {
+        return [
+            { title: 'No Scrubs', duration: '4:05' },
+            { title: 'Macarena', duration: '2:30' },
+            { title: 'All Star', duration: '3:15' },
+            { title: 'I Want it That Way', duration: '1:45' }
+        ];
+    };
+
+    const selectedSongReducer = (selectedSong = null, action) => {
+        if (action.type === 'SONG_SELECTED') {
+            return action.payload;
+        }
+
+        return selectedSong;
+    }
+    ```
 
 ## Wiring Up the Provider
+1. We import `Redux` to use it in `index.js` for the reducer function. To know whether to use curly braces to declare variables when import a library, we can check its documentation.
+    ```js
+    // src/reducers/index.js
+    import { combineReducers } from 'redux';
+
+    export default combineReducers({
+        songs: songsReducer,
+        selectedSong: selectedSongReducer
+    });
+    ```
+1. After configure the reducer function for `Redux`, we get back to work on the `index.js` in `src`. We import `Provider` from `react-redux` and `createStore` to update the `state` stored in `store` in `Redux`. 
+1. We then wrap the `App` component with `Provider` component and pass the `store` object with `props` which is created with `createStore` with reducer function.
+1. Note that this provider is created to enable the child components in `App` to use `Connect` componenet to communicate with `Provider` component directly.
+    ```js
+    // src/index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { Provider } from 'react-redux';
+    import { createStore } from 'redux';
+
+    import App from './components/App';
+    import reducers from './reducers';
+
+    ReactDOM.render(
+        <Provider store={createStore(reducers)}>
+            <App />
+        </Provider>,
+        document.querySelector('#root')
+    );
+    ```
 
 ## The Connect Function
 
