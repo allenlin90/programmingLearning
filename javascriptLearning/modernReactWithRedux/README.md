@@ -4901,24 +4901,184 @@ Finished
 
 # On We Go...To Redux!
 ## Introduction to Redux
+1. State management library
+1. Makes creating complex applications easier
+1. Not required to create a React app
+1. Not explicitly designed to work with React
 
 ## Redux by Analogy
+1. Redux Cycle
+    1. Action Creator 
+    1. Action
+    1. Dispatch
+    1. Reducers
+    1. State
+1. In this section, we are going to create an insurance company.
+    1. `policy` - Customer holds a `policy`, if bad stuff happens to them then we pay them.
+    1. `claim` - Customer had something bad happen to them, we need to pay them.
+    1. Note that these are insurance terms, not Redux terms.
+1. The insurance company works in 3 main functions after they receive forms from their customers
+    1. "Claims History" - Stores a list of all claims ever made.
+    1. "Policies" - Stores a list of who has policy with our insurance company.
+    1. "Accounting" - Stores a big bag of cash, we pay people from this.
+    <img src="./images/reduxAnalogyInsuranceCompany220.png">
 
 ## A Bit More Analogy
+1. We can go further details in to each department with its function in the insurance company. For example, the "**Policy**" department.
+    1. When a `form` comes in as to sign up for a policy, the department update the list of customers who owns a policy with the insurance company. 
+    1. The management team of the insurance company can check the list of customers. 
+1. Though the data can store internally in the department, we can have a central repository which stores all the data from each department in the company. 
 
 ## Finishing the Analogy
+1. Every `form` submitted to the insurance company has 2 mani fields, which are `Type` and `Payload`. 
+1. When we receive a `form` from customers, we need to verify what is the purpose of it. For example, the user may want to sign up a new policy or claim for compensation. 
+1. Besides, we need more detail on the type form, such as the `name` of the owner of the policy and the `claim amount` that the owner requests.
+1. For this insurance company case, we can have 3 main type policies with aligned data.
+    1. `create policy` is with `name` and `cash`
+    1. `create claim` is with `name` and `claim amount`
+    1. `delete policy` is with only the `name`.
+1. Therefore, each department in the company will look up the incoming `form` and check if it's related to their business. If yes, the department will update the list of their data to the central repository with the `name` in the `form`. Otherwise, it just returns an unchanged list.
+1. For "**Accounting**" department, they may work and update their data according to multiple types of `forms`. For example, when a user signs up a new policy and pay for it, accounting department will receive the money and update their data. Besides, when a user claims for compensation, accounting department will provide the money and update the money left in the company as well. 
+1. For "**Policy**" department, they will check only if a `form` indicates that if the user wants to create or end a policy with the company.
 
 ## Mapping the Analogy to Redux
+1. We can check the diagram for the flow aligned betwen Redux cycle and Insurance company.
+1. The central data repository of the insurance company is the `state` that Redux manages.
+    <img src="./images/reduxCycleAsInsuranceCompany223.png">
 
 ## Modeling with Redux
+1. These models are simulated with `codepen.io`.
+1. Note that the syntax for creating function to work no Redux will look repetitive to serve its purpose. 
+    ```js
+    // code simulated on codepen.io for insurance company
+    // require to import Redux library 
+
+    // clear console when the JS file runs
+    console.clear();
+
+    // People dropping off a form
+    const createPolicy = (name, amount) => {
+        return { // Action (a form in our analogy)
+            type: 'CREATE_POLICY',
+            payload: {
+                name,
+                amount
+            }
+        }
+    }
+
+    const deletePolicy = (name) => {
+        return {
+            type: 'DELETE_POLICY',
+            payload: {
+                name
+            }
+        }
+    }
+
+    const createClaim = (name, amountOfMoneyToCollect) => {
+        return {
+            type: 'CREATE_CLAIM',
+            payload: {
+                name,
+                amountOfMoneyToCollect
+            }
+        }
+    }
+    ```
 
 ## Creating Reducers
+1. When update the objects in `reducers` in Redux, we always want to create and return a new array rather than modifying on the old data directly. Therefore, we rarely see `.push` method used in the reducer functions
+1. Some of the parameters requires default value. As the first time they are called, they may not have value yet and can be `undefined` which can cause error to the function.
+    ```js    
+    // Reducers (Departments)
+    const claimsHistory = (oldListOfClaims = [], action) => {
+        if (action.type === 'CREATE_CLAIM') {
+            // we are about this action (FORM)
+            return [...oldListOfClaims, action.payload];
+            /*
+            we don't use .push method to update the array because it's modifying on the same object
+                oldListOfClaims.push(action.payload);
+            */
+        }
+    
+        // we don't care the action (form)
+        return oldListOfClaims;
+    };
+
+    // assume that the company initially has 100 dollars in their money bag
+    const accounting = (bagOfMoney = 100, action) => {
+        if (action.type === 'CREATE_CLAIM') {
+            return bagOfMoney - action.payload.amountOfMoneyToCollect;
+        } else if (action.type === 'CREATE_POLICY') {
+            return bagOfMoney + action.payload.amount;
+        }
+        
+        return bagOfMoney;
+    };
+    ```
 
 ## Rules of Reducers
+1. In this case, we can use `.filter` array method in JavaScript which will iterate through the elements in the array and return only elements that is in the `true` condition in the callback function. 
+1. Note this array method creates and returns a new array.
+1. In convention of using Redux, we will only create and return new arrays that derive from the old data rather than modify the old objects directly. 
+    ```js
+    const policies = (listOfPolicies = [], action) => {
+        if (action.type === 'CREATE_POLICY') {
+            return [...listOfPolicies, action.payload.name];
+        } else if (action.type === 'DELETE_POLICY') {
+            return listOfPolicies.filter(name => name !== action.payload.name);
+        }  
+        
+        return listOfPolicies;
+    }
+    ```
 
 ## Testing Our Example
+1. In this case, we will use the imported Redux library and destructuring assignment to create `ourDepartment` the reducers object.
+1. We then can use `createStore` method to create the `store` from the combined reducers.
+1. To work on `dispatch` action, we can use `store.dispatch()` with `action` which is the functions we declare to use for different departments.
+1. Besides, we can use `store.getState()` to get the current `states` stored in the `store` object.
+    ```js
+    const {createStore, combineReducers} = Redux;
+    const ourDepartments = combineReducers({
+        accounting,
+        claimsHistory,
+        policies
+    });
+
+    const store = createStore(ourDepartments);
+
+    const action = createPolicy('Alex', 20);
+    console.log(action);
+
+    store.dispatch(createPolicy('Alex', 20));
+    store.dispatch(createPolicy('Jim', 30));
+    store.dispatch(createPolicy('Bob', 40));
+
+    console.log(store.getState());
+
+    store.dispatch(createClaim('Alex', 120));
+    store.dispatch(createClaim('Jim', 50));
+
+    console.log(store.getState());
+
+    store.dispatch(deletePolicy('Bob'));
+
+    console.log(store.getState());
+    ``` 
+    <img src="./images/reduxMethods227.png">
 
 ## Important Redux Notes
+1. When we want to change the `state` and update date to the `store`, we will use the `action creator` which will produce an `action` object.
+1. The `action` object describe exactly how we want to change the data in the application.
+1. The `action` object is passed to `dispatch` function which will duplicate the data from `action` and feed the copies to `reducers`.
+1. `Reducers` will proceed on the data and update the `state`.
+    <img src="./images/reduxcycle228.png">
+1. Note that we must use `combineReducers`, so the properties will be udpate to the central `state` to keep the data with initial values since the beginning.
+1. Each `store.dispatch` method we use is actually running the whole Redux cycle from receiving the data and update to `state`. 
+1. One of the main feature from Redux is that we can't modify the `store` object directly or manually, so we must use `.dispatch` method with an `action` object to update it.
+1. Besides, it limits the way how developers modifying the data and define the ways of how to udpate the `state`. Therefore, the complexity of the app can be reduced when the app goes bigger.
 
 
 
