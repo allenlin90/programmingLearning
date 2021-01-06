@@ -5211,10 +5211,131 @@ Finished
     ```
 
 ## The Connect Function
+1. After we set up the `Provider`, child components in the `App` component can now use `Connect` component to communicate the `Provider` and manipulate data from `state`. 
+1. We create `SongList` component for the app as a class-based component. Note that we can use destructuring assignment to create a variable. 
+1. To use `Connect`, we import `react-redux` library and use the method before exporting the component. Note that we use 2 sets of parenthesis to call the `connect` function. This is using the feature fo closure and the first layer of the function is return a function. 
+    ```js
+    // src/component/SongList.js
+    import React, { Component } from 'react';
+    import { connect } from 'react-redux';
+
+    class SongList extends Component {
+        render() {
+            return <div>SongList</div>;
+        }
+    }
+
+    export default connect()(SongList);
+
+    // 2 sets of parenthesis in JavaScript
+    function plusOne() {
+        let num = 0;
+        return function() {
+            return num++;
+        }
+    }
+    console.log(plusOne()()); // 0
+
+    let addOne = plusOne();
+    console.log(addOne()); // 1
+    console.log(addOne()); // 2
+    console.log(addOne()); // 3
+    ```
+1. Structure in `App`
+    ```js
+    // components/App
+    import React from 'react';
+    import SongList from './SongList';
+
+    const App = () => {
+        return (
+            <div>
+                <SongList />
+            </div>
+        );
+    };
+
+    export default App;
+    ```
 
 ## Configuring Connect with MapStateToProps
+1. Note the `connect` function we created in `SongList` is actually a React component.
+1. We then declare a function to fetch data from `store` via connect and link between `state` and `props` for React components. In convention, we declare the function name as `mapStateToProps`. This can be either a regular function statement or an arrow function.
+1. We then can pass the function to configure `connect` function. Therefore,
+    ```js
+    // src/components/SongList.js
+    import React, { Component } from 'react';
+    import { connect } from 'react-redux';
+
+    class SongList extends Component {
+        render() {
+            console.log(this.props); // the state with the list of songs is passed to the component via props
+            return <div>SongList</div>;
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        console.log(state); // we can check what is inside the state object
+        return { songs: state.songs }; // we only need songs porperty passed from Provider to the component
+    }
+
+    export default connect(mapStateToProps)(SongList);
+    ```
 
 ## Building a List with Redux Data 
+1. We use Semantic UI library to build up the interface for `SongList`.
+    ```js
+    // src/components/SongList.js
+    import React, { Component } from 'react';
+    import { connect } from 'react-redux';
+
+    class SongList extends Component {
+        renderList() {
+            return this.props.songs.map((song) => {
+                return (
+                    <div className="item" key={song.title}> // better to assign unique keys to each element in the list
+                        <div className="right floated content">
+                            <button className="ui button primary">
+                                Select
+                            </button>
+                        </div>
+                        <div className="content">{song.title}</div>
+                    </div>
+                );
+            });
+        }
+
+        render() {
+            return <div className="ui divided list">{this.renderList()}</div>;
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        return { songs: state.songs };
+    }
+
+    export default connect(mapStateToProps)(SongList);
+    ```
+1. To constrainthe width of `SongList` component, we can modify the structure in `App`. 
+    ```js
+    // src/components/App.js
+    import React from 'react';
+    import SongList from './SongList';
+
+    const App = () => {
+        return (
+            <div className="ui container grid">
+                <div className="ui row">
+                    <div className="column eight wide">
+                        <SongList />
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    export default App;
+    ```
 
 ## Calling Action Creators from Components
 
