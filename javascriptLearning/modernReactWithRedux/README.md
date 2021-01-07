@@ -5561,8 +5561,52 @@ Finished
 
 # Async Actions with Redux Thunk
 ## App Overview and Goals
+1. The goals of building this project are
+    1. Absolutely understand the purpose of reducers
+    1. Absolutely understand making API requests with Redux
+    1. Absolutely understand the purpose of `redux-thunk`
+1. The app is to render data fetched from a outside API which provides data of "**blog posts**".
+    1. Post Title
+    1. Body of the post
+    1. Author name
+1. In this App, we have 2 main components, `PostList` which is a list of posts fetched from the API and `UserHeader` which provides the author name of the post.
+1. To fetch data, we will use `axios` to make requests to "**[JSONPlaceholder]**(http://jsonplaceholder.typicode.com/)" API. On the page, we can check the endpoints in "**Resources**" section for the type of data. 
+1. We will use `/posts` for the posts and their contents and `/users/` for the authors in this project.
+    <img src="./images/blogAppStructure249.png">
 
 ## Initial App Setup
+1. We install several npm packages to use in this project.
+    1. `redux` is the Redux library
+    1. `react-redux` provides integration layer between react and redux
+    1. `axios` helps us make network requests
+    1. `redux-thunk` is the middleware to help us make requests in a redux application
+1. We clear up all the boilerplates which are created by `npx create-react-app` by default. 
+    ```js
+    // src/index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { Provider } from 'react-redux';
+    import { createStore } from 'redux';
+
+    import App from './components/App';
+    import reducers from './reducers';
+
+    ReactDOM.render(
+        <Provider store={createStore(reducers)}>
+            <App />
+        </Provider>,
+        document.querySelector('#root')
+    );
+
+    // src/components/App.js
+    import React from 'react';
+
+    const App = () => {
+        return <div className="ui container">App</div>;
+    }
+
+    export default App;
+    ```
 
 ## Tricking Redux with Dummy Reducers
 
