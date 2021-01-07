@@ -5084,7 +5084,7 @@ Finished
 
 # Integrating React with Redux
 ## React Cooperating with Redux
-1. We are going to create an project with simpel integration of `React` and `Redux`. We will create a list of songs with their title. When the user click any of the songs in the list, there's details of the song rendered on the side of the page. 
+1. We are going to create an project with simple integration of `React` and `Redux`. We will create a list of songs with their title. When the user click any of the songs in the list, there's details of the song rendered on the side of the page. 
 
 ## React, Redux, and React-Redux
 1. The `songs` app has 2 main components.
@@ -5316,7 +5316,7 @@ Finished
 
     export default connect(mapStateToProps)(SongList);
     ```
-1. To constrainthe width of `SongList` component, we can modify the structure in `App`. 
+1. To constrain the width of `SongList` component, we can modify the structure in `App`. 
     ```js
     // src/components/App.js
     import React from 'react';
@@ -5337,13 +5337,225 @@ Finished
     export default App;
     ```
 
+## Extracting more data from Redux
+1. If the `state` has more than one properties, we can put the property that we want in `mapStateToProps`. Therefore, when we use `connect` component to link to `Provider`, we can access the property.
+1. In the exercise, we have another state `favoriteTitle` and would like to put text `'Favorite!'` if the song title matches the title in `favoriteTitle` in the `state`.
+    ```js
+    class SongList extends React.Component {
+        renderList() {
+            return this.props.songs.map((song) => {
+                <div className="item" key={song.title}>
+                    <div className="right floated content">
+                        <div className="ui button primary">Select</div>
+                    </div>
+                    <div className="content">{this.props.favoriteTitle === song.title ? `${song.title} 'Favorite!' : ${song.title}`}</div>
+                </div>
+            });
+        }
+
+        render (
+            return(
+                <div className="ui divided list">{this.renderList()}</div>
+            );
+        )
+    }
+
+    const mapStateToProps = (state) => {
+        return {
+            songs: state.songs, 
+            favoriteTitle: state.favoriteTitle // another state to configure in connect
+        }
+    };
+
+    export default connect(mapStateToProps)(SongList);
+    ```
+
 ## Calling Action Creators from Components
+1. After we use `connect` to link the component with `Provider`, we'd like to update the `state` when the user clicks on a select button. 
+1. Note that everytime we update data with `Redux`, we should use an `action creator`. The `connect` component can not only retrieve data from `store` in Redux system but also pass the action creator into the component, `SongList`, it connects.
+1. We import action creator `selectSong` from `actions` directory and pass it as the 2nd argument to `connect` as an object. Note that we use destructuring here that the property can be `{ selectSong: selectSong}`.
+1. We then can use `this.props.selectSong` to access the action creator, so we pass this action creator to `onClick` event handler to update the `state` when the user clicks the button. 
+1. Note that `mapStateToProps` will rerun every time when the component rerenders to get the latest `state`. Therefore, we can check the current `state` with `console.log()` in the function.
+    ```js
+    // src/components/SongList.js
+    import React, {Component} from 'react';
+    import { connect } from 'react-redux';
+    import { selectSong } from '../actions';
+
+    class SongList extends Component {
+        renderList() {
+            return this.props.songs.map((song) => {
+                return (
+                    <div className="item" key={song.title}>
+                        <div className="right floated content">
+                            <button
+                                className="ui button primary"
+                                onClick={() => this.props.selectSong(song)} // fire selectSong(song) action creator to update the state with the "song"
+                            >
+                                Select
+                            </button>
+                        </div>
+                        <div className="content">{song.title}</div>
+                    </div>
+                );
+            })
+        }
+
+        render() {
+            console.log(this.props); // access selectSong in props
+            return <div className="ui divided list">{this.renderList()}</div>;
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        console.log(state); // every time the component rerenders this mapStateToProps will rerun and update the state from the store object
+        return {
+            songs: state.songs
+        }
+    }
+
+    // pass selectSong action creator from actions 
+    export default connect(mapStateToProps, { selectSong })(SongList);
+    ```
 
 ## Redux is Not Magic
+1. In the last section, we import `selectSong` action, but pass it to `connect` and get to use the function from `props` sending from the parent component. We can't use the function directly after importing the function in the file. 
+1. `Redux` is not magic!
+    1. Redux does not automatically detect action creator being called. 
+    1. Redux does not automatically detect a function returning an object that is an 'action'.
+1. Note that the function we create in `actions` directory isn't wired with Redux directly. Therefore, there's no way Redux can know if we are using an action creator.
+1. The action must be passed to udpate `store` of Redux by using `store.dispatch` method. Though we don't see `store.dispatch` in `SongList` component, it is happending when we use `connect` to wire up and pass the function. 
+    ```js
+    import {selectSong} from '../actions';
+    
+    const mapStateToProps = (state) => {
+        return {songs: state.songs};
+    }
+
+    connect(mapStateToProps, { selectSong })(SongList);
+    ```
 
 ## Functional Components with Connect 
+1. In this case, we'd like to create another component `SongDetail` which shows the details of a selected song. Therefore, we need to use `connect` to link `state` and `props` and get the selected song from the state.
+1. Besides, we don't need to use any action as there's no option for users to work in this component, so we don't use any action creators in this case. 
+    <img src="./images/reduxSongDetailComponent246.png">
+1. We update the structure of `App` which is the parent component of `SongList` and `SongDetail`. We can notice the the structure that we have very little configuration on each of the child component after using Redux, and we can configure them directly in the component directly.
+    ```js
+    // component/App
+    import React from 'react';
+    import SongList from './SongList';
+    import SongDetail from './SongDetail';
+
+    const App = () => {
+        return (
+            <div className="ui container grid">
+                <div className="ui row">
+                    <div className="column eight wide">
+                        <SongList />
+                    </div>
+                    <div className="column eight wide">
+                        <SongDetail />
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    export default App;
+    ```
+1. We firstly create a new component in `component` directory.
+    ```js
+    // component/SongDetail.js
+    import React from 'react';
+    import {connect} from 'react-redux';
+
+    const SongDetail = (props) => {
+        console.log(props);
+        return <div>Song Detail</div>;
+    }
+
+    const mapStateToProps = (state) => {
+        return {song: state.selectedSong};
+    }
+
+    export default connect(mapStateToProps)(SongDetail);
+    ```
 
 ## Conditional Rendering
+1. We can change the property name of the `props` object in `mapStateToProps`.
+1. We use an `if` statement to check if `song` is not null which means the user has selected an item from the list. 
+1. On the other hand, if the `song` state does contain a selected `song`, we can render its information on the screen.
+    ```js
+    // src/component/SongDetails.js
+    const SongDetail = ({ song }) => {
+        if (!song) {
+            return <div>Select a Song</div>;
+        }
+        return (
+            <div>
+                <h3>Details for: </h3>
+                <p>
+                    Title: {song.title}
+                    <br />
+                    Duration: {song.duration}
+                </p>
+            </div>
+        );
+    }
+    ```
+
+## Coding Exercise
+1. This app has a main feature to allow users to click either "Increment" or "Decrement" button to increase or decrease the number shown in "**Current Count**".
+1. In this exercise, we have to ensure
+    1. Create `mapStateToProps` and pass it to `connect` method in an object as the 2nd argument.
+    1. "**Action creators**" are passed back to `Provider` through `connect`.
+    1. Import "**action creators**" (`increment` and `decrement`) and state (`count`) from `props`.
+    1. Use `onClick` event handler to call the action creators with arrow functions. However, we can just simply pass it as a callback since we don't have argument to work on in this case. 
+    1. Render the content from `state` to the screen. This is to put `count` in `<span></span>` to render it on screen.
+    ```js
+    // Action Creators - You don't need to change these
+    const increment = () => ({ type: 'increment'});
+    const decrement = () => ({ type: 'decrement'});
+    
+    const Counter = ({increment, decrement, count}) => {
+        return (
+            <div>
+                <button className="increment" onClick={() => increment()}>Increment</button> // use arrow function as callback
+                <button className="decrement" onClick={decrement}>Decrement</button> // pass the function as callback directly since we have no argument to work on
+                Current Count: <span>{count}</span>
+            </div>
+        );
+    };
+    
+    const mapStateToProps = (state) => {
+        return {count: state.count};
+    };
+    
+    const WrappedCounter = ReactRedux.connect(mapStateToProps, {increment, decrement})(Counter);
+    
+    // Only change code *before* me!
+    // -----------
+    
+    // reducers for Redux
+    const store = Redux.createStore(Redux.combineReducers({
+        count: (count = 0, action) => {
+            if (action.type === 'increment') {
+                return count + 1;
+            } else if (action.type === 'decrement') {
+                return count - 1;
+            } else {
+                return count;
+            }
+        }
+    }));
+
+    ReactDOM.render(
+        <ReactRedux.Provider store={store}>
+            <WrappedCounter />
+        </ReactRedux.Provider>, 
+        document.querySelector('#root')
+    );
+    ```
 
 
 
