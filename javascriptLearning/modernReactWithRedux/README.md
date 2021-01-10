@@ -5609,6 +5609,16 @@ Finished
     ```
 
 ## Tricking Redux with Dummy Reducers
+1. In the current stage, we don't have any reducer yet, so React framework warn there's no reducers given in the case.
+1. Therefore, we can provide a temporary, dummy reducer to enable the system during development.
+    ```js
+    // src/reducers/index.js
+    import { combineReducers } from 'redux';
+
+    export default combineReducers({
+        replaceMe: () => 'temporary reducer'
+    });
+    ```
 
 ## A Touch More Setup
 
