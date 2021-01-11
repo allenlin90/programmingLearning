@@ -5621,10 +5621,63 @@ Finished
     ```
 
 ## A Touch More Setup
+1. In this case, we create another component `PostList` with class-based component.
+1. Besides, we import Semantic UI CSS library with `link` tag in the `index.html`.
+    ```js
+    // src/component/PostList.js
+    import React from 'react';
+
+    class PostList extends React.Component {
+        render() {
+            return <div>Post List</div>;
+        }
+    }
+
+    export default PostList;
+    ```
 
 ## How to Fetch Data in a Redux App
+1. We learn how to fetch and store data in Redux. In most of the cases, we will follow the flow again and again
+    1. Components are generally responsible for fetching data they need by calling an action creator
+        1. Component gets rendered onto the screen
+        1. Component's `componentDidMount` lifecycle methods gets called
+        1. We call action creator from `componentDidMount`
+    1. Action creators are responsible for making API requests. This is where Redux-Thunk comes in to play
+        1. Action creator runs code to make an API request
+        1. API responds with data
+        1. Action creator returns an `action` with the fetched data on the `payload` property
+    1. We get fetched data into a component by generating new state in our redux store, then  gettingthat into our component through `mapStateToProps`
+        1. Some reducer sees the action, returns the data off the `payload`
+        1. Because we generated some new `state` object, redux/react-redux cause our React app to be rerendered
 
 ## Wiring Up an Action Creator
+1. We create action creator function in `actions` directory in `src` and import it to use in `PostList.js`.
+1. We import `{connect}` from `react-redux` library and use it to send the action function `fetchPosts` to the parent component. Then we can access it from `this.props.fetchPosts`. 
+1. We can this function in the lifecycle method `componentDidMount` when the component renders.
+    ```js
+    // src/actions/index.js
+    export const fetchPosts = () => {
+        return {
+            type: 'FETCH_POSTS'
+        }
+    }
+
+    // src/components/PostList.js
+    import { connect } from 'react-redux';
+    import { fetchPosts } from '../actions';
+
+    class PostList extends React.Component {
+        componentDidMount() {
+            this.props.fetchPosts();
+        }
+
+        render() {
+            return <div>Post List</div>;
+        }
+    }
+
+    export default connect(null, { fetchPosts })(PostList);
+    ```
 
 ## Making a Request From an Action Creator
 
