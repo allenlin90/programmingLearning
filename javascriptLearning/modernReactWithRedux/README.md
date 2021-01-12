@@ -5680,8 +5680,76 @@ Finished
     ```
 
 ## Making a Request From an Action Creator
+1. We create another folder `apis` to keep the route for making request to json placeholder `jsonPlaceholder.js`.
+    ```js
+    // src/apis/jsonPlaceholder.js
+    import axios from 'axios';
+    
+    export default axios.create({
+        baseURL: `http://jsonplaceholder.typicode.com`
+    });
+    ```
+1. We then import the configured `axios` object to use in the action creator. 
+1. However, this is not available that we will get an error prompted that the actions must be plain objects.
+1. This is the reason why we need to use `redux-thunk` in the project to make async request for action creator.
+    ```js
+    // src/actions/index.js
+    import jsonPlaceholder from '../apis/jsonPlaceholder';
+
+    // declare async function to make request is invalid for action creator!
+    export const fetchPosts = async () => {
+        const response = await jsonplaceholder.get('/posts');
+
+        return {
+            type: 'FETCH_POSTS',
+            payload: response
+        }
+    }
+    ```
+    <img src="./images/asyncActionCreatorError256.png">
 
 ## Understanding Async Action Creators
+1. From the last section, we have an error noticing that the action creator should be a plain object.
+1. The main problems the case are
+    1. Action creators must return plain JS objects with a type property. However, the object is returned by an async arrow function. Note that this is `async/await` syntax is actually a syntactic sugar. When [`Babel`](https://babeljs.io/repl) package compiles the code to ES5, the function is not actually as we see. 
+    1. By the time our action gets to a reducer, we won't have fetched our data.
+    ```js
+    // compile actions/index.js in babel to become ES5 compatible
+    "use strict";
+    function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+    function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+    var fetchPosts = /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var response;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+            switch (_context.prev = _context.next) {
+            case 0:
+                _context.next = 2;
+                return jsonplaceholder.get('/posts');
+
+            case 2:
+                response = _context.sent;
+                return _context.abrupt("return", {
+                type: 'FETCH_POSTS',
+                payload: response
+                });
+
+            case 4:
+            case "end":
+                return _context.stop();
+            }
+        }
+        }, _callee);
+    }));
+
+    return function fetchPosts() {
+        return _ref.apply(this, arguments);
+    };
+    }();
+    ```
 
 ## More on Async Action Creators
 
