@@ -5752,12 +5752,109 @@ Finished
     ```
 
 ## More on Async Action Creators
+1. Though we can turn the async function into using promsie to avoid the error, the function still won't run correctly because by the time the Redux flow executes the data hasn't been fetched from the API. 
+    1. Action creator called and a request is sent to the API to fetch data
+    1. Action returned 
+    1. Action sent to all reducers
+    1. Reducers run without data, as at this point the data usually hasn't beed fetched and responded.
+1. The main idea is that the reducers run without fetched data, as the API hasn't responded.
+1. This is the reason we will use `redux-thunk`.
 
 ## Middlewares in Redux
+1. There are 2 types of action creators
+    1. "**Synchronous**" action creator instantly returns an action with data ready to go.
+    1. "**Asynchronous**" action creator takes some amount of time for it to get its data ready to go.
+1. `redux-thunk` is a library which provides middleware to help us make requests in a redux application.
+1. The Middleware in Redux
+    1. Function the gets called with every action we dispatch
+    1. Has the ability to STOP, MODIFY, or otherwise mess around with actions
+    1. Tons of open source middleware exist
+    1. Most popular use of middleware is for dealing with async actions
+    1. We are going to use a middleware called `Redux-Thunk` to solve our async issues
 
 ## Behind the Scenes of Redux Thunk
+1. Normal Rules for Redux application
+    1. Action Creator **must** return action objects.
+    1. Actions must have a `type` property.
+    1. Actions can optionally have a '`payload`'.
+1. Rules with Redux Thunk
+    1. Action Creators **can** return action **_objects_**.
+    1. Action Creators **can** return **_functions_**.
+    <img src="./images/howReduxThunkWorkInternnally259.png">
+1. When action creator returns an "**object**", redux thunk (as the middleware) will check if the object is a JavaScript `Object` or `Function`. If it's a JavaScript object, it will just pass to reducers to proceed. Otherwise, the middleware will start to handle the function.
+1. The function will then be called with `dispatch` and `getState` methods. Therefore, in Redux Thunk, we will have `dispatch` and `getState` as arguments.
+    ```js
+    // https://github.com/reduxjs/redux-thunk/blob/master/src/index.js
+    // redux thunk source code
+    function createThunkMiddleware(extraArgument) {
+        return ({ dispatch, getState }) => (next) => (action) => {
+            if (typeof action === 'function') {
+                return action(dispatch, getState, extraArgument);
+            }
+
+            return next(action);
+        };
+    }
+
+    const thunk = createThunkMiddleware();
+    thunk.withExtraArgument = createThunkMiddleware;
+
+    export default thunk;
+    ```
 
 ## Shortened Syntax with Redux Thunk
+1. We not only import `thunk` from `redux-thunk` but also `{ applyMiddleWare }` from `redux` to use `thunk` as the middleware. 
+    ```js
+    // src/index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { Provider } from 'react-redux'; 
+    import { createStore, applyMiddleware } from 'redux'; // import applyMiddleware
+    import thunk from 'redux-thunk'; // import thunk
+
+    import App from './components/App';
+    import reducers from './reducers';
+
+    // use thunk as middleware for action creator
+    const store = createStore(reducers, applyMiddleware(thunk));
+
+    ReactDOM.render(
+        <Provider store={store}>
+            <App />
+        </Provider>,
+        document.querySelector('#root')
+    );
+    ```
+1. In this case, we haven't handle and update the `state` for the API call, so we don't pass `getState` as argument.
+1. We can use arrow function syntax to shorten the function.
+1. We don't need to return anything from the function, as the main purpose is to fetch data and pass it to `dispatch` to proceed further in Redux cycle.
+1. Note that we can still have regular, synchronous action creators in `actions`.
+    ```js
+    // src/actions/index.js
+    import jsonplaceholder from '../apis/jsonPlaceholder';
+
+    // regular syntax with function statement
+    export const fetchPosts = () => {
+        return async function (dispatch, getState) {
+            const response = await jsonplaceholder.get('/posts');
+
+            dispatch({ type: 'FETCH_POSTS', payload: response });
+        }
+    };
+
+    // shortened code with arrow function syntax from the code above. They work exactly the same
+    export const fetchPosts = () => async dispatch => {
+        const response = await jsonPlaceholder.get('/posts');
+        dispatch({type: 'FETCH_POSTS', payload: response})
+    }
+
+    // we can put regular action creators though using Redux-Thunk
+    export const selectPost = () => {
+        return {
+            type: 'SELECT_POST'
+        }
+    }
+    ```
 
 
 
