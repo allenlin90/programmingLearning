@@ -1,5 +1,7 @@
 Start learning on 2020/12/10
 Finished 
+
+Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/course/react-redux/)
 ---
 1. [Let's Dive In!](#Let's-Dive-In!)
     1. [Our First App](#Our-First-App)
@@ -179,7 +181,7 @@ Finished
     1. [Deployment Overview](#Deployment-Overview)
     1. [Deployment with Vercel](#Deployment-with-Vercel)
     1. [Deployment with Netlify](#Deployment-with-Netlify)
-1. [On We Go...To Redux!](#On-We-Go...To-Redux!)
+1. [On We Go...To Redux!](#On-We-GoTo-Redux!)
     1. [Introduction to Redux](#Introduction-to-Redux)
     1. [Redux by Analogy](#Redux-by-Analogy)
     1. [A Bit More Analogy](#A-Bit-More-Analogy)
@@ -3966,8 +3968,7 @@ Finished
 1. When click on the dropdown list directly, we can check from developer console that the order of the execution is 
     1. body
     1. item 
-    1. list
-    <img src="./images/OrderEventHandlerExecution180.png">
+    1. list    
     ```js
     // Dropdown.js
     const Dropdown = ({ options, selected, onSelectedChange }) => {
@@ -3981,6 +3982,7 @@ Finished
         }, []);
     }
     ```
+    <img src="./images/OrderEventHandlerExecution180.png">
 
 ## Which Element Was Clicked?
 1. In the current stage, we have 2 main scenarios to focus
@@ -4930,7 +4932,7 @@ Finished
 1. Though the data can store internally in the department, we can have a central repository which stores all the data from each department in the company. 
 
 ## Finishing the Analogy
-1. Every `form` submitted to the insurance company has 2 mani fields, which are `Type` and `Payload`. 
+1. Every `form` submitted to the insurance company has 2 main fields, which are `Type` and `Payload`. 
 1. When we receive a `form` from customers, we need to verify what is the purpose of it. For example, the user may want to sign up a new policy or claim for compensation. 
 1. Besides, we need more detail on the type form, such as the `name` of the owner of the policy and the `claim amount` that the owner requests.
 1. For this insurance company case, we can have 3 main type policies with aligned data.
@@ -5074,7 +5076,7 @@ Finished
 1. The `action` object describe exactly how we want to change the data in the application.
 1. The `action` object is passed to `dispatch` function which will duplicate the data from `action` and feed the copies to `reducers`.
 1. `Reducers` will proceed on the data and update the `state`.
-    <img src="./images/reduxcycle228.png">
+    <img src="./images/reduxCycle228.png">
 1. Note that we must use `combineReducers`, so the properties will be udpate to the central `state` to keep the data with initial values since the beginning.
 1. Each `store.dispatch` method we use is actually running the whole Redux cycle from receiving the data and update to `state`. 
 1. One of the main feature from Redux is that we can't modify the `store` object directly or manually, so we must use `.dispatch` method with an `action` object to update it.
@@ -5184,6 +5186,23 @@ Finished
     // src/reducers/index.js
     import { combineReducers } from 'redux';
 
+    const songsReducer = () => {
+        return [
+            { title: 'No Scrubs', duration: '4:05' },
+            { title: 'Macarena', duration: '2:30' },
+            { title: 'All Star', duration: '3:15' },
+            { title: 'I Want it That Way', duration: '1:45' }
+        ];
+    };
+
+    const selectedSongReducer = (selectedSong = null, action) => {
+        if (action.type === 'SONG_SELECTED') {
+            return action.payload;
+        }
+
+        return selectedSong;
+    }
+
     export default combineReducers({
         songs: songsReducer,
         selectedSong: selectedSongReducer
@@ -5213,7 +5232,7 @@ Finished
 ## The Connect Function
 1. After we set up the `Provider`, child components in the `App` component can now use `Connect` component to communicate the `Provider` and manipulate data from `state`. 
 1. We create `SongList` component for the app as a class-based component. Note that we can use destructuring assignment to create a variable. 
-1. To use `Connect`, we import `react-redux` library and use the method before exporting the component. Note that we use 2 sets of parenthesis to call the `connect` function. This is using the feature fo closure and the first layer of the function is return a function. 
+1. To use `Connect`, we import `react-redux` library and use the method before exporting the component. Note that we use 2 sets of parenthesis to call the `connect` function. This is using the feature fo closure and the first layer of the function returns a function. 
     ```js
     // src/component/SongList.js
     import React, { Component } from 'react';
@@ -5341,6 +5360,7 @@ Finished
 1. If the `state` has more than one properties, we can put the property that we want in `mapStateToProps`. Therefore, when we use `connect` component to link to `Provider`, we can access the property.
 1. In the exercise, we have another state `favoriteTitle` and would like to put text `'Favorite!'` if the song title matches the title in `favoriteTitle` in the `state`.
     ```js
+    // src/component/SongList.js
     class SongList extends React.Component {
         renderList() {
             return this.props.songs.map((song) => {
@@ -5348,7 +5368,11 @@ Finished
                     <div className="right floated content">
                         <div className="ui button primary">Select</div>
                     </div>
-                    <div className="content">{this.props.favoriteTitle === song.title ? `${song.title} 'Favorite!' : ${song.title}`}</div>
+                    <div className="content">
+                        {this.props.favoriteTitle === song.title ? 
+                            `${song.title} 'Favorite!' :
+                            ${song.title}`}
+                    </div>
                 </div>
             });
         }
@@ -5373,7 +5397,7 @@ Finished
 ## Calling Action Creators from Components
 1. After we use `connect` to link the component with `Provider`, we'd like to update the `state` when the user clicks on a select button. 
 1. Note that everytime we update data with `Redux`, we should use an `action creator`. The `connect` component can not only retrieve data from `store` in Redux system but also pass the action creator into the component, `SongList`, it connects.
-1. We import action creator `selectSong` from `actions` directory and pass it as the 2nd argument to `connect` as an object. Note that we use destructuring here that the property can be `{ selectSong: selectSong}`.
+1. We import action creator `selectSong` from `actions` directory and pass it as the 2nd argument to `connect` as an object. Note that we use destructuring here that the regular syntax for the property can be `{ selectSong: selectSong}`.
 1. We then can use `this.props.selectSong` to access the action creator, so we pass this action creator to `onClick` event handler to update the `state` when the user clicks the button. 
 1. Note that `mapStateToProps` will rerun every time when the component rerenders to get the latest `state`. Therefore, we can check the current `state` with `console.log()` in the function.
     ```js
