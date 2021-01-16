@@ -5884,18 +5884,152 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 
 # Redux Store Design
 ## Rules of Reducers
+1. While we may have multiple reducers to use in the project, we will separate them into different files in `src/reducers` and import them into `src/reducers/index.js` and use in the other components.
+1. In this `blog` project, we will have `fetchPosts` as action creators, which create action objects that has `type` and `payload`, then we can use reducers to store the data in `store` from Redux.
+    ```js
+    // src/reducer/postReducer.js
+    export default () => {
+        return 123; // this is just to test and return some value from the reducer
+    }
+
+    // src/reducer/index.js
+    import { combineReducers } from 'redux';
+    import postReducer from './postReducer';
+
+    export default combineReducers({
+        posts: postReducer
+    });
+    ```
 
 ## Return Values from Reducers
+1. Rules of Reducers
+    1. **Must return **_ANY_** value besides `undefined`.** 
+    1. Produces `state`, or data to be used inside of the app using only previous state and the action (reducers are pure).
+    1. Must not return reach `out of itself` to decide what value to return.
+    1. Must not mutate its input `state` argument.
+1. If we return an `undefined`, React will report an error.
+    ```js
+    // src/reducer/postReducer.js
+    export default () => {
+        // return an error if there's no value returned
+        return undefined; // return an error because a reducer can't return undefined
+    }
+    ```
 
 ## Argument Values
+1. Rules of Reducers
+    1. Must return **_ANY_** value besides `undefined`.
+    1. **Produces `state`, or data to be used inside of the app using only previous state and the action (reducers are pure).**
+    1. Must not return reach `out of itself` to decide what value to return.
+    1. Must not mutate its input `state` argument.
+1. When the app initiates, it will check if there's `undefined` from each reducer to know if the app is in the initial stage. 
+    <img src="./images/reducerBeingCalledFirstTime263.png">
+1. In the previous project, `songs`, we have a `selectedSongReducer` which does exactly for the 2nd item.
+1. We use a shorthard with ES6 syntax to preset the value for a argument if it's not given, which is being `undefined`. 
+    ```js
+    const selectedSongReducer = (selectedSong = null, action) => {
+        // if we don't preset selectedSong in the function statement with ES6 shorthand, this IF statement should be given to assign value to the argument
+        if (selectedSong === undefined) { 
+            selectedSong = null;
+        }
+
+        if (action.type === 'SONG_SELECTED') {
+            return action.payload;
+        }
+
+        return selectedSong;
+    };
+
+    selectedSongReducer(undefined, {type: 'abcdefg'});
+    ```
+1. The next time when the reducer is called, the state becomes the returned value from the last time when the reducer ran. 
+1. From the code above, we can see that the state was `undefined` in the very early stage and becomes `null` at the 2nd time it runs.
 
 ## Pure Reducers
+1. Rules of Reducers
+    1. Must return **_ANY_** value besides `undefined`.
+    1. Produces `state`, or data to be used inside of the app using only previous state and the action (reducers are pure).
+    1. **Must not return reach `out of itself` to decide what value to return.**
+    1. Must not mutate its input `state` argument.
+1. The reducer should only get data from previous `state` and be modified or updated by the action. It should work on DOM manipulation or API request.
+1. Therefore, the returned value from the reducer should be purely from the previous `state` and the action. 
+    <img src="./images/pureReducer264.png">
 
 ## Mutations in JavaScript
+1. Rules of Reducers
+    1. Must return **_ANY_** value besides `undefined`.
+    1. Produces `state`, or data to be used inside of the app using only previous state and the action (reducers are pure).
+    1. Must not return reach `out of itself` to decide what value to return.
+    1. **Must not mutate its input `state` argument.**
+1. The mutation in JavaScript refers to any action that will modify the orignal data of an object, including JavaScript Array. 
+1. Similar to use React, we should **NOT** modify the `state` directly. 
+1. We can't modify primitive values, such as `String`, `Number`, and `Boolean` variables that is declared with `const`. However, it's very easy to modify `Array` and `Object` in JavaScript.
+    ```js
+    // mutation in JavaScript
+    const colors = ['red', 'green'];
+    colors.push('purple');
+    console.log(colors); // ['red', 'green', 'purple']
+
+    colors.pop(); 
+    console.log(colors); // ['red', 'green']
+
+    colors[0] = 'PINK';
+    console.log(colors); // ['PINK', 'green']
+
+    // mutate object in JavaScript
+    const profile = {name: 'Alex'};
+    profile.name = 'Sam';
+    console.log(profile); // {name: 'Sam'}
+
+    profile.age = 30;
+    console.log(profile); // {name: 'Sam', age: 30}
+
+    const name = 'Sam';
+    console.log(name[0]); 
+    ```
 
 ## Equality of Arrays and Objects
+1. In JavaScript, we can use triple equal sign to compare to values. 
+1. When comparing `Array` or `Object`, it will only be the same when the variables are referring to the same `Array` or `Object` in the memory. 
+    ```js
+    const number = [1,2,3];
+    number === number; // true 
+    number === [1,2,3]; // false
+    ```
 
 ## A Misleading Rule
+1. Though the rules for Redux reducers say that we **MUST NOT** mutate the `state` object, we actually can modify it upon or request. We can simply notice this when we manipulate the arrays and objects decalred with `const` keyword. 
+1. However, there are some corner cases that can cause issues and problems by modifying the `state` directly that's why the lecture and most of the tutorials noticing that **DO NOT** modify the `state`.
+1. We can check the [source code](https://github.com/reduxjs/redux/blob/master/src/combineReducers.ts) to understand how does Redux work.
+1. Every time we dispatch an action, the following code will execute.
+    ```js
+    // https://github.com/reduxjs/redux/blob/master/src/combineReducers.ts
+    // the last part from redux/src/combineReducers
+    // every time we dispatch an action, the following code will execute
+    // note that the package is now written in TypeScript. By the time of the lecture, it's still in regular JavaScript
+
+    let hasChanged = false
+    const nextState: StateFromReducersMapObject<typeof reducers> = {}
+    for (let i = 0; i < finalReducerKeys.length; i++) { // this for loop iterates through all the reducers
+      const key = finalReducerKeys[i]
+      const reducer = finalReducers[key]
+      const previousStateForKey = state[key] // this is the previous state object that will be manipulate with the action object in the reducer
+      const nextStateForKey = reducer(previousStateForKey, action) // this is when the reducer really invokes
+      if (typeof nextStateForKey === 'undefined') { // throw an error if the value is undefined. This is aligned with item 2 of the rules that the reducer should not return undefined value 
+        const errorMessage = getUndefinedStateErrorMessage(key, action)
+        throw new Error(errorMessage)
+      }
+      nextState[key] = nextStateForKey
+      // this will modify hasChanged to be either false or true. If nextStateForKey is not equal to previousStateForKey, it returns true, so hasChanged will be changed to true. Otherwise, it will remain the same as false
+      hasChanged = hasChanged || nextStateForKey !== previousStateForKey
+    }
+    hasChanged =
+      hasChanged || finalReducerKeys.length !== Object.keys(state).length
+    // by checking whether hasChanged is updated, redux will return either nextState or the current, unmodified state
+    // if the nextState is returned, React will rerender the component as the state is updated, and this will be noticed to the whole app 
+    return hasChanged ? nextState : state 
+    ```
+1. Therefore, if we bypass Redux and didn't update the `state` within, it won't know if the `state` is updated and cause rerender to the whole app. Thus, we will see the app doesn't rerender when the state is updated by the reducers. 
 
 ## Safe State Updates in Reducers
 
