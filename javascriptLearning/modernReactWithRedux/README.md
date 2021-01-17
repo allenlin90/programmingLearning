@@ -6137,30 +6137,341 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     ```
 
 ## List Building
+1. Since we got the fetched data and passed through `props`, we can use another method in the component to render the list.
+1. However, we haven't finished the component because we need `UserHeader` in each of the item as the avatar image for each user. 
+1. We can check [posts](http://jsonplaceholder.typicode.com/posts) structure from json placeholder API.
+1. Note that each post fetched from the hundred posts has an `userId` which can be aligned with the `user` endpoint with their data. Besides all the posts are created by only 10 users from the dataset. It means that the hundred posts are made from 10 users.
+    ```js
+    /* http://jsonplaceholder.typicode.com/posts
+    {
+        "userId": 1,
+        "id": 1,
+        "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+        "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+    }
+    */
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchPosts } from '../actions';
+
+    class PostList extends React.Component {
+        componentDidMount() {
+            this.props.fetchPosts();
+        }
+
+        renderList() {
+            return this.props.posts.map(post => {
+                return (
+                    <div className="item" key={post.id}> // note that we need key attribute for each item in the list
+                        <i className="large middle aligned icon user" />
+                        <div className="content">
+                            <div className="description">
+                                <h2>{post.title}</h2>
+                                <p>{post.body}</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            });
+        }
+
+        render() {
+            console.log(this.props.posts);
+            return (
+                <div className="ui relaxed divided list">{this.renderList()}</div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        return { posts: state.posts };
+    }
+
+    export default connect(mapStateToProps, { fetchPosts })(PostList);
+    ```
 
 ## Displaying Users
+1. There are 2 ways we can aligned the data in each post to the user who creates the post. 
+1. Fetch to posts and users all at the same time. It means that every time when we fetch posts, we will fetch all users. However, this has a downside that when the app becomes bigger, we can't use the same solution for the problem. For example, we have millions of articles and users on [medium.com](https://medium.com/). We can't fetch all users and posts to a user when they visit the website.
+1. The other way to work around
+    1. Fetch posts from the API and wait for the response.
+    1. We then show the posts in `PostList` component.
+    1. Each element in `PostList` shows `UserHeader`.
+    1. `UserHeader` is given ID of user to show. This is given through `props` from `PostList` to `UserHeader` component.
+    1. Each `UserHeader` attempts to fetch its user. We will have new action creator to allow `UserHeader` component to fetch user data from from the given `userId`.
+    1. We then have multiple user fetching calls to the endpoint.
+    1. Each `UserHeader` shows its own user that is fetched individually.
+    <img src="./images/flowFetchingUser273.png">
 
 ## Fetching Singular Records
+1. We create a new action creator `fetchUser` that we will use to fetch each user from the endpoint according to the data from the posts. Note that we request the list of posts from the endpoint, so we name `fetchPosts` with plural.
+1. After fetch each user for the posts, we will store them with another reducer `usersReducer`.
+1. Note that the data structure respond by json placeholder is different that if we fetch only a single user, the endpoint will return an object. However, if we don't give the specific user to request, the endponit will return an array of objects. 
+    ```js
+    // src/actions/index.js
+    import jsonPlaceholder from '../apis/jsonPlaceholder';
+
+    export const fetchUser = (id) => async dispatch => {
+        const response = await jsonPlaceholder.get(`/users/${id}`);
+        dispatch({ type: 'FETCH_USER', payload: response.data });
+    }
+    ```
+    <img src="./images/fetchSingularRecords274.png">
 
 ## Displaying the User Header
+1. In `PostList`, we need to add `UserHeader` to each of the posts that will be rendered in the list.
+    ```js
+    // src/component/PostList.js
+    renderList() {
+        return this.props.posts.map(post => {
+            return (
+                <div className="item" key={post.id}>
+                    <i className="large middle aligned icon user" />
+                    <div className="content">
+                        <div className="description">
+                            <h2>{post.title}</h2>
+                            <p>{post.body}</p>
+                        </div>
+                        <UserHeader userId={post.userId} /> // pass userId for each user of the post
+                    </div>
+                </div>
+            );
+        });
+    }
+    ```
+1. We create a new component `UserHeader` in component directory. 
+    ```js
+    // src/component/UserHeader
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchUser } from '../actions';
+
+    class UserHeader extends React.Component {
+        componentDidMount() {
+            this.props.fetchUser(this.props.userId);
+        }
+
+        render() {
+            return (
+                <div>User Header</div>
+            );
+        }
+    }
+
+    export default connect(null, { fetchUser })(UserHeader);
+    ```
 
 ## Finding Relevant Users
+1. We use `connect` from `react-redux` package to connect it with Redux to use the action creator.
+1. We use `componentDidMount` to run the action creator when the component initiates.
+1. We use `filter` array method to get the first user object from `state` that matches the given user id from props.
+    1. `this.props.userId` is passing from `PostList`.
+    1. `this.props.users` is the `state` which is an array that is updated by reducer.
+1. If we can't find the user from the `state`, we will return a `null` (though this is not exactly correct and just used in this case).
+    ```js
+    // src/component/UserHeader.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchUser } from '../actions';
+
+    class UserHeader extends React.Component {
+        componentDidMount() {
+            this.props.fetchUser(this.props.userId);
+        }
+
+        render() {
+            const user = this.props.users.find((user) => user.id === this.props.userId);
+
+            if (!user) {
+                return null;
+            }
+
+            return (
+                <div className="header">{user.name}</div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        return {user: state.users}
+    }
+
+    export default connect(mapStateToProps, { fetchUser })(UserHeader);
+    ```
 
 ## Extracting Logic to MapStateToProps
+1. Note that we actually want only a single user from the `users` array in the state rather than the whole array. Though there no problem in this case, this cause issues in other projects. There are 2 ways to solve the issue.
+    1. We can modify the `props` sending from `PostList` to `UserHeader` component. 
+    1. We can modify `mapStateToProps` in the component directly. 
+1. `mapStateToProps` can take 2 argument which is the `state` that stores by Redux `store` and `ownProps` that is the `props` which will be passed to the component (`UserHeader` in this case). 
+    1. `state` is the `store` object from Redux.
+    1. `ownProps` is the `props` object that that this component receives from its parent. 
+1. Note that we can change the property name in `props` to `user` (plural to single), as we now only takes the specific user from the `state` rather than the whole array.
+    ```js
+    // src/component/UserHeader.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchUser } from '../actions';
+
+    class UserHeader extends React.Component {
+        componentDidMount() {
+            this.props.fetchUser(this.props.userId);
+        }
+
+        render() {
+            const { user } = this.props; // use destructure assignment to create a variable user
+
+            if (!user) {
+                return null;
+            }
+
+            return (
+                <div className="header">{user.name}</div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state, ownProps) => { // first argument is the store object from Redux, and the 2nd is the props that this component will receive
+        return { user: state.users.find(user => user.id === ownProps.userId) };
+    }
+
+    export default connect(mapStateToProps, { fetchUser })(UserHeader);
+    ```
 
 ## That's the Issue
+1. The problem in this case is that we have a hundred posts rendered on the page, while each of the post have an user who creates the post. 
+1. However, by checking in "**Network**" > "**XHR**" in developer console, we can notice that we have requested to the endpoint for the same users multiple times. 
+    <img src="./images/fetchingSameUserMultiTimes278.png">
 
 ## Memoizing Functions
+1. We can use `_.memoize` method from lodash library, which provides a feature to wrap and return a function with closure in it to check if an argument has been used to execute the function and store the output from the argument. So the next time when the same function is called, it will return the output directly without executing the function. 
+    ```js
+    // needs lodash library
+    // https://lodash.com/docs/4.17.15#memoize
+
+    function getUser(id) {
+        fetch(id);
+        return 'Made a request';
+    }
+
+    const memoizedGetUser = _.memoize(getUser);
+    memoizedGetUser(1); // check XHR tab in network in developer console. It made a request to id 1
+    memoizedGetUser(1); // it DOES NOT make a request to id 1
+
+    /* the case from the lecture wouldn't be obvious, I have the following function */
+    function print(text) {
+        console.log(text);
+        return text;
+    }
+
+    const memoizedPrint = _.memoize(print);
+    memoizedPrint('hello'); // console.log is executed 
+    memoizedPrint('hello'); // console.log IS NOT executed 
+    ```
 
 ## Memoization Issues
+1. We can't use `_.memoize` method on the action creators directly. As using `redux-thunk` and async request, the action creator returns an async function rather than the object directly. 
+1. Therefore, every time the action creator function executes, `_.memoize` a function rather than the result, so either we use `_.memoize` on the action creator or the async function won't work.
+    ```js
+    // both of the followings won't work
+    // fetchUser still keeps sending requests to the endpoint for every single post
+    export const fetchUser = _.memoize(function (id) { // wrap the outter function 
+        return async function (dispatch) {
+            const response = await jsonPlaceholder.get(`/users/${id}`);
+            dispatch({ type: 'FETCH_USER', payload: response.data });
+        };
+    });
+
+    export const fetchUser = function (id) {
+        return _.memoize(async function (dispatch) { // wrap the async function
+            const response = await jsonPlaceholder.get(`/users/${id}`);
+            dispatch({ type: 'FETCH_USER', payload: response.data });
+        });
+    };
+    ```
 
 ## One Time Memoization
+1. The solution is to use `_.memoize` to remember the response outside of the action creator, so `_.memoize` will only remember the response one time rather than multiple times when the action creator is called.
+1. In convention, we can name the memoized function starting with an underscore, so other developers wouldn't accidentally call this function.
+1. Since the action creator has no `await` keyword in it, we can take `async` off to execute it as regular function.
+1. Note that we should turn the function that `_.memoize` handles as `async` function and pass both `id` and `dispatch` to it.
+1. However, this solution has a problem that if the user has update his/her data during the time, we can't use the same action creator to fetch the data, as it will be halt by `_.memoize` if the users has been fetched. 
+    ```js
+    // src/actions/index.js
+    import _ from 'loadsh';
+    import jsonPlaceholder from '../apis/jsonPlaceholder';
+
+    export const fetchUser = (id) => dispatch => _fetchUser(id, dispatch);
+    const _fetchUser = _.memoize(async (id, dispatch) => {
+        const response = await jsonPlaceholder.get(`/users/${id}`);
+        dispatch({ type: 'FETCH_USER', payload: response.data });
+    });
+    ```
 
 ## Alternate Overfecthing Solution
+1. Another way to work around is to create another action creator `fetchPostsAndUsers`
+    1. Call `fetchPosts`
+    1. Get list of `posts` 
+    1. Find all unique `userId`'s from list of posts
+    1. Iterate over unique `userId`'s
+    1. Call `fetchUser` with each `userid`
+1. Though we can combine all the functions into a single action creator, we may have other use cases such as requesting data of a single user. Therefore, we'd still keep `fetchPosts` and `fetchUser` separated and use another action creator to combine them.
+1. We need to refactor the `fetchUser` back to its previous state
+    ```js
+    // src/actions/index.js
+    export const fetchUser = (id) => async dispatch => {
+        const response = await jsonPlaceholder.get(`/users/${id}`);
+        dispatch({ type: 'FETCH_USER', payload: response.data });
+    };
+    ```
 
 ## Action Creators in Action Creators
+1. In this case, as we will only call the combine action creator `fetchPostsAndUsers` which has both `fetchPosts` and `fetchUser` in it, we must to ensure the function is passed to `dispatch` by Redux Thunk to update `store` in Redux.
+1. Note that `fetchPosts()` actually returns an async function. When this function passed by `dispatch` to Redux Thunk, it will be executed, so the `dispatch({})` inside can eventually update the `store` object. 
+1. Besides, since `fetchPosts` is an async function, we should use `await` keyword to ensure it's finished, so we can execute the function further (the function is also `async`).
+    ```js
+    // src/actions/index.js
+    import _ from 'lodash';
+    import jsonPlaceholder from '../apis/jsonPlaceholder';
+
+    export const fetchPostsAndUsers = () => async dispatch => {
+        console.log('About to fetch posts'); // print in console before the data is fetched
+        await dispatch(fetchPosts()); // fetching data
+        console.log('Fetched posts'); // print in console after the data is fetched and updated to Redux
+    }
+
+    export const fetchPosts = () => async dispatch => {
+        const response = await jsonPlaceholder.get('/posts');
+        dispatch({ type: 'FETCH_POSTS', payload: response.data })
+    }
+
+    export const fetchUser = (id) => async dispatch => {
+        const response = await jsonPlaceholder.get(`/users/${id}`);
+        dispatch({ type: 'FETCH_USER', payload: response.data });
+    };
+    ```
 
 ## Finding Unique User Ids
+1. After the `posts` are fetched and updated the `state`, we'd like to work on the data returned from the endpoint. 
+1. The 2nd function called by Redux Thunk that returned by the action creator can have another argument, `getState`, which is a method on `store` object that can get all the data of Redux `store`.
+1. Therefore, we can get the updated list with `getState` from the update `store` object. 
+1. We then can use `_.map` which is lodash method that is similar to `Array.map` while it returns the values from the given `key` of the object as an array. 
+1. After getting all the `userId` in an array, we can use `_.uniq` from lodash to filter out the array with unique elements. Note that we can also easily use `.map` and `.reduce` array methods to do the same tricks.
+    ```js
+    // src/actions/index.js
+    export const fetchPostsAndUsers = () => async (dispatch, getState) => { // use getState to get all the data from store object
+        await dispatch(fetchPosts()); // ensure fetched data is called by redux thunk and update store object
+        const userIds = _.uniq(_.map(getState().posts, 'userId'));
+        userIds.forEach(id => dispatch(fetchUser(id)));
+    }
+
+    const userIds = getState().posts.map(post => post.userId).reduce((arr, id) => {
+        if (!arr.includes(id)){
+            arr.push(id);
+        }
+        return arr;
+    }, []);
+    ```
 
 ## Quick Refactor with Chain
 
