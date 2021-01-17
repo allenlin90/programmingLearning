@@ -6032,10 +6032,109 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 1. Therefore, if we bypass Redux and didn't update the `state` within, it won't know if the `state` is updated and cause rerender to the whole app. Thus, we will see the app doesn't rerender when the state is updated by the reducers. 
 
 ## Safe State Updates in Reducers
+1. There are several ways to manipulate arrays and objects in JavaScript. The main point is to avoid modifying the `state` object directly.
+    <img src="./images/safeStateUpdatesReducers268.png">
+1. For example, we can use `rest...` syntax to duplicate a new array with additional elements.
+    ```js
+    // manipulate arrays
+    const colors = ['red', 'green']; 
+    [...colors, 'blue']; // work as push to add an element as the last one in the array
+    ['purple', ...colors]; // work as unshift to add an element as the first one in the array
+
+    colors.filter(color=> color !== 'green'); // return a new array which doesn't have 'green'
+
+    // manipulate objects
+    const profile = { name: 'Sam' };
+    { ...profile, name: 'Alex' };
+    { ...profile, age: 30 };
+    { name: 'Alex', ...profile };
+    delete profile.name; // modify the object directly
+    profile.name = 'Alex'; // modify the object directly
+
+    ```
+1. Though we can duplicate an object and assign `undefined` to "remove" the property from the object, the property (key) is still in the object. Therefore, we can use `lodash` library to remove the property from the duplicated obejct. 
+1. `_.omit` method takes 2 arguments which is the object to be duplicated and the property that we wants to remove. 
+    ```js
+    const profile = {name: 'Sam'};
+    let obj = { ...profile, age: 30};
+    {...profile, age: undefined}; // duplicate with an object with its name property has undefined value
+    _.omit(profile, 'age');
+
+    // what _.omit method does is as the followings
+    let object = Object.assign({}, profile);
+    object == profile // false, which means these 2 objects are not the same one in the memory
+    delete object.name // true
+    object // {}
+    profile // {name: 'Sam'}
+    ```
 
 ## Switch Statements in Reducers
+1. When have multiple `IF` statement to check conditions, we can use `switch` instead and have `default` to return a value when there's no case matched. 
+    ```js
+    // src/reducers/postReducer.js
+    export default (state = [], action) => {
+        switch (action.type) {
+            case 'FETCH_POSTS':
+                return action.payload;
+            default:
+                return state;
+        }
+    }
+    ```
 
 ## Dispatching Correct Values
+1. To connect Redux `store` and React `state`, we should declare and import `mapStateToProps` to `connect` from `react-redux`.
+1. In this case, we will see 2 `console.log` in the console. First is an "**empty array**", and the 2nd is the response fetched from the API. 
+    ```js
+    // src/components/PostList.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchPosts } from '../actions';
+
+    class PostList extends React.Component {
+        componentDidMount() {
+            this.props.fetchPosts();
+        }
+
+        render() {
+            console.log(this.props.posts); // check the current state from props
+            return <div>Post List</div>;
+        }
+    }
+
+    const mapStateToProps = (state) => { // connect state with props
+        return { posts: state.posts };
+    }
+
+    export default connect(mapStateToProps, { fetchPosts })(PostList);
+    ```
+1. From the code below, we can notice that the `state` is returned when the App initiates.
+1. In `PostList`, `componentDidMount` fires `this.props.fetchPosts()` and receive the response which is updated to `store` through `dispatch`.
+1. Note that the method has been connected to the `props` of the component and `state`.
+1. As in the first there's no data fetched from the endpoint yet, it will return the default value which is the empty array from `postReducer`.
+1. The 2nd time when the method is called, `state` is updated from the reducer with `action.payload` that is created from the action object.
+    ```js
+    // src/reducers/postReducers.js
+    export default (state = [], action) => {
+        switch (action.type) {
+            case 'FETCH_POSTS':
+                return action.payload;
+            default:
+                return state;
+        }
+    }
+    ```
+1. However, we can update the action creator to be more specific on the data that we want to manipulate.
+1. With `response` from the `axios` request, we will have other properties and meta-data such as `headers` and `request`. 
+    ```js
+    // src/actions/index.js
+    import jsonPlaceholder from '../apis/jsonPlaceholder';
+
+    export const fetchPosts = () => async dispatch => {
+        const response = await jsonPlaceholder.get('/posts');
+        dispatch({ type: 'FETCH_POSTS', payload: response.data }); // update payload property with only the data that we want to use rather than the whole obejct
+    }
+    ```
 
 ## List Building
 
