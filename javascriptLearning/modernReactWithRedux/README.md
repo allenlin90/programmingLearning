@@ -6474,8 +6474,70 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     ```
 
 ## Quick Refactor with Chain
+1. This is an optional solution. 
+1. We can use [`_.chain`](https://lodash.com/docs/4.17.15#chain) method from lodash to concatenate several methods to work directly. Note that we must use `.value()` to close the chained object.
+1. According to lodash, `.chain` creates a lodash wrapper instance that wraps `value` with explicit method chain sequences enabled. The result of such sequences must be unwrapped with `_#value`.
+    ```js
+    export const fetchPostsAndUsers = () => async (dispatch, getState) => {
+        await dispatch(fetchPosts());
+        // const userIds = _.uniq(_.map(getState().posts, 'userId'));
+        // userIds.forEach(id => dispatch(fetchUser(id)));
+
+        _.chain(getState.posts)
+            .map('userId')
+            .uniq()
+            .forEach(id => dispatch(fetchUser(id)))
+            .value();
+    }
+    ```
 
 ## App Wrapup
+1. Using **Redux Thunk**
+    1. In root `index.js` file (`src/index.js`), we import `thunk` from `redux-thunk`.
+    1. We then use `createStore` from Redux to wire it up with redux-thunk.
+    1. By wiring up, all the actions will pass through the middleware `thunk` and been sent to the reducers.
+    ```js
+    // src/index.js
+    import { createStore, applyMiddleware} from 'redux';
+    import thunk from 'redux-thunk';
+
+    const store = createStore(reducers, applyMiddleware(thunk));
+    ```
+1. Configure **Action Creators**
+    1. Besides, wiring up the middle change the behavior of action creators that it can not only return JavaScript objects but functions. 
+    1. The returned function can be called automatically with `dispatch` and `getState` arguments.
+    1. This feature allows the app to run async functions and wait for the response. Note that the syntax of the action creator is a **function that returns another function**.
+    ```js
+    // action creators
+    function (){
+        return async function(dispatch, getState){
+            const response = await apiCall();
+            dispatch({type: 'AN_ACTION', payload: response.data});
+        }
+    }
+
+    () => async (dispatch, getState) => {
+        const response = await apiCall();
+        dispatch({type: 'AN_ACTION', payload: response.data});
+    }
+    ```
+1. Creating **Reducers**
+    1. The first argument in the reducer is the `state`, and we can give it a default value when the app initiates. For example, it can be an empty `array` or `object`, `0` as initial number, or empty string before it gets any value. 
+    1. Note that the initiate value **MUST NOT** be `undefined` or Redux will return an error. 
+    1. When expanding arrays, we can use spread assignment to duplicate a new array.
+    1. We **MUST NOT** modify the `state` object directly. 
+    1. As action creator would have similar syntax, rather than using `IF` and `ELSE IF` statement, we can use `switch` for different `cases` and use `default` as `ELSE` when there's nothing will be changed.
+    ```js
+    // reducers
+    export default (state = [], action) => {
+        switch (action.type) {
+            case 'AN_ACTION':
+                return [...state, action.payload];
+            default:
+                return state;
+        }
+    }
+    ```
 
 
 
