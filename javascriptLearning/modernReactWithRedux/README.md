@@ -6543,14 +6543,103 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 
 # Navigation with React Router
 ## App Outline
+1. This app is going to look really complicated, but at its core it is going to be straightforward to build.
+1. Our focus is going to be on React/Redux, not any complicated backend pieces.
+1. This app is a clone of [twich.tw](https://www.twitch.tv/) and has 3 main components
+    1. Real Time Messaging Protocol (RTMP) Server
+    1. Web server that knows which streams are currently broadcasting
+    1. Viewer's Browser
+1. Users can use "Open Broadcaster Software" (OBS) which is used to record works on computers or do livestreaming. 
+1. Then the user can connect to a Real Time Messaging Protocol (RTMP) Server.
+1. The RTMP server can then broadcast the video feed to multiple different users.
+1. Besides, multiple streamers (video feeders) can connect and feed videos to the RTMP server at the same time.
+    <img src="./images/twitchCloneAppStructure287.png">
+1. Besides the RTMP server, we need another server to provide the list of streaming videos that are available or connected to RTMP server. Note that RTMP server only serves a purpose to allow connection between streamers and viewers.
+    <img src="./images/twitchCloneAppOutline287.png">
 
 ## Mockups in Details
+1. This app has a significat difference between Twitch or other streaming platform that it allows every user create unlimited channels/streams that they can stream to. On Twitch, and usually other streaming platforms, every user will have one stream/channel they can stream to. In the other words, an user can create multiple stream and stream multiple vidoes with the same account at the same time.
+1. User is not logged in
+    1. User can view a list of all streams/channels
+    1. User can view video for a single stream
+1. User is logged in 
+    1. User can create a new stream/channel
+    1. User can **edit** a stream/channel they have created
+    1. User can **delete** a stream/channel they have created
+1. Therefore, on the index page which has the list of streaming videos on RTMP server will have 2 more buttons for the streamer after they log in.
 
 ## App Challenges
+1. We create a directory `stream` and, inside `stream`, we create the react app, `client`.
+1. App Challenges
+    1. Need to be able to navigate around to separate pages in our app
+    1. Need to allow a user to login/logout
+    1. Need to handle "**forms**" in Redux
+    1. Need to master "**CRUD operations**" in React/Redux
+    1. Errors will likely occur! Need good error handling
 
 ## Inital Setup
+1. We firstly remove all the default file from React app and create `index.js` in `src` and `App.js` in `components` as usual.
+    ```js
+    // src/index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import App from './components/App';
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+
+    // src/components/App.js
+    import React from 'react';
+
+    const App = () => {
+        return <div>App</div>
+    }
+    export default App;
+    ```
 
 ## Introducing React Router
+1. We will use another npm package `react-router-dom` which is the the React router we will use in the app. Note that the name of package has `dom`. 
+1. There are other similar named packages that we should be aware of what we have installed.
+    1. `react-router` is the core navigation library that we don't install this manully
+    1. `react-router-dom` is the navigation for dom-based apps (which is used in this project)
+    1. `react-router-native` is the navigation for react-native apps 
+    1. `react-router-redux` binds between Redux and React Router (which is not necessary)
+1. To use `react-router-dom`, we import 2 methods with destructive assignment and get `BrowserRouter` and `Route`.
+    1. `BrowserRouter` is a component used to wrap the routes we want to create
+    1. `Route` can indicate the path that we want to render certani components to create a page when the user visits the route.
+1. Note that we should use `<div>` tags to wrap `Route` tags in `BrowserRouter`.
+    ```js
+    // src/components/App.js
+    // PageOne and PageTwo are mock functions only to show what does react-router-dom do
+    import React from 'react';
+    import { BrowserRouter, Route } from 'react-router-dom';
+
+    const PageOne = () => {
+        return <div>PageOne</div>;
+    }
+    const PageTwo = () => {
+        return (
+            <div>
+                PageTwo
+                <button>Click Me!</button>
+            </div>
+        );
+    }
+
+    const App = () => {
+        return (
+            <div>
+                <BrowserRouter>
+                    <div> // Routes should be wrapped with div tags in BrowserRouter
+                        <Route path="/" exact component={PageOne} />
+                        <Route path="/pagetwo" component={PageTwo} />
+                    </div>
+                </BrowserRouter>
+            </div>
+        );
+    }
+
+    export default App;
+    ```
 
 ## How React Router Works
 
