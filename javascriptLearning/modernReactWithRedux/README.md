@@ -6642,14 +6642,127 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     ```
 
 ## How React Router Works
+1. React Router doesn't interact with the domain of the URL path. This library only helps us to work on the route at a domain.
+    ```js
+    // React Router only works with the path in the route which doesn't include the host and port
+    window.location.pathname
+    ```
+1. When using `BrowserRouter` object, it will internally create `history` object. This `history` object will track on the path that the user visits.
+    <img src="./images/reactRouterStructure292.png">
 
 ## How Paths Get Matched
+1. All the `Route` component in `BrowserRouter` has a `path` property. 
+    1. At the root path, which is `/`, the component includes an `exact` property.
+    1. The `component` property indicates that which component should be rendered when a user visits the path.
+1. We can have multiple components in the same route. For example, we can put different components at the root path.
+1. The `exact` property is to ensure the component in the parent path doesn't go further into its child path. For example, the component we pass to root path doesn't have `exact`, it will show in the other paths as well because all the other route is under the root path `/`. Besides, the property has a value as default to be `true` when it is given.
+1. The keyword changes the behavior of how does React Router evaluates the path extracted from the search bar. 
+    1. By default React Router will check if the path contains certain path. For example, when we visit `/pagetwo`, the path contains both `/` and `/pagetwo`.
+    1. When using `exact`, React Router will check if the path is exactly the same as the configured path, such as `/`, so it only shows when the user is on a certin path.
+    ```js
+    const App = () => {
+        return (
+            <div>
+                <BrowserRouter>
+                    <div>
+                        <Route path="/" exact={true} component={PageOne} /> // 2 PageOne component will be shown at the root path. This component will only show when user visits the root path
+                        <Route path="/" component={PageOne} /> // if we don't have exact in the root path, it will show in its child path which is /pagetwo as well
+                        <Route path="/pagetwo" component={PageTwo} />
+                    </div>
+                </BrowserRouter>
+            </div>
+        );
+    }
+    ```
+    <img src="./images/howReactRouteWorks293">
 
 ## How to "Not" Navigate with React Router
+1. In regular HTML, we can use an anchor tag `<a>` to navigate in the app. However, this is not ideal to manipulate with React Router
+    ```js
+    const PageOne = () => {
+        return <div>
+            <a href="/pagetwo">Navigate to Page Two</a>
+        </div>;
+    }
+    const PageTwo = () => {
+        return (
+            <div>
+                PageTwo
+                <button>Click Me!</button>
+                <a href="/">Navigate to Page One</a>
+            </div>
+        );
+    }
+    ```
+1. Using anchor tag is not a good approach as every time a user access a certain path, browser receives `index.html` file, "**dumps old HTML file it was showing**" (including all of your React/Redux state data). Since JavaScript will be removed, all the cache and fetched data or user inserted contents will all be wiped out. 
 
 ## Navigating with React Router
+1. In the browser, we can check at the "Network" tab that every time we change the route, the browser will request to the server for all the frontend resources, HTML, CSS, and JavaScript. This is redundant that we don't need to reload the page, fetch, and request all the files every time we change the route. Besides, all the data stored in JavaScript and memory will be cleared and wiped out.
+1. The way to work around is to use `Link` object from `react-router-dom` to replace anchor tag and use `to` as the property rather than `href`.
+1. Note that if we inspect the elements of the page on browser, we will find the `Link` components are actually anchor tags.
+    ```js
+    import { Link } from 'react-router-dom';
+    <Link to='/'>Navigate to Page One</Link>
+    ```
+1. When using `Link` object
+    1. User wants to navigate to another page in the app
+    1. user clicks a `Link` tag
+    1. React Router prevents the browser from navigating to the new page and fetching new `index.html` file.
+    1. URL still changes
+    1. `History` sees updated URL, takes URL and sends it to `BrowserRouter`
+    1. `BrowserRouter` communicates the URL to Route components
 
 ## Different Router Types
+1. Note that `BrowserRoueter` is actually browser side route control system which is not integrated directly with server side code. 
+1. There are 3 types of React Router we can use 
+    1. `BrowserRouter` which uses everything after the TLD (.com, .net) or port as the `path`
+    1. `HashRouter` which uses everything after a pound sign `#` as the `path`
+    1. `MemoryRouter` which doesn't use the URL to track navigation
+1. If we use `HashRouter`, the route will have a `/#` in between the domain and the path. Every time the user naviagtes between the paths, it only changes the path behind the pound sign.
+    ```js
+    import React from 'react';
+    import { HashRouter, Route, Link } from 'react-router-dom';
+
+    const App = () => {
+        return (
+            <div>
+                <HashRouter>
+                    <div>
+                        <Route path="/" exact component={PageOne}>
+                        <Route path="/pagetwo" component={PageTwo}>
+                    </div>
+                </HashRouter>
+            </div>
+        );
+    }
+    ``` 
+1. If we use `MemoryRouter`, the URL on the search bar will not change when the user navigates between the paths. 
+    ```js
+    import React from 'react';
+    import { MemoryRouter, Route, Link } from 'react-router-dom';
+
+    const App = () => {
+        return (
+            <div>
+                <MemoryRouter>
+                    <div>
+                        <Route path="/" exact component={PageOne}>
+                        <Route path="/pagetwo" component={PageTwo}>
+                    </div>
+                </MemoryRouter>
+            </div>
+        );
+    }
+    ```
+1. In traditional web app service, when a user sends request with a URL via browser to a backend server, the server will check if the route is valid and return an aligned HTML file to the request. 
+1. In this scenario, if the user provides a route that doesn't exist on the server, it will return a **404** error as the resource is "**not found**".
+1. On the React Development Server, which is the server shows when we run `npm start` and can be accessed through `localhost:3000`, Create-React-App Dev Server will 
+    1. Check if there's anything special on the route given by the user
+    1. Check `dev` resources and `public` directory. For example, in a regular React App directory, we can access the favicon and JSON file in the public folder with the filename dierctly
+    1. If there's nothing configured for the route, React will server up the `index.html` in `public` folder
+1. This feature prevent to let the user see a `404` error when the route doesn't exist.
+1. In the typical and traditional situation, a server can only return the file (index.html) if the route exists and is configured on the server side. Therefore, it can be very challenging to set up `BrowserRouter` when integrating frontend and backend code. However, modern server framework and cloud hosting services provides more direct and smart integration to deploy React App on the service.
+1. Therefore, we can use either `HashRouter` or `MemoryRouter` when integrating with different types of server or backend code.
 
 ## Component Scaffolding
 
