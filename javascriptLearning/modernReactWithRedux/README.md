@@ -6765,6 +6765,19 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 1. Therefore, we can use either `HashRouter` or `MemoryRouter` when integrating with different types of server or backend code.
 
 ## Component Scaffolding
+1. We have 6 different pages in this project
+    1. Index Page - StreamList
+    1. Show Stream - StreamShow
+    1. Index Page - StreamShow
+    1. Create Stream - StreamCreate
+    1. Edit Stream - StreamEdit
+    1. Delete Stream - StreamDelete
+1. For each of the components, we should have specific path for each of them
+    1. `/` - StreamList
+    1. `stream/new` - StreamCreate
+    1. `/streams/edit` - StreamEdit
+    1. `/streams/delete` - StreamDelete
+    1. `/streams/show` - StreamShow
 
 ## Wiring Up Routes
 
