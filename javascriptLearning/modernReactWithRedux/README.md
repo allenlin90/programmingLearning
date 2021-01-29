@@ -6780,14 +6780,108 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     1. `/streams/show` - StreamShow
 
 ## Wiring Up Routes
+1. As we build up the components, we configure `App.js` by setting up the routes and import the components. 
+1. We use `BrowserRouter` in this case. 
+    ```js
+    import React from 'react';
+    import { BrowserRouter, Route, Link } from 'react-router-dom';
+    import StreamCreate from './streams/StreamCreate';
+    import StreamEdit from './streams/StreamEdit';
+    import StreamDelete from './streams/StreamDelete';
+    import StreamList from './streams/StreamList';
+    import StreamShow from './streams/StreamShow';
+
+    const App = () => {
+        return (
+            <div>
+                <BrowserRouter>
+                    <div>
+                        <Route path="/" exact component={StreamList} />
+                        <Route path="/streams/new" exact component={StreamCreate} />
+                        <Route path="/streams/edit" exact component={StreamEdit} />
+                        <Route path="/streams/delete" exact component={StreamDelete} />
+                        <Route path="/streams/show" exact component={StreamShow} />
+                    </div>
+                </BrowserRouter>
+            </div>
+        );
+    }
+
+    export default App;
+    ```
 
 ## Always Visible Components
+1. We will build up the header component which is the navigation bar that always floats on the top for users to choose different functinos and login/out. We can see from the following structure that `Header` will always be visible to users. 
+1. We can put the component out of `BrowserRouter`, so it will be visible from all the routes with the other components.
+    <img src="./images/structureStreamApp300.png">    
 
 ## Connecting the Header
+1. We will use `Semantic UI` for the styling in the this project, and we create `Header`component that will be used and show in every route in the app. 
+1. However, the current set up is not finished yet, and we will get an error message indicating that we are using `Link` out of a `Router`.
+    ```js
+    // src/components/Header.js
+    import React from 'react';
+    import { Link } from 'react-router-dom';
+
+    const Header = () => {
+        return (
+            <div className="ui secondary pointing menu">
+                <Link to="/" className="item">
+                    Streamer
+                </Link>
+                <div className="right menu">
+                    <Link to="/" className="item">
+                        All Streams
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    export default Header;
+
+    // src/components/App.js
+    const App = () => {
+        return (
+            <div>
+                <Header />
+                <BrowserRouter>
+                    <div>
+                        <Route path="/" exact component={StreamList} />
+                        <Route path="/streams/new" exact component={StreamCreate} />
+                        <Route path="/streams/edit" exact component={StreamEdit} />
+                        <Route path="/streams/delete" exact component={StreamDelete} />
+                        <Route path="/streams/show" exact component={StreamShow} />
+                    </div>
+                </BrowserRouter>
+            </div>
+        );
+    }
+    ```
+    <img src="./images/errorToUseLinkOutOfRouter301.png">
 
 ## Links Inside Routers
-
-
+1. To solve the issues from the last section, we can change the structure and move`Header` component in to `BrwoserRouter` to be right above other components. Besides, since `Header` is not controlled with `Route`, it will show in every route. 
+    ```js
+    // src/components/App.js
+    const App = () => {
+        return (
+            <div>
+                <BrowserRouter>
+                    <div>
+                        <Header />
+                        <Route path="/" exact component={StreamList} />
+                        <Route path="/streams/new" exact component={StreamCreate} />
+                        <Route path="/streams/edit" exact component={StreamEdit} />
+                        <Route path="/streams/delete" exact component={StreamDelete} />
+                        <Route path="/streams/show" exact component={StreamShow} />
+                    </div>
+                </BrowserRouter>
+            </div>
+        );
+    }
+    ```
+    <img src="./images/linksInsideRoute302.png">
 
 # Handling Authenitcation with React
 ## OAuth-Based Authentication
