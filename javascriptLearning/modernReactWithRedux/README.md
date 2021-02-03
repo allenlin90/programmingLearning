@@ -6883,14 +6883,127 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     ```
     <img src="./images/linksInsideRoute302.png">
 
+
+
 # Handling Authenitcation with React
 ## OAuth-Based Authentication
+1. We will create a new component to allow users to login to the app with Google OAuth.
+1. Email/Password Authentication
+    1. We store a record in a database with the user's email and password
+    1. When the user tries to login, we compare email/pw with whats stored in DB
+    1. A user is 'logged in' when they enter the correct email/pw    
+1. OAuth Authentication
+    1. User authenticates wit houtside service provider (Google, LinkedIn, Facebook)
+    1. User authorizes our app to access their information
+    1. Outside provider tells us about the user
+    1. We are trusting the outside provider to correctly handle identification of a user
+    1. OAuth can be used for 
+        1. user identification in our app 
+        1. our app making action on behalf of user
+1. In this case, we are using OAuth to identify the user without using it to manipulate on Google on user's behalf.
+1. To setup OAuth, we can either do it on "**Servers**" or "**JS Browser Apps**".
+    1. OAuth for Servers
+        1. Results in a `token` that a server can use to make requests on behalf of the user
+        1. Usually used when we have an app that needs to access user data "**when they are not logged in**"
+        1. Difficult to setup because we need to store a lot of info about the user
+    1. OAuth for JS Browser Apps
+        1. Results in a `token` that a browser app can use to make requests on behalf of the user
+        1. Usually used when we have an app that only needs to access user data "**while they are logged in**"
+        1. Very easy to set up thanks to Google's JS lib to automate flow
 
 ## OAuth for Servers vs Browser Apps
+1. The main difference between server-side and browser-side OAuth is that by using server-side OAuth, the App can access to user data even when the user is not actively logged in. However, we don't need the feature in this case. 
+1. The flow starts when the user clicks '**Login with Google**' button.
+    1. User clicks 'Login with Google' button
+    1. We use google's JS lib to initiate OAuth process
+    1. Google's JS library makes auth request to Google
+    1. Google displays confirmation screen to user in popup window
+    1. User accepts
+    1. Popup window closes
+    1. Google's JS lib invokes a callback in our React/Redux App
+    1. Callback provided with '**authorization**' token and profile info for user
+1. Note that the callback should also listen to the user action that if the user has logged out from Google.
+    <img src="./images/google_browser_oauth306.png">
 
 ## Creating OAuth Credentials
+1. Steps for setting up OAuth
+    1. Create a new project at [`console.developers.google.com/`](https://console.developers.google.com/)
+    1. Set up an OAuth confirmation screen
+    1. Generate an OAuth Client ID
+    1. Install Google's API library, initialize it with the OAuth Client ID
+    1. Make sure the lib gets called any time the user clicks on the 'Login with Google' button
 
 ## Wiring Up the Google API Library
+1. We put the CDN file in the `index.html` in `public` directory with Google's JS lib. 
+    ```html
+    <script src="https://apis.google.com/js/api.js"></script>
+    ```
+1. After importing Google JS library, we create a new component `GoogleAuth.js` in `components`
+    ```js
+    // src/components/GoogleAuth.js
+    import React from 'react';
+
+    class GoogleAuth extends React.Component {
+        render() {
+            return <div>Google Auth</div>
+        }
+    }
+
+    export default GoogleAuth;
+    ```
+1. We import `GoogleAuth` into `Header.js`
+    ```js
+    // src/components/Header.js
+    import GoogleAuth from './GoogleAuth';
+
+    const Header = () => {
+        return (
+            <div className="ui secondary pointing menu">
+                <Link to="/" className="item">
+                    Streamer
+                </Link>
+                <div className="right menu">
+                    <Link to="/" className="item">
+                        All Streams
+                    </Link>
+                    <GoogleAuth />
+                </div>
+            </div>
+        );
+    }
+    ```
+1. By importing Google JS lib, we can use JavaScript to access a function `gapi` to interact with multiple Google Services.
+1. Since the Google JS lib is used by many Apps, Google has made the library as small as possible and every time the App would like to run on certain features, the App needs to request additional JS library from Google according to the requirements.
+1. In this case, we'd use Google OAuth, so we use `gapi` to load up `client:auth2` library for OAuth process. After we get the extra JS code, we can see the `gapi` function is updated.
+    ```js
+    gapi.load('client:auth2');
+
+    gapi(); // gapi is extended with additional code after loading 'auth2'
+    ```
+1. After understanding how does `gapi` works, we then can start to configure `GoogleAuth.js` component. We start with a lifecycle method `componentDidMount()`. Note that when calling the `gapi.load` method, we need to decalre `gapi` is on the `window` scope or React will return an error that `gapi` is not defined though Google lib has been imported in the global scope.
+1. Note that `gapi.load()` makes a request to acquire additional JS code from Google. We can only run the following process after we get the response from the request. Therefore, we pass an arrow function as callback in `window.gapi.load` method.
+1. In the callback, we use `window.gapi.client.init` method to start the process with the client ID given in Google Developer Console. Besides, we can request in the "**scope**" that what user's information that the App would like to use.
+    ```js
+    // src/components/GoogleAuth.js
+    import React from 'react';
+
+    class GoogleAuth extends React.Component {
+        componentDidMount() {
+            window.gapi.load('client:auth2', () => { // a callback function runs after gapi is extended with auth2
+                window.gapi.client.init({
+                    clientId: 'your client id given in creditials in Google developer console', // given by Google credentials in Google Developer Console
+                    scope: 'email' // request to check user's email
+                });
+            });
+        }
+
+        render() {
+            return <div>Google Auth</div>
+        }
+    }
+
+    export default GoogleAuth;
+    ```
 
 ## Sending a User Into the OAuth Flow
 
