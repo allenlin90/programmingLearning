@@ -7006,8 +7006,60 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     ```
 
 ## Sending a User Into the OAuth Flow
+1. We can check [Google sign-in JavaScript client reference](https://developers.google.com/identity/sign-in/web/reference). We can also find the document by searching for "gapi documentation".
+1. We mainly use [Authentication](https://developers.google.com/identity/sign-in/web/reference#authentication) section in this case.
+1. There are several methods we can refer from the library, such as checking user's login state and initiate OAuth flow.
+    ```js
+    // after importing and loading auth2 extended library
+    const auth = gapi.auth2.getAuthInstance() // get 'GoogleAuth' (which is auth in this case) object by calling gapi.auth2.init()
+    auth // we can check this 'auth' object 
+    auth.signIn() // starts the OAuth flow for the user to sign in
+    auth.isSignedIn.get() // check if the user signs in 
+    ```
 
 ## Rendering Authentication Status
+1. In the Auth component
+    1. Get a reference to the `auth` object  after it is initialized
+    1. Figure out if the user is currently signed in 
+    1. Print their authentication status on the screen
+1. `window.gapi.client.init` is an async function that it initates and extend the imported Google JS library. As it's a `Promise` object, we can use `.then` method to chain on it and proceed further function after the `auth` object is initiated.
+1. We have a state `isSignedIn` initates as `null` to check if the stats is updated. If it's `null`, it means we don't know whether the user signs in or not. 
+    ```js
+    // src/components/GoogleAuth.js
+    import React from 'react';
+
+    class GoogleAuth extends React.Component {
+        state = { isSignedIn: null }; // check if state is updated
+
+        componentDidMount() {
+            window.gapi.load('client:auth2', () => {
+                window.gapi.client.init({
+                    clientId: 'your client id',
+                    scope: 'email'
+                }).then(() => {
+                    this.auth = window.gapi.auth2.getAuthInstance();
+                    this.setState({ isSignedIn: this.auth.isSignedIn.get() });
+                });
+            });
+        }
+
+        renderAuthButton() {
+            if (this.state.isSignedIn === null) {
+                return <div>I don't know if we are signed in</div>;
+            } else if (this.state.isSignedIn) {
+                return <div>I am signed in!</div>;
+            } else {
+                return <div>I am not signed in</div>;
+            }
+        }
+
+        render() {
+            return <div>{this.renderAuthButton()}</div>
+        }
+    }
+
+    export default GoogleAuth;
+    ```
 
 ## Updating Auth State
 
