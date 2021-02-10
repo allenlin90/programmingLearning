@@ -7461,8 +7461,42 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 
 # Reducx Dev Tools
 ## Using Redux Dev Tools to Inspect the Store
+1. During developing, we can use [Redux Devtool](https://github.com/zalmoxisus/redux-devtools-extension) to make our life easier. We can visit the github repo and download the extension directly to the local browser.
+1. After installing the extension, we should wire it up in the app to allow accessing it. We can check [Advanced store setup](https://github.com/zalmoxisus/redux-devtools-extension#12-advanced-store-setup) for more details.
+1. The main features of the devtool is to help us along the useflow
+    1. Track on the actions on the left panel
+    1. Track on the state changes on the right panel 
+1. We can not only track the state and actions along the useflow but also click "jump" on each action to check the state at each action. 
+    <img src="./images/reduxDevToolExtension321.png">
+1. By using this extension, we can also visit and check other projects in real (such as [Airbnb](https://www.airbnb.com/), though it may not work at the point of visit).
+    ```js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { Provider } from 'react-redux';
+    import { createStore, applyMiddleware, compose } from 'redux'; // add applyMiddleware and compose from redux
+
+    import App from './components/App';
+    import reducers from './reducers';
+
+    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // wire up redux to browser extension
+    const store = createStore(
+        reducers,
+        composeEnhancers(applyMiddleware()) // use middleware for redux
+    );
+
+    ReactDOM.render(
+        <Provider store={store}>
+            <App />
+        </Provider>
+        ,
+        document.querySelector('#root')
+    );
+    ```
 
 ## Debug Sessions with Redux Dev Tools
+1. We can use query string `?debug_session=[some_string]` after `localhost:3000` when using redux devtool extension. This key is to notice the extension that we want to start a debug session.
+1. This feature can be very useful that the extension can remember multiple session for different scenarios we create, such as logging in and other action and sepcific useflow, so we can switch and check the states and conditions between different use cases.
+
 
 
 # Handling Forms with Redux Form
