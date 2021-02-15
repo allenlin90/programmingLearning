@@ -7501,12 +7501,64 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 
 # Handling Forms with Redux Form
 ## Forms with Redux Form
+1. In this section, we are going to work on `StreamCreate` component which is for a user to create a stream on the app. 
+1. In addition, we can use `redux-form` to work on the project.
+1. In regular conditions, we create a component scope `state` which listen and handles all the changes to the input data to the component. 
+    <img src="./images/handlingInputsWithoutRedux324.png">
+1. By using `redux-form`, we can skip the repetitive process to keep wiring up Redux `store` with `maptStateToProps` and `Action Creator` betwen Redux and the component.
+    <img src="./images/handlingInputsWithDOM324.png">
 
 ## Useful Redux Form Examples
+1. [Wizard From](https://redux-form.com/8.3.0/examples/wizard/) can be a very useful form for different purpose.
+1. This is used to collect multiple inputs from a user such as data to create a new account.
 
-## Conencting Reux Form
+## Conencting Redux Form
+1. We then add the `redux-form` library into our `index.js` in `reducers`.
+1. Note that we may have multiple reducers in the project, we can use `as` syntax to change the variable name when importing variables from the other library.
+1. After wiring up the reducer, we can check in Redux DevTool in `State` and `Tree` that we have `form` object which keeps all the information related to the form.
+    ```js
+    // src/reducers/index.js
+    import { combineReducers } from 'redux';
+    import { reducer as formReducer } from 'redux-form';
+    import authReducer from './authReducer';
+
+    export default combineReducers({
+        auth: authReducer,
+        form: formReducer
+    });
+    ```
 
 ## Creating Forms
+1. At the current stage, we can check at route `/stream/new` for the default setting of creating a stream. 
+1. We then update the `StreamCreate` component from a functional component to a class-based component which could help us  organize the helper methods. 
+1. When using `redux-form`, we import `Field` and `reduxForm`. 
+1. We can notice that these variables have different naming syntax. `Field` is a React component that shows HTML element on the screen.
+1. On the other hand, `reduxForm` is a function which works similar to `connect` for `react-redux`, we can use it to wire up the component which can do `mapStateToProps` and action creator.
+1. Similar to `connect`, `reduxForm` returns a function which wires up the React component that is passed to it. We pass only one option to configure the function as `form` which is used to indicate what is the form used for. 
+1. After wiring up with `reduxForm`, we can check what have been passed to the component by printing `this.props`. We will use the `prop` passed to the component to create the form we need.
+1. We then can create a `form` element and pass `Field` component which is imported from `redux-form` library. Note that a `Field` is some type of input which we would like users to fill in. These fields can be text input, checkbox, or any other type of inputs available on HTML.
+1. We firstly give `name` attribute to `Field` which is to indicate what will the component be handling. This is similar to `name` attribute for an `input` element.
+    ```js
+    // src/components/StreamCreate.js
+    import React from 'react';
+    import { Field, reduxForm } from 'redux-form';
+
+    class StreamCreate extends React.Component {
+        render() {
+            console.log(this.props); // check props after wiring up
+            return (
+                <form>
+                    <Field name="title" />
+                    <Field name="description" />
+                </form>
+            )
+        }
+    }
+
+    export default reduxForm({
+        form: 'streamCreate' // in convention, this is to name the form for its purpose
+    })(StreamCreate);
+    ```
 
 ## Automatically Handling Events
 
