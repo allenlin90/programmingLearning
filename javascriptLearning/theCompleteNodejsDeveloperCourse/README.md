@@ -43,7 +43,7 @@ Finished on 2020/08/07
 1. Web Servers (Weather App)
     1. Hello Express
     1. Serving up HTML and JSON
-    1. Serving up STatic Assets
+    1. Serving up Static Assets
     1. Serving up CSS, JS, Images, and More
     1. Dynamic Pages with Templating 
     1. Customizing the Views Directory
@@ -60,7 +60,7 @@ Finished on 2020/08/07
     1. Creating a Search Form
     1. Writing up the User Interface
 
-1. APplication Deployment (Weather App)
+1. Application Deployment (Weather App)
     1. Joining Heroku and Github
     1. Version Control With Git
     1. Exploring Git 
