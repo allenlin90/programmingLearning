@@ -7559,20 +7559,251 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
         form: 'streamCreate' // in convention, this is to name the form for its purpose
     })(StreamCreate);
     ```
+1. By using `Field` we have the first part connected by Redux Form library automatically.
+    <img src="./images/createForms327.png">
 
 ## Automatically Handling Events
+1. To show the input type of the screen of the `Field` component, we have to give `component` attribute in it. 
+1. Redux form works only on automating the process of wiring up the components, but it doesn't know the DOM and real elements to be shown on the screen. Therefore, we have to give the component to render by ourselves.
+1. We can give the render helper function an argument which will be passed by `Field` component.
+    <img src="./images/automaticallyHandleEventByField328.png">
+1. By checking the argument in developer tools, we can find that `formProps` has property `name` which is given by each `Field` component.
+    ```js
+    // src/components/streams/StreamCreate.js
+    class StreamCreate extends React.Component {
+        renderInput(formProps) {
+            console.log(formProps);
+            return (<input />)
+        }
+
+        render() {
+            return (
+                <form>
+                    <Field name="title" component={this.renderInput} />
+                    <Field name="description" component={this.renderInput} />
+                </form>
+            )
+        }
+    }
+    ```
+1. Then we can wire up and send the input data back to Redux Form and keep the value in Redux store.
+1. If we insert and value to the `input` elements, Redux will be updated with the latest value inserted. 
+    ```js
+    // src/components/streams/StreamCreate.js
+    renderInput(formProps) {
+        return (
+            <input
+                onChange={formProps.input.onChange}
+                value={formProps.input.value}
+            />
+        );
+    }
+    ```
+1. In addition, we can use JSX and JavaScript shorthands to assign the attributes. We firstly destructive assign `input` from `formProps` and use spread assignment to assign all the attributes from `formProps.input` to the element.
+    ```js
+    // JSX shorthand for the same purpose
+    renderInput({input}) { // works exactly the same as code above
+        return <input {...input}>
+    }
+    ```
 
 ## Customizing Form Fields
+1. We can pass more attributes through `Field` to the `input` elements, such as `label`.
+1. In the component in `Field`, we can take the value from the argument and create elements accordingly. In this case, we can reuse the component to create `label`.
+1. Besides, we can use Semantic UI CSS library to style the elements. 
+    ```js
+    // src/components/streams/StreamCreate.js
+    class StreamCreate extends React.Component {
+        renderInput({ input, label }) {
+            return (
+                <div className="field">
+                    <label>{label}</label>
+                    <input {...input} />
+                </div>
+            );
+        }
+
+        render() {
+            return (
+                <form className="ui form">
+                    <Field name="title" component={this.renderInput} label="Enter Title" />
+                    <Field name="description" component={this.renderInput} label="Enter Description" />
+                </form>
+            )
+        }
+    }
+    ```
 
 ## Handling Form Submission
+1. In general condition, we'd like to have a button for users to click and submit the request to create a stream in the App. In the callback function passing to the `onSubmit` event handler, we will have `event` argument and call its `event.preventDefault()` method to prevent redicting the user.
+    ```js
+    formDOM.addEventHandler('submit', function(event){
+        event.preventDefault();
+    })
+    ```
+    <img src="./images/handleFormSubmit330.png">
+1. If we check the `props` that is sending from redux form connection, we can find a method `handleSubmit`. We can call this in the `form` element with `onSubmit` event handler. Note that Redux Form library has been using `event.preventDefault()`, so we don't need to call it again in the callback function.
+1. Besides, `handleSubmit` will pass an argument to the callback function it receives which provides the values that the `form` collects.
+1. However, we should validate the input from users and prevent having empty string or invalid data when the submit event fires. 
+    ```js
+    onSubmit(formValues) {
+        console.log(formValues); // check object of values that the form element collects
+    }
 
+    render() {
+        return (
+            <form onSubmit={this.props.handleSubmit(this.onSubmit)} className="ui form">
+                <Field name="title" component={this.renderInput} label="Enter Title" />
+                <Field name="description" component={this.renderInput} label="Enter Description" />
+                <button className="ui button primary">Submit</button> // fire submit event in the form
+            </form>
+        )
+    }
+    ```
+    <img src="./images/printFormArgs330.png">
+    
 ## Validation of Form Inputs
+1. We create a validator to check if the user has given valid input for each field we require through the `form` element.
+1. The validator will work when the `form` is firstly rendered or when a user interacts with the form such as typing some inputs and submitting the inputs.
+1. If the validator function returns an empty JavaScript object `{}`, it means the inputs to the form are valid. Note that the validator is not created as a method in `StreamCreate` class component. 
+1. Otherwise, we assign key-value pairs to the object we are going to return with the properties as the name of the field that has error. We then give the error message as the value of the property.
+    ```js
+    // src/components/streams/StreamCreate.js
+    // this is a standalone function variable rather than in the StreamCreate class component
+    const validate = (formValues) => { 
+        const errors = {}
+        if (!formValues.title) {
+            // only ran if the user did not enter a title
+            errors.title = 'You must enter a title';
+        }
+
+        if (!formValues.description) {
+            errors.desription = 'You must enter a description'
+        }
+
+        return errors
+    }
+    ```
 
 ## Displaying Validation Messages
+1. We wire up the validator with Redux Form which is similar to `mapStateToProps` when connecting Redux Store. 
+1. Note that the validator function will fire when the component is firstly rendered and every time the user interacts with the `form` element, such as typing inputs or submit.
+1. When the component is rendered, Redux form will check if there's any property in the object returned from the validator and map the `name` attribute of the `Field` component and pass an argument if there's an error.
+1. In `renderInput` that we creates the view of `Field` components, we can have `meta` in the destructive assignment which has `error` property that carries the error message we set up in the validator.
+1. Therefore, we will see the error message directly when we firstly visit the page, as there's nothing in the input, so the validators run and return error message 
+    ```js
+    class StreamCreate extends React.Component {
+        renderInput({ input, label, meta }) { // meta is the argument given to the validator
+            console.log(meta); 
+            return (
+                <div className="field">
+                    <label>{label}</label>
+                    <input {...input} />
+                    <div>{meta.error}</div> // show error message from meta object
+                </div>
+            );
+        }
+    }
+
+    const validate = (formValues) => {
+        const errors = {}
+        if (!formValues.title) {
+            errors.title = 'You must enter a title';
+        }
+
+        if (!formValues.description) {
+            errors.description = 'You must enter a description';
+        }
+
+        return errors;
+    }
+
+    export default reduxForm({
+        form: 'streamCreate', // in convention, this is to name the form for its purpose
+        validate // wire up validator to redux form
+    })(StreamCreate);
+    ```
+    <img src="./images/displayingValidationMessages332.png">
 
 ## Showing Errors on Touch
+1. We can only show the error message to the user when the user "**focus**" on the input which is when clicking the area of the input bar, so we can validate the input value when the user click out the input bar to "**cancel focus**". This provides a friendly and clearer instruction to users.
+1. Note that we can cancel auto complete feature (which is auto generate options according to records in the browser for similar fields).
+1. Here has a critical difference in JSX and regualr HTML that the attribute name must be in camel case as `autoComplete` in JSX, while its counterpart in HTML is `autocomplete`. Besides, to turn the attribute off, we use `off` rather than `false`. 
+    ```html
+    <input autoComplete="off"> 
+    <!-- JSX with Complete starts with Uppercase C-->
+    <input autocomplete="off"> 
+    <!-- HTML -->
+    ```
+1. There are several properties in `meta` object that we can refer, such as `touched` and `active`. Every time the user "**focus**" on the input and "**unfocus**" the element, `renderInput` will be trigerred and rerender the component. If we put `console.log` to print `meta` object, we can see the changing between different state.
+    1. `active` is a boolean value which indicates if the user is "focusing" on the element.
+    1. `touched` is also a boolean value and will be `false` when the component is firstly rendered. It will become `true` when the user ever "focuses" on the element.
+1. In this case, we can check `touched` state from `meta` object to decide whether to show the error message on the screen.
+1. We then create an helper method in the component `renderError` to render another component. 
+    ```js
+    // src/components/streams/StreamCreate.js
+    renderError({ error, touched }) {
+        if (touched && error) {
+            return (
+                <div className="ui error message">
+                    <div className="header">{error}</div>
+                </div>
+            );
+        }
+    }
+
+    renderInput ({ input, label, meta }) {
+        return (
+            <div className="field">
+                <label>{label}</label>
+                <input autoComplete="off" {...input} />
+                <div>{this.renderError(meta)}</div> // this gives an error as 'this' refers to the wrong object 
+            </div>
+        );
+    }
+    ```
+1. Note that we will get an error directly by doing some because when we want to refer to another function in the class based method, we have to refer to the correct `this` in the correct lexical scope. The error message shows that we are trying to use a method from `undefined`. 
+1. Therefore, we can turn `renderInput` into an arrow function to allow the method refer to the correct `this` from the class instance. 
+1. However, after fixing the scope issue, we still can't see the error message when we firstly interact with the `input` elements because Semantic UI hides the error message by default. 
+    ```js
+    renderInput = ({ input, label, meta }) => { // turn renderInput method as arrow function
+        return (
+            <div className="field">
+                <label>{label}</label>
+                <input autoComplete="off" {...input} />
+                <div>{this.renderError(meta)}</div> 
+            </div>
+        );
+    }
+    ```
+1. If we check the "elements" in developer console, we will find the elements listed in the HTML file, while their `display` property is set to `none`. 
 
 ## Highlighting Errored Fields
+1. To solve the issue from the last section, we can simply add `error` to the class of `form` element.
+    ```js
+    <form
+        onSubmit={this.props.handleSubmit(this.onSubmit)}
+        className="ui form error"> // add "error" class for Semantic UI
+        <Field name="title" component={this.renderInput} label="Enter Title" />
+        <Field name="description" component={this.renderInput} label="Enter Description" />
+        <button className="ui button primary">Submit</button>
+    </form>
+    ```
+    <img src="./images/highlightErrorMessageFields334.gif">
+1. Besides, we can update a fancy feature to turn the input red by using class `error` from Semantic UI in `renderInput` method. 
+    ```js
+    // src/components/streams/StreamCreate.js
+    renderInput = ({ input, label, meta }) => {
+        const className = `field ${meta.error && meta.touched ? 'error' : ''}`
+        return (
+            <div className={className}>
+                <label>{label}</label>
+                <input autoComplete="off" {...input} />
+                <div>{this.renderError(meta)}</div> {/* show error message from meta object*/}
+            </div>
+        );
+    }
+    ```
 
 
 
