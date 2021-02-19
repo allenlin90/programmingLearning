@@ -7809,14 +7809,116 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 
 # REST-based React Apps 
 ## Creating Streams 
+1. After we finish the form to create the title and description of a new streaming input, we need connect the React app to the API server that a new stream is available for viewing.
+1. The list of available streams will be then sent back to the React app for users to select which stream that the user wants to watch.
+    <img src="./images/creatingStream335.png">
 
 ## REST-ful Conventions
+1. We will use JSON Server with REST-ful conventions. This is a conventional design pattern which makes developers working easier with each others.
+    <img src="./images/restfulConvention336.png">
 
 ## Setting Up an API Server
+1. We then create another direcotry in `streams` project as `api` and initiate another npm project with `npm init -y`.
+1. After installing JSON server with `npm install --save json-server`, we create `db.json` file in the folder to serve as the database for the API server.
+    ```json
+    // db.json
+    {
+        "streams": []
+    }
+    ```
+1. In `package.json`, we remove the default `test` script, and have `"start": "json-server -p 3001 -w db.json".
+1. JSON server follows the conventions of REST-ful API, so we can use CRUD commands with the conventional endpoint for `streams`. 
+    <img src="./images/restfulConvention336.png">
 
 ## Creating Streams Through Action Creators
+1. Since we are going to make request to server, we need `axios` and `redux-thunk` to serve on the purpose.
+1. We can create an additional folder to store the axios instance with the `baseURL`.
+1. Create `apis` folder in `src` with a file `streams.js`
+    ```js
+    // src/apis/streams.js
+    import axios from 'axios';
+
+    export default axios.create({
+        baseURL: 'http://localhost:3001'
+    });
+    ```
+1. We then import the instance to `index.js` in `actions`.
+    ```js
+    // src/actions/index.js
+    import streams from '../apis/streams'; // import axios instance
+    import { SIGN_IN, SIGN_OUT } from './types';
+
+    export const signIn = (userId) => {
+        return {
+            type: SIGN_IN,
+            payload: userId
+        };
+    };
+
+    export const signOut = () => {
+        return {
+            type: SIGN_OUT
+        };
+    };
+
+    export const createStream = (formValues) => async dispatch => {
+        streams.post('/streams', formValues);
+    };
+    ```
+1. After configuring all the stuffs above, we'd like to import them to use in `StreamCreate` component.
+1. However, since we have wired the component up with `reduxForm`, we should another syntax to connect with `react-redux`.
+    ```js
+    // src/components/streams/StreamCreate.js
+    import { connect } from 'react-redux';
+    import { createStream } from '../../actions';
+    ```
 
 ## Creating a Stream with REST Conventions
+1. To wire up the component with `react-redux`, we can use `connect` to wrap the component to export or declare the current wired component (with `reduxForm`) as a variable and 
+    ```js
+    // src/components/streams/StreamCreate.js
+    // wrap directly
+    export default connect(null, {createStream})(reduxForm({
+        form: 'streamCreate',
+        validate
+    })(StreamCreate))
+
+    // decalre variable and wrap with connect 
+    const formWrapped = reduxForm({
+        form: 'streamCreate', // in convention, this is to name the form for its purpose
+        validate
+    })(StreamCreate);
+
+    export default connect(null, { createStream })(formWrapped);
+    ```
+1. We then go back to root `index.js` and use `redux-thunk`
+    ```js
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { Provider } from 'react-redux';
+    import { createStore, applyMiddleware, compose } from 'redux';
+    import reduxThunk from 'redux-thunk'; // import redux thunk 
+
+    import App from './components/App';
+    import reducers from './reducers';
+
+    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+    const store = createStore(
+        reducers,
+        composeEnhancers(applyMiddleware(reduxThunk)) // use redux thunk as middleware
+    );
+
+    ReactDOM.render(
+        <Provider store={store}>
+            <App />
+        </Provider>
+        ,
+        document.querySelector('#root')
+    );
+    ```
+1. Note that we should declare `onSubmit` method as "**arrow function**" to prevent refernce scope error for `this` in the component. 
+1. After creating a new stream on the page, we can check `db.json` that there's a new records created in the JSON file.
 
 ## Dispatching Actions After Stream Creation
 
