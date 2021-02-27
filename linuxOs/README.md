@@ -1,6 +1,11 @@
 # Linux OS 
 from [Python-100-Days](https://github.com/jackfrued/Python-100-Days/blob/master/Day31-35/31-35.%E7%8E%A9%E8%BD%ACLinux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.md)
 
+**Enable Virtualization on Surface 3**
+1. Run command Prompt as administrator
+    1. On - bcdedit /set hypervisorlaunchtype auto
+    1. Off - bcdedit /set hypervisorlaunchtype off
+
 **Basic Linux commands** 
 1. Regular Linux command - [_**commandName**_] [_**argument**_] [_**commandObject**_] 
 1. Most of the Linux systems use **BASH** (Bourne Again Shell) as its default Shell. 

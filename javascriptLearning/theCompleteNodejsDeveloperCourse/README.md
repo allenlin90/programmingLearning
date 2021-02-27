@@ -3131,7 +3131,7 @@ doWorkCallback(function (error, result) {
     }
 
     myFunction();
-  ```
+    ```
 ### Generating Authentication Tokens
 1. When a new user sings a new account, or a exisiting user logs in, we can send a JWT to the user to authenticate the following usage. In this case, both `signup` and `login` router will be updated with a function to send and verify token. 
     ```js 
