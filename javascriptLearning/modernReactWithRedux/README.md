@@ -8395,12 +8395,140 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     ```
 
 ## Linking to Stream Creation
+1. On the list of streams page, we can have a button to direct the user to create page to create a new stream. 
+1. We can decide whether to render the `create` button by checking if a user has signed in.
+1. To redirect the user, we use `Link` component from `react-router-dom`.
+    ```js
+    // src/components/streams/StreamList.js 
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { Link } from 'react-router-dom';
+    import { fetchStreams } from '../../actions';
+
+    class StreamList extends React.Component {
+        componentDidMount() {
+            this.props.fetchStreams();
+        }
+
+        renderAdmin(stream) {
+            if (stream.userId === this.props.currentUserId) {
+                return (
+                    <div className="right floated content">
+                        <button className="ui button primary">
+                            Edit
+                        </button>
+                        <button className="ui button negative">
+                            Delete
+                        </button>
+                    </div>
+                );
+            }
+        }
+
+        renderList() {
+            return this.props.streams.map(stream => {
+                return (
+                    <div className="item" key={stream.id}>
+                        {this.renderAdmin(stream)}
+                        <i className="large middle aligned icon camera" />
+                        <div className="content">
+                            {stream.title}
+                            <div className="description">{stream.description}</div>
+                        </div>
+                    </div>
+                );
+            });
+        }
+
+        renderCreate() {
+            if (this.props.isSignedIn) {
+                return (
+                    <div style={{ textAlign: 'right' }}>
+                        <Link to="/streams/new" className="ui button primary">
+                            Create Stream
+                        </Link>
+                    </div>
+                )
+            }
+        }
+
+        render() {
+            return (
+                <div>
+                    <h2>Streams</h2>
+                    <div className="ui celled list">{this.renderList()}</div>
+                    {this.renderCreate()}
+                </div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        return {
+            streams: Object.values(state.streams),
+            currentUserId: state.auth.userId,
+            isSignedIn: state.auth.isSignedIn
+        };
+    }
+
+    export default connect(mapStateToProps, { fetchStreams })(StreamList);
+    ```
 
 ## When to Navigate Users
+1. When the user creates a new stream, we should redirect the user back to the list of streams, and the latest stream should be listed as well.
+1. In this project, we have been using "**Intentional Navigation**" which is an event handler that only works when the user clicks a `Link` component.
+1. On the other hand, we can use "**Programmatic Navigation**" which is to run code to forcibly navigate the user through the app.
+1. We shall only redirect the user when the app has got the response from the server and decide whether to redirect the user or show error message from the response.
+1. Therefore, the programmatic navigation should work when the action creator got the response from the request. We can work on further operations at `src/actions/index.js`.
 
 ## History Reference
+1. The `BrowserRouter` we use to navigate between routes creates a `history` object which keeps track of the address bar in the browser.
+    <img src="./images/historyReference353.png">
+1. The `history` object can not only watch and trace on the address but "**change**" the route. The programmatic navigation can be challenging because it's created by `BrowserRouter`.
+1. When a component is created, `history` is passed as a property from `BrowserRouter` to the component.
+1. So if we want to call it in the action creator, we have to pass it from the component to the action creator.
+    <img src="./images/browserRouterWithHistoryObject353.png">
+1. The other way to work around is to create `history` object ourselves.
 
 ## Creating a Browser History Object
+1. We create `history.js` in `src` directory and import `createHistory` from `history/createBrowserHistory`. This `history` library is installed along with `react-router-dom`, so we don't need to install this library specifically. Therefore, it's relatively easy to trigger the navigation from a component. However, we are trying to trigger the navigation within an `action creator` which only navigates the user after an async event is handled.
+1. However, as the library has some issue, we should import `createBrowserHistory` directory from `history` package.
+1. Besides, in `App.js` in `src/`, we use `Router` rather than `BrowserRouter` to work with self-created `history` object.
+    ```js
+    // src/history.js
+    import { createBrowserHistory } from 'history';
+    export default createBrowserHistory();
+
+    // src/components/App.js
+    import React from 'react';
+    import { Router, Route } from 'react-router-dom'; // change from BrowserRouter to Router
+    import StreamCreate from './streams/StreamCreate';
+    import StreamEdit from './streams/StreamEdit';
+    import StreamDelete from './streams/StreamDelete';
+    import StreamList from './streams/StreamList';
+    import StreamShow from './streams/StreamShow';
+    import Header from './Header';
+    import history from '../history';
+
+    const App = () => {
+        return (
+            <div>
+                <Router history={history}> // pass history object
+                    <div>
+                        <Header />
+                        <Route path="/" exact component={StreamList} />
+                        <Route path="/streams/new" exact component={StreamCreate} />
+                        <Route path="/streams/edit" exact component={StreamEdit} />
+                        <Route path="/streams/delete" exact component={StreamDelete} />
+                        <Route path="/streams/show" exact component={StreamShow} />
+                    </div>
+                </Router>
+            </div>
+        );
+    }
+
+    export default App;
+    ```
 
 ## Implementing Programmatic Navigation
 
