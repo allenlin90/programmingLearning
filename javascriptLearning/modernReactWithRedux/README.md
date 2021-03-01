@@ -380,7 +380,7 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     1. The first step is that the browser make a request to the host for the `index.html`.
     1. In the `index.html`, there's more script that will request another `bundle.js` which is bundled from `index.js`, `app.js`, and `react.js`. 
     1. Therefore, we get `index.html` and `bundle.js` from 2 requests. 
-    <img src="./images/reactAppFiles.png">    
+        <img src="./images/reactAppFiles.png">    
     1. In this case, the browser will firstly get `index.html` from the `public` folder which will make another requst for the script `index.js`.
         ```js
         // index.js 
