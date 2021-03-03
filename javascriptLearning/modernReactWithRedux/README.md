@@ -380,19 +380,19 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     1. The first step is that the browser make a request to the host for the `index.html`.
     1. In the `index.html`, there's more script that will request another `bundle.js` which is bundled from `index.js`, `app.js`, and `react.js`. 
     1. Therefore, we get `index.html` and `bundle.js` from 2 requests. 
-    <img src="./images/reactAppFiles.png">    
+        <img src="./images/reactAppFiles.png">    
     1. In this case, the browser will firstly get `index.html` from the `public` folder which will make another requst for the script `index.js`.
-    ```js
-    // index.js 
-    import React from "react";
-    import ReactDOM from "react-dom";
-    import App from "./App";
+        ```js
+        // index.js 
+        import React from "react";
+        import ReactDOM from "react-dom";
+        import App from "./App";
 
-    ReactDOM.render(
-        <App />, 
-        document.getElementById("root")
+        ReactDOM.render(
+            <App />, 
+            document.getElementById("root")
         );
-    ```
+        ```
     1. Checking from the code, we can find the first statement in `ReactDOM.render()` is `<App />` which is to check the `App` function in `App.js`, get back `JSX` and turn it into HTML.
     1. Then `ReactDOM.render()` will take the HTML created by `JSX` and put it into the element selected by `document.getElementById("root")`.
 1. What's the difference between React and ReactDOM?
