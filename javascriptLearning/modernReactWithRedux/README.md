@@ -8531,20 +8531,245 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     ```
 
 ## Implementing Programmatic Navigation
+1. In action creators, we import `history` object and use `push` method to redirect the user to the root route after create a new stream.
+    ```js
+    import streams from '../apis/streams';
+    import history from '../history'; // import history object
+    import {
+        SIGN_IN,
+        SIGN_OUT,
+        CREATE_STREAM,
+        FETCH_STREAMS,
+        FETCH_STREAM,
+        DELETE_STREAM,
+        EDIT_STREAM
+    } from './types';
+
+    export const signIn = (userId) => {
+        return {
+            type: SIGN_IN,
+            payload: userId
+        };
+    };
+
+    export const signOut = () => {
+        return {
+            type: SIGN_OUT
+        };
+    };
+
+    export const createStream = (formValues) => async (dispatch, getState) => {
+        const { userId } = getState().auth;
+        const response = await streams.post('/streams', { ...formValues, userId });
+
+        dispatch({ type: CREATE_STREAM, payload: response.data });
+        history.push('/'); // use push method to redirect to the root route
+    };
+
+    export const fetchStreams = () => async dispatch => {
+        const response = await streams.get('/streams');
+
+        dispatch({ type: FETCH_STREAMS, payload: response.data });
+    };
+
+    export const fetchStream = (id) => async dispatch => {
+        const response = await streams.get(`/streams/${id}`);
+
+        dispatch({ type: FETCH_STREAM, payload: response.dat });
+    }
+
+    export const editStream = (id, formValues) => async dispatch => {
+        const response = await streams.put(`/streams/${id}`, formValues);
+
+        dispatch({ type: EDIT_STREAM, payload: response.data });
+    }
+
+    export const deleteStream = (id) => async dispatch => {
+        await streams.delete(`/streams/${id}`);
+
+        dispatch({ type: DELETE_STREAM, payload: id });
+    }
+    ```
 
 ## Manually Changing API Records
+1. We can edit the data and records in `db.json` in the `api` for JSON web server.
+1. The data can be modified on the fly that the server will listen and restart to the change if the file is modified manually.
 
 ## URL-Based Selection
+1. To allow users to edit streams, the app should know what is the stream that the user wants to edit. There are 2 approaches for the case.
+    1. Selection Reducer - When a user clicks on a stream to edit it, use a `selectionReducer` to record what stream is being edited.
+    1. URL-based selection - Put the ID of the stream being edited in the URL.
+1. To indicate specific stream to the app, we can pass the id of the stream through URL. 
+    1. `/` - `StreamList`
+    1. `/streams/new` - `StreamCreate`
+    1. `/streams/edit/:id` - `StreamEdit`
+    1. `/streams/delete/:id` - `StreamDelete`
+    1. `/streams/:id` - `StreamShow`
 
 ## Wildcard Navigation
+1. Since we choose to use "**URL-based**" selection, we should change the buttosn created by `renderAdmin` method for each stream on the list. We'd like to have links to direct the user to certain stream according to URL rather than using.
+    ```js
+    // src/components/streams/StreamList.js
+    class StreamList extends React.Component {
+        renderAdmin(stream) {
+            if (stream.userId === this.props.currentUserId) {
+                return (
+                    <div className="right floated content">
+                        // change button element to Link component and pass "id"
+                        <Link to={`/streams/edit/${stream.id}`} className="ui button primary">Edit</Link>
+                        <button className="ui button negative">
+                            Delete
+                        </button>
+                    </div>
+                );
+            }
+        }
+    }
+    ```
+1. Besides the elements in `StreamList` component, we should update the rouet configuration in `App.js`.
+    ```js
+    // src/components/App.js
+    import React from 'react';
+    import { Router, Route } from 'react-router-dom';
+    import StreamCreate from './streams/StreamCreate';
+    import StreamEdit from './streams/StreamEdit';
+    import StreamDelete from './streams/StreamDelete';
+    import StreamList from './streams/StreamList';
+    import StreamShow from './streams/StreamShow';
+    import Header from './Header';
+    import history from '../history';
+
+    const App = () => {
+        return (
+            <div>
+                <Router history={history}>
+                    <div>
+                        <Header />
+                        <Route path="/" exact component={StreamList} />
+                        <Route path="/streams/new" exact component={StreamCreate} />
+                        // add :id in edit route
+                        <Route path="/streams/edit/:id" exact component={StreamEdit} />
+                        <Route path="/streams/delete" exact component={StreamDelete} />
+                        <Route path="/streams/show" exact component={StreamShow} />
+                    </div>
+                </Router>
+            </div>
+        );
+    }
+
+    export default App;
+    ```
 
 ## More on Route Params
+1. When using `Router` in `App.js` to handle routes and render component, the component that router directs to will have a `prop` passed. For example, after we configure `id` for `StreamCreate`, we can print out the `props` argument to check its valus.
+    ```js
+    // src/components/streams/StreamCreate.js
+    import React from 'react';
+
+    const StreamEdit = (props) => {
+        console.log(props); // check props passed from Router in App.js
+        return <div>StreamEdit</div>
+    }
+
+    export default StreamEdit;
+    ```
+1. From the `props` object, we can check `params` property in `match` which shows the variable passed through the router.
+1. Besides, we can keep concatenate the URL with columns to pass multiple values through URL.
+    ```js
+    // src/components/App.js
+    const App = () => {
+        return (
+            <div>
+                <Router history={history}>
+                    <div>
+                        <Header />
+                        // add :id in edit route
+                        <Route path="/streams/edit/:id/:anythingElse/:anotherVar" exact component={StreamEdit} />
+                    </div>
+                </Router>
+            </div>
+        );
+    }
+    ```
 
 ## Selecting Records from State
+1. `StreamEdit` component has had an argument passed from `Router` when it's redirect from `App.js`.
+1. We can use `connect` method from `react-redux` to wire up the props from Redux store.
+1. Note that when using `mapStateToProps`, we can pass a 2nd argument, which is to original property that will be passed to the component itself, which is the `props` from the router. 
+1. However, here's a strange behavior that if we access the route with id through browser search bar directly, we don't get the `stream` object in the `props` correctly. 
+1. On the other hand, if we click the "Edit" through `Link` from `StreamList`, the `stream` values will be assigned to `props` correctly. 
+1. This is because if we access `/streams/edit/:id` directly, `streams` is not updated in Redux store, so there's no `stream` data can be rendered from `state.streams`.
+    ```js
+    // src/components/streams/StreamEdit.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+
+    const StreamEdit = (props) => {
+        console.log(props);
+        return <div>StreamEdit</div>
+    }
+
+    const mapStateToProps = (state, ownProps) => {
+        return {
+            stream: state.streams[ownProps.match.params.id]
+        };
+    }
+
+    export default connect(mapStateToProps)(StreamEdit);
+    ```
+    <img src="./images/undefinedStreamFromReduxStore361.png">
 
 ## Component Isolation with React Router
+1. When the user visits the route by typing in the URL with stream id in the search bar, it follows the following process.
+    1. User types in `/streams/edit/3` to address bar and hits enter
+    1. user loads up our app
+    1. Redux state object is empty
+    1. We try to select stream with id `3` from `state`
+    1. No streams were loaded, so we get `undefined`
+    1. We navigated to `/`
+    1. `StreamList` fetches all of our streams, updates Redux
+    1. We select stream with id of `3`
+    1. Data is now in redux store, so we see the appropriate stream
+1. The Redux store is updated in `StreamList` as the component uses `componentDidMount` method to call `fetchStreams` method when the component is firstly rendered.
+1. By using `react-router`, each component needs to be designed to work in isolation (fetch its own data).
+1. In certain scenarios, such as the user book mark the URL or send it to other users, the App wouldn't work correctly in such conditions.
+1. Therefore, we should wire up and fetch the data to enable the usage. 
 
 ## Fetching a Stream for Edit Stream
+1. We then update `StreamEdit` from functional component to class-based component.
+1. Import `fetchStream`
+1. Use `componentDidMount` to fetch data with action creator `fetchStream` to retrieve a single stream data from database.
+1. Note that the component will be rendered twice, as first time when the component initiates, there's no stream data in the Redux store yet. We can use `IF` statement to check and put a "loading" condition during transition.
+    ```js
+    // src/components/streams/StreamEdit
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchStream } from '../../actions';
+
+    class StreamEdit extends React.Component {
+        componentDidMount() {
+            this.props.fetchStream(this.props.match.params.id);
+        }
+
+        render() {
+            if (!this.props.stream) {
+                return <div>Loading...</div>
+            }
+            return <div>{this.props.stream.title}</div>
+        }
+    }
+
+    const mapStateToProps = (state, ownProps) => {
+        return {
+            stream: state.streams[ownProps.match.params.id]
+        };
+    }
+
+    export default connect(
+        mapStateToProps,
+        { fetchStream }
+    )(StreamEdit);
+    ```
 
 ## Real Code Reuse
 
