@@ -3131,7 +3131,7 @@ doWorkCallback(function (error, result) {
     }
 
     myFunction();
-  ```
+    ```
 ### Generating Authentication Tokens
 1. When a new user sings a new account, or a exisiting user logs in, we can send a JWT to the user to authenticate the following usage. In this case, both `signup` and `login` router will be updated with a function to send and verify token. 
     ```js 
@@ -3223,7 +3223,7 @@ doWorkCallback(function (error, result) {
 
     // a middleware to run after getting a request and before executing a task 
     app.use(function (req, res, next) {
-    console.log(req.method, req.path); // GET /users/
+        console.log(req.method, req.path); // GET /users/
     });
 
 
@@ -3246,7 +3246,7 @@ doWorkCallback(function (error, result) {
 1. In this case, we can either check if `req` exist or not. However, since the service is not available and server is on maintenance, we don't need to `IF` statement and simply send the message to users directly. 
     ```js 
     app.use(function(req, res, next) {
-    res.status(503).send('Server is on maintenance...');
+        res.status(503).send('Server is on maintenance...');
     })
     ```
 
@@ -3263,8 +3263,8 @@ doWorkCallback(function (error, result) {
     ```js 
     // src/middleware/auth.js
     const auth = async function (req, res, next) {
-    console.log('auth middleware');
-    next();
+        console.log('auth middleware');
+        next();
     }
 
     module.exports = auth;
@@ -3333,7 +3333,7 @@ doWorkCallback(function (error, result) {
 1. Note that in the "**signup**" process, the status code should be `201` rather than `200`, as it makes a change to the server. Besides, we only need to generate tokens automatically in sign up and login process. 
     ```js
     if (pm.response.code === 201) {
-    pm.environment.set('authToken', pm.response.json().token)
+        pm.environment.set('authToken', pm.response.json().token)
     }
     ```
     <img src="./images/postmanAutoFlow.PNG">
@@ -3469,13 +3469,13 @@ doWorkCallback(function (error, result) {
 1. Use `.toJSON` method to hide data when a `Object` is converted to a JSON format data. 
     ```js 
     let guy = {
-    name: 'Allen',
-    age: 25
+        name: 'Allen',
+        age: 25
     };
 
     guy.toJSON = function(){
-    console.log(this) // {name: 'Allen', age: 25}
-    return this.name;
+        console.log(this) // {name: 'Allen', age: 25}
+        return this.name;
     }
     console.log(guy.toJSON()); // {name: 'Allen', age: 25} \n Allen
     console.log(JSON.stringify(guy)); // "Allen"

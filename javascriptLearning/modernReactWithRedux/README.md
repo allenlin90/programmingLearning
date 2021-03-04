@@ -380,19 +380,19 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     1. The first step is that the browser make a request to the host for the `index.html`.
     1. In the `index.html`, there's more script that will request another `bundle.js` which is bundled from `index.js`, `app.js`, and `react.js`. 
     1. Therefore, we get `index.html` and `bundle.js` from 2 requests. 
-    <img src="./images/reactAppFiles.png">    
+        <img src="./images/reactAppFiles.png">    
     1. In this case, the browser will firstly get `index.html` from the `public` folder which will make another requst for the script `index.js`.
-    ```js
-    // index.js 
-    import React from "react";
-    import ReactDOM from "react-dom";
-    import App from "./App";
+        ```js
+        // index.js 
+        import React from "react";
+        import ReactDOM from "react-dom";
+        import App from "./App";
 
-    ReactDOM.render(
-        <App />, 
-        document.getElementById("root")
+        ReactDOM.render(
+            <App />, 
+            document.getElementById("root")
         );
-    ```
+        ```
     1. Checking from the code, we can find the first statement in `ReactDOM.render()` is `<App />` which is to check the `App` function in `App.js`, get back `JSX` and turn it into HTML.
     1. Then `ReactDOM.render()` will take the HTML created by `JSX` and put it into the element selected by `document.getElementById("root")`.
 1. What's the difference between React and ReactDOM?
@@ -7921,50 +7921,855 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 1. After creating a new stream on the page, we can check `db.json` that there's a new records created in the JSON file.
 
 ## Dispatching Actions After Stream Creation
+1. After submitting the form to the local database, we can check on the "Network" tab and preview the response from the json server. We should handle the response after getting response from the server.
+1. For example, we can create a new Stream with "Other Stream" as the title and "Here's some stream" as the description.
+    ```json
+    {
+        "title": "Other Stream",
+        "description": "Here's some stream",
+        "id": 2
+    }
+    ```
+1. In `index.js` in `actions` directory, we can use `dispatch` to handle the response from the POST request.
+1. Note that the JSON replied from the database is stored in the `.data` property of the response. 
+    ```js
+    // src/actions/types.js
+    export const CREATE_STREAM = 'CREATE_STREAM';
+
+    // src/actions/index.js
+    import { SIGN_IN, SIGN_OUT, CREATE_STREAM } from './types';
+    export const createStream = (formValues) => async dispatch => {
+        const response = await streams.post('/streams', formValues);
+
+        dispatch({ type: CREATE_STREAM, payload: response.data }); // the data of response is stored in .data property
+    };
+    ```
 
 ## Bulk Action Creators
+1. The REST API we set up will respond data accordingly. According to the chart, as we have known what are the response from each action. Therefore, if we follow the REST API in convention, we can create the action creators for all the operations. 
+    <img src="./images/responseFromRestAPI341.png">
+1. When we build up the action creators, we should be very careful with the typos which can cause errors. 
+    ```js
+    // src/actions/types.js
+    export const SIGN_IN = 'SIGN_IN';
+    export const SIGN_OUT = 'SIGN_OUT';
+    export const CREATE_STREAM = 'CREATE_STREAM';
+    export const FETCH_STREAMS = 'FETCH_STREAMS'; // multiple
+    export const FETCH_STREAM = 'FETCH_STREAM'; // single
+    export const DELETE_STREAM = 'DELETE_STREAM';
+    export const EDIT_STREAM = 'EDIT_STREAM';
+    
+    // src/actions/index.js
+    import streams from '../apis/streams';
+    import {
+        SIGN_IN,
+        SIGN_OUT,
+        CREATE_STREAM,
+        FETCH_STREAMS,
+        FETCH_STREAM,
+        DELETE_STREAM,
+        EDIT_STREAM
+    } from './types';
+
+    export const signIn = (userId) => {
+        return {
+            type: SIGN_IN,
+            payload: userId
+        };
+    };
+
+    export const signOut = () => {
+        return {
+            type: SIGN_OUT
+        };
+    };
+
+    export const createStream = (formValues) => async dispatch => {
+        const response = await streams.post('/streams', formValues);
+
+        dispatch({ type: CREATE_STREAM, payload: response.data });
+    };
+
+    export const fetchStreams = () => async dispatch => {
+        const response = await streams.get('/streams');
+
+        dispatch({ type: FETCH_STREAMS, payload: response.data });
+    };
+
+    export const fetchStream = (id) => async dispatch => {
+        const response = await streams.get(`/streams/${id}`);
+
+        dispatch({ type: FETCH_STREAM, payload: response.dat });
+    }
+
+    export const editStream = (id, formValues) => async dispatch => {
+        const response = await streams.put(`/streams/${id}`, formValues);
+
+        dispatch({ type: EDIT_STREAM, payload: response.data });
+    }
+
+    export const deleteStream = (id) => async dispatch => {
+        await streams.delete(`/streams/${id}`);
+
+        dispatch({ type: DELETE_STREAM, payload: id });
+    }
+    ```
 
 ## Object-Based Reducers
+1. Since we have built up all the action creators, we can also build all the reducers for the project.
+1. To handle a list of items, we can have the structure as an array of objects.
+    ```js
+    let array = [
+        {
+            id: 1,
+            title,
+            description
+        },
+        {
+            id: 2,
+            title,
+            description
+        },
+        ...
+    ]
+    ```
+1. On the other hand, we can use an object as a collection of records.
+    ```js
+    let object = {
+        1: {
+            id,
+            title,
+            description
+        },
+        2: {
+            id,
+            title,
+            description
+        },
+        ...
+    }
+    ```
+1. The reason to use an object rather than an array is that it's easier and more efficient to edit items in the collection.
+    <img src="./images/objectBasedReducer342.png">
+1. If we use an array to keep the list of items, we would have the following structure.
+    ```js
+    // sample code
+    // collection in array
+    const streamReducer = (state = [], action) => {
+        switch (action.type) {
+            case EDIT_STREAM:
+                return state.map(stream => {
+                    if (stream.id === action.payload.id) {
+                        return action.payload;
+                    } else {
+                        return stream;
+                    }
+                });
+            default:
+                return state;
+        }
+    };
+
+    // collection in object
+    const streamReducer = (state = {}, action) => {
+        switch (action.type) {
+            case EDIT_STREAM:
+                const newState = { ...state };
+                newState[action.payload.id] = action.payload;
+                return newState;
+            default:
+                return state;
+        }
+    }
+    ```
 
 ## Key Interpolation Syntax
+1. Though the regular object approach still needs multiple lines to assign new response data, we can sue "**Key Interpoloation**" from JavaScript to turn the operations into a single line. 
+1. The syntax is to take the value from a variable and create a new key on the object. This will prevents JavaScript to create the key using the name of the variable and use its value instead.
+1. Note that if the object has had the key from the data of variable, it will be updated to the new value given. Otherwise, a new property will be added to the object. 
+    ```js
+    const streamReducer = (state = {}, action) => {
+        switch (action.type) {
+            case EDIT_STREAM:
+                // const newState = { ...state };
+                // newState[action.payload.id] = action.payload;
+                // return newState;
+                return { ...state, [action.payload.id]: action.payload };
+            default:
+                return state;
+        }
+    }
+    ```
 
 ## Handling Fetching, Creating, and Updating
+1. In `reducers`, we can create another file `streamReduer.js` to handle each action on the REST API. 
+    ```js
+    // src/components/reducers/streamReducer.js
+    import {
+        FETCH_STREAM,
+        FETCH_STREAMS,
+        CREATE_STREAM,
+        DELETE_STREAM,
+        EDIT_STREAM
+    } from '../actions/types';
+
+    export default (state = {}, action) => {
+        switch (action.type) {
+            case FETCH_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            case CREATE_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            case EDIT_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            default:
+                return state;
+        }
+    }
+    ```
 
 ## Deleting Properties with Omit
+1. We install `lodash` package to use its `_.omit()` method to remove a property from an object. This method will duplicate the object and remove the given key from the 2nd argument. Besides, it doesn't manipulate on the original object directly.
+    ```js
+    // src/components/reducers/streamReducer.js
+    import _ from 'lodash';
+
+    import {
+        FETCH_STREAM,
+        FETCH_STREAMS,
+        CREATE_STREAM,
+        DELETE_STREAM,
+        EDIT_STREAM
+    } from '../actions/types';
+
+    export default (state = {}, action) => {
+        switch (action.type) {
+            case FETCH_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            case CREATE_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            case EDIT_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            case DELETE_STREAM:
+                return _.omit(state, action.payload); // the payload has been the id already from DELETE action creator
+            default:
+                return state;
+        }
+    }
+    ```
+1. However, we can also proceed the methdo without using `lodash`.
+    ```js
+    let animals = {
+        cat: 'meow',
+        dog: 'bark'
+    }
+    let delAnimal = 'cat';
+    let animals2 = Object.assign({}, animals);
+    delete animals2[delAnimal];
+    let animals3 = {...animals};
+    delete animals3[delAnimal];
+
+    console.log(animals); // {cat: "meow", dog: "bark"}
+    console.log(animals2); // {dog: "bark"}
+    console.log(animals3); // {dog: "bark"}
+    ```
 
 ## Merging Lists of Records
+1. As we will receive an array of objects from the endpoint, can use `_.mapKeys(array, key)` to turn the array into an object which use the given key of each object in the array as the key.
+    <img src="./images/mapKeyslodash346.png">
+    ```js
+    // sammple code
+    const colors = [
+        {hue: 'green'},
+        {hue: 'yellow'},
+        {hue: 'blue'}
+    ];
+
+    _.mapKeys(colors, 'hue');
+    // {"green":{"hue":"green"},"yellow":{"hue":"yellow"},"blue":{"hue":"blue"}}
+
+    // use reduce array method without lodash library
+    colors.reduce((obj, color)=>{
+        obj[color['hue']] = color;
+        return obj;
+    }, {});
+    ```
+1. We update the final reducer `FETCH_STREAMS` which handles the response as an array. 
+    ```js
+    // src/components/reducers/streamReducer.js
+    import _ from 'lodash';
+
+    import {
+        FETCH_STREAM,
+        FETCH_STREAMS,
+        CREATE_STREAM,
+        DELETE_STREAM,
+        EDIT_STREAM
+    } from '../actions/types';
+
+    export default (state = {}, action) => {
+        switch (action.type) {
+            case FETCH_STREAMS:
+                return { ...state, ..._.mapKeys(action.payload, 'id') };
+            case FETCH_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            case CREATE_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            case EDIT_STREAM:
+                return { ...state, [action.payload.id]: action.payload };
+            case DELETE_STREAM:
+                return _.omit(state, action.payload); // the payload has been the id already from DELETE action creator
+            default:
+                return state;
+        }
+    }
+    // src/components/reducers/index.js
+    import { combineReducers } from 'redux';
+    import { reducer as formReducer } from 'redux-form';
+    import authReducer from './authReducer';
+    import streamReducer from './streamReducer';
+
+    export default combineReducers({
+        auth: authReducer,
+        form: formReducer,
+        streams: streamReducer
+    });
+    ```
+1. After updating the reducers, we can get back to the root route and check on Redux DevTools for the `state`.
 
 ## Fetching a List of All Streams
+1. After building all the required action creators and reducers, we can wire them up with the view components. 
+1. We can use `connet` from `react-redux` to wire up and get the `props`.
+1. We change `StreamList` from function based to class-component as to use `componentDidMount` method to run `fetchStreams` method only when the component is firstly rendered. 
+1. After wiring up, we can check `state` from `Redux DevTools`. Note that we should have the JSON DB running on port 3031. In this case, we have had 2 instances stored in the database when we work on `StreamCreate` component.
+    ```js
+    // src/components/streams/StreamList.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchStreams } from '../../actions';
+
+    class StreamList extends React.Component {
+        componentDidMount() {
+            this.props.fetchStreams();
+        }
+
+        render() {
+            return <div>StreamList</div>
+        }
+    }
+
+    export default connect(null, { fetchStreams })(StreamList);
+    ```
+    <img src="./images/fetchAllStreams347.png">
 
 ## Rendering All Streams
+1. With `mapStateToProps`, we can pass the `state` stored in Redux and pass to the component as `props`. 
+1. As the collection is an object, we can use `Object.values` function to create an array of values of the object. 
+1. We then create another method `renderList` to create the list of components. 
+    ```js
+    // src/components/streams/StreamList.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchStreams } from '../../actions';
+
+    class StreamList extends React.Component {
+        componentDidMount() {
+            this.props.fetchStreams();
+        }
+
+        renderList() {
+            return this.props.streams.map(stream => {
+                return (
+                    <div className="item" key={stream.id}>
+                        <i className="large middle aligned icon camera" />
+                        <div className="content">
+                            {stream.title}
+                            <div className="description">{stream.description}</div>
+                        </div>
+                    </div>
+                );
+            });
+        }
+
+        render() {
+            return (
+                <div>
+                    <h2>Streams</h2>
+                    <div className="ui celled list">
+                        {this.renderList()}
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        return { streams: Object.values(state.streams) };
+    }
+
+    export default connect(mapStateToProps, { fetchStreams })(StreamList);
+    ```
 
 ## Associating Streams with Users
+1. As each stream is creaetd by different user, we should add another property on the stream object to indicate which user creates the instance.
+1. Note that we have stored the `userId` in the `auth` object in Redux when we authenticate the user during login process.
+1. We can update `index.js` in `actions` and pass `userId` when creating a stream object. 
+1. Note that the async function not only takes `dispatch` but has `getState` which is a function that returns the current `states` stored in Redux.
+1. We then can use destructive assignment to create a new object to create and save a new stream. 
+1. When we navigate back to the root route, we can check each stream object if it has the same `userId`, so it will render buttons to either "**Edit**" or "**Delete**" the stream if it is created by the user. 
+    ```js
+    // src/actions/index.js
+    export const createStream = (formValues) => async (dispatch, getState) => {
+        const { userId } = getState().auth;
+        const response = await streams.post('/streams', { ...formValues, userId });
+
+        dispatch({ type: CREATE_STREAM, payload: response.data });
+    };
+    ```
 
 ## Conditionally Showing Edit and Delete
+1. After adding `userId` to create the stream object in action creator, we can pass it to the view component with `maptStateToProps`. In this case, we have the property name as `currentUserId`.
+1. To prevent complexity in `renderList` method, we create another helper method `renderAdmin` which is to create the buttons for the user to either "**edit**" or "**delete**" as an admin.
+1. Note that we use `right floated content` class from `Semantic UI` library. We should put the element on the top of the block to let it "**float**" to the right.
+1. After setting up the elements, we can try to login/out to check if the elements show correctly. The buttons should only show when the stream object belongs to the user. 
+    ```js
+    // src/components/streams/StreamList.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchStreams } from '../../actions';
+
+    class StreamList extends React.Component {
+        componentDidMount() {
+            this.props.fetchStreams();
+        }
+
+        renderAdmin(stream) {
+            if (stream.userId === this.props.currentUserId) {
+                return (
+                    <div className="right floated content">
+                        <button className="ui button primary">
+                            Edit
+                        </button>
+                        <button className="ui button negative">
+                            Delete
+                        </button>
+                    </div>
+                );
+            }
+        }
+
+        renderList() {
+            return this.props.streams.map(stream => {
+                return (
+                    <div className="item" key={stream.id}>
+                        {this.renderAdmin(stream)} // render this component on the top to let it "float" to the right on the same line
+                        <i className="large middle aligned icon camera" />
+                        <div className="content">
+                            {stream.title}
+                            <div className="description">{stream.description}</div>
+                        </div>
+                    </div>
+                );
+            });
+        }
+
+        render() {
+            return (
+                <div>
+                    <h2>Streams</h2>
+                    <div className="ui celled list">
+                        {this.renderList()}
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        return {
+            streams: Object.values(state.streams),
+            currentUserId: state.auth.userId // add in the userId
+        };
+    }
+
+    export default connect(mapStateToProps, { fetchStreams })(StreamList);
+    ```
 
 ## Linking to Stream Creation
+1. On the list of streams page, we can have a button to direct the user to create page to create a new stream. 
+1. We can decide whether to render the `create` button by checking if a user has signed in.
+1. To redirect the user, we use `Link` component from `react-router-dom`.
+    ```js
+    // src/components/streams/StreamList.js 
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { Link } from 'react-router-dom';
+    import { fetchStreams } from '../../actions';
+
+    class StreamList extends React.Component {
+        componentDidMount() {
+            this.props.fetchStreams();
+        }
+
+        renderAdmin(stream) {
+            if (stream.userId === this.props.currentUserId) {
+                return (
+                    <div className="right floated content">
+                        <button className="ui button primary">
+                            Edit
+                        </button>
+                        <button className="ui button negative">
+                            Delete
+                        </button>
+                    </div>
+                );
+            }
+        }
+
+        renderList() {
+            return this.props.streams.map(stream => {
+                return (
+                    <div className="item" key={stream.id}>
+                        {this.renderAdmin(stream)}
+                        <i className="large middle aligned icon camera" />
+                        <div className="content">
+                            {stream.title}
+                            <div className="description">{stream.description}</div>
+                        </div>
+                    </div>
+                );
+            });
+        }
+
+        renderCreate() {
+            if (this.props.isSignedIn) {
+                return (
+                    <div style={{ textAlign: 'right' }}>
+                        <Link to="/streams/new" className="ui button primary">
+                            Create Stream
+                        </Link>
+                    </div>
+                )
+            }
+        }
+
+        render() {
+            return (
+                <div>
+                    <h2>Streams</h2>
+                    <div className="ui celled list">{this.renderList()}</div>
+                    {this.renderCreate()}
+                </div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state) => {
+        return {
+            streams: Object.values(state.streams),
+            currentUserId: state.auth.userId,
+            isSignedIn: state.auth.isSignedIn
+        };
+    }
+
+    export default connect(mapStateToProps, { fetchStreams })(StreamList);
+    ```
 
 ## When to Navigate Users
+1. When the user creates a new stream, we should redirect the user back to the list of streams, and the latest stream should be listed as well.
+1. In this project, we have been using "**Intentional Navigation**" which is an event handler that only works when the user clicks a `Link` component.
+1. On the other hand, we can use "**Programmatic Navigation**" which is to run code to forcibly navigate the user through the app.
+1. We shall only redirect the user when the app has got the response from the server and decide whether to redirect the user or show error message from the response.
+1. Therefore, the programmatic navigation should work when the action creator got the response from the request. We can work on further operations at `src/actions/index.js`.
 
 ## History Reference
+1. The `BrowserRouter` we use to navigate between routes creates a `history` object which keeps track of the address bar in the browser.
+    <img src="./images/historyReference353.png">
+1. The `history` object can not only watch and trace on the address but "**change**" the route. The programmatic navigation can be challenging because it's created by `BrowserRouter`.
+1. When a component is created, `history` is passed as a property from `BrowserRouter` to the component.
+1. So if we want to call it in the action creator, we have to pass it from the component to the action creator.
+    <img src="./images/browserRouterWithHistoryObject353.png">
+1. The other way to work around is to create `history` object ourselves.
 
 ## Creating a Browser History Object
+1. We create `history.js` in `src` directory and import `createHistory` from `history/createBrowserHistory`. This `history` library is installed along with `react-router-dom`, so we don't need to install this library specifically. Therefore, it's relatively easy to trigger the navigation from a component. However, we are trying to trigger the navigation within an `action creator` which only navigates the user after an async event is handled.
+1. However, as the library has some issue, we should import `createBrowserHistory` directory from `history` package.
+1. Besides, in `App.js` in `src/`, we use `Router` rather than `BrowserRouter` to work with self-created `history` object.
+    ```js
+    // src/history.js
+    import { createBrowserHistory } from 'history';
+    export default createBrowserHistory();
+
+    // src/components/App.js
+    import React from 'react';
+    import { Router, Route } from 'react-router-dom'; // change from BrowserRouter to Router
+    import StreamCreate from './streams/StreamCreate';
+    import StreamEdit from './streams/StreamEdit';
+    import StreamDelete from './streams/StreamDelete';
+    import StreamList from './streams/StreamList';
+    import StreamShow from './streams/StreamShow';
+    import Header from './Header';
+    import history from '../history';
+
+    const App = () => {
+        return (
+            <div>
+                <Router history={history}> // pass history object
+                    <div>
+                        <Header />
+                        <Route path="/" exact component={StreamList} />
+                        <Route path="/streams/new" exact component={StreamCreate} />
+                        <Route path="/streams/edit" exact component={StreamEdit} />
+                        <Route path="/streams/delete" exact component={StreamDelete} />
+                        <Route path="/streams/show" exact component={StreamShow} />
+                    </div>
+                </Router>
+            </div>
+        );
+    }
+
+    export default App;
+    ```
 
 ## Implementing Programmatic Navigation
+1. In action creators, we import `history` object and use `push` method to redirect the user to the root route after create a new stream.
+    ```js
+    import streams from '../apis/streams';
+    import history from '../history'; // import history object
+    import {
+        SIGN_IN,
+        SIGN_OUT,
+        CREATE_STREAM,
+        FETCH_STREAMS,
+        FETCH_STREAM,
+        DELETE_STREAM,
+        EDIT_STREAM
+    } from './types';
+
+    export const signIn = (userId) => {
+        return {
+            type: SIGN_IN,
+            payload: userId
+        };
+    };
+
+    export const signOut = () => {
+        return {
+            type: SIGN_OUT
+        };
+    };
+
+    export const createStream = (formValues) => async (dispatch, getState) => {
+        const { userId } = getState().auth;
+        const response = await streams.post('/streams', { ...formValues, userId });
+
+        dispatch({ type: CREATE_STREAM, payload: response.data });
+        history.push('/'); // use push method to redirect to the root route
+    };
+
+    export const fetchStreams = () => async dispatch => {
+        const response = await streams.get('/streams');
+
+        dispatch({ type: FETCH_STREAMS, payload: response.data });
+    };
+
+    export const fetchStream = (id) => async dispatch => {
+        const response = await streams.get(`/streams/${id}`);
+
+        dispatch({ type: FETCH_STREAM, payload: response.dat });
+    }
+
+    export const editStream = (id, formValues) => async dispatch => {
+        const response = await streams.put(`/streams/${id}`, formValues);
+
+        dispatch({ type: EDIT_STREAM, payload: response.data });
+    }
+
+    export const deleteStream = (id) => async dispatch => {
+        await streams.delete(`/streams/${id}`);
+
+        dispatch({ type: DELETE_STREAM, payload: id });
+    }
+    ```
 
 ## Manually Changing API Records
+1. We can edit the data and records in `db.json` in the `api` for JSON web server.
+1. The data can be modified on the fly that the server will listen and restart to the change if the file is modified manually.
 
 ## URL-Based Selection
+1. To allow users to edit streams, the app should know what is the stream that the user wants to edit. There are 2 approaches for the case.
+    1. Selection Reducer - When a user clicks on a stream to edit it, use a `selectionReducer` to record what stream is being edited.
+    1. URL-based selection - Put the ID of the stream being edited in the URL.
+1. To indicate specific stream to the app, we can pass the id of the stream through URL. 
+    1. `/` - `StreamList`
+    1. `/streams/new` - `StreamCreate`
+    1. `/streams/edit/:id` - `StreamEdit`
+    1. `/streams/delete/:id` - `StreamDelete`
+    1. `/streams/:id` - `StreamShow`
 
 ## Wildcard Navigation
+1. Since we choose to use "**URL-based**" selection, we should change the buttosn created by `renderAdmin` method for each stream on the list. We'd like to have links to direct the user to certain stream according to URL rather than using.
+    ```js
+    // src/components/streams/StreamList.js
+    class StreamList extends React.Component {
+        renderAdmin(stream) {
+            if (stream.userId === this.props.currentUserId) {
+                return (
+                    <div className="right floated content">
+                        // change button element to Link component and pass "id"
+                        <Link to={`/streams/edit/${stream.id}`} className="ui button primary">Edit</Link>
+                        <button className="ui button negative">
+                            Delete
+                        </button>
+                    </div>
+                );
+            }
+        }
+    }
+    ```
+1. Besides the elements in `StreamList` component, we should update the rouet configuration in `App.js`.
+    ```js
+    // src/components/App.js
+    import React from 'react';
+    import { Router, Route } from 'react-router-dom';
+    import StreamCreate from './streams/StreamCreate';
+    import StreamEdit from './streams/StreamEdit';
+    import StreamDelete from './streams/StreamDelete';
+    import StreamList from './streams/StreamList';
+    import StreamShow from './streams/StreamShow';
+    import Header from './Header';
+    import history from '../history';
+
+    const App = () => {
+        return (
+            <div>
+                <Router history={history}>
+                    <div>
+                        <Header />
+                        <Route path="/" exact component={StreamList} />
+                        <Route path="/streams/new" exact component={StreamCreate} />
+                        // add :id in edit route
+                        <Route path="/streams/edit/:id" exact component={StreamEdit} />
+                        <Route path="/streams/delete" exact component={StreamDelete} />
+                        <Route path="/streams/show" exact component={StreamShow} />
+                    </div>
+                </Router>
+            </div>
+        );
+    }
+
+    export default App;
+    ```
 
 ## More on Route Params
+1. When using `Router` in `App.js` to handle routes and render component, the component that router directs to will have a `prop` passed. For example, after we configure `id` for `StreamCreate`, we can print out the `props` argument to check its valus.
+    ```js
+    // src/components/streams/StreamCreate.js
+    import React from 'react';
+
+    const StreamEdit = (props) => {
+        console.log(props); // check props passed from Router in App.js
+        return <div>StreamEdit</div>
+    }
+
+    export default StreamEdit;
+    ```
+1. From the `props` object, we can check `params` property in `match` which shows the variable passed through the router.
+1. Besides, we can keep concatenate the URL with columns to pass multiple values through URL.
+    ```js
+    // src/components/App.js
+    const App = () => {
+        return (
+            <div>
+                <Router history={history}>
+                    <div>
+                        <Header />
+                        // add :id in edit route
+                        <Route path="/streams/edit/:id/:anythingElse/:anotherVar" exact component={StreamEdit} />
+                    </div>
+                </Router>
+            </div>
+        );
+    }
+    ```
 
 ## Selecting Records from State
+1. `StreamEdit` component has had an argument passed from `Router` when it's redirect from `App.js`.
+1. We can use `connect` method from `react-redux` to wire up the props from Redux store.
+1. Note that when using `mapStateToProps`, we can pass a 2nd argument, which is to original property that will be passed to the component itself, which is the `props` from the router. 
+1. However, here's a strange behavior that if we access the route with id through browser search bar directly, we don't get the `stream` object in the `props` correctly. 
+1. On the other hand, if we click the "Edit" through `Link` from `StreamList`, the `stream` values will be assigned to `props` correctly. 
+1. This is because if we access `/streams/edit/:id` directly, `streams` is not updated in Redux store, so there's no `stream` data can be rendered from `state.streams`.
+    ```js
+    // src/components/streams/StreamEdit.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+
+    const StreamEdit = (props) => {
+        console.log(props);
+        return <div>StreamEdit</div>
+    }
+
+    const mapStateToProps = (state, ownProps) => {
+        return {
+            stream: state.streams[ownProps.match.params.id]
+        };
+    }
+
+    export default connect(mapStateToProps)(StreamEdit);
+    ```
+    <img src="./images/undefinedStreamFromReduxStore361.png">
 
 ## Component Isolation with React Router
+1. When the user visits the route by typing in the URL with stream id in the search bar, it follows the following process.
+    1. User types in `/streams/edit/3` to address bar and hits enter
+    1. user loads up our app
+    1. Redux state object is empty
+    1. We try to select stream with id `3` from `state`
+    1. No streams were loaded, so we get `undefined`
+    1. We navigated to `/`
+    1. `StreamList` fetches all of our streams, updates Redux
+    1. We select stream with id of `3`
+    1. Data is now in redux store, so we see the appropriate stream
+1. The Redux store is updated in `StreamList` as the component uses `componentDidMount` method to call `fetchStreams` method when the component is firstly rendered.
+1. By using `react-router`, each component needs to be designed to work in isolation (fetch its own data).
+1. In certain scenarios, such as the user book mark the URL or send it to other users, the App wouldn't work correctly in such conditions.
+1. Therefore, we should wire up and fetch the data to enable the usage. 
 
 ## Fetching a Stream for Edit Stream
+1. We then update `StreamEdit` from functional component to class-based component.
+1. Import `fetchStream`
+1. Use `componentDidMount` to fetch data with action creator `fetchStream` to retrieve a single stream data from database.
+1. Note that the component will be rendered twice, as first time when the component initiates, there's no stream data in the Redux store yet. We can use `IF` statement to check and put a "loading" condition during transition.
+    ```js
+    // src/components/streams/StreamEdit
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchStream } from '../../actions';
+
+    class StreamEdit extends React.Component {
+        componentDidMount() {
+            this.props.fetchStream(this.props.match.params.id);
+        }
+
+        render() {
+            if (!this.props.stream) {
+                return <div>Loading...</div>
+            }
+            return <div>{this.props.stream.title}</div>
+        }
+    }
+
+    const mapStateToProps = (state, ownProps) => {
+        return {
+            stream: state.streams[ownProps.match.params.id]
+        };
+    }
+
+    export default connect(
+        mapStateToProps,
+        { fetchStream }
+    )(StreamEdit);
+    ```
 
 ## Real Code Reuse
 

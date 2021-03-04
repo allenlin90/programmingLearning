@@ -974,7 +974,7 @@ GAME RULES:
 
 ### Summary of Step 1
 
-<img src="budgetAppStructure1.PNG">
+<img src="budgetAppStructure1.png">
 
 ### Project planning and architecture: Step 2
 
@@ -1061,7 +1061,7 @@ GAME RULES:
 
 ### Summary of Step 2
 
-<img src="budgetAppStructure2.PNG">
+<img src="budgetAppStructure2.png">
 
 ### Project planning and architecture: Step 3
 
@@ -1219,7 +1219,7 @@ GAME RULES:
    ```
 
 1. Final Structure
-   <img src="budgetAppStructure_final.PNG">
+   <img src="budgetAppStructure_final.png">
 
 # ES6/ES2015 JavaScript
 
@@ -4038,7 +4038,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
 1. As we can find `url` can find the path that users access, the other main function we want to get benefited from is to parse the parameters passed in the URL.
 1. We can check the paremeter input on URL on `url.parse(req.url, true).query` this is the value we pass in the URL that after question mark `?`. For example, the parameter of `localhost:1337/?id=1` is `{'id': '1'}`.
 1. Besides, we can use ampersand `&` to concatenate the parameters in the URL and pas multiple parameters. For example, in `localhost:1337/?id=1&date=today`, we have 2 parameters `{'id': '1', 'date': 'today'}`.
-   <img src="passParameterURL.PNG">
+   <img src="passParameterURL.png">
 1. In this case, each `id` represents a product on the webiste. Since we have only 4 products in this case, we can set up the condition that the `id` shouldn't be greater than the `length` of the JSON file we get.
 
    ```js
