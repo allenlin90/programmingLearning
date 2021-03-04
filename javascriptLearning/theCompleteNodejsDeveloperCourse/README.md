@@ -2753,12 +2753,12 @@ doWorkCallback(function (error, result) {
 
 ### Resource Updating Endpoints: Part 2
 1. This is a chanllenge to work on the router handler to update the content of tasks in the database. 
-  1. Set up the route handler 
-  1. Send error if unknown updates 
-  1. Attempt to update the task 
-    1. Handle task not found 
-    1. Handle validation errors 
-    1. Handle success 
+    1. Set up the route handler 
+    1. Send error if unknown updates 
+    1. Attempt to update the task 
+        1. Handle task not found 
+        1. Handle validation errors 
+        1. Handle success 
 1. A misake made here was setting the wront route, so server can't render the page on the given route correctly. I forget to put slash `/` before `tasks`
     ```js 
     // PATCH request to modify data of a specific task 

@@ -4,3 +4,6 @@ node_modules
 config
 tester
 goorm.manifest
+.eslintcache
+debug.log
+.env
