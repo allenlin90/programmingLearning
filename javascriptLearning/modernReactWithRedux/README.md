@@ -8772,10 +8772,227 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     ```
 
 ## Real Code Reuse
+1. The 3 main differences between the components to create and edit a stream are 
+    1. The header showing "Create" or "Edit" a stream.
+    1. Whether initial value of stream title and description is given. These shall be available when we want to "**edit**" a stream. 
+    1. The action when the user clicks "submit" button.
+1. Thus, we can refactor `StreamCreate` component and separate the form into `StreamForm` as an individual component and connect to `StreamEdit` component. 
+    ```js
+    // src/components/streams/StreamForm.js
+    import React from 'react';
+    import { Field, reduxForm } from 'redux-form';
+    // remove connect
+    // remove createStream action creator
+
+    class StreamForm extends React.Component {
+        renderError({ error, touched }) {
+            if (touched && error) {
+                return (
+                    <div className="ui error message">
+                        <div className="header">{error}</div>
+                    </div>
+                );
+            }
+        }
+
+        renderInput = ({ input, label, meta }) => {
+            const className = `field ${meta.error && meta.touched ? 'error' : ''}`
+            return (
+                <div className={className}>
+                    <label>{label}</label>
+                    <input autoComplete="off" {...input} />
+                    <div>{this.renderError(meta)}</div> {/* show error message from meta object*/}
+                </div>
+            );
+        }
+
+        // submit will trigger the callback functino passed from StreamCreate or StreamEdit
+        onSubmit = (formValues) => {
+            this.props.onSubmit(formValues);
+        }
+
+        render() {
+            return (
+                <form
+                    onSubmit={this.props.handleSubmit(this.onSubmit)}
+                    className="ui form error">
+                    <Field name="title" component={this.renderInput} label="Enter Title" />
+                    <Field name="description" component={this.renderInput} label="Enter Description" />
+                    <button className="ui button primary">Submit</button>
+                </form>
+            )
+        }
+    }
+
+    const validate = (formValues) => {
+        const errors = {}
+        if (!formValues.title) {
+            errors.title = 'You must enter a title';
+        }
+
+        if (!formValues.description) {
+            errors.description = 'You must enter a description';
+        }
+
+        return errors;
+    }
+
+    // only redux form needs to connect 
+    export default reduxForm({
+        form: 'streamForm',
+        validate
+    })(StreamForm);
+    ```
+1. The following is the `StreamCreate` before refactoring. 
+    ```js
+    // original StreamCreate component which will be refactored
+    // src/components/streams/StreamCreate.js
+    import React from 'react';
+    import { Field, reduxForm } from 'redux-form';
+    import { connect } from 'react-redux';
+    import { createStream } from '../../actions';
+
+    class StreamCreate extends React.Component {
+        renderError({ error, touched }) {
+            if (touched && error) {
+                return (
+                    <div className="ui error message">
+                        <div className="header">{error}</div>
+                    </div>
+                );
+            }
+        }
+
+        renderInput = ({ input, label, meta }) => {
+            const className = `field ${meta.error && meta.touched ? 'error' : ''}`
+            return (
+                <div className={className}>
+                    <label>{label}</label>
+                    <input autoComplete="off" {...input} />
+                    <div>{this.renderError(meta)}</div> {/* show error message from meta object*/}
+                </div>
+            );
+        }
+
+        onSubmit = (formValues) => {
+            this.props.createStream(formValues);
+        }
+
+        render() {
+            return (
+                <form
+                    onSubmit={this.props.handleSubmit(this.onSubmit)}
+                    className="ui form error">
+                    <Field name="title" component={this.renderInput} label="Enter Title" />
+                    <Field name="description" component={this.renderInput} label="Enter Description" />
+                    <button className="ui button primary">Submit</button>
+                </form>
+            )
+        }
+    }
+
+    const validate = (formValues) => {
+        const errors = {}
+        if (!formValues.title) {
+            // only ran if the user did not enter a title
+            errors.title = 'You must enter a title';
+        }
+
+        if (!formValues.description) {
+            errors.description = 'You must enter a description';
+        }
+
+        return errors;
+    }
+
+    const formWrapped = reduxForm({
+        form: 'streamCreate', // in convention, this is to name the form for its purpose
+        validate
+    })(StreamCreate);
+
+    export default connect(null, { createStream })(formWrapped);
+    ```
 
 ## Refactoring Stream Creation
+1. After separating `StreamForm`, we can take off redux form and import `StreamForm` component and pass the action creator with `onSubmit` event.
+1. As we are using action creator, we still need to use `connect` to link `createStream`.
+    ```js
+    // src/components/streams/StreamCreate.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { createStream } from '../../actions';
+    import StreamForm from './StreamForm';
+
+    class StreamCreate extends React.Component {
+        onSubmit = (formValues) => {
+            this.props.createStream(formValues);
+        }
+
+        render() {
+            return (
+                <div>
+                    <h3>Create a Stream</h3>
+                    <StreamForm onSubmit={this.onSubmit} />
+                </div>
+            );
+        }
+    }
+
+    export default connect(
+        null,
+        { createStream }
+    )(StreamCreate);
+    ```
 
 ## Setting Initial Values
+1. When we use Redux Form to create the form element, it is wired up and we can pass values when calling it from the other component. In this case, we just pass `console.log` as the callback function after submit.
+1. However, there's an issue for the callback function and giving `console.log`. This will be introduced in the next section. 
+    ```js
+    // src/components/streams/StreamEdit.js
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchStream, editStream } from '../../actions'; // add editStream action creator
+    import StreamForm from './StreamForm';
+
+    class StreamEdit extends React.Component {
+        componentDidMount() {
+            this.props.fetchStream(this.props.match.params.id);
+        }
+
+        onSubmit = (formValues) => { // use arrow function to prevent incorrect "this" pointing
+            // callback function passed to StreamForm
+            console.log(formValues);
+        }
+
+        render() {
+            if (!this.props.stream) {
+                return <div>Loading...</div>
+            }
+            return (
+                <div>
+                    <h3>Edit a Stream</h3>
+                    <StreamForm
+                        // initialValues is a specific attribute to Redux Form for initial values
+                        initialValues={this.props.stream}
+                        onSubmit={this.onSubmit}
+                    />
+                </div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state, ownProps) => {
+        return {
+            stream: state.streams[ownProps.match.params.id]
+        };
+    }
+
+    export default connect(
+        mapStateToProps,
+        { fetchStream, editStream } // wire up editStream action creator as well
+    )(StreamEdit);
+    ```
+    <img src="./images/settingInitialValue366.png">
 
 ## Avoiding Changes to Properties
 
