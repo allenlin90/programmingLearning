@@ -8995,12 +8995,127 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     <img src="./images/settingInitialValue366.png">
 
 ## Avoiding Changes to Properties
+1. In the current state, we pass the whole `Stream` object which includes `id` and `userId` that can be modified by the user. 
+    ```js
+    // src/components/streams/StreamEdit.js
+    import _ from 'lodash';
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchStream, editStream } from '../../actions';
+    import StreamForm from './StreamForm';
+
+    class StreamEdit extends React.Component {
+        componentDidMount() {
+            this.props.fetchStream(this.props.match.params.id);
+        }
+
+        onSubmit = (formValues) => {
+            console.log(formValues);
+        }
+
+        render() {
+            if (!this.props.stream) {
+                return <div>Loading...</div>
+            }
+            return (
+                <div>
+                    <h3>Edit a Stream</h3>
+                    <StreamForm
+                        initialValues={_.pick(this.props.stream, 'title', 'description')}
+                        onSubmit={this.onSubmit}
+                    />
+                </div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state, ownProps) => {
+        return {
+            stream: state.streams[ownProps.match.params.id]
+        };
+    }
+
+    export default connect(
+        mapStateToProps,
+        { fetchStream, editStream }
+    )(StreamEdit);
+    ```
 
 ## Edit Form Submission
+1. We use `editStream` action creator to update the stream with `id` (from `this.props.match.params.id`) and `formValues`.
+1. However, there's an issue in this modification that the "edit" and "delete" buttons will be removed after the user is redirected back to the list of streams.
+    ```js
+    // src/components/stream/StreamEdit.js
+    import _ from 'lodash';
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { fetchStream, editStream } from '../../actions';
+    import StreamForm from './StreamForm';
+
+    class StreamEdit extends React.Component {
+        componentDidMount() {
+            this.props.fetchStream(this.props.match.params.id);
+        }
+
+        onSubmit = (formValues) => {
+            this.props.editStream(this.props.match.params.id, formValues);
+        }
+
+        render() {
+            if (!this.props.stream) {
+                return <div>Loading...</div>
+            }
+            return (
+                <div>
+                    <h3>Edit a Stream</h3>
+                    <StreamForm
+                        initialValues={_.pick(this.props.stream, 'title', 'description')}
+                        onSubmit={this.onSubmit}
+                    />
+                </div>
+            );
+        }
+    }
+
+    const mapStateToProps = (state, ownProps) => {
+        return {
+            stream: state.streams[ownProps.match.params.id]
+        };
+    }
+
+    export default connect(
+        mapStateToProps,
+        { fetchStream, editStream }
+    )(StreamEdit);
+    ```
+1. We'd like to redirect the user back to the list of streams after the stream is updated.
+    ```js
+    // src/actions/index.js
+    export const editStream = (id, formValues) => async dispatch => {
+        const response = await streams.put(`/streams/${id}`, formValues);
+
+        dispatch({ type: EDIT_STREAM, payload: response.data });
+        history.push('/');
+    }
+    ```
 
 ## PUT vs PATCH Requests
+1. In REST API, "PUT" and "PATCH" work different that 
+    1. A PUT request udpate ALL properties of a record
+    1. A PATCH request udpate SOME properties of a record
+1. This makes a difference that when we use the form to update part of the object and send it back, different type of request will modify the object in a different way.
+1. In the app, we can see that the 4th Stream which is owned by the user has missing "Edit" and "Delete" buttons and the 4th Stream object has no `userId` property.
+    <img src="./images/PUTvsPATCHhttpRequest369.png">
+1. Therefore, we can change the request type in action creator from `PUT` to `PATCH`.
+    ```js
+    // src/actions/index.js
+    export const editStream = (id, formValues) => async dispatch => {
+        const response = await streams.patch(`/streams/${id}`, formValues); // change request from put to patch
 
-
+        dispatch({ type: EDIT_STREAM, payload: response.data });
+        history.push('/');
+    }
+    ```
 
 # Using React Portals 
 
