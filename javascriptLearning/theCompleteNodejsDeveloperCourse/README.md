@@ -3879,7 +3879,7 @@ doWorkCallback(function (error, result) {
         res.send();
     });
     ```
-1. In POSTMAN, we can send the data with `body` tab and change the type from `raw` to `form-data`. In the `key` field, we can change the data type from `text` to `file` and use file selector to choose the file we want to upload. 
+1. In POSTMAN, we can send the data with `body` tab and change the type from `raw` to `form-data`. In the `key` field, we can change the data type from `text` to `file` and use file selector to choose the file we want to upload. Note that the key of the value is `avatar`. 
     <img src="./images/postmanSendFile.PNG">
 1. The uploaded files doesn't have extension (file type suffix). We can manually modify the file name with `.jpg` or other type of format according to its original datatype. 
 1. We add a new route handler in `src/routers/user.js`. However, this has no filter for data type and authentication of the user. 
