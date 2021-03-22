@@ -4327,7 +4327,7 @@ doWorkCallback(function (error, result) {
 1. Though there are several options for database hosting in the market, we will use "Atlas" provided by MongoDB organization. 
 1. When singup the account, we should always be careful with the plan and solution we select and see "free" in the navigation bar at the bottom. (I have signed up a database on ht, while there's one free database perproject on atlas. Therefore, I'll use li in this case). Besides, since we are in Asia, we can choose the host at Singapore rather than in the US.
 1. After building the initial cluster, we can click connect to configure the database. 
-    <img src="./images/./images/mongodbAtlas.png">
+    <img src="./images/mongodbAtlas.png">
 1. We firstly whitelist a connection IP address. In the step, we choose "Add a different IP address". Note that we should be very careful about these options, as they are security sensitive. In this case, we provide `0.0.0.0/0` which is available for connection from anywhere, such as from local machine to heroku deployments. 
     <img src="./images/mongodbAtlasWhitelistIP.png">
 1. After setting up whitelist for IP addresses, we can set up the account and password for the database admin. `taskapp` and `e5cq****`
