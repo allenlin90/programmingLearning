@@ -9,6 +9,9 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. [Building the Header - Part 2](#Building-the-Header---Part-2)
     1. [Building a Complex Animated Button - Part 1](#Building-a-Complex-Animated-Button---Part-1)
     1. [Building a Complex Animated Button - Part 2](#Building-a-Complex-Animated-Button---Part-2)
+1. [How CSS Works: A Look Behind the Scenes](#How-CSS-Works:-A-Look-Behind-the-Scenes)
+    1. [Three Pillars of Writing Good HTML and CSS](#Three-Pillars-of-Writing-Good-HTML-and-CSS)
+    1. [How CSS Works Behind the Scenes: An Overview](How-CSS-Works-Behind-the-Scenes:-An-Overview#)
 
 ---
 # Natours Project - Steup and First Steps
@@ -221,3 +224,108 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/8-buttonAnimation.gif">
 
 ## Building a Complex Animated Button - Part 2
+1. We can use pseudo element `::after` to create a virtual element like the child element of the selected element. 
+1. To use the feature, it must have `content` property which can be set as empty string. The element won't work without this proerty. 
+1. The pseudo element has its `width` and `height` inherited from the parent. THerefore, we can set the properties both to `100%` to match the size of its parent which is the element with `.btn` class.
+    ```css
+    .btn::after {
+        content: "";
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        border-radius: 100px;
+    }
+    ```
+1. If we'd like the pseudo element overlay on each other, we can use `position: absolute` to set the position. Note that the parent element should have `position: relative` to enable absolute feature. Besides, we set `z-index: -1` to put the pseudo element behind the parent element as the background. 
+    ```css
+    .btn:link,
+    .btn:visited {
+        position: relative;
+    }
+    .btn::after{
+        position: absolute;
+        top: 0;
+        left:0;
+        z-index: -1;
+    }
+    ```
+1. As we may have different color for the background of the pseudo element according to the class, we can change color by the class. In this case, we give the background color on `btn-white`. 
+1. We'd like the effect to expand or scale up the element when the user hovers the cursor on top of the element. We can use `.tn:hover::after` to assign certain properties when the element gets hovered on. 
+1. We change the `opacity: 0` to make the element looks transparent. 
+1. We then can set up `transition: all .4s` to its parent element which is `.btn::after` for the animation. 
+    ```css
+    .btn::after {
+        transition: all .4s;
+    }
+
+    /* assign color by class with name rather than the universal btn class */
+    .btn-white::after { 
+        background-color: #fff;
+    }
+
+    .btn:hover::after {
+        transform: scaleX(1.5) scaleY(1.6);
+        opacity: 0;
+    }
+    ```
+    <img src="images/10-buttonHoverEffect.gif">
+1. To create the animation to let the button floating up, we can use `@keyframes` for animations as we do for the titles `moveInLeft` and `moveInRight`. However, the element is in the HTML file and is at the original place before the animation starts.
+    <img src="images/10-without_animatino_fill_mode.gif">
+1. To prevent the effect, we can use [`animatino-fill-mode`](https://www.w3schools.com/cssref/css3_pr_animation-fill-mode.asp) that the element will get the style values that is set by the first keyframe (depends on animation-direction), and retain this during the animation-delay period.
+    ```css
+    @keyframes moveInBottom {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+        
+    .btn-animated {
+        animation: moveInBottom .5s ease-out .75s;
+        animation-fill-mode: backwards;
+    }
+    ```
+    <img src="images/10-animatino_fill_mode_backwards.gif">
+
+
+
+# How CSS Works: A Look Behind the Scenes
+## Three Pillars of Writing Good HTML and CSS
+1. Responsive Design 
+    1. Fluid layouts
+    1. Media queries
+    1. Responsive images
+    1. Correct units
+    1. Desktop-first vs mobile-first
+1. Maintainable and scalable code
+    1. Clean
+    1. Easy-to-understand
+    1. Growth
+    1. Reusable
+    1. How to organize files
+    1. How to name classes
+    1. How to structure HTML
+1. Web Performance
+    1. Less HTTP requests
+    1. Less code
+    1. Compress code
+    1. Use a CSS preprocessor
+    1. Less images
+    1. Compress images
+
+## How CSS Works Behind the Scenes: An Overview
+1. What happens to CSS when we load up a webpage
+    1. Load HTML
+    1. Parse HTML to have DOM (Document Object Model)
+    1. Load CSS
+    1. Parse CSS to have CSSOM (CSS Object Model)
+        1. Resolve conflicting CSS declaration (cascade)
+        1. Process final CSS values
+    1. After having both "DOM" and "CSSOM", we will have "Render Tree"
+    1. Website rendering tehvisual formatting model
+    1. Final rendered website
+    <img src="images/13-how_css_work_behind_the_scenes.png">
