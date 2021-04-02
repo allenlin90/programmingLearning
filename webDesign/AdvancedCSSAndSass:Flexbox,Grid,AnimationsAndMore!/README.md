@@ -12,9 +12,15 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 1. [How CSS Works: A Look Behind the Scenes](#How-CSS-Works:-A-Look-Behind-the-Scenes)
     1. [Three Pillars of Writing Good HTML and CSS](#Three-Pillars-of-Writing-Good-HTML-and-CSS)
     1. [How CSS Works Behind the Scenes: An Overview](How-CSS-Works-Behind-the-Scenes:-An-Overview#)
+    1. [How CSS is Parsed, Part 1: The Cascade and Specificity](#How-CSS-is-Parsed,-Part-1:-The-Cascade-and-Specificity)
+    1. [How CSS is Parsed, Part 2: Value Processing](#How-CSS-is-Parsed,-Part-2:-Value-Processing)
+    1. [How CSS is Parsed, Part 3: Inheritance](#How-CSS-is-Parsed,-Part-3:-Inheritance)
+    1. [Converting px to rem: An effective Workflow](#Converting-px-to-rem:-An-effective-Workflow)
+    1. [How CSS Renders a Website: The Visual Formatting Model](#How-CSS-Renders-a-Website:-The-Visual-Formatting-Model)
+    1. [CSS Architecture, Components and BEM](#CSS-Architecture,-Components-and-BEM)
 
 ---
-# Natours Project - Steup and First Steps
+#-Natours Project - Setup and First Steps
 ## Project Overview
 1. Put the link of final builtup here after finishing practicing
 1. Use pure CSS without JavaScript to create the following effects
@@ -329,3 +335,59 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. Website rendering tehvisual formatting model
     1. Final rendered website
     <img src="images/13-how_css_work_behind_the_scenes.png">
+
+## How CSS is Parsed, Part 1: The Cascade and Specificity
+1. The ordinary CSS syntax includes "selector" and "declaration block". In the "declaration block", there are "declarations", each of which is composed by "property" and "declared value" that we we want to modify the selected element. 
+1. "**Cascade**" represents the "C" in CSS. As CSS can be combined and sourced from different sheets, casacde is an essential feature that it resolves conflicts between different CSS rules and declarations, when more than one rule appleis to a certain element. 
+1. When processing the sheet, the engine looks from the following order to decide which decoration to apply to the selected element.
+    1. Importance
+        1. User `!important` declarations
+        1. Author `!important` declarations
+        1. Author declarations
+        1. User declarations
+        1. Default browser declarations
+    1. Sepcificity
+        1. Inline styles (in HTML file)
+        1. IDs
+        1. Classes, pseudo-classes, attribute
+        1. Elements, pseudo-elements
+    1. Source Order 
+1. CSS declarations marked with `!important` have the highest priority.
+1. However, only use `!important` as a last resource. It's better to use correct specifications, so the code can be more maintainable. 
+1. Inline styles will always have priority over styles in external stylesheets. 
+1. A selector that contains 1 ID is more specific than one with 1000 classes.
+1. A selector that contains 1 class is more specific than one with 1000 elements
+1. The universal selector * has no specificity value (0,0,0,0)
+1. Rely more on specificity than on the order of selectors
+1. But rely on order when using 3rd-party stylesheets - always put the author sheet the last.
+1. We can check at this [CSS Specificity Calculator](https://specificity.keegan.st/) to check the score.
+
+## How CSS is Parsed, Part 2: Value Processing
+1. CSS values are proceeded in the following process
+    1. Declared value (author declaration)
+    1. Cascaded value (after the cascade)
+    1. Specified value (defaulting, if there is no cascaded value)
+    1. Computed value (converting relative values to absolute)
+    1. Used value (final calculations, based on layout)
+    1. Actual value (browser and device restrictions)
+    <img src="images/16-css_value_processing.png">
+1. When converting from relative to absolute values, the relative units `em` for **font** is based on the parent element's size, while for "**length**", it is based on the element itself. 
+    <img src="images/16-css_relative_to_absolute_value.png">
+1. Each property has an initial value, used if nothing is declared.
+1. Browsers specify a "root" `font-size` for each page (usually 16px).
+1. Percentages and relative values are always converted to pixels.
+1. Percentages are measured relative to their parent's `font-size`, if used to specify `font-size`.
+1. Percentages are measured relative to their their parent's `width`, if used to specify lengths.
+1. `em` are measured relative to their parent `font-size`, if used to specify `font-size`.
+1. `em` are measured relative to current `font-size`, if used to specify lengths.
+1. `rem` are always measured relative to the document's root `font-size`.
+1. `vh` and `vw` are simply precentage measurements of the viewport's `height` and `width`.
+
+## How CSS is Parsed, Part 3: Inheritance
+
+## Converting px to rem: An effective Workflow
+
+## How CSS Renders a Website: The Visual Formatting Model
+
+## CSS Architecture, Components and BEM
+
