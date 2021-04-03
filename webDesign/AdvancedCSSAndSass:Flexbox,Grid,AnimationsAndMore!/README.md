@@ -17,7 +17,10 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. [How CSS is Parsed, Part 3: Inheritance](#How-CSS-is-Parsed,-Part-3:-Inheritance)
     1. [Converting px to rem: An effective Workflow](#Converting-px-to-rem:-An-effective-Workflow)
     1. [How CSS Renders a Website: The Visual Formatting Model](#How-CSS-Renders-a-Website:-The-Visual-Formatting-Model)
+        1. [The Box Model](#The-Box-Model)
+        1. [Box Types](#Box-Types)
     1. [CSS Architecture, Components and BEM](#CSS-Architecture,-Components-and-BEM)
+    1. [Implementing BEM in the Natours project](#Implementing-BEM-in-the-Natours-project)
 
 ---
 #-Natours Project - Setup and First Steps
@@ -384,10 +387,405 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 1. `vh` and `vw` are simply precentage measurements of the viewport's `height` and `width`.
 
 ## How CSS is Parsed, Part 3: Inheritance
+1. Every CSS property must have a value
+1. Is there a cascaded value?
+    1. Yes - Specified value = Cascaded value
+    1. No - Is the property inherited? (specific to each property)
+        1. Yes - Specified value = Computed value of parent element
+        1. No - Specified value = Initial value (specific to each property)
+        <img src="images/17-css_inheritance.png">
+1. Inheritance passes the values for some specific properties from parents to children - more maintainable code.
+1. Properties related to text are inherited: `font-family`, `font-size`, `color`, etc.
+1. The `inherit` keyword forces inheritance on a certain property.
+1. The initial keyword resets a property to its initial value.
 
 ## Converting px to rem: An effective Workflow
+1. Learning targets
+    1. How and why to use `rem` units in projects
+    1. A great workflow for converting `px` to `rem`
+1. We can set the root `font-size` on `html` element the `rem` will be aligned to the given size. 
+    ```css
+    html {
+        font-size: 10px;
+    }
+    ```
+1. When we have `100%` as the `font-size` in `html` element, it uses the default font-size given from the browser. Since the modern browsers are using `16px` as the defulat `font-size`, we can set it as `62.5%` which is `10px` if the defulat is `16px`. This can make the element become responsive according to user's setting.
+    ```css
+    html {
+        font-size: 62.5%;
+    }
+    ```
+1. Besides `font-size`, we can use the power of inheritance on `box-sizing` feature that we can the universal selector for box-sizing `inherit` and `box-sizing: border-box` in `body` tag. 
+1. In addition, we'd like all the elements, including virtual ones created from `::bfore` and `::after` to apply the property. We can add those with the universal selectors as well. 
+    ```css
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: inherit;    
+    }
+
+    body {
+        font-family: "Lato", sans-serif;
+        font-weight: 400;
+        /* font-size: 16px; */
+        line-height: 1.7;
+        color: #777;
+        padding: 3rem;
+
+        box-sizing: border-box;
+    }
+    ```
 
 ## How CSS Renders a Website: The Visual Formatting Model
+1. The visual formatting model is an algorithm that calculates boxes and determines the layout of these boxes, for each element in the render tree, in order to determine the final layout of the page.
+1. The algorithm takes the followings into account
+    1. **Dimensions** of boxes: the box model
+    1. **Box type**: inline, block, and inline-block
+    1. **Positioning scheme**: floats and positioning
+    1. **Stacking contexts**
+    1. Other elements in the render tree
+    1. Viewport size, dimensions of images, etc.
+
+### The Box Model
+    1. Content: text, images, etc.
+    1. Padding: transparent area aroudn the content, inside of the box
+    1. Border: goes around the padding and the content
+    1. Margin: space between boxes
+    1. Fill area: area that gets filled with background color or background image
+    <img src="images/19-box_model.png">
+1. Heights and Width in default setting
+    1. Total Width = right border + right padding + specified width + left padding + left border
+    1. Total Height = top border + top padding + specified height + bottom padding + bottom border
+1. If we apply `box-sizing: border-box`, this will include the padding the and border of the element into the specified width and height. 
+    1. Total Width = specified width
+    1. Total Height = specified height
+
+### Box Types
+1. Block-level boxes 
+    1. Elements formatted visually as blocks
+    1. 100% of parent's width
+    1. Vertically, one after another
+    1. Box-model applies as showed
+    ```css
+    html {
+        display: block;
+        display: flex;
+        display: list-item;
+        display: table;
+    }
+    ```
+1. Inline boxes
+    1. Content is distributed in lines
+    1. Occupies only content's space
+    1. No line-breaks
+    1. No heights and widths
+    1. Padding and margins only horizontal (left and right)
+    ```css
+    html {
+        display: inline-block;
+    }
+    ```
+1. Inline-block boxes
+    1. A mix of block and inline
+    1. Occupies only content's space
+    1. No line-breaks
+    1. Box-model applies as showed
+    ```css
+    html {
+        display: inline;
+    }
+    ```
+    <img src="images/19-types_of_boxes.png">
+
+### Positioning Schemes
+1. Normal flow
+    1. Default positioning scheme
+    1. NOT floated
+    1. NOT absolutely positioned
+    1. Elements laid out according to their source order
+    ```css
+    html {
+        position: relative;
+    }
+    ```
+1. Floats
+    1. Elements is removed from the normal flow
+    1. Text and inline elements will wrap around teh floated element
+    1. The container will not adjust its height to the element
+    ```css
+    html {
+        float: right;
+        float: left;
+    }
+    ```
+1. Absolute positioning
+    1. Element is removed from the normal flow
+    1. No impact on surrounding content or elements
+    1. We use `top`, `bottom`, `left`, and `right` to offset the element from its relatively positioned container. 
+    ```css
+    html {
+        position: absolute;
+        position: fixed;
+    }
+    ```
+    <img src="images/19-positioning_schemes.png">
+
+### Stacking Contexts
+1. Though we can set the `position` and `z-index` to stack the elements up in certain context, other properties such as `opacity`, `transform`, and `filter` may create stacking context as well.  
+    ```css
+    #div_parent {
+        position: relative;
+    }
+
+    #div3 {
+        z-index: 3;
+        position: absolute;
+    }
+    #div2 {
+        z-index: 2;
+        position: absolute;
+    }
+    #div1 {
+        z-index: 1;
+        position: absolute;
+    }
+    ```
 
 ## CSS Architecture, Components and BEM
+1. The Think, Build, Architect mindset
+    1. Think - Think about the layout of the webpage or web app before writing code
+    1. Build - Build the layout in HTML and CSS with a consistent strcuture for naming classes
+    1. Architect - Create a logical architecture for the CSS with files and folders
+1. Thinking about the layout
+    1. Component-driven design
+    1. **Modular building blocks** taht make up interfaces
+    1. Held together by the **layout** of the page
+    1. **Re-usable** across a project, and between different projects
+    1. **Independent** allowing us to use them anywhere on the page
+1. Building with meaningful class names
+    1. BEM stands for Block Element Modifier
+    1. Block - standalone component that is meaningful on its own
+    1. Element - part of a block that has no standalone meaning
+    1. Modifier - a different version of a block or an element
+    ```css
+    .block{}
+    .blocK__element{}
+    .block__element--modifier{}
+    ```
+1. Architecting with files and folders
+    1. The 7-1 pattern
+    1. 7 different folders for partial Sass files, and 1 main Sass file to import all other files into a compiled CSS stylesheet.
+        1. base/
+        1. component/
+        1. layout/
+        1. pages/
+        1. themes/
+        1. abstracts/
+        1. vendors/
 
+## Implementing BEM in the Natours project
+1. HTML
+    ```html
+    <header class="header">
+            <div class="header__logo-box">
+                <img src="img/logo-white.png" alt="Logo" class="header__logo">
+            </div>
+            <div class="header__text-box">
+                <h1 class="heading-primary">
+                    <span class="heading-primary--main">outdoors</span>
+                    <span class="heading-primary--sub">is where life happens</span>
+                </h1>
+                <a href="#" class="btn btn--white btn--animated">Discover our tours</a>
+            </div>
+        </header>
+    ```
+1. CSS
+    ```css
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: inherit;
+    }
+
+    html {
+        font-size: 62.5%;
+    }
+
+    body {
+        font-family: "Lato", sans-serif;
+        font-weight: 400;
+        /* font-size: 16px; */
+        line-height: 1.7;
+        color: #777;
+        padding: 3rem;
+
+        box-sizing: border-box;
+    }
+
+    .header {
+        height: 95vh;
+        background-image: linear-gradient(
+            to right bottom,
+            rgba(126, 213, 111, 0.8), 
+            rgba(40,180,131,0.8)), 
+            url(../img/hero.jpg);
+        background-size: cover;
+        background-position: top;
+        position: relative;
+        clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+    }
+
+    .header__logo-box {
+        position: absolute;
+        top: 4rem;
+        left: 4rem;
+    }
+
+    .header__logo {
+        height: 3.5rem;
+    }
+
+    .header__logo:hover {
+        animation: moveInRight 1s ease-out;
+    }
+
+    .header__text-box {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .heading-primary {
+        color: #fff;
+        text-transform: uppercase;
+
+        backface-visibility: hidden;
+        margin-bottom: 6rem;
+    }
+
+    .heading-primary--main {
+        display: block;
+        font-size: 6rem;
+        font-weight: 400;
+        letter-spacing: 3.5rem;
+
+        animation-name: moveInLeft;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+        
+        /* animation-iteration-count: 3; */
+        /* animation-delay: 1s; */
+    }
+
+    .heading-primary--sub {
+        display: block;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 1.74rem;
+
+        animation: moveInRight 1s ease-out;
+    }
+
+    @keyframes moveInLeft {
+        0% {
+            opacity: 0;
+            transform: translateX(-10rem);
+        }
+
+        80% {
+            opacity: 1;
+            transform: translateX(1rem);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes moveInRight {
+        0% {
+            opacity: 0;
+            transform: translateX(10rem);
+        }
+
+        80% {
+            opacity: 1;
+            transform: translateX(-1rem);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes moveInBottom {
+        0% {
+            opacity: 0;
+            transform: translateY(3rem);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    .btn:link,
+    .btn:visited {
+        text-transform: uppercase;
+        text-decoration: none;
+        padding: 1.5rem 4rem;
+        display: inline-block;
+        border-radius: 10rem;
+        transition: all .2s;
+        position: relative;
+        font-size: 1.6rem;
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 1rem 2rem rgba(0,0,0,0.2);
+    }
+
+    .btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,0.2);
+    }
+
+    .btn--white {
+        background-color: #fff;
+        color: #777;
+    }
+
+    .btn::after {
+        content: "";
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        border-radius: 100px;
+        position: absolute;
+        top: 0;
+        left:0;
+        z-index: -1;
+        transition: all .4s;
+    }
+
+    .btn--white::after {
+        background-color: #fff;
+    }
+
+    .btn:hover::after {
+        transform: scaleX(1.5) scaleY(1.6);
+        opacity: 0;
+    }
+
+    .btn--animated {
+        animation: moveInBottom .5s ease-out .75s;
+        animation-fill-mode: backwards;
+    }
+    ```
