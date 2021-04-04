@@ -3,7 +3,7 @@ Finished on
 
 Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.udemy.com/course/advanced-css-and-sass/)
 ---
-1. [Natours Project - Steup and First Steps](#Natours-Project---Steup-and-First-Steps)
+1. [Natours Project - Setup and First Steps (Part 1)](#Natours-Project---Setup-and-First-Steps-(Part-1))
     1. [Project Overview](#Project-Overview)
     1. [Building the Header - Part 1](#Building-the-Header---Part-1)
     1. [Building the Header - Part 2](#Building-the-Header---Part-2)
@@ -21,9 +21,109 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         1. [Box Types](#Box-Types)
     1. [CSS Architecture, Components and BEM](#CSS-Architecture,-Components-and-BEM)
     1. [Implementing BEM in the Natours project](#Implementing-BEM-in-the-Natours-project)
+1. [Introduction to Sass and NPM](#Introduction-to-Sass-and-NPM)
+    1. [What is Sass](#What-is-Sass)
+    1. [First Steps with Sass: Variables and Nesting](#First-Steps-with-Sass:-Variables-and-Nesting)
+    1. [First Steps with Sass: Mixins, Extends, and Functions](#First-Steps-with-Sass:-Mixins,-Extends,-and-Functions)
+1. [Natours Project - Using Advanced CSS and Sass (Part 2)](#Natours-Project---Using-Advanced-CSS-and-Sass-(Part-2))
+    1. [Converting Our CSS Code to Sass: Variables and Nesting](#Converting-Our-CSS-Code-to-Sass:-Variables-and-Nesting)
+    1. [Implementing the 7-1 CSS Architecture with Sass](#Implementing-the-7-1-CSS-Architecture-with-Sass)
+    1. [Review: Basic Principles of Responsive Design and Layout Types](#Review:-Basic-Principles-of-Responsive-Design-and-Layout-Types)
+    1. [Building a Custom Grid with Floats](#Building-a-Custom-Grid-with-Floats)
+    1. [Building the About Section - Part 1](#Building-the-About-Section---Part-1)
+    1. [Building the About Section - Part 2](#Building-the-About-Section---Part-2)
+    1. [Building the About Section - Part 3](#Building-the-About-Section---Part-3)
+    1. [Building the Features Section](#Building-the-Features-Section)
+    1. [Building the Tours Section - Part 1](#Building-the-Tours-Section---Part-1)
+    1. [Building the Tours Section - Part 2](#Building-the-Tours-Section---Part-2)
+    1. [Building the Tours Section - Part 3](#Building-the-Tours-Section---Part-3)
+    1. [Building The Stories Section - Part 1](#Building-The-Stories-Section---Part-1)
+    1. [Building The Stories Section - Part 2](#Building-The-Stories-Section---Part-2)
+    1. [Building The Stories Section - Part 3](#Building-The-Stories-Section---Part-3)
+    1. [Building the Booking Section - Part 1](#Building-the-Booking-Section---Part-1)
+    1. [Building the Booking Section - Part 2](#Building-the-Booking-Section---Part-2)
+    1. [Building the Booking Section - Part 3](#Building-the-Booking-Section---Part-3)
+    1. [Building the Footer](#Building-the-Footer)
+    1. [Building the Navigation - Part 1](#Building-the-Navigation---Part-1)
+    1. [Building the Navigation - Part 2](#Building-the-Navigation---Part-2)
+    1. [Building the Navigation - Part 3](#Building-the-Navigation---Part-3)
+    1. [Building a Pure CSS Popup - Part 1](#Building-a-Pure-CSS-Popup---Part-1)
+    1. [Building a Pure CSS Popup - Part 2](#Building-a-Pure-CSS-Popup---Part-2)
+1. [Natours Project - Advanced Responsive Design (Part 3)](#Natours-Project---Advanced-Responsive-Design-(Part-3))
+    1. [Mobile-First vs Desktop-First and Berakpoints](#Mobile-First-vs-Desktop-First-and-Berakpoints)
+    1. [Let's Use the Power of Sass Mixins to Write Media Queries](#Let's-Use-the-Power-of-Sass-Mixins-to-Write-Media-Queries)
+    1. [Writing Media Queries - Base, Typography and Layout](#Writing-Media-Queries---Base,-Typography-and-Layout)
+    1. [Writing Media Queries - Layout, About and Features Sections](#Writing-Media-Queries---Layout,-About-and-Features-Sections)
+    1. [Writing Media Queries - Tours, Stories, and Booking Sections](#Writing-Media-Queries---Tours,-Stories,-and-Booking-Sections)
+    1. [An Overview of Responsive Images](#An-Overview-of-Responsive-Images)
+    1. [Responsive Images in HTML - Art Direction and Density   Switching](#Responsive-Images-in-HTML---Art-Direction-and-Density-Switching)
+    1. [Responsive Images in HTML - Desity and Resolution Switching](#Responsive-Images-in-HTML---Desity-and-Resolution-Switching)
+    1. [Responsive Images in CSS](#Responsive-Images-in-CSS)
+    1. [Testing for Browsers Support with @supports](#Testing-for-Browsers-Support-with-@supports)
+    1. [Setting up a Simple Build Process with NPM Scripts](#Setting-up-a-Simple-Build-Process-with-NPM-Scripts)
+    1. [Wrapping up the Natours Project: Final Considerations](#Wrapping-up-the-Natours-Project:-Final-Considerations)
+1. [Trillo Project - Master Flexbox](#Trillo-Project---Master-Flexbox)
+    1. [Why Flexbox: An Overview of the Philosophy Behind Flexbox](#Why-Flexbox:-An-Overview-of-the-Philosophy-Behind-Flexbox)
+    1. [A Basic Intro to Flexbox: The Flex Container](#A-Basic-Intro-to-Flexbox:-The-Flex-Container)
+    1. [A Basic Intro to Flexbox: Flex Items](#A-Basic-Intro-to-Flexbox:-Flex-Items)
+    1. [A Basic Intro to Flexbox: Adding More Flex Items](#A-Basic-Intro-to-Flexbox:-Adding-More-Flex-Items)
+    1. [Project Overview](#Project-Overview)
+    1. [Defining Project Settings and Custom Properties](#Defining-Project-Settings-and-Custom-Properties)
+    1. [Building the Overall Layout](#Building-the-Overall-Layout)
+    1. [Building the Header - Part 1](#Building-the-Header---Part-1)
+    1. [Building the Header - Part 2](#Building-the-Header---Part-2)
+    1. [Building the Header - Part 3](#Building-the-Header---Part-3)
+    1. [Building the Navigation - Part 1](#Building-the-Navigation---Part-1)
+    1. [Building the Navigation - Part 2](#Building-the-Navigation---Part-2)
+    1. [Building the Hotel Overview - Part 1](#Building-the-Hotel-Overview---Part-1)
+    1. [Building the Hotel Overview - Part 2](#Building-the-Hotel-Overview---Part-2)
+    1. [Building the Description Section - Part 1](#Building-the-Description-Section---Part-1)
+    1. [Building the Description Section - Part 2](#Building-the-Description-Section---Part-2)
+    1. [Building User Reviews Section](#Building-User-Reviews-Section)
+    1. [Building the CTA Section](#Building-the-CTA-Section)
+    1. [Writing Media Queries - Part 1](#Writing-Media-Queries---Part-1)
+    1. [Writing Media Queries - Part 2](#Writing-Media-Queries---Part-2)
+    1. [Wrapping up the Trillo Project: Final Considerations](#Wrapping-up-the-Trillo-Project:-Final-Considerations)
+1. [A Quick Introduction to CSS Grid Layouts](A-Quick-Introduction-to-CSS-Grid-Layouts)
+    1. [Why CSS Grid: A Whole new Mindset](#Why-CSS-Grid:-A-Whole-new-Mindset)
+    1. [Quick Setup for This Section](#Quick-Setup-for-This-Section)
+    1. [Creating Our First Grid](#Creating-Our-First-Grid)
+    1. [Getting Familiar with the fr unit](#Getting-Familiar-with-the-fr-unit)
+    1. [Positioning Grid Items](#Positioning-Grid-Items)
+    1. [Spanning Grid Items](#Spanning-Grid-Items)
+    1. [Grid Challenge](#Grid-Challenge)
+    1. [Grid Challenge: A Basic Solution](#Grid-Challenge:-A-Basic-Solution)
+    1. [Naming Grid Lines](#Naming-Grid-Lines)
+    1. [Naming Grid Areas](#Naming-Grid-Areas)
+    1. [Implicit Grid vs. Explicit Grids](#Implicit-Grid-vs.-Explicit-Grids)
+    1. [Aligning Grid Items](#Aligning-Grid-Items)
+    1. [Aligning Tracks](#Aligning-Tracks)
+    1. [Using min-content, max-content and the minmax() function](#Using-min-content,-max-content-and-the-minmax()-function)
+    1. [Responsive Layouts with auto-fit and auto-fill](#Responsive-Layouts-with-auto-fit-and-auto-fill)
+1. [Nexter Project - Master CSS Grid Layouts](#Nexter-Project---Master-CSS-Grid-Layouts)
+    1. [Project Overview and Setup](#Project-Overview-and-Setup)
+    1. [Building the Overall Layout - Part 1](#Building-the-Overall-Layout---Part-1)
+    1. [Building the Overall Layout - Part 2](#Building-the-Overall-Layout---Part-2)
+    1. [Building the Features Section - Part 1](#Building-the-Features-Section---Part-1)
+    1. [Building the Features Section - Part 2](#Building-the-Features-Section---Part-2)
+    1. [Building the Story Section - Part 1](#Building-the-Story-Section---Part-1)
+    1. [Building the Story Section - Part 2](#Building-the-Story-Section---Part-2)
+    1. [Building the Homes Section - Part 1](#Building-the-Homes-Section---Part-1)
+    1. [Building the Homes Section - Part 2](#Building-the-Homes-Section---Part-2)
+    1. [Building the Gallery - Part 1](#Building-the-Gallery---Part-1)
+    1. [Building the Gallery - Part 2](#Building-the-Gallery---Part-2)
+    1. [Building the Footer](#Building-the-Footer)
+    1. [Building the Sidebar](#Building-the-Sidebar)
+    1. [Building the Header - Part 1](#Building-the-Header---Part-1)
+    1. [Building the Header - Part 2](#Building-the-Header---Part-2)
+    1. [Building the Realtors Section](#Building-the-Realtors-Section)
+    1. [Writing Media Queries - Part 1](#Writing-Media-Queries---Part-1)
+    1. [Writing Media Queries - Part 2](#Writing-Media-Queries---Part-2)
+    1. [Browser Supprot for CSS Grid](#Browser-Supprot-for-CSS-Grid)
+    1. [Warpping up the NExter Project: Final Considerations](#Warpping-up-the-NExter-Project:-Final-Considerations)
 
 ---
-#-Natours Project - Setup and First Steps
+# Natours Project - Setup and First Steps (Part 1)
 ## Project Overview
 1. Put the link of final builtup here after finishing practicing
 1. Use pure CSS without JavaScript to create the following effects
@@ -789,3 +889,1219 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         animation-fill-mode: backwards;
     }
     ```
+
+
+
+# Introduction to Sass and NPM
+## What is Sass
+1. Sass is a CSS preprocessor, an extension of CSS that adds power and elegance to the basic language. We can use Sass compiler to turn SASS source code into compiled CSS Code. 
+1. Sass provide the following featuers to make it more useful. 
+    1. Variables - for reusable values such as colors, font-sizes, spacing, etc.
+    1. Nesting - to nest selectors inside of one another, allowing us to write less code.
+    1. Operators -  for mathematical operations right inside of CSS.
+    1. Partials and imports - to write CSS in different files and importing them all into one single file. 
+    1. Mixins - to write reusable pieces of CSS code
+    1. Functions - similar to mixins, with the difference that they produce a value that can be used 
+    1. Extends - to make different seelctors inherit declarations that are common to all of them
+    1. Control directives - for writing complex code using conditional and loops (not covered in this course)
+1. Sass and Scss syntax
+    1. Sass
+    ```sass
+    .navigation
+        list-style: none
+        float: left
+        & li
+        display: inline-block
+        margin-left: 30px
+    ```
+    1. Scss
+    ```scss
+    .navigation {
+        list-style: none;
+        float: left;
+
+        & li {
+            display: inline-block;
+            margin-left: 30px;
+        }
+    }
+    ```
+
+## First Steps with Sass: Variables and Nesting
+1. We can use [CodePen](https://codepen.io/) environment without installing the required packages locally.
+1. We can check this practice at [https://codepen.io/allenlin90/pen/VwPbzaG](https://codepen.io/allenlin90/pen/VwPbzaG)
+1. In Scss, an ampersand `&` represents as the current selector when it's nested in the selector, so we can use it chain futher as more specific selector. 
+1. When an element using `float`, its parent element will lose its height if all the child elements are floated. Therefore, we can use pseudo `::after` to create an empty content to fix the issue. In this case, we have both `navigation` and `buttons` classes floated, so the `nav` element loses its height.
+    ```css
+    nav {
+        margin: 30px;
+        background-color: #f9ed69;
+    }
+    nav::after { /* fix missing height of float elements */
+        content: "";
+        clear: both;
+        display: table;
+    }
+    ```
+1. HTML 
+    ```html
+    <nav class="clearfix">
+        <ul class="navigation">
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Contact</a></li>  
+        </ul>
+        <div class="buttons">
+            <a href="#" class="btn-main">Sign up</a>
+            <a href="#" class="btn-hot">Get a quote</a>
+        </div>
+    </nav>
+    ```
+1. Scss
+    ```scss
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    $color-primary: #f9ed69; // yellow color
+    $color-secondary: #f08a5d; // orange
+    $color-tertiary: #b83b5e; // pink
+    $color-text-dark: #333;
+    $color-text-light: #eee;
+
+    $width-button: 150px;
+
+    nav {
+        margin: 30px;
+        background-color: $color-primary;
+        
+        &::after { // this is to fix the issues from floating elements 
+            content: "";
+            clear: both;
+            display: table;
+        }
+    }
+
+    .navigation {
+        list-style: none;
+        float: left;
+        
+        li {
+            display: inline-block;
+            margin-left: 30px; 
+            &:first-child {
+                margin: 0;
+            }
+            
+            a:link {
+                text-decoration: none;
+                text-transform: uppercase;
+                color: $color-text-dark;
+            }
+        }
+    }
+
+    .buttons {
+        float: right;
+    }
+
+    .btn-main:link,
+    .btn-hot:link {
+        padding: 10px;
+        display: inline-block;
+        text-align: center;
+        border-radius: 100px;
+        text-decoration: none;
+        text-transform: uppercase;
+        width: $width-button;
+        color: $color-text-light;
+    }
+
+    .btn-main {
+        &:link {
+            background-color: $color-secondary;
+        }
+        
+        &:hover {
+            background-color: darken($color-secondary, 15%);
+        }
+    }
+
+    .btn-hot {
+        &:link {
+            background-color: $color-tertiary;
+        }
+        
+        &:hover {
+            background-color: lighten($color-tertiary, 10%);
+        }
+    }
+    ```
+1. Compiled CSS
+    ```css
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    nav {
+        margin: 30px;
+        background-color: #f9ed69;
+    }
+    nav::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    .navigation {
+        list-style: none;
+        float: left;
+    }
+    .navigation li {
+        display: inline-block;
+        margin-left: 30px;
+    }
+    .navigation li:first-child {
+        margin: 0;
+    }
+    .navigation li a:link {
+        text-decoration: none;
+        text-transform: uppercase;
+        color: #333;
+    }
+
+    .buttons {
+        float: right;
+    }
+
+    .btn-main:link,
+    .btn-hot:link {
+        padding: 10px;
+        display: inline-block;
+        text-align: center;
+        border-radius: 100px;
+        text-decoration: none;
+        text-transform: uppercase;
+        width: 150px;
+        color: #eee;
+    }
+
+    .btn-main:link {
+        background-color: #f08a5d;
+    }
+    .btn-main:hover {
+        background-color: #ea5717;
+    }
+
+    .btn-hot:link {
+        background-color: #b83b5e;
+    }
+    .btn-hot:hover {
+        background-color: #cb5b7b;
+    }
+    ```
+
+## First Steps with Sass: Mixins, Extends, and Functions
+1. Mixins are chunks of code that can be reused in different selectors. For example, we have to fix floating issues when to get the height of the element back. 
+    ```scss
+    @mixin clearfix {
+        &::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    }
+
+    nav {
+        @include clearfix;
+    }
+    ```
+1. We can pass arguments to `mixin` as functions. For example, we decorate anchor tags with similar properties such as taking off underline text decoration and transform text to uppercase. However, the text color should be changed accordingly to either light or dark color.
+    ```scss
+    @mixin clearfix {
+        &::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    }
+
+    @mixin style-link-text($col) {
+        text-decoration: none;
+        text-transform: uppercase;
+        color: $col;
+    }
+
+    .navigation {
+        list-style: none;
+        float: left;
+        
+        li {
+            display: inline-block;
+            margin-left: 30px; 
+            &:first-child {
+                margin: 0;
+            }
+            
+            a:link {
+                @include style-link-text($color-text-dark);
+            }
+        }
+    }
+
+    .btn-main:link,
+    .btn-hot:link {
+        padding: 10px;
+        display: inline-block;
+        text-align: center;
+        border-radius: 100px;
+        width: $width-button;
+        @include style-link-text($color-text-light);
+    }
+    ```
+1. Besides `mixin`, we can use `function` to do calculation on the given arguments. Note that the function can return only the calculated number, so we need to pass units to it to enable the property. 
+    ```scss
+    @function divide($a, $b) {
+        @return $a / $b;
+    }
+
+    nav {
+        margin: divide(60, 2) * 1px; // 30px
+        background-color: $color-primary;
+        
+        @include clearfix;
+    }
+    ```
+1. For common styling that shared by multiple selectors, we can use `extend` instead of `mixin`. `extend` and `mixin` work simialr but in a totally different way. 
+1. `mixin` is to add certain properties and values to a given selector, while `extend` is to create a duplicated  selector from the given one and give it the properties and values from the defined `extend`.
+    ```scss
+    // Scss
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    $color-primary: #f9ed69; // yellow color
+    $color-secondary: #f08a5d; // orange
+    $color-tertiary: #b83b5e; // pink
+    $color-text-dark: #333;
+    $color-text-light: #eee;
+
+    $width-button: 150px;
+
+    @mixin clearfix {
+        &::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    }
+
+    @mixin style-link-text($col) {
+        text-decoration: none;
+        text-transform: uppercase;
+        color: $col;
+    }
+
+    @function divide($a, $b) {
+        @return $a / $b;
+    }
+
+    nav {
+        margin: divide(60, 2) * 1px; // 30px
+        background-color: $color-primary;
+        
+        @include clearfix;
+    }
+
+    .navigation {
+        list-style: none;
+        float: left;
+        
+        li {
+            display: inline-block;
+            margin-left: 30px; 
+            &:first-child {
+                margin: 0;
+            }
+            
+            a:link {
+                @include style-link-text($color-text-dark);
+            }
+        }
+    }
+
+    .buttons {
+        float: right;
+    }
+
+    %btn-placeholder {
+        padding: 10px;
+        display: inline-block;
+        text-align: center;
+        border-radius: 100px;
+        width: $width-button;
+        @include style-link-text($color-text-light);
+    }
+
+    .btn-main {
+        &:link {
+            @extend %btn-placeholder;
+            background-color: $color-secondary;
+        }
+        
+        &:hover {
+            background-color: darken($color-secondary, 15%);
+        }
+    }
+
+    .btn-hot {
+        &:link {
+            @extend %btn-placeholder;
+            background-color: $color-tertiary;
+        }
+        
+        &:hover {
+            background-color: lighten($color-tertiary, 10%);
+        }
+    }
+    ```
+1. Compiled CSS
+    ```css
+    /* compiled CSS */
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    nav {
+        margin: 30px;
+        background-color: #f9ed69;
+    }
+    nav::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    .navigation {
+        list-style: none;
+        float: left;
+    }
+    .navigation li {
+        display: inline-block;
+        margin-left: 30px;
+    }
+    .navigation li:first-child {
+        margin: 0;
+    }
+    .navigation li a:link {
+        text-decoration: none;
+        text-transform: uppercase;
+        color: #333;
+    }
+
+    .buttons {
+        float: right;
+    }
+
+    .btn-hot:link, .btn-main:link {
+        padding: 10px;
+        display: inline-block;
+        text-align: center;
+        border-radius: 100px;
+        width: 150px;
+        text-decoration: none;
+        text-transform: uppercase;
+        color: #eee;
+    }
+
+    .btn-main:link {
+        background-color: #f08a5d;
+    }
+    .btn-main:hover {
+        background-color: #ea5717;
+    }
+
+    .btn-hot:link {
+        background-color: #b83b5e;
+    }
+    .btn-hot:hover {
+        background-color: #cb5b7b;
+    }
+    ```
+
+## NPM Packages: Let's Install Sass Locally
+1. The section for command line is skipped.
+1. The only NPM package we need at this moment is `node-sass`. Besides, this is a developing tool to compile the Scss file into regular CSS file.
+1. In package.json, we can change the script to `"compile:sass": "node-sass sass/main.scss css/style.css -w"`. This will enable the npm package to keep "watching" and apply when the file changes.
+    ```json
+    {
+        "name": "natours",
+        "version": "1.0.0",
+        "description": "",
+        "main": "index.js",
+        "scripts": {
+            "compile:sass": "node-sass sass/main.scss css/style.css -w"
+        },
+        "keywords": [],
+        "author": "",
+        "license": "ISC",
+        "devDependencies": {
+            "node-sass": "^5.0.0"
+        }
+    }
+    ```
+1. However, there's another way that we can use 2 extensions from VSCode editor which can hot reload the webpage when there's any changes to the file.
+    1. Live Server - [https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+    1. Live Sass - [https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass)
+    1. The solutions are suggested in the Q&A of this section [28](https://www.udemy.com/course/advanced-css-and-sass/learn/lecture/8274464#questions/5766057)
+
+
+
+# Natours Project - Using Advanced CSS and Sass (Part 2)
+## Converting Our CSS Code to Sass: Variables and Nesting
+1. In this section, we just rewrite the CSS into Scss syntax and use variables
+    ```scss
+    $color-primary: #55c57a;
+    $color-primary-light: #7ed56f;
+    $color-primary-dark: #28b485;
+
+    $color-grey-dark: #777;
+    $color-white: #fff;
+    $color-black: #000;
+
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: inherit;
+    }
+
+    html {
+        font-size: 62.5%;
+    }
+
+    body {
+        font-family: "Lato", sans-serif;
+        font-weight: 400;
+        /* font-size: 16px; */
+        line-height: 1.7;
+        color: $color-grey-dark;
+        padding: 3rem;
+
+        box-sizing: border-box;
+    }
+
+    .header {
+        height: 95vh;
+        background-image: linear-gradient(
+            to right bottom,
+            rgba($color-primary-light, 0.8), 
+            rgba($color-primary-dark, 0.8)), 
+            url(../img/hero.jpg);
+        background-size: cover;
+        background-position: top;
+        position: relative;
+        
+        clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+
+        &__logo-box {
+            position: absolute;
+        top: 4rem;
+        left: 4rem;
+        }
+        
+        &__logo {
+            height: 3.5rem;
+        }
+        
+        &__logo:hover {
+            animation: moveInRight 1s ease-out;
+        }
+        
+        &__text-box {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    }
+        
+    .heading-primary {
+        color: $color-white;
+        text-transform: uppercase;
+
+        backface-visibility: hidden;
+        margin-bottom: 6rem;
+
+        &--main {
+            display: block;
+            font-size: 6rem;
+            font-weight: 400;
+            letter-spacing: 3.5rem;
+
+            animation-name: moveInLeft;
+            animation-duration: 1s;
+            animation-timing-function: ease-out;
+            
+            /* 
+            animation-iteration-count: 3; 
+            animation-delay: 1s; 
+            */
+        }
+
+        &--sub {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 1.74rem;
+
+            animation: moveInRight 1s ease-out;
+        }
+    }
+
+    @keyframes moveInLeft {
+        0% {
+            opacity: 0;
+            transform: translateX(-10rem);
+        }
+
+        80% {
+            opacity: 1;
+            transform: translateX(1rem);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes moveInRight {
+        0% {
+            opacity: 0;
+            transform: translateX(10rem);
+        }
+
+        80% {
+            opacity: 1;
+            transform: translateX(-1rem);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes moveInBottom {
+        0% {
+            opacity: 0;
+            transform: translateY(3rem);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    .btn {
+        &:link,
+        &:visited {
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 1.5rem 4rem;
+            display: inline-block;
+            border-radius: 10rem;
+            transition: all .2s;
+            position: relative;
+            font-size: 1.6rem;
+        }
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 1rem 2rem rgba($color-black, 0.2);
+
+            &::after {
+                transform: scaleX(1.5) scaleY(1.6);
+                opacity: 0;
+            }
+        }
+
+        &:active {
+            transform: translateY(-1px);
+            box-shadow: 0 .5rem 1rem rgba($color-black, 0.2);
+        }
+
+        &--white {
+            background-color: $color-white;
+            color: $color-grey-dark;
+
+            &::after {
+                background-color: $color-white;
+            }
+        }
+
+        &::after {
+            content: "";
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            border-radius: 100px;
+            position: absolute;
+            top: 0;
+            left:0;
+            z-index: -1;
+            transition: all .4s;
+        }    
+
+        &--animated {
+            animation: moveInBottom .5s ease-out .75s;
+            animation-fill-mode: backwards;
+        }
+    }
+    ```
+
+## Implementing the 7-1 CSS Architecture with Sass
+1. We separate the code into different files according to its purpose. In this case, we follow 7-1 architecture guideline to manage the directories and files.
+    ```scss
+    // sass/main.scss
+    @import "abstracts/functions";
+    @import "abstracts/mixins";
+    @import "abstracts/variables";
+
+    @import "base/animations";
+    @import "base/base";
+    @import "base/typography";
+    @import "base/utilities";
+
+    @import "components/buttons";
+
+    @import "layout/header";
+
+    @import "pages/home";
+    ```
+
+## Review: Basic Principles of Responsive Design and Layout Types
+1. Fluid Grids and Layouts - To allow content to easily adapt to the current viewport width used to browser the website. Uses `%` rather than `px` fort all layout-related lengths.
+1. Flexible/Responsive Images - Images behave differently than text content, and so we need to ensure that they also adpat nicely to the current viewport.
+1. Media Queries - To change styles on certain viewport widths (breakpoints), allowing us to create different version of our website for different widths.
+1. Layout Types
+    1. Float Layouts (1st project in this course, Natours)
+    1. Flexbox (2nd project in this course, Trillo)
+    1. CSS Grid (3rd project in this course, Nexter)
+
+## Building a Custom Grid with Floats
+1. Learning targets in this lecture
+    1. How to architect and build a simple grid system
+    1. How the attribute selectors works
+    1. How the `:not` pseudo-class works
+    1. How `calc()` works, and what's the difference between `calc()` and simple Sass operations
+1. A grid is 2-dimentional system that each element has its own width and height that covers different spans of rows and columns.
+1. We firstly prepare the Grid System in HTML. Our custom grid system has 4 columns and each element should be place on the same row but may cross multiple columns.
+1. We'd like to have `margin-bottom` for all the elements except the last row in the grid. For this case, we can use `:not` selector select all the the other elements besides the given one. 
+1. Since all the `div` tags in the `.row` has class that starts with `col-`, we can use specific CSS selector to select only elements that has the specific attributes. In addition, we can use certain characters to have advanced selecting feature such as `^`, `~`, and `$` which is simialr to regular expression. We can check more info. for [CSS attribute selector](https://www.w3schools.com/css/css_attribute_selectors.asp). 
+1. [`calc()`](https://www.w3schools.com/cssref/func_calc.asp) is a special and powerful feature in CSS that we can calculate the numbers from different units. In addition, to use Sass variable in the expression, we should use ["Interpolation"](https://sass-lang.com/documentation/interpolation), `#{$sass_variable}`, which is similar to [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) in JavaScript.
+    ```html
+    <section class="grid-test">
+        <div class="row">
+            <div class="col-1-of-2">
+                Col 1 of 2
+            </div>
+            <div class="col-1-of-2">
+                Col 1 of 2
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-1-of-3">
+                Col 1 of 3
+            </div>
+            <div class="col-1-of-3">
+                Col 1 of 3
+            </div>
+            <div class="col-1-of-3">
+                Col 1 of 3
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-1-of-3">
+                Col 1 of 3
+            </div>
+            <div class="col-2-of-3">
+                Col 2 of 3
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-1-of-4">
+                Col 1 of 4
+            </div>
+            <div class="col-1-of-4">
+                Col 1 of 4
+            </div>
+            <div class="col-1-of-4">
+                Col 1 of 4
+            </div>
+            <div class="col-1-of-4">
+                Col 1 of 4
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-1-of-4">
+                Col 1 of 4
+            </div>
+            <div class="col-1-of-4">
+                Col 1 of 4
+            </div>
+            <div class="col-2-of-4">
+                Col 2 of 4
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-1-of-4">
+                Col 1 of 4
+            </div>
+            <div class="col-3-of-4">
+                Col 3 of 4
+            </div>
+        </div>
+    </section>
+    ```
+1. We put the clear float properties in `mixins` as this can be used for multiple places by different elements.
+    ```scss
+    // abstracts/_mixins.scss
+    @mixin clearfix {
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+    ```
+1. We can the variables for with with the colors in `_variables.scss`.
+    ```scss
+    // abstracts/_variables.scss
+    // COLORS
+    $color-primary: #55c57a;
+    $color-primary-light: #7ed56f;
+    $color-primary-dark: #28b485;
+
+    $color-grey-dark: #777;
+    $color-white: #fff;
+    $color-black: #000;
+
+    // GRID
+    $grid-width: 114rem;
+    $gutter-vertical: 8rem;
+    $gutter-horizontal: 6rem;
+    ```
+1. Scss
+    ```scss
+    // layout/_grid.scss
+    .row {
+        max-width: $grid-width;
+        background-color: #eee;
+        margin: 0 auto;
+
+        // not pseudo selector
+        &:not(:last-child) {
+            margin-bottom: $gutter-vertical;
+        }
+
+        @include clearfix;
+
+        // attriute selector to select class name starts with 'col-'
+        [class^="col-"] {
+            background-color: orangered;
+            float: left;
+
+            &:not(:last-child) {
+                margin-right: $gutter-horizontal;
+            }
+        }
+
+        .col-1-of-2 {
+            width: calc((100% - #{$gutter-horizontal})/2);      
+        }
+
+        .col-1-of-3 {
+            width: calc((100% - 2 * #{$gutter-horizontal}) / 3);
+        }
+
+        .col-2-of-3 {
+            width: calc(2 * ((100% - 2 * #{$gutter-horizontal}) / 3) + #{$gutter-horizontal} );
+        }
+
+        .col-1-of-4 {
+            width: calc((100% - 3 * #{$gutter-horizontal}) / 4);
+        }
+
+        .col-2-of-4 {
+            width: calc(2 * ((100% - 3 * #{$gutter-horizontal}) / 4) + #{$gutter-horizontal} );
+        }
+
+        .col-3-of-4 {
+            width: calc(3 * ((100% - 3 * #{$gutter-horizontal}) / 4) + 2 * #{$gutter-horizontal} );
+        }
+    }
+    ```
+    <img src="images/34-custom_4_col_grid_system.png">
+
+## Building the About Section - Part 1
+1. Learning targets
+    1. Thinking about components
+    1. How and why to use utility classes
+    1. How to use the `background-clip` property
+    1. How to `transform` multiple properties simultaneously
+    1. How to use the outline-offset property together with `outline`
+    1. How to style elements that are NOT hovered while others are
+1. We prepare HTML elements
+    ```html
+    <main>
+        <section class="section-about">
+            <div class="u-centered-text u-margin-bottom-8">
+                <h2 class="heading-secondary">
+                    Exciting tours for adventurous people
+                </h2>
+            </div>
+
+            <div class="row">
+                <div class="col-1-of-2">
+                    Text content
+                </div>
+                <div class="col-1-of-2">
+                    Image composition
+                </div>
+            </div>
+        </section>
+    </main>
+    ```
+1. We add one more variable `$color-grey-light-1: #f7f7f7`, which is very light grey color for the background.
+    ```scss
+    // abstracts/_variables.scss
+    $color-grey-light-1: #f7f7f7;
+    ```
+1. For the main elements in the home page, we put the code in `_home.scss` under `page` directory, as these properties are only used at the homepage. 
+    1. Use negative values on `margin-top` to lift the element up and fill the void left by the header polygon. The size to lift is according to the header element. In this case, the header height is 95vh, while the polygon is set at 75vh on the side. Therefore, we can have `-20vh` to lift the main element to fill the void area.
+    ```scss
+    // page/_home.scss
+    .section-about {
+        background-color: $color-grey-light-1;
+        padding: 25rem 0;
+        margin-top: -20vh;
+    }
+    ```
+1. We add effects on the heading text when the user hovers the cursor on it.
+    1. Use `background-image` with `linear-gradient` as in the `header` to create the gradient green color. 
+    1. Use `-webkit-background-clip` to have the background image (color) only applies on the text rather than the element of the text.
+    1. Change text color to `transparent`, so the gradient color can fill up the text.
+    1. Use `transition` for a smoother animation when the cursor hovers on the element. 
+    1. When the user hovers on the element. 
+        1. Use `skewX` and `skewY` to tilt the element on different direction and degree. 
+        1. Use `text-shadow` to have shadows as 3-dimentional effect on the element.
+    ```scss
+    // base/_typography.scss
+    .heading-secondary {
+        font-size: 3.5rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        display: inline-block;
+        background-image: linear-gradient(to right, $color-primary-light, $color-primary-dark);
+        -webkit-background-clip: text;
+        color: transparent;
+        letter-spacing: 2px;
+        transition: all .2s;
+
+        &:hover {
+            transform: skewY(2deg) skewX(15deg) scale(1.1);
+            text-shadow: .5rem 1rem 2rem rgba($color-black, .2);
+        }
+    }
+    ```
+1. As the element is an `inline-block`, we can use `text-align: center` on its parent element to center the element on the page. Note that there are multiple ways to center items in the block, such as `margin: 0 auto;` to create margin on the side of a `block` element.
+1. The header can be used in multiple components or elements. As we may require different margin bottom according to design and scanrios, we should modify the property on the header directly. Therefore, we can use utilities as to align the text that we can add margin bottom on the parent element. 
+    ```scss
+    // base/_utilities.scss
+    .u-centered-text {
+        text-align: center;
+    }
+
+    .u-margin-bottom-8 {
+        margin-bottom: 8rem;
+    }
+    ```
+    <img src="images/36-building_about_section_part1.png">
+
+## Building the About Section - Part 2
+1. We modify the section below the `h2` header in the about section. Besides images and icons, we can use [HTML symbols](https://www.w3schools.com/html/html_symbols.asp) directly for special characters such as an arrow &rarr; `&rarr;`.
+    ```html
+    <div class="row">
+        <div class="col-1-of-2">
+            <h3 class="heading-tertiary u-margin-bottom-small">You're going to fall in love with nature</h3>
+            <p class="paragraph">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Non neque ut, id aliquam autem a
+                deserunt odit quia maiores perferendis esse dolores doloribus soluta commodi ipsum vitae sint
+                magnam cum.
+            </p>
+            <h3 class="heading-tertiary u-margin-bottom-small">Live adventures like you never have before</h3>
+            <p class="paragraph">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores quaerat aperiam tenetur,
+                optio placeat maiores!
+            </p>
+
+            <a href="#" class="btn-text">Learn more &rarr;</a>
+        </div>
+        <div class="col-1-of-2">
+            Image composition
+        </div>
+    </div>
+    ```
+    <img src="images/37-building_about_section_part2.png">
+1. Since we'd like all buttons and some elements set to have `1.6rem` (`16px`) as the fontsize, we can have another variable for the value. 
+    ```scss
+    // abstract/_variables.scss
+    $default-font-size: 1.6rem;
+    ```
+1. We add more elements to the about part, which has its own header and content
+    ```scss
+    // abstracts/_utilities.scss
+    .heading-tertiary {
+        font-size: $default-font-size;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .paragraph {
+        font-size: $default-font-size;
+
+        &:not(:last-child) {
+            margin-bottom: 3rem;
+        }
+    }
+    ```
+1. As we require different size of `margin-bottom`, we can modify them in the `_utilities` with different sizes and naming for different purpose. 
+    ```scss
+    .u-margin-bottom-small {margin-bottom: 1.5rem; }
+    .u-margin-bottom-mdium {margin-bottom: 4rem; }
+    .u-margin-bottom-big {margin-bottom: 8rem; }
+    ```
+1. We create another type of buttons which is a text link that has effects when the user hovers or clicks it.  
+    ```scss
+    .btn-text {
+        &:link,
+        &:visited {
+            font-size: $default-font-size;
+            color: $color-primary;
+            display: inline-block;
+            text-decoration: none;
+            border-bottom: 1px solid $color-primary;
+            padding: 3px;
+            transition: all .2s;
+        }
+
+        &:hover {
+            background-color: $color-primary;
+            color: $color-white;
+            box-shadow: 0 1rem 2rem rgba($color-black, .15);
+            transform: translateY(-2px);
+        }
+
+        &:active {
+            box-shadow: 0 .5rem 1rem rgba($color-black, .15);
+            transform: translateY(-2px);
+        }
+    }
+    ```
+    
+    <img src="images/37-text_button_effects.gif">
+
+## Building the About Section - Part 3
+1. This part is to create the image gallery on the right part of the "about" section in `main` tag. When the user hovers on any of the image, the image floats, zooms in, and gets green border.
+    ```html
+    <div class="col-1-of-2">
+        <div class="composition">
+            <img src="img/nat-1-large.jpg" alt="photo_1" class="composition__photo composition__photo--p1">
+            <img src="img/nat-2-large.jpg" alt="photo_2" class="composition__photo composition__photo--p2">
+            <img src="img/nat-3-large.jpg" alt="photo_3" class="composition__photo composition__photo--p3">
+        </div>
+    </div>
+    ```
+1. We use CSS to create interactive effects when the user hovers on any of the images of the composition.
+    1. Positioning elements
+        1. To have images scattered in the block, we can have them in `position: absolute`, while its parent element should be in `position: relative`.
+        1. When setting the position, we could use percentage rather than absolute values to allow the elements being responsive.
+    1. For `box-shadow`, usually we don't give value on the x-axis, so the first value is usually `0`.
+    1. Outline Property
+        1. In this case, to have gap between the border and the image inside, we can use `outline` rather than `border`. The `border` of an element is counted as part of the dimention of the element and is inside the margin of the element. On the other hand, `outline` is out of margin and could overlap the elements outside. The total width of the element is not affected by the `outline` of the element.
+        1. The have the gap between the image and the outline, we can use `outline-offset` to have the gap between the outline and element. 
+    1. We can select all the other elements when one of the image is triggered `:hover`, while others are not triggered to apply `scale(.95)`. This is a relatively complicated selector `.composition:hover composition__photo:not(:hover)`.
+    ```scss
+    // components/_compositions.scss
+    .composition {
+        position: relative; // to enable position: absolute
+
+        &__photo {
+            width: 55%;
+            box-shadow: 0 1.5rem 4rem rgba($color-black, .4);
+            border-radius: 2px;
+            position: absolute;
+            transition: all .2s;
+            outline-offset: 2rem; // to have gap between image and the green border
+
+            &--p1 {
+                left: 0; // on the edge of left side of the container
+                top: -2rem;
+            }
+
+            &--p2 {
+                right: 0; // on the edge of right side of the container
+                top: 2rem;
+            }
+
+            &--p3 {
+                left: 20%;
+                top: 10rem;
+            }
+
+            &:hover {
+                outline: 1.5rem solid $color-primary;
+                transform: scale(1.05);
+                box-shadow: 0 2.5rem 4rem rgba($color-black, .5);
+                z-index: 20;
+            }
+        }
+
+        &:hover &__photo:not(:hover) {
+            transform: scale(.95);
+        }
+        // .composition:hover composition__photo:not(:hover)
+    }
+    ```
+    <img src="images/39-image_composition.gif">
+
+## Building the Features Section
+1. Learning targets
+    1. How to include and use and icon font
+    1. Another way of creating "**skewed section**"
+    1. How and when to use the direct child selector
+
+## Building the Tours Section - Part 1
+
+## Building the Tours Section - Part 2
+
+## Building the Tours Section - Part 3
+
+## Building The Stories Section - Part 1
+
+## Building The Stories Section - Part 2
+
+## Building The Stories Section - Part 3
+
+## Building the Booking Section - Part 1
+
+## Building the Booking Section - Part 2
+
+## Building the Booking Section - Part 3
+
+## Building the Footer
+
+## Building the Navigation - Part 1
+
+## Building the Navigation - Part 2
+
+## Building the Navigation - Part 3
+
+## Building a Pure CSS Popup - Part 1
+
+## Building a Pure CSS Popup - Part 2
+
+
+
+# Natours Project - Advanced Responsive Design (Part 3)
+## Mobile-First vs Desktop-First and Berakpoints
+## Let's Use the Power of Sass Mixins to Write Media Queries
+## Writing Media Queries - Base, Typography and Layout
+## Writing Media Queries - Layout, About and Features Sections
+## Writing Media Queries - Tours, Stories, and Booking Sections
+## An Overview of Responsive Images
+## Responsive Images in HTML - Art Direction and Density Switching
+## Responsive Images in HTML - Desity and Resolution Switching
+## Responsive Images in CSS
+## Testing for Browsers Support with @supports
+## Setting up a Simple Build Process with NPM Scripts
+## Wrapping up the Natours Project: Final Considerations
+
+
+
+# Trillo Project - Master Flexbox
+## Why Flexbox: An Overview of the Philosophy Behind Flexbox
+## A Basic Intro to Flexbox: The Flex Container
+## A Basic Intro to Flexbox: Flex Items
+## A Basic Intro to Flexbox: Adding More Flex Items
+## Project Overview
+## Defining Project Settings and Custom Properties
+## Building the Overall Layout
+## Building the Header - Part 1
+## Building the Header - Part 2
+## Building the Header - Part 3
+## Building the Navigation - Part 1
+## Building the Navigation - Part 2
+## Building the Hotel Overview - Part 1
+## Building the Hotel Overview - Part 2
+## Building the Description Section - Part 1
+## Building the Description Section - Part 2
+## Building User Reviews Section
+## Building the CTA Section
+## Writing Media Queries - Part 1
+## Writing Media Queries - Part 2
+## Wrapping up the Trillo Project: Final Considerations
+
+
+
+# A Quick Introduction to CSS Grid Layouts
+## Why CSS Grid: A Whole new Mindset
+## Quick Setup for This Section
+## Creating Our First Grid
+## Getting Familiar with the fr unit
+## Positioning Grid Items
+## Spanning Grid Items
+## Grid Challenge
+## Grid Challenge: A Basic Solution
+## Naming Grid Lines
+## Naming Grid Areas
+## Implicit Grid vs. Explicit Grids
+## Aligning Grid Items
+## Aligning Tracks
+## Using min-content, max-content and the minmax() function
+## Responsive Layouts with auto-fit and auto-fill
+
+
+
+# Nexter Project - Master CSS Grid Layouts
+## Project Overview and Setup
+## Building the Overall Layout - Part 1
+## Building the Overall Layout - Part 2
+## Building the Features Section - Part 1
+## Building the Features Section - Part 2
+## Building the Story Section - Part 1
+## Building the Story Section - Part 2
+## Building the Homes Section - Part 1
+## Building the Homes Section - Part 2
+## Building the Gallery - Part 1
+## Building the Gallery - Part 2
+## Building the Footer
+## Building the Sidebar
+## Building the Header - Part 1
+## Building the Header - Part 2
+## Building the Realtors Section
+## Writing Media Queries - Part 1
+## Writing Media Queries - Part 2
+## Browser Supprot for CSS Grid
+## Warpping up the NExter Project: Final Considerations
