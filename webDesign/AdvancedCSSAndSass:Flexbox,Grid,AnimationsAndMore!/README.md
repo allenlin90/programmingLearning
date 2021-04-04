@@ -1991,6 +1991,105 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. How to include and use and icon font
     1. Another way of creating "**skewed section**"
     1. How and when to use the direct child selector
+1. We can download and install fonts from [Linea](https://linea.io/). In this case, we only need the following file and folder. We can put this file in the same folder in `css/` and rename the css file to `icon-font.css`. To use the icons, we can check the reference at `_basic/_ICONFONT/icons-reference.html`. 
+    1. `_basic/_ICONFONT/styles.css`
+    1. `_basic/_ICONFONT/font/`
+    ```html
+    <i class="icon-basic-world"></i>
+    ```
+1. HTML
+    ```html
+    <section class="section-features">
+        <div class="row">
+            <div class="col-1-of-4">
+                <div class="feature-box">
+                    <i class="feature-box__icon icon-basic-world"></i>
+                    <h3 class="heading-tertiary u-margin-bottom-small">Explore the world</h3>
+                    <p class="feature-box__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste,
+                        repellendus.</p>
+                </div>
+            </div>
+
+            <div class="col-1-of-4">
+                <div class="feature-box">
+                    <i class="feature-box__icon icon-basic-compass"></i>
+                    <h3 class="heading-tertiary u-margin-bottom-small">Meet nature</h3>
+                    <p class="feature-box__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste,
+                        repellendus.</p>
+                </div>
+            </div>
+
+            <div class="col-1-of-4">
+                <div class="feature-box">
+                    <i class="feature-box__icon icon-basic-map"></i>
+                    <h3 class="heading-tertiary u-margin-bottom-small">Find your way</h3>
+                    <p class="feature-box__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste,
+                        repellendus.</p>
+                </div>
+            </div>
+
+            <div class="col-1-of-4">
+                <div class="feature-box">
+                    <i class="feature-box__icon icon-basic-heart"></i>
+                    <h3 class="heading-tertiary u-margin-bottom-small">Live a healthier life</h3>
+                    <p class="feature-box__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste,
+                        repellendus.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    ```
+    <img src="images/39-tours_section.png">
+1. For the properties on page `_home.scss`.
+    1. Use `linear-gradient`
+    1. `skewY()` and compensate by the directly child. 
+    1. We use direct child selector `>` to have the direct child in `.section-features` which is `div.row` in this case. If we don't have direct selector and select all the child elements inside, the inner the layer will apply multiple times of the effect which can make the layout become funny.
+    1. We use universal selector `*` here as this could be any element in the section. 
+    ```scss
+    // pages/_home.scss
+    .section-features {
+        padding: 20rem 0;
+        background-image: linear-gradient(
+            to right bottom,
+            rgba($color-primary-light, 0.8), 
+            rgba($color-primary-dark, 0.8)), 
+            url(../img/nat-4.jpg);
+        background-size: cover;
+
+        transform: skewY(-7deg);
+
+        & > * {
+            transform: skewY(7deg);
+        }
+    }
+    ```
+1. For the properties on page `_feature-box.css`.
+    1. Use similar feature as for the title in `header` and "**about section**". We use `linear-gradient` to change the background color, turn the text color into `transparent`, and use `-webkit-background-clip` to change only the area right on the text itself.
+    1. Have `transform` property to "lift" the element when the user hovers on it. 
+    ```scss
+    // components/_feature-box.scss
+    .feature-box {
+        background-color: rgba($color-white, .8);
+        font-size: 1.5rem;
+        padding: 2.5rem;
+        text-align: center;
+        border-radius: 3px;
+        box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+        transition: transform .3s;
+
+        &__icon {
+            font-size: 6rem;
+            margin-bottom: .5rem;
+            background-image: linear-gradient(to right, $color-primary-light, $color-primary-dark);
+            color: transparent;
+            -webkit-background-clip: text;
+        }
+
+        &:hover {
+            transform: translateY(-1.5rem) scale(1.03);
+        }
+    }
+    ```
 
 ## Building the Tours Section - Part 1
 
