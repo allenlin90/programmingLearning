@@ -2490,7 +2490,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         }
     }
     ```
-    <img src="images/42-flipping_carsd_and_button.gif">
+    <img src="images/41-flipping_cards_and_button.gif">
 1. Final HTML
     ```html
     <main>
@@ -2960,8 +2960,244 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         ```
 
 ## Building The Stories Section - Part 1
+1. Learning targets
+    1. How to make text flow around shapes with `shape-outside` and `float`.
+    1. How to apply a `filter` to images
+    1. How to create a background video covering an entire section
+    1. How to use the `video` HTML element
+    1. How and when to use the `object-fit` property
+        ```html
+        <section class="section-stories">
+            <div class="u-center-text u-margin-bottom-huge">
+                <h2 class="heading-secondary">
+                    We make people genuienly happy
+                </h2>
+            </div>
+
+            <div class="row">
+                <div class="story">
+                    <figure class="story__shape">
+                        <img class="story__img" src="img/nat-8.jpg" alt="person_on_a_tour">
+                    </figure>
+                    <div class="story__text">
+                        <h3 class="heading__tertiary u-margin-bottom-small">I had best week ever with my family</h3>
+                        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam repellendus assumenda
+                            voluptas error quisquam reiciendis, pariatur laboriosam nostrum dolores ad quis impedit
+                            laudantium sapiente at praesentium cumque ipsa? Totam autem ratione, nemo incidunt eaque
+                            nesciunt!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        ```
+1. For the story section, we can simply use style it with light grey color.
+    ```scss
+    // page/_home.scss
+    .section-stories {
+        padding: 15rem 0;
+        background-color: $color-grey-light-1;    
+    }
+    ```
+1. [`shape-outside`](https://developer.mozilla.org/en-US/docs/Web/CSS/shape-outside) defines a shape—which may be non-rectangular—around which adjacent inline content should wrap. By default, inline content wraps around its margin box; shape-outside provides a way to customize this wrapping, making it possible to wrap text around complex objects rather than simple boxes.
+    <img src="images/42-shape-outline_without_shaped.png">
+1. `shape-outside` only works when the has `width` and `height` and has `float: left` or `float: right`. However, this only defines how the text around the element wrapping it rather than changing the shape into a figure.
+1. To change the shape of the element, we should use `clip-path` with `polygon()`, `circle()`, `ellipse()`, or `url()`.
+    <img src="images/42-shape-outline_shaped.png">
+1. When an element is "**floated**", it's best to use `transform: translate()` to move it rather than using `margin`. Besides, the shifted figure has overlayed on the padding on the left side, so we can add another 3rem space, which can be `padding-left: 9rem;` for the trick.
+    <img src="images/42-add_padding-left_9rem.png">
+1. We then can use `transform: skewX(12deg)` to skew the container of the review. Note that we used to use universal selector `*` to select the dierct child in the container to skew it back, so the contents can be normal. However, we can only use `transform` property once on an element.
+1. Since, we have applied `transform: translateX()` on `.story__shape` to shift it to the left.
+    ```scss
+    // component/_story.scss
+    .story {
+        width: 75%;
+        margin: 0 auto;
+        box-shadow: 0 3rem 6rem rgba($color-black, .1);
+        background-color: $color-white;
+        border-radius: 3px;
+        padding: 6rem;
+        padding-left: 9rem;
+        font-size: $default-font-size;
+        transform: skewX(-12deg);
+
+        /*
+        & > * { // this doesn't work on the image because the shape has used `transform: translateX()`
+            transform: skewX(12deg);
+        }
+        */
+
+        &__shape {
+            width: 15rem;
+            height: 15rem;
+            float: left;
+            // shape-outside only works if the element has width and height and float: left or float: right
+            -webkit-shape-outside: circle(50% at 50% 50%);
+            // shape-outside is only to make the element around to wrap the shape
+            shape-outside: circle(50% at 50% 50%);
+
+            // clip-path with circle or polygon can really shape the figure
+            -webkit-clip-path: circle(50% at 50% 50%);
+            clip-path: circle(50% at 50% 50%);
+            transform: translateX(-3rem) skewX(12deg); // have skewX() to skew the content back
+        }
+
+        &__img {
+            height: 100%;
+        }
+
+        &__text {
+            transform: skewX(12deg);
+        }
+    }
+    ```
+    <img src="images/42-final_result_of_section.png">
 
 ## Building The Stories Section - Part 2
+1. With [`figure`](https://www.w3schools.com/tags/tag_figure.asp) tag, we can have `figcaption` to add descriptive text to the figure.
+    ```html
+    <figure class="story__shape">
+        <img class="story__img" src="img/nat-8.jpg" alt="person_on_a_tour">
+        <figcaption class="story__caption">Mary Smith</figcaption>
+    </figure>
+    ```
+1. We start to style the caption for the figure. As the text is at the bottom of the `figure` by default, we can use `position: absolute` to center the element to the middle of its container.
+1. Since we'd like the text (name of the reviewer) floated up, we can set its `translate` on y-axis as `20%`, so it will be 20% further down the middle.
+1. We set its `opacity` to `0`, as to "**hide**" the text before the user hovers on.
+1. Set another selector to choose the caption when the whole `story` item is hovered. Note that we can't use `transform: translateY()` as it will set `translateX()` to default value which can cause unexpected result.
+1. To filter the image when hovers on the element, we can use `filter` property with `blur` and `brightness`.
+    ```scss
+    // component/_story.scss
+    .story {
+        &__caption {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 20%);
+            color: $color-white;
+            text-transform: uppercase;
+            font-size: 1.7rem;
+            text-align: center;
+            opacity: 0;
+            transition: all .5s;
+            backface-visibility: hidden; // prevent the glitch when the text floats up
+        }
+
+        &:hover &__caption {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+
+        &:hover &__img {
+            transform: translateX(-4rem) scale(1);
+            filter: blur(3px) brightness(80%);
+        }
+    }
+    ```
+    <img src="images/43-floated_figcaption_hover.png">
+1. Add text button at the bottom of the section.
+    ```html
+    <div class="row">
+        <div class="story">
+            <figure class="story__shape">
+                <img class="story__img" src="img/nat-8.jpg" alt="person_on_a_tour">
+                <figcaption class="story__caption">Mary Smith</figcaption>
+            </figure>
+            <div class="story__text">
+                <h3 class="heading__tertiary u-margin-bottom-small">I had best week ever with my family</h3>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam repellendus assumenda
+                    voluptas error quisquam reiciendis, pariatur laboriosam nostrum dolores ad quis impedit
+                    laudantium sapiente at praesentium cumque ipsa? Totam autem ratione, nemo incidunt eaque
+                    nesciunt!</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="story">
+            <figure class="story__shape">
+                <img class="story__img" src="img/nat-9.jpg" alt="person_on_a_tour">
+                <figcaption class="story__caption">Jack Wilson</figcaption>
+            </figure>
+            <div class="story__text">
+                <h3 class="heading__tertiary u-margin-bottom-small">WOW! My life is completely different now
+                </h3>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam repellendus assumenda
+                    voluptas error quisquam reiciendis, pariatur laboriosam nostrum dolores ad quis impedit
+                    laudantium sapiente at praesentium cumque ipsa? Totam autem ratione, nemo incidunt eaque
+                    nesciunt!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="u-center-text u-margin-top-big">
+        <a href="#" class="btn-text">Read all stories</a>
+    </div>
+    ```
+1. Scss
+    ```scss
+    .story {
+        width: 75%;
+        margin: 0 auto;
+        box-shadow: 0 3rem 6rem rgba($color-black, .1);
+        background-color: $color-white;
+        border-radius: 3px;
+        padding: 6rem;
+        padding-left: 9rem;
+        font-size: $default-font-size;
+        transform: skewX(-12deg);
+
+        &__shape {
+            width: 15rem;
+            height: 15rem;
+            float: left;
+            // shape-outside only works if the element has width and height and float: left or float: right
+            -webkit-shape-outside: circle(50% at 50% 50%);
+            // shape-outside is only to make the element around to wrap the shape
+            shape-outside: circle(50% at 50% 50%);
+
+            // clip-path with circle or polygon can really shape the figure
+            -webkit-clip-path: circle(50% at 50% 50%);
+            clip-path: circle(50% at 50% 50%);
+            transform: translateX(-3rem) skewX(12deg);
+            position: relative;
+        }
+
+        &__img {
+            height: 100%;
+            transform: translateX(-4rem) scale(1.4);
+            backface-visibility: hidden;
+            transition: all .5s;
+        }
+
+        &__text {
+            transform: skewX(12deg);
+        }
+
+        &__caption {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 20%);
+            color: $color-white;
+            text-transform: uppercase;
+            font-size: 1.7rem;
+            text-align: center;
+            opacity: 0;
+            transition: all .5s;
+            backface-visibility: hidden;
+        }
+
+        &:hover &__caption {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+
+        &:hover &__img {
+            transform: translateX(-4rem) scale(1);
+            filter: blur(3px) brightness(80%);
+        }
+    }
+    ```
+    <img src="images/43-stories_hover.gif">
 
 ## Building The Stories Section - Part 3
 
