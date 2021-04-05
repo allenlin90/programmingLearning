@@ -2098,7 +2098,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. How use the `backface-visibility` property
     1. Using background blend modes
     1. How and when to use `box-decoration-break`
-1. _home.scss
+1. The styling on the page `page/_home.scss`
     1. We firstly set up background color to the light grey and use negative value on `margin-top` to lift up the element to cover the void space of "**features**".
     ```scss
     // page/_home.scss
@@ -2108,7 +2108,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         margin-top: -10rem;
     }
     ```
-1. _card.scss
+1. The card component `components/_card.scss`
     1. `perspective` property
         1. We can use `transform: rotateY()` to flip the element against its y-axis. However, the default fliping is to flip into the monitor to the other side. Therefore, we can use [`perspective`](https://www.w3schools.com/cssref/css3_pr_perspective.asp) to change the behavior.
         1. Note that we should put the `perspective` property on the parent element, as only the child element will be affected. Besides, the value defines the distance between the element to the monitor (as to the user). In our case, we'd like it to be as far as it could, so the element can look like fliping itself on the same spot. 
@@ -2295,10 +2295,669 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
                 }
             }
             ```
+            <img src="images/39-flipping_card.gif">
 
 ## Building the Tours Section - Part 2
+1. The card is now flipping to the wrong side. Therefore, we can corret effect with negative value.
+    ```scss
+    // components/_card.scss
+    .card {
+        &:hover &__side--front {
+            transform: rotateY(-180deg);
+        }
+    }
+    ```
+1. We modify the HTML for the card comopnent. We firstly work on the front side of the card which has 3 sections, picture, header, and detail contents.
+    ```html
+    <div class="card">
+        <div class="card__side card__side--front">
+            <div class="card__picture card__picture--1">
+                &nbsp;
+            </div>
+            <div class="card__heading">
+                Heading
+            </div>
+            <div class="card_details">
+                Details
+            </div>
+        </div>
+        <div class="card__side card__side--back card__side--back-1">
+            BACK
+        </div>
+    </div>
+    ```
+1. Update `card` component
+    1. The card image
+        1. We then use `background-image` to import the image file and use `linear-gradient` to overlap it. Besides, we can use a modern feature [`background-blend-mode`](https://www.w3schools.com/cssref/pr_background-blend-mode.asp) which is only available in modern browsers. We use `screen` in this case, though it has several other options, such as `color`, `overlay`, `color-burn`, `color-dodge`, `saturation`, and `luminosity`. This property provide some feature that is only available in some professional program such as photoshop.
+        1. As the image is overlapping the card element the top corners doesn't have rounded corners from `border-radius`. Note that it's not obvious since we give only `3px` in this case. It will be more obvious when we change to `border-radius: 30px`. Therefore, we can use `overflow: hidden` to hide the image that overflows the container.
+        1. Use `clip-path: polygon()` to create a trapezoid shape like the one in the header. Note that this is a modern feature, so we need to use `-webkit-clip-path` to specify and ensure its workign in the supported browsers. 
+        ```scss
+        // component/_card.scss
+        .card {
+            &__side {
+                border-radius: 3px;
+                overflow: hidden;                
+            }
+
+            // FRONT SIDE STYLING
+            &__picture {
+                background-size: cover;
+                height: 23rem;
+                background-blend-mode: screen; // blend the linear-gradient color and the image
+                -webkit-clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+                clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+                
+                &--1 {
+                    background-image: linear-gradient(to right bottom, $color-secondary-light, $color-secondary-dark), url(../img/nat-5.jpg);
+                }
+
+                &--2 {
+                    background-image: url(../img/nat-5.jpg);
+                }
+
+                &--3 {
+                    background-image: url(../img/nat-5.jpg);
+                }
+            }
+        }
+        ```
+    1. The card heading
+        1. We firstly modify the header with semantic HTML tag. In this case, we change the `div` tag to `h4`.
+            ```html
+            <h4 class="card__heading">
+                <span class="card__heading--span card__heading--span--1">the sea explore</span>
+            </h4>
+            ```
+        1. We'd like the wording break into 2nd line, so we don't give width at `100%`. In this case, we give `70%`. Thought it's `75%` in the course, this property depends on the width of the computer screen. After testing, I found the suitable width for my laptop is at `70%`. 
+        1. Use `background-image: linear-gradient()` to have the gradient color background. Besides, we use `rgba()` here as to make the element transparent.
+        1. As to break the line of header into 2, we give some padding to expand the element. 
+        1. We then can use [`box-decoration-break`](https://www.w3schools.com/cssref/css3_pr_box-decoration-break.asp) to apply the CSS properties on the broken lines. Though the text is in the same `span` tag, it is considered 2 elements by using the property. 
+        1. The box-decoration-break property specifies how the background, padding, border, border-image, box-shadow, margin, and clip-path of an element is applied when the box for the element is fragmented.
+            ```scss
+            // components/_card.scss
+            .card {
+                &__heading {
+                    font-size: 2.8rem;
+                    font-weight: 300;
+                    text-transform: uppercase;
+                    text-align: right;
+                    color: $color-white;
+                    position: absolute;
+                    top: 12rem;
+                    right: 2rem;
+                    width: 70%;
+                }
+
+                &__heading--span {
+                    padding: 1rem 1.5rem;
+                    -webkit-box-decoration-break: clone;
+                    box-decoration-break: clone;
+                    &--1 {
+                        background-image: linear-gradient(to right bottom, 
+                        rgba($color-secondary-light, .85), 
+                        rgba($color-secondary-dark, .85));
+                    }
+                }
+            }
+            ```
+    1. The list in the card
+        1. We add the HTML elements. The list can be an unordered list. 
+            ```html
+            <div class="card__details">
+                <ul>
+                    <li>3 day tours</li>
+                    <li>Up to 30 people</li>
+                    <li>2 tour guides</li>
+                    <li>Sleep in cozy hotels</li>
+                    <li>Difficulty: easy</li>
+                </ul>
+            </div>
+            ```
+        1. Add another light grey in the variables
+            ```scss
+            // abstracts/_variables.scss
+            $color-grey-light-2: #eee;
+            ```
+        1. We can have the list narrowed by adding `padding: 3rem;`, set its width as `width: 80%;`, and use `margin: 0 auto;` to align it to the center of its container.
+        1. Use `list-style: none` to clear the decoration on the list.
+        1. We add `border-bottom` to each `li` in the list as the underline effect. However, we don't want the last item in the list has the effect, so we can use `not` pseudo selector to select all the other items except the last one.
+            ```scss
+            // components/_card.scss
+            .card {
+                &__details {
+                    padding: 3rem;
+
+                    ul {
+                        list-style: none;
+                        width: 80%;
+                        margin: 0 auto;
+
+                        li {
+                            text-align: center;
+                            font-size: 1.5rem;
+                            padding: 1rem;
+
+                            &:not(:last-child) {
+                                border-bottom: 1px solid $color-grey-light-2;
+                            }
+                        }
+                    }
+                }
+            }
+            ```
+            <img src="images/40-front_card.png">
 
 ## Building the Tours Section - Part 3
+1. This part is the final step that we will work on the back side of the card.
+    ```html
+    <div class="card__side card__side--back card__side--back-1">
+        <div class="card__cta">
+            <div class="card__price-box">
+                <p class="card__price-only">Only</p>
+                <p class="card__price-value">$297</p>
+            </div>
+            <a href="#" class="btn btn--white">Book now!</a>
+        </div>
+    </div>
+    ```
+1. We have the whole `.card__cta` element center in the middle of the backside of the card by using `position: absolute`, `top: 50%`, `left: 50%`, `transform(-50%, -50%)`, and `text-align: center`
+    ```scss
+    // components/_card.scss
+    .card {
+        // FRONT SIDE STYLING
+        &__cta {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            text-align: center;
+        }
+
+        &__price-box{
+            text-align: center;
+            color: $color-white;
+            margin-bottom: 8rem;
+        }
+
+        &__price-only {
+            font-size: 1.4rem;
+        }
+
+        &__price-value {
+            font-size: 6rem;
+            font-weight: 100;
+        }
+    }
+    ```
+    <img src="images/42-flipping_carsd_and_button.gif">
+1. Final HTML
+    ```html
+    <main>
+        <section class="section-about">
+            <div class="u-centered-text u-margin-bottom-huge">
+                <h2 class="heading-secondary">
+                    Exciting tours for adventurous people
+                </h2>
+            </div>
+
+            <div class="row">
+                <div class="col-1-of-2">
+                    <h3 class="heading-tertiary u-margin-bottom-small">You're going to fall in love with nature</h3>
+                    <p class="paragraph">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Non neque ut, id aliquam autem a
+                        deserunt odit quia maiores perferendis esse dolores doloribus soluta commodi ipsum vitae sint
+                        magnam cum.
+                    </p>
+                    <h3 class="heading-tertiary u-margin-bottom-small">Live adventures like you never have before</h3>
+                    <p class="paragraph">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores quaerat aperiam tenetur,
+                        optio placeat maiores!
+                    </p>
+
+                    <a href="#" class="btn-text">Learn more &rarr;</a>
+                </div>
+                <div class="col-1-of-2">
+                    <div class="composition">
+                        <img src="img/nat-1-large.jpg" alt="photo_1" class="composition__photo composition__photo--p1">
+                        <img src="img/nat-2-large.jpg" alt="photo_2" class="composition__photo composition__photo--p2">
+                        <img src="img/nat-3-large.jpg" alt="photo_3" class="composition__photo composition__photo--p3">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-features">
+            <div class="row">
+                <div class="col-1-of-4">
+                    <div class="feature-box">
+                        <i class="feature-box__icon icon-basic-world"></i>
+                        <h3 class="heading-tertiary u-margin-bottom-small">Explore the world</h3>
+                        <p class="feature-box__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste,
+                            repellendus.</p>
+                    </div>
+                </div>
+
+                <div class="col-1-of-4">
+                    <div class="feature-box">
+                        <i class="feature-box__icon icon-basic-compass"></i>
+                        <h3 class="heading-tertiary u-margin-bottom-small">Meet nature</h3>
+                        <p class="feature-box__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste,
+                            repellendus.</p>
+                    </div>
+                </div>
+
+                <div class="col-1-of-4">
+                    <div class="feature-box">
+                        <i class="feature-box__icon icon-basic-map"></i>
+                        <h3 class="heading-tertiary u-margin-bottom-small">Find your way</h3>
+                        <p class="feature-box__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste,
+                            repellendus.</p>
+                    </div>
+                </div>
+
+                <div class="col-1-of-4">
+                    <div class="feature-box">
+                        <i class="feature-box__icon icon-basic-heart"></i>
+                        <h3 class="heading-tertiary u-margin-bottom-small">Live a healthier life</h3>
+                        <p class="feature-box__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste,
+                            repellendus.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-tours">
+            <div class="u-center-text u-margin-bottom-big">
+                <h2 class="heading-secondary">
+                    Most popular tours
+                </h2>
+            </div>
+
+            <div class="row">
+                <div class="col-1-of-3">
+                    <div class="card">
+                        <div class="card__side card__side--front">
+                            <div class="card__picture card__picture--1">
+                                &nbsp;
+                            </div>
+                            <h4 class="card__heading">
+                                <span class="card__heading--span card__heading--span--1">the sea explore</span>
+                            </h4>
+                            <div class="card__details">
+                                <ul>
+                                    <li>3 day tours</li>
+                                    <li>Up to 30 people</li>
+                                    <li>2 tour guides</li>
+                                    <li>Sleep in cozy hotels</li>
+                                    <li>Difficulty: easy</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card__side card__side--back card__side--back-1">
+                            <div class="card__cta">
+                                <div class="card__price-box">
+                                    <p class="card__price-only">Only</p>
+                                    <p class="card__price-value">$297</p>
+                                </div>
+                                <a href="#" class="btn btn--white">Book now!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1-of-3">
+                    <div class="card">
+                        <div class="card__side card__side--front">
+                            <div class="card__picture card__picture--2">
+                                &nbsp;
+                            </div>
+                            <h4 class="card__heading">
+                                <span class="card__heading--span card__heading--span--2">the forest hiker</span>
+                            </h4>
+                            <div class="card__details">
+                                <ul>
+                                    <li>7 day tours</li>
+                                    <li>Up to 40 people</li>
+                                    <li>6 tour guides</li>
+                                    <li>Sleep in provided tents</li>
+                                    <li>Difficulty: medium</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card__side card__side--back card__side--back-2">
+                            <div class="card__cta">
+                                <div class="card__price-box">
+                                    <p class="card__price-only">Only</p>
+                                    <p class="card__price-value">$497</p>
+                                </div>
+                                <a href="#" class="btn btn--white">Book now!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1-of-3">
+                    <div class="card">
+                        <div class="card__side card__side--front">
+                            <div class="card__picture card__picture--3">
+                                &nbsp;
+                            </div>
+                            <h4 class="card__heading">
+                                <span class="card__heading--span card__heading--span--3">the snow adventurer</span>
+                            </h4>
+                            <div class="card__details">
+                                <ul>
+                                    <li>5 day tours</li>
+                                    <li>Up to 15 people</li>
+                                    <li>3 tour guides</li>
+                                    <li>Sleep in provided tents</li>
+                                    <li>Difficulty: hard</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card__side card__side--back card__side--back-3">
+                            <div class="card__cta">
+                                <div class="card__price-box">
+                                    <p class="card__price-only">Only</p>
+                                    <p class="card__price-value">$897</p>
+                                </div>
+                                <a href="#" class="btn btn--white">Book now!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="u-center-text u-margin-top-big">
+                <a href="#" class="btn btn--green">Discover all tours</a>
+            </div>
+        </section>
+    </main>
+    ```
+1. Final Scss
+    1. Add new utilities for margin top
+        ```scss
+        .u-margin-top-big {margin-top: 8rem; }
+        .u-margin-top-huge {margin-top: 10rem; }
+        ```
+    1. Add green button
+        ```scss
+        // components/_buttons.scss
+        .btn {
+            &:link,
+            &:visited {
+                text-transform: uppercase;
+                text-decoration: none;
+                padding: 1.5rem 4rem;
+                display: inline-block;
+                border-radius: 10rem;
+                transition: all .2s;
+                position: relative;
+                font-size: $default-font-size;
+            }
+
+            &:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 1rem 2rem rgba($color-black, 0.2);
+
+                &::after {
+                    transform: scaleX(1.5) scaleY(1.6);
+                    opacity: 0;
+                }
+            }
+
+            &:active {
+                transform: translateY(-1px);
+                box-shadow: 0 .5rem 1rem rgba($color-black, 0.2);
+            }
+
+            &--white {
+                background-color: $color-white;
+                color: $color-grey-dark;
+
+                &::after {
+                    background-color: $color-white;
+                }
+            }
+
+            &--green {
+                background-color: $color-primary;
+                color: $color-white;
+
+                &::after {
+                    background-color: $color-primary;
+                }
+            }
+
+            &::after {
+                content: "";
+                display: inline-block;
+                height: 100%;
+                width: 100%;
+                border-radius: 100px;
+                position: absolute;
+                top: 0;
+                left:0;
+                z-index: -1;
+                transition: all .4s;
+            }    
+
+            &--animated {
+                animation: moveInBottom .5s ease-out .75s;
+                animation-fill-mode: backwards;
+            }
+        }
+
+        .btn-text {
+            &:link,
+            &:visited {
+                font-size: $default-font-size;
+                color: $color-primary;
+                display: inline-block;
+                text-decoration: none;
+                border-bottom: 1px solid $color-primary;
+                padding: 3px;
+                transition: all .2s;
+            }
+
+            &:hover {
+                background-color: $color-primary;
+                color: $color-white;
+                box-shadow: 0 1rem 2rem rgba($color-black, .15);
+                transform: translateY(-2px);
+            }
+
+            &:active {
+                box-shadow: 0 .5rem 1rem rgba($color-black, .15);
+                transform: translateY(-2px);
+            }
+        }
+        ```
+    1. Reduced bottom padding
+        ```scss
+        // page/_home.scss
+        .section-about {
+            background-color: $color-grey-light-1;
+            padding: 25rem 0;
+            margin-top: -20vh;
+        }
+
+        .section-features {
+            padding: 20rem 0;
+            background-image: linear-gradient(
+                to right bottom,
+                rgba($color-primary-light, 0.8), 
+                rgba($color-primary-dark, 0.8)), 
+                url(../img/nat-4.jpg);
+            background-size: cover;
+
+            transform: skewY(-7deg);
+            margin-top: -10rem;
+
+            & > * {
+                transform: skewY(7deg);
+            }
+        }
+
+        .section-tours {
+            background-color: $color-grey-light-1;
+            padding: 25rem 0 15rem 0;
+            margin-top: -10rem;
+        }
+        ```
+    1. The card component
+        ```scss
+        // components/_card.scss
+        .card {
+            perspective: 150rem;
+            -moz-perspective: 150rem;
+            position: relative;
+            height: 52rem; // to fix the issue for showing perspective
+
+            &__side {        
+                height: 52rem;
+                transition: all .8s ease;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%; // ensure its width is extended to the the width of its parent
+                backface-visibility: hidden; // hide the other side when the card is flipped
+                border-radius: 3px;
+                overflow: hidden;
+                box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+
+                &--front {
+                    background-color: $color-white;
+                }
+
+                &--back {            
+                    transform: rotateY(180deg);
+
+                    &-1 {
+                        background-image: linear-gradient(to right bottom, $color-secondary-light, $color-secondary-dark);
+                    }
+
+                    &-2 {
+                        background-image: linear-gradient(to right bottom, $color-primary-light, $color-primary-dark);
+                    }
+
+                    &-3 {
+                        background-image: linear-gradient(to right bottom, $color-tertiary-light, $color-tertiary-dark);
+                    }
+                }
+            }
+
+            &:hover &__side--front {
+                transform: rotateY(-180deg);
+            }
+
+            &:hover &__side--back {
+                transform: rotateY(0);
+            }
+
+            // FRONT SIDE STYLING
+            &__picture {
+                background-size: cover;
+                height: 23rem;
+                background-blend-mode: screen;
+                -webkit-clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+                clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+                // fixed the missing border-radius of the top corners on the card
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+                
+                &--1 {
+                    background-image: linear-gradient(to right bottom, $color-secondary-light, $color-secondary-dark), url(../img/nat-5.jpg);
+                }
+
+                &--2 {
+                    background-image: linear-gradient(to right bottom, $color-primary-light, $color-primary-dark), url(../img/nat-6.jpg);
+                }
+
+                &--3 {
+                    background-image: linear-gradient(to right bottom, $color-tertiary-light, $color-tertiary-dark), url(../img/nat-7.jpg);
+                }
+            }
+
+            &__heading {
+                font-size: 2.8rem;
+                font-weight: 300;
+                text-transform: uppercase;
+                text-align: right;
+                color: $color-white;
+                position: absolute;
+                top: 12rem;
+                right: 2rem;
+                width: 70%;
+            }
+
+            &__heading--span {
+                padding: 1rem 1.5rem;
+                -webkit-box-decoration-break: clone;
+                box-decoration-break: clone;
+                &--1 {
+                    background-image: linear-gradient(to right bottom, 
+                    rgba($color-secondary-light, .85), 
+                    rgba($color-secondary-dark, .85));
+                }
+
+                &--2 {
+                    background-image: linear-gradient(to right bottom, 
+                    rgba($color-primary-light, .85), 
+                    rgba($color-primary-dark, .85));
+                }
+                &--3 {
+                    background-image: linear-gradient(to right bottom, 
+                    rgba($color-tertiary-light, .85), 
+                    rgba($color-tertiary-dark, .85));
+                }
+            }
+
+            &__details {
+                padding: 3rem;
+
+                ul {
+                    list-style: none;
+                    width: 80%;
+                    margin: 0 auto;
+
+                    li {
+                        text-align: center;
+                        font-size: 1.5rem;
+                        padding: 1rem;
+
+                        &:not(:last-child) {
+                            border-bottom: 1px solid $color-grey-light-2;
+                        }
+                    }
+                }
+            }
+
+            // FRONT SIDE STYLING
+            &__cta {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                text-align: center;
+            }
+
+            &__price-box{
+                text-align: center;
+                color: $color-white;
+                margin-bottom: 8rem;
+            }
+
+            &__price-only {
+                font-size: 1.4rem;
+            }
+
+            &__price-value {
+                font-size: 6rem;
+                font-weight: 100;
+            }
+        }
+        ```
 
 ## Building The Stories Section - Part 1
 
