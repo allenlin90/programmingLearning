@@ -2092,6 +2092,209 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Building the Tours Section - Part 1
+1. Learning targets
+    1. How to build an amazing, rotating card
+    1. How to use `perspective` in CSS
+    1. How use the `backface-visibility` property
+    1. Using background blend modes
+    1. How and when to use `box-decoration-break`
+1. _home.scss
+    1. We firstly set up background color to the light grey and use negative value on `margin-top` to lift up the element to cover the void space of "**features**".
+    ```scss
+    // page/_home.scss
+    .section-tours {
+        background-color: $color-grey-light-1;
+        padding: 25rem 0 50rem 0;
+        margin-top: -10rem;
+    }
+    ```
+1. _card.scss
+    1. `perspective` property
+        1. We can use `transform: rotateY()` to flip the element against its y-axis. However, the default fliping is to flip into the monitor to the other side. Therefore, we can use [`perspective`](https://www.w3schools.com/cssref/css3_pr_perspective.asp) to change the behavior.
+        1. Note that we should put the `perspective` property on the parent element, as only the child element will be affected. Besides, the value defines the distance between the element to the monitor (as to the user). In our case, we'd like it to be as far as it could, so the element can look like fliping itself on the same spot. 
+            ```html
+            <div class="row">
+                <div class="col-1-of-3">
+                    <div class="card">
+                        <div class="card__side">
+                            TEXT
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-1-of-3">
+                    Col 1 of 3
+                </div>
+                <div class="col-1-of-3">
+                    Col 1 of 3
+                </div>
+            </div>
+            ```
+        1. Definition to `perspective`
+            1. he perspective property is used to give a 3D-positioned element some perspective.
+            1. The perspective property defines how far the object is away from the user. So, a lower value will result in a more intensive 3D effect than a higher value.
+            1. When defining the perspective property for an element, it is the CHILD elements that get the perspective view, NOT the element itself.            
+            ```scss
+            // components/_card.scss
+            .card {
+                perspective: 150rem;
+                -moz-perspective: 150rem;
+
+                &__side {
+                    background-color: orangered;
+                    color: #fff;
+                    height: 50rem;
+                    transition: all .8s;
+                }
+
+                &:hover &__side {
+                    transform: rotateY(180deg);
+                }
+            }
+            ```
+    1. Two sides of the `card` component
+        1. We modify the HTML tag to have contents for both 2 sides of the `card`.
+            ```html
+            <div class="row">
+                <div class="col-1-of-3">
+                    <div class="card">
+                        <div class="card__side card__side--front">
+                            FRONT
+                        </div>
+                        <div class="card__side card__side--back">
+                            BACK
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1-of-3">
+                    Col 1 of 3
+                </div>
+                <div class="col-1-of-3">
+                    Col 1 of 3
+                </div>
+            </div>
+            ```        
+        1. As we have 2 sides of the card
+            1. We create new modifiers `card__side--front` and `card__side--back` for each side of the card.
+            1. One card (back) is flipped `180` degrees by default. When the user hovers on the element, it will be flipped back to `0`, while the front one will be flipped by `180` degrees to the back. Note that we shouldn't flip the element by another `180` but just flip it back to `0`.
+        1. As we use `position: absolute` on the child elements, the parent element loses its height, so the effect can become weird. Therefore, we can simply add the `height` as its children back, which is `height: 50rem` in this case.
+        1. We use [`backface-visibility: hidden`](https://www.w3schools.com/cssref/css3_pr_backface-visibility.asp) to hide the element which its flipped, so its mirror image won't show or overlap on the displayed element.
+        1. We set another value `ease` on the `trasition` property to provide a smoother animation. Note that the default value for this `transition-timing-function` is `linear`.
+            ```scss
+            // components/_card.scss
+            .card {
+                perspective: 150rem;
+                -moz-perspective: 150rem;
+                position: relative;
+                height: 50rem; // to fix the issue for showing perspective
+
+                &__side {
+                    color: #fff;
+                    font-size: 2rem;
+
+                    height: 50rem;
+                    transition: all .8s ease;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%; // ensure its width is extended to the the width of its parent
+                    backface-visibility: hidden; // hide the other side when the card is flipped
+
+                    &--front {
+                        background-color: $color-white;
+                    }
+
+                    &--back {
+                        background-color: green;
+                        transform: rotateY(180deg);
+                    }
+                }
+
+                &:hover &__side--front {
+                    transform: rotateY(180deg);
+                }
+
+                &:hover &__side--back {
+                    transform: rotateY(0);
+                }
+            }
+            ```
+    1. Set colors for `linear-gradient` as the background in `_variables`.
+        1. We firstly modify the HTML elements and add a modifer on the card
+            ```html
+            <div class="row">
+                <div class="col-1-of-3">
+                    <div class="card">
+                        <div class="card__side card__side--front">
+                            FRONT
+                        </div>
+                        <div class="card__side card__side--back card__side--back-1">
+                            BACK
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1-of-3">
+                    Col 1 of 3
+                </div>
+                <div class="col-1-of-3">
+                    Col 1 of 3
+                </div>
+            </div>
+            ```
+        1. Add new variables to `abstracts/_variables.scss` for <span style="color: #000; background: #ffb900;">orange</span> color and <span style="color: #000; background: #2998ff;">blue</span> color. 
+            ```scss
+            // abstracts/_variables.scss
+            $color-secondary-light: #ffb900;
+            $color-secondary-dark: #ff7730;
+
+            $color-tertiary-light: #2998ff;
+            $color-tertiary-dark: #5643fa;
+            ```
+        1. We add `box-shadow` to the card `box-shadow: 0 1.5rem 4rem rgba($color-black, .15);` and have a small rounded corner on the element for `border-radius: 3px;`.
+        1. As setting `linear-gradient` background color on other elements, we use `background-image` (not `background-color`!) with the new variables for orange color.
+            ```scss
+            // components/_card.scss
+            .card {
+                perspective: 150rem;
+                -moz-perspective: 150rem;
+                position: relative;
+                height: 50rem; // to fix the issue for showing perspective
+
+                &__side {        
+                    color: #fff;
+                    font-size: 2rem;
+
+                    height: 50rem;
+                    transition: all .8s ease;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%; // ensure its width is extended to the the width of its parent
+                    backface-visibility: hidden; // hide the other side when the card is flipped
+                    border-radius: 3px;
+                    box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+
+                    &--front {
+                        background-color: $color-white;
+                    }
+
+                    &--back {            
+                        transform: rotateY(180deg);
+
+                        &-1 {
+                            background-image: linear-gradient(to right bottom, $color-secondary-light, $color-secondary-dark);
+                        }
+                    }
+                }
+
+                &:hover &__side--front {
+                    transform: rotateY(180deg);
+                }
+
+                &:hover &__side--back {
+                    transform: rotateY(0);
+                }
+            }
+            ```
 
 ## Building the Tours Section - Part 2
 
