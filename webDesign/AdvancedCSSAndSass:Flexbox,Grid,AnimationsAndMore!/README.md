@@ -3272,6 +3272,96 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/44-video_background.gif">
 
 ## Building the Booking Section - Part 1
+1. Learning targets
+    1. How to implement "solid-color gradients"
+    1. How the general and adjacent sibling selectors work and why we need them
+    1. How to use the `::input-placeholder` pseudo-element
+    1. How and when to use the `:focus`, `:invalid`, `placeholder-shown`, and `:checked` pseudo-classes
+    1. Techniques to build custom radio buttons
+1. For the `form` we will build here, the element can be used somewhere else at the site while its styling could be different from page to page. Therefore, we can keep the `form` as a component while have the decorations in `_home.scss`, as we will only use the styles on this main page.
+    ```html
+    <section class="section-book">
+        <div class="row">
+            <div class="book">
+                <div class="book__form">
+                    <form action="#" class="form">
+                        <div class="u-margin-bottom-medium">
+                            <h2 class="heading-secondary">
+                                Start booking now
+                            </h2>
+                        </div>
+                        <div class="form__group">
+                            <input id="name" type="text" class="form__input" placeholder="Full aame" required>
+                            <label for="name" class="form__label">Full Name</label>
+                        </div>
+
+                        <div class="form__group">
+                            <input id="email" type="email" class="form__input" placeholder="Email address" required>
+                            <label for="email" class="form__label">Email address</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    ```
+1. To have the background shown without having any content, we can firstly provide some `height` to the element to let it have size by itself.
+1. We can not only use the given options for `background-size` such as `cover` but also percentage. For example, using `100%` can work exactly the same as using `cover`.
+1. Though we can use another element and apply `clip-path: polygon()` to create a specific figure and overlay on the other element or stay in the contaier, we can use solid gradient which is similar to using `linear-gradient` that we can have the solid color extend to the specific position and turn into transparent, so it will look like the desirable shape.
+1. This technique is useful that we don't have the styling on the component directly, so we can be easy to reuse the component in the other section.
+1. In `linear-gradient`, we can also specify the location where we want the color to starts. For example, we can give the initial color at `0%` and have the 2nd color at `50%`, so the  color gradient will only be shown from 0% to 50%, while after `50%`, the color will be solid 2nd color.
+    ```scss
+    .book {
+        background-image: linear-gradient(105deg, 
+        rgba($color-white, .9) 0%, 
+        orangered 50%), 
+        url(../img/nat-10.jpg);
+        background-size: 100%;
+        border-radius: 3px;
+        box-shadow: 0 1.5rem 4rem rgba($color-black, .2);
+
+        height: 50rem; // testing value, as there's no content yet
+    }
+    ```
+    <img src="images/45-linear_gradient_solid_color.png">
+1. If we put another `white` color from `0%` to `50%`, the solid color will be half of the element. Note that we have the color shape because we use `105deg` to rotate it. The original direction of `linear-gradient` is from top to the bottom.
+    ```scss
+    .book {
+        background-image: linear-gradient(105deg, 
+        rgba($color-white, .9) 0%, 
+        rgba($color-white, .9) 50%, 
+        orangered 50%), 
+        url(../img/nat-10.jpg);
+        background-size: 100%;
+        border-radius: 3px;
+        box-shadow: 0 1.5rem 4rem rgba($color-black, .2);
+
+        height: 50rem; // testing value, as there's no content yet
+    }
+    ```
+    <img src="images/45-linear_gradient_white_solid_color.png">
+1. Final Scss
+    ```scss
+    // page/_home.scss
+    .book {
+        background-image: linear-gradient(105deg, 
+        rgba($color-white, .9) 0%, 
+        rgba($color-white, .9) 50%, 
+        transparent 50%), 
+        url(../img/nat-10.jpg);
+        background-size: 100%;
+        border-radius: 3px;
+        box-shadow: 0 1.5rem 4rem rgba($color-black, .2);
+
+        height: 50rem;
+
+        &__form {
+            width: 50%;
+            padding: 6rem;
+        }
+    }
+    ```
+    <img src="images/45-final_form_part_1.png">
 
 ## Building the Booking Section - Part 2
 
