@@ -3364,6 +3364,161 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/45-final_form_part_1.png">
 
 ## Building the Booking Section - Part 2
+1. HTML
+    ```html
+    <div class="book">
+        <div class="book__form">
+            <form action="#" class="form">
+                <div class="u-margin-bottom-medium">
+                    <h2 class="heading-secondary">
+                        Start booking now
+                    </h2>
+                </div>
+                <div class="form__group">
+                    <input id="name" type="text" class="form__input" placeholder="Full name" required>
+                    <label for="name" class="form__label">Full Name</label>
+                </div>
+
+                <div class="form__group">
+                    <input id="email" type="email" class="form__input" placeholder="Email address" required>
+                    <label for="email" class="form__label">Email address</label>
+                </div>
+            </form>
+        </div>
+    </div>
+    ```
+1. We change the styling 
+    ```scss
+    // component/_form.scss
+    .form {
+        &__input {
+            font-size: 1.5rem;
+            font-family: inherit; // get from the parent element
+            color: inherit;
+            padding: 1.5rem 2rem;
+            border-radius: 2px;
+            background-color: rgba($color-white, .5);
+            border: none;
+            border-bottom: 3px solid transparent;
+            width: 90%;
+            display: block;
+        }
+    }
+    ```
+1. Change the style when the user focus on the `input`. We can clear the border which could be `blue` or `black` on the border by `outline`. We add the <span style="background: #55c57a; color: black;">green</span> `border-bottom`. Note that this bordre will affect to the overall height of the element. Thus, we can firstly add a transparent border-bottom when it's not focused. 
+1. For chrome and Safari browser, we can use [`-webkit-input-placeholder`](https://www.w3schools.com/cssref/sel_placeholder.asp) pseudo selector to change the color of placeholder in the input tag.
+    ```scss
+    // components/_form.scss
+    .form {
+        &__input {
+            border-bottom: 3px solid transparent;
+
+            &:focus {
+                outline: none; // clear the border on the input tag when it's focused
+                box-shadow: 0 1rem 2rem rgba($color-black, .1);
+                border-bottom: 3px solid $color-primary;
+            }
+
+            &::-webkit-input-placeholder { // this only works no Safari and Chrome
+                color: $color-grey-dark-2;
+            }
+        }
+    }
+    ```
+1. We can have different decoration when the input has [invalid](https://www.w3schools.com/cssref/sel_invalid.asp) values. For example, when we configure the tag as `<input type="email">`, the browser will check the value by default and show if it's invalid. When the input value is valid, it will apply regular `.form:focus` styles on it.
+    ```scss
+    // components/_form.scss
+    .form {
+        &:focus {
+            border-bottom: 3px solid $color-primary;
+        }
+
+        &:focus:invalid {
+            border-bottom: 3px solid $color-secondary-dark;
+        }
+    }
+    ```
+1. We then can style on the `label` to let the text goes down when the user is inserting values. In this case, we'd like the `label` looks like sliding from the placeholder to the bottom of the input tag. We can check the input state with [`:placeholder-shown`](https://developer.mozilla.org/en-US/docs/Web/CSS/:placeholder-shown) selector and use [CSS sibling combinator](https://www.w3schools.com/css/css_combinators.asp) to select the adjacent element right next to the selected element with a plus sign `+`. Note that if the the element doesn't directly follow the element in HTML, we should use tilde symbol `~`. 
+    1. `:placeholder-shown` represents any `input` or `textarea` element that is currently displaying placeholder text. Usually it means there's no value in the `input` or `textarea` element yet.
+    1. CSS sibling combinator can select elements in the same container (HTML element). 
+        1. If the element is right after the selected element, we can use `+` as the adjacent sibling selector. Note this selects only a single element. 
+        1. Otherwise, we can use `~` to select all the elements in the same container. 
+1. In orginal state (which is when the placeholder is shown) of the `label`, it can be moved up by y-axis with both `opacity: 0` and `visibility: 0`.
+    1. `opacity: 0` is to hide text and make it invisible at the original state (when placeholder of the input is shown). Though this is not necessary for the effect, it provides a smoother animatino during transition from invisible to visible. Otherwise, the text may look like just showing up and moved down. 
+    1. `visibility: hidden` is to hide the text why prevent user selecting the element. The main difference between `visibility: hidden` and `display: none` is that though the element is invisible by `visibilty: hidden`, it still takes up space on the page. However, `display: none` totally removes the element from the page. 
+1. We need to use both `opacity: 0` and `visibility: hidden` on the element to provide smoother transition. Using `display: none` could do similar effect but may looks funny, as it doesn't have transition between states of the element. 
+    ```scss
+    // components/_form.scss
+    .form {
+        &__label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-left: 2rem;
+            margin-top: .7rem;
+            display: block;
+            transition: all .3s;
+        }
+
+        &__input:placeholder-shown + &__label {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-4rem);
+        }
+    }
+    ```
+1. Final Scss
+    ```scss
+    // components/_form.scs
+    .form {
+        &__group:not(:last-child) {
+            margin-bottom: 2rem;
+        }
+
+        &__input {
+            font-size: 1.5rem;
+            font-family: inherit; // get from the parent element
+            color: inherit;
+            padding: 1.5rem 2rem;
+            border-radius: 2px;
+            background-color: rgba($color-white, .5);
+            border: none;
+            border-bottom: 3px solid transparent;
+            width: 90%;
+            display: block;
+            
+            &:focus {
+                outline: none; // clear the border on the input tag when it's focused
+                box-shadow: 0 1rem 2rem rgba($color-black, .1);
+                border-bottom: 3px solid $color-primary;
+            }
+
+            &:focus:invalid {
+                border-bottom: 3px solid $color-secondary-dark;
+            }
+
+            &::-webkit-input-placeholder { // this only works no Safari and Chrome
+                color: $color-grey-dark-2;
+            }
+        }
+
+
+        &__label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-left: 2rem;
+            margin-top: .7rem;
+            display: block;
+            transition: all .3s;
+        }
+
+        &__input:placeholder-shown + &__label {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-4rem);
+        }
+    }
+    ```
+    <img src="images/46-form_styling.gif">
 
 ## Building the Booking Section - Part 3
 
