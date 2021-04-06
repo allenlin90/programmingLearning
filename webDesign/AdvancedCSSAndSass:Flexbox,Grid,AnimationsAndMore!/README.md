@@ -3200,6 +3200,76 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/43-stories_hover.gif">
 
 ## Building The Stories Section - Part 3
+1. In this section, we are going to use an video as the background which covers the whole section. We use both [`video`](https://www.w3schools.com/html/html5_video.asp) and `source` tag in this case. 
+    1. We don't use `src` attribute in `video` tag directly. We use `source` tag nested in the `video` tag instead as it allows the browsers to choose from the alternative video source that the browser supports.
+    1. We can put some text as the content in the `video` tag. This works similar to `alt` attribute for `img` tag that if the browser doesn't support playing the video, this text will show to indicate to the user. 
+    1. We can specify `autoplay`, `muted`, and `loop` when playing the video.
+        ```html
+        <section class="section-stories">
+            <div class="bg-video">
+                <video class="bg-video__content" autoplay muted loop>
+                    <source src="img/video.mp4" type="video/mp4">
+                    <source src="img/video.webm" type="video/webm">
+                    Your browser is not support playing video!
+                </video>
+            </div>
+        </section>
+        ```
+1. We should also take off the `background-color` from the element itself. Besides, we can give negative value on `z-index` to ensure all the other elements can overlay on the video.
+    ```scss
+    // page/_home.scss
+    .section-stories {
+        position: relative;
+        padding: 15rem 0;
+        // take off the testing background
+    }
+    ```
+1. We add `opacity: .15;` on the video. Since we'd like the background of each story section can be seen through, we can use `rgba($color-white, .6)` on the story component. Note that we can't use the property on the whole story section directly or the context (text) will also be faded.
+    ```scss
+    // components/_bg-video.scss
+    .bg-video {
+        opacity: .15;
+    }
+
+    // components/_story.scss
+    .story {
+        background-color: rgba($color-white, .6);
+    }
+    ```
+1. To make the video fit to the background of the section and keep its ratio, we can use `object-fit: cover;` which is similar to `background-size: cover` that can adjust the image by CSS. [`object-fit`](https://www.w3schools.com/css/css3_object-fit.asp) is used to specify how an `<img>` or `<video>` should be resized to fit its container.
+    1. `fill` - This is default. The image is resized to fill the given dimension. If necessary, the image will be stretched or squished to fit
+    1. `contain` - The image keeps its aspect ratio, but is resized to fit within the given dimension
+    1. `cover` - The image keeps its aspect ratio and fills the given dimension. The image will be clipped to fit
+    1. `none` - The image is not resized
+    1. `scale-down` - the image is scaled down to the smallest version of none or contain
+        ```scss
+        .bg-video {
+            &__content {
+                object-fit: cover;
+            }
+        }
+        ```
+1. The video background Scss
+    ```scss
+    // components/_bg-video.scss
+    .bg-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: -1;
+        opacity: .15;
+        overflow: hidden;
+
+        &__content {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+    }
+    ```
+    <img src="images/44-video_background.gif">
 
 ## Building the Booking Section - Part 1
 
