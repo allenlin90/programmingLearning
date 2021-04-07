@@ -3775,6 +3775,107 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/47-radio_and_submit_button.gif">
 
 ## Building the Footer
+1. The learning target in this section is to understand how to design a simple website footer.
+1. In the footer, we have logo image and a row that has 2 parts of contents. 
+    ```html
+    <!-- This section is below the <main> tag -->
+    <footer class="footer">
+        <div class="footer__logo-box">
+            <img src="img/logo-green-2x.png" alt="full_logo" class="footer__logo">
+        </div>
+        <div class="row">
+            <div class="col-1-of-2">
+                <div class="footer__navigation">
+                    <ul class="footer__list">
+                        <li class="footer__item"><a href="#" class="footer__link">Company</a></li>
+                        <li class="footer__item"><a href="#" class="footer__link">Contact us</a></li>
+                        <li class="footer__item"><a href="#" class="footer__link">Careers</a></li>
+                        <li class="footer__item"><a href="#" class="footer__link">Privacy policy</a></li>
+                        <li class="footer__item"><a href="#" class="footer__link">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-1-of-2">
+                <p class="footer__copyright">
+                    Built by <a href="#" class="footer__link">Allen</a> for advance CSS design from <a href="#"
+                        class="footer__link">Advanced CSS and Sass</a>. Copyright &copy; You are 100% allowed to
+                    use this webpage for both personal and commerical use, but NOT to claim it as your own design.
+                </p>
+            </div>
+        </div>
+    </footer>
+    ```
+1. We add a new grey color in variables
+    ```scss
+    // abstract/_variables.scss
+    $color-grey-dark-3: #333;
+    ```
+1. We can center the image element with certain `width` and `height` as long as it's `display: inline` or `display: inline-block`.
+1. As we'd like to narrow the "**copyright**" section by giving `width: 80%`, the content is aligned to the left-side of the container. Therefore, we can use `float: right` to align the whole element and its children to the right. 
+    ```scss
+    // layout/_footer.scss
+    .footer {
+        background-color: $color-grey-dark-3;
+        padding: 10rem;
+        font-size: 1.4rem;
+        color: $color-grey-light-1;
+
+        &__logo-box {
+            text-align: center;
+            margin-bottom: 8rem;
+        }
+
+        &__logo {
+            width: 15rem;
+            height: auto;
+        }
+
+        &__navigation {
+            border-top: 1px solid $color-grey-dark;
+            padding-top: 2rem;
+            display: inline-block;
+        }
+
+        &__list {
+            list-style: none;
+        }
+
+        &__item {
+            display: inline-block;
+
+            &:not(:last-child) {
+                margin-right: 1.5rem;
+            }
+        }
+
+        &__link {
+            &:link,
+            &:visited {
+                color: $color-grey-light-1;
+                background-color: $color-grey-dark-3;
+                text-decoration: none;
+                text-transform: uppercase;
+                display: inline-block;
+                transition: all .2s;
+            }
+
+            &:hover,
+            &:active {
+                color: $color-primary;
+                box-shadow: 0 1rem 2rem rgba($color-black, .4);
+                transform: rotate(5deg) scale(1.3);
+            }
+        }
+
+        &__copyright {
+            border-top: 1px solid $color-grey-dark;
+            padding-top: 2rem;
+            width: 80%;
+            float: right;
+        }
+    }
+    ```
+    <img src="images/48-footer.gif">
 
 ## Building the Navigation - Part 1
 
