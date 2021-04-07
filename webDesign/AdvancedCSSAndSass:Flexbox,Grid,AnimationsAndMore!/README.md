@@ -3501,7 +3501,6 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
             }
         }
 
-
         &__label {
             font-size: 1.2rem;
             font-weight: 700;
@@ -3521,6 +3520,259 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/46-form_styling.gif">
 
 ## Building the Booking Section - Part 3
+1. We add `transition` to let the animation works smoother
+    ```scss
+    // components/_form.scss
+    .form {
+        &__input {
+            transition: all .3s;
+        }
+    }
+    ```
+1. In this section, we will build the customized radio buttons. 
+1. For radio buttons, it's similar to other `input` tags. However, we can give `name` attribute on each radio buttno in the same `form` to indicate that only one of the options can be selected. 
+1. We then create another `span` element in the `label` tag. 
+    1. The idea here is to hide the real `input` tag and show the styled button nested in the `label`. 
+    1. Note that when we group a `label` and `input` in the same container and assign `id` and `for` to link them, when the user clicks on the label, the `input` will be "**focused**" or "**selected**".
+    ```html
+    <form class="form">
+        <div class="form__group">
+            <div class="form__radio-grouop">
+                <input type="radio" class="form__radio-input" id="small" name="size">
+                <label for="small" class="form__radio-label">
+                    <span class="form__radio-button"></span>
+                    Small tour group
+                </label>
+            </div>
+
+            <div class="form__radio-grouop">
+                <input type="radio" class="form__radio-input" id="large" name="size">
+                <label for="large" class="form__radio-label">
+                    <span class="form__radio-button"></span>
+                    Large tour group
+                </label>
+            </div>
+        </div>
+        <div class="form__group">
+            <button class="btn btn--green">Next step &rarr;</button>
+        </div>
+    </form>
+    ```
+1. Use `display: none` to hide the input tag, so the element won't show and occupy any space on the page.
+1. Use `cursor: pointer` to make the `label` and the `span`inside clickable.
+1. We work on the customized radio button. 
+    1. Turn the `span` (`.form__radio-button`) in the label into `display: inline-block` to assign both `width` and `height`.
+    1. As the figure isn't ailgned, we use negative `top: -.4rem` to lift up the element.
+    1. Use `::after` to create pseudo element and give `position: absolute`. Note that `position:absolute` works only if the parent element has a specified `position` property. It will align to the nearest parenet element that has `position: relative`. Since we have both `.form__radio-button` and `.form__radio-button::after` align on the same parent. It has no problem in this case.
+    1. We use both `position: absolute;`, `top: 50%;`, `left:50%;`, and `transform: translate(-50%, -50%);` to center the `::after` pseudo element right at the middle. 
+    1. For both `.form__radio-button` and `.form__radio-button::after`, we make them both look like a circle by using `border-radius: 50%;`.
+    1. The initial `opacity: 0` is set to `0` in order to hide the inner circle when the radio button isn't selected. 
+    1. Use general sibling selector tilde symbol `~` to select the child of the adjacent element. This is a relatively complicated selector. 
+        ```html
+        <!-- select the child of the sibling element -->
+        <!-- selector ~ sibling child -->
+        <div class="form__radio-group">
+            <input type="radio" class="form__radio-input" id="small" name="size">
+            <label for="small" class="form__radio-label">
+                <span class="form__radio-button"></span>
+                Small tour group
+            </label>
+        </div>
+        ```
+        ```scss
+        // components/_form.scss
+        .btn {
+            &__radio-group {
+                width: 45%;
+                display: inline-block;
+            }
+
+            &__radio-input { // hide the real input tag
+                display: none;
+            }
+            
+            &__radio-label {
+                font-size: $default-font-size;
+                cursor: pointer;
+                position: relative;
+                padding-left: 4.5rem;
+            }
+
+            &__radio-button {
+                height: 3rem;
+                width: 3rem;
+                border: 5px solid $color-primary;
+                border-radius: 50%;
+                display: inline-block;
+                position: absolute;
+                left: 0;
+                top: -.4rem;
+
+                &::after {
+                    content: "";
+                    display: block;
+                    height: 1.3rem;
+                    width: 1.3rem;
+                    border-radius: 50%;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background-color: $color-primary;
+                    opacity: 0;
+                    transition: opacity .2s;
+                }
+            }
+
+            &__radio-input:checked ~ &__radio-label &__radio-button::after {
+                opacity: 1;
+            }
+        }
+        ```
+1. As we only set up `btn` to style anchor tags, it doesn't work correctly on `button` tags. 
+    1. As `:link` and `:visited` is the state on anchor tags, the styles doesn't work for a `button` if we just use the decoration on it. Therefore, we can simply give an ampersand `&` for the case.
+    1. When clicking the button, it's in "**focus**" state which is similar to "**active**" when an achor tag is clicked. 
+    ```scss
+    // components/_buttons.scss
+    .btn {
+        &, // ensure this works with button tag
+        &:link,
+        &:visited {
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 1.5rem 4rem;
+            display: inline-block;
+            border-radius: 10rem;
+            transition: all .2s;
+            position: relative;
+            font-size: $default-font-size;
+
+            // change for the <button> element
+            border: none;
+            cursor: pointer;
+        }
+
+        &:active,
+        &:focus { // add 'focus' state
+            outline: none;
+            transform: translateY(-1px);
+            box-shadow: 0 .5rem 1rem rgba($color-black, 0.2);
+        }
+    }
+    ```
+1. We make all the utilities stylnig with `!important` because some of the selectors can be more specific than the utilities. Therefore, we can use `!important` here to ensure it's working. 
+    ```scss
+    // base/_utilities.scss
+    .u-center-text { text-align: center !important; }
+
+    .u-margin-bottom-small {margin-bottom: 1.5rem !important; }
+    .u-margin-bottom-medium {margin-bottom: 4rem !important; }
+    .u-margin-bottom-big {margin-bottom: 8rem !important; }
+    .u-margin-bottom-huge {margin-bottom: 10rem !important; }
+
+    .u-margin-top-big {margin-top: 8rem !important; }
+    .u-margin-top-huge {margin-top: 10rem !important; }
+    ```
+1. Final Scss
+    ```scss
+    // components/_form.scss
+    .form {
+        &__group:not(:last-child) {
+            margin-bottom: 2rem;
+        }
+
+        &__input {
+            font-size: 1.5rem;
+            font-family: inherit; // get from the parent element
+            color: inherit;
+            padding: 1.5rem 2rem;
+            border-radius: 2px;
+            background-color: rgba($color-white, .5);
+            border: none;
+            border-bottom: 3px solid transparent;
+            width: 90%;
+            display: block;
+            transition: all .3s;
+            
+            &:focus {
+                outline: none; // clear the border on the input tag when it's focused
+                box-shadow: 0 1rem 2rem rgba($color-black, .1);
+                border-bottom: 3px solid $color-primary;
+            }
+
+            &:focus:invalid {
+                border-bottom: 3px solid $color-secondary-dark;
+            }
+
+            &::-webkit-input-placeholder { // this only works no Safari and Chrome
+                color: $color-grey-dark-2;
+            }
+        }
+
+
+        &__label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-left: 2rem;
+            margin-top: .7rem;
+            display: block;
+            transition: all .3s;
+        }
+
+        &__input:placeholder-shown + &__label {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-4rem);
+        }
+
+        &__radio-group {
+            width: 45%;
+            display: inline-block;
+        }
+
+        &__radio-input { // hide the real input tag
+            display: none;
+        }
+
+        &__radio-label {
+            font-size: $default-font-size;
+            cursor: pointer;
+            position: relative;
+            padding-left: 4.5rem;
+        }
+
+        &__radio-button {
+            height: 3rem;
+            width: 3rem;
+            border: 5px solid $color-primary;
+            border-radius: 50%;
+            display: inline-block;
+            position: absolute;
+            left: 0;
+            top: -.4rem;
+
+            &::after {
+                content: "";
+                display: block;
+                height: 1.3rem;
+                width: 1.3rem;
+                border-radius: 50%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: $color-primary;
+                opacity: 0;
+                transition: opacity .2s;
+            }
+        }
+
+        &__radio-input:checked ~ &__radio-label &__radio-button::after {
+            opacity: 1;
+        }
+    }
+    ```
+    <img src="images/47-radio_and_submit_button.gif">
 
 ## Building the Footer
 
