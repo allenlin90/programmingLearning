@@ -4332,8 +4332,129 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         }
     }
     ```
+    <img src="51-navigation_button_animation.gif">
 
 ## Building a Pure CSS Popup - Part 1
+1. Learning targets
+    1. How to build a nice popup with only CSS
+    1. How to use the `:target` pseudo-class
+    1. How to create boxes with equeal height using `display: table-cell`
+    1. How to create CSS text columns
+    1. How to automatically hyphenate words using `hyphens`
+1. HTML
+    ```html
+    <div class="popup">
+        <div class="popup__content">
+            <div class="popup__left">
+                <img src="img/nat-8.jpg" alt="tour_photo" class="popup__img">
+                <img src="img/nat-9.jpg" alt="tour_photo" class="popup__img">
+            </div>
+            <div class="popup__right">
+                <h2 class="heading-secondary u-margin-bottom-small">Start booking now</h2>
+                <h2 class="heading-tertiary u-margin-bottom-small">Important &ndash; Please read these terms before
+                    booking</h2>
+                <p class="popup__text">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque ipsa nobis inventore? Ullam id
+                    repellendus nihil nulla debitis aperiam nobis modi, eaque libero adipisci praesentium ex minima
+                    aliquid commodi doloribus provident facere at consequatur beatae dicta eos eius. Molestias, dolorum.
+                    Modi beatae dicta quos quaerat pariatur nobis voluptatibus dignissimos doloremque!
+                </p>
+                <a href="#" class="btn btn--green">Book now</a>
+            </div>
+        </div>
+    </div>
+    ```
+1. Styling the popup component
+    1. We firstly give `height: 100vh`, `width: 100%` (or width: 100wh), `position: fixed` to extend and overlay the whole popup component on the viewport. Note that the navigation button has a very high `z-index`, so we can give a higher value in this case to overlay the all the elements.    
+        ```scss
+        // components/_popup.scss
+        .popup {
+            height: 100vh;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba($color-black, 0.8);
+            z-index: 9999;
+
+            &__content {
+                @include absCenter;
+                width: 75%;
+                box-shadow: 0 2rem 4rem rgba($color-black, .2);
+                background-color: $color-white;
+                border-radius: 3px;
+                overflow: hidden; // to hide the corner of the overflow image
+            }
+        }
+        ```
+    1. Put the often used snippet `position: aboluste`, `top: 50%`, `left: 50%`, and `transform: translate(-50%, -50%)` as mixins `absCenter` in the `abstracts`.
+        ```scss
+        // abstracts/_mixins.scss
+        @mixin absCenter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        ```
+1. Separate the left and right popup
+    1. We separate the left and right into 1/3 and 2/3 of the component.
+    1. Though there are several ways to create containers in the same height, we can turn the element into a table-like item by `display: table` and its child elements with `display: table-cell`. By default, this will give the same height of each cell in the HTML table. 
+    1. On the right side of the popup component, we can use `vertical-align: middle` to center the contents at the middle. Note that by giving any value such as `top` or `bottom` to `vertical-align`, HTML table will take off the white space to fit the contents and have 2 cells have the same height.
+        ```scss
+        // component/_popup.scss
+        .popup {
+            &__content {
+                display: table;
+            }
+
+            &__left {
+                width: 33.333333%;
+                display: table-cell;
+            }
+
+            &__right {
+                width: 66.666667%;
+                display: table-cell;
+                vertical-align: middle;
+                padding: 3rem 5rem;
+            }
+
+            &__img {
+                display: block;
+                width: 100%;
+            }
+        }
+        ```
+1. Create columns
+    1. We can use a modern CSS property [`column-count`](https://www.w3schools.com/cssref/css3_pr_column-count.asp) to create columns. This property can simply be used in a block element.
+    1. Use `column-gap` to specify the space between each column and `column-rule` for styling the rule between each column.
+        ```scss
+        // component/_popup.scss
+        .popup {           
+            &__text {
+                font-size: 1.4rem; // this turn 1em into 14px
+                margin-bottom: 4rem;
+
+                -moz-column-count: 2;
+                -moz-column-gap: 4rem; 
+                -moz-column-rule: 1px solid $color-grey-light-2;
+
+                column-count: 2;
+                column-gap: 4rem; //1em = 14px as in the same element
+                column-rule: 1px solid $color-grey-light-2;
+
+                -moz-hyphens: auto;
+                -ms-hyphens: auto;
+                -webkit-hyphens: auto;
+                hyphens: auto;
+            }
+        }
+        ```
+1. Before breaking into columns
+    <img src="images/52-before_breaking_into_columns.png">
+1. After breaking into columns
+    <img src="images/52-after_breaking_into_columns.png">
 
 ## Building a Pure CSS Popup - Part 2
 
