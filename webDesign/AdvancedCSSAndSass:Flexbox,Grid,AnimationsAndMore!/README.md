@@ -125,6 +125,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 ---
 # Natours Project - Setup and First Steps (Part 1)
 ## Project Overview
+1. [Porject Lin]k(https://wonderful-goldwasser-8b2175.netlify.app/irresponsive_natours/index.html)
 1. Put the link of final builtup here after finishing practicing
 1. Use pure CSS without JavaScript to create the following effects
     1. A "**Hover Effect**" that the card flips when the user put the cursor on the element. 
@@ -4457,7 +4458,213 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/52-after_breaking_into_columns.png">
 
 ## Building a Pure CSS Popup - Part 2
+1. Besides using `input` hack, we can use another feature "**anchor**" from HTML.
+1. We can give `id` to an element, and user another achor tag `<a href="">` to point to the element by its `href` attribute. This works with [`:target`](https://www.w3schools.com/cssref/sel_target.asp) selector.
+1. When URL in the browser search bar has a pound sign `#`, it means an element is "**targeted**".
+1. We can set with an anchor tag `<a>` with its `href` attribute to target at certain element in the HTML. 
+1. In this case, if the element with `id="popup"` is targeted when the user clicks on the link, it triggers the selector and change the CSS styling. Note that we haven't had solution to close the popup window yet. However, simply change the targeted element will change the state that the targeted element is changed from `popup` to something else.
+    ```scss
+    // component/_popup.scss
+    .popup {
+        opacity: 0;
+        visibility: hidden;
+        transition: all .3s;
 
+        &:target {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+    ```
+1. We then update the HTML to have a close button when the `popup` shows up.
+1. In this case, we set the close button targeted at the `section-tours` because this is where the user clicks and opens the `popup`, and when the targeted element changes, the `:target` selector doesn't work on `popup` component, so it will return back to its initial state which is `opacity: 0` and `visibility: hidden`.
+1. We can use HTML symbol `&times;` which looks like a "X" and shows &times; in HTML or Markdown language.
+    ```html
+    <div class="popup__right">
+        <a href="#section-tours" class="popup__close">&times;</a>
+        <h2 class="heading-secondary u-margin-bottom-small">Start booking now</h2>
+        <h2 class="heading-tertiary u-margin-bottom-small">Important &ndash; Please read these terms before
+            booking</h2>
+        <p class="popup__text">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque ipsa nobis inventore? Ullam id
+            repellendus nihil nulla debitis aperiam nobis modi, eaque libero adipisci praesentium ex minima
+            aliquid commodi doloribus provident facere at consequatur beatae dicta eos eius. Molestias, dolorum.
+            Modi beatae dicta quos quaerat pariatur nobis voluptatibus dignissimos doloremque!
+        </p>
+        <a href="#" class="btn btn--green">Book now</a>
+    </div>
+    ```
+1. We then can decorate the anochor tag with the following CSS. We make the symbol &times; <span style="background: #55c57a; color: #000;">green</span> as <span style="background: #fff; color: #55c57a; font-weight: bold;">&times;</span>
+    ```scss
+    // component/_popup.scss
+    .popup {
+        &__close {
+            &:link,
+            &:visited {
+                color: $color-grey-dark;
+                position: absolute;
+                top: 2.5rem;
+                right: 2.5rem;
+                font-size: 3rem;
+                text-decoration: none;
+                display: inline-block;
+                transition: all .2s;
+                line-height: 1;
+            }
+
+            &:hover {
+                color: $color-primary;
+            }
+        }
+    }
+    ```
+1. Popup animation
+    1. This part makes the animation to zoom out the `popup` component from the center of the page to cover the whole page.
+    1. Note that we need to specify `transform: translate(-50%, 50%)` again because a selector can only have one `transform` property working. By giving the 2nd `transform` the 1st `transform` will be overwritten.
+    1. We should not only show the `popup` component, but the `.popup__content` child. We only turns `opacity` to `0` because we have given `visibility: hidden` on the whole `popup` component. 
+    1. By using `:target` pseduo selector, the decoration only works on elements have `.popup` class. When the target changes (target after `#` in URL on search bar) the decoration will change back to initial state.
+    ```scss
+    // component/_popup.scss
+    .popup {
+        &__conent {
+            @include absCenter
+            // initial state of the popup component
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(.25); // zoom in to the center
+            transition: all .4s .2s;
+            // we don't need visibility: hidden as the div.popup has been visibility: hidden
+        }
+
+        &:target {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        &:target &__content {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1); // zoom out
+        }
+    }
+    ```
+1. Final HTML
+    ```html
+    <div class="popup" id="popup">
+        <div class="popup__content">
+            <div class="popup__left">
+                <img src="img/nat-8.jpg" alt="tour_photo" class="popup__img">
+                <img src="img/nat-9.jpg" alt="tour_photo" class="popup__img">
+            </div>
+            <div class="popup__right">
+                <a href="#section-tours" class="popup__close">&times;</a>
+                <h2 class="heading-secondary u-margin-bottom-small">Start booking now</h2>
+                <h2 class="heading-tertiary u-margin-bottom-small">Important &ndash; Please read these terms before
+                    booking</h2>
+                <p class="popup__text">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque ipsa nobis inventore? Ullam id
+                    repellendus nihil nulla debitis aperiam nobis modi, eaque libero adipisci praesentium ex minima
+                    aliquid commodi doloribus provident facere at consequatur beatae dicta eos eius. Molestias, dolorum.
+                    Modi beatae dicta quos quaerat pariatur nobis voluptatibus dignissimos doloremque!
+                </p>
+                <a href="#" class="btn btn--green">Book now</a>
+            </div>
+        </div>
+    </div>
+    ```
+1. Final Scss
+    ```scss
+    // component/_popup.scss
+    .popup {
+        height: 100vh;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba($color-black, 0.8);
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all .3s;  
+    
+        &__content {
+            @include absCenter;
+
+            width: 75%;
+            box-shadow: 0 2rem 4rem rgba($color-black, .2);
+            background-color: $color-white;
+            border-radius: 3px;
+            display: table;
+            overflow: hidden;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(.25);
+            transition: all .4s .2s;
+        }
+
+        &__left {
+            width: 33.333333%;
+            display: table-cell;
+        }
+
+        &__right {
+            width: 66.666667%;
+            display: table-cell;
+            vertical-align: middle;
+            padding: 3rem 5rem;
+        }
+
+        &__img {
+            display: block;
+            width: 100%;
+        }
+
+        &__text {
+            font-size: 1.4rem; // this turn 1em into 14px
+            margin-bottom: 4rem;
+
+            -moz-column-count: 2;
+            -moz-column-gap: 4rem; 
+            -moz-column-rule: 1px solid $color-grey-light-2;
+
+            column-count: 2;
+            column-gap: 4rem; //1em = 14px as in the same element
+            column-rule: 1px solid $color-grey-light-2;
+
+            -moz-hyphens: auto;
+            -ms-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+        }
+
+        &:target {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        &:target &__content {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        &__close {
+            &:link,
+            &:visited {
+                color: $color-grey-dark;
+                position: absolute;
+                top: 2.5rem;
+                right: 2.5rem;
+                font-size: 3rem;
+                text-decoration: none;
+                display: inline-block;
+                transition: all .2s;
+                line-height: 1;
+            }
+
+            &:hover {
+                color: $color-primary;
+            }
+        }
+    }
+    ```
+1. [Project Link](https://wonderful-goldwasser-8b2175.netlify.app/irresponsive_natours/index.html)
 
 
 # Natours Project - Advanced Responsive Design (Part 3)
