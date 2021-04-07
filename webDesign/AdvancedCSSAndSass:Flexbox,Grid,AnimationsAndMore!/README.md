@@ -4128,8 +4128,210 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/49-color_sliding_on_item.gif">
 
 ## Building the Navigation - Part 2
+1. We will turn the navigation button into use in this section, so some of the previous Scss will be modified. Note that at this stage, we still let the navigation background image covers the whole viewport by default. 
+1. Besides, we should hide the list by default. We can give `width: 0` and `opacity: 0` to hide the element. However, this solution has problem that its content still overflows the container, and the user can still see the mouse cursor changes when hovering to the left. Besides, users can click the links which can cause problems to user experience. To solve the problem, we can use `visiblity: hidden` or `overflow: hidden` or use both to solve this issue. However, if we use `visiblity: hidden`, we need to turn it back to `visible`.
+1. There's [another solution](https://www.udemy.com/course/advanced-css-and-sass/learn/lecture/8274526#questions/12918320) given in the disucssion in the lecture.
+    ```scss
+    // layout/_navigation.scss
+    .navigation{
+        &__nav {
+            opacity: 0;
+            width: 0;
+            visibility: hidden;
+            overflow: hidden;
+        }
+
+        &__background {
+            transform: scale(80); // this cause the background image covers the whole viewport
+        }
+    }
+    ```
+1. To allow the checkbox `input` works as a toggle button, we can use pseudo selector `:checked` to check the state of the element, and use general sibling selector `~` to select the nivgation panel and the background. 
+1. We use `transition` to provide a smoother animation between states. However, we can see the background information animation extended from the top right corner. 
+    ```scss
+    .navigation {
+        &__background{
+            transition: transform .8s;
+        }
+
+        &__nav{
+            transition: all .8s;
+        }
+
+        &__checkbox:checked ~ &__background {
+            transform: scale(80);
+        }
+
+        &__checkbox:checked ~ &__nav {
+            opacity: 1;
+            width: 100%;
+        }
+    }
+    ```
+    <img src="images/50-regular_transition_animation.gif">
+1. In addition, we can use [transition-timing-function: cubic-bezier](https://www.w3schools.com/cssref/func_cubic-bezier.asp). In addition we can use the following tools to fine the suitable values to configure.
+    1. [https://cubic-bezier.com/](https://cubic-bezier.com/)
+    1. [https://easings.net/](https://easings.net/)
+1. We will use `easeInOutBack` which is `cubic-bezier(0.68, -0.6, 0.32, 1.6);` in this case. 
+1. Final Scss
+    ```scss
+    // layout/_navigation.scss
+    .navigation {
+        &__checkbox {
+            display: none;
+        }
+
+        &__button {
+            background-color: $color-white;
+            height: 7rem;
+            width: 7rem;
+            position: fixed;
+            top: 6rem;
+            right: 6rem;
+            border-radius: 50%;
+            z-index: 2000;
+            box-shadow: 0 1rem 3rem rgba($color-black, .1);
+        }
+
+        &__background {
+            height: 6rem;
+            width: 6rem;
+            border-radius: 50%;
+            position: fixed;
+            top: 6.5rem;
+            right: 6.5rem;
+            background-image: radial-gradient($color-primary-light, $color-primary-dark);
+            z-index: 1000;
+            transition: transform .8s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+
+            // transform: scale(80);
+        }
+
+        &__nav {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1500;
+
+            opacity: 0;
+            overflow: hidden;
+            width: 0;
+            transition: all .8s;
+        }
+
+        &__list {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            list-style: none;
+            text-align: center;
+            width: 100%;
+        }
+
+        &__item {
+            margin: 1rem;
+        }
+
+        &__link {
+            &:link,
+            &:visited {
+                display: inline-block;
+                font-size: 3rem;
+                font-weight: 300;
+                padding: 1rem 2rem;
+                color: $color-white;
+                text-decoration: none;
+                text-transform: uppercase;
+                background-image: linear-gradient(120deg, transparent 0%, transparent 50%, $color-white 50%);
+                background-size: 250%;
+                transition: all .4s;
+
+                span {
+                    margin-right: 1rem;
+                    display: inline-block;
+                }
+            }
+
+            &:hover,
+            &:active {
+                background-position: 100%;
+                color: $color-primary;
+                transform: translateX(1rem);
+            }
+        }
+
+        &__checkbox:checked ~ &__background {
+            transform: scale(80);
+        }
+
+        &__checkbox:checked ~ &__nav {
+            opacity: 1;
+            width: 100%;
+        }
+    }
+    ```
+    <img src="images/50-final_animation_clickin_button.gif">
 
 ## Building the Navigation - Part 3
+1. To create the burger (trigram) "☰" symbol, we can use one `span` tag and use pseudo elements `::before` and `::after` to have three lines with one HTML element. We there for add a new `span` tag in the `label`. Besdies, we use HTML sybmol `&nbsp;` to leave a blank character.
+    ```html
+    <label for="navi-toggle" class="navigation__button">
+        <span class="navigation__icon">&nbsp;</span>
+    </label>
+    ```
+1. We can use the following styling to create the burger (trigram) "☰" symbol and the animation to turn the symbol into a "x" when the user clicks on it.
+    ```scss
+    .navigation {
+        &__icon {
+            position: relative;
+            margin-top: 3.5rem;
+
+            &,
+            &::before,
+            &::after {
+                width: 3rem;
+                height: 2px;
+                background-color: $color-grey-dark-3;
+                display: inline-block;
+            }
+
+            &::before,
+            &::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                transition: all .2s;
+            }
+
+            &::before { top: -.8rem; }
+            &::after { top: .8rem; }
+        }
+
+        &__button:hover &__icon::before {
+            top: -1rem;
+        }
+
+        &__button:hover &__icon::after {
+            top: 1rem;
+        }
+
+        &__checkbox:checked + &__button &__icon {
+            background-color: transparent;
+        }
+
+        &__checkbox:checked + &__button &__icon::before {
+            top: 0;
+            transform: rotate(135deg);
+        }
+
+        &__checkbox:checked + &__button &__icon::after {
+            top: 0;
+            transform: rotate(-135deg);
+        }
+    }
+    ```
 
 ## Building a Pure CSS Popup - Part 1
 
