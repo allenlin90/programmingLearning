@@ -3878,6 +3878,254 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/48-footer.gif">
 
 ## Building the Navigation - Part 1
+1. Learning targets
+    1. What the "**checkbox hack**" is and how it works
+    1. How to create custom animation timing functions using "**cubic bezier curves**"
+    1. How to animate "**solid-color gradients**"
+    1. How and why to use `transform-origin`
+    1. In general: create an amazinly creative effect
+1. Features of the navigation button
+    1. The navigation is a floating button stayed on the top right corner and stay at where it is though the user scroll the page.
+    1. When the user hovers it, the lines in the button will expand a bit
+    1. When the user clicks it, it opens a navigation list which covers the whole viewport, and the symbol in the button changes from a burger (trigram) "☰" to "X".
+    1. When the user hovers on any item of the list, the item get opposite color by default (background and font color). The animation effects slides in from the left.
+1. In this case, we use similar hack that we did for the [customized radio buttons](#Building-the-Booking-Section---Part-3). However, we use a checkbox `<input type="checkbox">` for the trick. As long as the checkbox is checked, the menu is opened and expanded.
+1. We firstly create the HTML elements on the very top of the document.
+    ```html
+    <div class="navigation">
+        <input type="checkbox" class="navigation__checkbox" id="navi-toggle">
+        <label for="navi-toggle" class="navigation__button">MENU</label>
+
+        <div class="navigation__background">&nbsp;</div>
+
+        <nav class="navigation__nav">
+            <ul class="navigation__list">
+                <li class="navigation__item"><a href="#" class="navigation__link"><span>01</span>About Natours</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link"><span>02</span>Your benefits</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link"><span>03</span>Popular tours</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link"><span>04</span>Stories</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link"><span>05</span>Book now</a></li>
+            </ul>
+        </nav>
+    </div>
+    ```
+1. For the navigation button
+    1. We hide the input tag with `display: none`. If we use JavaScript to check, we can know when the user clicks the button (label tag), the state of the input tag changes.
+    1. In this case, we use [`radial-gradient`](https://www.w3schools.com/cssref/func_radial-gradient.asp) instead of `linear-gradient` to create the color gradient as backgound. Unlike `linear-gradient` that we can specify the direction of the color gradient, it starts color gradient from the center of the element to the edge of the figure.
+    1. We use high value for `z-index` on both `.navigation__button` and `.navigation__background`, so the elements can overlay on other elements when the user scoll the page.
+        ```scss
+        // layout/_navigation.scss
+        .navigation {
+            &__checkbox { // hide the <input type="checkbox">
+                display: none;
+            }
+
+            &__button {
+                background-color: $color-white;
+                height: 7rem;
+                width: 7rem;
+                position: fixed;
+                top: 6rem;
+                right: 6rem;
+                border-radius: 50%;
+                z-index: 2000;
+            }
+
+            &__background { // background of the navigation panel
+                height: 6rem;
+                width: 6rem;
+                border-radius: 50%;
+                position: fixed;
+                top: 6.5rem;
+                right: 6.5rem;
+                background-image: radial-gradient($color-primary-light, $color-primary-dark);
+                z-index: 1000;
+            }
+        }
+        ```
+    1. When the user clicks the navigation button 
+        1. Scale the background element `<div class="navigation__background">&nbsp;</div>` should be scaled to cover the whole viewport (note that the value to be scales here is a approximate number. If the monitor is very large, it may not be enough to cover the whole viewport). 
+        1. The navigation panel should occupy the whole viewport which can configured as `width: 100vw;` and `height: 100vh;`.
+        1. We can give the navigation panel a `z-index` value between the background and the button.
+        1. We use `position: absoltue`, `top: 50%`, `left: 50%` (it can also be `right: 50%`), and `transform: translate(-50%, -50%)` to center the wholte `ul` tag. Note that this `position` works because its container `<div class="navigation__nav">` has `position: fixed`.
+            ```scss
+            // layout/_navigation.scss
+            .navigation {
+                &__background {
+                    transform: scale(80);
+                }
+
+                &__nav {
+                    height: 100vh;
+                    width: 100vw;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    z-index: 1500;
+                }
+
+                &__list {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    list-style: none;
+                    text-align: center;
+                }
+
+                &__item {
+                    margin: 1rem;
+                }
+            }                
+            ```
+    1. Styling the items in the list
+        1. We use `orangered` in this case to make the effect more obvious.
+        1. For the opposite color effect, we can use `linear-gradient` with a given degree to rotate the color.
+        1. We can change the value of `background-size` to have check the result of the effect. We then can use such feature with transition to have the color changing animation. 
+        1. For example, we can have the `background-size: 250%` which is large enough to cover on each side of the color. 
+            ```scss
+            .navigation {
+                &__link {
+                    &:link,
+                    &:visited {
+                        font-size: 3rem;
+                        font-weight: 300;
+                        padding: 1rem 2rem;
+                        color: $color-white;
+                        text-decoration: none;
+                        text-transform: uppercase;
+                        background-image: linear-gradient(120deg, orangered 0%, orangered 50%, $color-white 50%);
+                        background-size: 100%;
+                    }
+                }
+            }
+            ```
+        1. `background-size: 100%`
+            <img src="images/49-background-size_at_100_percent.png">
+        1. `background-size: 175%`
+            <img src="images/49-background-size_at_175_percent.png">
+        1. `background-size: 250%`
+            <img src="images/49-background-size_at_250_percent.png">
+    1. When the user hovers on any of the items in the list. 
+        1. We can use [`background-position`](https://www.w3schools.com/cssref/pr_background-position.asp) with percentage to shift the background color.
+        1. Note that we can only makes `transform: translate()` works when the element is a `block` or `inline-block` element.
+        1. As we have taken off the styling for `li` tags, we can add `span` and numbering the item. Note that `span` is `inline` elements that we can only add `margin` on both its left and right side when we turn it into `inline-block` or `block` element.
+            ```scss
+            // layout/_navigation.scss
+            .navigation {
+                &__link {
+                    &:link,
+                    &:visited {
+                        display: inline-block;
+                        font-size: 3rem;
+                        font-weight: 300;
+                        padding: 1rem 2rem;
+                        color: $color-white;
+                        text-decoration: none;
+                        text-transform: uppercase;
+                        background-image: linear-gradient(120deg, transparent 0%, transparent 50%, $color-white 50%);
+                        background-size: 250%;
+                        transition: all .4s;
+
+                        span {
+                            margin-right: 1rem;
+                            display: inline-block;
+                        }
+                    }
+
+                    &:hover,
+                    &:active {
+                        background-position: 100%;
+                        color: $color-primary;
+                        transform: translateX(1rem); // this works only when the element is inline-block or block
+                    }
+                }
+            }
+            ```
+1. Final Scss
+    ```scss
+    // layout/_navigation.scss
+    .navigation {
+        &__checkbox {
+            display: none;
+        }
+
+        &__button {
+            background-color: $color-white;
+            height: 7rem;
+            width: 7rem;
+            position: fixed;
+            top: 6rem;
+            right: 6rem;
+            border-radius: 50%;
+            z-index: 2000;
+        }
+
+        &__background {
+            height: 6rem;
+            width: 6rem;
+            border-radius: 50%;
+            position: fixed;
+            top: 6.5rem;
+            right: 6.5rem;
+            background-image: radial-gradient($color-primary-light, $color-primary-dark);
+            z-index: 1000;
+
+            transform: scale(80);
+        }
+
+        &__nav {
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1500;
+        }
+
+        &__list {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            list-style: none;
+            text-align: center;
+        }
+
+        &__item {
+            margin: 1rem;
+        }
+
+        &__link {
+            &:link,
+            &:visited {
+                display: inline-block;
+                font-size: 3rem;
+                font-weight: 300;
+                padding: 1rem 2rem;
+                color: $color-white;
+                text-decoration: none;
+                text-transform: uppercase;
+                background-image: linear-gradient(120deg, transparent 0%, transparent 50%, $color-white 50%);
+                background-size: 250%;
+                transition: all .4s;
+
+                span {
+                    margin-right: 1rem;
+                    display: inline-block;
+                }
+            }
+
+            &:hover,
+            &:active {
+                background-position: 100%;
+                color: $color-primary;
+                transform: translateX(1rem);
+            }
+        }
+    }
+    ```
+    <img src="images/49-color_sliding_on_item.gif">
 
 ## Building the Navigation - Part 2
 
