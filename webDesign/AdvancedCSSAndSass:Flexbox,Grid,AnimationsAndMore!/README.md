@@ -4710,6 +4710,99 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/55-breakpoints_for_devices.png">
 
 ## Let's Use the Power of Sass Mixins to Write Media Queries
+1. Learning targets
+    1. How to use a powerful Sass mixin to write all our media queries
+    1. Hwo to use the `@content` and `@if` Sass directives
+    1. Taking advantage of Chrome DevTools for responsive design
+1. With Sass, we can write the media query directly in the selector as other nested ones using ampersand `&`. The code will be compiled and have its own selector as regular CSS.
+1. We can create a new `mixin` which holds the desirable device width for the media query, so in the future if we need to modify the device width, we can change in the mixin directly.
+1. `mixin` can not only take arguments but take entire code block by usign [`@content`](https://sass-lang.com/documentation/at-rules/mixin#content-blocks). Therefore, we can `@include` the mixin and write the code inside directly.
+    ```scss
+    // abstracts/_mixins.scss
+    // MEDIA QUERY MANAGER
+    /*
+    0 - 600px: Phone
+    600 - 900px: Tablet portrait
+    900 - 1200px: Tablet landscape
+    [1200-1800] is where our normal styles apply
+    1800px + : Big desktop
+    */
+
+    @mixin respond-phone {
+        @media (max-width: 600px) { @content };
+    }    
+    ```
+1. In the `base`, we can use the mixin to modify the font of the whole website.
+    ```scss
+    // base/_base.scss
+    html {
+        // This defines what 1rem is
+        font-size: 62.5%;
+
+        @include respond-phone {
+            font-size: 50%;
+        }
+    }
+    ```
+1. However, by the previous approach, we still need to specify all the desirable or possible devices width for `media-queries` one by one.
+1. We can create a "**media-query**" manager by `@if`. This feature can make Sass programming-like to decide which media query to apply. 
+1. According to [this article - https://zellwk.com/blog/media-query-units/](https://zellwk.com/blog/media-query-units/), we can see that using `px` based media query may have funny and buggy results. This is suggested from the lecture as well that we can use `em` (not `rem`!) based media queries. 
+    ```scss
+    // abstracts/_mixins.scss
+    /*
+    - phone
+    - tab-port
+    - tab-land
+    - big-desktop
+
+    1em = 16px
+    */
+
+    @mixin respond($breakpoint) {
+        @if $breakpoint == phone {
+            @media (max-width: 37.5em) { @content }; // 600px
+        }
+        @if $breakpoint == tab-port {
+            @media (max-width: 56.25em) { @content }; // 900 px
+        }
+        @if $breakpoint == tab-land {
+            @media (max-width: 75em) { @content }; // 1200px
+        }
+        @if $breakpoint == big-desktop {
+            @media (min-width: 112.5em) { @content }; // 1800px
+        }
+    }
+    ```
+1. It's import to follow the cascading behavior as media queries have no specificity on importance. That means only the code order in the file matters that the browser can decide which code of styling will be applied to the elements. 
+1. With Desktop-first approach (using `max-width`), we can start with the big size media query.
+1. Note that we use the same `font-size` for `tab-port` and `phone` in this case, so we take `@include respond(phone)` off, as it's considered duplicate.
+    ```scss
+    // base/_base.scss
+    html {
+        // This defines what 1rem is
+        font-size: 62.5%; // 1rem = 10px; 10px/16px = 62.5%
+        
+        @include respond(tab-land) { // width < 1200?
+            font-size: 56.25%; // 1rem = 9px, 9/16=56.25%
+        }
+
+        @include respond(tab-port) { // width < 900?
+            font-size: 50%; // 1rem = 8px, 8/16=50%
+        }
+
+        /*
+        @include respond(phone)) { // width < 600?
+            font-size: 50%; // 1rem = 8px, 8/16=50%
+        }
+        */
+
+        @include respond(big-desktop) {
+            font-size: 75%; // 1rem = 12px, 12/16=75%
+        }
+    }
+    ```
+
+
 ## Writing Media Queries - Base, Typography and Layout
 ## Writing Media Queries - Layout, About and Features Sections
 ## Writing Media Queries - Tours, Stories, and Booking Sections
