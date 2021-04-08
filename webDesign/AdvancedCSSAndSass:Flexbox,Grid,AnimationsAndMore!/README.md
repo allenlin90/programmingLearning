@@ -125,7 +125,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 ---
 # Natours Project - Setup and First Steps (Part 1)
 ## Project Overview
-1. [Porject Lin]k(https://wonderful-goldwasser-8b2175.netlify.app/irresponsive_natours/index.html)
+1. [Porject Link](https://wonderful-goldwasser-8b2175.netlify.app/irresponsive_natours/index.html)
 1. Put the link of final builtup here after finishing practicing
 1. Use pure CSS without JavaScript to create the following effects
     1. A "**Hover Effect**" that the card flips when the user put the cursor on the element. 
@@ -4664,11 +4664,51 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         }
     }
     ```
+    <img src="images/53-final_animations.gif">
 1. [Project Link](https://wonderful-goldwasser-8b2175.netlify.app/irresponsive_natours/index.html)
+
 
 
 # Natours Project - Advanced Responsive Design (Part 3)
 ## Mobile-First vs Desktop-First and Berakpoints
+1. Responsive design strategies
+    1. Desktop-first
+        1. Start writing CSS for the desktop: large screen.
+        1. Then, media queries shrink design to smaller screens
+    1. Mobile-first
+        1. Start writing CSS for mobile devices: small screen
+        1. Then, media queries expand design to a large desktop screen
+        1. Forces us to reduce websites and apps to the absolute essentials
+1. Media queries don't add any importance or specificity to selectors, so code order matters - media queries at the end
+1. For **Desktop-first**, we can use `max-width` in media query that if the viewport width is **_less_** than the given media query, the styling code in the media query will apply. 
+1. For **Mobile-first**, we can use `min-width` in media query that if the viewport width is **_larger_** than the given media query, the styling code in the media query will apply. 
+    <img src="images/55-mobile_vs_desktop_first_design.png">
+1. Pros of mobile-first design
+    1. 100% optimized for the mobile experience
+    1. Reduces websites and apps to the absolute essentials
+    1. Results in smaller, faster and more effcienct products
+    1. Prioritizes content over aesthetic design, which may be desirable
+1. Cos of mobile-first design
+    1. The desktop version might feel overly empty and simplistic
+    1. More difficult and counterintuitive to develop
+    1. Less creative freedom, making it more difficult to create distictive products
+    1. Clients are used to see a desktpo version of the site as a prototype
+    1. Do your users even use the mobile internet? What's the purpose of your website?
+1. No matter what you do, alaways keep both desktop and mobile in mind
+1. The options of the breakpoints
+    1. BAD
+        1. Using the width of certain devicse as the breakpoint, such as iPhone and iPad
+        1. Each generation of devices may have different size and resolution
+        1. This approach can cause problems for maintainence in the future 
+    1. GOOD
+        1. Group several similar devices such as mobile phones, tablets, laptop
+        1. This consider devices has similar size and resolution can show similar results of the website
+    1. PERFECT
+        1. Design breaks which is totall according to the design pattern and consider little on the devices running the website
+        1. It can be very hard to execute this approach
+1. We can check the statistics from [https://gs.statcounter.com/screen-resolution-stats](https://gs.statcounter.com/screen-resolution-stats).
+    <img src="images/55-breakpoints_for_devices.png">
+
 ## Let's Use the Power of Sass Mixins to Write Media Queries
 ## Writing Media Queries - Base, Typography and Layout
 ## Writing Media Queries - Layout, About and Features Sections
