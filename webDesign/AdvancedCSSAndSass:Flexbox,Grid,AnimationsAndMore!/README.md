@@ -4802,8 +4802,163 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     }
     ```
 
-
 ## Writing Media Queries - Base, Typography and Layout
+1. ORDER: base + typography > general layout + grid > page layout > components
+1. We take out the padding when the viewport width is less than `900px`. Besides, we move the `padding: 3rem` from `_typography.scss` to `_base.scss` in `body` selector.
+    ```scss
+    // base/_base.scss
+    body {
+        padding: 3rem;
+
+        @include respond(tab-port) { // width < 900?
+            padding: 0;
+        }
+    }
+    ```
+1. We adds media queries that we have done in the last section.
+    ```scss
+    // base/_typography.scss
+    .heading-primary {
+        &--main {
+            @include respond(phone) {
+                letter-spacing: 1rem;
+                font-family: 5rem;
+            }            
+        }
+
+        &--sub {
+            @include respond(phone) {
+                letter-spacing: 1rem;
+            }
+        }
+
+        .heading-secondary {
+            @include respond(tab-port) {
+                font-size: 3rem;
+            }
+            @include respond(phone) {
+                font-size: 2.5rem;
+            }
+        }
+    }
+    ```
+1. We modify the styling on the grid, as when the viewport becomes narrower, the number of columns in a row should change.
+    1. We can modify the `max-width` to limit the maximum column width when the viewport width is less than `900px`.
+    1. For each `row`, we reduce the `margin-bottom` from `8rem` to `6rem`.
+    1. Since there's only a single column in the row, we can remove the `margin-right`.
+    1. Have little padding on the edge to push the contents a bit inside the `row` contianer.
+        ```scss
+        // layout/_grid.scss
+        .row {
+            max-width: $grid-width;
+
+            &:not(:last-child) {
+                margin-bottom: $gutter-vertical;
+                @include respond(tab-port) { // reduce the gap between each row
+                    margin-bottom: $gutter-vertical-small;
+                }
+            }
+
+            @include respond(tab-port) { // constrain the maximum width of a column 
+                max-width: 50rem;
+                padding: 0 3rem;
+            }
+
+            @include clearfix;
+
+            [class^="col-"] {
+                float: left;
+
+                &:not(:last-child) {
+                    margin-right: $gutter-horizontal;
+
+                    @include respond(tab-port) { 
+                        margin-right: 0; // remove margin-right because there's only single column
+                        margin-bottom: $gutter-vertical-small; // add space between each column
+                    }
+                }
+
+                @include respond(tab-port) {
+                    width: 100% !important; // ensure the columns change to a single one
+                }
+            }
+        }
+        ```
+1. We change the `clip-path` shape to make the tilt less when the screen becomes smaller.
+    ```scss
+    // layout/_header.scss
+    .header {        
+        @include resopnd(phone) {
+            -webkit-clip-path: polygon(0 0, 100% 0, 100% 85vh, 0 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 85vh, 0 100%);
+        }
+    }
+    ```
+1. Change the location of the navigation button on the top right corner.
+    ```scss
+    // layout/_navigation.scss
+    .navigation {
+        &__button {
+            top: 6rem;
+            right: 6rem;
+
+            @include respond(tab-port) {
+                top: 4rem;
+                right: 4rem;
+            }
+
+            @include respond(phone) {
+                top: 3rem;
+                right: 3rem;
+            }
+        }
+
+        &__background {
+            top: 6.5rem;
+            right: 6.5rem;
+
+            @include respond(tab-port) {
+                top: 4.5rem;
+                right: 4.5rem;
+            }
+
+            @include respond(phone) {
+                top: 3.5rem;
+                right: 3.5rem;
+            }
+        }
+    }
+    ```
+1. Fix the footer and change the content into a single conlumn. 
+    ```scss
+    // layout/_footer.scss
+    .footer {
+        padding: 10rem;
+
+        @include respond(tab-port) {
+            padding: 8rem 0;
+        }
+
+        &__navigation {
+            @include respond(tab-port) {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        &__copyright {
+            width: 80%;
+            float: right;
+            
+            @include respond(tab-port) {
+                width: 100%;
+                float: none;
+            }
+        }
+    }
+    ```
+    <img src="images/58-media_queries_for_layout.gif">
+
 ## Writing Media Queries - Layout, About and Features Sections
 ## Writing Media Queries - Tours, Stories, and Booking Sections
 ## An Overview of Responsive Images
