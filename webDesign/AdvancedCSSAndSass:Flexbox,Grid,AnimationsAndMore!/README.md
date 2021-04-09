@@ -4960,6 +4960,166 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/58-media_queries_for_layout.gif">
 
 ## Writing Media Queries - Layout, About and Features Sections
+1. In footer, we give more `margin-bottom` to the image when the screen size is smaller.
+    ```scss
+    // layout/_footer.scss
+    .footer {
+        &__logo-box {
+            margin-bottom: 8rem;
+
+            @include respond(tab-port) {
+                margin-bottom: 6rem;
+            }
+        }
+    }
+    ```
+1. In the overall home layout, we can reduce the padding of each section, as the current there's too much white space between the items. 
+1. In this case, we reduce `5rem` on the padding on each section. However, we haven't modified on the "**booking**" section yet.
+    ```scss
+    // pages/_home.scss
+    .section-about {
+        padding: 25rem 0;
+
+        @include respond(tab-port) {
+            padding: 20rem 0;
+        }
+    }
+
+    .section-features {
+        padding: 20rem 0;
+
+        @include respond(tab-port) {
+            padding: 15rem 0;
+        }
+    }
+
+    .section-tours {
+        padding: 25rem 0 15rem 0;
+
+        @include respond(tab-port) {
+            padding: 20rem 0 10rem 0;
+        }
+    }
+
+    .section-stories {
+        padding: 15rem 0;
+
+        @include respond(tab-port) {
+            padding: 10rem 0;
+        }
+    }
+
+    .section-book {
+        padding: 15rem 0;
+
+        @include respond(tab-port) {
+            padding: 10rem 0;
+        }
+    }
+    ```
+1. Though we are using utilities such as `u-margin-bottom-small` to have space on HTML element, we can use media queries on these utilities as well. 
+    ```scss
+    // base/_utilities.scss
+    .u-margin-bottom-medium {
+        margin-bottom: 4rem !important; 
+
+        @include respond(tab-port) {
+            margin-bottom: 3rem !important;;
+        }
+    }
+
+    .u-margin-bottom-big {
+        margin-bottom: 8rem !important; 
+
+        @include respond(tab-port) {
+            margin-bottom: 5rem !important;;
+        }
+    }
+    ```
+1. We then start to modify the image `composition`.
+1. In the large screen size, the images are floated on the right, so the section as 2 columns side by side. 
+1. For smaller screens, we'd like to have it in a row.
+1. We can different scales and position on the images.
+    ```scss
+    // components/_compositions.scss
+    .composition {
+        &__photo {
+            width: 55%;
+            box-shadow: 0 1.5rem 4rem rgba($color-black, .4);
+            position: absolute;
+
+            @include respond(tab-port) {
+                float: left;
+                position: relative;
+                width: 33.3333333%;
+                box-shadow: 0 1.5rem 3rem rgba($color-black, .2);
+            }
+
+            &--p1 {
+                left: 0;
+                top: -2rem;
+
+                @include respond(tab-port) {
+                    top: 0;
+                    transform: scale(1.2);
+                }
+            }
+
+            &--p2 {
+                right: 0;
+                top: 2rem;
+
+                @include respond(tab-port) {
+                    top: -1rem;
+                    transform: scale(1.3);
+                    z-index: 100;
+                }
+            }
+
+            &--p3 {
+                left: 20%;
+                top: 10rem;
+
+                @include respond(tab-port) {
+                    top: 1rem;
+                    left: 0;
+                    transform: scale(1.1);
+                }
+            }
+        }
+    }
+    ```
+1. For the "feature-box" section, we have small adjustment 
+    ```scss
+    // components/_feature-box.scss
+    .feature-box {
+        padding: 2.5rem;
+
+        @include respond (tab-port) {
+            padding: 2rem;
+        }
+
+        &__icon {
+            margin-bottom: .5rem;
+
+            @include respond (tab-port) {
+                margin-bottom: 0rem;
+            }
+        }
+    }
+    ```
+1. We still find the white space created by `padding` is too large for the section, so we modify it in the home layout. 
+    ```scss
+    // pages/_home.scss
+    .section-features {
+        padding: 20rem 0;
+
+        @include respond(tab-port) {
+            padding: 10rem 0;
+        }
+    }
+    ```
+
 ## Writing Media Queries - Tours, Stories, and Booking Sections
 ## An Overview of Responsive Images
 ## Responsive Images in HTML - Art Direction and Density Switching
