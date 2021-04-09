@@ -5121,6 +5121,162 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Writing Media Queries - Tours, Stories, and Booking Sections
+1. On touch screens, the user can't hover on the flipping card to trigger the effect, while the user can only click on the element to flip the card. 
+1. In this case, we will rewrite the styling on `card` component when the device screen size is narrow. Since we are going to rewrite, we start a whole new chuck in `_card.scss`. The idea is to simply copy all the styling and take those out if we don't need to use. 
+1. The final `card` component has only one side and the back side is pushed down to the bottom of the list of items. We then change the `padding` for adjust the layout.
+1. We then use `clip-path` to create a shape which looks like the header.
+1. Besides, the `shadow-box` effect should work on both the front and back side elements, and we can give white background to the back element.
+    ```scss
+    // components/_card.scss
+    .card {
+        @include respond(tab-port) {
+            height: auto;
+            border-radius: 3px; // this should work on the whole card rather than only the front 
+            background-color: $color-white; 
+            box-shadow: 0 1.5rem 4rem rgba($color-black, .15); // give box-shadow to whole card component
+
+            &__side {        
+                height: auto;            
+                position: relative; // the card has only one side
+                box-shadow: none; // cancel the box-shadow given from regular styling code
+                
+                &--back {            
+                    transform: rotateY(0);
+                    clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%); // create the header-like shape
+                }
+            }
+
+            &:hover &__side--front {
+                transform: rotateY(0);
+            }
+
+            &__details {
+                padding: 1rem 3rem;
+            }
+            
+            // FRONT SIDE STYLING
+            &__cta {
+                position: relative;
+                top: 0%;
+                left: 0%;
+                transform: translate(0);
+                width: 100%;
+                padding: 7rem 4rem 4rem 4rem;
+            }
+
+            &__price-box{            
+                margin-bottom: 3rem;
+            }
+
+            &__price-value {
+                font-size: 6rem;            
+            }
+        }
+    }
+    ```
+1. After styling the `card` components, we can work with `story` components.
+1. We basically turn off all the `skew` effects when the screen is in phone size.
+    ```scss
+    // components/_story.scss    
+    .story {
+        width: 75%;
+        padding: 6rem;
+        padding-left: 9rem;        
+        transform: skewX(-12deg);
+
+        @include respond(tab-port) {
+            width: 100%;
+            padding: 4rem;
+            padding-left: 7rem;
+        }
+
+        @include respond(phone) {
+            transform: skewX(0);
+        }
+
+        &__shape {            
+            transform: translateX(-3rem) skewX(12deg);            
+
+            @include respond(phone) {
+                transform: translateX(-3rem) skewX(0);
+            }
+        }
+        &__text {
+            transform: skewX(12deg);
+
+            @include respond(phone) {
+                transform: skewX(0);
+            }
+        }
+    }
+    ```
+1. After configuring `_story.scss`, we work with the home layout, which we didn't work with at the first place.
+1. The elements starts to get weird since `tablet-landscape` width. Besides, we have the white filter cover the whole background image after `tablet-portrait` as the width is too narrow to show the regular styling.
+    ```scss
+    // pages/_home.scss
+    .book {
+        background-image: linear-gradient(105deg, 
+            rgba($color-white, .9) 0%, 
+            rgba($color-white, .9) 50%, 
+            transparent 50%), 
+            url(../img/nat-10.jpg);
+        background-size: 100%;
+        border-radius: 3px;
+        box-shadow: 0 1.5rem 4rem rgba($color-black, .2);
+
+        @include respond(tab-land) { // let the background image covers the whole background rather than repeating itself
+            background-image: linear-gradient(105deg, 
+                rgba($color-white, .9) 0%, 
+                rgba($color-white, .9) 65%, 
+                transparent 65%), 
+                url(../img/nat-10.jpg);
+            background-size: cover;
+        }
+
+        @include respond(tab-port) { // let the white filter covers the whole background image
+            background-image: linear-gradient(105deg, 
+                rgba($color-white, .9) 0%, 
+                rgba($color-white, .9) 100%),            
+                url(../img/nat-10.jpg);
+        }
+
+        &__form {
+            width: 50%;
+            padding: 6rem;
+
+            @include respond(tab-land) {
+                width: 65%;
+            }
+
+            @include respond(tab-port) {
+                width: 100%; // occupy the whole width
+            }
+        }
+    }
+    ```
+1. After fixing the booking layout, we can modify the inner component "radio buttons".
+    ```scss
+    // components/_form.scss
+    .form {        
+        &__input {            
+            width: 90%;            
+
+            @include respond(tab-port) {
+                width: 100%;            
+            }
+        }
+            
+        &__radio-group {
+            width: 45%;            
+
+            @include respond(tab-port) {
+                width: 100%;
+                margin-bottom: 2rem;
+            }
+        }
+    }
+    ```
+
 ## An Overview of Responsive Images
 ## Responsive Images in HTML - Art Direction and Density Switching
 ## Responsive Images in HTML - Desity and Resolution Switching
