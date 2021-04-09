@@ -5282,7 +5282,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. Resolution switching (Decrease image resolution on smaller screen)
     1. Density switching (Half the image resolution on @1x screen)
     1. Art direction (Different image on smaller screen)    
-    <img src="images/60-an_overview_of_responsive_image.png">
+        <img src="images/60-an_overview_of_responsive_image.png">
 
 ## Responsive Images in HTML - Art Direction and Density Switching
 1. Learning targets
@@ -5316,6 +5316,63 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         ```
 
 ## Responsive Images in HTML - Desity and Resolution Switching
+1. Learning target - How to allow the browser to decide the best image to download, using the `srcset` attribute, width descriptors, and the `sizes` attribute of the `<img>` element.
+1. In the browser DevTool, we can check the option of "**add device pixel ratio**" and change the resolution of the page to perform [resolution switching](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images#resolution_switching_different_sizes).
+    1. HTML using `1x` for low resolution
+        <img src="images/62-responsive_image_sourceA_1x.png">
+    1. HTML using `2x` for high resolution
+        <img src="images/62-responsive_image_sourceA_2x.png">
+1. In this case, we'd like to update the image composition for different resolution.
+    1. In the `<img srcset="">`, we specify the image size by giving its actual width which is `300w` for small size and `1000w` for large size. Note that though the unit is in `w`, it's actually "**pixel**".
+    1. We then add the breakpoints in `sizes` attribute to indicate to the HTML file that which image to render. Besides, we can give the default size as an option, which is `300xp` in this case. 
+    1. We get `20vw` and `30vw` from the percentage of the actual width that we want to have. For example, the actual size in certain viewport is `176px` which is almost 20% of the size we want. Therefore, we use `20vw` for the case. 
+    1. We use `src` attribute for another source in case that the browser doesn't support the feature. 
+        ```html
+        <main>
+            <section class="section-about">            
+                <div class="row">                
+                    <div class="col-1-of-2">
+                        <div class="composition">
+
+                            <img srcset="img/nat-1.jpg 300w, img/nat-1-large.jpg 1000w" 
+                                sizes="(max-width: 900px) 20vw, (max-width: 600px) 30vw, 300px" 
+                                alt="photo_1" 
+                                class="composition__photo composition__photo--p1" 
+                                src="img/nat-1-large.jpg">
+                                
+                            <img srcset="img/nat-2.jpg 300w, img/nat-2-large.jpg 1000w" 
+                                sizes="(max-width: 900px) 20vw, (max-width: 600px) 30vw, 300px" 
+                                alt="photo_2" 
+                                class="composition__photo composition__photo--p2" 
+                                src="img/nat-2-large.jpg">
+
+                            <img srcset="img/nat-3.jpg 300w, img/nat-3-large.jpg 1000w" 
+                                sizes="(max-width: 900px) 20vw, (max-width: 600px) 30vw, 300px" 
+                                alt="photo_3" 
+                                class="composition__photo composition__photo--p3" 
+                                src="img/nat-3-large.jpg">
+                            
+                            <!-- <img src="img/nat-1-large.jpg" alt="photo_2" class="composition__photo composition__photo--p1">
+                            <img src="img/nat-2-large.jpg" alt="photo_2" class="composition__photo composition__photo--p2">
+                            <img src="img/nat-3-large.jpg" alt="photo_3" class="composition__photo composition__photo--p3"> -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        ```
+1. We can do the same trick for the `footer`. 
+    ```html
+    <footer class="footer">
+        <div class="footer__logo-box">
+            <picture class="footer__logo">
+                <source srcset="img/logo-green-small-1x.png 1x, img/logo-green-small-2x.png 2x" media="(max-width: 37.5em)">
+                <img srcset="img/logo-green-1x.png 1x, img/logo-green-2x.png 2x" alt="full_logo" class="footer__logo" src="img/logo-green-2x.png">
+            </picture>            
+        </div>        
+    </footer>
+    ```
+
 ## Responsive Images in CSS
 ## Testing for Browsers Support with @supports
 ## Setting up a Simple Build Process with NPM Scripts
