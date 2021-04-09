@@ -5278,7 +5278,43 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## An Overview of Responsive Images
+1. The goal of responsive images is to serve the right image to the right screen size and device, in order to avoid downloading unnecessary large images on smaller screens.
+    1. Resolution switching (Decrease image resolution on smaller screen)
+    1. Density switching (Half the image resolution on @1x screen)
+    1. Art direction (Different image on smaller screen)    
+    <img src="images/60-an_overview_of_responsive_image.png">
+
 ## Responsive Images in HTML - Art Direction and Density Switching
+1. Learning targets
+    1. How to use the `srcset` attribute on the `<img>` and `<source>` elements, together with density descriptors.
+    1. How and why to use the `picture` element for art direction.
+    1. How to write media queries in HTML.
+1. For density switching, we can use `srcset` attribute to let the browser decide which source of image to use.
+    ```html
+    <footer class="footer">
+        <div class="footer__logo-box">
+            <img srcset="img/logo-green-1x.png 1x, img/logo-green-2x.png 2x" alt="full_logo" class="footer__logo">
+        </div>
+    </footer>
+    ```
+1. For art direction, if we'd like to use media query in HTML, we can use [`picture`](https://www.w3schools.com/tags/tag_picture.asp) tag. In this case, the browser will look up to the medai query and decide which image to render on the page.
+    1. The `<picture>` tag gives web developers more flexibility in specifying image resources.
+    1. The most common use of the `<picture>` element will be for art direction in responsive designs. Instead of having one image that is scaled up or down based on the viewport width, multiple images can be designed to more nicely fill the browser viewport.
+    1. The `<picture>` element contains two tags: one or more `<source>` tags and one `<img>` tag.
+    1. The browser will look for the first `<source>` element where the media query matches the current viewport width, and then it will display the proper image (specified in the srcset attribute). The `<img>` element is required as the last child of the `<picture>` element, as a fallback option if none of the source tags matches.
+        ```html
+        <footer class="footer">
+            <div class="footer__logo-box">
+
+                <picture class="footer__logo">
+                    <source srcset="img/logo-green-small-1x.png 1x, img/logo-green-small-2x.png 2x" media="(max-width: 37.5em)">
+                    <img srcset="img/logo-green-1x.png 1x, img/logo-green-2x.png 2x" alt="full_logo" class="footer__logo">
+                </picture>
+                
+            </div>
+        </footer>
+        ```
+
 ## Responsive Images in HTML - Desity and Resolution Switching
 ## Responsive Images in CSS
 ## Testing for Browsers Support with @supports
