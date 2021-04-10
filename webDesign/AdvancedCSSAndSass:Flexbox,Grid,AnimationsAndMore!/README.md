@@ -5433,6 +5433,101 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         ```
 
 ## Testing for Browsers Support with @supports
+1. For some modern CSS properties, we can use [https://caniuse.com/](https://caniuse.com/) to check if a browser supports certain property we'd like to use.
+1. Learning target
+    1. How to use `@supports` feature queries
+    1. Implement gracefull degradation on selected properties
+    1. How to use `backdrop-filter`
+1. We can use `backdrop-filter` and `-webkit-backdrop-filter` with `blur()` to create a blurry filter which effects to the background. 
+1. However, if some browser don't support the feature, we can use `@support` to check if the properties work. If the property does work, it will apply the styling in the code block. 
+    ```scss
+    // components/_popup.scss
+    .popup {
+        background-color: rgba($color-black, .8);
+
+        @supports(-webkit-backdrop-filter: blue(10px)) or (backdrop-filter: blur(10px)) {
+            // this only works if the browser supports
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            background-color: rgba($color-black, .3);
+        }
+    }
+    ```
+1. We have other fixes in the other components as well. 
+    1. Card component
+        ```scss
+        // component/_card.scss
+        .card {
+            &__side {        
+                -webkit-backface-visibility: hidden; // this works for safari
+                backface-visibility: hidden; // hide the other side when the card is flipped
+            }
+        }
+        ```
+    1. Header Layout. 
+        1. `min-resolution` doesn't work on Safari browser, so we need another property `-webkit-min-device-pixel-ratio` to check for Safari device.
+        1. `clip-path` wouldn't work in Firefox browser, so we can also check with `@supports`.
+            ```scss
+            // layout/_header.scss
+            .header {
+                height: 85vh;
+                background-image: linear-gradient(
+                    to right bottom,
+                    rgba($color-primary-light, 0.8), 
+                    rgba($color-primary-dark, 0.8)), 
+                    url(../img/hero-small.jpg);
+                background-size: cover;
+                background-position: top;
+                position: relative;
+
+                @supports (clip-path: polygon(0 0)) or (-webkit-clip-path: polygon(0 0)) {
+                    -webkit-clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+                    clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+                    height: 95vh;
+                }
+
+                @media (min-resolution: 192dpi and (min-width: 37.5em)),
+                    (-webkit-min-device-pixel-ratio: 2) and (min-width: 37.5em), // this ensure the media query works on Safari
+                    (min-width: 125em) { 
+                    // some browser may not support this media query
+                    background-image: linear-gradient(
+                        to right bottom,
+                        rgba($color-primary-light, 0.8), 
+                        rgba($color-primary-dark, 0.8)), 
+                        url(../img/hero.jpg);
+                }
+            }
+            ```
+    1. Story component. `shape-outside` and `clip-path` wouldn't work in some browsers as well, so we can use `@supports` to check. If it's not working, we can use `border-radius` to create similar styling to the element. Besides, we need to turn `border-radius` off, if `shape-radius` is working.
+        ```scss
+        // component/_story.scss
+        .story {
+            &__shape {
+                width: 15rem;
+                height: 15rem;
+                float: left;
+                transform: translateX(-3rem) skewX(12deg);
+                position: relative;
+                overflow: hidden;
+                border-radius: 50%;
+
+                @supports (clip-path: polygon(0 0)) or (-webkit-clip-path: polygon(0 0)) {
+                    -webkit-clip-path: circle(50% at 50% 50%);
+                    clip-path: circle(50% at 50% 50%);
+                    // shape-outside only works if the element has width and height and float: left or float: right
+                    -webkit-shape-outside: circle(50% at 50% 50%);
+                    // shape-outside is only to make the element around to wrap the shape
+                    shape-outside: circle(50% at 50% 50%);
+                    border-radius: none;
+                }
+
+                @include respond(phone) {
+                    transform: translateX(-3rem) skewX(0);
+                }
+            }
+        }
+        ```
+
 ## Setting up a Simple Build Process with NPM Scripts
 ## Wrapping up the Natours Project: Final Considerations
 

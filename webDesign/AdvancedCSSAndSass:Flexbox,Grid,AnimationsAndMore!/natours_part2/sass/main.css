@@ -957,6 +957,9 @@ body {
   visibility: hidden;
   -webkit-transition: all .3s;
   transition: all .3s;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .popup__content {
