@@ -5529,7 +5529,124 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         ```
 
 ## Setting up a Simple Build Process with NPM Scripts
+1. A build process. We'd like to concate the `icon-font.css` to our CSS file.
+    1. Compliation
+    1. Concatenation
+    1. Prefixing
+    1. Compressing
+        <img src="images/65-steps_compiling_sass.png">
+1. We can configure the build process in `package.json` for both development and production.
+    1. For "**build**" process, we use `concat`, `postcss-cli`, `autoprefixer`, and `npm-run-all` npm packages
+        1. We use `node-sass` to compile the Sass file to CSS.
+        1. `concat` is used to concatenate CSS files.
+        1. [`postcss-cli`](https://www.npmjs.com/package/postcss-cli) and [autoprefixer](https://www.npmjs.com/package/autoprefixer) are used to add headers to support in different versions of browsers. We can also specify how many versions that we want to support.
+        1. To compress the CSS file, we can get back to use [`node-sass`](https://www.npmjs.com/package/node-sass#command-line-interface) package. Note that we need to specify `--output-style compressed` to have compressed CSS file.
+        1. After all the required files are ready, we can use `npm-run-all` package to run all the process at one command. Therefore, we can simply run `npm run build:css` in the terminal to get the final CSS file `style.css`.
+            ```json
+            {
+                "scripts": {
+                    "compile:sass": "node-sass sass/main.scss css/style.comp.css",
+                    "concat:css": "concat -o css/style.concat.css css/icon-font.css css/style.comp.css",
+                    "prefix:css": "postcss --use autoprefixer -b 'last 10 versions' css/style.concat.css -o css/style.prefix.css",
+                    "compress:css": "node-sass css/style.prefix.css css/style.css --output-style compressed",
+                    "build:css": "npm-run-all compile:sass concat:css prefix:css compress:css"
+                }
+            }
+            ```
+    1. For developing process, we can configure the "**script**" with `npm-run-all`. 
+        1. We can run `npm run start` and specify `--parallel` to run both command at the same time. 
+        1. Without specifying `--parallel`, the commands will be executed in the given order.
+        1. Both commands are ingoing commands, so if we don't specify to run them at the same time, one command won't be executed.
+            ```json
+            {
+                "scripts": {
+                    "watch:sass": "node-sass sass/main.scss css/style.css -w",
+                    "devserver": "live-server",
+                    "start": "npm-run-all --parallel devserver watch:sass"
+                }
+            }
+            ```
+1. Final JSON. Note that on Linux and Mac system, we may need to install those devDependencies globally or the commands wouldn't work.
+    ```json
+    {
+        "name": "natours",
+        "version": "1.0.0",
+        "description": "",
+        "main": "index.js",
+        "scripts": {
+            "watch:sass": "node-sass sass/main.scss css/style.css -w",
+            "devserver": "live-server",
+            "start": "npm-run-all --parallel devserver watch:sass",
+            "compile:sass": "node-sass sass/main.scss css/style.comp.css",
+            "concat:css": "concat -o css/style.concat.css css/icon-font.css css/style.comp.css",
+            "prefix:css": "postcss --use autoprefixer -b 'last 10 versions' css/style.concat.css -o css/style.prefix.css",
+            "compress:css": "node-sass css/style.prefix.css css/style.css --output-style compressed",
+            "build:css": "npm-run-all compile:sass concat:css prefix:css compress:css"
+        },
+        "keywords": [],
+        "author": "",
+        "license": "ISC",
+        "devDependencies": {
+            "autoprefixer": "^10.2.5",
+            "concat": "^1.0.3",
+            "node-sass": "^5.0.0",
+            "npm-run-all": "^4.1.5",
+            "postcss-cli": "^8.3.1"
+        }
+    }
+    ```
+
 ## Wrapping up the Natours Project: Final Considerations
+1. We can add some feature when users select the text on the screen, so we can change the selected effect from default blue color to whatever we want to fit the style.
+    ```scss
+    // base/_base.scss
+    ::selection {
+        background-color: $color-primary;
+        color: $color_white;
+    }
+    ```
+1. In `mixin` and other media queries, we'd like to specify that these media queries should only work on the screen, so it won't affect when we choose to print the website. This can be simply achieved by adding `only screen and` before the other conditions on media queries.
+    ```scss
+    // abstracts/_mixins.scss
+    @mixin respond($breakpoint) {
+        @if $breakpoint == phone {
+            @media only screen and (max-width: 37.5em) { @content }; // 600px
+        }
+        @if $breakpoint == tab-port {
+            @media only screen and (max-width: 56.25em) { @content }; // 900 px
+        }
+        @if $breakpoint == tab-land {
+            @media only screen and (max-width: 75em) { @content }; // 1200px
+        }
+        @if $breakpoint == big-desktop {
+            @media only screen and (min-width: 112.5em) { @content }; // 1800px
+        }
+    }
+    ```
+1. In order to make the webpage responsive, we should ensure the following `meta` tag is available in the `head` tag. 
+    ```html
+    <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+    </html>
+    ```
+1. For smaller or mobile devies, users seldom use `hover` effect on the elements. For example, the users wouldn't expect the `card` component can be fliped when they clip or hover on it. Besides, it's not easy for touch devices to "**hover**" on the elements.
+    1. Since we can't add conditions to `mixin` directly, we need to rewrite the whole media query ourselves.
+    1. To check if a device can be touched, we can check with `hover: none` which means the user can't "**hover**" on the device.
+    1. On the otherhand, we can use the other way to work around by checking `hover: hover` which means the user CAN "**hover**" on the device.
+        ```scss
+        // components/_card.scss
+        .card {
+            @media only screen and (max-width: 56.25em),
+                only screen and (hover: none) {
+
+                }
+        }
+        ```
+1. Another reminder for the navigation button is that without JavaScript, we can't use the full feature of navigation to direct the user to certain section on the page and check the state of the input. This isn't achievable by using pure CSS.
+1. For the `popup` component, the user should also be able to close the component by clicking anywhere outside the element rather than only the close button on the top right corner. However , this feature will only be available to work with JavaScript. 
+1. In real projects, we can use more variables and give comments to co-work with other developers and changing or updating the whole CSS file.
 
 
 
