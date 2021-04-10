@@ -77,7 +77,7 @@
         -webkit-hyphens: auto;
         hyphens: auto;
 
-        @include resopnd(phone) {
+        @include respond(phone) {
             -webkit-column-count: 1;
             -moz-column-count: 1;
             column-count: 1;

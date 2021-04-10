@@ -5374,6 +5374,64 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Responsive Images in CSS
+1. Learning targets 
+    1. How to implement responsive images in CSS
+    1. How to use resolution media queries to target high-resolution screens with `2x`
+    1. How to combine multiple conditions in media queries
+1. The target of this sections is to make the background image of each section responsive.
+    1. If the resolution is higher than `192dpi`, which is the resolution of Apple retina devices.
+    1. For smaller devices the density is usually 2x and the width is less than 600px.
+    1. As density is 2x and largest breakpoint can be up to 600px, the resolution on the image can be rendered is 1200px (2 * 600).
+    1. Thus, it doesn't make sense that to load image larger than 1200px on small devices.
+    1. Therefore, we can add another media query for the viewport width.
+    1. On the other hand, for large screen with low resolution, we can have another media query to handle the device.
+    1. This also works on devices with high resolution.
+    1. In the media query, we can give multiple conditions and separate by comma. 
+    1. We can conver the `px` unit into `em`, which is `(600px / 16px) = 37.5em` and `(2000px / 16px) = 125em`.
+        ```scss
+        // layout/_header.scss
+        .header {
+            @media (min-resolution: 192dpi and (min-width: 37.5em)), (min-width: 125em) { 
+                background-image: linear-gradient(
+                    to right bottom,
+                    rgba($color-secondary-light, 0.8), 
+                    rgba($color-secondary-dark, 0.8)), 
+                    url(../img/hero.jpg);
+            }
+
+            @include respond(phone) {
+                -webkit-clip-path: polygon(0 0, 100% 0, 100% 85vh, 0 100%);
+                clip-path: polygon(0 0, 100% 0, 100% 85vh, 0 100%);
+            }
+        }
+        ```
+1. We not only change the unit in CSS but also the unit in media query in HTML. The default size is `16xp`, so we divide every media query by the number to turn the unit into `em`. 
+    1. 600px / 16px = 37.5em
+    1. 900px / 16px = 56.25em
+        ```html
+        <main>
+            <section class="section-about">
+                <div class="row">
+                    <div class="col-1-of-2">
+                        <div class="composition">
+                            <img srcset="img/nat-1.jpg 300w, img/nat-1-large.jpg 1000w"
+                                sizes="(max-width: 56.25em) 20vw, (max-width: 37.5em) 30vw, 300px" alt="photo_1"
+                                class="composition__photo composition__photo--p1" src="img/nat-1-large.jpg">
+
+                            <img srcset="img/nat-2.jpg 300w, img/nat-2-large.jpg 1000w"
+                                sizes="(max-width: 56.25em) 20vw, (max-width: 37.5em) 30vw, 300px" alt="photo_2"
+                                class="composition__photo composition__photo--p2" src="img/nat-2-large.jpg">
+
+                            <img srcset="img/nat-3.jpg 300w, img/nat-3-large.jpg 1000w"
+                                sizes="(max-width: 56.25em) 20vw, (max-width: 37.5em) 30vw, 300px" alt="photo_3"
+                                class="composition__photo composition__photo--p3" src="img/nat-3-large.jpg">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        ```
+
 ## Testing for Browsers Support with @supports
 ## Setting up a Simple Build Process with NPM Scripts
 ## Wrapping up the Natours Project: Final Considerations
