@@ -5652,7 +5652,47 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 
 # Trillo Project - Master Flexbox
 ## Why Flexbox: An Overview of the Philosophy Behind Flexbox
+1. Flex box is a new module in CSS3 that makes it easy to align leements to one another, in different directions and orders.
+1. The main idea behind flexbox is to give the container the ability to expand and to shrink elements to best use all the avaialble space. 
+1. Flex repalces float layouts, using less, and more readable and logical code.
+1. Flexbox completely changes the way that we build one-demensional layouts.
+    ```css
+    element {
+        display: flex; 
+        /* display: flex-inline */
+    }
+    ```
+    <img src="images/68-flexbox_structure.png">
+1. Flex container
+    1. `flex-direction` which has `row` as default value. Besides, we can use `row-reverse`, `column`, and `column-reverse`.
+    1. `flex-wrap` with `nowrap` as default, and we can use `wrap` and `wrap-reverse`.
+    1. `justify-content` with `flex-start` as default, and we can use `flex-end`, `center`, `space-between`, `space-around`, and `space-evenly`.
+    1. `align-items` with `strech` as default, and we can use `flex-start`, `flex-end`, `center`, `baseline`.
+    1. `align-content` with `stretch` as default, and we can use `flex-start`, `flex-end`, `center`, `space-between`, and `space-around`.
+1. Flex items
+    1. `align-self` with `auto` as default, and we can use `strech`, `flex-start`, `flex-end`, `center`, `baseline`.
+    1. `order` start from `0`, and we can give "**integer**" as values.
+    1. We can have the followings shorthanded as `flex` property.
+        1. `flex-grow` start from `0`, and we can give "**integer**" as values.
+        1. `flex-shrink` start from `0`, and we can give "**integer**" as values.
+        1. `flex-basis` with `auto` as default.
+            ```css
+            .flex_item {
+                flex: 0 1 auto 
+                /* <int> <int> <length> */
+            }
+            ```
+            <img src="images/68-flexbox_properties_container_and_elements.png">
+
 ## A Basic Intro to Flexbox: The Flex Container
+1. In this section, we try different properties and values and check how do they effect on the flexblox container and its child elements.
+    1. `flex-direction: column`
+    1. `justify-content: center`
+    1. `align-items: flex-start`
+    1. `align-items: flex-end`
+    1. `align-items: baseline`
+    1. `align-items: center`
+
 ## A Basic Intro to Flexbox: Flex Items
 ## A Basic Intro to Flexbox: Adding More Flex Items
 ## Project Overview
