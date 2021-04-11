@@ -5694,6 +5694,60 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. `align-items: center`
 
 ## A Basic Intro to Flexbox: Flex Items
+1. For items in the flexbox container, we can use `align-self` to overwirte the property of `justify-content` and `align-items` of the flexbox container. Therefore, only the single item in the flexbox is affected rather than all the items.
+1. With `order` property on flexbox items, the item will be ordered by the given order value from low to high. 
+1. `order` property can be very useful when styling responsive design that we can change the order of the elements when the screnn size changes.
+    ```html
+    <!-- html elements -->
+    <div class="container">
+        <div class="item">1</div>
+        <div class="item i2">2</div>
+        <div class="item i3">3</div>
+        <div class="item i4">4</div>
+        <div class="item">5</div>
+    </div>
+    ```
+    ```css
+    /* css code */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .container {
+        background-color: #ccc;
+        padding: 10px;
+        
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .item {
+        background-color: #f1425d;
+        padding: 40px;
+        margin: 30px;
+        color: #fff;
+        font-size: 40px;
+    }
+
+    .i2 {
+        height: 200px;
+    }
+
+    .i3 {
+        order: -1;
+    }
+
+    .i4 {
+        align-self: flex-end;
+        order: -1;
+    }
+    ```
+1. To modify and distribute the space in the flexbox container, we can use [`flex-grow`](https://css-tricks.com/almanac/properties/f/flex-grow/). By giving any value to all the items in the flexbox container, the items will be expanded and occupy the space as much as they can. 
+
 ## A Basic Intro to Flexbox: Adding More Flex Items
 ## Project Overview
 ## Defining Project Settings and Custom Properties
