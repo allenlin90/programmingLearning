@@ -5693,6 +5693,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. `align-items: flex-end`
     1. `align-items: baseline`
     1. `align-items: center`
+1. We can test the features in the sandbox on codepen [https://codepen.io/allenlin90/pen/ZELvdra](https://codepen.io/allenlin90/pen/ZELvdra)
 
 ## A Basic Intro to Flexbox: Flex Items
 1. For items in the flexbox container, we can use `align-self` to overwirte the property of `justify-content` and `align-items` of the flexbox container. Therefore, only the single item in the flexbox is affected rather than all the items.
@@ -5750,8 +5751,170 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 1. To modify and distribute the space in the flexbox container, we can use [`flex-grow`](https://css-tricks.com/almanac/properties/f/flex-grow/). By giving any value to all the items in the flexbox container, the items will be expanded and occupy the space as much as they can. 
 
 ## A Basic Intro to Flexbox: Adding More Flex Items
+1. In the flexbox container, we can use the following properties
+    1. [`flex-wrap`](https://www.w3schools.com/cssref/css3_pr_flex-wrap.asp) specifies whether the flexible items should wrap or not. If the elements are not flexible items, the `flex-wrap` property has no effect.
+    1. [`align-content`](https://css-tricks.com/almanac/properties/a/align-content/) which has 6 values that we can align the "lines" of the items in the container. Note that this property doesn't work if there's only a single line in the flexbox container.
+    ```css
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        align-content: center;
+    }
+    ```
+
 ## Project Overview
+1. We have the basic configuration for the page. We can get all the initial files from the github repo at [https://github.com/jonasschmedtmann/advanced-css-course](https://github.com/jonasschmedtmann/advanced-css-course).
+1. HTML
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+        <title>trillo &mdash; Your all-in-one booking app</title>
+    </head>
+
+    <body>
+        Trillo
+    </body>
+
+    </html>
+    ```
+1. SCSS
+    ```scss
+    /*
+    COLORS
+
+    Primary: #eb2f64
+    Primary light: #FF3366
+    Primary dark: #BA265D
+
+    Grey light 1: #faf9f9
+    Grey light 2: #f4f2f2
+    Grey light 3: #f0eeee
+    Grey light 4: #ccc
+
+    Grey dark 1: #333
+    Grey dark 2: #777
+    Grey dark 3: #999
+
+    */
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: #eb2f64;
+    }
+    ```
+1. `package.json`
+    ```json
+    {
+        "name": "Trillo",
+        "version": "1.0.0",
+        "description": "trillo app",
+        "main": "index.js",
+        "scripts": {
+            "watch:sass": "node-sass sass/main.scss css/style.css -w",
+            "devserver": "live-server",
+            "start": "npm-run-all --parallel devserver watch:sass",
+            "compile:sass": "node-sass sass/main.scss css/style.comp.css",
+            "prefix:css": "postcss --use autoprefixer -b 'last 10 versions' css/style.comp.css -o css/style.prefix.css",
+            "compress:css": "node-sass css/style.prefix.css css/style.css --output-style compressed",
+            "build:css": "npm-run-all compile:sass prefix:css compress:css"
+        },
+        "author": "Jonas",
+        "license": "ISC",
+        "devDependencies": {
+            "autoprefixer": "^7.1.4",
+            "concat": "^1.0.3",
+            "node-sass": "^4.5.3",
+            "npm-run-all": "^4.1.1",
+            "postcss-cli": "^4.1.1"
+        }
+    }
+    ```
+
 ## Defining Project Settings and Custom Properties
+1. Learning target: How and why use CSS custom properties.
+1. We create 3 Sass file `_base.scss`, `_layout.scss`, and `_components.scss` and import these files to `main.scss`.
+1. We can use native CSS variables which can be called by using `var()` 
+1. We then configure the `_base.scss` to setup the initial requirements of the page. 
+    1. We use regular setup with universal selector `*` to select all the elements in the HTML. 
+    1. Use `*::after` and `*::before` to select all the element to ensure they inherti the property of `box-sizing` from their parent element.
+    1. We use `min-height` to extend the whole `body` tag for the whole page as there's no element in the body tag yet.
+        ```scss
+        // sass/_base.scss
+        /*
+        COLORS
+
+        Primary: #eb2f64
+        Primary light: #FF3366
+        Primary dark: #BA265D
+
+        Grey light 1: #faf9f9
+        Grey light 2: #f4f2f2
+        Grey light 3: #f0eeee
+        Grey light 4: #ccc
+
+        Grey dark 1: #333
+        Grey dark 2: #777
+        Grey dark 3: #999
+
+        */
+
+        :root {
+            --color-primary: #eb2f64;
+            --color-primary-light: #FF3366;
+            --color-primary-dark: #BA265D;
+
+            --color-grey-light-1: #faf9f9;
+            --color-grey-light-2: #f4f2f2;
+            --color-grey-light-3: #f0eeee;
+            --color-grey-light-4: #ccc;
+
+            --color-grey-dark-1: #333;
+            --color-grey-dark-2: #777;
+            --color-grey-dark-3: #999;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: inherit;
+        }
+
+        html {
+            box-sizing: border-box;
+            font-size: 62.5%; // 1rem = 10px, 10px/16px = 62.5%
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--color-grey-dark-2);
+            background-image: linear-gradient(to right bottom, var(--color-primary-light), var(--color-primary-dark));
+            background-size: cover;
+            background-repeat: no-repeat;
+
+            min-height: 100vh; // this works when there's no element, so this can extend the height to let background image cover the whole page
+        }
+        ```
+
 ## Building the Overall Layout
 ## Building the Header - Part 1
 ## Building the Header - Part 2
