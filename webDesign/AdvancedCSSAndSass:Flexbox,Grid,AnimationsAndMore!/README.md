@@ -6040,6 +6040,108 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/74-overall_layout_with_flexbox.png">
 
 ## Building the Header - Part 1
+1. Learning targets
+    1. Why to use SVG icons vs font icons.
+    1. How to find, generate and use SVG sprites in HTML.
+    1. How to change the color of an SVG icon in CSS.
+    1. How to use more advanced flexbox alignment techniques, including `justify-content`, `align-self`, and `flex`.
+1. In the `header`, we have the "logo", "search bar" and "user navigation" as the main 3 components in the header.
+1. We use SVG instead of icon fonts, as some browser don't support and provide poor user experience for the usage. Therefore, SVG "**Scalable Vecotr Graphics**" are the better alternatives for the case.
+1. When using SVG files, we can have all the required graphics stored in the same file and take each of the graphics by the time we need it. The integrated file can be named as `sprite.svg`.
+1. We use the following structure to import the SVG file. Note that this only works on a web-server.
+    ```html
+    <svg class="search__icon">
+        <use xlink:href="img/sprite.svg#icon-magnifying-glass"></use>
+    </svg>
+    ```
+1. HTML file 
+    ```html
+    <header class="header">
+        <img src="img/logo.png" alt="trillo_logo" class="logo">
+        <form action="" class="search">
+            <input type="text" class="search__input" placeholder="Search hotels">
+            <button class="search__button">
+                <svg class="search__icon">
+                    <use xlink:href="img/sprite.svg#icon-magnifying-glass"></use>
+                </svg>
+            </button>
+        </form>
+
+        <nav class="user-nav">
+            <div class="user-nav__icon-box">
+                <svg class="user-nav__icon">
+                    <use xlink:href="img/sprite.svg#icon-bookmark"></use>
+                </svg>
+                <span class="user-nav__notification">7</span>
+            </div>
+            <div class="user-nav__icon-box">
+                <svg class="user-nav__icon">
+                    <use xlink:href="img/sprite.svg#icon-chat"></use>
+                </svg>
+                <span class="user-nav__notification">13</span>
+            </div>
+            <div class="user-nav__user">
+                <img src="img/user.jpg" alt="user_photo" class="user-nav__user-photo">
+                <span class="user-nav__user-name">Allen</span>
+            </div>
+        </nav>
+    </header>
+    ```
+1. To style SVG images, we can simply give `width` and `height` to the element directly. 
+1. In this case, we just have all the required selectors in the Sass file. 
+    ```scss
+    // LOGO
+    .logo {
+        height: 3.25rem;
+    }
+
+    // SEARCH
+    .search {
+        &__input {
+
+        }
+
+        &__button {
+
+        }
+
+        &__icon {
+            height: 2rem;
+            width: 2rem;
+        }
+    }
+
+    // USER NAVIGATION
+    .user-nav {
+        &__icon-box {
+
+        }
+
+        &__icon {
+            height: 2.25rem;
+            width: 2.25rem;
+        }
+
+        &__notification {
+
+        }
+
+        &__user {
+
+        }
+
+        &__user-photo {
+            height: 3.75rem;
+            width: 3.75rem;
+            border-radius: 50%;
+        }
+
+        &__user-name {
+
+        }
+    }
+    ```
+
 ## Building the Header - Part 2
 ## Building the Header - Part 3
 ## Building the Navigation - Part 1
