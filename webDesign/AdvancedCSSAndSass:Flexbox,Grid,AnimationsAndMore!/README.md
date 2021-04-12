@@ -5670,19 +5670,20 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     1. `align-items` with `strech` as default, and we can use `flex-start`, `flex-end`, `center`, `baseline`.
     1. `align-content` with `stretch` as default, and we can use `flex-start`, `flex-end`, `center`, `space-between`, and `space-around`.
 1. Flex items
-    1. `align-self` with `auto` as default, and we can use `strech`, `flex-start`, `flex-end`, `center`, `baseline`.
-    1. `order` start from `0`, and we can give "**integer**" as values.
+    1. [`align-self`](https://www.w3schools.com/cssref/css3_pr_align-self.asp) with `auto` as default, and we can use `strech`, `flex-start`, `flex-end`, `center`, `baseline`.
+    1. [`order`](https://developer.mozilla.org/en-US/docs/Web/CSS/order) start from `0`, and we can give "**integer**" as values. If we give negative value for the item, the item with the lowest value will be the first item in the order. 
     1. We can have the followings shorthanded as `flex` property.
-        1. `flex-grow` start from `0`, and we can give "**integer**" as values.
-        1. `flex-shrink` start from `0`, and we can give "**integer**" as values.
-        1. `flex-basis` with `auto` as default.
+        1. [`flex-grow`](https://www.w3schools.com/cssref/css3_pr_flex-grow.asp) start from `0`, and we can give "**integer**" as values.
+        1. [`flex-shrink`](https://www.w3schools.com/cssref/css3_pr_flex-shrink.asp) start from `1`, and we can give "**integer**" as values. The number specifies how much the item will shrink relative to the rest of the flexible items. If we give `0` to the property, the item won't be shrinked when the width of the viewport changes. 
+        1. [`flex-basis`](https://www.w3schools.com/cssref/css3_pr_flex-basis.asp) with `auto` as default. This property provides the initial value for the element that the element will have the minimum width if it's available. Besides, this property makes the element the last element to start shrinking when the viewport is narrowing down. 
             ```css
             .flex_item {
-                flex: 0 1 auto 
+                flex: 0 1 auto;
                 /* <int> <int> <length> */
             }
             ```
             <img src="images/68-flexbox_properties_container_and_elements.png">
+        1. If we gives only 1 argument to 1 `flex`, the value will be assigned and work as `flex-grow` property.
 
 ## A Basic Intro to Flexbox: The Flex Container
 1. In this section, we try different properties and values and check how do they effect on the flexblox container and its child elements.
