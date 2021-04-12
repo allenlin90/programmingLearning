@@ -5916,6 +5916,129 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         ```
 
 ## Building the Overall Layout
+1. HTML structure. The web app has 2 main components in the `container` which are `header` and `content`, while in the `content`, it has `sidebar` and `hotel-view`.
+    ```html
+    <body>
+        <div class="container">
+            <header class="header">
+                Header part
+            </header>
+            <div class="content">
+                <nav class="sidebar">
+                    Navigation
+                </nav>
+                <main class="hotel-view">
+                    Hotel view
+                </main>
+            </div>
+        </div>
+    </body>
+    ```
+1. Variables in `_base.scss`
+    ```scss
+    /*
+    COLORS
+
+    Primary: #eb2f64
+    Primary light: #FF3366
+    Primary dark: #BA265D
+
+    Grey light 1: #faf9f9
+    Grey light 2: #f4f2f2
+    Grey light 3: #f0eeee
+    Grey light 4: #ccc
+
+    Grey dark 1: #333
+    Grey dark 2: #777
+    Grey dark 3: #999
+
+    */
+
+    :root {
+        --color-primary: #eb2f64;
+        --color-primary-light: #FF3366;
+        --color-primary-dark: #BA265D;
+
+        --color-grey-light-1: #faf9f9;
+        --color-grey-light-2: #f4f2f2;
+        --color-grey-light-3: #f0eeee;
+        --color-grey-light-4: #ccc;
+
+        --color-grey-dark-1: #333;
+        --color-grey-dark-2: #777;
+        --color-grey-dark-3: #999;
+
+        --shadow-dark: 0 2rem 6rem rgba(0,0,0,.3);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: inherit;
+    }
+
+    html {
+        box-sizing: border-box;
+        font-size: 62.5%; // 1rem = 10px, 10px/16px = 62.5%
+    }
+
+    body {
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 400;
+        line-height: 1.6;
+        color: var(--color-grey-dark-2);
+        background-image: linear-gradient(to right bottom, var(--color-primary-light), var(--color-primary-dark));
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        min-height: 100vh; // this works when there's no element, so this can extend the height to let background image cover the whole page
+    }
+    ```
+1. In the `container`, we set up `min-height` so that the element will have at least `50rem` as its height if it doesn't have any child element, and we can use `max-width`, so that the maximum width of the component won't be over `120rem`.
+1. The native CSS variable can not only take pure value but also a set of values for certain CSS properties. For example, as we keep using `box-shadow` to add the shadow effect to a container, we can keep the frequent used values as a CSS variable.
+1. We'd like the `sidebar` and `view-hotel` component stay side by side in the `content` element. Therefore, we can use flexbox on the element. 
+1. On the `sidebar`, we'd like the component to occupy only 18% of the width in its container. Besides, it shouldn't be streched or shrinked, so we can use `flex: 0 0 18%`, which will fix the item to have width that is 18% of its container width. Note that `18%` works as `flex-basis: 18%`.
+1. For `hotel-view`, which is the sibling of `sidebar`, we can use `flex: 1` which works as `flex-grow: 1`. Therefore, the item will be expanded and fill the whole rest element that it can take. 
+    ```scss
+    // sass/_layout.scss
+    .container {
+        max-width: 120rem;
+        margin: 8rem auto;
+        background-color: var(--color-grey-light-2);
+        box-shadow: var(--shadow-dark); // keep the config as CSS variable
+
+        min-height: 50rem;
+    }
+
+    .header {
+        height: 7rem;
+        background-color: #fff;
+        border-bottom: var(--color-grey-light-2);
+    }
+
+    .content {
+        display: flex;
+    }
+
+    .sidebar {
+        background-color: var(--color-grey-dark-1);
+
+        flex: 0 0 18%;
+    }
+
+    .hotel-view {
+        background-color: #fff;    
+        background-color: orangered;
+        flex: 1;
+    }
+    ```
+    <img src="images/74-overall_layout_with_flexbox.png">
+
 ## Building the Header - Part 1
 ## Building the Header - Part 2
 ## Building the Header - Part 3
