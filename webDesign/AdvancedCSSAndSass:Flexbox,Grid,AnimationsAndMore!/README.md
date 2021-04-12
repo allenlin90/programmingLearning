@@ -6219,42 +6219,152 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
             fill: var(--color-grey-dark-3); // this is used to change color of a SVG graphic
         }
     }
+    ```
 
+## Building the Header - Part 3
+1. We use direct child selector `>` to select all the elements in the user navigation and turn them into flexbox container.
+1. We use `position: relative`, `position: absolute`, `top`, and `right` to position the red circle notification which overlays on the icon.
+1. We can keep turning child elements into flexbox container though the element itself is a flexbox item.
+    ```scss
+    // sass/_components.scss
     // USER NAVIGATION
     .user-nav {
-        background-color: greenyellow;
+        align-self: stretch; // extend the element to fill the whole container
 
+        display: flex;
+        align-items: center;
+
+        & > * {
+            padding: 0 2rem;
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        & > *:hover {
+            background-color: var(--color-grey-light-2);
+        }
+        
         &__icon-box {
-
+            position: relative;
         }
 
         &__icon {
             height: 2.25rem;
             width: 2.25rem;
+            fill: var(--color-grey-dark-2);        
         }
 
         &__notification {
+            font-size: .8rem;
+            height: 1.75rem;
+            width: 1.75rem;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            color: #fff;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.1rem;
 
-        }
-
-        &__user {
-
+            // center the white text in the notification red circle
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         &__user-photo {
             height: 3.75rem;
-            width: 3.75rem;
             border-radius: 50%;
-        }
-
-        &__user-name {
-
+            margin-right: 1rem;
         }
     }
     ```
+    <img src="images/77-header_trillo.png">
 
-## Building the Header - Part 3
 ## Building the Navigation - Part 1
+1. Learning targets
+    1. How to use `scaleY` and multiple transition properties with different settings, to create a hover effect.
+    1. How and why to use the `currentColor` CSS variable.
+    1. How to use some more advanced flexbox alignment techniques, including `flex-direction`, `justify-content`, and `align-items`.
+1. HTML
+    ```html
+    <nav class="sidebar">
+        <ul class="side-nav">
+            <li class="side-nav__item">
+                <a href="#" class="side-nav__link">
+                    <svg class="side-nav__icon">
+                        <use xlink:href="img/sprite.svg#icon-home"></use>
+                    </svg>
+                    <span>Hotel</span>
+                </a>
+            </li>
+            <li class="side-nav__item">
+                <a href="#" class="side-nav__link">
+                    <svg class="side-nav__icon">
+                        <use xlink:href="img/sprite.svg#icon-aircraft-take-off"></use>
+                    </svg>
+                    <span>Flight</span>
+                </a>
+            </li>
+            <li class="side-nav__item">
+                <a href="#" class="side-nav__link">
+                    <svg class="side-nav__icon">
+                        <use xlink:href="img/sprite.svg#icon-key"></use>
+                    </svg>
+                    <span>Car rental</span>
+                </a>
+            </li>
+            <li class="side-nav__item">
+                <a href="#" class="side-nav__link">
+                    <svg class="side-nav__icon">
+                        <use xlink:href="img/sprite.svg#icon-map"></use>
+                    </svg>
+                    <span>Tours</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="legal">
+            &copy; 2021 by trillo. All rights reserved.
+        </div>
+    </nav>
+    ```
+1. We can use turn the sidebar element into a flexbox container and use `flex-direction` to turn the container from row to column. Besides, we can use `justify-content: space-between`, so the items (2 elements) will be put on the top and bottom in the container.
+    ```scss
+    // _layout.scss        
+    .sidebar {
+        background-color: var(--color-grey-dark-1);
+
+        flex: 0 0 18%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;    
+    }
+
+    .hotel-view {
+        background-color: #fff;    
+        
+        // test
+        background-color: orangered;
+        height: 80rem;
+
+        flex: 1;
+    }
+    ```
+1. In this case, we just set up the HTML structure and style the copyright text at the bottom of the sidebar.
+    ```scss
+    // _comopnents.scss
+    // LEGAL TEXT
+    .legal {
+        font-size: 1.2rem;
+        color: var(--color-grey-light-4);
+        text-align: center;
+        padding: 2.5rem;
+    }
+    ```
+
 ## Building the Navigation - Part 2
 ## Building the Hotel Overview - Part 1
 ## Building the Hotel Overview - Part 2
