@@ -6366,6 +6366,77 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Building the Navigation - Part 2
+1. We firstly modify the font size and cancel the styling to items in `ul` by `list-style: none`.
+1. We then create the hover effect by using the pseudo item `::before` to have an element expanded from the middle to top and bottom and from left to right. 
+    1. Use `scaleY()` to shrink and expand the element on its y-axis. 
+    1. As we would like to hide the background color in the initial stage, we can give `scaleY(0)`, so it will be shrinked down.
+    1. We can have another class to apply on the item that is selected. However, this styling should be worked with JavaScript that when the user clicks on any other item rather than the current active one, the active class on the current item should be removed and assigned to the one which the user clicks. 
+    1. In `transition`, we can give the property that we want to apply the animation as the first argument. The 2nd argument is the duration that how long will the animation works. The 3rd one is the time to delay. In this case, we can wait for the expand from the center to the top and bottom finishes and expand the color from left to right.
+    1. We need to use `z-index` of the icon and text of the item. Otherwise it can be covered by the expanded background color. In addition, `z-index` only works when the element has a given `position` value. 
+    1. For the icon, we can use `fill: currentColor`. This property will get the `color` from the current element (which could be inherited) or its parent element. This can be useful that the icon can automatically changes its color to be aligned with the text if we modify the theme and change the color of the text.
+        ```scss
+        // _components.scss
+        // SIDE NAVIGATION
+        .side-nav {
+            font-size: 1.4rem;
+            list-style: none;
+            margin-top: 3.5rem;
+            
+            &__item {
+                position: relative;
+
+                &:not(:last-child) {
+                    margin-bottom: .5rem;
+                }
+            }
+
+            &__item::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 3px;
+                background-color: var(--color-primary);
+                transform: scaleY(0);
+                transition: transform .2s, 
+                            width .4s cubic-bezier(1,0,0,1) .2s,
+                            background-color .1s;
+            }
+
+            &__item:hover::before,
+            &__item--active::before {
+                transform: scaleY(1);
+                width: 100%;
+            }
+
+            &__item:active::before {
+                background-color: var(--color-primary-light);
+            }
+
+            &__link:link,
+            &__link:visited {
+                color: var(--color-grey-light-1);
+                text-decoration: none;
+                text-transform: uppercase;
+                display: block;
+                padding: 1.5rem 3rem;
+                position: relative;
+                z-index: 10;
+
+                display: flex;
+                align-items: center;
+            }
+            
+            &__icon {
+                width: 1.75rem;
+                height: 1.75rem;
+                margin-right: 2rem;
+                fill: currentColor; // this gets the color from current or parent element. This can be used as combo with hover effect
+            }
+        }
+        ```
+
 ## Building the Hotel Overview - Part 1
 ## Building the Hotel Overview - Part 2
 ## Building the Description Section - Part 1
