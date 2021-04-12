@@ -6143,6 +6143,116 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Building the Header - Part 2
+1. To position the elements in the header, we can use flexbox to justify and align the items.
+    ```scss
+    // _layout.scss
+    .header {
+        display: flex;    
+        justify-content: space-between;
+        align-items: center;
+    }
+    ```
+1. Since the `input` tag doesn't inherit `font-size` and `font-family` from the parent direclty, so we need to specify the property to apply the styling. 
+1. To align the items in a flex item, we can turn the flex item into another flexbox container. 
+1. We use `margin-right` with negative value to shift the element on the right to overlay on the styled element.
+1. We can use `fill` property to change the color of a SVG graphic. 
+    ```scss
+    // _components.scss
+    // LOGO
+    .logo {
+        height: 3.25rem;
+        margin-left: 3rem;
+    }
+
+    // SEARCH
+    .search {
+        flex: 0 0 40%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        &__input {
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
+            background-color: var(--color-grey-light-2);
+            border: none;
+            padding: .7rem 2rem;
+            border-radius: 100px;
+            width: 90%;
+            transition: all .2s;
+            margin-right: -3.25rem; // make the icon overlay on the search bar area
+
+            &:focus {
+                outline: none;
+                width: 100%;
+                background-color: var(--color-grey-light-3);
+            }
+
+            &::-webkit-input-placeholder {
+                font-weight: 100;
+                color: var(--color-grey-light-4);
+            }
+        }
+
+        &__input:focus + &__button {
+            background-color: var(--color-grey-light-3);
+        }
+
+        &__button {
+            border: none;
+            background-color: var(--color-grey-light-2);
+
+            &:focus{
+                outline: none;
+            }
+
+            &:active {
+                transform: translateY(2px);
+            }
+        }
+
+        &__icon {
+            height: 2rem;
+            width: 2rem;
+            fill: var(--color-grey-dark-3); // this is used to change color of a SVG graphic
+        }
+    }
+
+    // USER NAVIGATION
+    .user-nav {
+        background-color: greenyellow;
+
+        &__icon-box {
+
+        }
+
+        &__icon {
+            height: 2.25rem;
+            width: 2.25rem;
+        }
+
+        &__notification {
+
+        }
+
+        &__user {
+
+        }
+
+        &__user-photo {
+            height: 3.75rem;
+            width: 3.75rem;
+            border-radius: 50%;
+        }
+
+        &__user-name {
+
+        }
+    }
+    ```
+
 ## Building the Header - Part 3
 ## Building the Navigation - Part 1
 ## Building the Navigation - Part 2
