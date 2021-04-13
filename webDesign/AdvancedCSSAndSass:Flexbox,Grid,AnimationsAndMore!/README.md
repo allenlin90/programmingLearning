@@ -6569,6 +6569,77 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         ```
 
 ## Building the Description Section - Part 1
+1. Learning targets
+    1. Continue use flexbox, including `flex-wrap` to build a multi-column list. 
+    1. How and why to use CSS masks with `mask-image` and `mask-size`. 
+1. HTML
+    ```html
+    <div class="description">
+        <p class="paragraph">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Hic voluptate obcaecati dolores ex eligendi error earum sed cumque harum, odit fugit, quae recusandae impedit natus ea unde distinctio neque deserunt.
+        </p>
+        <p class="paragraph">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem reprehenderit repudiandae molestias sit corporis numquam?
+        </p>
+        <ul class="list">
+            <li class="list__item">Close to the beach</li>
+            <li class="list__item">Breakfast included</li>
+            <li class="list__item">Free airport shuttle</li>
+            <li class="list__item">Free wifi in all rooms</li>
+            <li class="list__item">Air conditioning and heating</li>
+            <li class="list__item">Pets allowed</li>
+            <li class="list__item">We speak all languages</li>
+            <li class="list__item">Perfect for families</li>
+        </ul>
+
+        <div class="recommend">
+            <p class="recommend__count">
+                Lucy and 3 other friends recommend this hotel.
+            </p>
+            <div class="recommend__friends">
+                <img src="img/user-3.jpg" alt="user_3" class="recommend__photo">
+                <img src="img/user-4.jpg" alt="user_4" class="recommend__photo">
+                <img src="img/user-5.jpg" alt="user_5" class="recommend__photo">
+                <img src="img/user-6.jpg" alt="user_6" class="recommend__photo">
+            </div>
+        </div>
+    </div>
+    ```
+1. We have another 2 variables that we can use in `_base.scss`. Note that we can have another variable used in the CSS varialbe.
+    ```scss
+    // _base.scss
+    :root {
+        --shawdow-light: 0 2rem 5rem rgba(0,0,0,.06);
+
+        --line: 1px solid var(--color-grey-light-2);
+    }
+    ```
+1. As the styling is more related to the layout rather than the comopnent, we have the CSS code in `_layout.scss`. 
+1. In most cases, if we set `flex-basis` of a flexbox item, we will have the first 2 arguments as `0` which are `flex-grow` and `flex-shrink`.
+    ```scss
+    // _layout.scss
+    .detail {
+        display: flex;
+        padding: 4.5rem;
+        background-color: var(--color-grey-light-1);
+        border-bottom: var(--line);
+    }
+
+    .description {
+        font-size: 1.4rem;
+        background-color: #fff;
+        box-shadow: var(--shawdow-light);
+        padding: 3rem;
+        flex: 0 0 60%;
+        margin-right: 4.5rem;
+    }
+
+    .user-reviews {
+        background-color: yellowgreen;
+        flex: 1;
+    }
+    ```
+
 ## Building the Description Section - Part 2
 ## Building User Reviews Section
 ## Building the CTA Section
