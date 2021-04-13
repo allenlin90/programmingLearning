@@ -6641,6 +6641,78 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Building the Description Section - Part 2
+1. Besides `last-child`, we can use [`last-of-type`](https://www.w3schools.com/cssref/sel_last-of-type.asp) which selects only the same type of elements. 
+1. [`-webkit-mask-image: url()`](https://css-tricks.com/almanac/properties/m/mask-image/) can be used to make out the element which only the graphic area can be seen through, so that we can use this technique to change the color of a SVG graphic with CSS code. 
+1. This feature works with `background-image` of the element. 
+1. Besides, this property doesn't work on all the browser (only the webkit based), so we need to check if the property works or we can use regular `background-image: url()` for the case. 
+    ```scss
+    // _component.scss
+    // LIST
+    .list {
+        list-style: none;
+        margin: 3rem 0;
+        padding: 3rem 0;
+        border-top: var(--line);
+        border-bottom: var(--line);
+
+        display: flex;
+        flex-wrap: wrap;
+
+        &__item {
+            flex: 0 0 50%;
+            margin-bottom: .7rem;
+        }
+
+        &__item::before {
+            content: "";
+            display: inline-block;
+            height: 1rem;
+            width: 1rem;
+            margin-right: .7rem;
+
+            // Older browsers
+            // background-image: url(../img/chevron-thin-right.svg);
+            // background-size: cover;
+
+            // Newer browsers - masks
+            background-color: var(--color-primary);
+            -webkit-mask-image: url(../img/chevron-thin-right.svg);
+            -webkit-mask-size: cover;
+            mask-image: url(../img/chevron-thin-right.svg);
+            mask-size: cover;
+        }
+    }
+
+    // RECOMMEND
+    .recommend {
+        font-size: 1.3rem;
+        color: var(--color-grey-light-3);
+        
+        display: flex;
+        align-items: center;
+
+        &__count {
+            margin-right: auto;
+        }
+
+        &__friends {
+
+        }
+
+        &__photo {
+            box-sizing: content-box; // default setting of box-sizing
+            height: 4rem;
+            width: 4rem;
+            border-radius: 50%;
+            border: 3px solid #fff;
+
+            &:not(:last-child) {
+                margin-right: -1.5rem;
+            }
+        }
+    }
+    ```
+
 ## Building User Reviews Section
 ## Building the CTA Section
 ## Writing Media Queries - Part 1
