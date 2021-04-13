@@ -6714,6 +6714,117 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Building User Reviews Section
+1. Learning target - Continue using and practicing flexbox
+    ```html
+    <div class="user-reviews">
+        <figure class="review">
+            <blockquote class="review__text">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus rerum quo quis obcaecati odio reiciendis unde.
+            </blockquote>
+            <figcaption class="review__user">
+                <img src="img/user-1.jpg" alt="user_1" class="review__photo">
+                <div class="review__user-box">
+                    <p class="review__user-name">Nick Smith</p>
+                    <p class="review__user-date">Feb 23rd, 2021</p>
+                </div>
+                <div class="review__rating">7.8</div>
+            </figcaption>
+        </figure>
+        <figure class="review">
+            <blockquote class="review__text">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus rerum quo quis obcaecati odio reiciendis unde.
+            </blockquote>
+            <figcaption class="review__user">
+                <img src="img/user-2.jpg" alt="user_2" class="review__photo">
+                <div class="review__user-box">
+                    <p class="review__user-name">Mary Thomas</p>
+                    <p class="review__user-date">Sep 13th, 2021</p>
+                </div>
+                <div class="review__rating">9.3</div>
+            </figcaption>
+        </figure>
+
+        <button class="btn-inline">Show all <span>&rarr;</span></button>
+    </div>
+    ```
+1. Since we'd like to center the items in the container, we can use `text-align: center` to align all the elements that is `inline` and `inline-block`. However, this will change the `p` tags in the child elements as well. 
+1. As we want only the first tier of containers being aligned, we can turn the element into a flexbox container, change it to a column and use `align-items: center`.
+    ```scss
+    // _layout.scss
+    .user-reviews {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    ```
+1. To have special characters in HTML and CSS, we can look up the HTML entiteis. However, the code to import special characters in CSS is different from HTML. We can check the [snippets](https://css-tricks.com/snippets/html/glyphs/). In this case, we'd like to use "left double quotation mark" which ISOnum is `\201C`.
+1. We have pseudo element `::before` to carry the special character and have lower `z-index` so that it does't overlay on the contents in the flexbox.
+    ```scss
+    // _components.scss
+    .review {
+        background-color: #fff;
+        box-shadow: var(--shadow-light);
+        padding: 3rem;
+        margin-bottom: 3.5rem;
+        position: relative;
+        overflow: hidden;
+
+        &__text {
+            margin-bottom: 2rem;
+            z-index: 10;
+            position: relative;
+        }
+
+        &__user {
+            display: flex;
+            align-items: center;
+        }
+
+        &__photo {
+            height: 4.5rem;
+            width: 4.5rem;
+            border-radius: 50%;
+            margin-right: 1.5rem;
+        }
+
+        &__user-box {
+            margin-right: auto;
+        }
+
+        &__user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: .4rem;
+        }
+
+        &__user-date {
+            font-size: 1rem;
+            color: var(--color-grey-dark-3);
+        }
+
+        &__rating {
+            color: var(--color-primary);
+            font-size: 2rem;
+            font-weight: 300;
+        }
+
+        &::before {
+            content: "\201C";
+            position: absolute;
+            top: -2.75rem;
+            left: -1rem;
+            line-height: 1;
+            font-size: 20rem;
+            color: var(--color-grey-light-2);
+            font-family: sans-serif;
+            z-index: 1;
+        }
+    }
+    ```
+
 ## Building the CTA Section
 ## Writing Media Queries - Part 1
 ## Writing Media Queries - Part 2
