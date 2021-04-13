@@ -6438,6 +6438,88 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         ```
 
 ## Building the Hotel Overview - Part 1
+1. Learning targets
+    1. How to create an infinite animation
+    1. How to use `margin: auto` with flexbox, and why it's so powerful.
+    1. Continue to use flexbox properties for easy positioning and alignemnt. 
+1. HTML
+    ```html
+    <div class="overview">
+        <h1 class="overview__heading">
+            Hotel Las Palmas
+        </h1>
+        <div class="overview__stars">
+            <svg class="overview__icon-star">
+                <use xlink:href="img/sprite.svg#icon-star"></use>
+            </svg>
+            <svg class="overview__icon-star">
+                <use xlink:href="img/sprite.svg#icon-star"></use>
+            </svg>
+            <svg class="overview__icon-star">
+                <use xlink:href="img/sprite.svg#icon-star"></use>
+            </svg>
+            <svg class="overview__icon-star">
+                <use xlink:href="img/sprite.svg#icon-star"></use>
+            </svg>
+            <svg class="overview__icon-star">
+                <use xlink:href="img/sprite.svg#icon-star"></use>
+            </svg>
+        </div>
+
+        <div class="overview__location">
+            <svg class="overview__icon-location">
+                <use xlink:href="img/sprite.svg#icon-location-pin"></use>
+            </svg>
+            <button class="btn-inline">Albufeira, Portugal</button>
+        </div>
+
+        <div class="overview__rating">
+            <div class="overview__rating-average">8.6</div>
+            <div class="overview__rating-count">429 votes</div>
+        </div>
+    </div>
+    ```
+1. We firstly turn the whole `overview` component as a flexbox container.
+1. We can use `margin: auto` that CSS will give the margin that fit the contianer but keep the original size of the element with it, so the element won't be streched or extended to fit its container. 
+1. This is similar to use `margin: 0 auto` to keep the element at the center of the container that it just given both margin on the left and right evenly (and have no margin on the top and bottom), so the element will be kept in the middle.
+    ```scss
+    // HOTEL OVERVIEW
+    .overview {
+        display: flex;
+
+        &__heading {
+
+        }
+
+        &__stars {
+            margin-right: auto;
+        }
+
+        &__icon-star,
+        &__icon-location {
+            width: 1.75rem;
+            height: 1.75rem;
+            fill: var(--color-primary);
+        }
+
+        &__location {
+            
+        }
+
+        &__rating {
+
+        }
+
+        &__rating-average {
+
+        }
+
+        &__rating-count {
+            
+        }
+    }
+    ```
+
 ## Building the Hotel Overview - Part 2
 ## Building the Description Section - Part 1
 ## Building the Description Section - Part 2
