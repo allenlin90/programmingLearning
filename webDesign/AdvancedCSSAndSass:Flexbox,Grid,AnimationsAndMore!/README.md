@@ -6521,6 +6521,53 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Building the Hotel Overview - Part 2
+1. We firstly set up the button with `background-color: transparent` and `border-bottom: currentColor` as this button could be used with other components with different background color.
+1. We'd like the button text become grey when the user hovers on it, so we can use pseudo selector for the hover effect. 
+1. When the button is clicked which means the button has "focus" or "active" state, we can define aniamtion by `@keyframe`. 
+    1. In this case, we'd like 0% and 100% have exactly the same state while change 50% to the transformed state.
+    1. We use `scale(1.05)` to slightly enlarge the element and `box-shadow: 0 1rem 4rem rgba(0,0,0,.25)` for the floating effect. 
+        ```scss
+        // _components.scss
+        // BUTTON INLINE
+        .btn-inline {
+            border: none;
+            color: var(--color-primary);
+            font-size: inherit;
+            border-bottom: 1px solid currentColor;
+            padding: 2px;
+            display: inline-block;
+            background-color: transparent;
+            cursor: pointer;
+            transition: all .2s;
+
+            &:hover {
+                color: var(--color-grey-dark-1);
+            }
+
+            &:focus {
+                outline: none;
+                animation: pulsate 1s infinite; // requires infinite to keep looping the animation
+            }
+        }
+
+        @keyframes pulsate {
+            0% {
+                transform: scale(1);
+                box-shadow: none;
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 1rem 4rem rgba(0,0,0,.25);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: none;
+            }
+        }
+        ```
+
 ## Building the Description Section - Part 1
 ## Building the Description Section - Part 2
 ## Building User Reviews Section
