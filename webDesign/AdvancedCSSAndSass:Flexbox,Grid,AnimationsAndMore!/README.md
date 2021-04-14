@@ -8372,15 +8372,236 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     }
     ```
 
+
+
 # A Quick Introduction to CSS Grid Layouts
 ## Why CSS Grid: A Whole new Mindset
+1. CSS Grid layout is a brand new module that brings a two-diensional grid system to CSS for the first time. 
+1. CSS Grid replaces flat layouts, using less, and more readable and logical CSS and HTML.
+1. CSS Grid works perfectly together with Flexbox, which is best to handle one-dimensional components and layouts. 
+1. CSS Grid completely changes the way that we envision and build two-dimensinoal layouts. 
+    <img src="images/90-grid_terminology_structure.png">
+    <img src="images/90-grid_terminology_properties.png">
+
 ## Quick Setup for This Section
+1. This part is some minor configuration on codepen. 
+
 ## Creating Our First Grid
+1. [Code Pen Snnipet](https://codepen.io/allenlin90/pen/LYxmOEW)
+1. HTML
+    ```html
+    <div class="container">
+        <div class="item item--1">1: Orange</div>
+        <div class="item item--2">2: Green</div>
+        <div class="item item--3">3: Violet</div>
+        <div class="item item--4">4: Pnk</div>
+        <div class="item item--5">5: Blue</div>
+        <div class="item item--6">6: Brown</div>
+    </div>
+    ```
+1. SCSS
+    ```scss
+    .container {
+        background-color: #eee;
+        width: 1000px;
+        margin: 30px auto;
+        
+        display: grid;
+        grid-template-rows: 150px 150px;
+        grid-template-columns: 150px 150px 150px;
+        
+        // grid-row-gap: 30px;
+        // grid-column-gap: 30px;
+        grid-gap: 30px;
+    }
+
+    .item {
+        padding: 20px;
+        font-size: 30px;
+        font-family: sans-serif;
+        color: white;
+    
+    &--1 {
+        background-color: orangered;
+    }
+    
+    &--2 {
+        background-color: yellowgreen;
+    }
+    
+    &--3 {
+        background-color: blueviolet;
+    }
+    
+    &--4 {
+        background-color: palevioletred;
+    }
+    
+    &--5 {
+        background-color: royalblue;
+    } 
+    
+    &--6 {
+        background-color: goldenrod;
+    }
+    }
+    ```
+
 ## Getting Familiar with the fr unit
+1. In CSS Grid template, we can use `repeat` to have multiple rows or columns with given width.
+1. Besides regular CSS units, we can use fractional unit `fr` to strech (or expand the element) to occupy by portion and as much as they can. This is similar to `flex-grow` for flexbox items.
+1. Note that the space of `grid-gap`, `grid-row-gap` and `grid-column-gap` are not taken into account. 
+    ```scss
+    .container {
+        width: 1000px;
+        display: grid;
+        grid-gap: 30px; 
+
+        height: 3000px;
+
+        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr) 300px;
+    }
+    ```
+
 ## Positioning Grid Items
+1. In the Grid system, we can use `grid-row-start` and `grid-row-end` to specify the starting and ending row of the element in the grid. Besides, we can simply use `grid-row` and separate the row numbers with slash `/`. 
+1. On the other hand, similar structure also works with `grid-column-start`, `grid-column-end`, `grid-column`.
+1. There's another shorthand that we can use [`grid-area`](https://www.w3schools.com/cssref/pr_grid-area.asp) insteading of using `grid-row` and `grid-column`. The order of the arguments for the property is as the followings. However, this could be confusing.
+    1. grid-row-start
+    1. grid-column-start
+    1. grid-row-end
+    1. grid-column-end
+
 ## Spanning Grid Items
+1. In grid system, we can span an item cross multiple grid cells. 
+1. Besides, we can have multiple items in the same grid cell. It means that items can overlay on each other when all of them are specified to stay at certain cell in the grid system.
+1. To float any overlaid item, we can simply give a higher `z-index` to float the item over the other. 
+1. Note that if there's any item was original place at the cell that is specified and occupied by the other element, the item will be pushed away and find a new grid cell to stay in the system. However, if only the `row` or `column` is specified for the grid cell, one of the item with less specification will be moved or overlaid.
+1. When using `grid-column` and `grid-row`, we can use `span` to indicate that how many rows or columns that the item wants to occupy. 
+1. However, if we give more than the current system, such as give `grid-column: span 4` in a 3 * 3 grid, the grid systme will create an extra column in the grid. 
+1. If we don't know exactly where to end, we can simply use `-1` as the end of the column or row to span. 
+    ```scss
+    .item {
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+
+        &--3 {
+            background-color: blueviolet;
+            grid-column: 1 / 3; 
+            // grid-column: 2 / 3;
+            // grid-column: 2 / span 3; // this creates an extra column (actually only a gutter)
+            grid-column: 1 / -1; // this makes the item occupies the whole row
+        }
+    }
+    ```
+
 ## Grid Challenge
+1. First approach for the solution [code pen](https://codepen.io/allenlin90/pen/rNjvpWY)
+1. HTML 
+    ```html
+    <div class="challenge">
+        <header class="header">Header</header> 
+        <div class="small_box--1">Small box 1</div>
+        <div class="small_box--2">Small box 2</div>
+        <div class="small_box--3">Small box 3</div>
+        <div class="sidebar">Side bar</div>
+        <div class="main_content">Main content</div>
+        <footer class="footer">Footer</footer>
+    </div>
+    ```
+1. Scss
+    ```scss
+    .challenge {  
+        color: #fff;  
+        font-weight: 700;
+        width: 500px;
+        height: 500px;
+        margin: 0 auto;
+        
+        display: grid;    
+        grid-template-rows: 1fr 2fr 4fr 1fr;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 10px;
+        
+        & > * {
+            background-color: orangered;
+            padding: 1rem;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+        }
+        
+        .sidebar {
+            grid-column: 4 / 5;
+            grid-row: 2 / span 2;
+        }
+        
+        .main_content {
+            grid-column: 1 / span 3;
+        }
+        
+        .footer {
+            grid-column: 1 / -1;
+        }
+    }
+    ```
+
 ## Grid Challenge: A Basic Solution
+1. HTML
+    ```html
+    <div class="challenge">
+        <header class="header">Header</header> 
+        <div class="small-box-1">Small box 1</div>
+        <div class="small-box-2">Small box 2</div>
+        <div class="small-box-3">Small box 3</div>
+        <div class="main_content">Main content</div>
+        <div class="sidebar">Side bar</div>  
+        <footer class="footer">Footer</footer>
+    </div>
+    ```
+
+1. SCSS
+    ```scss
+    .challenge {  
+        width: 1000px;  
+        margin: 30px auto;
+        
+        display: grid;    
+        grid-template-rows: 100px 200px 400px 100px;
+        grid-template-columns: repeat(3, 1fr) 200px;
+        grid-gap: 30px;
+        
+        & > * {
+            background-color: orangered;
+            color: white;
+            font-weight: 700;
+            padding: 20px;
+            font-size: 30px;
+            font-family: sans-serif;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+        }
+        
+        .sidebar {
+            grid-column: 4 / 5;
+            grid-row: 2 / span 2;
+        }
+        
+        .main_content {
+            grid-column: 1 / span 3;
+        }
+        
+        .footer {
+            grid-column: 1 / -1;
+        }
+    }
+    ```
+
 ## Naming Grid Lines
 ## Naming Grid Areas
 ## Implicit Grid vs. Explicit Grids
