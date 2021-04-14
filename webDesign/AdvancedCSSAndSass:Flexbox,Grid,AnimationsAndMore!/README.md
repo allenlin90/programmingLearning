@@ -5652,6 +5652,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 
 # Trillo Project - Master Flexbox
 ## Why Flexbox: An Overview of the Philosophy Behind Flexbox
+1. [Project Link](https://wonderful-goldwasser-8b2175.netlify.app/advancedcss/trillo/)
 1. Flex box is a new module in CSS3 that makes it easy to align leements to one another, in different directions and orders.
 1. The main idea behind flexbox is to give the container the ability to expand and to shrink elements to best use all the avaialble space. 
 1. Flex repalces float layouts, using less, and more readable and logical code.
@@ -7600,9 +7601,776 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Writing Media Queries - Part 2
+1. New breakpoints for media queries
+    ```scss
+    // _base.scss
+    /*
+    COLORS
+
+    Primary: #eb2f64
+    Primary light: #FF3366
+    Primary dark: #BA265D
+
+    Grey light 1: #faf9f9
+    Grey light 2: #f4f2f2
+    Grey light 3: #f0eeee
+    Grey light 4: #ccc
+
+    Grey dark 1: #333
+    Grey dark 2: #777
+    Grey dark 3: #999
+
+    */
+
+    :root {
+        --color-primary: #eb2f64;
+        --color-primary-light: #FF3366;
+        --color-primary-dark: #BA265D;
+
+        --color-grey-light-1: #faf9f9;
+        --color-grey-light-2: #f4f2f2;
+        --color-grey-light-3: #f0eeee;
+        --color-grey-light-4: #ccc;
+
+        --color-grey-dark-1: #333;
+        --color-grey-dark-2: #777;
+        --color-grey-dark-3: #999;
+
+        --shadow-dark: 0 2rem 6rem rgba(0,0,0,.3);
+        --shawdow-light: 0 2rem 5rem rgba(0,0,0,.06);
+
+        --line: 1px solid var(--color-grey-light-2);
+    }
+
+    $bp-largest: 75em; // 1200px
+    $bp-large: 68.75em; // 1100px
+    $bp-medium: 56.25em; // 900px
+    $bp-small: 37.5em; // 600px
+    $bp-smallest: 31.25em; // 500px
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: inherit;
+    }
+
+    html {
+        box-sizing: border-box;
+        font-size: 62.5%; // 1rem = 10px, 10px/16px = 62.5%
+
+        @media only screen and (max-width: $bp-large) {
+            font-size: 50%;
+        }
+    }
+
+    body {
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 400;
+        line-height: 1.6;
+        color: var(--color-grey-dark-2);
+        background-image: linear-gradient(to right bottom, var(--color-primary-light), var(--color-primary-dark));
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        min-height: 100vh; // this works when there's no element, so this can extend the height to let background image cover the whole page
+    }
+    ```
+1. Layout 
+    ```scss
+    // _layout.scss
+    .container {
+        max-width: 120rem;
+        margin: 8rem auto;
+        background-color: var(--color-grey-light-2);
+        box-shadow: var(--shadow-dark);
+
+        min-height: 50rem;
+
+        @media only screen and (max-width: $bp-largest) {
+            margin: 0;
+            max-width: 100%;
+            width: 100%;
+        }
+    }
+
+    .header {
+        font-size: 1.4rem;
+        height: 7rem;
+        background-color: #fff;
+        border-bottom: var(--line);
+
+        display: flex;    
+        justify-content: space-between;
+        align-items: center;
+
+        @media only screen and (max-width: $bp-smallest) {
+            flex-wrap: wrap;
+            align-content: space-around;
+            height: 11rem;
+        }
+    }
+
+    .content {
+        display: flex;
+
+        @media only screen and (max-width: $bp-medium) {
+            flex-direction: column;
+        }
+    }
+
+    .sidebar {
+        background-color: var(--color-grey-dark-1);
+
+        flex: 0 0 18%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;    
+    }
+
+    .hotel-view {
+        background-color: #fff;
+
+        flex: 1;
+    }
+
+    .detail {
+        font-size: 1.4rem;
+        display: flex;
+        padding: 4.5rem;
+        background-color: var(--color-grey-light-1);
+        border-bottom: var(--line);
+
+        @media only screen and (max-width: $bp-medium) {
+            padding: 3rem;
+        }
+
+        @media only screen and (max-width: $bp-small) {
+            flex-direction: column;
+        }
+    }
+
+    .description {
+        background-color: #fff;
+        box-shadow: var(--shawdow-light);
+        padding: 3rem;
+        flex: 0 0 60%;
+        margin-right: 4.5rem;
+        
+        @media only screen and (max-width: $bp-medium) {
+            padding: 2rem;
+            margin-right: 3rem;
+        }
+
+        @media only screen and (max-width: $bp-small) {
+            margin-right: 0;
+            margin-bottom: 3rem;
+        }
+    }
+
+    .user-reviews {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    ```
+1. Component
+    ```scss
+    // _components.scss
+    // LOGO
+    .logo {
+        height: 3.25rem;
+        margin-left: 2rem;
+    }
+
+    // SEARCH
+    .search {
+        flex: 0 0 40%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        @media only screen and (max-width: $bp-smallest) {
+            order: 1;
+            flex: 0 0 100%;
+            background-color: var(--color-grey-light-2);
+        }
+        
+        &__input {
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
+            background-color: var(--color-grey-light-2);
+            border: none;
+            padding: .7rem 2rem;
+            border-radius: 100px;
+            width: 90%;
+            transition: all .2s;
+            margin-right: -3.25rem;
+
+            &:focus {
+                outline: none;
+                width: 100%;
+                background-color: var(--color-grey-light-3);
+            }
+
+            &::-webkit-input-placeholder {
+                font-weight: 100;
+                color: var(--color-grey-light-4);
+            }
+        }
+
+        &__input:focus + &__button {
+            background-color: var(--color-grey-light-3);
+        }
+
+        &__button {
+            border: none;
+            background-color: var(--color-grey-light-2);
+
+            &:focus{
+                outline: none;
+            }
+
+            &:active {
+                transform: translateY(2px);
+            }
+        }
+
+        &__icon {
+            height: 2rem;
+            width: 2rem;
+            fill: var(--color-grey-dark-3);
+        }
+    }
+
+    // USER NAVIGATION
+    .user-nav {
+        align-self: stretch; // extend the element to fill the whole container
+
+        display: flex;
+        align-items: center;
+
+        & > * {
+            padding: 0 2rem;
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        & > *:hover {
+            background-color: var(--color-grey-light-2);
+        }
+        
+        &__icon-box {
+            position: relative;
+        }
+
+        &__icon {
+            height: 2.25rem;
+            width: 2.25rem;
+            fill: var(--color-grey-dark-2);        
+        }
+
+        &__notification {
+            font-size: .8rem;
+            height: 1.75rem;
+            width: 1.75rem;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            color: #fff;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.1rem;
+
+            // center the white text in the notification red circle
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &__user-photo {
+            height: 3.75rem;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+    }
+
+    // SIDE NAVIGATION
+    .side-nav {
+        font-size: 1.4rem;
+        list-style: none;
+        margin-top: 3.5rem;
+
+        @media only screen and (max-width: $bp-medium) {
+            display: flex;
+            margin: 0;
+        }
+        
+        &__item {
+            position: relative;
+
+            &:not(:last-child) {
+                margin-bottom: .5rem;
+
+                @media only screen and (max-width: $bp-medium) {
+                    margin: 0;
+                }
+            }
+
+            @media only screen and (max-width: $bp-medium) {
+                flex: 1;
+            }
+        }
+
+        &__item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--color-primary);
+            transform: scaleY(0);
+            transition: transform .2s, 
+                        width .4s cubic-bezier(1,0,0,1) .2s,
+                        background-color .1s;
+        }
+
+        &__item:hover::before,
+        &__item--active::before {
+            transform: scaleY(1);
+            width: 100%;
+        }
+
+        &__item:active::before {
+            background-color: var(--color-primary-light);
+        }
+
+        &__link:link,
+        &__link:visited {
+            color: var(--color-grey-light-1);
+            text-decoration: none;
+            text-transform: uppercase;
+            display: block;
+            padding: 1.5rem 3rem;
+            position: relative;
+            z-index: 10;
+
+            display: flex;
+            align-items: center;
+
+            @media only screen and (max-width: $bp-medium) {
+                justify-content: center;
+                padding: 2rem;
+            }
+
+            @media only screen and (max-width: $bp-small) {
+                flex-direction: column;
+                padding: 1.5rem .5rem;            
+            }
+        }
+        
+        &__icon {
+            width: 1.75rem;
+            height: 1.75rem;
+            margin-right: 2rem;
+            fill: currentColor; // this gets the color from current or parent element. This can be used as combo with hover effect
+
+            @media only screen and (max-width: $bp-small) {
+                margin-right: 0;
+                margin-bottom: .7rem;
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+    }
+
+    // LEGAL TEXT
+    .legal {
+        font-size: 1.2rem;
+        color: var(--color-grey-light-4);
+        text-align: center;
+        padding: 2.5rem;
+
+        @media only screen and (max-width: $bp-medium) {
+            display: none;
+        }
+    }
+
+    // GALLERY
+    .gallery {
+        display: flex;
+
+        &__photo {
+            width: 100%;
+            display: block;
+        }
+    }
+
+    // HOTEL OVERVIEW
+    .overview {
+        display: flex;
+        align-items: center;
+        border-bottom: var(--line);
+
+        &__heading {
+            font-size: 2.25rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 1.5rem 3rem;
+
+            @media only screen and (max-width: $bp-small) {
+                font-size: 1.8rem;
+                padding: 1.25rem 2rem;
+            }
+        }
+
+        &__stars {
+            margin-right: auto;
+            display: flex;
+        }
+
+        &__icon-star,
+        &__icon-location {
+            width: 1.75rem;
+            height: 1.75rem;
+            fill: var(--color-primary);
+        }
+
+        &__location {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        &__icon-location {
+            margin-right: .5rem;
+        }
+
+        &__rating {
+            background-color: var(--color-primary);
+            color: #fff;
+            margin-left: 3rem;
+            padding: 0 2.25rem;
+            align-self: stretch; // this makes the pink scoring on the right streched and cover the whole height
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            @media only screen and (max-width: $bp-small) {
+                padding: 0 1.5rem;
+            }
+        }
+
+        &__rating-average {
+            font-size: 2.25rem;
+            font-weight: 300;
+            margin-bottom: -3px;
+
+            @media only screen and (max-width: $bp-small) {
+                font-size: 1.8rem;
+            }
+        }
+
+        &__rating-count {
+            font-size: .8rem;
+            text-transform: uppercase;
+
+            @media only screen and (max-width: $bp-small) {
+                font-size: .5rem;
+            }
+        }
+    }
+
+    // BUTTON INLINE
+    .btn-inline {
+        border: none;
+        color: var(--color-primary);
+        font-size: inherit;
+        border-bottom: 1px solid currentColor;
+        padding: 2px;
+        display: inline-block;
+        background-color: transparent;
+        cursor: pointer;
+        transition: all .2s;
+
+        & span {
+            margin-left: 3px;
+            transition: margin-left .2s;
+        }
+
+        &:hover {
+            color: var(--color-grey-dark-1);
+
+            span {
+                margin-left: 8px;
+            }
+        }
+
+        &:focus {
+            outline: none;
+            animation: pulsate 1s infinite; // requires infinite to keep looping the animation
+        }
+    }
+
+    @keyframes pulsate {
+        0% {
+            transform: scale(1);
+            box-shadow: none;
+        }
+
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 1rem 4rem rgba(0,0,0,.25);
+        }
+
+        100% {
+            transform: scale(1);
+            box-shadow: none;
+        }
+    }
+
+    // PARAGRAPH
+    .paragraph:not(:last-of-type) {
+        margin-bottom: 2rem;
+    }
+
+    // LIST
+    .list {
+        list-style: none;
+        margin: 3rem 0;
+        padding: 3rem 0;
+        border-top: var(--line);
+        border-bottom: var(--line);
+
+        display: flex;
+        flex-wrap: wrap;
+
+        &__item {
+            flex: 0 0 50%;
+            margin-bottom: .7rem;
+        }
+
+        &__item::before {
+            content: "";
+            display: inline-block;
+            height: 1rem;
+            width: 1rem;
+            margin-right: .7rem;
+
+            // Older browsers
+            // background-image: url(../img/chevron-thin-right.svg);
+            // background-size: cover;
+
+            // Newer browsers - masks
+            background-color: var(--color-primary);
+            -webkit-mask-image: url(../img/chevron-thin-right.svg);
+            -webkit-mask-size: cover;
+            mask-image: url(../img/chevron-thin-right.svg);
+            mask-size: cover;
+        }
+    }
+
+    // RECOMMEND
+    .recommend {
+        font-size: 1.3rem;
+        color: var(--color-grey-light-3);
+        
+        display: flex;
+        align-items: center;
+
+        &__count {
+            margin-right: auto;
+        }
+
+        &__friends {
+            display: flex;
+        }
+
+        &__photo {
+            box-sizing: content-box; // default setting of box-sizing
+            height: 4rem;
+            width: 4rem;
+            border-radius: 50%;
+            border: 3px solid #fff;
+
+            &:not(:last-child) {
+                margin-right: -2rem;
+            }
+        }
+    }
+
+    // REVIEWS
+    .review {
+        background-color: #fff;
+        box-shadow: var(--shadow-light);
+        padding: 3rem;
+        margin-bottom: 3.5rem;
+        position: relative;
+        overflow: hidden;
+
+        @media only screen and (max-width: $bp-medium) {
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        &__text {
+            margin-bottom: 2rem;
+            z-index: 10;
+            position: relative;
+        }
+
+        &__user {
+            display: flex;
+            align-items: center;
+        }
+
+        &__photo {
+            height: 4.5rem;
+            width: 4.5rem;
+            border-radius: 50%;
+            margin-right: 1.5rem;
+        }
+
+        &__user-box {
+            margin-right: auto;
+        }
+
+        &__user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: .4rem;
+        }
+
+        &__user-date {
+            font-size: 1rem;
+            color: var(--color-grey-dark-3);
+        }
+
+        &__rating {
+            color: var(--color-primary);
+            font-size: 2rem;
+            font-weight: 300;
+        }
+
+        &::before {
+            content: "\201C";
+            position: absolute;
+            top: -2.75rem;
+            left: -1rem;
+            line-height: 1;
+            font-size: 20rem;
+            color: var(--color-grey-light-2);
+            font-family: sans-serif;
+            z-index: 1;
+        }
+    }
+
+    // CALL TO ACTION
+    .cta {
+        padding: 3.5rem 0;
+        text-align: center;
+
+        @media only screen and (max-width: $bp-medium) {
+            padding: 2.5rem 0;
+        }
+
+        &__book-now {
+            font-size: 2rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            margin-bottom: 2.5rem;
+        }
+    }
+
+    .btn {
+        font-size: 1.5rem;
+        font-weight: 300;
+        text-transform: uppercase;
+        border-radius: 100px;
+        border: none;
+        background-image: linear-gradient(to right, var(--color-primary-light), var(--color-primary-dark));
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+
+        & > * {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            transition: all .2s;
+        }
+
+        &__visible {
+            padding: 2rem 7.5rem;
+        }
+
+        &__invisible {
+            position: absolute;
+            padding: 2rem 0;
+            left: 0;
+            top: -100%; // move up exactly the size of the element
+        }
+
+        &:hover {
+            background-image: linear-gradient(to left, var(--color-primary-light), var(--color-primary-dark));
+        }
+
+        &:hover &__visible {
+            transform: translateY(100%);
+        }
+
+        &:hover &__invisible {
+            top: 0;
+        }
+
+        &:focus {
+            outline: none;
+            animation: pulsate 1s infinite;
+        }
+    }
+    ```
+
 ## Wrapping up the Trillo Project: Final Considerations
+1. [Final output](https://wonderful-goldwasser-8b2175.netlify.app/advancedcss/trillo/)
+1. We can check the records from [caniuse.com](https://caniuse.com/flexbox). Stated on 2021/04/14, 97.88% of the devices can support on "**unprefixed**" property of flexbox. This means that most of the devices around the globe have supported flexbox.
+1. For the SVG coloring styling code, we can use `@supports` to check if the browser can use the property. Besides, we need to remove the `background-image` if `mask-image` property works. 
+    ```scss
+    // _components.scss
+    // LIST
+    .list {
+        &__item::before {
+            // Older browsers
+            background-image: url(../img/chevron-thin-right.svg);
+            background-size: cover;
 
-
+            // Newer browsers - masks
+            @supports(-webkit-mask-image: url()) or (mask-image: url()) {
+                background-color: var(--color-primary);
+                -webkit-mask-image: url(../img/chevron-thin-right.svg);
+                -webkit-mask-size: cover;
+                mask-image: url(../img/chevron-thin-right.svg);
+                mask-size: cover;
+                background-image: none;
+            }
+        }
+    }
+    ```
 
 # A Quick Introduction to CSS Grid Layouts
 ## Why CSS Grid: A Whole new Mindset
