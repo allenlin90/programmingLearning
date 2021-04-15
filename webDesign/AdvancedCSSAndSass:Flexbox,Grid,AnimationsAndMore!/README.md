@@ -8603,6 +8603,48 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Naming Grid Lines
+1. In [`grid-template-rows` and `grid-template-columns`](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Layout_using_Named_Grid_Lines), we can assign a name or names to certain row or column in the grid system.
+1. After naming the rows and columns, we can use `grid-row` and `grid-column` on the flexbox item to assign the position of the item in the grid by giving separted the start and end with a slash `/`. 
+1. If we use [`repeat`](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Layout_using_Named_Grid_Lines#multiple_lines_with_the_same_name_with_repeat) to create the template, we can put the name in the method directly. Each of the name will be assigned with a number according to how many of which are created. 
+    ```scss
+    .challenge {  
+        width: 1000px;  
+        margin: 30px auto;
+        
+        display: grid;    
+        grid-template-rows: [header-start] 100px [header-end box-start] 200px [box-end main-start] 400px [main-end footer-start] 100px [footer-end];
+        grid-template-columns: repeat(3, [col-start] 1fr [col-end]) 200px [grid-end];
+        // col-start 1, col-start 2, and col-start 3 are created by repeat
+        grid-gap: 30px;
+    
+        & > * {
+            background-color: orangered;
+            color: white;
+            font-weight: 700;
+            padding: 20px;
+            font-size: 30px;
+            font-family: sans-serif;
+        }
+        
+        .header {
+            grid-column: col-start 1 / grid-end; // we can use -1 instead of grid-end
+        }
+        
+        .sidebar {
+            grid-column: col-end 3 / grid-end;
+            grid-row: box-start / main-end;
+        }
+        
+        .main_content {
+            grid-column: col-start 1 / col-end 3;
+        }
+        
+        .footer {
+            grid-column: col-start 1 / grid-end; // we can use -1 instead of grid-end
+        }
+    }
+    ```
+
 ## Naming Grid Areas
 ## Implicit Grid vs. Explicit Grids
 ## Aligning Grid Items
