@@ -8752,6 +8752,50 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Aligning Grid Items
+1. In grid system, there's similar properties as flexbox that we can use `align-items` and `justify-items`. 
+1. Note that each of them has default value as `stretch` so that each element is expanded to cover the whole cell in the grid. 
+1. In addition, we can use `align-self` and `justify-self` on each of the item in the grid to have specific allocation for the item in the grid cell. 
+    ```scss
+    .container {
+        width: 1000px;
+        margin: 30px auto;
+        background-color: #ddd;
+        
+        display: grid;
+        grid-template-rows: repeat(2, 150px);
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 30px;
+        
+        grid-auto-rows: 80px; 
+        
+        grid-auto-flow: row; 
+        grid-auto-columns: .5fr; 
+        
+        align-items: center; 
+        justify-items: center; 
+        
+        .item {
+            padding: 10px;
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 30px;
+            background-color: orangered;
+            
+            &--4 {
+                background-color: crimson;
+                grid-row: 2 / span 3;
+                align-self: start;
+                justify-self: stretch;
+            }
+            
+            &--7 {
+                background-color: palevioletred;
+                grid-column: 1 / -1;
+            }
+        }
+    }
+    ```
+
 ## Aligning Tracks
 ## Using min-content, max-content and the minmax() function
 ## Responsive Layouts with auto-fit and auto-fill
