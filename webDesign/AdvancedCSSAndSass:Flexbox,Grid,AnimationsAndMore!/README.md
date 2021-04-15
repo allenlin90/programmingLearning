@@ -8845,6 +8845,98 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Using min-content, max-content and the minmax() function
+1. We use similar HTML structure in the previous section. [Code Pen](https://codepen.io/allenlin90/pen/wvgXJPa)
+    ```html
+    <body>
+        <div class="container">
+            <div class="item item--1">Modern</div>
+            <div class="item item--2">CSS</div>
+            <div class="item item--3">with</div>
+            <div class="item item--4">Flexbox</div>
+            <div class="item item--5">and</div>
+            <div class="item item--6">Grid</div>
+            <div class="item item--7">is</div>
+            <div class="item item--8">great and amazing and just awesome to work with</div>
+        </div>
+    </body>
+    ```
+1. We can use [`min-content`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-content), [`max-content`](https://developer.mozilla.org/en-US/docs/Web/CSS/max-content), and [`minmax()`](https://developer.mozilla.org/en-US/docs/Web/CSS/minmax()) function to modify the size of the grid cell. 
+    1. `max-content` makes the elements in the same column having the width as the maximum width from the content. For example, if a content has no padding and margin but only text, the width of the element will be the width of the text content in the element. The text in the element won't be wrapped to be the next line, so the width can be extended to be long that the text content will be in just one line. 
+    1. `min-content` works on the opposite of `max-content`. 
+        1. It takes the longest word which is "awesome" in item 8 in this case and shrink down the whole cell (Note that if the string has no space between and is a very long string value, this property wouldn't work).
+            ```scss
+            .container {
+                grid-template-columns: max-content 1fr 1fr min-content;
+                // without modifying rows, overflow content will be hidden
+            }
+            ```
+        1. If we don't specify any value on `overflow` property, only part of the content will be shown in the element. 
+        1. However, if we modify the values for `grid-template-rows`, the cell will be extended to have enough space for the overflew content that wasn't shown before modifying grid rows.
+            ```scss
+            .container {
+                grid-template-columns: max-content 1fr 1fr min-content;
+                grid-template-rows: repeat(2, min-content); // extend the cell for all the content in the element 
+            }
+            ```
+    1. `minmax()` function provides a range for an element that the element won't shrink down when the width or height hit the bottomline of the given value. Besides, the element will try to extend to the given maximum value as much as it can. In the following example, the first column will be no less than `200px` when the viewport shrinks down. On the other hand, with enough space, the first column will occupy `50%` of its container width, and the rest of the space will be separated evenly by the 3 columns.
+        ```scss
+        .container {
+            grid-template-columns: minmax(200px, 50%) repeat(3, 1fr);
+        }
+        ```
+1. Assigning [fraction unit](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#the_fr_unit) doesn't mean that the width or height will always be evenly allocated. 
+1. When the grid has no enough space for the columns or rows to separate evenly, the columns or rows will only be allocated with the minimum width or height they need according to the content in the element. 
+1. Note that fraction unit works when the unit is not fixed, which means the width or height of the container should be in precentage so that it can change accordingly. 
+    1. For example, if the width is fixed at `1000px`, each column has a fixed fraction unit accordinly. This wouldn't change when we change the viewport. 
+    1. If we change the width to be `90%`, which is according ot the viewport, `minmax()` and fraction units start to work and change the exact number accordingly. 
+        ```scss
+        .container {
+            width: 1000px; // this wouldn't makes the 1fr changes when changing viewport 
+            width: 90%;
+
+            display: grid;
+            grid-template-columns: minmax(200px, 50%) repeat(3, 1fr);
+        }
+        ```
+1. Scss
+    ```scss
+    .container {
+        width: 1000px;
+        margin: 30px auto;
+        background-color: #ddd;
+        
+        display: grid;
+        // Using min-content and max-content
+        // grid-template-rows: repeat(2, 150px);
+        // grid-template-columns: max-content 1fr 1fr min-content;
+        // grid-template-rows: repeat(2, min-content);
+        // grid-template-rows: repeat(2, minmax(150px, min-content));
+        
+        // Using minmax function
+        width: 90%;
+        grid-template-rows: repeat(2, minmax(150px, min-content));
+        grid-template-columns: minmax(200px, 1fr) repeat(3, 1fr);
+        
+        
+        .item {
+            padding: 10px;
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 30px;
+            background-color: orangered;
+            
+            &--1 { background-color: orangered;}
+            &--2 { background-color: yellowgreen;}
+            &--3 { background-color: blueviolet;}
+            &--4 { background-color: palevioletred;}
+            &--5 { background-color: royalblue;}
+            &--6 { background-color: goldenrod;}
+            &--7 { background-color: crimson;}
+            &--8 { background-color: darkslategray;}
+        }
+    }
+    ```
+
 ## Responsive Layouts with auto-fit and auto-fill
 
 
