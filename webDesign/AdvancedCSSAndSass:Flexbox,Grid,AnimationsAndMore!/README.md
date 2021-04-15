@@ -8797,6 +8797,53 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Aligning Tracks
+1. If the grid system doesn't fit to its container, we can use `justify-content` and `align-content` to adjust the position of the grid on its x-axis and y-axis. 
+1. We can not only `grid-auto-flow` can be used with [`dense`](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow#values). The feature can fill up the empty cell in the grid. 
+    ```scss
+    .container {
+        width: 1000px;
+        margin: 30px auto;
+        background-color: #ddd;
+        
+        display: grid;
+        grid-gap: 30px;
+        
+        grid-auto-rows: 80px; // this is for the implicit
+        grid-auto-flow: row dense; // default of this is row
+        grid-auto-columns: .5fr; // this only works when grid-auto-flow is set to column
+        
+        grid-template-rows: repeat(2, 100px);
+        grid-template-columns: repeat(2, 200px);
+        height: 1000px;
+        
+        justify-content: center; // center / start / end / space-between / space-around / space-evenly
+        align-content: center;
+        
+        .item {
+            padding: 10px;
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 30px;
+            background-color: orangered;
+            
+            &--4 {
+                background-color: crimson;
+                grid-row: 2 / span 3;
+            }
+            
+            &--6 {
+                background-color: lightcoral;
+                grid-row: 2 / span 2;
+            }
+            
+            &--7 {
+                background-color: palevioletred;
+                grid-column: 1 / -1;
+            }
+        }
+    }
+    ```
+
 ## Using min-content, max-content and the minmax() function
 ## Responsive Layouts with auto-fit and auto-fill
 
