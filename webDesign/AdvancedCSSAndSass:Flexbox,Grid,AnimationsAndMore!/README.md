@@ -8646,6 +8646,63 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Naming Grid Areas
+1. The 3rd method is to use [`grid-template-areas`](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-areas) in the grid container. 
+1. For each item in the grid, we can use `grid-area` to assign the item to certain area in the grid. 
+    ```scss
+    .challenge {
+        width: 1000px;  
+        margin: 30px auto;
+        
+        display: grid;    
+        grid-template-rows: 100px 200px 400px 100px;
+        grid-template-columns: repeat(3, 1fr) 200px;
+        grid-gap: 30px;
+        
+        grid-template-areas: 
+            "head head head head"
+            "box-1 box-2 box-3 side"
+            "main main main side"
+            "foot foot foot foot";
+        
+        & > * {
+            background-color: orangered;
+            color: white;
+            font-weight: 700;
+            padding: 20px;
+            font-size: 30px;
+            font-family: sans-serif;
+        }
+        
+        .header {
+            grid-area: head;
+        }
+        
+        .small-box-1 {
+            grid-area: box-1;
+        }
+        
+        .small-box-2 {
+            grid-area: box-2;
+        }
+        
+        .small-box-3 {
+            grid-area: box-3;
+        }
+        
+        .sidebar {
+            grid-area: side;
+        }
+        
+        .main_content {
+            grid-area: main;
+        }
+        
+        .footer {
+            grid-area: foot;
+        }
+    }
+    ```
+
 ## Implicit Grid vs. Explicit Grids
 ## Aligning Grid Items
 ## Aligning Tracks
