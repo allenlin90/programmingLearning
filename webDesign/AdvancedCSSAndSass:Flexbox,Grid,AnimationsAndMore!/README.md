@@ -8704,6 +8704,53 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Implicit Grid vs. Explicit Grids
+1. We create another structure to test grid system. [Code Pen](https://codepen.io/allenlin90/pen/RwKJoaW)
+    ```html
+    <body>
+        <div class="container">
+            <div class="item item--1">Modern</div>
+            <div class="item item--2">CSS</div>
+            <div class="item item--3">with</div>
+            <div class="item item--4">Flexbox</div>
+            <div class="item item--5">and</div>
+            <div class="item item--6">Grid</div>
+            <div class="item item--7">is</div>
+            <div class="item item--8">great</div>
+        </div>
+    </body>
+    ```
+1. Items in the grid system that can fit into the grid template are "**explicit**" grid elements, while those can't fit are "**implicit**" grid items.
+1. The grid system will automatically create new rows for the additional child elements which can't fit to the template. This is because the default value for `grid-auto-flow: row` is row, so the grid will create new rows. 
+1. Note that items in the grid system will be allocated from left to right and from top to bottom.
+1. We can use `grid-auto-rows` to assign certain height to each new row added to the grid system. 
+1. If we change the value to `column`, the direction will change and new columns will be created when there are additional items that can't fit to the template.
+    ```scss
+    .container {
+        width: 1000px;
+        margin: 30px auto;
+        background-color: #ddd;
+        
+        display: grid;
+        grid-template-rows: repeat(2, 150px);
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 30px;
+        
+        grid-auto-rows: 80px; // this is for the implicit. This only works when grid-auto-flow is row or as default
+        
+        // these properties can be useful when the fetching data that we can't expect how many rows or columns will be created
+        grid-auto-flow: column; // default of this is row
+        grid-auto-columns: .5fr; // this only works when grid-auto-flow is set to column
+        
+        .item {
+            padding: 20px;
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 30px;
+            background-color: orangered;
+        }
+    }
+    ```
+
 ## Aligning Grid Items
 ## Aligning Tracks
 ## Using min-content, max-content and the minmax() function
