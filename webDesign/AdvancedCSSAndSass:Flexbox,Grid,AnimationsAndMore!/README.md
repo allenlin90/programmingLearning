@@ -9080,6 +9080,62 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Building the Overall Layout - Part 1
+1. Learning targets 
+    1. How to build a complex and modern layout using advanced CSS Grid techniques.
+    1. How to choose different row and column track sizes for different types of content.
+1. HTML
+    ```html
+    <body class="container">
+        <div class="sidebar">
+            Sidebar
+        </div>
+
+        <header class="header">
+            Header
+        </header>
+
+        <div class="realtors">
+            Top 3 realtors
+        </div>
+
+        <section class="features">
+            Features
+        </section>
+
+        <div class="story__pictures">
+            Story pictures
+        </div>
+
+        <div class="story__content">
+            Story content
+        </div>
+
+        <section class="homes">
+            Homes
+        </section>
+
+        <section class="gallery">
+            Gallery
+        </section>
+
+        <footer class="footer">
+            Footer
+        </footer>
+    </body>
+    ```
+1. We have set background colors to each of the section on the website. 
+    1. The 1st part has 80% of the viewport height `80vh`. 
+    1. The 2nd part we have the content to up the area required, so we can use either `min-content` or `auto`. 
+    1. The 3rd part is using the viewport width for the responsive content.
+    1. For the rest 3 parts, we can use `min-content` as the sections take space as their elements require. 
+        ```scss
+        // sass/_base.scss
+        .container {
+            display: grid;
+            grid-template-rows: 80vh min-content 40vw repeat(3, min-content); // 6 rows
+        }
+        ```
+
 ## Building the Overall Layout - Part 2
 ## Building the Features Section - Part 1
 ## Building the Features Section - Part 2
