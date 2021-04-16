@@ -9135,8 +9135,82 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
             grid-template-rows: 80vh min-content 40vw repeat(3, min-content); // 6 rows
         }
         ```
+    <img src="images/107-nexter_grid_layout_diagram.png">
 
 ## Building the Overall Layout - Part 2
+1. For each section of the website, we have them cross the grid system according to the design. 
+1. We update the 2nd column of `grid-template-columns` to `minmax(6rem, 1fr)`, as we'd like the column (which works as padding in some rows to have minimum space for the white area).
+    ```scss
+    // sass/_base.scss
+    .container {
+        display: grid;
+        grid-template-rows: 80vh min-content 40vw repeat(3, min-content); // 6 rows
+        grid-template-columns: [sidebar-start] 8rem [sidebar-end full-start] minmax(6rem, 1fr) [center-start] repeat(8, [col-start] minmax(min-content, 14rem) [col-end]) [center-end] 1fr [full-end];
+        
+        & > * { // this is for testing
+            padding: 40px;
+            font-size: 3rem;
+        }
+    }
+
+    // sass/_header.scss
+    .header {
+        background-color: $color-grey-dark-1;
+        grid-column: full-start / col-end 6;
+    }
+
+    // sass/_realtors.scss
+    .realtors {
+        background-color: $color-secondary;
+        grid-column: col-start 7 / full-end;
+    }
+
+    // sass/_story.scss
+    .story {
+        &__pictures {
+            background-color: $color-primary;
+            grid-column: full-start / col-end 4;
+        }
+
+        &__content {
+            background-color: $color-grey-light-1;
+            grid-column: col-start 5 / full-end;
+        }
+    }
+
+    // sass/_homes.scss
+    .homes {
+        background-color: $color-secondary;
+        grid-column: center-start / center-end;
+    }
+
+    // sass/_features.scss
+    .features {
+        background-color: $color-grey-light-2;
+        grid-column: center-start / center-end;
+    }
+
+    // sass/_gallery.scss
+    .gallery {
+        background-color: $color-grey-dark-1;
+        grid-column: full-start / full-end;
+    }
+
+    // sass/_footer.scss
+    .footer {
+        background-color: $color-secondary;
+        grid-column: full-start / full-end;
+    }
+
+    // sass/_sidebar.scss
+    .sidebar {
+        background-color: $color-primary;
+        grid-column: sidebar-start / sidebar-end;
+        grid-row: 1 / -1;
+    }
+    ```
+    <img src="images/107-nexter_overall_layout.gif">
+
 ## Building the Features Section - Part 1
 ## Building the Features Section - Part 2
 ## Building the Story Section - Part 1
