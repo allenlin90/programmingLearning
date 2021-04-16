@@ -8938,7 +8938,52 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Responsive Layouts with auto-fit and auto-fill
-
+1. [Code Pen](https://codepen.io/allenlin90/pen/jOyKjzR)
+1. On [`repeat()`](https://developer.mozilla.org/en-US/docs/Web/CSS/repeat()#values) function, we can not only use regular absolute units (`px` or `cm`) or responsive units (`rem` or `em`) but also special feature, such as `min-content`, `max-content`, and `auto`, which are introduced in the last section.
+1. If we use `auto-fill` the rows or columns will be divided accordingly. For example, the container has `1000px` as its width. If we have `grid-template-columns: repeat(auto-fill, 100px)`, the grid will be divided into 10 columns, and each of the columns has `100px` on its width because 1000px / 100px = 10.
+1. On the other hand, `auto-fit` works in the other way that it also divides the the grid into the maximum number of columns but the columns hold no element will be collapased, which means the empty column won't have width. 
+1. When the width is responsive (such as setting to `width: 90%`), `auto-fit` can create suitable number for the grid to have columns on the same row. Otherwise, it pushes to the next row. This provides responsive feature similar to media query.
+    1. For example, when we set `grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))`, the minimum width of each column will be at `200px` and have maximum to be shared. 
+    1. However, as the number of columns will be changed according to the width of the viewport, the actual range of each column can be from `200px` up to `300px` because when the container width is more than `600px` the minimum width (`200px`) of another element can be applied.
+    1. Therefore, a new column will be created and the element will float up from the row below. 
+1. We can check another article discuss about [auto-fit and auto-fill](https://css-tricks.com/auto-sizing-columns-css-grid-auto-fill-vs-auto-fit/)
+1. Scss
+    ```scss
+    .container {
+        width: 1000px;
+        margin: 30px auto;
+        background-color: #ddd;
+        
+        display: grid;
+        // Using auto-fill and auto-fit
+        grid-template-rows: repeat(2, minmax(150px, min-content));
+        grid-template-columns: repeat(auto-fill, 100px); // grid will have 10 columns that each column has width at 100px
+        grid-template-columns: repeat(auto-fit, 100px); // grid will have 10 columns that each column has width at 100px, but the last 2 columns have no width
+        
+        // when the width is responsive, auto-fit can create suitable number for the grid to have columns on the same row. Otherwise, it pushes to the next row
+        width: 90%;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-auto-rows: 150px;
+    
+    .item {
+        padding: 10px;
+        color: #fff;
+        font-family: sans-serif;
+        font-size: 30px;
+        background-color: orangered;
+        
+        &--1 { background-color: orangered;}
+        &--2 { background-color: yellowgreen;}
+        &--3 { background-color: blueviolet;}
+        &--4 { background-color: palevioletred;}
+        &--5 { background-color: royalblue;}
+        &--6 { background-color: goldenrod;}
+        &--7 { background-color: crimson;}
+        &--8 { background-color: darkslategray;}
+    }
+    }
+    ```
+    
 
 
 # Nexter Project - Master CSS Grid Layouts
