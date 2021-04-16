@@ -8988,6 +8988,97 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 
 # Nexter Project - Master CSS Grid Layouts
 ## Project Overview and Setup
+1. We import and use `<link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,400,400i|Nunito:300,300i" rel="stylesheet">` in the HTML file for the font. 
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,400,400i|Nunito:300,300i" rel="stylesheet">
+        <link rel="stylesheet" href="sass/main.css">
+        <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+        <title>nexter &mdash; your home, your freedom</title>
+    </head>
+
+    <body class="container">
+        TEST TEXT
+    </body>
+
+    </html>
+    ```
+1. We have some basic configuration in `_base.scss`.
+    ```scss
+    // sass/_base.scss
+    // COLOR VARIABLES
+    $color-primary: #c69963;
+    $color-primary-dark: #B28451;
+
+    $color-secondary: #101d2c;
+
+    $color-grey-light-1: #f9f7f6;
+    $color-grey-light-2: #aaa;
+
+    $color-grey-dark-1: #54483A;
+    $color-grey-dark-2: #6D5D4B;
+
+    // FONT VARIABLES
+    $font-primary: 'Nunito', sans-serif;
+    $font-display: 'Josefin Sans', sans-serif;
+
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        box-sizing: border-box;
+        font-size: 62.5%; // 10px / 16px = 62.5 -> 1rem - 10px
+    }
+
+    body {
+        font-family: $font-primary;
+        color: $color-grey-dark-2;
+        font-weight: 300;
+        line-height: 1.6;
+    }
+    ```
+1. package.json
+    ```json
+    {
+        "name": "Nexter",
+        "version": "1.0.0",
+        "description": "Nexter webpage",
+        "main": "index.js",
+        "scripts": {
+            "watch:sass": "node-sass sass/main.scss css/style.css -w",
+            "devserver": "live-server",
+            "start": "npm-run-all --parallel devserver watch:sass",
+
+            "compile:sass": "node-sass sass/main.scss css/style.comp.css",
+            "prefix:css": "postcss --use autoprefixer -b 'last 10 versions' css/style.comp.css -o css/style.prefix.css",
+            "compress:css": "node-sass css/style.prefix.css css/style.css --output-style compressed",
+            "build:css": "npm-run-all compile:sass prefix:css compress:css"
+        },
+        "author": "Jonas",
+        "license": "ISC",
+        "devDependencies": {
+            "autoprefixer": "^7.1.4",
+            "concat": "^1.0.3",
+            "node-sass": "^4.5.3",
+            "npm-run-all": "^4.1.1",
+            "postcss-cli": "^4.1.1"
+        }
+    }
+    ```
+
 ## Building the Overall Layout - Part 1
 ## Building the Overall Layout - Part 2
 ## Building the Features Section - Part 1
