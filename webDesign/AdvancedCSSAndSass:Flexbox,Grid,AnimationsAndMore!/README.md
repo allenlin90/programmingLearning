@@ -9300,6 +9300,46 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/108-features_inner_grid.png">
 
 ## Building the Features Section - Part 2
+1. We create another grid in the `feature` element (which is the item in `features` rather than the whole section).
+1. In this case, we have `min-content` as the first column which is the "icon", so if we adjust the size of icon, the column can be responsive on its size. Besides, we use `1fr` for the rest of the content. 
+1. To make the overall grid responsive and change numbers of elements of each row when the viewport narrows, we use `grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr))`. 
+1. The minimum of each column can be at least `250px` and update the divided space assigned by `1fr`.
+1. Note that the structure will have 3 columns at most because `features` section is limited from `center-start` and `center-end`. The space is only available for the item to hold up to 3 columns. 
+    ```scss
+    // sass/_features.scss
+    .features {
+        grid-column: center-start / center-end;
+
+        margin: 15rem 0;
+
+        display: grid;
+        // grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+        // grid-template-rows: auto auto // skip this as grid system has given it by default
+        grid-gap: 6rem;
+        align-items: start;
+    }
+    
+    .feature {
+        display: grid;
+        grid-template-columns: min-content 1fr; // min-content is the size of the icon, while 1fr is the rest
+        grid-row-gap: 1.5rem;
+        grid-column-gap: 2.5rem;
+
+        &__icon {
+            fill: $color-primary;
+            width: 4.5rem;
+            height: 4.5rem;
+            grid-row: 1 / span 2; // -1 only goes to the end of explicit grid
+            transform: translateY(-1rem);
+        }
+
+        &__text {
+            font-size: 1.7rem;
+        }
+    }
+    ```
+
 ## Building the Story Section - Part 1
 ## Building the Story Section - Part 2
 ## Building the Homes Section - Part 1
