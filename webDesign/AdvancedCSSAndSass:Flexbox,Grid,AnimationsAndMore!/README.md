@@ -9784,6 +9784,59 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     ```
 
 ## Building the Gallery - Part 1
+1. Learning targets
+    1. How to create to complex grid-looking gallery
+    1. Using `object-fit` together with images for grid items.
+1. We firstly set up the HTML elements
+    ```html
+    <section class="gallery">
+        <figure class="gallery__item gallery__item--1">
+            <img src="img/gal-1.jpeg" alt="gallery_image_1" class="gallery__img">
+        </figure>
+    </section>
+    ```
+1. We create a 8 * 7 grid for the photo gallery. Some image has only one unit while some cross several rows and columns.
+1. Since the `grip-gap` only works between cells in the grid, which means each side of the grid as no gap created from the property. Therefore, we can use `padding` to create some white space.
+    ```scss
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(7 , 5vw);
+        padding: 1.5rem;
+        grid-gap: 1.5rem;
+    }
+    ```
+1. We use both `width` and `height` at `100%` on the images to contrain the elements to prevent large images overflow the grid cell. 
+1. [`object-fit`](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit#values) property only works when the element has been given both width and height. When using `cover`, the image will be cliped and kept its aspect ratio, so the image is not tortured and looks funny. 
+    ```scss
+    .gallery {
+        background-color: $color-grey-light-1;
+        grid-column: full-start / full-end;
+
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(7 , 5vw);
+        grid-gap: 1.5rem;
+        padding: 1.5rem;
+
+        &__item {
+            &--1 {
+                grid-row: 1 / span 2;
+                grid-column: 1 / span 2;
+            }
+        }
+
+        &__img {
+            // giving both width and height to prevent overflow and enable object-fit property
+            width: 100%; 
+            height: 100%;
+            object-fit: cover; // this only works when width and height are given
+            display: block;
+        }
+    }
+    ```
+    <img src="images/114-fit_image_to_multiple_grid_cell.png">
+
 ## Building the Gallery - Part 2
 ## Building the Footer
 ## Building the Sidebar
