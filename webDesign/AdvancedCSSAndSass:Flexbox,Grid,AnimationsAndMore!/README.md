@@ -9319,7 +9319,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         grid-gap: 6rem;
         align-items: start;
     }
-    
+
     .feature {
         display: grid;
         grid-template-columns: min-content 1fr; // min-content is the size of the icon, while 1fr is the rest
@@ -9339,9 +9339,148 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         }
     }
     ```
+1. Rather than using mixin, we can use Sass extends.
+    ```scss
+    // sass/_typegraphy.scss
+    %heading {
+        font-family: $font-display;
+        font-weight: 400;
+    }
+
+    .heading-1 {
+        @extend %heading;
+    }
+
+    .heading-2 {
+        @extend %heading;
+    }
+
+    .heading-3 {
+        @extend %heading;
+    }
+
+    .heading-4 {
+        @extend %heading;
+        font-size: 1.9rem;
+
+        &--light { color: $color-grey-light-1; }
+        &--dark { color: $color-grey-dark-1; }
+    }
+
+    ```
 
 ## Building the Story Section - Part 1
+1. Learning targets
+    1. How to deal with overlapping grid items.
+    1. Why images are special and behave differently than other grid items.
+    1. How to devide if flexbox is a better tool in certain situations.
+1. HTML
+    ```html
+    <div class="story__content">
+        <h3 class="heading-3">Happy Customers</h3>
+        <h2 class="heading-2 heading-2--dark">&ldquo;The best decision of our lives&rdquo;</h2>
+        <p class="story__text">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Itaque rerum laudantium molestiae rem repellat!
+            Accusantium recusandae voluptates id expedita voluptatem!
+        </p>
+        <button class="btn">Find your own home</button>
+    </div>
+    ```
+1. For the `story__content` component, we can use either flexbox or grid to center the items inside of it.
+    ```scss
+    // sass/_story.scss
+    .story {
+        &__content {
+            background-color: $color-grey-light-1;
+            grid-column: col-start 5 / full-end;
+            
+            padding: 6rem 8vw;
+
+            /*
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start; // this prevent items being stretched
+            */
+
+            display: grid;
+            align-content: center;
+            justify-items: start; // prevent items beining stretched
+        }
+    }
+    ```
+1. Though button styling and helper functions wouldn't fit in "typography" in other projects. We try to make the file structure as easy as it could. 
+    ```scss
+    // sass/_typography.scss
+    .btn {
+        background-color: $color-primary;
+        color: #fff;
+        border: none;
+        border-radius: 0;
+        font-family: $font-display;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        padding: 1.8rem 3rem;
+        cursor: pointer;
+        transition: all .2s;
+
+        &:hover {
+            background-color: $color-primary-dark;
+        }
+    }
+    
+    // helper class
+    .mb-sm { margin-bottom: 2rem; }
+    .mb-md { margin-bottom: 3rem; }
+    .mb-lg { margin-bottom: 4rem; }
+    .mb-hg { margin-bottom: 8rem; }
+    ```
+    <img src="images/110-story_content.png">
+
 ## Building the Story Section - Part 2
+1. We add the images to HTML file
+    ```html
+    <div class="story__pictures">
+        <img src="img/story-1.jpeg" alt="couple_with_new_house" class="story__img--1">
+        <img src="img/story-2.jpeg" alt="new_house" class="story__img--2">
+    </div>
+    ```
+1. To create a 6 * 6 grid for the images, we can simply use `grid-template-rows: repeat(6, 1fr)` and `grid-template-columns: repeat(6, 1fr)`.
+    1. Use `linear-gradient` and `url()` to create the `background-image`.
+    1. As the image item will try to stay its ratio, it may not fit perfectly to the assigned grid cells. Therefore, we can use `align-items` to align the image vertically center in its container.
+    1. For the 2nd image, we can use `z-index` to ensure it's floating and over other elements.
+    1. To let the image overflow the container, we can assign `width` over 100%. 
+        ```scss
+        .story {
+            &__pictures {
+                background-color: $color-primary;
+                grid-column: full-start / col-end 4;
+                background-image: linear-gradient(rgba($color-primary, .5), rgba($color-primary, .5)), url(../img/back.jpg);
+
+                display: grid;
+                grid-template-rows: repeat(6, 1fr);
+                grid-template-columns: repeat(6, 1fr);
+                align-items: center; // this is to handle the image, as it may not fit to the container
+            }
+
+            &__img--1 {
+                width: 100%;
+                grid-row: 2 / 6;
+                grid-column: 2 / 6;
+                box-shadow: 0 2rem 5rem rgba(#000, .1);
+            }
+
+            &__img--2 {
+                width: 115%; // make the image over the container
+                grid-row: 4 / 6;
+                grid-column: 4 / 7;
+                z-index: 20; // makes the image float over other element
+                box-shadow: 0 2rem 5rem rgba(#000, .2);
+            }
+        }
+        ```
+        <img src="images/111-final_story_section.png">
+
 ## Building the Homes Section - Part 1
 ## Building the Homes Section - Part 2
 ## Building the Gallery - Part 1
