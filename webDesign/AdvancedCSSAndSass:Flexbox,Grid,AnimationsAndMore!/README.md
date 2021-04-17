@@ -9482,7 +9482,307 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
         <img src="images/111-final_story_section.png">
 
 ## Building the Homes Section - Part 1
+1. Learning target - How to build a rather complex component using a mix of CSS Grid properties, overlapping and flexbox.
+1. HTML
+    ```html
+    <section class="homes">
+        <div class="home">
+            <img src="img/house-1.jpeg" alt="house_1" class="home__img">
+            <svg class="home__like">
+                <use xlink:href="img/sprite.svg#icon-heart-full"></use>
+            </svg>
+            <h5 class="home__name">Beautiful Family House</h5>
+            <div class="home__location">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-map-pin"></use>
+                </svg>
+                <p>USA</p>
+            </div>
+            <div class="home__rooms">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-profile-male"></use>
+                </svg>
+                <p>5 rooms</p>
+            </div>
+            <div class="home__area">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-expand"></use>
+                </svg>
+                <p>325 m<sup>2</sup></p>
+            </div>
+            <div class="home__price">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-key"></use>
+                </svg>
+                <p>$1,200,000</p>
+            </div>
+            <button class="cta home__btn btn">Contact realtor</button>
+        </div>
+
+        <div class="home">
+            <img src="img/house-2.jpeg" alt="house_2" class="home__img">
+            <svg class="home__like">
+                <use xlink:href="img/sprite.svg#icon-heart-full"></use>
+            </svg>
+            <h5 class="home__name">Modern Glass Villa</h5>
+            <div class="home__location">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-map-pin"></use>
+                </svg>
+                <p>Canada</p>
+            </div>
+            <div class="home__rooms">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-profile-male"></use>
+                </svg>
+                <p>6 rooms</p>
+            </div>
+            <div class="home__area">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-expand"></use>
+                </svg>
+                <p>450 m<sup>2</sup></p>
+            </div>
+            <div class="home__price">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-key"></use>
+                </svg>
+                <p>$2,750,000</p>
+            </div>
+            <button class="cta home__btn btn">Contact realtor</button>
+        </div>
+
+        <div class="home">
+            <img src="img/house-3.jpeg" alt="house_3" class="home__img">
+            <svg class="home__like">
+                <use xlink:href="img/sprite.svg#icon-heart-full"></use>
+            </svg>
+            <h5 class="home__name">Cozy Country House</h5>
+            <div class="home__location">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-map-pin"></use>
+                </svg>
+                <p>UK</p>
+            </div>
+            <div class="home__rooms">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-profile-male"></use>
+                </svg>
+                <p>4 rooms</p>
+            </div>
+            <div class="home__area">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-expand"></use>
+                </svg>
+                <p>250 m<sup>2</sup></p>
+            </div>
+            <div class="home__price">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-key"></use>
+                </svg>
+                <p>$850,000</p>
+            </div>
+            <button class="cta home__btn btn">Contact realtor</button>
+        </div>
+
+        <div class="home">
+            <img src="img/house-4.jpeg" alt="house_4" class="home__img">
+            <svg class="home__like">
+                <use xlink:href="img/sprite.svg#icon-heart-full"></use>
+            </svg>
+            <h5 class="home__name">Large Rustical Villa</h5>
+            <div class="home__location">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-map-pin"></use>
+                </svg>
+                <p>Portugal</p>
+            </div>
+            <div class="home__rooms">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-profile-male"></use>
+                </svg>
+                <p>6 rooms</p>
+            </div>
+            <div class="home__area">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-expand"></use>
+                </svg>
+                <p>480 m<sup>2</sup></p>
+            </div>
+            <div class="home__price">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-key"></use>
+                </svg>
+                <p>$1,950,000</p>
+            </div>
+            <button class="cta home__btn btn">Contact realtor</button>
+        </div>
+
+        <div class="home">
+            <img src="img/house-5.jpeg" alt="house_5" class="home__img">
+            <svg class="home__like">
+                <use xlink:href="img/sprite.svg#icon-heart-full"></use>
+            </svg>
+            <h5 class="home__name">Majestic Palace HOuse</h5>
+            <div class="home__location">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-map-pin"></use>
+                </svg>
+                <p>Germany</p>
+            </div>
+            <div class="home__rooms">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-profile-male"></use>
+                </svg>
+                <p>18 rooms</p>
+            </div>
+            <div class="home__area">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-expand"></use>
+                </svg>
+                <p>4230 m<sup>2</sup></p>
+            </div>
+            <div class="home__price">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-key"></use>
+                </svg>
+                <p>$9,500,000</p>
+            </div>
+            <button class="cta home__btn btn">Contact realtor</button>
+        </div>
+
+        <div class="home">
+            <img src="img/house-6.jpeg" alt="house_6" class="home__img">
+            <svg class="home__like">
+                <use xlink:href="img/sprite.svg#icon-heart-full"></use>
+            </svg>
+            <h5 class="home__name">Modern Family Apartment</h5>
+            <div class="home__location">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-map-pin"></use>
+                </svg>
+                <p>Italy</p>
+            </div>
+            <div class="home__rooms">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-profile-male"></use>
+                </svg>
+                <p>3 rooms</p>
+            </div>
+            <div class="home__area">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-expand"></use>
+                </svg>
+                <p>180 m<sup>2</sup></p>
+            </div>
+            <div class="home__price">
+                <svg>
+                    <use xlink:href="img/sprite.svg#icon-key"></use>
+                </svg>
+                <p>$600,000</p>
+            </div>
+            <button class="cta home__btn btn">Contact realtor</button>
+        </div>
+    </section>
+    ```
+
 ## Building the Homes Section - Part 2
+1. Similar to the "features" section, we use `auto-fit` and `minmax()` to create columns in the grid.
+1. In most cases, we don't need to specify the conditions for rows as the browser can handle it. However, it is not always the case. 
+1. In this section, we have a relative complex component that we have the "**house image**", "**like icon**", and "**house name**" on the same row in the grid and use overlap to stack each element. 
+    1. We divide the `home` component into 2-column-grid.
+    1. Since `grid-template-row` is set with `auto` by default, we don't need to specify the properties in most of the cases.
+    1. We specify the "**house image**" in the first row with `gird-row: 1 / 2`, and so do "**like icon**" and "**house name**".
+    1. We use `z-index` to ensure that "**like icon**" and "**house name**" are always over the "**house image**".
+    1. For the "**like icon**", we can use `justify-self: end` to ensure it will be positioned at the end of the column.
+    1. For the "**house name**", we use `align-self: end` and `justify-center` to position the element at the bottom center of the `home` component. 
+    1. After all, we use `transform: translateY(50%)` to push the element down to exceed the bottom grid cell. 
+1. For the following part, we turn each attribute of the house into flexbox and use `align-items: center` to center the element vertically.
+1. Since we only want the first 2 elements be pushed down, we can add `margin-top` on the elements directly.
+    ```scss
+    // sass/_homes.scss
+    .homes {
+        grid-column: center-start / center-end;
+        margin: 15rem 0;
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+        grid-gap: 7rem;
+    }
+
+    .home {
+        background-color: $color-grey-light-1;
+        
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-row-gap: 3.5rem;
+
+        &__img {
+            width: 100%;
+            grid-row: 1 / 2; // overlap the image with the like icon
+            grid-column: 1 / -1;
+            z-index: 1;
+        }
+
+        &__like {
+            grid-row: 1 / 2; // overlap like icon with the image
+            grid-column: 2 / 3;
+            fill: $color-primary;
+            height: 2.5rem;
+            width: 2.5rem;
+            z-index: 2;
+            justify-self: end;
+            margin: 1rem;
+        }
+
+        &__name {
+            grid-row: 1 / 2;
+            grid-column: 1 / -1;
+            justify-self: center;
+            align-self: end;
+            z-index: 2;
+
+            width: 80%;
+            font-family: $font-display;
+            font-size: 1.6rem;
+            text-align: center;
+            padding: 1.25rem;
+            background-color: $color-secondary;
+            color: #fff;
+            font-weight: 400;
+            transform: translateY(50%); // move the item down
+        }
+
+        &__location,
+        &__rooms {
+            margin-top: 2.5rem; // have some space on the top of the first row
+        }
+
+        &__location,
+        &__rooms,
+        &__area,
+        &__price {
+
+            font-size: 1.5rem;
+            margin-left: 2rem;
+
+            display: flex;
+            align-items: center;
+
+            svg {
+                fill: $color-primary;
+                height: 2rem;
+                width: 2rem;
+                margin-right: 1rem;
+            }
+        }
+
+        &__btn {
+            grid-column: 1 / -1;
+        }
+    }
+    ```
+
 ## Building the Gallery - Part 1
 ## Building the Gallery - Part 2
 ## Building the Footer
