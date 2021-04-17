@@ -9212,6 +9212,93 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/107-nexter_overall_layout.gif">
 
 ## Building the Features Section - Part 1
+1. Learning targets
+    1. How and why to create grids inside of grids
+    1. How to create a responsive component wihtout media queries
+    1. How to build a small component using CSS grid
+1. In HTML file, we can use snippet to create elements with shorthands. Use curly braces to wrap the content text and give dollar sign as the placeholder for the number.
+    ```html
+    <!-- creates 5 items from 1 to 5 in container -->
+    .container>.element{item $}*5
+
+    <div class="container">
+        <div class="element">item 1</div>
+        <div class="element">item 2</div>
+        <div class="element">item 3</div>
+        <div class="element">item 4</div>
+        <div class="element">item 5</div>
+    </div>
+    ```
+1. We set up the required HTML elements.
+    ```html
+    <section class="features">
+        <div class="feature">
+            <svg class="feature__icon">
+                <use xlink:href="img/sprite.svg#icon-global"></use>
+            </svg>
+            <h4 class="heading-4">World's best luxury homes</h4>
+            <p class="feautre__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus rerum vitae aliquid
+                pariatur ducimus ullam?</p>
+        </div>
+        <div class="feature">
+            <svg class="feature__icon">
+                <use xlink:href="img/sprite.svg#icon-trophy"></use>
+            </svg>
+            <h4 class="heading-4">Only the best properties</h4>
+            <p class="feautre__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus rerum vitae aliquid
+                pariatur ducimus ullam?</p>
+        </div>
+        <div class="feature">
+            <svg class="feature__icon">
+                <use xlink:href="img/sprite.svg#icon-map-pin"></use>
+            </svg>
+            <h4 class="heading-4">All homes in top locations</h4>
+            <p class="feautre__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus rerum vitae aliquid
+                pariatur ducimus ullam?</p>
+        </div>
+        <div class="feature">
+            <svg class="feature__icon">
+                <use xlink:href="img/sprite.svg#icon-key"></use>
+            </svg>
+            <h4 class="heading-4">New home in one week</h4>
+            <p class="feautre__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus rerum vitae aliquid
+                pariatur ducimus ullam?</p>
+        </div>
+        <div class="feature">
+            <svg class="feature__icon">
+                <use xlink:href="img/sprite.svg#icon-presentation"></use>
+            </svg>
+            <h4 class="heading-4">Top 1% realtors</h4>
+            <p class="feautre__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus rerum vitae aliquid
+                pariatur ducimus ullam?</p>
+        </div>
+        <div class="feature">
+            <svg class="feature__icon">
+                <use xlink:href="img/sprite.svg#icon-lock"></use>
+            </svg>
+            <h4 class="heading-4">Secure payment on nexter</h4>
+            <p class="feautre__text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus rerum vitae aliquid
+                pariatur ducimus ullam?</p>
+        </div>
+    </section>
+    ```
+1. We can create a grid in the grid system. We'd like the grid to have 3 columns by it self and 2 rows. 
+1. As the structure has had 2 rows for 6 elements, we don't need to specify the properties in CSS.
+    ```scss
+    // sass/_features.scss
+    .features {
+        grid-column: center-start / center-end;
+
+        margin: 15rem 0;
+
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        // grid-template-rows: auto auto // skip this as grid system has given it by default
+        grid-gap: 6rem;
+    }
+    ```
+    <img src="images/108-features_inner_grid.png">
+
 ## Building the Features Section - Part 2
 ## Building the Story Section - Part 1
 ## Building the Story Section - Part 2
