@@ -25,19 +25,32 @@
     }
 
     &__seenon-text {
+        display: grid;
+        grid-template-columns: 1fr max-content 1fr; // text wrap will apply if we use min-content
+        grid-column-gap: 1.5rem;
+        align-items: center;
+        
+        font-size: 1.6rem;
+        color: $color-grey-light-2;
 
+        &::before,
+        &::after {
+            content: '';
+            height: 1px;
+            display: block;
+            background-color: currentColor;
+        }
     }
 
     &__seenon-logos {
-        text-align: center;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-column-gap: 3rem;
+        justify-items: center;
                 
         img { 
             height: 2.5rem; // ensure all logos have the same height
-            display: inline-block;
-
-            &:not(:last-child) {
-                margin-right: 3rem;
-            }
+            filter: brightness(70%); // turn the white logos grey
         }
     }
 }

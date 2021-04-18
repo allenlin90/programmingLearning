@@ -10112,6 +10112,32 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/118-centered_grid_system.png">
 
 ## Building the Header - Part 2
+1. [Pseudo elements](https://www.w3schools.com/css/css_pseudo_elements.asp) `::before` and `::after` are elements insert before or after the content of the element rather than creating adjacent element aroudn the element. It means the `::before` and `::after` elements after the child elements of the selected element.
+1. Therefore, we can have the text content `header__seenon-text` has element before and after it. Note that with the pseudo selectors, we have 3 elements in the item.
+1. We then use `grid-template-columsn` to create 3 columns for each fo them. For `::before` and `::after`, we have the same width for each element by using `1fr`. However, we use `max-content` for the text content. Note that if we use `min-content` the space character of the text content can be the text breakpoint, so the text will be wrapped. 
+1. We can use `currentColor` to ensure the horizontal lines have the same color as the text color.
+    ```scss
+    .header {
+        &__seenon-text {
+            display: grid;
+            grid-template-columns: 1fr max-content 1fr; // text wrap will apply if we use min-content
+            grid-column-gap: 1.5rem;
+            align-items: center;
+            
+            font-size: 1.6rem;
+            color: $color-grey-light-2;
+
+            &::before,
+            &::after {
+                content: '';
+                height: 1px;
+                display: block;
+                background-color: currentColor;
+            }
+        }
+    }
+    ```
+    <img src="images/119-final_header_layout.png">
 
 ## Building the Realtors Section
 
