@@ -9838,6 +9838,101 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/114-fit_image_to_multiple_grid_cell.png">
 
 ## Building the Gallery - Part 2
+1. This section is to align all the images in the gallery section. This part is much easier if we have had the blueprint and use the developing tool from FireFox to see the grid columns and rows.
+    ```scss
+    // sass/_gallery.scss
+    .gallery {
+        background-color: $color-grey-light-1;
+        grid-column: full-start / full-end;
+
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(7 , 5vw);
+        grid-gap: 1.5rem;
+        padding: 1.5rem;
+
+        &__item {
+            &--1 {
+                grid-row: 1 / span 2;
+                grid-column: 1 / span 2;
+            }
+
+            &--2 {
+                grid-row: 1 / span 3;
+                grid-column: 3 / span 3;
+            }
+
+            &--3 {
+                grid-row: 1 / span 2;
+                grid-column: 6 / span 1;
+            }
+
+            &--4 {
+                grid-row: 1 / span 2;
+                grid-column: 7 / -1;
+            }
+
+            &--5 {
+                grid-row: 3 / span 3;
+                grid-column: 1 / span 2;
+            }
+
+            &--6 {
+                grid-row: 4 / span 2;
+                grid-column: 3 / span 2;
+            }
+
+            &--7 {
+                grid-row: 4 / span 1;
+                grid-column: 5 / span 1;
+            }
+
+            &--8 {
+                grid-row: 3 / span 2;
+                grid-column: 6 / span 2;
+            }
+
+            &--9 {
+                grid-row: 3 / span 3;
+                grid-column: 8 / -1;
+            }
+
+            &--10 {
+                grid-row: 6 / span 2;
+                grid-column: 1 / span 1;
+            }
+
+            &--11 {
+                grid-row: 6 / span 2;
+                grid-column: 2 / span 2;
+            }
+
+            &--12 {
+                grid-row: 6 / span 2;
+                grid-column: 4 / span 1;
+            }
+
+            &--13 {
+                grid-row: 5 / span 3;
+                grid-column: 5 / span 3;
+            }
+
+            &--14 {
+                grid-row: 6 / span 2;
+                grid-column: 8 / -1;
+            }        
+        }
+
+        &__img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; // this only works when width and height are given
+            display: block;
+        }
+    }
+    ```
+    <img src="images/115-final_gallery_component.png">
+
 ## Building the Footer
 ## Building the Sidebar
 ## Building the Header - Part 1
