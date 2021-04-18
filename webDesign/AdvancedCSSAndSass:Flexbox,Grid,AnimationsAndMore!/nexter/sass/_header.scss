@@ -11,7 +11,15 @@
     grid-template-rows: 1fr min-content minmax(6rem, min-content) 1fr;
     grid-template-columns: minmax(min-content, max-content); // make the content responsive to have text break when the viewport is too narrow
     grid-row-gap: 1.5rem;
-    justify-content: center;    
+    justify-content: center;
+
+    @media only screen and (max-width: $bp-medium) {
+        grid-column: 1 / -1;
+    }
+
+    @media only screen and (max-width: $bp-small) {
+        padding: 5rem;
+    }
 
     &__logo {
         height: 3rem;
@@ -21,7 +29,6 @@
     &__btn {
         align-self: start;
         justify-self: start;
-
     }
 
     &__seenon-text {

@@ -10272,6 +10272,128 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/121-media_query_sidebar.png"
 
 ## Writing Media Queries - Part 2
+1. Though we have handled the scenarios for large screens, the layout will still funny when the viewport is the size on mobile devices. 
+1. When the screen is narrow, we can put the `realtors` part below the `header`.
+    1. We add a new breakpoint at `800px`.
+    1. We add another row for pushing `realtors` below the `header`. For the row height, we can simply use `min-content` which is the minimum that the item needs.
+    1. Though we give `100vh` for the 2nd row, which is `header`, it doesn't fit to the whole viewport and overflows because the `sidebar` on the top. Therefore, we can use `calc()` function to have `100vh - 6rem` for the height.
+        ```scss
+        // sass/_base.scss
+        // RESPONSIVE BREAKPOINTS
+        $bp-medium: 50em; // 800px
+
+        .container {
+            @media only screen and (max-width: $bp-medium) { // put realtors below header
+                grid-template-rows: 6rem calc(100vh - 6rem) min-content min-content 40vw repeat(3, min-content); // 8 rows 
+            }
+        }
+        ```
+    1. We then add the media query to both `header` and `realtors`.
+        ```scss
+        // sass/_header.scss
+        .header {
+            @media only screen and (max-width: $bp-medium) {
+                grid-column: 1 / -1;
+            }
+        }
+
+        // sass/_realtors.scss
+        .realtors {
+            @media only screen and (max-width: $bp-medium) {
+                grid-column: 1 / -1;
+            }
+        }
+        ```
+    1. After `realtors` is pushed below, we can create 6 columns for the image and text content of each realtor and keep them in the same row.
+        ```scss
+        // scss/_realtors.scss
+        .realtors {
+            &__list {
+                @media only screen and (max-width: $bp-medium) {
+                    grid-template-columns: repeat(3, min-content max-content);
+                }
+            }
+        }
+        ```
+1. The `story` section also has issue when the width is not enough.
+    1. We switch the order of image and the content in `story` section when the viewport width is narrower than `800px`. 
+    1. The text content in `.story__content` still overflows the container because the row height is set to be `40vh` in `_base.css`. 
+        ```scss
+        // scss/_story.scss
+        .story {
+            @media only screen and (max-width: $bp-medium) {
+                grid-column: 1 / -1;
+                padding: 6rem;
+            }
+
+            &__img--1 {
+                @media only screen and (max-width: $bp-medium) {
+                    grid-column: 1 / 5;
+                    grid-row: 1 / -1;
+                }
+            }
+
+            &__img--2 {
+                @media only screen and (max-width: $bp-medium) {
+                    grid-row: 1 / -1;
+                    width: 100%;
+                }
+            }
+
+            &__content {
+                @media only screen and (max-width: $bp-medium) {
+                    grid-column: 1 / -1;
+                    grid-row: 5 / 6;
+                }
+            }
+        }
+        ```
+    1. Since we have all the rest rows as `min-content`, we can delete all the specification and let grid system handle it. The default feature for grid system is to create implicit rows that has `min-content` as the row height when there's element out of the explicit rows. 
+        ```scss
+        // sass/_base.scss
+        .container {
+            @media only screen and (max-width: $bp-medium) { // put realtors below header
+                grid-template-rows: 6rem calc(100vh - 6rem); // the rest will be in the implicit row that has min-content/auto
+            }
+        }
+        ```
+1. The last part is the `realtors` in a very narrow viewport width at `600px` (which is usually the mobile phone size).
+1. Therefore, we add another breakpoint for the scenario at `600px`.
+    ```scss
+    // sass/_base.scss
+    // RESPONSIVE BREAKPOINTS
+    $bp-small: 37.5em; // 600px
+    ```
+1. Besides, the `padding` of the header should be less
+    ```scss
+    // sass/_header.scss
+    .header {
+        @media only screen and (max-width: $bp-small) {
+            padding: 5rem;
+        }
+    }
+    ```
+1. We just change the layout of `realtors` back to what it was as a column that has 3 elements.
+    ```scss
+    // sass/realtors.scss
+    .realtors {
+        @media only screen and (max-width: $bp-small) {
+            grid-template-columns: min-content max-content;
+        }
+    }
+    ```
+1. `1200px`
+
+    <img src="images/122-viewport_1200.gif">
+1. `1000px`
+
+    <img src="images/122-viewport_1000.gif">
+1. `800px`
+
+    <img src="images/122-viewport_800.gif">
+1. `600px`
+
+    <img src="images/122-viewport_600.gif">
 
 ## Browser Supprot for CSS Grid
 
