@@ -1,5 +1,5 @@
 Start learning on 2021/03/24
-Finished on 
+Finished on 2021/04/18
 
 Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.udemy.com/course/advanced-css-and-sass/)
 ---
@@ -8988,6 +8988,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 
 # Nexter Project - Master CSS Grid Layouts
 ## Project Overview and Setup
+1. [Porject Link](https://wonderful-goldwasser-8b2175.netlify.app/advancedcss/nexter/)
 1. We import and use `<link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,400,400i|Nunito:300,300i" rel="stylesheet">` in the HTML file for the font. 
     ```html
     <!DOCTYPE html>
@@ -10396,5 +10397,9 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/122-viewport_600.gif">
 
 ## Browser Supprot for CSS Grid
-
-## Warpping up the NExter Project: Final Considerations
+1. We can use `@supports` to check if the browser supports grid system.
+    ```scss
+    @supports (display: grid) {
+        // applies if the browser supports grid
+    }
+    ```
