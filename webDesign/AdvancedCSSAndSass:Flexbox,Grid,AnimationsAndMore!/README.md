@@ -10140,8 +10140,136 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/119-final_header_layout.png">
 
 ## Building the Realtors Section
+1. We firstly set up HTML file
+    ```html
+    <div class="realtors">
+        <h3 class="heading-3">Top 3 realtors</h3>
+        <div class="realtors__list">
+            <img src="img/realtor-1.jpeg" alt="realtor_1" class="realtors__img">
+            <div class="realtors__details">
+                <h4 class="heading-4 heading-4--light">Erik Feinman</h4>
+                <p class="realtors__sold">245 hourses sold</p>
+            </div>
+
+            <img src="img/realtor-2.jpeg" alt="realtor_2" class="realtors__img">
+            <div class="realtors__details">
+                <h4 class="heading-4 heading-4--light">Kim Brown</h4>
+                <p class="realtors__sold">212 hourses sold</p>
+            </div>
+
+            <img src="img/realtor-3.jpeg" alt="realtor_3" class="realtors__img">
+            <div class="realtors__details">
+                <h4 class="heading-4 heading-4--light">Toby Ramsey</h4>
+                <p class="realtors__sold">198 hourses sold</p>
+            </div>
+        </div>
+    </div>
+    ```
+1. We have another item in the section as we don't wont the `h3` header to the part in the grid system inside.
+1. We give images a specific size and turn them into circles by using `border-radius: 50%`.
+1. As we don't want the text be wrapped, we can use `max-content` for the text content. However, since images have fixed size, we can use either `max-content`, `auto`, or `min-content` for the case.
+1. As the `h3` header is not a grid item in the inner grid, we an use `justify-item: center` to center it in `realtors`.
+    ```scss
+    // sass/_realtors.scss
+    .realtors {
+        background-color: $color-secondary;
+        grid-column: col-start 7 / full-end;
+        padding: 3rem;
+
+        display: grid;
+        align-content: center;
+        justify-content: center;
+        justify-items: center; // center the h3 header
+        grid-row-gap: 2rem;
+
+        &__list {
+            display: grid;
+            grid-template-columns: min-content max-content;
+            grid-column-gap: 2rem;
+            grid-row-gap: 5vh;
+            align-items: center;
+        }
+
+        &__img {
+            width: 7rem;
+            border-radius: 50%;
+            display: block;
+        }
+
+        &__sold {
+            text-transform: uppercase;
+            color: $color-grey-light-2;
+            margin-top: -3px;
+        }
+    }
+    ```
+    <img src="images/120-final_realtors.png">
 
 ## Writing Media Queries - Part 1
+1. We firstly fix some issues in the `header`.
+    1. The logo images at the bottom shouldn't have fixed width and height but maximum for each property.
+    1. For the overall structure, we have the columns width and row height to be responsive by using `minmax()`. 
+        ```scss
+        // sass/_header.scss
+        .header {
+            grid-template-rows: 1fr min-content minmax(6rem, min-content) 1fr; // have higher row height when the text is wrapped
+            grid-template-columns: minmax(min-content, max-content); // enable the text content to abel for text-wrap
+
+            &__seenon-logos {
+                align-items: center;
+
+                img { 
+                    max-height: 2.5rem; // ensure all logos have the same height
+                    max-width: 100%; // make the images scalable according to the viewport
+                    filter: brightness(70%); // turn the white logos grey
+                }
+            }
+        }
+        ```
+1. We set up breakpoints for the overall structure. We'd like to have `font-size` decreasing from `10px` to only half of the default which is `8px`.
+1. Besides, when the screen becomes narrower, we can take the `sidebar` from the left to the top of the overall layout.
+    ```scss
+    // sass/_base.scss
+    // RESPONSIVE BREAKPOINTS
+    $bp-largest: 75em; // 1200px
+    $bp-large: 62.5em; // 1000px
+
+    html {
+        @media only screen and (max-width: $bp-largest) {
+            font-size: 50%;
+        }
+    }
+
+    .container {
+        display: grid;
+        @media only screen and (max-width: $bp-large) {
+            grid-template-rows: 6rem 80vh min-content 40vw repeat(3, min-content); // 6 rows
+            grid-template-columns: [full-start] minmax(6rem, 1fr) [center-start] repeat(8, [col-start] minmax(min-content, 14rem) [col-end]) [center-end] 1fr [full-end];
+        }
+    }
+    ```
+1. After we change the row, the sidebar will be pushed to the top when the viewport is less than `1000px`. Since the menu icon is a flexbox item, we can use `justify-content: flex-end` to push the icon to the top right corner. 
+    ```scss
+    // sass/_sidebar.scss
+    .sidebar {
+        @media only screen and (max-width: $bp-large) {
+            grid-column: 1 / -1;
+            grid-row: 1 / 2;
+            justify-content: flex-end;
+            align-items: center;
+        }
+    }
+    .nav-btn {
+        @media only screen and (max-width: $bp-large) {
+            margin-top: 0;
+            margin-right: 3rem;
+
+            &::before { transform: translateY(-1.2rem); }
+            &::after { transform: translateY(1rem); }
+        }
+    }
+    ```
+    <img src="images/121-media_query_sidebar.png"
 
 ## Writing Media Queries - Part 2
 
