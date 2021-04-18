@@ -8798,7 +8798,7 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
 
 ## Aligning Tracks
 1. If the grid system doesn't fit to its container, we can use `justify-content` and `align-content` to adjust the position of the grid on its x-axis and y-axis. 
-1. We can not only `grid-auto-flow` can be used with [`dense`](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow#values). The feature can fill up the empty cell in the grid. 
+1. We can not only use `grid-auto-flow` on `row` but also use with [`dense`](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow#values). The feature can fill up the empty cell in the grid. 
     ```scss
     .container {
         width: 1000px;
@@ -9934,6 +9934,60 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/115-final_gallery_component.png">
 
 ## Building the Footer
+1. Learning Target - Applied the concept that have learned.
+1. We use `grid` rather than `flexbox` in this case as grid has easier approach to have customized gutter by using `grip-gap` between the items.
+1. To set the size of columns in the grid, we can use `auto-fit` to let the system look up the number of columns to create. However, in the `minmax()` funciton, we should use a minimum width because the `block` elements will be stretched and occupy the whole width of the container, so only 1 column will be created.
+1. In the `minmax()`, we need to use at least one absolute value. After testing, `minmax(min-content, 1fr)` doesn't work as expected that it doesn't allow each element to have all text on one row without wrapping the text as the minimum. This setting will let each element occupy the whole width of the continer.
+1. Though we may use `max-width: fit-content` which actually shrink the element down into a single row and has the maximum width by the text content inside. However, the items in the grid won't aling up on the same row. Each item still occupies a whole row in the grid. 
+1. The problem is from the `minmax()` config that either the `min` or `max` must be a fixed value. It doesn't work if both of the values are dynamic. Therefore, Jonas (lecturer) gives the mininum at `15rem`.
+1. We can check the discussion at [https://stackoverflow.com/questions/51594965/why-auto-fit-or-auto-fill-not-working-properly-with-minmax](https://stackoverflow.com/questions/51594965/why-auto-fit-or-auto-fill-not-working-properly-with-minmax).
+    ```scss
+    // sass/_footer.scss
+    .footer {
+        background-color: $color-secondary;
+        grid-column: full-start / full-end;
+        padding: 8rem;
+    }
+
+    .nav {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));    
+        grid-gap: 2rem;
+        align-items: center;
+
+        &__link:link,
+        &__link:visited {
+            font-size: 1.4rem;
+            color: #fff;
+            text-decoration: none;
+            font-family: $font-display;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 1.5rem;
+            display: block;
+            transition: all .2s;        
+        }
+
+        &__link:hover,
+        &__link:active {
+            background-color: rgba(#fff, .05);
+            transform: translateY(-3px);
+        }
+    }
+
+    .copyright {
+        font-size: 1.4rem;
+        color: $color-grey-light-2;
+        margin-top: 6rem;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        width: 70%;
+    }
+    ```
+    <img src="images/116-final_footer.png">
+
 ## Building the Sidebar
 ## Building the Header - Part 1
 ## Building the Header - Part 2
