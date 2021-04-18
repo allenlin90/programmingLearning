@@ -9989,10 +9989,136 @@ Course Link [https://www.udemy.com/course/advanced-css-and-sass/](https://www.ud
     <img src="images/116-final_footer.png">
 
 ## Building the Sidebar
+1. To create the burger menu icon with pure css, we can just put the element as the bar in the middle and use `::before` and `::after` pseudo element to work on it. 
+    ```html
+    <div class="sidebar">
+        <button class="nav-btn"></button>
+    </div>
+    ```
+1. In `sidebar` section, we can turn the item into a flexbox to center the elements in its containter.
+1. To style a `button` element, we can firstly take off `border` and `border-radius`.
+    ```scss
+    .sidebar {
+        background-color: $color-primary;
+        grid-column: sidebar-start / sidebar-end;
+        grid-row: 1 / -1;
+
+        display: flex;
+        justify-content: center;
+    }
+
+    .nav-btn {
+        border: none;
+        border-radius: 0;
+
+        background-color: #fff;
+        height: 2px;
+        width: 4.5rem;
+        margin-top: 4rem;    
+
+        &::before,
+        &::after {
+            content: '';
+            background-color: #fff;
+            height: 2px;
+            width: 4.5rem;
+            display: block;
+        }
+
+        &::before { transform: translateY(-1.5rem); }
+        &::after { transform: translateY(1.3rem); }
+    }
+    ```
+
 ## Building the Header - Part 1
+1. Learning targets
+    1. How to manage vertical spacing in a responsive layout using CSS grid techniques.
+    1. How to use `::before` and `::after` as grid items.
+1. We firstly prepare the HTML elements
+    ```html
+    <header class="header">
+        <img src="img/logo.png" alt="nexter_logo" class="header__logo">
+        <h3 class="heading-3">Your own home: </h3>
+        <h1 class="heading-1">The ultimate personal freedom</h1>
+        <button class="btn">View our properties</button>
+        <div class="header__seenon-text">Seen on</div>
+        <div class="header__seenon-logos">
+            <img src="img/logo-bbc.png" alt="seen_on_logo_1">
+            <img src="img/logo-forbes.png" alt="seen_on_logo_2">
+            <img src="img/logo-techcrunch.png" alt="seen_on_logo_3">
+            <img src="img/logo-bi.png" alt="seen_on_logo_4">
+        </div>
+    </header>
+    ```
+1. As the `header` section is set to `80vh` which is 80% of the overall viewport height, the section has a given height. 
+1. If we turn the section in to a grid and put `grid-template-rows: 1fr`, the grid will have only one explicit row which will take as much space as it can, while have the rest elements in the implicit rows that only has height according to their content.
+1. Note that elements in the other rows are in implicit rows which size is given automatically at the minimum they need.
+    ```scss
+    .header {
+        display: grid;
+        grid-template-rows: 1fr; // this makes only 1 explicit row in the grid
+    }
+    ```
+    <img src="images/118-only_one_explicit_row_with_full_height.png">
+1. We then adjust each row to fit the content. We'd like to have the logo and button have the same space on their row, the 2nd is the `min-content` which is minimum that it needs, and the 3 row for `6rem` for height. 
+    ```scss
+    .header {
+        grid-template-rows: 1fr min-content 6rem 1fr;
+    }
+    ```
+1. We use `grid-row-gap` to create space between each row. 
+1. Since the grid has only one column, we can style it as `grid-template-columns: max-content`, so the text content of the `heading--1` element won't be wrapped. Besides, the column width is limited to the maximum width of the content which is also the `heading--1`. 
+1. The `header__btn` is stretched due to grid default feature, so we can use `align-self` and `justify-self` to prevent. 
+    ```scss
+    // sass/_header.scss
+    .header {
+        background-color: $color-grey-dark-1;
+        grid-column: full-start / col-end 6;
+        background-image: linear-gradient(rgba($color-secondary, .93), rgba($color-secondary, .93)), url(../img/hero.jpeg);
+        background-size: cover;
+        background-position: center;
+        padding: 8rem;
+        padding-top: 4rem;
+
+        display: grid;
+        grid-template-rows: 1fr min-content 6rem 1fr;
+        grid-template-columns: max-content;
+        grid-row-gap: 1.5rem;
+        justify-content: center;    
+
+        &__logo {
+            height: 3rem;
+            justify-self: center;
+        }
+
+        &__btn {
+            align-self: start;
+            justify-self: start;
+
+        }
+
+        &__seenon-text {
+
+        }
+
+        &__seenon-logos {
+            
+            img { 
+                height: 2.5rem; // ensure all logos have the same height
+            }
+        }
+    }
+    ```
+    <img src="images/118-centered_grid_system.png">
+
 ## Building the Header - Part 2
+
 ## Building the Realtors Section
+
 ## Writing Media Queries - Part 1
+
 ## Writing Media Queries - Part 2
+
 ## Browser Supprot for CSS Grid
+
 ## Warpping up the NExter Project: Final Considerations
