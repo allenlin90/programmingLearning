@@ -10,6 +10,10 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. [Understanding "methods" in Vue Apps](Understanding-"methods"-in-Vue-Apps)
     1. [Working with Data inside of a Vue App](#Working-with-Data-inside-of-a-Vue-App)
     1. [Outputting Raw HTML Content with v-html](#Outputting-Raw-HTML-Content-with-v-html)
+    1. [A First Summary](#A-First-Summary)
+    1. [Understanding the Event Binding](#Understanding-the-Event-Binding)
+    1. [Events and Methods](#Events-and-Methods)
+    1. [Working with Event Arguments](#Working-with-Event-Arguments)
 
 ---
 
@@ -192,3 +196,107 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </section>
     ```
 1. However, it's not recommended to have this method as default because it may be vulnerable to XXS attacks.
+
+## A First Summary
+1. If we use `app = Vue.createApp()` and select a specific HTML element by `app.mount()`, Vue can work on the selected HTML element and its child, while won't affect other HTML elements on the page. 
+1. To manipulate the elements, we can use "**interpolation**" (double curly braces) and `v-html` and `v-bind` on HTML attributes. 
+
+## Understanding the Event Binding
+1. To add event listener on Vue component, we can use `v-on` and follow with a column and the event, such as `v-on:click`, on the HTML element.
+1. We then can add Javascript expression or give the event handler function for the element.
+1. However, `v-on` takes either expression or function and can't execution as a code block. For example, if we try to put `console.log('Hello World')` to execute direclty, browser will return an error.
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <button v-on:click="increase">Add</button>
+        <button v-on:click="counter--">Reduce</button>
+        <p>Result: {{ counter }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                counter: 0,
+            };
+        },
+        methods: {
+            increase() {
+                this.counter++;
+            }
+        }
+    });
+
+    app.mount('#events');
+    ```
+
+## Events and Methods
+1. Though we can give expressions and logic at `v-on` in HTML element, it's not a good practice, as we should separate the purpose of each type of file.
+1. Therefore, we can create a function in the JavaScript. This function should be a method in the Vue component. 
+1. Besides, we can either pass the method or call the method in `v-on` directly. Either approach will work, as Vue can handle the conditions.
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <!-- either assign method execute it will work as long as it's a method in the Vue component -->
+        <button v-on:click="add()">Add</button>
+        <button v-on:click="reduce">Reduce</button>button>
+        <p>Result: {{ counter }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                counter: 0,
+            };
+        },
+        methods: {
+            add() {
+                this.counter += 1;
+            },
+            reduce() {
+                this.counter -= 1;
+            }
+        }
+    });
+
+    app.mount('#events');
+    ```
+
+## Working with Event Arguments
+1. Since `v-on` can either take an expression or assign a method, we can pass an argument(s) to the method. 
+1. Therefore, we can make our method dynamic and change the ouptut or feature on the Vue component very fast.
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <!-- Pass arguments to methods -->
+        <button v-on:click="add(5)">Add</button>
+        <button v-on:click="reduce(5)">Reduce</button>
+        <p>Result: {{ counter }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+            counter: 0,
+            };
+        },
+        methods: { // both methods take arguments
+            add(num) {
+            this.counter += num;
+            },
+            reduce(num) {
+            this.counter -= num;
+            }
+        }
+    });
+
+    app.mount('#events');
+    ```
