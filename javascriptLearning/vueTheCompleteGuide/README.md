@@ -14,6 +14,10 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. [Understanding the Event Binding](#Understanding-the-Event-Binding)
     1. [Events and Methods](#Events-and-Methods)
     1. [Working with Event Arguments](#Working-with-Event-Arguments)
+    1. [Using the Native Event Object](#Using-the-Native-Event-Object)
+    1. [Exploring Event Modifiers](#Exploring-Event-Modifiers)
+    1. [Locking Content with v-once](#Locking-Content-with-v-once)
+    1. [Data Binding + Event Binding = Two-way Binding](#Data-Binding-+-Event-Binding-=-Two-way-Binding)
 
 ---
 
@@ -298,5 +302,225 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         }
     });
 
+    app.mount('#events');
+    ```
+
+## Using the Native Event Object
+1. In regular cases, browser will provide an `event` argument to the callback function of the event handler. 
+1. If we don't pass any argument to the event handler callback function it takes `event` argument by default. Therefore, we can use it as regular JavaScript to check the properties in the event object. 
+1. In this case, we can track on the value that the user gives to an `input` tag by checking the `input` event. 
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <input type="text" v-on:input="setName">
+        <p>Your Name : {{ name }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                name: '',
+            };
+        },
+        methods: {
+            setName(event) {
+                this.name = event.target.value;
+            },
+        }
+    });
+
+    app.mount('#events');
+    ```
+1. Besides, only the part that is handled by Vue is changed in the HTML document. This feature is similar to vanilla JavaScript to manipulate DOM. 
+1. In addition, we can still pass an argument(s) to the event handler but keep the event object. Vue provides a reserved variable `$event` that we can pass to the function for `v-on` as well. 
+    ```html
+    <!-- HTML -->
+    <input type="text" v-on:input="setName($event, 'Another Name')">
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.creatApp({
+        data() {
+            return {
+                name: '',
+            },
+        },
+        methods: {
+            setName(event, secondName) {
+                return event.target.value + ' ' + secondName;
+            } 
+        }
+    })
+    ```
+
+## Exploring Event Modifiers
+1. In regular `form` element, the browser will return when the user submits the form as it send a HTTP request to server.
+1. However, we'd like to prevent the default feature and stop browser from reloading the page.
+1. We can use regular way in JavaScript to use `event.preventDefault()` in the callback funciton to prevent the browser reloads the page. 
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <form v-on:submit="submitForm" action="">
+        <input type="text" name="" id="">
+        <button type="submit">Sign Up</button>
+        </form>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        methods: {
+            submitForm(event) {
+                event.preventDefault();
+            }
+        }
+    })
+    ```
+1. On the other hand, we can use Vue feature to modify the event on HTML directly. In this case, we can simply modify Vue event handler with `v-on:submit.prevent`.
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <form v-on:submit.prevent="submitForm" action="">
+        <input type="text" name="" id="">
+        <button type="submit">Sign Up</button>
+        </form>
+    </section>
+    ```
+1. Besides `.prevent`, we can do `click.right` for click event to change default from left click on a mouse to right click, so the function will only be trigerred when the user right clicks on the element.
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <button v-on:click="add(5)">Add</button>
+        <button v-on:click.right="reduce(5)">Reduce</button>
+        <p>Result: {{ counter }}</p>
+    </section>
+    ```
+1. In this case, we'd like to manipulate the input to the `p` tag below only when the user hits <kbd>enter</kbd>. Note that we can use `v-on` to apply multiple event handler on the same element. 
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <input 
+            type="text" name="" id=""
+            v-on:input="setName($event, 'Last Name')" 
+            v-on:keyup.enter="confirmInput">
+        <p>Your Name : {{ confirmedName }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                name: '',
+                confirmedName: '',
+            }
+        },
+        methods: {
+            setName(event, secondName) {
+                this.name = event.target.value + ' ' + secondName
+            }, 
+            confirmInput() {
+                this.confirmedName = this.name;
+            }
+        }
+    })
+    ```
+1. We may refer to [event modifier](https://vuejs.org/v2/guide/events.html#Event-Modifiers) from Vue officail document.
+
+## Locking Content with v-once
+1. In some scenarios, we'd like the Vue controled element to render interpolation at once when the app initiates. 
+1. We can give `v-once` to indicate that the interpolation in the element will only happen when the element is firstly rendered. This is similar to the lifecycle method in React to prevent the element being re-rendered when the value or state changes.
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <button v-on:click="add($event, 5)">Add</button>
+        <button v-on:click="reduce($event, 5)">Reduce</button>
+        <p v-once>Starting Counter: {{ counter }}</p>
+        <p>Result: {{ counter }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                counter: 10,
+            }
+        },
+        methods: {
+            add(event, num = 1) {
+                return counter += num;
+            }
+
+            reduce(event, num = 1) {
+                return counter -= num;
+            }
+        }
+    })
+    ```
+
+## Data Binding + Event Binding = Two-way Binding
+1. If we'd like to reset the data when the user clicks a button on the page, we can use regular JavaScript with DOM selector to handle the event.
+1. We can use `v-bind` to bind the attribute with Vue interpolation. In this case, we bind the `value` attribute of the `input` tag with `name` interpolation of Vue. Therefore, when the user clicks on the "reset" button, not only the content in the `p` tag below will be removed but also the data in the `input` tag.
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <h2>Events in Action</h2>
+        <button v-on:click="add(10)">Add 10</button>
+        <button v-on:click="reduce(5)">Subtract 5</button>
+        <p>Result: {{ counter }}</p>
+        <button v-on:click="resetInput">Reset Input</button>
+        <!-- bind value -->
+        <input type="text" v-bind:value="name" v-on:input="setName($event, 'lastName')">
+        <!-- use v-model for two-way binding -->
+        <input type="text" v-model="name">
+        <p>Your Name: {{ name }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                name: '',
+            }
+        }, 
+        methods: {
+            setName(event, lastName){
+                this.name = event.target.value;
+            },
+            resetInput(){
+                this.name = '';
+            }
+        }
+    });
+
+    app.mount('#events');
+    ```
+1. On the other hand, we can use [`v-model`](https://vuejs.org/v2/guide/forms.html#Basic-Usage) which is a syntax sugar to use on `input`, `textarea`, and `select`. In this case, we don't event need to setup methods on the element to realize render the data. 
+    ```html
+    <!-- HTML -->
+    <section id="events">
+        <input type="text" v-model="input">
+        <p>Your Name: {{ input }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                input: '',
+            }
+        }
+    });
+    
     app.mount('#events');
     ```
