@@ -1168,6 +1168,54 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## Dynamic Styling with Inline Styles
+1. We can use `v-bind` or its shorthand column `:` to select `style` attribute of a HTML tag. Besides, passing a regular CSS property such as `border-color` we can use curly braces to wrap it and use "**camelCase**" on the property.
+1. We then can refer to the `data` for the Vue component and use tenary statement to check what value to return for the style. Note that we can pass the data variable directly in the curly braces.
+1. Though we can use `methods` to manulate the style with JavaScript DOM, as we can get the `event` object and change the property with DOM selector `event.target.style.borderColor`. 
+    1. However, the first click will only turn the color to red by inline style as the "**state**" just changes, and the component is re-rendered.
+    1. Since the "state" has changed and won't change by the 2nd click, the `method` can work on the DOM manipulate and turn the `border-color` into the other given color. 
+    ```html
+    <!-- HTML -->
+    <body>
+        <header>
+            <h1>Vue Dynamic Styling</h1>
+        </header>
+        <section id="styling">
+            <div class="demo" 
+                :style="{borderColor: boxASelected ? 'red' : '#ccc'}" 
+                @click="boxSelected($event, 'A')">
+            </div>
+            <div class="demo" @click="boxSelected('B')"></div>
+            <div class="demo" @click="boxSelected('C')"></div>
+        </section>
+    </body>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                boxASelected: false,
+                boxBSelected: false,
+                boxCSelected: false,
+            };
+        },
+        methods: {
+            boxSelected(event, box) {
+                if (box === 'A') {
+                    this.boxASelected = true;
+                    event.target.style.borderColor = 'blue';
+                } else if (box === 'B') {
+                    this.boxBSelected = true;
+                } else if (box === 'B') {
+                    this.boxCSelected = true;
+                }
+            }
+        }
+    });
+
+    app.mount('#styling');
+    ```
+
 ## Adding CSS Classes Dynamically
 ## Classes & Computed Properties
 ## Dynamic Classes: Array Syntax
