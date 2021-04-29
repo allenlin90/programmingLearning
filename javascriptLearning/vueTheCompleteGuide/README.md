@@ -1217,8 +1217,578 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## Adding CSS Classes Dynamically
+1. In a Vue component, we can use both `v-bind:class` and a regular "**class**" attribute in HTML tag. Therefore, we can keep both dynamic and static classes in the same element. 
+1. With bound attribute, we can use Vue interpolation to check whether th apply the class to the element. 
+1. A bound class can take a JavaScript object which has the name of the class as the property and a boolean value to indicate whether to apply the class or not.
+    ```html
+    <!-- HTML -->
+    <div :class="{active: true}">
+    ```
+1. Besides, to toggle the properties, we can give an initial value and set it as the reversed value by an exclamation mark `!`. 
+    ```html
+    <!-- HTML -->
+    <section id="styling">
+        <div class="demo" :class="{active: boxASelected}" @click="boxSelected('A')">
+        </div>
+        <div class="demo" :class="{active: boxBSelected}" @click="boxSelected('B')"></div>
+        <div class="demo" :class="{active: boxCSelected}" @click="boxSelected('C')"></div>
+  </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                boxASelected: false,
+                boxBSelected: false,
+                boxCSelected: false,
+            };
+        },
+        methods: {
+            boxSelected(box) { // toggle the property
+                if (box === 'A') {
+                    this.boxASelected = !this.boxASelected;
+                } else if (box === 'B') {
+                    this.boxBSelected = !this.boxBSelected;
+                } else if (box === 'C') {
+                    this.boxCSelected = !this.boxCSelected;
+                }
+            }
+        }
+    });
+
+    app.mount('#styling');
+    ```
+
 ## Classes & Computed Properties
+1. Since we can pass an object to bound `class`, we can use `computed` to return an object.
+    ```html
+    <!-- HTML -->
+    <section id="styling">
+    <div class="demo" :class="boxAClasses" @click="boxSelected('A')">
+    </div>
+    <div class="demo" :class="{active: boxBSelected}" @click="boxSelected('B')"></div>
+    <div class="demo" :class="{active: boxCSelected}" @click="boxSelected('C')"></div>
+  </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                boxASelected: false,
+            }
+        },
+        computed: {
+            boxAClasses() {
+                return {
+                    active: this.boxASelected
+                }
+            }
+        },
+        methods: {
+            boxSelected(box) {
+                if (box === 'A') {
+                    this.boxAselected = !this.boxAselected;
+                }
+            }
+        }
+    });
+    ```
+    ```css
+    /* CSS */
+    .active {
+        border-color: red;
+        background-color: salmon;
+    }
+    ```
+
 ## Dynamic Classes: Array Syntax
+1. Besides passing an object, we can also pass an array of classes (in `string` or `object`). Therefore, we can have only a bound class attribute in the HTML tag.
+    ```html
+    <!-- HTML -->
+    <section id="styling">
+        <div :class="['demo', boxAClasses]" @click="boxSelected('A')">
+        </div>
+        <div :class="['demo', {active: boxBSelected}]" @click="boxSelected('B')"></div>
+        <div class="demo" :class="{active: boxCSelected}" @click="boxSelected('C')"></div>
+  </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data(){
+            return {
+                boxASelected: false;
+                boxBSelected: false;
+                boxCSelected: false;
+            }
+        },
+        computed: {
+            boxAClasses() {
+                return {
+                    active: boxASelected
+                }
+            },
+            boxBClasses() {
+                return {
+                    active: boxBSelected
+                }
+            },
+            boxCClasses() {
+                return {
+                    active: boxCSelected
+                }
+            }
+        },
+        methods: {
+            boxSelected(box) {
+                if (box === 'A') { 
+                    this.boxASelected = !this.boxASelected
+                }
+                else if (box === 'B') { 
+                    this.boxBSelected = !this.boxBSelected
+                }
+                else if (box === 'C') { 
+                    this.boxCSelected = !this.boxCSelected
+                }
+            }
+        }
+    });
+
+    app.mount('#styling');
+    ```
+
+## Assignment 4: Time to practice: Dynamic Styling
+1. HTML source code 
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Vue Basics</title>
+            <link
+            href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+            rel="stylesheet"
+            />
+            <link rel="stylesheet" href="styles.css" />
+            <script src="https://unpkg.com/vue@next" defer></script>
+            <script src="app.js" defer></script>
+        </head>
+    <body>
+        <header>
+            <h1>Vue Styling</h1>
+        </header>
+        <section id="assignment">
+            <!-- 1) Fetch the user input and use it as a CSS class -->
+            <!-- The entered class should be added to the below paragraph -->
+            <input type="text" />
+            <!-- (available classes: "user1", "user2") -->
+            <p>
+                Style me!
+            </p>
+            <button>Toggle Paragraph</button>
+            <!-- 2) Use the "visible" and "hidden" classes to show/ hide the above paragraph -->
+            <!-- Clicking the button should toggle between the two options -->
+
+            <!-- 3) Add dynamic inline styling to the below paragraph and let the user enter a background-color -->
+            <input type="text" />
+            <p>Style me inline!</p>
+        </section>
+    </body>
+    </html>
+    ```
+1. Approaches for task 1
+    1. use only `watch` and `v-model` in HTML
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-model="user" />
+            <p :class="userClass">
+            Style me!
+            </p>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    user: '',
+                    userClass: null
+                }
+            },
+            watch: {
+                user(value) {
+                    if (value === 'user1') {
+                        this.userClass = { user1: true };
+                    } else if (value === 'user2') {
+                        this.userClass = { user2: true };
+                    } else {
+                        this.userClass = null;
+                    }
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. use only `methods` and `v-on` in HTML
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-on:input="userInput" />
+            <p :class="userClass">
+            Style me!
+            </p>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    user: '',
+                    userClass: null
+                }
+            },
+            methods: {
+                userInput(event) {
+                    this.user = event.target.value;
+                    if (this.user === 'user1') {
+                        this.userClass = { user1: true };
+                    } else if (this.user === 'user2') {
+                        this.userClass = { user2: true };
+                    } else {
+                        this.userClass = null;
+                    }
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. use only `computed` and `v-model`
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-model="user" />
+            <p :class="userClass">
+            Style me!
+            </p>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    user: '',
+                }
+            }
+            computed: {
+                userClass() {
+                    if (this.user === 'user1') {
+                        return { user1: true }
+                    } else if (this.user === 'user2') {
+                        return { user2: true }
+                    } else {
+                        return null
+                    }
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+1. Approaches for task 2
+    1. Use `computed` and `methods`
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <p :class="[toggle]">
+            Style me!
+            </p>
+            <button @click="toggleParagraph">Toggle Paragraph</button>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    show: true,
+                }
+            },
+            computed: {
+                toggle() {
+                    return {
+                        visible: this.show,
+                        hidden: !this.show
+                    }
+                }
+            },
+            methods: {
+                toggleParagraph() {
+                    this.show = !this.show;
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. Use only `methods`
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <p :class="[toggle()]">
+            Style me!
+            </p>
+            <button @click="toggleParagraph">Toggle Paragraph</button>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    show: true,
+                }
+            },
+            methods: {
+                toggleParagraph() {
+                    this.show = !this.show;
+                },
+                toggle() {
+                    return {
+                        visible: this.show,
+                        hidden: !this.show
+                    }
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. Use `watch` and `methods`
+        ```html
+        <section id="assignment">
+            <p :class="[userClass, visibleClass]">
+            Style me!
+            </p>
+            <button @click="toggleParagraph">Toggle Paragraph</button>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    user: '',
+                    show: true,
+                    visibleClass: null
+                }
+            },
+            watch: {
+                show(value) {
+                    this.visibleClass = {
+                        visible: value,
+                        hidden: !value
+                    }
+                }
+            },
+            methods: {
+                toggleParagraph() {
+                    this.show = !this.show;
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+1. Approaches for task 3
+    1. Use only `v-model` and inline styling in HTML
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-model="color" />
+            <p :style="{'color': color}">Style me inline!</p>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    color: '',
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. Use only `computed` and `v-model`
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-model="color" />
+            <p :style="textColor">Style me inline!</p>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    color: '',
+                }
+            },
+            computed: {
+                textColor() {
+                    if (this.color) {
+                        return {
+                            color: this.color
+                        }
+                    }
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. Use `watch` and `v-model`
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-model="color" />
+            <p :style="textColor">Style me inline!</p>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    color: '',
+                    textColor: null
+                }
+            },
+            watch: {
+                color(color) {
+                    if (color) {
+                        this.textColor = {
+                            color
+                        }
+                    }
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. Use `v-on` and `methods`
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-on:input="changeColor" />
+            <p :style="textColor">Style me inline!</p>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    textColor: null
+                }
+            },
+            methods: {
+                changeColor(event) {
+                    if (event.target.value) {
+                        this.textColor = {
+                            color: event.target.value
+                        }
+                    }
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+1. Solutions from the lecture
+    1. Task 1
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-model="inputClass">
+            <p :class="inputClass">Style me!</p>
+        <section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    inputClass: ''
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. Task 2
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-model="inputClass">
+            <p :class="inputClass">Style me!</p>
+            <button @click="toggleParagraphVisibility">Toggle Paragraph</
+        <section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    inputClass: '',
+                    paragraphIsVisible: true
+                }
+            },
+            computed: {
+                paraClasses() {
+                    return {
+                        user1: this.inputClass === 'user1',
+                        user2: this.inputClass === 'user2',
+                        visible: this.paragraphIsVisible,
+                        hidden: !this.paragraphIsVisible,
+                    }
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
+    1. Task 3
+        ```html
+        <!-- HTML -->
+        <section id="assignment">
+            <input type="text" v-model="inputBackgroundColor" />
+            <p :style="{backgroundColor: inputBackgroundColor}">Style me inline!</p>
+        </section>
+        ```
+        ```js
+        // JavaScript
+        const app = Vue.createApp({
+            data() {
+                return {
+                    inputBackgroundColor: '',
+                }
+            }
+        });
+
+        app.mount('#assignment');
+        ```
 
 
 
