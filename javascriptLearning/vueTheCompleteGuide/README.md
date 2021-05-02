@@ -1794,13 +1794,323 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Redenering Conditional Content & Lists
 ## Understanding the Problem
+1. In this case, we will show the `p` indicating that there's no goal.
+1. We'd like to allow users to give new values with `input` tag. The new values shoule be added as `li` elements in the list `ul`.
+    ```html
+    <!-- HTML -->
+    <body>
+    <header>
+      <h1>Vue Course Goals</h1>
+    </header>
+    <section id="user-goals">
+      <h2>My course goals</h2>
+      <input type="text" />
+      <button>Add Goal</button>
+      <p>No goals have been added yet - please start adding some!</p>
+      <!-- show p tag above when there's nothing in the list -->
+      <ul>
+        <li>Goal</li>
+      </ul>
+    </section>
+  </body>
+    ```
+
 ## Rendering Content Conditionally
+1. We can use `v-model` to bind the data of Vue component to collect the value from user input, and declare a method to add the input value to store in the array.
+1. We can use `v-if` in the `p` tag to check whether there's any item in the array and only shows when the array is empty. 
+    ```html
+    <!-- HTML -->
+    <section id="user-goals">
+        <h2>My course goals</h2>
+        <input type="text" v-model="enteredGoalValue" />
+        <button @click="addGoal">Add Goal</button>
+        <p v-if="goals.length === 0">No goals have been added yet - please start adding some!</p>
+        <ul>
+            <li>Goal</li>
+        </ul>
+  </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+            enteredGoalValue: '',
+            goals: []
+            };
+        },
+        methods: {
+            addGoal() {
+                this.goals.push(this.enteredGoalValue);
+            }
+        }
+    });
+
+    app.mount('#user-goals');
+
+    ```
+
 ## v-if, v-else and v-else-if
+1. We can use not only `v-if` to control the elements but also `v-else-if` and `v-else` as regular logical statements. However, `v-else-if` and `v-else` should come right after in the element that "adjacent" to the element with `v-if` (not child or parent).
+    ```html
+    <!-- HTML -->
+    <section id="user-goals">
+        <h2>My course goals</h2>
+        <input type="text" v-model="enteredGoalValue" />
+        <button @click="addGoal">Add Goal</button>
+        <p v-if="goals.length === 0">No goals have been added yet - please start adding some!</p>
+        <ul v-else>
+            <li>Goal</li>
+        </ul>
+  </section>
+    ```
+
 ## Using v-show Instead of v-if
+1. Besides `v-if`, we can use `v-show` which takes an expression to check whether to show a HTML element. 
+1. The main difference between `v-if` and `v-show` controlled elements is that `v-if` do "remove" the element from the page, while `v-show` just apply `display: none` property to the the element, so the element is still on the page but not visible.
+1. Therefore, in some cases that an element is toggled very often, we can use `v-show` rather than `v-if` to improve App performance.
+
 ## Rendering Lists of Data
+1. To render items in an JavaScript `array`, we can use `v-for` on the element.
+1. The syntax for `v-for` is similar to call the properties of JavaScript objects which use `in`, (though `of` keyword also works, it is recommended to use `in`).
+1. We then can use the variable to create dynamic items in the list according to the array data in the `state`. 
+1. Note that Vue doesn't re-render the whole item but cache the data and only change the elements according to the data. 
+1. For example, the number of items in the list is aligned to the number of items in the JavaScript array it bound to. When any item is added or removed from the array, only the HTML element aligned to the data will be modified rather than the whole list.
+    ```html
+    <!-- HTML -->
+    <section id="user-goals">
+        <h2>My course goals</h2>
+        <input type="text" v-model="enteredGoalValue" />
+        <button @click="addGoal">Add Goal</button>
+        <p v-if="goals.length === 0">No goals have been added yet - please start adding some!</p>
+        <ul v-else>
+            <li v-for="goal in goals">{{ goal }}</li>
+        </ul>
+    </section>
+    ```
+
 ## Diving Deeper Into v-for
+1. We can not only declare a variable for the item in the array but also the index of the item.
+1. The syntax is to wrap the variables in the parenthesis and give a 2nd argument as `(var, index) in array`
+    ```html
+    <!-- HTML -->
+    <section id="user-goals">
+        <h2>My course goals</h2>
+        <input type="text" v-model="enteredGoalValue" />
+        <button @click="addGoal">Add Goal</button>
+        <p v-if="goals.length === 0">No goals have been added yet - please start adding some!</p>
+        <ul v-else>
+            <li v-for="(goal, index) in goals">{{ index }} - {{ goal }}</li>
+        </ul>
+    </section>
+    ```
+1. Besides arrays, we can use `v-for` to loop through a JavaScript `object`.
+    ```html
+    <!-- HTML -->
+    <ul>
+        <li v-for="(value, key, index) in {name: 'Max', age: 31}">{{ index + 1 }} - {{ key }}: {{ value }}</li>
+    </ul>
+    ```
+1. In addition, we can simply create a number list with `v-for` by giving a variable and a nubmer
+    ```html
+    <!-- HTML -->
+    <ul>
+        <li v-for="num in 10">{{ num }}</li>
+    </ul>
+    ```
+
 ## Removing List Items
+1. With the power of `v-for`, we can use it with `methods` to "**remove**" items from the list. In this case, we can use [`.splice`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) array method to remove an element from the array at a given position (index).
+1. Note that the variable `index` we pass to the method is only accessible if the method is in the same element as the element using `v-for`.
+    ```html
+    <!-- HTML -->
+    <section id="user-goals">
+        <h2>My course goals</h2>
+        <input type="text" v-model="enteredGoalValue" />
+        <button @click="addGoal">Add Goal</button>
+        <p v-if="goals.length === 0">No goals have been added yet - please start adding some!</p>
+        <ul v-else>
+            <li v-for="(goal, index) in goals" @click="removeGoal(index)">{{ goal }} - {{ index }}</li>
+        </ul>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                enteredGoalValue: '',
+                goals: []
+            };
+        },
+        methods: {
+            addGoal() {
+                this.goals.push(this.enteredGoalValue);
+            },
+            removeGoal(index) {
+                this.goals.splice(index, 1);
+            }
+        }
+    });
+
+    app.mount('#user-goals');
+    ```
+
 ## Lists & Keys
+1. If we have another element nested in another element and both use event handler for `click` event, we can use the shorthand in Vue to stop propagation.
+1. In the previous example, we have the item in the list to be removed when the user clicks on the element. However, if we now give an `input` tag to collect other data, it will be closed when the user clicks on the nested `input` tag. Therefore, we need to stop propagation for the case.  
+    ```html
+    <!-- HTML -->
+    <section id="user-goals">
+        <h2>My course goals</h2>
+        <input type="text" v-model="enteredGoalValue" />
+        <button @click="addGoal">Add Goal</button>
+        <p v-if="goals.length === 0">No goals have been added yet - please start adding some!</p>
+        <ul v-else>
+            <li v-for="(goal, index) in goals" @click="removeGoal(index)">
+                <p>{{ goal }} - {{ index }}</p>
+                <input type="text" name="" id="" @click.stop>
+                <!-- shorthand to stop propagation -->
+            </li>
+        </ul>
+    </section>
+    ```
+1. However, Vue has a bug on the event that the input values will be passed on in the nested elements.
+1. The issue comes from the optimization mechanism of Vue. It doesn't remove the first element when we delete it but keeps it and remove the 2nd one and move the contents of the 2nd one to the first one.
+1. Only the dynamic content, which is declare in `p` tag as `{{ goal }} - {{ index }}` in the example above, will be updated. 
+    <img src="images/46-bugs_in_vue_list.gif">
+1. Thus, if we work another way around to have input in the 2nd item in the list, the value will be removed when the 1st element is deleted. 
+    <img src="images/46-bugs_in_vue_list_2.gif">
+1. Vue has a solution which is similar to React that it gives an unique "**key**" to the item in the list. Note that the key is not a HTML attribute so as it in React app. Besdies, it needs to use `v-bind` or the shorthand column `:` to bind the data.
+1. In real practice, it's better to use the "**id**" of the item, which is NOT the index because the index is dynamic when the items are added or removed from the array. Besides, the content itself could be too long as an unique identifier. However, we can simply use the content `goal` as the unqiue identifier in this case.
+    ```html
+    <!-- HTML -->
+    <section id="user-goals">
+        <h2>My course goals</h2>
+        <input type="text" v-model="enteredGoalValue" />
+        <button @click="addGoal">Add Goal</button>
+        <p v-if="goals.length === 0">No goals have been added yet - please start adding some!</p>
+        <ul v-else>
+            <li v-for="(goal, index) in goals" :key="goal" @click="removeGoal(index)">
+                <!-- :key bond attribute indicates to Vue that which element is going to be modifed -->
+                <p>{{ goal }} - {{ index }}</p>
+                <input type="text" name="" id="" @click.stop>
+            </li>
+        </ul>
+    </section>
+    ```
+## Assignment 5: Time to Practice: Conditional Content & Lists
+1. HTML source code
+    ```html
+    <body>
+        <header>
+            <h1>Vue Lists and Conditional Content</h1>
+        </header>
+        <section id="assignment">
+            <h2>Assignment</h2>
+            <!-- 1) Add code to manage a list of tasks in a Vue app -->
+            <!-- When clicking "Add Task" a new task with the entered text should be added -->
+            <input type="text">
+            <button>Add Task</button>
+            <ul>
+                <!-- 2) Output the list of tasks here -->
+            </ul>
+            <!-- 3) When the below button is pressed, the list should be shown or hidden -->
+            <!-- BONUS: Also update the button caption -->
+            <button>Hide / Show List</button>
+        </section>
+    </body>
+    ```
+1. Use `methods` and `watch` in JavaScript with `v-show` and `v-for` in HTML. Delete feature is added when the user clicks on the item in the list, the item will be removed and `tasks` array in `data` will be updated.
+    ```html
+    <!-- HTML -->
+    <section id="assignment">
+        <h2>Assignment</h2>
+        <input type="text" v-model="task">
+        <button @click="addTask">Add Task</button>
+        <ul v-show="show">
+            <li v-for="(item, index) in tasks" :key="item" @click="removeItem(index)">{{ index + 1}} - {{ item }}</li>
+        </ul>
+        <button @click="toggleList">{{ btnText }} List</button>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                show: true,
+                btnText: 'Hide',
+                task: '',
+                tasks: []
+            }
+        },
+        watch: {
+            show(value) {
+                if (value) {
+                    this.btnText = 'Hide';
+                } else {
+                    this.btnText = 'Show';
+                }
+            }
+        },
+        methods: {
+            addTask() {
+                this.tasks.push(this.task);
+            },
+            toggleList() {
+                this.show = !this.show;
+            },
+            removeItem(index) {
+                this.tasks.splice(index, 1);
+            }
+        }
+    });
+
+    app.mount('#assignment');
+    ```
+1. Solution from the lecture. `computed` and `methods` are used in this case.
+    ```html
+    <!-- HTML -->
+    <section id="assignment">
+        <h2>Assignment</h2>
+        <input type="text" v-model="task">
+        <button @click="addTask">Add Task</button>
+        <ul v-show="show">
+            <li v-for="(item, index) in tasks" :key="item" >{{ index + 1}} - {{ item }}</li>
+        </ul>
+        <button @click="toggleList">{{ btnText }} List</button>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                show: true,
+                task: '',
+                tasks: []
+            }
+        },
+        computed: {
+            btnText() {
+                if (this.show) {
+                    return 'Hide';
+                }
+                return 'Show';
+            }
+        },
+        methods: {
+            addTask() {
+                this.tasks.push(this.task);
+            },
+            toggleList() {
+                this.show = !this.show;
+            }
+        }
+    });
+
+    app.mount('#assignment');
 
 
 
