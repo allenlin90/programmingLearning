@@ -2111,8 +2111,11 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     });
 
     app.mount('#assignment');
+    ```
 
-
+## Summary 
+1. **DO NOT** use `v-if` and `v-for` on the same element. Use a wrapper with `v-if` instead.
+    <img src="images/47-module_summary.png">
 
 # Coure Project: The Monster Slayer Game
 ## Project Setup & First Methods
