@@ -73,7 +73,7 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
     1. [Rendering Lists of Components](#Rendering-Lists-of-Components)
     1. [The Purpose of Keys in Lists](#The-Purpose-of-Keys-in-Lists)
     1. [Implementing Keys in Lists](#Implementing-Keys-in-Lists)
-1. [Using Ref's for DOM Access](#Using-Ref's-for-DOM-Access)
+1. [Using Ref's for DOM Access](#Using-Refs-for-DOM-Access)
     1. [Grid CSS](#Grid-CSS)
     1. [Issues with Grid CSS](#Issues-with-Grid-CSS)
     1. [Creating an Image Card Component](#Creating-an-Image-Card-Component)
@@ -509,7 +509,7 @@ Course Link [https://www.udemy.com/course/react-redux/](https://www.udemy.com/co
 
 ## Converting Styling to JSX Format
 ## Class vs ClassName
-## Referencing JS variable in JSX
+## Referencing JS variables in JSX
 1. The value of the property should be single-quoted and be put as JavaScript object. While single-line properties such as `class` and `for`, we can use double quotes to wrap them.
 1. The custom styling syntax to an element are different in JSX and HTML.
 1. JSX uses different syntax to add a class to an element.

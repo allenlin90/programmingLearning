@@ -2763,13 +2763,236 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Vue: Behind the Scenes
 ## An Introduction to Vue's Reactivity
+1. Vue is set to track on the data if any of its value is changed.
+1. This is acheived by using JavaScript [`proxy`](https://javascript.info/proxy).
+
 ## Vue Reactivity: A Deep Dive
+1. In vanilla JavaScript, though we declare a variable with value from the other variable, the data wouldn't change because JavaScript is not dynamic that it follows the execution context and thus lock the value when it's declared.
+    ```js
+    let message = 'Hello';
+    let longMessage = message + 'World!';
+    console.log(longMessage); // Hello World!
+
+    message = 'Hola';
+    console.log(longMessage); // Hello World!
+    ```
+1. If we use a proxy, we can notice that the object is modifed and the `set` method is trigerred. Besides, the `data` object is modifed by the proxy as well. 
+    ```js
+    const data = {
+        message: 'Hello!',
+        longMessage: 'Hello! World!'
+    };
+
+    const handler = {
+        set(target, key, value) {
+            if (key === 'message') {
+                target.longMessage = value + 'World';
+            }
+            target.message = value;
+        }
+    };
+
+    const proxy = new Proxy(data, handler);
+
+    proxy.message = 'Hello!!!';
+
+    console.log(proxy.longMessage); // Hello!!!World
+    ```
+
 ## One App vs Multiple Apps
+1. Each Vue app doesn't connect to each other by default. Therefore, though we can declare multiple Vue apps in the same JavaScript file, the `data` properties of each app can't be acccess from one of the other. 
+    ```html
+    <section id="app">
+        <p>{{ message }}</p>
+    </section>
+    <section id="app2">
+        <!-- THIS WON'T WORK! <p>{{ message }}</p> -->
+        <p>{{ favoriteMeal }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                message: 'Hello World!'
+            }
+        }
+    });
+    app.mount('#app');
+
+    const app2 = Vue.createApp({
+        data() {
+            return {
+                favoriteMeal: 'Pizza'
+            }
+        }
+    })
+    app2.mount('#app2');
+    ```
+
 ## Understanding Templates
+1. By using `app.mount` method, we have turned the HTML elements as a Vue template.
+1. In addition, we can use `template` (which is a reserved keyword as `data`, `watch`, `computed`, and `methods`) to create template. We can use JavaScript template literal to have multiple lines.
+1. Though the feature is avaialble, there's no strong reason to use Vue to create templates in this way.
+    ```html
+    <!-- HTML -->
+    <section id="app">
+        <!-- empty and will be injected by Vue -->
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        template: `
+            <h2>How Vue Works</h2>
+            <input type="text" @input="saveInput">
+            <button @click="setText">Set Text</button>
+            <p>{{ message }}</p>
+        `,
+        data() {
+            return {
+                currentUserInput: '',
+                message: 'Vue is great!',
+            }
+        },
+        methods: {
+            saveInput(event) {
+                this.currentUserInput = event.target.value;
+            },
+            setText() {
+                this.message = this.currentUserInput;
+            },
+        }
+    });
+
+    app.mount('#app');
+    ```
+
 ## Working with Refs
+1. We can give a Vue specific attribute `ref` on a HTML element, so Vue can directly access the element as a DOM selector. This feature is similar to [React Reference System](https://reactjs.org/docs/refs-and-the-dom.html), which can also select a HTML element or an instance of React component. We can look up example from [React learning note](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#using-refs-for-dom-access).
+1. Note that we don't need to put `v-bind` or `:` as using `key` on list items.
+1. It uses a special syntax with `this.$ref.[name_of_ref]`
+    ```html
+    <!-- HTML -->
+    <section id="app">
+        <h2>How Vue Works</h2>
+        <input type="text" ref="userText"> <!-- give a ref attribute -->
+        <button @click="setText">Set Text</button>
+        <p>{{ message }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                currentUserInput: '',
+                message: 'Vue is great!',
+            };
+        },
+        methods: {
+            saveInput(event) {
+                this.currentUserInput = event.target.value;
+            },
+            setText() {
+                // this.message = this.currentUserInput;
+                this.message = this.$refs.userText.value;
+                // console.log(this.$refs.userText);
+            },
+        },
+    });
+
+    app.mount('#app');
+    ```
+
 ## How Vue Updates the DOM
+1. Vue component has a "**virtual DOM**" which is a copy of the actual DOM which controlled by JavaScript and stored in memory. This approach is hence improving the performance rather manipulating on the DOM objects directly. 
+1. Besides, Vue has its own internal optimization to update its virtual DOM. 
+    <img src="images/64-vue_virtual_dom.png">
+
 ## Vue App Lifecycle - Theory
+1. Vue apps runs and renders instances on the screen in a lifecyle. This is similar to React Apps behavior that we can apply some features or functions at certain stage of the App to work on specific task(s). 
+1. When the Vue App starts from `createApp({})`, it goes through the following stages
+    1. `beforeCreate()` is when "**before**" the App is fully initialized.
+    1. `created()` is when "**after**" the App is fully initialized.
+    1. "**Compile template**" - Note that we don't see any thing both the stages above. Vue only knows the data properties before rendering the instances. Besdies, the code will be compiled to be rendered on the screen.
+    1. `beforeMount()` is right before when the instances are going to be rendered on the screen.
+    1. `mounted()` is when Vue has added all the contents to HTML. 
+    1. "**Mounted Vue Instance**" - When all Vue instances are mounted, it stays and listens if there's any changes to the `data`. 
+    1. "**Data Changed**" - Vue listens to `data` and its instances. When there's any changes, it trigerrs and starts a new lifecycle.
+        1. `beforeUpdate()` is similar to `beforeMount()` when the Vue instance gets updated with its `data` on the screen.
+        1. `updated()` is similar to `mounted()` when the Vue instance has updated `data` and been rendered on the screen.
+    1. "**Instance Unmounted**" - This triggers when a Vue instance is removed from the screen and simiar to other hooks in the lifecycle, it has both `beforeUnmount()` and `unmounted()`.
+        1. `beforeUnmount()`
+        1. `unmounted()`
+        
+    <img src="images/65-vue_instance_lifecycle.png">
+
 ## Vue App Lifecycle - Practice
+1. Vue instance lifecycle is similar to [React component lifecycle](https://reactjs.org/docs/react-component.html#the-component-lifecycle) and [React Lifecycle Diagram](https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/) which deals with the App in certain stage in the lifecycle.
+1. Note that we can use the debugger in developer console in any modern browser to check the order of execution and stop at certain line of code. We can check more information at [Chrome DevTools - Debug JavaScript](https://developer.chrome.com/docs/devtools/javascript/)
+    ```html
+    <!-- HTML -->
+    <section id="app">
+        <h2>How Vue Works</h2>
+        <input type="text" ref="userText">
+        <button @click="setText">Set Text</button>
+        <p>{{ message }}</p>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                currentUserInput: '',
+                message: 'Vue is great!',
+            };
+        },
+        methods: {
+            saveInput(event) {
+                this.currentUserInput = event.target.value;
+            },
+            setText() {
+                // this.message = this.currentUserInput;
+                this.message = this.$refs.userText.value;
+                // console.log(this.$refs.userText);
+            },
+        },
+        beforeCreate() {
+            console.log('beforeCreate()');
+        },
+        created() {
+            console.log('created()');
+        },
+        beforeMount() {
+            console.log('beforeMount()');
+        },
+        mounted() {
+            console.log('mounted()');
+        },
+        beforeUpdate() {
+            console.log('beforeUpdate()');
+        },
+        updated() {
+            console.log('updated()');
+        },
+        beforeUnmount() {
+            console.log('beforeUnmount()');
+        },
+        unmounted() {
+            console.log('unmounted()');
+        }
+    });
+
+    app.mount('#app');
+
+    setTimeout(function () {
+        app.unmount('#app');
+    }, 3000);
+    ```
+
 
 
 
