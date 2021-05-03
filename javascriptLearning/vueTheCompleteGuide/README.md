@@ -2117,14 +2117,647 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 1. **DO NOT** use `v-if` and `v-for` on the same element. Use a wrapper with `v-if` instead.
     <img src="images/47-module_summary.png">
 
+
+
 # Coure Project: The Monster Slayer Game
 ## Project Setup & First Methods
+1. The game allows the uesr acts as a player to slay a monster where both entities have certain amount of health (HP). The player can choose to "**attack**", "**special attack**", "**heal**", or "**surrender**". Both the monster and the player can attack and damage random amount of health on each other. 
+1. HTML source code
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Vue Basics</title>
+        <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="styles.css" />
+        <script src="https://unpkg.com/vue@next" defer></script>
+        <script src="app.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <h1>Monster Slayer</h1>
+        </header>
+        <div id="game">
+            <section id="monster" class="container">
+                <h2>Monster Health</h2>
+                <div class="healthbar">
+                    <div class="healthbar__value"></div>
+                </div>
+            </section>
+            <section id="player" class="container">
+                <h2>Your Health</h2>
+                <div class="healthbar">
+                    <div class="healthbar__value"></div>
+                </div>
+            </section>
+            <section id="controls">
+                <button>ATTACK</button>
+                <button>SPECIAL ATTACK</button>
+                <button>HEAL</button>
+                <button>SURRENDER</button>
+            </section>
+            <section id="log" class="container">
+                <h2>Battle Log</h2>
+                <ul></ul>
+            </section>
+        </div>
+    </body>
+
+    </html>
+    ```
+1. We'd like to calculate a random value when the play attacks on the monster and triggers another method to allow the monster to attack back.
+1. We can use `Math.random` and `Math.floor` to calculate an integer between a given range. Since both the player and monster uses the same formula, we can declare it as a function out of the Vue instance.
+1. In a Vue instance, as calling `data` in the same object with `this`, we can also call the method in the same instance.
+1. Note that we haven't updated the UI in this section yet.
+    ```js
+    // JavaScript
+    function getRandomValue(min, max) { // used by both player and monster
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                playerHealth: 100,
+                monsterHealth: 100
+            };
+        },
+        methods: {
+            attackMonster() {
+                const attackValue = getRandomValue(5, 12);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer(); // triger the monster to attackwhen it is attacked by the player
+            },
+            attackPlayer() {
+                const attackValue = getRandomValue(8, 15);
+                this.playerHealth -= attackValue;
+            }
+        }
+    });
+
+    app.mount('#game');
+    ```
+
 ## Updating the Health Bars
+1. We can use `width` property on the health bar to control the UI. Though we can use inline expression for Vue component direclty, we should follow the principle to have least logical on HTML and use it for only structuring the page.
+1. Note that to change a bond HTML attribute for styling, we should pass an object and change the property name to modify in camelCase. 
+1. In addition, though we don't use expressions in HTML directly, we can use JavaScript template literals in the expression of Vue component.
+    ```html
+    <!-- HTML -->
+    <div id="game">
+        <section id="monster" class="container">
+            <h2>Monster Health</h2>
+            <div class="healthbar">
+                <div class="healthbar__value" :style="monsterBarStyles"></div>
+            </div>
+        </section>
+        <section id="player" class="container">
+            <h2>Your Health</h2>
+            <div class="healthbar">
+                <div class="healthbar__value" :style="playerBarStyles"></div>
+            </div>
+        </section>
+    </div>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                playerHealth: 100,
+                monsterHealth: 100
+            };
+        },
+        computed: {
+            monsterBarStyles() {
+                return { width: `${this.monsterHealth}%` }
+            },
+            playerBarStyles() {
+                return { width: `${this.playerHealth}%` }
+            }
+        },
+        methods: {
+            attackMonster() {
+                const attackValue = getRandomValue(5, 12);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            },
+            attackPlayer() {
+                const attackValue = getRandomValue(8, 15);
+                this.playerHealth -= attackValue;
+            }
+        }
+    });
+    ```
+
 ## Adding a "Special Attack"
+1. We allow the player to have a "special attack" every 3 rounds to have a higher damage to the monster. 
+1. In HTML, we use `v-bind` on `disabled` HTML attribute to prevent users from abusing special attacks.
+    ```html
+    <div id="game">
+        <section id="controls">
+            <button @click="attackMonster">ATTACK</button>
+            <button :disabled="mayUseSpecialAttack" @click="specialAttackMonster">SPECIAL ATTACK</button>
+            <button>HEAL</button>
+            <button>SURRENDER</button>
+        </section>
+    </div>
+    ```
+1. We then use `computed` with modular operator to check if the remainder is equal to 3.
+    ```js
+    // JavaScript
+    function getRandomValue(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                playerHealth: 100,
+                monsterHealth: 100,
+                currentRound: 0
+            };
+        },
+        computed: {
+            monsterBarStyles() {
+                return { width: `${this.monsterHealth}%` }
+            },
+            playerBarStyles() {
+                return { width: `${this.playerHealth}%` }
+            },
+            mayUseSpecialAttack() {
+                return this.currentRound % 3 !== 0;
+            }
+        },
+        methods: {
+            attackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(5, 12);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            },
+            attackPlayer() {
+                const attackValue = getRandomValue(8, 15);
+                this.playerHealth -= attackValue;
+            },
+            specialAttackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(10, 25);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            }
+        }
+    });
+
+    app.mount('#game');
+    ```
+
 ## Adding a "Heal" Functionality
+1. We allow the user to "health" the play by recovering a random amount of health, while in the same round the monster should give another attack to the player.
+1. Besides, we should limiat the amount of health of the player to not exceeding `100`.
+    ```html
+    <!-- HTML -->
+    <div id="game">
+        <section id="controls">
+            <button @click="attackMonster">ATTACK</button>
+            <button :disabled="mayUseSpecialAttack" @click="specialAttackMonster">SPECIAL ATTACK</button>
+            <button @click="healPlayer">HEAL</button>
+            <button>SURRENDER</button>
+        </section>
+    </div>
+    ```
+    ```js
+    // JavaScript
+    function getRandomValue(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                playerHealth: 100,
+                monsterHealth: 100,
+                currentRound: 0
+            };
+        },
+        computed: {
+            monsterBarStyles() {
+                return { width: `${this.monsterHealth}%` }
+            },
+            playerBarStyles() {
+                return { width: `${this.playerHealth}%` }
+            },
+            mayUseSpecialAttack() {
+                return this.currentRound % 3 !== 0;
+            }
+        },
+        methods: {
+            attackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(5, 12);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            },
+            attackPlayer() {
+                const attackValue = getRandomValue(8, 15);
+                this.playerHealth -= attackValue;
+            },
+            specialAttackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(10, 25);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            },
+            healPlayer() {
+                this.currentRound++;
+                const healValue = getRandomValue(8, 20);
+                if (this.playerHealth + healValue > 100) {
+                    this.playerHealth = 100;
+                } else {
+                    this.playerHealth += healValue;
+                }
+                this.attackPlayer();
+            }
+        }
+    });
+
+    app.mount('#game');
+    ```
+
 ## Adding a "Game Over" Screen
+1. We add a new section to show "game over" part when there's a winner of the game. Besides, we can use `v-if` to show this section only when the player or monster wins. 
+1. Besides, we use a `watcher` to keep tracking on the `winner` data when it is changed when theres a winner of the game.
+    ```html
+    <!-- HTML -->
+    <div id="game">
+        <section class="container" v-if="winner">
+            <h2>Game Over!</h2>
+            <h3 v-if="winner === 'monster'">You lost!</h3>
+            <h3 v-else-if="winner === 'player'">You won!</h3>
+            <h3 v-else>It's a draw!</h3>
+            <button @click="startGame">Start New Game</button>
+        </section>
+    </div>
+    ```
+    ```js
+    // JavaScript
+    function getRandomValue(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                playerHealth: 100,
+                monsterHealth: 100,
+                currentRound: 0,
+                winner: null,
+            };
+        },
+        watch: {
+            playerHealth(value) {
+                if (value <= 0 && this.monsterHealth <= 0) {
+                    // A draw
+                    this.winner = 'draw';
+                } else if (value <= 0) {
+                    // Player lost
+                    this.winner = 'monster';
+                }
+            },
+            monsterHealth(value) {
+                if (value <= 0 && this.playerHealth <= 0) {
+                    // A draw
+                    this.winner = 'draw';
+                } else if (value <= 0) {
+                    // Monster lost
+                    this.winner = 'player';
+                }
+            }
+        },
+        computed: {
+            monsterBarStyles() {
+                if (this.monsterHealth < 0) return { width: `0%` };
+                return { width: `${this.monsterHealth}%` }
+            },
+            playerBarStyles() {
+                if (this.playerHealth < 0) return { width: `0%` };
+                return { width: `${this.playerHealth}%` }
+            },
+            mayUseSpecialAttack() {
+                return this.currentRound % 3 !== 0;
+            }
+        },
+        methods: {
+            startGame() {
+                this.playerHealth = 100;
+                this.monsterHealth = 100;
+                this.currentRound = 0;
+                this.winner = null;
+            },
+            attackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(5, 12);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            },
+            attackPlayer() {
+                const attackValue = getRandomValue(8, 15);
+                this.playerHealth -= attackValue;
+            },
+            specialAttackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(10, 25);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            },
+            healPlayer() {
+                this.currentRound++;
+                const healValue = getRandomValue(8, 20);
+                if (this.playerHealth + healValue > 100) {
+                    this.playerHealth = 100;
+                } else {
+                    this.playerHealth += healValue;
+                }
+                this.attackPlayer();
+            },
+            surrender() {
+                this.winner = 'monster';
+            }
+        }
+    });
+
+    app.mount('#game');
+    ```
+
 ## Finshing the Core Functionality
+1. We add the functionality of "surrender" to assign the monster as the winner when the user clicks on it. 
+1. As the actions section is adjacent to the "game over" section, we can use `v-else` directly to show one of the section according to the scenario.
+    ```html
+    <!-- HTML -->
+    <div id="game">
+        <section class="container" v-if="winner">
+            <h2>Game Over!</h2>
+            <h3 v-if="winner === 'monster'">You lost!</h3>
+            <h3 v-else-if="winner === 'player'">You won!</h3>
+            <h3 v-else>It's a draw!</h3>
+            <button @click="startGame">Start New Game</button>
+        </section>
+        <section id="controls" v-else>
+            <button @click="attackMonster">ATTACK</button>
+            <button :disabled="mayUseSpecialAttack" @click="specialAttackMonster">SPECIAL ATTACK</button>
+            <button @click="healPlayer">HEAL</button>
+            <button @click="surrender">SURRENDER</button>
+        </section>
+    </div>
+    ```
+    ```js
+    // JavaScript
+    function getRandomValue(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                playerHealth: 100,
+                monsterHealth: 100,
+                currentRound: 0,
+                winner: null,
+            };
+        },
+        watch: {
+            playerHealth(value) {
+                if (value <= 0 && this.monsterHealth <= 0) {
+                    // A draw
+                    this.winner = 'draw';
+                } else if (value <= 0) {
+                    // Player lost
+                    this.winner = 'monster';
+                }
+            },
+            monsterHealth(value) {
+                if (value <= 0 && this.playerHealth <= 0) {
+                    // A draw
+                    this.winner = 'draw';
+                } else if (value <= 0) {
+                    // Monster lost
+                    this.winner = 'player';
+                }
+            }
+        },
+        computed: {
+            monsterBarStyles() {
+                if (this.monsterHealth < 0) return { width: `0%` };
+                return { width: `${this.monsterHealth}%` }
+            },
+            playerBarStyles() {
+                if (this.playerHealth < 0) return { width: `0%` };
+                return { width: `${this.playerHealth}%` }
+            },
+            mayUseSpecialAttack() {
+                return this.currentRound % 3 !== 0;
+            }
+        },
+        methods: {
+            startGame() {
+                this.playerHealth = 100;
+                this.monsterHealth = 100;
+                this.currentRound = 0;
+                this.winner = null;
+            },
+            attackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(5, 12);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            },
+            attackPlayer() {
+                const attackValue = getRandomValue(8, 15);
+                this.playerHealth -= attackValue;
+            },
+            specialAttackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(10, 25);
+                this.monsterHealth -= attackValue;
+                this.attackPlayer();
+            },
+            healPlayer() {
+                this.currentRound++;
+                const healValue = getRandomValue(8, 20);
+                if (this.playerHealth + healValue > 100) {
+                    this.playerHealth = 100;
+                } else {
+                    this.playerHealth += healValue;
+                }
+                this.attackPlayer();
+            },
+            surrender() {
+                this.winner = 'monster';
+            }
+        }
+    });
+
+    app.mount('#game');
+    ```
+
 ## Adding a Battle Log
+1. We create another array in `data` for `logMessages`. This method will be used in the other methodswhen the player and monster perform any of the actions, such as attacking and healing.
+1. Besides, we need to reset the array to empty when the game starts or restarts.
+1. To add the message, we can use `.unshift` to add the item as the first item in the array. Though we can also use `.splice(0, 0, logMessage)`, `.unshift` works without any argument.
+1. In the log list, we can use `v-for` to render the items. In this case, we use some pre-built CSS styling and use tenary operator to check whether it's the player or monster doing certain action and how much value deals on the action.
+1. Final HTML code
+    ```html
+    <!-- HTML -->
+    <div id="game">
+        <section id="monster" class="container">
+            <h2>Monster Health</h2>
+            <div class="healthbar">
+                <div class="healthbar__value" :style="monsterBarStyles"></div>
+            </div>
+        </section>
+        <section id="player" class="container">
+            <h2>Your Health</h2>
+            <div class="healthbar">
+                <div class="healthbar__value" :style="playerBarStyles"></div>
+            </div>
+        </section>
+        <section class="container" v-if="winner">
+            <h2>Game Over!</h2>
+            <h3 v-if="winner === 'monster'">You lost!</h3>
+            <h3 v-else-if="winner === 'player'">You won!</h3>
+            <h3 v-else>It's a draw!</h3>
+            <button @click="startGame">Start New Game</button>
+        </section>
+        <section id="controls" v-else>
+            <button @click="attackMonster">ATTACK</button>
+            <button :disabled="mayUseSpecialAttack" @click="specialAttackMonster">SPECIAL ATTACK</button>
+            <button @click="healPlayer">HEAL</button>
+            <button @click="surrender">SURRENDER</button>
+        </section>
+        <section id="log" class="container">
+            <h2>Battle Log</h2>
+            <ul>
+                <li v-for="(logMessage) in logMessages">
+                    <span
+                        :class="{'log--player': logMessage.actionBy === 'player', 'log--monster': logMessage.actionBy === 'monster'}">{{
+                        logMessage.actionBy === 'player' ? 'Player' : 'Monster' }}</span>
+                    <span v-if="logMessage.actionType === 'heal'"> heals himself for <span class="log--heal"> {{
+                            logMessage.actionValue }} </span></span>
+                    <span v-else>
+                        attacks and deals <span class="log--damage">{{ logMessage.actionValue }}</span>
+                    </span>
+                </li>
+            </ul>
+        </section>
+    </div>
+    ```
+1. Final JavaScript code
+    ```js
+    // JavaScript
+    function getRandomValue(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                playerHealth: 100,
+                monsterHealth: 100,
+                currentRound: 0,
+                winner: null,
+                logMessages: [],
+            };
+        },
+        watch: {
+            playerHealth(value) {
+                if (value <= 0 && this.monsterHealth <= 0) {
+                    // A draw
+                    this.winner = 'draw';
+                } else if (value <= 0) {
+                    // Player lost
+                    this.winner = 'monster';
+                }
+            },
+            monsterHealth(value) {
+                if (value <= 0 && this.playerHealth <= 0) {
+                    // A draw
+                    this.winner = 'draw';
+                } else if (value <= 0) {
+                    // Monster lost
+                    this.winner = 'player';
+                }
+            }
+        },
+        computed: {
+            monsterBarStyles() {
+                if (this.monsterHealth < 0) return { width: `0%` };
+                return { width: `${this.monsterHealth}%` }
+            },
+            playerBarStyles() {
+                if (this.playerHealth < 0) return { width: `0%` };
+                return { width: `${this.playerHealth}%` }
+            },
+            mayUseSpecialAttack() {
+                return this.currentRound % 3 !== 0;
+            }
+        },
+        methods: {
+            startGame() {
+                this.playerHealth = 100;
+                this.monsterHealth = 100;
+                this.currentRound = 0;
+                this.winner = null;
+                this.logMessages = [];
+            },
+            attackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(5, 12);
+                this.monsterHealth -= attackValue;
+                this.addLogMessage('player', 'attack', attackValue);
+                this.attackPlayer();
+            },
+            attackPlayer() {
+                const attackValue = getRandomValue(8, 15);
+                this.playerHealth -= attackValue;
+                this.addLogMessage('monster', 'attack', attackValue);
+            },
+            specialAttackMonster() {
+                this.currentRound++;
+                const attackValue = getRandomValue(10, 25);
+                this.monsterHealth -= attackValue;
+                this.addLogMessage('player', 'attack', attackValue);
+                this.attackPlayer();
+            },
+            healPlayer() {
+                this.currentRound++;
+                const healValue = getRandomValue(8, 20);
+                if (this.playerHealth + healValue > 100) {
+                    this.playerHealth = 100;
+                } else {
+                    this.playerHealth += healValue;
+                }
+                this.addLogMessage('player', 'heal', healValue);
+                this.attackPlayer();
+            },
+            surrender() {
+                this.winner = 'monster';
+            },
+            addLogMessage(who, what, value) {
+                this.logMessages.unshift({
+                    actionBy: who,
+                    actionType: what,
+                    actionValue: value,
+                });
+            }
+        }
+    });
+
+    app.mount('#game');
+    ```
 
 
 
