@@ -6,8 +6,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 1. [Basics and Core Concepts - DOM Interaction with Vue](#Basics-and-Core-Concepts---DOM-Interaction-with-Vue)
     1. [Creating and Connecting Vue App Instance](#Creating-and-Connecting-Vue-App-Instance)
     1. [Interpolation and Data Binding](#Interpolation-and-Data-Binding)
-    1. [Binding Attributes with the "v-bind" Directive](#Binding-Attributes-with-the-"v-bind"-Directive)
-    1. [Understanding "methods" in Vue Apps](Understanding-"methods"-in-Vue-Apps)
+    1. [Binding Attributes with the "v-bind" Directive](#Binding-Attributes-with-the-v-bind-Directive)
+    1. [Understanding "methods" in Vue Apps](Understanding-methods-in-Vue-Apps)
     1. [Working with Data inside of a Vue App](#Working-with-Data-inside-of-a-Vue-App)
     1. [Outputting Raw HTML Content with v-html](#Outputting-Raw-HTML-Content-with-v-html)
     1. [A First Summary](#A-First-Summary)
@@ -17,17 +17,17 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. [Using the Native Event Object](#Using-the-Native-Event-Object)
     1. [Exploring Event Modifiers](#Exploring-Event-Modifiers)
     1. [Locking Content with v-once](#Locking-Content-with-v-once)
-    1. [Data Binding + Event Binding = Two-way Binding](#Data-Binding-+-Event-Binding-=-Two-way-Binding)
-    1. [Methods used for Data Bindings: How it works](#Methods-used-for-Data-Bindings:-How-it-works)
+    1. [Data Binding + Event Binding = Two-way Binding](#data-binding--event-binding--two-way-binding)
+    1. [Methods used for Data Bindings: How it works](#Methods-used-for-Data-Bindings-How-it-works)
     1. [Introducing Computed Properties](#Introducing-Computed-Properties)
     1. [Working with Watchers](#Working-with-Watchers)
     1. [Methods vs Computed Properties vs Watchers](#Methods-vs-Computed-Properties-vs-Watchers)
     1. [v-bind and v-on Shorthands](#v-bind-and-v-on-Shorthands)
     1. [Dynamic Styling with Inline Styles](#Dynamic-Styling-with-Inline-Styles)
     1. [Adding CSS Classes Dynamically](#Adding-CSS-Classes-Dynamically)
-    1. [Classes & Computed Properties](#Classes-&-Computed-Properties)
-    1. [Dynamic Classes: Array Syntax](#Dynamic-Classes:-Array-Syntax)
-1. [Redenering Conditional Content & Lists](#Redenering-Conditional-Content-&-Lists)
+    1. [Classes & Computed Properties](#classes--computed-properties)
+    1. [Dynamic Classes: Array Syntax](#dynamic-classes-array-syntax)
+1. [Redenering Conditional Content & Lists](#Redenering-Conditional-Content--Lists)
     1. [Understanding the Problem](#Understanding-the-Problem)
     1. [Rendering Content Conditionally](#Rendering-Content-Conditionally)
     1. [v-if, v-else and v-else-if](#v-if,-v-else-and-v-else-if)
@@ -35,18 +35,18 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. [Rendering Lists of Data](#Rendering-Lists-of-Data)
     1. [Diving Deeper Into v-for](#Diving-Deeper-Into-v-for)
     1. [Removing List Items](#Removing-List-Items)
-    1. [Lists & Keys](#Lists-&-Keys)
-1. [Coure Project: The Monster Slayer Game](#Coure-Project:-The-Monster-Slayer-Game)
-    1. [Project Setup & First Methods](#Project-Setup-&-First-Methods)
+    1. [Lists & Keys](#Lists--Keys)
+1. [Coure Project: The Monster Slayer Game](#Coure-Project-The-Monster-Slayer-Game)
+    1. [Project Setup & First Methods](#Project-Setup--First-Methods)
     1. [Updating the Health Bars](#Updating-the-Health-Bars)
-    1. [Adding a "Special Attack"](#Adding-a-"Special-Attack")
-    1. [Adding a "Heal" Functionality](#Adding-a-"Heal"-Functionality)
-    1. [Adding a "Game Over" Screen](#Adding-a-"Game-Over"-Screen)
+    1. [Adding a "Special Attack"](#adding-a-special-attack)
+    1. [Adding a "Heal" Functionality](#Adding-a-Heal-Functionality)
+    1. [Adding a "Game Over" Screen](#Adding-a-Game-Over-Screen)
     1. [Finshing the Core Functionality](#Finshing-the-Core-Functionality)
     1. [Adding a Battle Log](#Adding-a-Battle-Log)
-1. [Vue: Behind the Scenes](#Vue:-Behind-the-Scenes)
+1. [Vue: Behind the Scenes](#Vue-Behind-the-Scenes)
     1. [An Introduction to Vue's Reactivity](#An-Introduction-to-Vue's-Reactivity)
-    1. [Vue Reactivity: A Deep Dive](#Vue-Reactivity:-A-Deep-Dive)
+    1. [Vue Reactivity: A Deep Dive](#Vue-Reactivity-A-Deep-Dive)
     1. [One App vs Multiple Apps](#One-App-vs-Multiple-Apps)
     1. [Understanding Templates](#Understanding-Templates)
     1. [Working with Refs](#Working-with-Refs)
@@ -56,195 +56,195 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 1. [Introducing Components](#Introducing-Components)
     1. [Understanding the Problem](#Understanding-the-Problem)
     1. [Introducing Components](#Introducing-Components)
-    1. [The Why: Building Complex User Interfaces With Components](#The-Why:-Building-Complex-User-Interfaces-With-Components)
-1. [Moving to a Better Development SEtup & Workflow with the Vue CLI](#Moving-to-a-Better-Development-SEtup-&-Workflow-with-the-Vue-CLI)
+    1. [The Why: Building Complex User Interfaces With Components](#The-Why-Building-Complex-User-Interfaces-With-Components)
+1. [Moving to a Better Development SEtup & Workflow with the Vue CLI](#Moving-to-a-Better-Development-SEtup--Workflow-with-the-Vue-CLI)
     1. [Why We Need A Development Server](#Why-We-Need-A-Development-Server)
     1. [WHy We Want A Better Developer Experience](#WHy-We-Want-A-Better-Developer-Experience)
-    1. [Installing & Using the Vue CLI](#Installing-&-Using-the-Vue-CLI)
+    1. [Installing & Using the Vue CLI](#Installing--Using-the-Vue-CLI)
     1. [Inspecting the Created Project](#Inspecting-the-Created-Project)
-    1. [Inspecting the Vue Code & ".vue" Files](#Inspecting-the-Vue-Code-&-".vue"-Files)
-    1. [Adding the "Vutur" Extension to VS Code](#Adding-the-"Vutur"-Extension-to-VS-Code)
-    1. [More on ".vue" Files](#More-on-".vue"-Files)
+    1. [Inspecting the Vue Code & ".vue" Files](#Inspecting-the-Vue-Code--.vue-Files)
+    1. [Adding the "Vutur" Extension to VS Code](#Adding-the-Vutur-Extension-to-VS-Code)
+    1. [More on ".vue" Files](#More-on-vue-Files)
     1. [A New Vue Project](#A-New-Vue-Project)
     1. [Creating a Basic Vue App](#Creating-a-Basic-Vue-App)
     1. [Adding a Component](#Adding-a-Component)
     1. [Adding Styling](#Adding-Styling)
 1. [Component Communication](#Component-Communication)
-    1. [Introducing "Props" (Parent => Child Communication)](#Introducing-"Props"-(Parent-=>-Child-Communication))
-    1. [Prop Behavior & Changing Props](#Prop-Behavior-&-Changing-Props)
+    1. [Introducing "Props" (Parent => Child Communication)](#introducing-props-parent--child-communication)
+    1. [Prop Behavior & Changing Props](#Prop-Behavior--Changing-Props)
     1. [Validating Props](#Validating-Props)
     1. [Working with Dynamic Props Values](#Working-with-Dynamic-Props-Values)
-    1. [Emitting Custom Events (Child => Parent Communication)](#Emitting-Custom-Events-(Child-=>-Parent-Communication))
-    1. [Defining & Validating Custom Events](#Defining-&-Validating-Custom-Events)
-    1. [Prop / Event Fallthrough & Binding All Props](#Prop-/-Event-Fallthrough-&-Binding-All-Props)
-    1. [Demo: Adding Components & Connecting Them](#Demo:-Adding-Components-&-Connecting-Them)
-    1. [Demo: Adding More Component Communication](#Demo:-Adding-More-Component-Communication)
+    1. [Emitting Custom Events (Child => Parent Communication)](#Eemitting-custom-events-child--parent-communication))
+    1. [Defining & Validating Custom Events](#Defining--Validating-Custom-Events)
+    1. [Prop / Event Fallthrough & Binding All Props](#Prop-/-Event-Fallthrough--Binding-All-Props)
+    1. [Demo: Adding Components & Connecting Them](#Demo-Adding-Components--Connecting-Them)
+    1. [Demo: Adding More Component Communication](#Demo-Adding-More-Component-Communication)
     1. [A Potential Problem](#A-Potential-Problem)
-    1. [Provide + Inject To The Rescue](#Provide-+-Inject-To-The-Rescue)
-    1. [Provide + Inject for Functions / Methods](#Provide-+-Inject-for-Functions-/-Methods)
-    1. [Provide + Inject vs Props & Custom Events](#Provide-+-Inject-vs-Props-&-Custom-Events)
+    1. [Provide + Inject To The Rescue](#Provide--Inject-To-The-Rescue)
+    1. [Provide + Inject for Functions / Methods](#Provide--Inject-for-Functions--Methods)
+    1. [Provide + Inject vs Props & Custom Events](#Provide--Inject-vs-Props--Custom-Events)
 1. [Diving Deeper Into Components](#Diving-Deeper-Into-Components)
     1. [Project Setup](#Project-Setup)
     1. [Global vs Local Components](#Global-vs-Local-Components)
     1. [Scoped Styles](#Scoped-Styles)
     1. [Introducing Slots](#Introducing-Slots)
     1. [Named Slots](#Named-Slots)
-    1. [Slot Styles & Compilation](#Slot-Styles-&-Compilation)
+    1. [Slot Styles & Compilation](#Slot-Styles--Compilation)
     1. [More on Slots](#More-on-Slots)
     1. [Scoped Slots](#Scoped-Slots)
     1. [Dynamic Components](#Dynamic-Components)
     1. [Keeping Dynamic Components Alive](#Keeping-Dynamic-Components-Alive)
-    1. [Applying What We Know & A Problem](#Applying-What-We-Know-&-A-Problem)
+    1. [Applying What We Know & A Problem](#Applying-What-We-Know--A-Problem)
     1. [Teleporting Elements](#Teleporting-Elements)
     1. [Working with Fragments](#Working-with-Fragments)
     1. [The Vue Style Guide](#The-Vue-Style-Guide)
     1. [Moving to a Different Folder Structure](#Moving-to-a-Different-Folder-Structure)
-1. [Course Projct: The Learning Resources App](#Course-Projct:-The-Learning-Resources-App)
-    1. [Setup & First Steps](#Setup-&-First-Steps)
-    1. [First Components & Props](#First-Components-&-Props)
+1. [Course Projct: The Learning Resources App](#Course-Projct-The-Learning-Resources-App)
+    1. [Setup & First Steps](#Setup--First-Steps)
+    1. [First Components & Props](#First-Components--Props)
     1. [Styling and More Components](#Styling-and-More-Components)
-    1. [Header & BaseCard Components](#Header-&-BaseCard-Components)
+    1. [Header & BaseCard Components](#Header--BaseCard-Components)
     1. [Adding a Base Button](#Adding-a-Base-Button)
-    1. [Dynamic Components & Attribute Fallthrough](#Dynamic-Components-&-Attribute-Fallthrough)
-    1. [Adding & Styling Tabs](#Adding-&-Styling-Tabs)
+    1. [Dynamic Components & Attribute Fallthrough](#Dynamic-Components--Attribute-Fallthrough)
+    1. [Adding & Styling Tabs](#Adding--Styling-Tabs)
     1. [Adding a Form](#Adding-a-Form)
     1. [Fetching User Input](#Fetching-User-Input)
     1. [Adding a Modal Dialog](#Adding-a-Modal-Dialog)
     1. [Deleting Items](#Deleting-Items)
-    1. [Adding "Teleport"](#Adding-"Teleport")
+    1. [Adding "Teleport"](#Adding-Teleport)
 1. [Form](#Form)
-    1. [v-model & Inputs](#v-model-&-Inputs)
+    1. [v-model & Inputs](#v-model--Inputs)
     1. [Working with v-model Modifiers and Numbers](#Working-with-v-model-Modifiers-and-Numbers)
     1. [v-model and Dropdowns](#v-model-and-Dropdowns)
-    1. [Using v-model with Checkboxes & Radiobuttons](#Using-v-model-with-Checkboxes-&-Radiobuttons)
+    1. [Using v-model with Checkboxes & Radiobuttons](#Using-v-model-with-Checkboxes--Radiobuttons)
     1. [Adding Basic Form Validation](#Adding-Basic-Form-Validation)
     1. [Building a Custom Control Component](#Building-a-Custom-Control-Component)
     1. [Using v-model on Custom Components](#Using-v-model-on-Custom-Components)
 1. [Sending Http Requests](#Sending-Http-Requests)
-    1. [Starting App & Why we need a Backend](#Starting-App-&-Why-we-need-a-Backend)
+    1. [Starting App & Why we need a Backend](#Starting-App--Why-we-need-a-Backend)
     1. [Adding a Backend](#Adding-a-Backend)
-    1. [How to (Not) Send Http Requests](#How-to-(Not)-Send-Http-Requests)
+    1. [How to (Not) Send Http Requests](#How-to-Not-Send-Http-Requests)
     1. [Sending a POST Request to Store Data](#Sending-a-POST-Request-to-Store-Data)
-    1. [Getting Data (GET Request) & Transforming Response Data](#Getting-Data-(GET-Request)-&-Transforming-Response-Data)
+    1. [Getting Data (GET Request) & Transforming Response Data](#Getting-Data-GET-Request)--Transforming-Response-Data)
     1. [Loading Data When a Component Mounts](#Loading-Data-When-a-Component-Mounts)
-    1. [Showing a "Loading..." Message](#Showing-a-"Loading..."-Message)
-    1. [Handling the "No Data" State](#Handling-the-"No-Data"-State)
+    1. [Showing a "Loading..." Message](#Showing-a-Loading...-Message)
+    1. [Handling the "No Data" State](#Handling-the-No-Data-State)
     1. [Handling Technical / Browser-side Errors](#Handling-Technical-/-Browser-side-Errors)
     1. [Handling Error Responses](#Handling-Error-Responses)
-1. [Routing: Building "Multi-Page" Single Page Application](#Routing:-Building-"Multi-Page"-Single-Page-Application)
-    1. [What & Why?](#What-&-Why?)
+1. [Routing: Building "Multi-Page" Single Page Application](#Routing-Building-Multi-Page-Single-Page-Application)
+    1. [What & Why?](#What--Why?)
     1. [Routing Setup](#Routing-Setup)
-    1. [Registering & Rendering Routes](#Registering-&-Rendering-Routes)
+    1. [Registering & Rendering Routes](#Registering--Rendering-Routes)
     1. [Navigating with router-link](#Navigating-with-router-link)
     1. [Styling Active Links](#Styling-Active-Links)
     1. [Programmatic Navigation](#Programmatic-Navigation)
-    1. [Passing Data with Route Params (Dynamic Segments)](#Passing-Data-with-Route-Params-(Dynamic-Segments))
-    1. [Navigation & Dynamic Paths](#Navigation-&-Dynamic-Paths)
+    1. [Passing Data with Route Params (Dynamic Segments)](#Passing-Data-with-Route-Params-Dynamic-Segments))
+    1. [Navigation & Dynamic Paths](#Navigation--Dynamic-Paths)
     1. [A Vue Bug](#A-Vue-Bug)
     1. [Updating Params Data with Watchers](#Updating-Params-Data-with-Watchers)
     1. [Passing Params as Props](#Passing-Params-as-Props)
-    1. [Redirecting & "Catch All" Routes](#Redirecting-&-"Catch-All"-Routes)
+    1. [Redirecting & "Catch All" Routes](#Redirecting--Catch-All-Routes)
     1. [Using Nested Routes](#Using-Nested-Routes)
-    1. [More Fun with Named Routes & Location Objects](#More-Fun-with-Named-Routes-&-Location-Objects)
+    1. [More Fun with Named Routes & Location Objects](#More-Fun-with-Named-Routes--Location-Objects)
     1. [Using Query Params](#Using-Query-Params)
     1. [Rendering Multiple Routers with Named Router Views](#Rendering-Multiple-Routers-with-Named-Router-Views)
     1. [Controlling Scroll Behavior](#Controlling-Scroll-Behavior)
     1. [Introducing Navigation Guards](#Introducing-Navigation-Guards)
     1. [Diving Deeper Into Navigation Guards](#Diving-Deeper-Into-Navigation-Guards)
-    1. [The Global "afterEach" Guard](#The-Global-"afterEach"-Guard)
-    1. [Beyond Entering: Route Leave Guards](#Beyond-Entering:-Route-Leave-Guards)
+    1. [The Global "afterEach" Guard](#The-Global-afterEach-Guard)
+    1. [Beyond Entering: Route Leave Guards](#Beyond-Entering-Route-Leave-Guards)
     1. [Utilizing Route Metadata](#Utilizing-Route-Metadata)
     1. [Organizing Route Files](#Organizing-Route-Files)
-1. [Animations & Transitions](#Animations-&-Transitions)
-    1. [Animation Basics & CSS Transitions](#Animation-Basics-&-CSS-Transitions)
+1. [Animations & Transitions](#Animations--Transitions)
+    1. [Animation Basics & CSS Transitions](#Animation-Basics--CSS-Transitions)
     1. [Understanding CSS Animations](#Understanding-CSS-Animations)
-    1. [Why is "Just CSS" Not Enough?](#Why-is-"Just-CSS"-Not-Enough?)
+    1. [Why is "Just CSS" Not Enough?](#Why-is-Just-CSS-Not-Enough?)
     1. [Playing CSS Animations with Vue's Help](#Playing-CSS-Animations-with-Vue's-Help)
     1. [Using the Transition Component](#Using-the-Transition-Component)
     1. [CSS Animations with the Transition Component](#CSS-Animations-with-the-Transition-Component)
     1. [Using Custom CSS Class Names](#Using-Custom-CSS-Class-Names)
-    1. [Example: Animating a Modal](#Example:-Animating-a-Modal)
+    1. [Example: Animating a Modal](#Example-Animating-a-Modal)
     1. [Transitioning Between Multiple Elements](#Transitioning-Between-Multiple-Elements)
     1. [Using Transition Events](#Using-Transition-Events)
-    1. [Building JavaScript Transitions (instead of CSS)](#Building-JavaScript-Transitions-(instead-of-CSS))
+    1. [Building JavaScript Transitions (instead of CSS)](#Building-JavaScript-Transitions-instead-of-CSS))
     1. [Disabling CSS Transitions](#Disabling-CSS-Transitions)
     1. [Getting Started with Animated Lists](#Getting-Started-with-Animated-Lists)
-    1. [Animating Lists with "transition-group"](#Animating-Lists-with-"transition-group")
+    1. [Animating Lists with "transition-group"](#Animating-Lists-with-transition-group")
     1. [Animate List Item Movement](#Animate-List-Item-Movement)
     1. [Animate Route Changes](#Animate-Route-Changes)
 1. [Vuex](#Vuex)
-    1. [What & Why?](#What-&-Why?)
-    1. [Creating & Using a Store](#Creating-&-Using-a-Store)
+    1. [What & Why?](#What--Why?)
+    1. [Creating & Using a Store](#Creating--Using-a-Store)
     1. [Connecting Components to State](#Connecting-Components-to-State)
     1. [Introducing Mutations - A Better Way of Changing Data](#Introducing-Mutations---A-Better-Way-of-Changing-Data)
     1. [Passing Data to Mutations with Payloads](#Passing-Data-to-Mutations-with-Payloads)
     1. [Introducing Getters - A Better Way Of Getting Data](#Introducing-Getters---A-Better-Way-Of-Getting-Data)
     1. [Running Async Code with Actions](#Running-Async-Code-with-Actions)
-    1. [Understanding the Action "Context"](#Understanding-the-Action-"Context")
+    1. [Understanding the Action "Context"](#Understanding-the-Action-Context")
     1. [Using Mapper Helpers](#Using-Mapper-Helpers)
     1. [Organizing your Store with Modules](#Organizing-your-Store-with-Modules)
     1. [Understanding Local Module State](#Understanding-Local-Module-State)
     1. [Namespacing Modules](#Namespacing-Modules)
-    1. [Structuring Vuex Code & Files](#Structuring-Vuex-Code-&-Files)
-1. [Main Project: "Find a Coach" Web App](#Main-Project:-"Find-a-Coach"-Web-App)
+    1. [Structuring Vuex Code & Files](#Structuring-Vuex-Code--Files)
+1. [Main Project: "Find a Coach" Web App](#Main-Project-Find-a-Coach-Web-App)
     1. [Planning the Project / Web App](#Planning-the-Project-/-Web-App)
     1. [Planning the Data Requirements](#Planning-the-Data-Requirements)
     1. [Planning the Layout / Components](#Planning-the-Layout-/-Components)
     1. [Registering Routes](#Registering-Routes)
     1. [Adding Route Page Components](#Adding-Route-Page-Components)
-    1. [Working on the Main Layout & Styling](#Working-on-the-Main-Layout-&-Styling)
+    1. [Working on the Main Layout & Styling](#Working-on-the-Main-Layout--Styling)
     1. [Wiring Up Pages](#Wiring-Up-Pages)
     1. [Adding Vuex and Coach Data](#Adding-Vuex-and-Coach-Data)
     1. [Working on the Coaches List and List Items](#Working-on-the-Coaches-List-and-List-Items)
-    1. [Adding a Couple of Base Components (Base Card, Base Button, Base Badge)](#Adding-a-Couple-of-Base-Components-(Base-Card,-Base-Button,-Base-Badge))
+    1. [Adding a Couple of Base Components (Base Card, Base Button, Base Badge)](#Adding-a-Couple-of-Base-Components-Base-Card,-Base-Button,-Base-Badge))
     1. [Building the Coach Detail Component](#Building-the-Coach-Detail-Component)
     1. [Filtering Coaches](#Filtering-Coaches)
-    1. [Registering as a Coach: The Form](#Registering-as-a-Coach:-The-Form)
+    1. [Registering as a Coach: The Form](#Registering-as-a-Coach-The-Form)
     1. [Adding Coaches to Vuex](#Adding-Coaches-to-Vuex)
     1. [Adding Form Validation](#Adding-Form-Validation)
     1. [Working on the Contact Form](#Working-on-the-Contact-Form)
-    1. [Storing Requests (Messages) with Vuex](#Storing-Requests-(Messages)-with-Vuex)
-    1. [Outputting Incoming Requests (Messages)](#Outputting-Incoming-Requests-(Messages))
+    1. [Storing Requests (Messages) with Vuex](#Storing-Requests-Messages)-with-Vuex)
+    1. [Outputting Incoming Requests (Messages)](#Outputting-Incoming-Requests-Messages))
     1. [Filtering Requests for teh Active Coach](#Filtering-Requests-for-teh-Active-Coach)
     1. [Sending a PUT Http Request to Store Coach Data](#Sending-a-PUT-Http-Request-to-Store-Coach-Data)
-    1. [Fetching Coach Data (GET Http Request)](#Fetching-Coach-Data-(GET-Http-Request))
+    1. [Fetching Coach Data (GET Http Request)](#Fetching-Coach-Data-GET-Http-Request))
     1. [Rendering a Loading Spinner](#Rendering-a-Loading-Spinner)
     1. [Adding Http Error Handling](#Adding-Http-Error-Handling)
     1. [Sending Coaching Requests Http Requests](#Sending-Coaching-Requests-Http-Requests)
     1. [Caching Http Response Data](#Caching-Http-Response-Data)
     1. [Adding Route Transitions](#Adding-Route-Transitions)
-    1. [The "Not Found" Page & Summary](#The-"Not-Found"-Page-&-Summary)
-1. [Vue & Authentication](#Vue-&-Authentication)
-    1. [How Authentication Works in Vue Apps (or any SPA)](#How-Authentication-Works-in-Vue-Apps-(or-any-SPA))
+    1. [The "Not Found" Page & Summary](#The-Not-Found-Page--Summary)
+1. [Vue & Authentication](#Vue--Authentication)
+    1. [How Authentication Works in Vue Apps (or any SPA)](#How-Authentication-Works-in-Vue-Apps-or-any-SPA))
     1. [Locking / Protecting Backend Resources](#Locking-/-Protecting-Backend-Resources)
-    1. [Adding an Authentication Page (Login & Signup)](#Adding-an-Authentication-Page-(Login-&-Signup))
+    1. [Adding an Authentication Page (Login & Signup)](#Adding-an-Authentication-Page-Login--Signup))
     1. [Preparing Vuex](#Preparing-Vuex)
-    1. [Adding a "Signup" Action & Flow](#Adding-a-"Signup"-Action-&-Flow)
-    1. [Better UX: Loading Spinner & Error Handling](#Better-UX:-Loading-Spinner-&-Error-Handling)
-    1. [Adding a "Login" Action & Flow](#Adding-a-"Login"-Action-&-Flow)
+    1. [Adding a "Signup" Action & Flow](#Adding-a-Signup-Action--Flow)
+    1. [Better UX: Loading Spinner & Error Handling](#Better-UX-Loading-Spinner--Error-Handling)
+    1. [Adding a "Login" Action & Flow](#Adding-a-Login-Action--Flow)
     1. [Attaching the Token to Outgoing Requests](#Attaching-the-Token-to-Outgoing-Requests)
     1. [Updating the UI Based on Auth State](#Updating-the-UI-Based-on-Auth-State)
-    1. [Adding a "Logout" Action & Flow](#Adding-a-"Logout"-Action-&-Flow)
-    1. [Authentication & Routing (incl. Navigation Guards)](#Authentication-&-Routing-(incl.-Navigation-Guards))
-    1. [Adding "Auto Login"](#Adding-"Auto-Login")
-    1. [Adding "Auto Logout"](#Adding-"Auto-Logout")
-1. [Optimizing & Deploying Vue Apps](#Optimizing-&-Deploying-Vue-Apps)
+    1. [Adding a "Logout" Action & Flow](#Adding-a-Logout-Action--Flow)
+    1. [Authentication & Routing (incl. Navigation Guards)](#Authentication--Routing-incl.-Navigation-Guards))
+    1. [Adding "Auto Login"](#Adding-Auto-Login")
+    1. [Adding "Auto Logout"](#Adding-Auto-Logout")
+1. [Optimizing & Deploying Vue Apps](#Optimizing--Deploying-Vue-Apps)
     1. [What To Deploy?](#What-To-Deploy?)
-    1. [Optimization: Using Asynchronous Components](#Optimization:-Using-Asynchronous-Components)
+    1. [Optimization: Using Asynchronous Components](#Optimization-Using-Asynchronous-Components)
     1. [Building the Project For Production](#Building-the-Project-For-Production)
     1. [Deploying a Vue App](#Deploying-a-Vue-App)
 1. [The Composition API - Replacing the Options API](#The-Composition-API---Replacing-the-Options-API)
     1. [Which Problem Does the Composition API Solve?](#Which-Problem-Does-the-Composition-API-Solve?)
-    1. [Replacing "data" with "refs"](#Replacing-"data"-with-"refs")
-    1. [Building "reactive" Objects](#Building-"reactive"-Objects)
-    1. [Reactivity: A Deep Dive](#Reactivity:-A-Deep-Dive)
-    1. [Replacing "methods" with regular Functions](#Replacing-"methods"-with-regular-Functions)
-    1. [Replacing "Computed Properties" with the "computed" Function](#Replacing-"Computed-Properties"-with-the-"computed"-Function)
+    1. [Replacing "data" with "refs"](#Replacing-data-with-refs")
+    1. [Building "reactive" Objects](#Building-reactive-Objects)
+    1. [Reactivity: A Deep Dive](#Reactivity-A-Deep-Dive)
+    1. [Replacing "methods" with regular Functions](#Replacing-methods-with-regular-Functions)
+    1. [Replacing "Computed Properties" with the "computed" Function](#Replacing-Computed-Properties-with-the-computed-Function)
     1. [Two-Way-Binding and the Composition API](#Two-Way-Binding-and-the-Composition-API)
     1. [Working with Watchers](#Working-with-Watchers)
     1. [A First Summary](#A-First-Summary)
     1. [How to Use Templates Refs](#How-to-Use-Templates-Refs)
-    1. [Components, Props, & The Composition API](#Components,-Props,-&-The-Composition-API)
+    1. [Components, Props, & The Composition API](#Components,-Props,--The-Composition-API)
     1. [Emitting Custom Events](#Emitting-Custom-Events)
     1. [Working with Provide / Inject](#Working-with-Provide-/-Inject)
     1. [Lifecycle Hooks in the Composition API](#Lifecycle-Hooks-in-the-Composition-API)
@@ -252,22 +252,22 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. [Migrating a First Component](#Migrating-a-First-Component)
     1. [Migrating a Big Component](#Migrating-a-Big-Component)
     1. [Migrating the Remaining Components](#Migrating-the-Remaining-Components)
-    1. [Routing, Params & The Composition API](#Routing,-Params-&-The-Composition-API)
-    1. [The Route & Router Objects and the Composition API](#The-Route-&-Router-Objects-and-the-Composition-API)
+    1. [Routing, Params & The Composition API](#Routing,-Params--The-Composition-API)
+    1. [The Route & Router Objects and the Composition API](#The-Route--Router-Objects-and-the-Composition-API)
     1. [Using Vuex with the Composition API](#Using-Vuex-with-the-Composition-API)
-1. [Reusing Funcitonality: Mixins & Custom Composition Functions](#Reusing-Funcitonality:-Mixins-&-Custom-Composition-Functions)
+1. [Reusing Funcitonality: Mixins & Custom Composition Functions](#Reusing-Funcitonality-Mixins--Custom-Composition-Functions)
     1. [Reusability Concepts](#Reusability-Concepts)
     1. [Using Mixins](#Using-Mixins)
     1. [Understanding Mixin Merging](#Understanding-Mixin-Merging)
     1. [Global Mixins](#Global-Mixins)
     1. [Disadvantages of Mixins](#Disadvantages-of-Mixins)
-    1. [Custom Hooks / Composables & The Composition API](#Custom-Hooks-/-Composables-&-The-Composition-API)
+    1. [Custom Hooks / Composables & The Composition API](#Custom-Hooks-/-Composables--The-Composition-API)
     1. [More Custom Composition Functions](#More-Custom-Composition-Functions)
     1. [Why Hookks / Composables Beat Mixins](#Why-Hookks-/-Composables-Beat-Mixins)
-    1. [Example: Creating a "Search" Hook](#Example:-Creating-a-"Search"-Hook)
+    1. [Example: Creating a "Search" Hook](#Example-Creating-a-Search-Hook)
     1. [Custom Hooks Gotchas](#Custom-Hooks-Gotchas)
     1. [More Thoughts on Custom Hooks / Composables](#More-Thoughts-on-Custom-Hooks-/-Composables)
-    1. [Example: A Custom "Sort" Hook](#Example:-A-Custom-"Sort"-Hook)
+    1. [Example: A Custom "Sort" Hook](#Example-A-Custom-Sort-Hook)
 ---
 
 # Basics and Core Concepts - DOM Interaction with Vue
@@ -463,7 +463,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     <section id="events">
         <h2>Events in Action</h2>
         <button v-on:click="increase">Add</button>
-        <button v-on:click="counter--">Reduce</button>
+        <button v-on:click="counter-->Reduce</button>
         <p>Result: {{ counter }}</p>
     </section>
     ```
@@ -2995,11 +2995,153 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-
 # Introducing Components
 ## Understanding the Problem
+1. If we inspect the HTML, we can notice that there are 2 items in the list which is a contact to a person.
+1. HTML source code
+    ```html
+    <!-- HTML -->
+    <body>
+        <header>
+            <h1>FriendList</h1>
+        </header>
+        <section id="app">
+            <ul>
+                <li>
+                    <h2>Manuel Lorenz</h2>
+                    <button>Show Details</button>
+                    <ul>
+                        <li><strong>Phone:</strong> 01234 5678 991</li>
+                        <li><strong>Email:</strong> manuel@localhost.com</li>
+                    </ul>
+                </li>
+                <li>
+                    <h2>Julie Jones</h2>
+                    <button>Show Details</button>
+                    <ul>
+                        <li><strong>Phone:</strong> 09876 543 221</li>
+                        <li><strong>Email:</strong> julie@localhost.com</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+    </body>
+    ```
+1. As we'd like to render the contact data from Vue rather than hardcode the values in HTML, we can use an array in `data` to store the information.
+1. In this case, we can use `v-for` and other attributes introduced in the previous sections such as `:key` and `v-if`.
+1. After configuring the basic settings, we can use a state to control whether to show or hide the details of a contact.
+1. However, since we have one single state to control and toggle the items, all the list will show or hide its own details when any of the contact is clicked.
+1. One way to work around is to create multiple states to listen to toggle events that each contact in the list has its own state of show/hide the details.
+1. However, this isn't realistic that if the number of items in the array is not fixed, we don't know exactly how many states should we declare.
+1. Therefore, we can use Vue component to solve the problem. 
+    ```html
+    <!-- HTML -->
+    <section id="app">
+        <ul>
+            <li v-for="friend in friends" :key="friend.id">
+                <h2>{{ friend.name }}</h2>
+                <button @click="toggleDetails">Show Details</button>
+                <ul v-if="detailsAreVisible">
+                    <li><strong>Phone:</strong> {{ friend.phone }}</li>
+                    <li><strong>Email:</strong> {{ friend.email }}</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        data() {
+            return {
+                friends: [
+                    {
+                        id: 'manuel',
+                        name: 'Manuael Lorenz',
+                        phone: '01234 5678 991',
+                        email: 'manuel@localhost.com'
+                    },
+                    {
+                        id: 'julie',
+                        name: 'Julie Jones',
+                        phone: '+09876 543 221',
+                        email: 'julie@localhost.com'
+                    },
+                ],
+                detailsAreVisible: false,
+            };
+        },
+        methods: {
+            toggleDetails() {
+                this.detailsAreVisible = !this.detailsAreVisible;
+            }
+        }
+    });
+
+    app.mount('#app');
+    ```
+
 ## Introducing Components
+1. To create a Vue component, we can simply use `app.component([compoennt-name])` and give the name to declare as the argument. Note that we may follow the convention to have 2 words naming pattern and use a dash `-` to separate the words. This is to prevent clashing with the default HTML elements such as `div`, `section`, and `header`.
+1. The `.component()` method takes 2 arguments.
+    1. The name of the component, which we then can use it as a HTML element in a Vue app. 
+    1. The configuration to the component which is exactly the same as a regular Vue app.
+1. Note that the Vue component only works in the Vue app, and we don't need to `app.mount()` it as the main Vue app. 
+1. In the component, we do need to use `template` which is introduced in [previous section](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/vueTheCompleteGuide#understanding-templates).
+1. Each componet is individual and not connected. it works as a "**mini**" app in the Vue app.
+1. This feature is very similar to use JSX for [React Components](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#strucuturing-apps-with-class-based-components) in a React App. 
+    ```html
+    <!-- HTML -->
+    <section id="app">
+        <ul>
+            <!-- use Vue component in a Vue connected app -->
+            <friend-contact></friend-contact>
+            <friend-contact></friend-contact>
+        </ul>
+    </section>
+    ```
+    ```js
+    // JavaScript
+    const app = Vue.createApp({
+        /*
+            Vue App...
+        */
+    });
+
+    app.component(`friend-contact`, {
+        template: `
+        <li>
+            <h2>{{ friend.name }}</h2>
+            <button @click="toggleDetails">Show Details</button>
+            <ul v-if="detailsAreVisible">
+                <li><strong>Phone:</strong> {{ friend.phone }}</li>
+                <li><strong>Email:</strong> {{ friend.email }}</li>
+            </ul>
+        </li>
+        `,
+        data() {
+            return {
+                detailsAreVisible: false,
+                friend: {
+                    id: 'manuel',
+                    name: 'Manuael Lorenz',
+                    phone: '01234 5678 991',
+                    email: 'manuel@localhost.com'
+                }
+            }
+        },
+        methods: {
+            toggleDetails() {
+                this.detailsAreVisible = !this.detailsAreVisible;
+            }
+        }
+    });
+
+    app.mount('#app'); // this is not required for Vue component
+    ```
+
 ## The Why: Building Complex User Interfaces With Components
+1. This approach is very similar to React Apps that it has a main control over multiple reusable components in the app and connect them with `props` for data and properties to control over the specific features and behaviors of each component. 
 
 
 
