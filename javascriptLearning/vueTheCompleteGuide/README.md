@@ -4033,6 +4033,250 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 ## Demo: Adding Components & Connecting Them
 1. In this section, we'd like to have a form to allow users to create a new entry for the friend list. Therefore, we create a new component `NewFriend.vue`.
+1. The following the code from practice to make the component fulfill the desirable feature to take user inputs. The main problem from the practice is forget to use data binding to store the input values in the `stata` by using `v-bind` or `v-model`. Therefore, `data` property is not used in this case.
+1. Besides, users input values in the inputs tags are fetched with regular JavaScript DOM which may not be the optimized way to retrieve data and cause the code looking tedious. However, I chose to create the friend contact object in the component before sending back to `App.vue`.  
+    ```html
+    <!-- Vue component in practice -->
+    <template>
+        <section>
+            <form action="" @submit.prevent="createFriend">
+                <label for="create_firstname">First Name</label>
+                <input
+                    type="text"
+                    name="firstname"
+                    id="create_firstname"
+                    required
+                />
+                <label for="create_lastname">Last Name</label>
+                <input type="text" name="lastname" id="create_lastname" required />
+                <label for="create_phone">Phone Number</label>
+                <input type="text" name="phone" id="create_phone" required />
+                <label for="create_email">Email</label>
+                <input type="email" name="email" id="create_email" required />
+                <button>Create</button>
+            </form>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        emits: ["create-new-friend"],
+        data() {
+            return {
+                firstname: "",
+                lastname: "",
+                phone: "",
+                email: "",
+                isFavorite: false,
+            };
+        },
+        methods: {
+            createFriend(event) {
+                event.preventDefault();
+                const formDOM = event.target;
+                const user = [...formDOM.querySelectorAll("input")].reduce(
+                    (friend, input) => {
+                        friend[input.name] = input.value;
+                        input.value = "";
+                        return friend;
+                    },
+                    {}
+                );
+                const friend = {
+                    id: user.firstname.toLowerCase(),
+                    name: user.firstname + " " + user.lastname,
+                    phone: user.phone,
+                    email: user.email,
+                    isFavorite: false,
+                };
+                this.$emit("create-new-friend", friend);
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    section {
+        text-align: center;
+        width: 90%;
+        max-width: 40rem;
+        margin: 2rem auto;
+    }
+
+    form {
+        margin: 0 auto;
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        grid-gap: 1rem;
+    }
+
+    label {
+        justify-self: start;
+    }
+
+    button {
+        grid-column: 1 / 3;
+        justify-self: center;
+    }
+    </style>
+    ```
+    ```html
+    <!-- App.vue -->
+    <template>
+        <h2>My Friends</h2>
+        <section>
+            <header>
+                <h1>My Friends</h1>
+            </header>
+            <new-friend @create-new-friend="createANewFriend"></new-friend>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                friends: [
+                    {
+                        id: "manuel",
+                        name: "Manuel Lorenz",
+                        phone: "0123 45678 90",
+                        email: "manuel@localhost.com",
+                        isFavorite: true,
+                    },
+                    {
+                        id: "julie",
+                        name: "Julie Jones",
+                        phone: "0987 654421 21",
+                        email: "julie@localhost.com",
+                        isFavorite: false,
+                    },
+                ],
+            };
+        },
+        methods: {
+            toggleFavoriteStatus(friendId) {
+                const identifiedFriend = this.friends.find(
+                    (friend) => friend.id === friendId
+                );
+                identifiedFriend.isFavorite = !identifiedFriend.isFavorite;
+            },
+            createANewFriend(friend) {
+                this.friends.push(friend);
+            },
+        },
+    };
+    </script>
+    ```
+1. Solutions from the lecture.
+    ```html
+    <!-- src/components/NewFriend.vue -->
+    <template>
+        <form action="" @submit.prevent="submitData">
+            <div>
+                <label for="">Name</label>
+                <input type="text" v-model="enteredName">
+            </div>
+            <div>
+                <label for="">Phone</label>
+                <input type="tel" v-model="enteredPhone">
+            </div>
+            <div>
+                <label for="">E-mail</label>
+                <input type="email" v-model="enteredEmail">
+            </div>
+            <div>
+                <button>Add Contact</button>
+            </div>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        emits: ['add-contact'],
+        data() {
+            return {
+                enteredName: '',
+                enteredPhone: '',
+                enteredEmail: '',
+            }
+        },
+        methods: {
+            submitData() {
+                this.$emit('add-contact', this.enteredName, this.enteredPhone, this.enteredEmail);
+            }
+        }
+    };
+    </script>
+    ```
+    ```html
+    <!-- App.vue -->
+    <template>
+        <h2>My Friends</h2>
+        <section>
+            <header>
+                <h1>My Friends</h1>
+            </header>
+            <new-friend @add-contact="addContact"></new-friend>
+            <ul>
+                <friend-contact
+                    v-for="friend in friends"
+                    :key="friend.id"
+                    :id="friend.id"
+                    :name="friend.name"
+                    :phone-number="friend.phone"
+                    :email-address="friend.email"
+                    :is-favorite="friend.isFavorite"
+                    @toggle-favorite="toggleFavoriteStatus"
+                ></friend-contact>
+            </ul>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                friends: [
+                    {
+                        id: "manuel",
+                        name: "Manuel Lorenz",
+                        phone: "0123 45678 90",
+                        email: "manuel@localhost.com",
+                        isFavorite: true,
+                    },
+                    {
+                        id: "julie",
+                        name: "Julie Jones",
+                        phone: "0987 654421 21",
+                        email: "julie@localhost.com",
+                        isFavorite: false,
+                    },
+                ],
+            };
+        },
+        methods: {
+            toggleFavoriteStatus(friendId) {
+                const identifiedFriend = this.friends.find(
+                    (friend) => friend.id === friendId
+                );
+                identifiedFriend.isFavorite = !identifiedFriend.isFavorite;
+            },
+            addContact(name, phone, email) {
+                const newFriendContact = {
+                    id: new Date().toISOString(),
+                    name,
+                    phone,
+                    email,
+                    isFavorite: false
+                };
+                this.friends.push(newFriendContact);
+            }
+        },
+    };
+    </script>
+    ```
 
 ## Demo: Adding More Component Communication
 ## A Potential Problem
