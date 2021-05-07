@@ -3480,13 +3480,560 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Component Communication
 ## Introducing "Props" (Parent => Child Communication)
+1. To enable components to communicate, we can use `props` property which is a reserved keyword as `data` and `methods` to get the data passing from the parent to child components. The idea is exactly the same as [React components](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#communicating-with-props).
+1. So as it does in React, the HTML attribute should be in `kebap-case`, while for JavaScrfipt object property key, we should use `camelCase`. `kebap-case` isn't a legal naming style for JavaScript properties.
+    ```html
+    <!-- src/App.vue -->
+    <template>
+    <h2>My Friends</h2>
+        <section>
+            <header><h1>My Friends</h1></header>
+            <ul>
+            <friend-contact
+                name="Manuel Lorenz"
+                phone-number="0123 45678 90"
+                email-address="manuel@localhost.com"
+            ></friend-contact>
+            <friend-contact
+                name="Julie Jones"
+                phone-number="0123 45678 90"
+                email-address="julie@localhost.com"
+            ></friend-contact>
+            </ul>
+        </section>
+    </template>
+    ```
+1. In this case, we can use an array to catch the passing data from the parent in `FriendContact` component.
+1. We then case access the passed values as the properties in `data` through `this` or its name in the HTML template.
+    ```html
+    <!-- src/components/FriendContact.vue -->
+    <template>
+        <li>
+            <h2>{{ name }}</h2>
+            <button @click="toggleDetails">
+                {{ detailsAreVisible ? "Hide" : "Show" }} Details
+            </button>
+            <ul v-if="detailsAreVisible">
+                <li><strong>Phone: </strong>{{ phoneNumber }}</li>
+                <li><strong>Email: </strong>{{ emailAddress }}</li>
+            </ul>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: ["name", "phoneNumber", "emailAddress"],
+        data() {
+            return {
+                detailsAreVisible: false,
+                friend: {
+                    id: "manuel",
+                    name: "Manuel Lorenz",
+                    phone: "0123 45678 90",
+                    email: "manuel@localhost.com",
+                },
+            };
+        },
+        methods: {
+            toggleDetails() {
+                this.detailsAreVisible = !this.detailsAreVisible;
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Prop Behavior & Changing Props
+1. From the previous section, we can notice that `App.vue` acts as the "parent" component and `FriendContact` is the "child" component.
+1. Note that we shouldn't mutate (change) the `props` to follow [one-way data flow](https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow). The values should be only changed from where it was passed to the component. For example, we have another property passed from `App.vue` to `FriendContact.vue`.
+    ```html
+    <!-- src/App.vue -->
+    <template>
+        <h2>My Friends</h2>
+        <section>
+            <header><h1>My Friends</h1></header>
+            <ul>
+                <friend-contact
+                    name="Manuel Lorenz"
+                    phone-number="0123 45678 90"
+                    email-address="manuel@localhost.com"
+                    is-favorite="1"
+                ></friend-contact>
+                <friend-contact
+                    name="Julie Jones"
+                    phone-number="0123 45678 90"
+                    email-address="julie@localhost.com"
+                    is-favorite="0"
+                ></friend-contact>
+            </ul>
+        </section>
+    </template>
+    ```
+    ```html
+    <!-- src/components/FriendContact.vue -->
+    <template>
+        <li>
+            <h2>{{ name }}</h2>
+            <button @click="toggleDetails">
+                {{ detailsAreVisible ? "Hide" : "Show" }} Details
+            </button>
+            <button @click="toggleFavorite">Toggle Favorite</button>
+            <ul v-if="detailsAreVisible">
+                <li><strong>Phone: </strong>{{ phoneNumber }}</li>
+                <li><strong>Email: </strong>{{ emailAddress }}</li>
+            </ul>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: ["name", "phoneNumber", "emailAddress", "isFavorite"],
+        data() {
+            return {
+                detailsAreVisible: false,
+                friend: {
+                    id: "manuel",
+                    name: "Manuel Lorenz",
+                    phone: "0123 45678 90",
+                    email: "manuel@localhost.com",
+                },
+            };
+        },
+        methods: {
+            toggleDetails() {
+                this.detailsAreVisible = !this.detailsAreVisible;
+            },
+            toggleFavorite() {
+                if (this.isFavorite === "1") {
+                    this.isFavorite = "0";
+                } else {
+                    this.isFavorite = "1";
+                }
+            },
+        },
+    };
+    </script>
+    ```
+    <img src="images/90-unit_data_flow.png">
+1. There are 2 ways that we can modify the props.
+    1. We can modify the data in the parent component (which is `App.vue` in this case) and pass the updated value to the child component. 
+    1. We can take the props as the initial data for a data property in the child component and has a separated state to control it.
+        ```html
+        <!-- src/components/FriendContact.vue -->
+        <template>
+            <li>
+                <h2>{{ name }} {{ friendIsFavorite === "1" ? "(Favorite)" : "" }}</h2>
+                <button @click="toggleFavorite">Toggle Favorite</button>
+                <button @click="toggleDetails">
+                    {{ detailsAreVisible ? "Hide" : "Show" }} Details
+                </button>
+                <ul v-if="detailsAreVisible">
+                    <li><strong>Phone: </strong>{{ phoneNumber }}</li>
+                    <li><strong>Email: </strong>{{ emailAddress }}</li>
+                </ul>
+            </li>
+        </template>
+
+        <script>
+        export default {
+            props: ["name", "phoneNumber", "emailAddress", "isFavorite"],
+            data() {
+                return {
+                    detailsAreVisible: false,
+                    friend: {
+                        id: "manuel",
+                        name: "Manuel Lorenz",
+                        phone: "0123 45678 90",
+                        email: "manuel@localhost.com",
+                    },
+                    friendIsFavorite: this.isFavorite,
+                };
+            },
+            methods: {
+                toggleDetails() {
+                    this.detailsAreVisible = !this.detailsAreVisible;
+                },
+                toggleFavorite() {
+                    if (this.friendIsFavorite === "1") {
+                        this.friendIsFavorite = "0";
+                    } else {
+                        this.friendIsFavorite = "1";
+                    }
+                },
+            },
+        };
+        </script>
+        ```
+
 ## Validating Props
+1. The `props` data can be complicated, so we would like to [validate the data](https://vuejs.org/v2/guide/components-props.html#Prop-Validation) when we work in larger projects with other developers. 
+1. We can have `type` to check the type of the data value such as `String`, `Number`, and `Boolean`; `required` to check if the prop is required to pass to the component; and `default` to have a default value if the value is not given. Note that `default` can be a function (method) to give a calculated value. 
+1. We can also use `validator` which takes only function to check if the prop is valid. The validator function must return a Boolean value (`true`/`false`).
+    ```html
+    <!-- src/components/FriendContact.vue -->
+    <script>
+    export default {
+        props: {
+            name: {
+                type: String,
+                required: true,
+            },
+            phoneNumber: {
+                type: String,
+                requried: true,
+            },
+            emailAddress: {
+                type: String,
+                requried: true,
+            },
+            isFavorite: {
+                type: String,
+                requried: false,
+                default: "0",
+                validator: function (value) {
+                    return value === "1" || value === "0";
+                },
+            },
+        },
+        data() {
+            return {
+                detailsAreVisible: false,
+                friend: {
+                    id: "manuel",
+                    name: "Manuel Lorenz",
+                    phone: "0123 45678 90",
+                    email: "manuel@localhost.com",
+                },
+                friendIsFavorite: this.isFavorite,
+            };
+        },
+        methods: {
+            toggleDetails() {
+                this.detailsAreVisible = !this.detailsAreVisible;
+            },
+            toggleFavorite() {
+                if (this.friendIsFavorite === "1") {
+                    this.friendIsFavorite = "0";
+                } else {
+                    this.friendIsFavorite = "1";
+                }
+            },
+        },
+    };
+    </script>
+    ```
+1. Note that `props` are validated before a component instance is created, so instance properties (e.g. `data`, `computed`, etc) will not be available inside `default` or validator functions.
+
 ## Working with Dynamic Props Values
+1. To pass a boolean value through `props`, we can use `v-bind` or its shorthand `:` on the HTML attribute. Note that a regular HTML attribute is always a text (`String`).
+1. Besides passing props one by one, we can use `v-for` and the variable to create a dynamic component as a list.
+    ```html
+    <!-- src/App.vue -->
+    <template>
+        <h2>My Friends</h2>
+        <section>
+            <header>
+                <h1>My Friends</h1>
+            </header>
+            <ul>
+                <friend-contact
+                    v-for="friend in friends"
+                    :key="friend.id"
+                    :name="friend.name"
+                    :phone-number="friend.phone"
+                    :email-address="friend.email"
+                    :is-favorite="true"
+                ></friend-contact>
+            </ul>
+        </section>
+    </template>
+    ```
+1. We then can revise the structure in `FriendContact` component for the new props.
+    ```html
+    <!-- src/components/FriendContact.vue -->
+    <template>
+        <li>
+            <h2>{{ name }} {{ friendIsFavorite ? "(Favorite)" : "" }}</h2>
+            <button @click="toggleFavorite">Toggle Favorite</button>
+            <button @click="toggleDetails">
+                {{ detailsAreVisible ? "Hide" : "Show" }} Details
+            </button>
+            <ul v-if="detailsAreVisible">
+                <li><strong>Phone: </strong>{{ phoneNumber }}</li>
+                <li><strong>Email: </strong>{{ emailAddress }}</li>
+            </ul>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        // props: ["name", "phoneNumber", "emailAddress", "isFavorite"],
+        props: {
+            name: {
+                type: String,
+                required: true,
+            },
+            phoneNumber: {
+                type: String,
+                requried: true,
+            },
+            emailAddress: {
+                type: String,
+                requried: true,
+            },
+            isFavorite: {
+                type: Boolean,
+                requried: false,
+                default: false,
+                // validator: function (value) {
+                //     return value === "1" || value === "0";
+                // },
+            },
+        },
+        data() {
+            return {
+                detailsAreVisible: false,
+                friendIsFavorite: this.isFavorite,
+            };
+        },
+        methods: {
+            toggleDetails() {
+                this.detailsAreVisible = !this.detailsAreVisible;
+            },
+            toggleFavorite() {
+                this.friendIsFavorite = !this.friendIsFavorite;
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Emitting Custom Events (Child => Parent Communication)
+1. In this friend list app, `is-favorite` should not be given as a arbitrary value but as a property of a `friend` object. Therefore, we give another `isFavorite` property to a friend object. 
+1. In addition, if the data is fetched and stored in a database that if the user toggle the "favorite" button, we should send the data back to the server to store the preference that the user has made. Therefore, rather than just passing the props from parent to child compoennt, we should be able to send the data back from child to the parent as well. 
+1. In Vue, we can use a prebuilt method `$emit()`, which is simialar to `$refs`, in the child component. Therefore, the parent component can "**listen**" to the event sending from the child component. The 1st argument is the event name that the parent can "catch". 
+1. We can pass a 2nd arguement to the `$emit()` method, so the "**listener**" in the parent component can catch the value and work on other features.
+1. In this case, we can pass the `id` of the `friend` object to the child and pass it back when the user clicks on the "Toggle Favorite" button to triger the listener.
+1. In `App.vue`, we can put a listener matching the event name in on the child component and use its own `methods` to handle the data. 
+1. In this case, we can use `.find` array method to refer to the `friend` object and toggle its `isFavorite` property. 
+1. Though the concept is very similar to React app, React app passes the method directly from parent to the child to allow the child component toggles the property of a data in the parent. However, both ways can be workaround in both frameworks.
+    ```html
+    <!-- src/components/FriendContact.vue -->
+    <template>
+        <li>
+            <!-- change the detector in ternary operator to isFavorite -->
+            <h2>{{ name }} {{ isFavorite ? "(Favorite)" : "" }}</h2>
+            <button @click="toggleFavorite">Toggle Favorite</button>
+            <button @click="toggleDetails">
+                {{ detailsAreVisible ? "Hide" : "Show" }} Details
+            </button>
+            <ul v-if="detailsAreVisible">
+                <li><strong>Phone: </strong>{{ phoneNumber }}</li>
+                <li><strong>Email: </strong>{{ emailAddress }}</li>
+            </ul>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: {
+            id: { // get this from parent component
+                type: String,
+                required: true,
+            },
+            name: {
+                type: String,
+                required: true,
+            },
+            phoneNumber: {
+                type: String,
+                requried: true,
+            },
+            emailAddress: {
+                type: String,
+                requried: true,
+            },
+            isFavorite: {
+                type: Boolean,
+                requried: false,
+                default: false,
+            },
+        },
+        data() {
+            return {
+                detailsAreVisible: false,
+                // remove friendIsFavorite prop
+            };
+        },
+        methods: {
+            toggleDetails() {
+                this.detailsAreVisible = !this.detailsAreVisible;
+            },
+            toggleFavorite() {
+                this.$emit("toggle-favorite", this.id);
+                // the 1st argument is the event name
+                // send the id back to notice the parent                
+            },
+        },
+    };
+    </script>
+    ```
+    ```html
+    <!-- src/App.vue -->
+        <template>
+        <h2>My Friends</h2>
+        <section>
+            <header>
+                <h1>My Friends</h1>
+            </header>
+            <ul>
+                <!-- pass id to child component -->
+                <friend-contact
+                    v-for="friend in friends"
+                    :key="friend.id"
+                    :id="friend.id" 
+                    :name="friend.name"
+                    :phone-number="friend.phone"
+                    :email-address="friend.email"
+                    :is-favorite="friend.isFavorite"
+                    @toggle-favorite="toggleFavoriteStatus"
+                ></friend-contact>
+                <!-- add a listener to handle the emit event and call a method -->
+            </ul>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                friends: [
+                    {
+                        id: "manuel",
+                        name: "Manuel Lorenz",
+                        phone: "0123 45678 90",
+                        email: "manuel@localhost.com",
+                        isFavorite: true,
+                    },
+                    {
+                        id: "julie",
+                        name: "Julie Jones",
+                        phone: "0987 654421 21",
+                        email: "julie@localhost.com",
+                        isFavorite: false,
+                    },
+                ],
+            };
+        },
+        methods: {
+            toggleFavoriteStatus(friendId) {
+                const identifiedFriend = this.friends.find( // use .find method to locate the friend object has the same 'id'
+                    (friend) => friend.id === friendId
+                );
+                // toggle 'isFavorite' property to the opposite
+                identifiedFriend.isFavorite = !identifiedFriend.isFavorite;
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Defining & Validating Custom Events
+1. In a Vue component, we can use another property `emits` (simialr to `porps` and `data`), which we use an `array` to list all the `emits` in the component. It can be easier to manage when the app is developed by multiple developers.
+1. In addition, we can make `emits` an object and have more configuration on it. We can also [validate the value](https://v3.vuejs.org/guide/component-custom-events.html#validate-emitted-events) that the `emits` function returns. Note that the validator can only return a Boolean value.
+    ```js
+    const app = Vue.createApp({
+        props: {},
+        emits: ['event-handler'],
+        emits: {
+            'event-handler': function(id) {
+                if (id) true;
+                return false;
+            }
+        }
+        data(){},
+        methods: {}
+    });
+    ```
+
 ## Prop / Event Fallthrough & Binding All Props
+1. [Prop Fallthrough](https://v3.vuejs.org/guide/component-attrs.html#non-prop-attributes) - You can set props (and listen to events) on a component which you haven't registered inside of that component. 
+1. Besides passing each property from parent to child component, we can use `v-bind`  to send all the properties of an object to the child. Note that we can't use it in `v-for` and can only use this feature when the data property is an JavaScript object.
+1. Note that we should be careful and avoid naming clashes. For example, in the following component, we should avoid using `name` in the `company` object as it may overwrite `name` from a `friend`. 
+1. Since it's a shorthand, we can't use `:` column directly, as it requries a attribute name, so the syntax is `v-bind="Object"`
+    ```html
+    <!-- App.vue -->
+    <template>
+        <h2>My Friends</h2>
+        <section>
+            <header>
+                <h1>My Friends</h1>
+            </header>
+            <ul>
+                <friend-contact
+                    v-for="friend in friends"
+                    :key="friend.id"
+                    :id="friend.id"
+                    :name="friend.name"
+                    :phone-number="friend.phone"
+                    :email-address="friend.email"
+                    :is-favorite="friend.isFavorite"
+                    v-bind="company"
+                    @toggle-favorite="toggleFavoriteStatus"
+                ></friend-contact>
+            </ul>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                friends: [
+                    {
+                        id: "manuel",
+                        name: "Manuel Lorenz",
+                        phone: "0123 45678 90",
+                        email: "manuel@localhost.com",
+                        isFavorite: true,
+                    },
+                    {
+                        id: "julie",
+                        name: "Julie Jones",
+                        phone: "0987 654421 21",
+                        email: "julie@localhost.com",
+                        isFavorite: false,
+                    },
+                ],
+                company: {
+                    country: 'TH'
+                }
+            };
+        },
+        methods: {
+            toggleFavoriteStatus(friendId) {
+                const identifiedFriend = this.friends.find(
+                    (friend) => friend.id === friendId
+                );
+                identifiedFriend.isFavorite = !identifiedFriend.isFavorite;
+            },
+        },
+    };
+    </script>
+    ```
+    ```html
+    <!-- components/FriendContact.vue -->
+    <template>
+        <li>
+            <!-- this country is passed from the parent component -->
+            <h2>{{ country }}</h2>
+        </li>
+    </template>
+    ```
+
 ## Demo: Adding Components & Connecting Them
+1. In this section, we'd like to have a form to allow users to create a new entry for the friend list. Therefore, we create a new component `NewFriend.vue`.
+
 ## Demo: Adding More Component Communication
 ## A Potential Problem
 ## Provide + Inject To The Rescue
