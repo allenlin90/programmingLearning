@@ -4279,6 +4279,226 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## Demo: Adding More Component Communication
+1. In this case, we add another button to allow users to "delete" a friend from the list. 
+1. We firstly create a `button` and give it another `emits` to send data back to `App.vue` where the friend list stores. Note that though we can use another method to send the `emit` back, we can delcare it directly in the HTML template.
+1. After sending the data back to `App.vue`, we can use a method with [`Array.filter()`](https://www.w3schools.com/jsref/jsref_filter.asp) to remove the friend from the list by its id. Note that `.filter` method only keeps items in the array that matches a given condition. 
+    ```html
+    <!-- src/components/FriendContact -->
+    <template>
+        <li>
+            <h2>{{ name }} {{ isFavorite ? "(Favorite)" : "" }}</h2>
+            <button @click="toggleFavorite">Toggle Favorite</button>
+            <button @click="toggleDetails">
+                {{ detailsAreVisible ? "Hide" : "Show" }} Details
+            </button>
+            <ul v-if="detailsAreVisible">
+                <li><strong>Phone: </strong>{{ phoneNumber }}</li>
+                <li><strong>Email: </strong>{{ emailAddress }}</li>
+            </ul>
+            <!-- have emit as in-line expression -->
+            <button @click="$emit('delete', id)">Delete</button>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: {
+            id: {
+                type: String,
+                require: true, 
+            },
+            // ...
+        },
+        emits: ['delete', 'toggleFavorite'],
+        data(){ return {} },
+        methods: {},
+    }
+    </script>
+    ```
+    ```html
+    <!-- App.vue -->
+    <template>
+        <h2>My Friends</h2>
+        <section>
+            <header>
+                <h1>My Friends</h1>
+            </header>
+            <new-friend @add-contact="addContact"></new-friend><ul>
+                <friend-contact
+                    v-for="friend in friends"
+                    :key="friend.id"
+                    :id="friend.id"
+                    :name="friend.name"
+                    :phone-number="friend.phone"
+                    :email-address="friend.email"
+                    :is-favorite="friend.isFavorite"
+                    @toggle-favorite="toggleFavoriteStatus"
+                    @delete="deleteContact"
+                ></friend-contact>
+            </ul>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                friends: [
+                    {
+                        id: "manuel",
+                        name: "Manuel Lorenz",
+                        phone: "0123 45678 90",
+                        email: "manuel@localhost.com",
+                        isFavorite: true,
+                    },
+                    {
+                        id: "julie",
+                        name: "Julie Jones",
+                        phone: "0987 654421 21",
+                        email: "julie@localhost.com",
+                        isFavorite: false,
+                    },
+                ],
+            };
+        },
+        methods: {
+            toggleFavoriteStatus(friendId) {
+                const identifiedFriend = this.friends.find(
+                    (friend) => friend.id === friendId
+                );
+                identifiedFriend.isFavorite = !identifiedFriend.isFavorite;
+            },
+            addContact(name, phone, email) {
+                const newFriendContact = {
+                    id: new Date().toISOString(),
+                    name,
+                    phone,
+                    email,
+                    isFavorite: false
+                };
+                this.friends.push(newFriendContact);
+            },
+            deleteContact(friendId) {
+                this.friends = this.friends.filter(friend=>friend.id !== friendId);
+            },
+        },
+    };
+    </script>
+    ```
+
+## Assignment 6: Time to practice: Props and Custom events
+1. Task 1: 
+    1. Add two components to the app: 
+    1. An ActiveUser component and an UserData component
+    1. ActiveUser should output a username (h2) and age (h3)
+    1. UserData should output two input fields => for name and age
+    1. Optional: Add styling of your choice
+1. Task 2: Output both components side-by-side in your main App template
+1. Task 3: Add user data and ensure it contains a name and age
+    1. User data should be output in ActiveUser
+    1. It should be updated via the UserData component
+1. Tentative solution. This is not so different from the solution given by the lecturer.
+    ```html
+    <!-- src/components/UserData.vue -->
+    <template>
+        <form action="" @submit.prevent="activateUser">
+            <div>
+                <label for="username">User Name</label>
+                <input type="text" id="username" v-model="username">
+            </div>
+            <div>
+                <label for="user_age">User Age</label>
+                <input type="text" id="user_age" v-model="userAge">
+            </div>
+            <button>submit</button>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        emits: ['activate-user'],
+        data() {
+            return {
+                username: '',
+                userAge: 0
+            }
+        },
+        methods: {
+            activateUser() {
+                this.$emit('activate-user', this.username, this.userAge);
+            }
+        }
+    }
+    </script>
+    ```
+    ```html
+    <!-- src/components/ActiveUser.vue -->
+    <template>
+        <div>
+            <h2>{{ username }}</h2>
+            <h3 v-if="userAge">{{ userAge }}</h3>
+        </div>
+    </template>
+
+    <script>
+    export default {
+        props: {
+            username: {
+                type: String,
+                required: true, 
+            },
+            userAge: {
+                type: Number,
+                requried: true,
+            },
+        }
+    }
+    </script>
+    ```
+    ```html
+    <!-- App.vue -->
+    <template>
+        <section>
+            <user-data @activate-user="getUser"></user-data>
+            <active-user
+                :username="username"
+                :user-age="userAge"
+            ></active-user>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        data(){
+            return {
+                username: '',
+                userAge: 0,    
+            }
+        },
+        methods: {
+            getUser(name, age) {
+                this.username = name;
+                this.userAge = parseInt(age);
+            }
+        }
+    }
+    </script>
+    ```
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import App from './App.vue';
+    import ActiveUser from './components/ActiveUser.vue';
+    import UserData from './components/UserData.vue';
+
+    const app = createApp(App);
+
+    app.component('active-user', ActiveUser);
+    app.component('user-data', UserData);
+
+    app.mount('#app');
+    ```
+
 ## A Potential Problem
 ## Provide + Inject To The Rescue
 ## Provide + Inject for Functions / Methods
