@@ -4500,15 +4500,189 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## A Potential Problem
+1. Since we start to build components with multiple layers, we are passing `props` and `emits` through several component. The components in the middle layers is only used to "open" the channel the ensure the data can be sent from the innermost component.
+1. We use another syntax when there's no method to handle the emits and just pass it upwards. In this case we can [emit a value with an `$event`](https://v3.vuejs.org/guide/component-basics.html#emitting-a-value-with-an-event).
+    ```html
+    <!-- App.vue -->
+    <template>
+        <div>
+            <active-element
+                :topic-title="activeTopic && activeTopic.title"
+                :text="activeTopic && activeTopic.fullText"
+            ></active-element>
+            <knowledge-base
+                :topics="topics"
+                @select-topic="activateTopic"
+            ></knowledge-base>
+        </div>
+    </template>
+    ```
+    ```html
+    <!-- KnowledgeBase -->
+    <template>
+        <section>
+            <h2>Select a Topic</h2>
+            <knowledge-grid
+                :topics="topics"
+                @select-topic="$emit('select-topic', $event)"
+            ></knowledge-grid>
+        </section>
+    </template>
+    ```
+    ```html
+    <!-- KnowledgeGrid -->
+    <knowledge-element
+      v-for="topic in topics"
+      :key="topic.id"
+      :id="topic.id"
+      :topic-name="topic.title"
+      :description="topic.description"
+      @select-topic="$emit('select-topic', $event)"
+    ></knowledge-element>
+    ```
+    ```html
+    <!-- KnowledgeElement -->
+    <template>
+        <li>
+            <h3>{{ topicName }}</h3>
+            <p>{{ description }}</p>
+            <button @click="$emit('select-topic', id)">Learn More</button>
+        </li>
+    </template>
+    ```
+
 ## Provide + Inject To The Rescue
+1. In Vue, we can use [`provide` and `inject`](https://v3.vuejs.org/guide/component-provide-inject.html#working-with-reactivity) (both of which are reserved properties as `data`, `methods,` and `computed`) and use these properties on the component to send data directly. 
+1. In the previous example, an array of `topics` is stored in `App.vue`, while we'd like to use the data in `KnowledgeGrid`. We use provide in the "**parent**" component which sends the data, and use `inject` in the child component which is `KnowledgeGrid` to catch the data. Note that the component to `provide` the data must be a parent or ancestor of the "**injected**" component.
+1. With the feature, we can avoid passing data through `KnowledgeBase` and pass directly from `App` to `KnowledgeGrid`. 
+    ```html
+    <!-- App.vue -->
+    <script>
+    export default {
+        provide: {
+            topics: [
+                {
+                    id: 'basics',
+                    title: 'The Basics',
+                    description: 'Core Vue basics you have to know',
+                    fullText:
+                        'Vue is a great framework and it has a couple of key concepts: Data binding, events, components and reactivity - that should tell you something!',
+                },
+                {
+                    id: 'components',
+                    title: 'Components',
+                    description:
+                        'Components are a core concept for building Vue UIs and apps',
+                    fullText:
+                        'With components, you can split logic (and markup) into separate building blocks and then combine those building blocks (and re-use them) to build powerful user interfaces.',
+                },
+            ],
+        }
+    }
+    </script>
+    ```
+    ```html
+    <!-- KnowledgeGrid.vue -->
+    <script>
+    export default {
+        inject: ['topics'],
+    }
+    </script>
+    ```
+1. However, this creates another issue when the `data` is dynamic and mutable. When the `topic` object in `topcis` changes, it won't reflect to the data in `provide`. Therefore, we can declare `provide` as a method in the like `data`.
+1. In addition, we can use `mounted` lifecycle method to simluate an async data fetch to add extra topic in the `topics` array. Note that we use array function to ensure `this` keyword refer to the correct scope and thus get the data from `this.topics`.
+    ```js
+    <!-- App.vue -->
+    export default {
+        data() {
+            return {
+                topics: [
+                    {
+                        id: 'basics',
+                        title: 'The Basics',
+                        description: 'Core Vue basics you have to know',
+                        fullText:
+                            'Vue is a great framework and it has a couple of key concepts: Data binding, events, components and reactivity - that should tell you something!',
+                    },
+                    {
+                        id: 'components',
+                        title: 'Components',
+                        description:
+                            'Components are a core concept for building Vue UIs and apps',
+                        fullText:
+                            'With components, you can split logic (and markup) into separate building blocks and then combine those building blocks (and re-use them) to build powerful user interfaces.',
+                    },
+                ],
+            }
+        },
+        provide() {
+            return {
+                topics: this.topics,
+            }
+        },
+        mounted() {
+            setTimeout(() => {
+                this.topics.push({
+                    id: 'event',
+                    title: 'Events',
+                    description: 'Events are important in Vue',
+                    fullText: 'Events allow you to trigger code on demand!',
+                });
+            }, 3000);
+        }
+    }
+    ```
+
 ## Provide + Inject for Functions / Methods
+1. `provide` and `inject` can not only be used on data but also for methods (function). Since we can pass the method from `App.vue` to `KnowledgeElement.vue`, we can remove the `$emit()` in `KnowledgeGrid.vue`.
+1. In this case, we can expect a method is provided and to be injected as `selectTopc`. 
+    ```html
+    <!-- KnowledgeElement.vue -->
+    <template>
+        <li>
+            <h3>{{ topicName }}</h3>
+            <p>{{ description }}</p>
+            <button @click="selectTopic(id)">Learn More</button>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        inject: ['selectTopic'],
+        props: ['id', 'topicName', 'description'],
+        emits: ['select-topic'],
+    };
+    </script>
+    ```
+    ```js
+    // App.vue
+    export default {
+        provide() {
+            return {
+                topics: this.topics,
+                selectTopic: this.activateTopic, // send the method with a given key
+            };
+        },
+        methods: {
+            activateTopic(topicId) {
+                this.activeTopic = this.topics.find(
+                    (topic) => topic.id === topicId
+                );
+            },
+        },
+    };
+    ```
+
 ## Provide + Inject vs Props & Custom Events
+1. Though `provide` and `inject` can be useful, it can also be very confusing when a team of developers try to understand where both of these are used. At the first sight, we can't know exactly which component in the Vue app is "**injected**".
+1. Therefore, in some scanerios, we can still use pass-through `emit` to ensure other developers can understand the structure in a more obvious way.
+    <img src="images/103-module_summary.png">
 
 
 
 # Diving Deeper Into Components
-## Project Setup
 ## Global vs Local Components
+
 ## Scoped Styles
 ## Introducing Slots
 ## Named Slots
