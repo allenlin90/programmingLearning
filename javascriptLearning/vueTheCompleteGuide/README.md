@@ -4682,20 +4682,582 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Diving Deeper Into Components
 ## Global vs Local Components
+1. If we register components at the main `app` which is in the `main.js`, these components will be "global" components which can be accessed from any component in the Vue app. Thus, we can use them anywhere in the `template` tag.
+1. However, this approach can also be confusing when the app goes large. Besides, Vue needs to load all the components since the app initiates which can reduce app performance. Besides, some of the components may only be used once in the whole app.
+1. To register a component locally, we can use `components` keyword, which is another reserved property as `data` and `methods`, and have key/value pair to indicate the component. Note that we can use either "**kebap-case**" in string or "**PascalCase**" for the property.
+1. In addition, we can use PascalCase on the component as a self-closing element. Note that the regular kebap-case as for regular HTML tags doesn't work for custom compoenent for self-closing tag.
+    ```vue
+    <!-- Vue.app -->
+    <template>
+        <div>
+            <TheHeader />
+            <the-header></the-header>
+            <badge-list></badge-list>
+            <user-info
+                :full-name="activeUser.name"
+                :info-text="activeUser.description"
+                :role="activeUser.role"
+            ></user-info>
+        </div>
+    </template>
+    ```
+    ```html
+    <script>
+    import TheHeader from "./components/TheHeader.vue";
+    import BadgeList from "./components/BadgeList.vue";
+    import UserInfo from "./components/UserInfo.vue";
+
+    export default {
+        components: { 
+            "the-header": TheHeader,
+            BadgeList, // PascalCase also works. Vue will translate it to kebap-case for HTML
+            UserInfo,
+        },
+        data() {
+            return {
+                activeUser: {
+                    name: "Maximilian Schwarzmüller",
+                    description: "Site owner and admin",
+                    role: "admin",
+                },
+            };
+        },
+    };
+    </script>
+    ```
+    ```html
+    <style>
+    html {
+        font-family: sans-serif;
+    }
+
+    body {
+        margin: 0;
+    }
+    </style>
+    ```
 
 ## Scoped Styles
-## Introducing Slots
+1. In convention, we can have the styling globally in `App.vue` which styling can be applied to all the child components in it. 
+1. We can add `scoped` on the `style` tag to limit the styling to be applied to only the component itself. The styling won't be applied to its sibling, neighbor, or child component.
+    ```html
+    <!-- App.vue -->
+    <style scoped>
+    </style>
+    ```
+
+## Introducing Slots   
+1. We may have custom styled components which are used to wrap other elements. In this case, the child element in the wrapper has to be injected to the general component, which is not ideal for its purpose because we create these components with styling for general purpose that we can also import them globally in `main.js`. 
+1. One solution is to pass `content` to props in string. The other solution is to use [`slot`](https://v3.vuejs.org/guide/component-slots.html#slots) in Vue.
+     ```html
+    <template>
+        <div> {{ content }} </div>
+    </template>
+
+    <script>
+    export default {
+        props: ['content'],
+    }
+    </script>
+
+    <style>
+    div {
+        margin: 2rem auto;
+        max-width: 30rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        padding: 1rem;
+    }
+    </style>
+    ```
+    ```html
+    <!-- UserInfo.vue -->
+    <!-- this doesn't work! Because BaseCard.vue doesn't know what's inside of it -->
+    <template>
+        <section>
+            <base-card>
+                <header>
+                    <h3>{{ fullName }}</h3>
+                    <base-badge
+                        :type="role"
+                        :caption="role.toUpperCase()"
+                    ></base-badge>
+                </header>
+                <p>{{ infoText }}</p>
+            </base-card>
+        </section>
+    </template>
+    ```
+1. We then update the placeholder in `BaseCard.vue` by using `slot`.
+    ```html
+    <template>
+        <div>
+            <slot></slot>
+        </div>
+    </template>
+    ```
+
 ## Named Slots
+1. When using multiple `slot` in a general component, we can give `name` attribute to differentiate each `slot` tag. Note that we can have only one unamed `slot` in the component.
+1. In this case have another `slot` named "**header**" which is inside a header tag. 
+    ```html
+    <!-- BaseCard.vue -->
+    <template>
+        <div>
+            <header>
+                <slot name="header"></slot>
+            </header>
+            <slot></slot>
+        </div>
+    </template>
+    ```
+1. We there can use `template`, which is a Vue tag, to import the named `slot` and use `v-slot:[name]` to bind the "**name**" that we give to the named `slot`.
+    ```html
+    <!-- UserInfo.Vue -->
+    <template>
+        <section>
+            <base-card>
+                <!-- use v-slot:[name] to import the named slot -->
+                <template v-slot:header>
+                    <h3>{{ fullName }}</h3>
+                    <base-badge
+                        :type="role"
+                        :caption="role.toUpperCase()"
+                    ></base-badge>
+                </template>
+                <p>{{ infoText }}</p>
+            </base-card>
+        </section>
+    </template>
+    ```
+1. In addition, if there are multiple inner `template` tag, we can also indicate the `default` one to bind with the unamed `slot`. 
+    ```html
+    <!-- UserInfo.vue -->
+    <template>
+        <section>
+            <base-card>
+                <template v-slot:header>
+                    <h2>Available Badges</h2>
+                </template>
+                <template v-slot:default>
+                    <ul>
+                        <li>
+                            <base-badge type="admin" caption="ADMIN"></base-badge>
+                        </li>
+                        <li>
+                            <base-badge type="author" caption="AUTHOR"></base-badge>
+                        </li>
+                    </ul>
+                </template>
+            </base-card>
+        </section>
+    </template>
+    ```
+
 ## Slot Styles & Compilation
+1. As we "**scoped**" the styling, it doesn't affect to the content sent to the `slot` and its child elements.
+1. Vue will analyze and compile the `template` and its elements before rendering to the screen. Therefore, the regular CSS scope won't work as the styling is "fixed" to only the general HTML tags in the component. 
+1. Thus, in this case, we need to move the styling for `header` HTML tag into `BaseCard.vue`. 
+    ```html
+    <!-- BaseCard.vue -->
+    <template>
+        <div>
+            <header>
+                <slot name="header"></slot>
+            </header>
+            <slot></slot>
+        </div>
+    </template>
+
+    <script>
+    export default {
+        props: ["content"],
+    };
+    </script>
+
+    <style scoped>
+    div {
+        margin: 2rem auto;
+        max-width: 30rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        padding: 1rem;
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    </style>
+    ```
+
 ## More on Slots
+1. We can have default elements in the general component if we have some content in the `slot`. 
+    ```html
+    <!-- BaseCard.vue -->
+    <template>
+        <div>
+            <header>
+                <slot name="header">
+                    <!-- This h2 tag only shows when there's nothing sending to  -->
+                    <h2>The Default</h2>
+                </slot>
+            </header>
+            <slot></slot>
+        </div>
+    </template>
+    ```
+1. We can access the `slots` with a reserved property `$slots` which is an object similar to `$emit`. For example, we can use `mounted()` lifecycle method to print the element in the console. If the slot is named, we can use its name directly or use `default` to access the unamed one.
+1. By using `console.log`, we can notice that the app prints `this.$slots.header` twice that the first is `undefined` as there's nothing given in the `slot`. 
+1. Therefore, we can use the feature with `v-if` to check if there's any element is given and should Vue create a DOM for the `header` `slot`. 
+    ```html
+    <!-- BaseCard.vue -->
+    <template>
+        <div>
+            <!-- prevents creating headerDOM if no child element is given -->
+            <header v-if="$slots.header">
+                <slot name="header">
+                    <!-- <h2>The Default</h2> -->
+                </slot>
+            </header>
+            <slot></slot>
+        </div>
+    </template>
+
+    <script>
+    export default {
+        mounted() {
+            console.log(this.$slots.header);
+            console.log(this.$slots.default);
+        }
+    };
+    </script>
+    ```
+1. In addition, `v-slot:` has a shorthand similar to `:` for `v-bind` and `@` for `v-on` that we can use a pound sign `#` to replace the attribute. 
+    ```html
+    <!-- BadgeList.vue -->
+    <template>
+        <section>
+            <base-card>
+                <!-- use v-slot: shorthand as '#' -->
+                <template #default>
+                    <ul>
+                        <li>
+                            <base-badge type="admin" caption="ADMIN"></base-badge>
+                        </li>
+                        <li>
+                            <base-badge type="author" caption="AUTHOR"></base-badge>
+                        </li>
+                    </ul>
+                </template>
+            </base-card>
+        </section>
+    </template>
+    ```
+
 ## Scoped Slots
+1. In some scenarios, we would like the `slot` to access data that is only available in a child component using it, which data is usually an array. In this case, we can use [`scoped slots`](https://v3.vuejs.org/guide/component-slots.html#scoped-slots). 
+    ```html
+    <!-- CourseGoals.vue -->
+    <template>
+        <ul>
+            <li v-for="goal in goals" :key="goal">
+                <slot></slot>
+            </li>
+        </ul>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                goals: ["Finish the course", "Learn Vue"],
+            };
+        },
+    };
+    </script>
+    ```
+
 ## Dynamic Components
+1. We firstly restructure `App.vue` and create another 2 components for demo purpose, `ManageGoals.vue` and `ActiveGoals.vue`.
+    ```html
+    <!-- ActiveGoals.vue -->
+    <template>
+        <h2>Active Goals</h2>
+    </template>
+    ```
+    ```html
+    <!-- ManageGoals.vue -->
+    <template>
+        <h2>Manage Goals</h2>
+    </template>
+    ```
+    ```html
+    <!-- App.vue -->
+    <template>
+        <div>
+            <the-header></the-header>
+            <active-goals></active-goals>
+            <manage-goals></manage-goals>
+        </div>
+    </template>
+    ```
+1. In this case, if we'd like to create buttons to control which component to show, we can use `v-if`, `data`, and `methods` to control the components.
+1. However, this approach can be very tedious and hard to manage when there are many components.
+    ```html
+    <template>
+        <div>
+            <the-header></the-header>
+            <button @click="setSelectedComponent('active-goals')">
+                Active Goals
+            </button>
+            <button @click="setSelectedComponent('manage-goals')">
+                Manage Goals
+            </button>
+            <active-goals
+                v-if="selectedComponent === 'active-goals'"
+            ></active-goals>
+            <manage-goals
+                v-if="selectedComponent === 'manage-goals'"
+            ></manage-goals>
+        </div>
+    </template>
+
+    <script>
+    import TheHeader from "./components/TheHeader.vue";
+    import ActiveGoals from "./components/ActiveGoals.vue";
+    import ManageGoals from "./components/ManageGoals.vue";
+
+    export default {
+        components: {
+            "the-header": TheHeader,
+            ActiveGoals,
+            ManageGoals,
+        },
+        data() {
+            return {
+                selectedComponent: "active-goals",
+            };
+        },
+        methods: {
+            setSelectedComponent(cmp) {
+                this.selectedComponent = cmp;
+            },
+        },
+    };
+    </script>
+    ```
+1. The other way to have dynamic component is to use `component` element (which is Vue only tag) with `is` attribute that binds with a data.
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <div>
+            <the-header></the-header>
+            <button @click="setSelectedComponent('active-goals')">
+                Active Goals
+            </button>
+            <button @click="setSelectedComponent('manage-goals')">
+                Manage Goals
+            </button>
+            <component :is="selectedComponent"></component>
+        </div>
+    </template>
+    ```
+    ```js
+    // App.vue
+    import TheHeader from "./components/TheHeader.vue";
+    import ActiveGoals from "./components/ActiveGoals.vue";
+    import ManageGoals from "./components/ManageGoals.vue";
+
+    export default {
+        components: {
+            "the-header": TheHeader,
+            ActiveGoals,
+            ManageGoals,
+        },
+        data() {
+            return {
+                selectedComponent: "active-goals",
+            };
+        },
+        methods: {
+            setSelectedComponent(cmp) {
+                this.selectedComponent = cmp;
+            },
+        },
+    };
+    ```
+
 ## Keeping Dynamic Components Alive
+1. In some cases, we may have components that have `input` tags as part of the elements. However, when the user switch between the component, the inserted value in the `input` will be removed because the component is re-rendered by default.
+    ```vue
+    <template>
+        <div>
+            <h2>Manage Goals</h2>
+            <!-- inserted value in input tag will be removed when the user switch between components -->
+            <input type="text" />
+        </div>
+    </template>
+    ```
+1. In this case, we can use a Vue only tag `keep-alive` which will "**cache**" the component rather than trashing it from the DOM and re-render it.
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <div>
+            <the-header></the-header>
+            <button @click="setSelectedComponent('active-goals')">
+                Active Goals
+            </button>
+            <button @click="setSelectedComponent('manage-goals')">
+                Manage Goals
+            </button>
+            <!-- use keep-alive tag to cache the component and its state -->
+            <keep-alive>
+                <component :is="selectedComponent"></component>
+            </keep-alive>            
+        </div>
+    </template>
+    ```
+
 ## Applying What We Know & A Problem
+1. In case we want to apply a error catch in `ManageGoals` component that the user submits empty value. We can either use `alert` to show a warning or create another component `ErrorAlert` to show the warning message. 
+1. In this case, we use `dialog` with `open` attribute to show contain the message and use `slot` to have customized elements in the component. 
+    ```html
+    <!-- ErrorAlert.vue -->
+    <template>
+        <dialog open>
+            <slot></slot>
+        </dialog>
+    </template>
+
+    <style scoped>
+    dialog {
+        margin: 0;
+        position: fixed;
+        top: 20vh;
+        left: 30%;
+        width: 40%;
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        padding: 1rem;
+    }
+    </style>
+    ```
+1. We have an `input` tag in `ManageGoals` and use `ref` attribute with `this.$refs.[name]` to refer to the element. Though we can use DOM selector, this approach is easier and with less code.
+1. We then have a method applied to the button and create a data `inputIsInvalid` as the state. If the input is empty, we can trigger and change the state that cause the component to re-render.
+1. We then can add another button in the `dialog` component (as customized content) and toggle the state back to close the warning message.
+    ```vue
+    <!-- ManageGoals.vue -->
+    <template>
+        <div>
+            <h2>Manage Goals</h2>
+            <input type="text" ref="goal" />
+            <button @click="setGoal">Set Goal</button>
+            <error-alert v-if="inputIsInvalid">
+                <h2>Input is invalid!</h2>
+                <p>Please enter at least a few characters...</p>
+                <button @click="confrimError">Okay</button>
+            </error-alert>
+        </div>
+    </template>
+    ```
+    ```html
+    <!-- ManageGoals.vue -->
+    <script>
+    import ErrorAlert from "./ErrorAlert.vue";
+
+    export default {
+        components: {
+            ErrorAlert,
+        },
+        data() {
+            return {
+                inputIsInvalid: false,
+            };
+        },
+        methods: {
+            setGoal() {
+                const enteredValue = this.$refs.goal.value;
+                if (enteredValue === "") {
+                    this.inputIsInvalid = true;
+                }
+            },
+            confrimError() {
+                this.inputIsInvalid = false;
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Teleporting Elements
+1. From the previous case, we can inspect the HTML structure and notice that the `dialog` element is nested in the inner component. In this case, we can "teleport" the element and set it at the "root" of the component by using `teleport` which is a Vue only tag.
+1. `teleport` tag has `to` attribute which we can pass a regular CSS selector such as `body` or `#app` to select the element in HTML DOM.
+1. In the following case, `error-alert` component will be rendered in the `body` tag directly rather than nested in `ManageGoals` component.
+    ```vue
+    <!-- ManageGoals.vue -->
+    <template>
+        <div>
+            <h2>Manage Goals</h2>
+            <input type="text" ref="goal" />
+            <button @click="setGoal">Set Goal</button>
+            <!-- teleport the warpped element to body tag -->
+            <teleport to="body">
+                <error-alert v-if="inputIsInvalid">
+                    <h2>Input is invalid!</h2>
+                    <p>Please enter at least a few characters...</p>
+                    <button @click="confrimError">Okay</button>
+                </error-alert>
+            </teleport>
+        </div>
+    </template>
+    ```
+
 ## Working with Fragments
+1. In Vue2, the elements in a `template` should be wrapped in a single block element, it means that in the `template` tag, there should be only a single `div`, `section`, or other HTML wrapper tags that contains all the other HTML elements.
+    ```vue
+    <!-- Vue 2 -->
+    <template>
+        <div>
+            <h2>Manage Goals</h2>
+            <input type="text" ref="goal" />
+            <button @click="setGoal">Set Goal</button>
+            <!-- teleport the warpped element to body tag -->
+            <teleport to="body">
+                <error-alert v-if="inputIsInvalid">
+                    <h2>Input is invalid!</h2>
+                    <p>Please enter at least a few characters...</p>
+                    <button @click="confrimError">Okay</button>
+                </error-alert>
+            </teleport>
+        </div>
+    </template>
+    ```
+1. However, we can have the elements in Vue3 directly without a wrapper containing all the elements of a component.
+    ```vue
+    <!-- Vue 3 -->
+    <template>
+        <h2>Manage Goals</h2>
+        <input type="text" ref="goal" />
+        <button @click="setGoal">Set Goal</button>
+        <!-- teleport the warpped element to body tag -->
+        <teleport to="body">
+            <error-alert v-if="inputIsInvalid">
+                <h2>Input is invalid!</h2>
+                <p>Please enter at least a few characters...</p>
+                <button @click="confrimError">Okay</button>
+            </error-alert>
+        </teleport>
+    </template>
+    ```
+
 ## The Vue Style Guide
+1. For naming and structuring of a Vue app, we can follow the [Style Guide](https://v3.vuejs.org/style-guide/#rule-categories) from Vue.js.
+
 ## Moving to a Different Folder Structure
+1. We can use further file structuring to manage the components.
+    <img src="images/121-module_summary.png">
 
 
 
