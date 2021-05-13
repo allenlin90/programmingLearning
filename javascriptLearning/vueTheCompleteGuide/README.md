@@ -5263,11 +5263,465 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Course Projct: The Learning Resources App
 ## Setup & First Steps
+1. We firstly create `components` directory in `src` and `App.vue` as the initial files. 
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import App from './App.vue';
+
+    const app = createApp(App)
+
+    app.mount('#app');
+    ```
+    ```html
+    <!-- App.vue -->
+    <template>
+        <ul>
+            <li v-for="storedResource in storedResources" :key="storedResource.id">
+                <h2>{{ storedResource.title }}</h2>
+                <p>{{ storedResource.description }}</p>
+                <a :href="storedResource.link">{{ storedResource.title }}</a>
+            </li>
+        </ul>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                storedResources: [
+                    {
+                        id: 'official-guide',
+                        title: 'Official Guide',
+                        description: 'The official Vue.js documentation',
+                        link: 'https://vuejs.org',
+                    },
+                    {
+                        id: 'google',
+                        title: 'Google',
+                        description: 'Learn to google...',
+                        link: 'https://google.org',
+                    },
+                ],
+            };
+        },
+    };
+    </script>
+    ```
+
 ## First Components & Props
+1. We then create a sub-folder in `components` to hold all the learning resource related components.
+    ```html
+    <!-- src/components/learning-resources/LearningResource.vue -->
+    <template>
+        <li>
+            <div>
+                <header>
+                    <h3>{{ title }}</h3>
+                    <button>Delete</button>
+                </header>
+            </div>
+            <p>{{ description }}</p>
+            <nav>
+                <a :href="link" target="_blank">View Resource</a>
+            </nav>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: ['title', 'description', 'link'],
+    };
+    </script>
+    ```
+1. We send the `props` from `App.vue` to `LearningResource.vue` and import to use the component.
+    ```html
+    <!-- App.vue -->
+    <template>
+        <ul>
+            <learning-resource
+                v-for="res in storedResources"
+                :key="res.id"
+                :title="res.title"
+                :description="res.description"
+                :link="res.link"
+            ></learning-resource>
+        </ul>
+    </template>
+
+    <script>
+    import LearningResource from './components/learning-resources/LearningResource.vue';
+    export default {
+        components: {
+            LearningResource,
+        },
+        data() {
+            return {
+                storedResources: [
+                    {
+                        id: 'official-guide',
+                        title: 'Official Guide',
+                        description: 'The official Vue.js documentation',
+                        link: 'https://vuejs.org',
+                    },
+                    {
+                        id: 'google',
+                        title: 'Google',
+                        description: 'Learn to google...',
+                        link: 'https://google.org',
+                    },
+                ],
+            };
+        },
+    };
+    </script>
+    ```
+
 ## Styling and More Components
+1. We create another component `StoredResources` to wrap the contents stored in `storedResources` Array. We firstly remove `LearningResources` component from `App.vue` and restructure it. We pass the array as a `prop` to `StoredResources`.
+    ```html
+    <!-- App.vue -->
+    <template>
+        <stored-resources :resources="storedResources"></stored-resources>
+    </template>
+
+    <script>
+    import StoredResources from './components/learning-resources/StoredResources.vue';
+
+    export default {
+        components: {
+            StoredResources,
+        },
+        data() {
+            return {
+                storedResources: [
+                    {
+                        id: 'official-guide',
+                        title: 'Official Guide',
+                        description: 'The official Vue.js documentation',
+                        link: 'https://vuejs.org',
+                    },
+                    {
+                        id: 'google',
+                        title: 'Google',
+                        description: 'Learn to google...',
+                        link: 'https://google.org',
+                    },
+                ],
+            };
+        },
+    };
+    </script>
+
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+        margin: 0;
+    }
+    </style>
+    ```
+1. `StoredResources` receive an array of objects as the learning resource.
+    ```html
+    <!-- src/components/learning-resources/StoredResources.vue -->
+    <template>
+        <ul>
+            <learning-resource
+                v-for="res in resources"
+                :key="res.id"
+                :title="res.title"
+                :description="res.description"
+                :link="res.link"
+            ></learning-resource>
+        </ul>
+    </template>
+
+    <script>
+    import LearningResource from './LearningResource.vue';
+    export default {
+        components: { LearningResource },
+        props: ['resources'],
+    };
+    </script>
+
+    <style scoped>
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        margin: auto;
+        max-width: 40rem;
+    }
+    </style>
+    ```
+1. We add some styling to `LearningResource.vue`.
+    ```html
+    <!-- src/components/learning-resources/LearningResource.vue -->
+    <template>
+        <li>
+            <div>
+                <header>
+                    <h3>{{ title }}</h3>
+                    <button>Delete</button>
+                </header>
+            </div>
+            <p>{{ description }}</p>
+            <nav>
+                <a :href="link" target="_blank">View Resource</a>
+            </nav>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: ['title', 'description', 'link'],
+        methods: {},
+    };
+    </script>
+
+    <style scoped>
+    li {
+        margin: auto;
+        max-width: 40rem;
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+        margin: 0.5rem 0;
+    }
+
+    p {
+        margin: 0.5rem 0;
+    }
+
+    a {
+        text-decoration: none;
+        color: #ce5c00;
+    }
+
+    a:hover,
+    a:active {
+        color: #c89300;
+    }
+    </style>
+    ```
+
 ## Header & BaseCard Components
+1. We create `BaseCard` component, which we can use in the whole app, so we can register it in `main.js`.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import App from './App.vue';
+    import BaseCard from './components/UI/BaseCard.vue';
+
+    const app = createApp(App);
+    app.component('base-card', BaseCard);
+
+    app.mount('#app');
+    ```
+1. For the component, it's basically a wrapper which we can pass customized content into it, so we can use `slot` to inject elements when using it with other components.
+    ```html
+    <!-- src/components/UIBaseCard.vue -->
+    <template>
+        <div>
+            <slot></slot>
+        </div>
+    </template>
+
+    <style scoped>
+    div {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        padding: 1rem;
+        margin: 2rem auto;
+        max-width: 40rem;
+    }
+    </style>
+    ```
+1. We create a header to be used as the main header in the app. It takes a `prop` to show the title in the header. 
+    ```html
+    <template>
+        <header>
+            <h1>{{ title }}</h1>
+        </header>
+    </template>
+
+    <script>
+    export default {
+        props: ['title'],
+    };
+    </script>
+
+    <style scoped>
+    header {
+        width: 100%;
+        height: 5rem;
+        background-color: #640032;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    header h1 {
+        color: white;
+        margin: 0;
+    }
+    </style>
+    ```
+1. We use `TheHeader` component in `App.vue`.
+    ```html
+    <!-- App.vue -->
+    <template>
+        <the-header title="RememberMe"></the-header>
+        <stored-resources :resources="storedResources"></stored-resources>
+    </template>
+
+    <script>
+    import StoredResources from './components/learning-resources/StoredResources.vue';
+    import TheHeader from './components/layouts/TheHeader.vue';
+
+    export default {
+        components: {
+            StoredResources,
+            TheHeader,
+        },
+    };
+    </script>
+    ```
+
 ## Adding a Base Button
+1. We create another component `BaseButton` similar to `BaseCard` that can be used any where in the Vue app. 
+1. We can use `v-bind` to bind both `type` and `class` HTML attributes to manipulate the behavior of the element. Note that the `class` is scoped to apply only to the button element itself, so we must pass the name of the `class` when calling it from the parent component.
+1. Besides, we use `slot` to allow developers to send custom content in the button.
+    ```html
+    <!-- src/components/UI/BaseButton.vue -->
+    <template>
+        <button :type="type" :class="mode"><slot></slot></button>
+    </template>
+
+    <script>
+    export default {
+        props: ['type', 'mode'],
+    };
+    </script>
+
+    <style scoped>
+    button {
+        padding: 0.75rem 1.5rem;
+        font-family: inherit;
+        background-color: #3a0061;
+        border: 1px solid #3a0061;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover,
+    button:active {
+        background-color: #270041;
+        border-color: #270041;
+    }
+
+    .flat {
+        background-color: transparent;
+        color: #3a0061;
+        border: none;
+    }
+
+    .flat:hover,
+    .flat:active {
+        background-color: #edd2ff;
+    }
+    </style>
+    ```
+1. Register the component in `main.js`.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import App from './App.vue';
+    import BaseCard from './components/UI/BaseCard.vue';
+    import BaseButton from './components/UI/BaseButton.vue';
+
+    const app = createApp(App);
+    app.component('base-card', BaseCard);
+    app.component('base-button', BaseButton);
+
+    app.mount('#app');
+    ```
+1. Update to use the component in `LearningResources`.
+    ```vue
+    <!-- src/components/learning-resource/LearningResources.vue -->
+    <template>
+        <li>
+            <base-card>
+                <header>
+                    <h3>{{ title }}</h3>
+                    <base-button mode="flat">Delete</base-button>
+                </header>
+                <p>{{ description }}</p>
+                <nav>
+                    <a :href="link" target="_blank">View Resource</a>
+                </nav>
+            </base-card>
+        </li>
+    </template>
+    ```
+
 ## Dynamic Components & Attribute Fallthrough
+1. We then create buttons to either "add" new resoruce or "view" all the stored resource. The components are `AddResource.vue` and `TheResources.vue`. 
+1. We use `BaseCard` component to wrap the buttons and use HTML attribute "fall-through" behavior to use "**click**" event handler on the component.
+1. We then use dynamic component by import components (which don't have globally access and isn't registered in `main.js`) with `is` attribute to change the component. 
+1. We therefore took off `StoredResources` component from `App.vue`. However, this also lose its `data` (the array storing learning resources). The solution will be provided in the next section.
+    ```vue
+    <!-- src/components/learning-resources/TheResource.vue -->
+    <template>
+        <base-card>
+            <!-- Add event handler to component directly -->
+            <base-button @click="setSelectedTab('stored-resources')"
+                >Stored Resources</base-button
+            >
+            <base-button @click="setSelectedTab('add-resources')"
+                >Add Resource</base-button
+            >
+        </base-card>
+        <component :is="selectedTab"></component>
+    </template>
+    ```
+    ```html
+    <script>
+    import StoredResources from './StoredResources.vue';
+    import AddResources from './AddResources.vue';
+    export default {
+        components: {
+            StoredResources,
+            AddResources,
+        },
+        data() {
+            return {
+                selectedTab: 'stored-resources',
+            };
+        },
+        methods: {
+            setSelectedTab(tab) {
+                this.selectedTab = tab;
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Adding & Styling Tabs
 ## Adding a Form
 ## Fetching User Input
