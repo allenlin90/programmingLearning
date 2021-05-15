@@ -6454,12 +6454,609 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Form
 ## v-model & Inputs
+1. To retrieve the data from `input` tags in `form`, we can use either `methods` on the `input` or use `v-model` which binds to the properties in `data` directly, so we don't need to use `v-bind` and methods to handle the input event.
+1. To prevent the submited `form` to refresh the page, we can use `.prevent` on the event listener on the `form` tag directly.
+    ```html
+    <!-- src/components/TheForm.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div class="form-control">
+                <label for="user-name">Your Name</label>
+                <input
+                    id="user-name"
+                    name="user-name"
+                    type="text"
+                    v-model="userName"
+                />
+            </div>
+            <div class="form-control">
+                <label for="age">Your Age (Years)</label>
+                <input id="age" name="age" type="number" />
+            </div>
+            <div class="form-control">
+                <label for="referrer">How did you hear about us?</label>
+                <select id="referrer" name="referrer">
+                    <option value="google">Google</option>
+                    <option value="wom">Word of mouth</option>
+                    <option value="newspaper">Newspaper</option>
+                </select>
+            </div>
+            <div class="form-control">
+                <h2>What are you interested in?</h2>
+                <div>
+                    <input id="interest-news" name="interest" type="checkbox" />
+                    <label for="interest-news">News</label>
+                </div>
+                <div>
+                    <input
+                        id="interest-tutorials"
+                        name="interest"
+                        type="checkbox"
+                    />
+                    <label for="interest-tutorials">Tutorials</label>
+                </div>
+                <div>
+                    <input id="interest-nothing" name="interest" type="checkbox" />
+                    <label for="interest-nothing">Nothing</label>
+                </div>
+            </div>
+            <div class="form-control">
+                <h2>How do you learn?</h2>
+                <div>
+                    <input id="how-video" name="how" type="radio" />
+                    <label for="how-video">Video Courses</label>
+                </div>
+                <div>
+                    <input id="how-blogs" name="how" type="radio" />
+                    <label for="how-blogs">Blogs</label>
+                </div>
+                <div>
+                    <input id="how-other" name="how" type="radio" />
+                    <label for="how-other">Other</label>
+                </div>
+            </div>
+            <div>
+                <button>Save Data</button>
+            </div>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                userName: '',
+            };
+        },
+        methods: {
+            submitForm() {
+                console.log('Username: ' + this.userName);
+                this.userName = '';
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Working with v-model Modifiers and Numbers
+1. Though the lecture introduced that `v-model` can turn value retrieved from `input[type=number]` into `Number`, it is updated at the latest [Vue framework](https://v3.vuejs.org/guide/component-custom-events.html#handling-v-model-modifiers) (2021/05/15) that we need to use `.modifier` such as `v-model.number=""` to turn the input data into certain data type.
+1. Therefore, in the regular case, `v-model` will still retrieve value as `String` type to store in `data`. This is exactly the same as using `refs` to retrive value from the DOM. 
+1. Note that `v-model.number` works with `input[type=text]` that it can also convert value in `String` to `Number`.
+1. There are other [modifiers](https://v3.vuejs.org/guide/component-custom-events.html#handling-v-model-modifiers) such as `.lazy` and `.trim`.
+
 ## v-model and Dropdowns
+1. `v-model` can also work on `select` tag with `option` tags. We can set an initial for it to apply as the value in each option.
+    ```html
+    <!-- TheForm.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div class="form-control">
+                <label for="referrer">How did you hear about us?</label>
+                <select id="referrer" name="referrer" v-model="referrer">
+                    <option value="google">Google</option>
+                    <option value="wom">Word of mouth</option>
+                    <option value="newspaper">Newspaper</option>
+                </select>
+            </div>
+            <div>
+                <button>Save Data</button>
+            </div>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                userName: '',
+                userAge: null,
+                referrer: 'wom',
+            };
+        },
+        methods: {
+            submitForm() {
+                console.log('Referrer: ' + this.referrer);
+                this.referrer = 'wom';
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Using v-model with Checkboxes & Radiobuttons
+1. When working with multiple checkboxs `input[type=checkbox]` sharing the same `name` attribute, we can have them using the same `v-model` and pointing to the same `data`. 
+1. Note that we should have an array to catch the data. Besides, each `input` should have its own unique `value` attribute to let Vue differentiate between them. Each value will be pushed to the array by the order of user clicking on the checkbox.
+1. If there's a single checkbox, it handles with only `Boolean` value. 
+1. For radio buttons `input[type=radio]`, we should also assign unique `value` to each of them, while them can also share the same `data` with `v-model`. The initial value can be set as `null`. 
+    ```html
+    <!-- TheForm.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div class="form-control">
+                <h2>What are you interested in?</h2>
+                <div>
+                    <input
+                        id="interest-news"
+                        name="interest"
+                        type="checkbox"
+                        value="news"
+                        v-model="interest"
+                    />
+                    <label for="interest-news">News</label>
+                </div>
+                <div>
+                    <input
+                        id="interest-tutorials"
+                        name="interest"
+                        type="checkbox"
+                        value="tutorials"
+                        v-model="interest"
+                    />
+                    <label for="interest-tutorials">Tutorials</label>
+                </div>
+                <div>
+                    <input
+                        id="interest-nothing"
+                        name="interest"
+                        type="checkbox"
+                        value="nothing"
+                        v-model="interest"
+                    />
+                    <label for="interest-nothing">Nothing</label>
+                </div>
+            </div>
+            <div class="form-control">
+                <h2>How do you learn?</h2>
+                <div>
+                    <input
+                        id="how-video"
+                        name="how"
+                        type="radio"
+                        value="video"
+                        v-model="how"
+                    />
+                    <label for="how-video">Video Courses</label>
+                </div>
+                <div>
+                    <input
+                        id="how-blogs"
+                        name="how"
+                        type="radio"
+                        value="blogs"
+                        v-model="how"
+                    />
+                    <label for="how-blogs">Blogs</label>
+                </div>
+                <div>
+                    <input
+                        id="how-other"
+                        name="how"
+                        type="radio"
+                        values="other"
+                        v-model="how"
+                    />
+                    <label for="how-other">Other</label>
+                </div>
+            </div>
+            <div class="form-control">
+                <input
+                    type="checkbox"
+                    name="confirm-terms"
+                    id="confirm-terms"
+                    v-model="confirm"
+                />
+                <label for="confirm-terms">Agree to terms of use?</label>
+            </div>
+            <div>
+                <button>Save Data</button>
+            </div>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                userName: '',
+                userAge: null,
+                referrer: 'wom',
+                interest: [], // multiple checkboxes
+                how: null,
+                confirm: false, // single checkbox
+            };
+        },
+        methods: {
+            submitForm() {
+                console.log('Checkboxes');
+                console.log(this.interest);
+                this.interest = [];
+
+                console.log('Radio buttons');
+                console.log(this.how);
+                this.how = null;
+
+                console.log('Confirm?');
+                console.log(this.confirm);
+                this.confirm = false;
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Adding Basic Form Validation
+1. We can use a input event [`blur`](https://www.w3schools.com/jsref/event_onblur.asp) (similar to [`onfocusout`](https://www.w3schools.com/jsref/event_onfocusout.asp)) which trigers when the user leaves an `input` field if it has been focused on.
+1. We can have another state `userNameValidity` in `data` to check whether to show the error message and add `invalid` class to the `input` and `label` tag. 
+    ```html
+    <!-- TheForm.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div
+                class="form-control"
+                :class="{ invalid: userNameValidity === 'invalid' }"
+            >
+                <label for="user-name">Your Name</label>
+                <input
+                    id="user-name"
+                    name="user-name"
+                    type="text"
+                    v-model.trim="userName"
+                    @blur="validateInput"
+                />
+                <p v-if="userNameValidity === 'invalid'">
+                    Please enter a valid name!
+                </p>
+            </div>
+            <div>
+                <button>Save Data</button>
+            </div>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                userNameValidity: 'pending',
+            };
+        },
+        methods: {
+            validateInput() {
+                if (!this.userName) {
+                    this.userNameValidity = 'invalid';
+                } else {
+                    this.userNameValidity = 'valid';
+                }
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    form {
+        margin: 2rem auto;
+        max-width: 40rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        padding: 2rem;
+        background-color: #ffffff;
+    }
+
+    .form-control {
+        margin: 0.5rem 0;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    .form-control.invalid input { /* turn input field red */
+        border-color: red;
+    }
+
+    .form-control.invalid label { /* turn label color red */
+        color: red;
+    }
+
+    h2 {
+        font-size: 1rem;
+        margin: 0.5rem 0;
+    }
+
+    input,
+    select {
+        display: block;
+        width: 100%;
+        font: inherit;
+        margin-top: 0.5rem;
+    }
+
+    select {
+        width: auto;
+    }
+
+    input[type='checkbox'],
+    input[type='radio'] {
+        display: inline-block;
+        width: auto;
+        margin-right: 1rem;
+    }
+
+    input[type='checkbox'] + label,
+    input[type='radio'] + label {
+        font-weight: normal;
+    }
+
+    button {
+        font: inherit;
+        border: 1px solid #0076bb;
+        background-color: #0076bb;
+        color: white;
+        cursor: pointer;
+        padding: 0.75rem 2rem;
+        border-radius: 30px;
+    }
+
+    button:hover,
+    button:active {
+        border-color: #002350;
+        background-color: #002350;
+    }
+    </style>
+    ```
+
 ## Building a Custom Control Component
+1. We create a `RatingControl` component to allow users to select one of the 3 options.
+    ```html
+    <!-- RatingControl.vue -->
+    <template>
+        <ul>
+            <li :class="{ active: activeOption === 'poor' }">
+                <button type="button" @click="activate('poor')">Poor</button>
+            </li>
+            <li :class="{ active: activeOption === 'average' }">
+                <button type="button" @click="activate('average')">Average</button>
+            </li>
+            <li :class="{ active: activeOption === 'great' }">
+                <button type="button" @click="activate('great')">Great</button>
+            </li>
+        </ul>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                activeOption: null,
+            };
+        },
+        methods: {
+            activate(option) {
+                this.activeOption = option;
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    .active {
+        border-color: #a00078;
+    }
+
+    .active button {
+        color: #a00078;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0.5rem 0;
+        padding: 0;
+        display: flex;
+    }
+
+    li {
+        margin: 0 1rem;
+        border: 1px solid #ccc;
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    button {
+        font: inherit;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+    }
+    </style>
+    ```
+1. We then can import and use the component in `TheForm` locally. However, we haven't connected the componet and its data with the `form` in this lecture.
+    ```html
+    <!-- TheForm.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div class="form-control">
+                <rating-control></rating-control>
+            </div>
+            <div>
+                <button>Save Data</button>
+            </div>
+        </form>
+    </template>
+
+    <script>
+    import RatingControl from './RatingControl.vue';
+    export default {
+        components: {
+            RatingControl,
+        },
+    };
+    </script>
+    ```
+
 ## Using v-model on Custom Components
+1. `v-model` is actually a shorthand to use both `v-on:input` and `v-bind:value`. However, we have only learnt to how to use `v-model` on `input` and `select` tags so far. We haven't learnt how to work it on custom components such as `RatingControl.vue` that we just made.
+1. When creating a [custom component](https://v3.vuejs.org/guide/migration/v-model.html#overview), Vue will automatically set a `modelValue` as a `prop` to the component behind the scenes. Besides, the custom component will "**emit**" an event `update:modelValue`.
+1. By the feature, we still can use `v-model` on a custom component, while we need to declare both the `props` and `emits` in the custom components.
+    ```js
+    // RatingControl.vue 
+    export default {
+        props: ['modelValue'],
+        emits: ['update:modelValue'],
+        data() {
+            return {
+                activeOption: null,
+            };
+        },
+        methods: {
+            activate(option) {
+                this.activeOption = option;
+            },
+        },
+    };
+    ```
+1. In `TheForm`, when we are using `v-model`, it's like we are using both `:model-value=""` and `@update:modelValue=""`. 
+    ```html
+    <!-- TheForm.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div class="form-control">
+                <rating-control
+                    v-model="rating"
+                    :model-value="rating"
+                    @update:modelValue=""
+                ></rating-control>
+            </div>
+            <div>
+                <button>Save Data</button>
+            </div>
+        </form>
+    </template>
+
+    <script>
+    import RatingControl from './RatingControl.vue';
+    export default {
+        components: {
+            RatingControl,
+        },
+    };
+    </script>
+    ```
+1. Therefore, in `RatingControl.vue`, we should use `emit` to send the data back. 
+1. However, `data` value from  injected data such as values from `props` or `inject` only receive once and set as initial, it won't be changed though new value is passed in the parent component. 
+1. Therefore, we can use `computed` to work on the dynamic styling instead.
+    ```html
+    <!-- RatingControl.vue -->
+    <template>
+        <ul>
+            <li :class="{ active: activeOption === 'poor' }">
+                <button type="button" @click="activate('poor')">Poor</button>
+            </li>
+            <li :class="{ active: activeOption === 'average' }">
+                <button type="button" @click="activate('average')">Average</button>
+            </li>
+            <li :class="{ active: activeOption === 'great' }">
+                <button type="button" @click="activate('great')">Great</button>
+            </li>
+        </ul>
+    </template>
+
+    <script>
+    export default {
+        props: ['modelValue'],
+        emits: ['update:modelValue'],
+        // data() {
+        //     return {
+        //         activeOption: this.modelValue,
+        //     };
+        // },
+        computed: {
+            activeOption() {
+                return this.modelValue;
+            },
+        },
+        methods: {
+            activate(option) {
+                this.$emit('update:modelValue', option);
+            },
+        },
+    };
+    </script>
+    ```
+1. Note that we reset all the inputs in `submitForm` method in `TheForm.vue`.
+    ```html
+    <!-- TheForm.vue -->
+    <script>
+    import RatingControl from './RatingControl.vue';
+    export default {
+        components: {
+            RatingControl,
+        },
+        data() {
+            return {
+                userName: '',
+                userAge: null,
+                referrer: 'wom',
+                interest: [],
+                how: null,
+                confirm: false,
+                userNameValidity: 'pending',
+                rating: null,
+            };
+        },
+        methods: {
+            submitForm() { // print out and reset all states
+                console.log('Username: ' + this.userName);
+                this.userName = '';
+
+                console.log('Userage: ');
+                console.log(this.userAge + 5);
+                this.userAge = null;
+
+                console.log('Referrer: ' + this.referrer);
+                this.referrer = 'wom';
+
+                console.log('Checkboxes');
+                console.log(this.interest);
+                this.interest = [];
+
+                console.log('Radio buttons');
+                console.log(this.how);
+                this.how = null;
+
+                console.log('Confirm?');
+                console.log(this.confirm);
+                this.confirm = false;
+
+                console.log('Rating');
+                console.log(this.rating);
+                this.rating = null;
+            },
+        },
+    };
+    </script>
+    ```
 
 
 
