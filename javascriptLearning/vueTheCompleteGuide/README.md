@@ -5723,11 +5723,732 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## Adding & Styling Tabs
+1. We restructure `App.vue` and move `storedResources` array from the component to `TheResources`.
+    ```html
+    <!-- App.vue -->
+    <template>
+        <the-header title="RememberMe"></the-header>
+        <the-resources></the-resources>
+    </template>
+
+    <script>
+    import TheHeader from './components/layouts/TheHeader.vue';
+    import TheResources from './components/learning-resources/TheResources.vue';
+
+    export default {
+        components: {
+            TheHeader,
+            TheResources,
+        },
+    };
+    </script>
+
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+        margin: 0;
+    }
+    </style>
+    ```
+1. In `TheResources`, we use `provide` property to send the array to `StoredResources` to render if the user selects it.
+1. Besides, we use `computed` to check which component the user selects and apply class on it.
+    ```vue
+    <!-- src/components/learning-resource -->
+    <template>
+        <base-card>
+            <base-button
+                @click="setSelectedTab('stored-resources')"
+                :mode="storedResButtonMode"
+                >Stored Resources</base-button
+            >
+            <base-button
+                @click="setSelectedTab('add-resource')"
+                :mode="addResButtonMode"
+                >Add Resource</base-button
+            >
+        </base-card>
+        <component :is="selectedTab"></component>
+    </template>
+    ```
+    ```html
+    <!-- src/components/learning-resource -->
+    <script>
+    import StoredResources from './StoredResources.vue';
+    import AddResource from './AddResource.vue';
+
+    export default {
+        components: {
+            StoredResources,
+            AddResource,
+        },
+        data() {
+            return {
+                selectedTab: 'stored-resources',
+                storedResources: [
+                    {
+                        id: 'official-guide',
+                        title: 'Official Guide',
+                        description: 'The official Vue.js documentation',
+                        link: 'https://vuejs.org',
+                    },
+                    {
+                        id: 'google',
+                        title: 'Google',
+                        description: 'Learn to google...',
+                        link: 'https://google.org',
+                    },
+                ],
+            };
+        },
+        provide() {
+            return {
+                resources: this.storedResources,
+            };
+        },
+        computed: {
+            storedResButtonMode() {
+                return this.selectedTab === 'stored-resources' ? null : 'flat';
+            },
+            addResButtonMode() {
+                return this.selectedTab === 'add-resource' ? null : 'flat';
+            },
+        },
+        methods: {
+            setSelectedTab(tab) {
+                this.selectedTab = tab;
+            },
+        },
+    };
+    </script>
+    ```
+1. In `StoredResources`, we use `inject` to catch the data sending from its parent component. From the previous lecture, we just simply change the data from `props` to `inejct`. 
+    ```html
+    <!-- src/components/learning-resources/StoredResources.vue -->
+    <template>
+        <ul>
+            <learning-resource
+                v-for="res in resources"
+                :key="res.id"
+                :title="res.title"
+                :description="res.description"
+                :link="res.link"
+            ></learning-resource>
+        </ul>
+    </template>
+
+    <script>
+    import LearningResource from './LearningResource.vue';
+    export default {
+        inject: ['resources'], // change from props to 'inject' to catch data from 'provide'
+        components: { LearningResource },
+    };
+    </script>
+
+    <style scoped>
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        margin: auto;
+        max-width: 40rem;
+    }
+    </style>
+    ```
+
 ## Adding a Form
+1. We then add a `form` to `AddResource` component to allow users to input new data to the `storedResources` array.
+1. We have several `input` elements wrapped with `div` and use `BaseButton` as the submit button to the form. Note that we can use the `fall-through` feature by passing `type` attribute on the `<button>` directly without sending the `type` as `props` to `BaseButton` component.
+    ```html
+    <!-- AddResource.vue -->
+    <template>
+        <base-card>
+            <form action="">
+                <div class="form-control">
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" />
+                </div>
+                <div class="form-control">
+                    <label for="description">Description</label>
+                    <textarea
+                        name="description"
+                        id="description"
+                        rows="3"
+                    ></textarea>
+                </div>
+                <div class="form-control">
+                    <label for="link">Link</label>
+                    <input type="url" name="link" id="link" />
+                </div>
+                <div>
+                    <base-button type="submit">Add Resource</base-button>
+                </div>
+            </form>
+        </base-card>
+    </template>
+
+    <script>
+    export default {};
+    </script>
+
+    <style scoped>
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    input,
+    textarea {
+        display: block;
+        width: 100%;
+        font: inherit;
+        padding: 0.15rem;
+        border: 1px solid #ccc;
+    }
+
+    input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #3a0061;
+        background-color: #f7ebff;
+    }
+
+    .form-control {
+        margin: 1rem 0;
+    }
+    </style>
+    ```
+1. Therefore, we can just remove `type` from `props` in `BaseButton` component.
+    ```html
+    <!-- src/components/UI/BaseButton.vue -->
+    <template>
+        <button :class="mode">
+            <slot></slot>
+        </button>
+    </template>
+
+    <script>
+    export default {
+        props: ['mode'],
+    };
+    </script>
+
+    <style scoped>
+    button {
+        padding: 0.75rem 1.5rem;
+        font-family: inherit;
+        background-color: #3a0061;
+        border: 1px solid #3a0061;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover,
+    button:active {
+        background-color: #270041;
+        border-color: #270041;
+    }
+
+    .flat {
+        background-color: transparent;
+        color: #3a0061;
+        border: none;
+    }
+
+    .flat:hover,
+    .flat:active {
+        background-color: #edd2ff;
+    }
+    </style>
+    ````
+
 ## Fetching User Input
+1. After setting up the HTML elements, we can work on the event handlers and connects between `TheResources.vue` and `AddResource.vue` component.
+    ```vue
+    <!-- src/components/learning-resources/AddResources.vue -->
+    <template>
+        <base-card>
+            <form @submit.prevent="submitData">
+                <div class="form-control">
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" ref="titleInput" />
+                </div>
+                <div class="form-control">
+                    <label for="description">Description</label>
+                    <textarea
+                        name="description"
+                        id="description"
+                        rows="3"
+                        ref="descInput"
+                    ></textarea>
+                </div>
+                <div class="form-control">
+                    <label for="link">Link</label>
+                    <input type="url" name="link" id="link" ref="linkInput" />
+                </div>
+                <div>
+                    <base-button type="submit">Add Resource</base-button>
+                </div>
+            </form>
+        </base-card>
+    </template>
+    ```
+1. From `TheResources.vue` we can `provide` a method from the component to be used in the other component. We firstly create `addResource` in `methods` which can push new input from the user to the array and send it to child components by using `provide`.
+    ```js
+    // src/components/learning-resources/TheResources.vue
+    import StoredResources from './StoredResources.vue';
+    import AddResource from './AddResource.vue';
+
+    export default {
+        components: {
+            StoredResources,
+            AddResource,
+        },
+        data() {
+            return {
+                selectedTab: 'stored-resources',
+                storedResources: [
+                    {
+                        id: 'official-guide',
+                        title: 'Official Guide',
+                        description: 'The official Vue.js documentation',
+                        link: 'https://vuejs.org',
+                    },
+                    {
+                        id: 'google',
+                        title: 'Google',
+                        description: 'Learn to google...',
+                        link: 'https://google.org',
+                    },
+                ],
+            };
+        },
+        provide() {
+            return {
+                resources: this.storedResources,
+                addResource: this.addResource,
+            };
+        },
+        computed: {
+            storedResButtonMode() {
+                return this.selectedTab === 'stored-resources' ? null : 'flat';
+            },
+            addResButtonMode() {
+                return this.selectedTab === 'add-resource' ? null : 'flat';
+            },
+        },
+        methods: {
+            setSelectedTab(tab) {
+                this.selectedTab = tab;
+            },
+            addResource(title, description, url) {
+                const newResource = {
+                    id: new Date().toISOString(),
+                    title,
+                    description,
+                    link: url,
+                };
+                this.storedResources.unshift(newResource);
+                this.selectedTab = 'stored-resources';
+            },
+        },
+    };
+    ```
+1. In `AddResource.vue`, we use `inject` to catch `addResource` method from `TheResources.vue` and call the method in its own method `submitData` to pass the data back to `TheResources.vue` component.
+    ```js
+    // src/components/learning-resources/AddResources.vue
+    export default {
+        inject: ['addResource'],
+        methods: {
+            submitData() {
+                const enteredTitle = this.$refs.titleInput.value;
+                const enteredDescription = this.$refs.descInput.value;
+                const enteredLink = this.$refs.linkInput.value;
+
+                this.addResource(enteredTitle, enteredDescription, enteredLink);
+            },
+        },
+    };
+    ```
+1. In addition, we can use `keep-alive` tag to wrap the dynamic component in `TheResources.vue` to provide a better user experience that the inserted values won't be removed when switching between components.
+    ```vue
+    <!-- src/components/learning-resources/TheResources.vue -->
+    <template>
+        <base-card>
+            <base-button
+                @click="setSelectedTab('stored-resources')"
+                :mode="storedResButtonMode"
+                >Stored Resources</base-button
+            >
+            <base-button
+                @click="setSelectedTab('add-resource')"
+                :mode="addResButtonMode"
+                >Add Resource</base-button
+            >
+        </base-card>
+        <keep-alive>
+            <component :is="selectedTab"></component>
+        </keep-alive>
+    </template>
+    ```
+
 ## Adding a Modal Dialog
+1. We create another general component `BaseDialog.vue` as `UI` and register it in `main.js`.
+1. In this component, we allow developers to have 3 sections of custom contents, `header`, `main_content` and `actions`, so we need to give `name` to each `slot`. Besides, we give a default header to the `slot`.
+1. Besides, we `emit` the action when the user try to click on the "close" button or on the backdrop (which is the filter-like background) to turn off the `dialog`. Note that in the styling, we have an empty `div` stretching and covering the whole viewport to create a filter-like backdrop.
+    ```html
+    <!-- src/components/UI/BaseDialog.vue -->
+    <template>
+        <div @click="$emit('close')"></div>
+        <dialog open>
+            <header>
+                <slot name="header">
+                    <h2>{{ title }}</h2>
+                </slot>
+            </header>
+            <section>
+                <slot></slot>
+            </section>
+            <menu>
+                <slot name="actions">
+                    <!-- this only shows if devleoper doesn't give any button -->
+                    <base-button @click="$emit('close')">Close</base-button>
+                </slot>
+            </menu>
+        </dialog>
+    </template>
+
+    <script>
+    export default {
+        props: {
+            title: {
+                type: String,
+                required: false,
+            },
+        },
+        emits: ['close'],
+    };
+    </script>
+
+    <style scoped>
+    div {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.75);
+        z-index: 10;
+    }
+
+    dialog {
+        position: fixed;
+        top: 20vh;
+        left: 10%;
+        width: 80%;
+        z-index: 100;
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    header {
+        background-color: #3a0061;
+        color: white;
+        width: 100%;
+        padding: 1rem;
+    }
+
+    header h2 {
+        margin: 0;
+    }
+
+    section {
+        padding: 1rem;
+    }
+
+    menu {
+        padding: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        margin: 0;
+    }
+
+    @media (min-width: 768px) {
+        dialog {
+            left: calc(50% - 20rem);
+            width: 40rem;
+        }
+    }
+    </style>
+    ```
+1. In `AddResource.vue`, we can "**listen**" to the emits.
+    ```vue
+    <!-- src/components/learning-resources/AddResource.vue -->
+    <template>
+        <base-dialog
+            v-if="inputIsInvalid"
+            title="Invalid Input"
+            @close="confirmError"
+        >
+        <!-- handle emitted 'close' event -->
+            <template #default>
+                <p>Unfortunaltely, at least one input value is invalid.</p>
+                <p>
+                    Please check all inputs and make sure you enter at least a few
+                    characters into each input field.
+                </p>
+            </template>
+            <template v-slot:actions>
+                <base-button @click="confirmError">Okay</base-button>
+            </template>
+        </base-dialog>
+        <base-card>
+            <form @submit.prevent="submitData">
+                <div class="form-control">
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" ref="titleInput" />
+                </div>
+                <div class="form-control">
+                    <label for="description">Description</label>
+                    <textarea
+                        name="description"
+                        id="description"
+                        rows="3"
+                        ref="descInput"
+                    ></textarea>
+                </div>
+                <div class="form-control">
+                    <label for="link">Link</label>
+                    <input type="url" name="link" id="link" ref="linkInput" />
+                </div>
+                <div>
+                    <base-button type="submit">Add Resource</base-button>
+                </div>
+            </form>
+        </base-card>
+    </template>
+    ```
+
 ## Deleting Items
+1. To allow users to delete an item from the resource array, we add a new method `removeResource` in `TheResources.vue`. This method takes the `id` of the item object, so we can remove it from the array. This method should be provided to be used in each child component. 
+    ```js
+    // src/components/learning-resources/TheResources.vue
+    import StoredResources from './StoredResources.vue';
+    import AddResource from './AddResource.vue';
+
+    export default {
+        components: {
+            StoredResources,
+            AddResource,
+        },
+        data() {
+            return {
+                selectedTab: 'stored-resources',
+                storedResources: [
+                    {
+                        id: 'official-guide',
+                        title: 'Official Guide',
+                        description: 'The official Vue.js documentation',
+                        link: 'https://vuejs.org',
+                    },
+                    {
+                        id: 'google',
+                        title: 'Google',
+                        description: 'Learn to google...',
+                        link: 'https://google.org',
+                    },
+                ],
+            };
+        },
+        provide() {
+            return {
+                resources: this.storedResources,
+                addResource: this.addResource,
+                deleteResource: this.removeResource,
+            };
+        },
+        computed: {
+            storedResButtonMode() {
+                return this.selectedTab === 'stored-resources' ? null : 'flat';
+            },
+            addResButtonMode() {
+                return this.selectedTab === 'add-resource' ? null : 'flat';
+            },
+        },
+        methods: {
+            setSelectedTab(tab) {
+                this.selectedTab = tab;
+            },
+            addResource(title, description, url) {
+                const newResource = {
+                    id: new Date().toISOString(),
+                    title,
+                    description,
+                    link: url,
+                };
+                this.storedResources.unshift(newResource);
+                this.selectedTab = 'stored-resources';
+            },
+            removeResource(resId) {
+                this.storedResources = this.storedResources.filter(
+                    (res) => res.id !== resId
+                ); // this doesn't work!
+                console.log(this.storedResources.length);
+            },
+        },
+    };
+    ```
+1. Besides, we need to modify `StoredResources.vue` to ensure the component pass `id` as `props` to its child component which is `LearningResources.vue`.
+    ```html
+    <!-- src/components/learning-resources/StoredResource.vue -->
+    <template>
+        <ul>
+            <learning-resource
+                v-for="res in resources"
+                :key="res.id"
+                :id="res.id"
+                :title="res.title"
+                :description="res.description"
+                :link="res.link"
+            ></learning-resource>
+        </ul>
+    </template>
+    ```
+1. In `LearningResource`, we use `inject` to catch the method sending from `TheResources.vue` and triger it when the user clicks on the "delete" button.
+    ```vue
+    <!-- src/components/learning-resources/LearningResource.vue -->
+    <template>
+        <li>
+            <base-card>
+                <header>
+                    <h3>{{ title }}</h3>
+                    <base-button mode="flat" @click="deleteResource(id)"
+                        >Delete</base-button
+                    >
+                </header>
+                <p>{{ description }}</p>
+                <nav>
+                    <a :href="link" target="_blank">View Resource</a>
+                </nav>
+            </base-card>
+        </li>
+    </template>    
+    <script>
+    export default {
+        props: ['id', 'title', 'description', 'link'],
+        inject: ['deleteResource'],
+        methods: {},
+    };
+    </script>
+    ```
+1. However, this approach doesn't work because we are overwriting the data of `this.storedResources` in `TheResources.vue`. 
+1. `Array.filter` method returns a new array which will change the `data` in `TheResources.vue` while the "**provided**" data to child components are still referring to the initial array.
+1. Therefore, we need to modify the array directly rather than assigning a new array to the data. In this case, we can use `splice` to remove an item at a given index in the array.
+    ```js
+    // src/components/learning-resources/TheResources.vue
+    import StoredResources from './StoredResources.vue';
+    import AddResource from './AddResource.vue';
+
+    export default {
+        components: {
+            StoredResources,
+            AddResource,
+        },
+        data() {
+            return {
+                selectedTab: 'stored-resources',
+                storedResources: [
+                    {
+                        id: 'official-guide',
+                        title: 'Official Guide',
+                        description: 'The official Vue.js documentation',
+                        link: 'https://vuejs.org',
+                    },
+                    {
+                        id: 'google',
+                        title: 'Google',
+                        description: 'Learn to google...',
+                        link: 'https://google.org',
+                    },
+                ],
+            };
+        },
+        provide() {
+            return {
+                resources: this.storedResources,
+                addResource: this.addResource,
+                deleteResource: this.removeResource,
+            };
+        },
+        computed: {
+            storedResButtonMode() {
+                return this.selectedTab === 'stored-resources' ? null : 'flat';
+            },
+            addResButtonMode() {
+                return this.selectedTab === 'add-resource' ? null : 'flat';
+            },
+        },
+        methods: {
+            setSelectedTab(tab) {
+                this.selectedTab = tab;
+            },
+            addResource(title, description, url) {
+                const newResource = {
+                    id: new Date().toISOString(),
+                    title,
+                    description,
+                    link: url,
+                };
+                this.storedResources.unshift(newResource);
+                this.selectedTab = 'stored-resources';
+            },
+            removeResource(resId) {
+                const resIndex = this.storedResources.findIndex(res => res.id === resId);
+                this.storedResources.splice(resIndex, 1);
+            },
+        },
+    };
+    ```
+1. The main reason of this issue is that the items rendered on the page are created by other Vue components. Since these componets takes data from `provide` and `inject` rather than `props`, it won't re-render because the data has been sent in the initial stage. Therefore, we have to ensure what data each component is referring to and manipulate on the correct `data`.
+
 ## Adding "Teleport"
+1. We can put the dialog component `BaseDialog.vue` in the outter layer in HTML for semantic purpose. 
+1. For the case, we can use `teleport` tag in `template` and specify the location by using CSS selector. 
+    ```vue
+    <!-- src/components/UI/BaseDialog.vue -->
+    <template>
+        <teleport to="body">
+            <div @click="$emit('close')"></div>
+            <dialog open>
+                <header>
+                    <slot name="header">
+                        <h2>{{ title }}</h2>
+                    </slot>
+                </header>
+                <section>
+                    <slot></slot>
+                </section>
+                <menu>
+                    <slot name="actions">
+                        <base-button @click="$emit('close')">Close</base-button>
+                    </slot>
+                </menu>
+            </dialog>
+        </teleport>
+    </template>
+    ```
 
 
 
