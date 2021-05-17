@@ -7063,14 +7063,457 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 # Sending Http Requests
 ## Starting App & Why we need a Backend
 ## Adding a Backend
+1. The reseaon here is only that we need a backend to work with HTTP requests.
+1. We just start a new project in [Firebase](https://firebase.google.com/). 
+
 ## How to (Not) Send Http Requests
+1. We can use either `axios` or `fetch` API to send HTTP requests to a backend server.
+
 ## Sending a POST Request to Store Data
+1. We can check [Firebase realtime database documentation](https://firebase.google.com/docs/reference/rest/database) for the pattern to call REST API served by firebase.
+1. In this case, we can naming anything after the endpoint to call to Firebase and add it a suffix with `.json`. Firebase will create the data and store in its realtime database.
+1. The part is relatively easy that we just use `fetch` to call the endpoint with POST method and send the data.
+1. Besides, since we don't store the input in the memory locally.
+    ```js
+    // LearningSurvey.vue
+    fetch(
+        'firebase_endpoint/surveys.json',
+        {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: this.enteredName,
+                rating: this.chosenRating,
+            }),
+        }
+    );
+    ```
+
 ## Getting Data (GET Request) & Transforming Response Data
+1. Since we don't have data sending from the parent component, we can take off `props` from the object.
+1. As `fetch` API returns a `Promise`, we can use `.then` to handle the aysnc behavior and update the received data to `data`. 
+1. On the other hand, we can also use `async/await` syntax for async function.
+1. The endpoint send back an object with an unique id as the key property and `name` and `rating` aligned with the id.
+    ```html
+    <!-- UserExperience.vue -->
+    <template>
+        <section>
+            <base-card>
+                <h2>Submitted Experiences</h2>
+                <div>
+                    <base-button @click="loadExperiences"
+                        >Load Submitted Experiences</base-button
+                    >
+                </div>
+                <ul>
+                    <survey-result
+                        v-for="result in results"
+                        :key="result.id"
+                        :name="result.name"
+                        :rating="result.rating"
+                    ></survey-result>
+                </ul>
+            </base-card>
+        </section>
+    </template>
+
+    <script>
+    import SurveyResult from './SurveyResult.vue';
+
+    export default {
+        // props: ['results'],
+        data() {
+            return {
+                results: [],
+            };
+        },
+        components: {
+            SurveyResult,
+        },
+        methods: {
+            loadExperiences() {
+                fetch(
+                    'https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/surveys.json'
+                )
+                    .then((response) => {
+                        if (response.ok) return response.json();
+                    })
+                    .then((data) => {
+                        const results = [];
+                        for (const id in data) {
+                            results.push({
+                                id,
+                                name: data[id].name,
+                                rating: data[id].rating,
+                            });
+                        }
+                        this.results = results;
+                    });
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Loading Data When a Component Mounts
+1. We can use the lifecycle methods as React app does, to call the endpoint and load the data before the elements rendered to the screen. This approach can significantly improve user experience.
+1. In this case, we can simply call the `loadExperiences` method in `mounted`.
+    ```js
+    // UserExperiences.vue
+    import SurveyResult from './SurveyResult.vue';
+
+    export default {
+        // props: ['results'],
+        data() {
+            return {
+                results: [],
+            };
+        },
+        components: {
+            SurveyResult,
+        },
+        methods: {
+            loadExperiences() {
+                fetch(
+                    'https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/surveys.json'
+                )
+                    .then((response) => {
+                        if (response.ok) return response.json();
+                    })
+                    .then((data) => {
+                        const results = [];
+                        console.log(data);
+                        for (const id in data) {
+                            results.push({
+                                id,
+                                name: data[id].name,
+                                rating: data[id].rating,
+                            });
+                        }
+                        this.results = results;
+                    });
+            },
+        },
+        mounted() {
+            this.loadExperiences();
+        },
+    };
+    ```
+
 ## Showing a "Loading..." Message
+1. We can have a new state `isLoading` in `data` and set default as `false`.
+1. When the app starts it runs `loadExperience` and turn the state to `true`.
+1. After it receives data from the endpoint, we can tur nthe state back to `false`.
+1. After configuring the states and methods, we can use `v-if` and `v-else` to decide whether to show the hint message.
+    ```html
+    <!-- UserExperience.vue -->
+    <template>
+        <section>
+            <base-card>
+                <h2>Submitted Experiences</h2>
+                <div>
+                    <base-button @click="loadExperiences"
+                        >Load Submitted Experiences</base-button
+                    >
+                </div>
+                <p v-if="isLoading">Lading...</p>
+                <ul v-else>
+                    <survey-result
+                        v-for="result in results"
+                        :key="result.id"
+                        :name="result.name"
+                        :rating="result.rating"
+                    ></survey-result>
+                </ul>
+            </base-card>
+        </section>
+    </template>
+
+    <script>
+    import SurveyResult from './SurveyResult.vue';
+
+    export default {
+        // props: ['results'],
+        data() {
+            return {
+                results: [],
+                isLoading: false,
+            };
+        },
+        components: {
+            SurveyResult,
+        },
+        methods: {
+            loadExperiences() {
+                this.isLoading = true;
+                fetch(
+                    'https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/surveys.json'
+                )
+                    .then((response) => {
+                        if (response.ok) return response.json();
+                    })
+                    .then((data) => {
+                        this.isLoading = false;
+                        const results = [];
+                        console.log(data);
+                        for (const id in data) {
+                            results.push({
+                                id,
+                                name: data[id].name,
+                                rating: data[id].rating,
+                            });
+                        }
+                        this.results = results;
+                    });
+            },
+        },
+        mounted() {
+            this.loadExperiences();
+        },
+    };
+    </script>
+    ```
+
 ## Handling the "No Data" State
+1. We can add other logical expressions to check whether we have received any data after successfully call the endpoint.
+1. We can check whether `isLoading` is `false` as the fetching process has done and if `results` array has `length` more than 0.
+    ```vue
+    <!-- UserExperience.vue -->
+    <template>
+        <section>
+            <base-card>
+                <h2>Submitted Experiences</h2>
+                <div>
+                    <base-button @click="loadExperiences"
+                        >Load Submitted Experiences</base-button
+                    >
+                </div>
+                <p v-if="isLoading">Lading...</p>
+                <p v-else-if="!isLoading && (!results || !results.length)">
+                    No stored experiences found. Start adding some survey results
+                    first.
+                </p>
+                <ul v-else-if="!isLoading && results && results.length">
+                    <survey-result
+                        v-for="result in results"
+                        :key="result.id"
+                        :name="result.name"
+                        :rating="result.rating"
+                    ></survey-result>
+                </ul>
+            </base-card>
+        </section>
+    </template>
+    ````
+
 ## Handling Technical / Browser-side Errors
+1. We give a new state `error` to check if there's error when calling the endpoint.
+1. We can switch the execution order for `v-if` and `v-else-if` for the desirable results. For example, we firstly check loading is completed, if there's any error on the endpoint call. 
+1. 
+    ```html
+    <!-- UserExperience.vue -->
+    <template>
+        <section>
+            <base-card>
+                <h2>Submitted Experiences</h2>
+                <div>
+                    <base-button @click="loadExperiences"
+                        >Load Submitted Experiences</base-button
+                    >
+                </div>
+                <p v-if="isLoading">Loading...</p>
+                <p v-else-if="!isLoading && error">{{ error }}</p>
+                <p v-else-if="!isLoading && (!results || !results.length)">
+                    No stored experiences found. Start adding some survey results
+                    first.
+                </p>
+                <ul v-else>
+                    <survey-result
+                        v-for="result in results"
+                        :key="result.id"
+                        :name="result.name"
+                        :rating="result.rating"
+                    ></survey-result>
+                </ul>
+            </base-card>
+        </section>
+    </template>
+
+    <script>
+    import SurveyResult from './SurveyResult.vue';
+
+    export default {
+        // props: ['results'],
+        data() {
+            return {
+                results: [],
+                isLoading: false,
+                error: null,
+            };
+        },
+        components: {
+            SurveyResult,
+        },
+        methods: {
+            loadExperiences() {
+                this.isLoading = true;
+                this.error = null;
+                fetch(
+                    'https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/surveys.json'
+                )
+                    .then((response) => {
+                        if (response.ok) return response.json();
+                    })
+                    .then((data) => {
+                        this.isLoading = false;
+                        const results = [];
+                        console.log(data);
+                        for (const id in data) {
+                            results.push({
+                                id,
+                                name: data[id].name,
+                                rating: data[id].rating,
+                            });
+                        }
+                        this.results = results;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.isLoading = false;
+                        this.error =
+                            'Failed to fetch data - please try again later.';
+                    });
+            },
+        },
+        mounted() {
+            this.loadExperiences();
+        },
+    };
+    </script>
+    ```
+
 ## Handling Error Responses
+1. This section is about handling error when calling sending POST request to the endpoint. In some scenarios, the server respond an error with hint as the request maybe invalid or there's something wrong on the server-side.
+1. In this case, we can use `.then` to check if `response` object respond by Firebase endpoint has a `true` `.ok` property. If not, we can `throw new Error()` and use `.catch` to react to the error in JavaScript and render a customized hint to the user.
+    ```html
+    <!-- LearningSurvey.vue -->
+    <template>
+        <section>
+            <base-card>
+                <h2>How was you learning experience?</h2>
+                <form @submit.prevent="submitSurvey">
+                    <div class="form-control">
+                        <label for="name">Your Name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            v-model.trim="enteredName"
+                        />
+                    </div>
+                    <h3>My learning experience was ...</h3>
+                    <div class="form-control">
+                        <input
+                            type="radio"
+                            id="rating-poor"
+                            value="poor"
+                            name="rating"
+                            v-model="chosenRating"
+                        />
+                        <label for="rating-poor">Poor</label>
+                    </div>
+                    <div class="form-control">
+                        <input
+                            type="radio"
+                            id="rating-average"
+                            value="average"
+                            name="rating"
+                            v-model="chosenRating"
+                        />
+                        <label for="rating-average">Average</label>
+                    </div>
+                    <div class="form-control">
+                        <input
+                            type="radio"
+                            id="rating-great"
+                            value="great"
+                            name="rating"
+                            v-model="chosenRating"
+                        />
+                        <label for="rating-great">Great</label>
+                    </div>
+                    <p v-if="invalidInput">
+                        One or more input fields are invalid. Please check your
+                        provided data.
+                    </p>
+                    <p v-if="error">{{ error }}</p>
+                    <div>
+                        <base-button>Submit</base-button>
+                    </div>
+                </form>
+            </base-card>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                enteredName: '',
+                chosenRating: null,
+                invalidInput: false,
+                error: null,
+            };
+        },
+        emits: ['survey-submit'],
+        methods: {
+            submitSurvey() {
+                if (this.enteredName === '' || !this.chosenRating) {
+                    this.invalidInput = true;
+                    return;
+                }
+                this.invalidInput = false;
+
+                // this.$emit('survey-submit', {
+                //     userName: this.enteredName,
+                //     rating: this.chosenRating,
+                // });
+
+                this.error = null;
+                fetch(
+                    'https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/surveys.json',
+                    {
+                        method: 'post',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: this.enteredName,
+                            rating: this.chosenRating,
+                        }),
+                    }
+                )
+                    .then((response) => {
+                        if (response.ok) {
+                            // if...
+                        } else {
+                            throw new Error('Could not save data!');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.error = error.message; // catch from the Error object from .then
+                    });
+
+                this.enteredName = '';
+                this.chosenRating = null;
+            },
+        },
+    };
+    </script>
+    ```
 
 
 
