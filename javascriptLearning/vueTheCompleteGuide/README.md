@@ -7519,28 +7519,1303 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Routing: Building "Multi-Page" Single Page Application
 ## What & Why?
+1. Vue is a SPA (single page application) framework, so when user using the app, all the UI and components are controled by JavaScript and it doesn't change the path on the search bar in the browser. 
+1. Therefore, when we share the URL of the web app, the user will always be directed to the initial page of the app.
+
 ## Routing Setup
+1. To use routing system in Vue, we can install package `vue-router`. In this case, we add a suffix `@next` when install the package `npm install vue-router@next`. 
+1. There are 2 main configuration to setup `vue-router` which are [`history`](https://next.router.vuejs.org/guide/essentials/history-mode.html) and `routes`. 
+1. `history` is to record the path that the user has visited, and it can be 2 modes `hash` and `HTML5`. We use `createWebHistory` which is based on `HTML5` in this case.
+1. `routes` are the paths that we want to register in the case. 
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from 'vue-router'; // import vue-router
+
+    import App from './App.vue';
+
+    const router = createRouter({ // register behavior and configure startup
+        history: createWebHistory(),
+        routes: [],
+    });
+
+    const app = createApp(App)
+
+    app.mount('#app');
+    ```
+
 ## Registering & Rendering Routes
+1. We can register the components to render with the route. Therefore, we import the component to `main.js` directly.
+1. After registeration, we can use `app.use` to register router to the Vue app. This concept is similar to use `Express` framework in NodeJS.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    import App from './App.vue';
+    import TeamsList from './components/teams/TeamsList.vue';
+    import UsersList from './components/users/UsersList.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/teams', component: TeamsList }, // our-domain.com/teams => TeamsList
+            { path: '/users', component: UsersList },
+        ],
+    });
+
+    const app = createApp(App);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+1. After registering the components in `main.js`, we can remove component in `App.vue` as the rendering mechanism will be handled by `vue-router` in `main.js`. 
+1. Besides, we need to add `router-view` tag in the template.
+1. Note that the buttons on the top navigation doesn't work yet.
+    ```html
+    <!-- App.vue -->
+    <template>
+        <!-- <the-navigation @set-page="setActivePage"></the-navigation> -->
+        <the-navigation></the-navigation>
+        <main>
+            <!-- <component :is="activePage"></component> -->
+            <router-view></router-view>
+        </main>
+    </template>
+
+    <script>
+    // import TeamsList from './components/teams/TeamsList.vue';
+    // import UsersList from './components/users/UsersList.vue';
+    import TheNavigation from './components/nav/TheNavigation.vue';
+
+    export default {
+        components: {
+            TheNavigation,
+            // TeamsList,
+            // UsersList,
+        },
+        data() {
+            return {
+                activePage: 'teams-list',
+                teams: [
+                    { id: 't1', name: 'Frontend Engineers', members: ['u1', 'u2'] },
+                    {
+                        id: 't2',
+                        name: 'Backend Engineers',
+                        members: ['u1', 'u2', 'u3'],
+                    },
+                    { id: 't3', name: 'Client Consulting', members: ['u4', 'u5'] },
+                ],
+                users: [
+                    { id: 'u1', fullName: 'Max Schwarz', role: 'Engineer' },
+                    { id: 'u2', fullName: 'Praveen Kumar', role: 'Engineer' },
+                    { id: 'u3', fullName: 'Julie Jones', role: 'Engineer' },
+                    { id: 'u4', fullName: 'Alex Blackfield', role: 'Consultant' },
+                    { id: 'u5', fullName: 'Marie Smith', role: 'Consultant' },
+                ],
+            };
+        },
+        provide() {
+            return {
+                teams: this.teams,
+                users: this.users,
+            };
+        },
+        /*
+        methods: {
+            setActivePage(page) {
+                this.activePage = page;
+            },
+        },
+        */
+    };
+    </script>
+    ```
+
 ## Navigating with router-link
+1. We then change the link from `button` tags to `router-link` which is `vue-router` specific and creates an anchor tag `<a>` behind the scenes.
+1. Since we aren't using `button` tags and to `emit` data from the component, we can simply remove the `script` section from the component.
+1. As the links are changed to anchor tags `<a>`, we need to modify the CSS styling.
+    ```html
+    <!-- src/components/nav/TheNavigation.vue -->
+    <template>
+        <header>
+            <nav>
+                <ul>
+                    <li>
+                        <!-- <button @click="setActivePage('teams-list')">Teams</button> -->
+                        <router-link to="/teams">Teams</router-link>
+                    </li>
+                    <li>
+                        <!-- <button @click="setActivePage('users-list')">Users</button> -->
+                        <router-link to="/users">Users</router-link>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+    </template>
+
+    <script>
+    export default {
+        emits: ['set-page'],
+        // methods: {
+        //   setActivePage(page) {
+        //     this.$emit('set-page', page);
+        //   },
+        // },
+    };
+    </script>
+
+    <style scoped>
+    header {
+        width: 100%;
+        height: 5rem;
+        background-color: #11005c;
+    }
+
+    nav {
+        height: 100%;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    li {
+        margin: 0 2rem;
+    }
+
+    a {
+        /* font: inherit; */
+        text-decoration: none;
+        background: transparent;
+        border: 1px solid transparent;
+        cursor: pointer;
+        color: white;
+        padding: 0.5rem 1.5rem;
+        display: inline-block;
+    }
+
+    a:hover,
+    a:active {
+        color: #f1a80a;
+        border-color: #f1a80a;
+        background-color: #1a037e;
+    }
+    </style>
+    ```
+1. After rendering the elements on the page, we can notice that the selected anchor tag will have `vue-router` classes added automatically.
+1. We therefore can use such feature to style the element when a link is selected.
+
 ## Styling Active Links
+1. The selected anchor tag will add 2 classes [`router-link-exact-active` and `router-link-active`](https://router.vuejs.org/api/#v-slot-api-3-1-0). The main difference between those are that if we have nested `link` tags, all the related elements will be added with `router-link-active`, while the `link` that the user links to exactly (which is the current path) will be added with `router-link-exact-active`.
+1. Therefore, we can just style the anchor tag that has such classes to apply specific styling when it's selected.
+    ```css
+    /* src/components/nav/TheNavigation.vue */
+    header {
+        width: 100%;
+        height: 5rem;
+        background-color: #11005c;
+    }
+
+    nav {
+        height: 100%;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    li {
+        margin: 0 2rem;
+    }
+
+    a {
+        /* font: inherit; */
+        text-decoration: none;
+        background: transparent;
+        border: 1px solid transparent;
+        cursor: pointer;
+        color: white;
+        padding: 0.5rem 1.5rem;
+        display: inline-block;
+    }
+
+    a:hover,
+    a:active,
+    a.router-link-active {
+        color: #f1a80a;
+        border-color: #f1a80a;
+        background-color: #1a037e;
+    }
+    ```
+1. In addition, both `router-link-active` and `router-link-exact-active` are default classes created by `vue-router`.
+1. We can change the name for the class in `main.js` when setting up and configuring `vue-router`. 
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    import App from './App.vue';
+    import TeamsList from './components/teams/TeamsList.vue';
+    import UsersList from './components/users/UsersList.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/teams', component: TeamsList }, // our-domain.com/teams => TeamsList
+            { path: '/users', component: UsersList },
+        ],
+        linkActiveClass: 'active', // change default from 'router-link-active'
+        linkExactActiveClass: 'exact-active' // change default from 'router-link-exact-active'
+    });
+
+    const app = createApp(App);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+
 ## Programmatic Navigation
+1. In some cases, we'd like to redirect the user to the other path after finishing certain tasks. For example, after a user finishes registration or adding new data, the app can direct the user to the other view to check the results.
+1. We can use [`programmatic navigation`](https://router.vuejs.org/guide/essentials/navigation.html#programmatic-navigation) to redirect the user to certain route that is registered in `vue-router`.
+1. Besides, there are other [router methods](https://router.vuejs.org/api/#router-instance-methods) such as `this.$router.forward()` and `this.$router.back()`.
+    ```html
+    <!-- src/components/users/UserList.vue -->
+    <template>
+        <!-- add a button to redirect the user as example -->
+        <button @click="confirmInput">Confirm</button>
+        <ul>
+            <user-item
+                v-for="user in users"
+                :key="user.id"
+                :name="user.fullName"
+                :role="user.role"
+            ></user-item>
+        </ul>
+    </template>
+
+    <script>
+    import UserItem from './UserItem.vue';
+
+    export default {
+        components: {
+            UserItem,
+        },
+        inject: ['users'],
+        methods: {
+            confirmInput() {
+                this.$router.push('/teams'); // direct to /teams route
+                this.$router.forward(); // go next page 
+                this.$router.back(); // go last page
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    ul {
+        list-style: none;
+        margin: 2rem auto;
+        max-width: 20rem;
+        padding: 0;
+    }
+    </style>
+    ```
+
 ## Passing Data with Route Params (Dynamic Segments)
+1. In routes, we can set parameters similar to the system in `Express` as using [dynamic route segments or route matching](https://router.vuejs.org/guide/essentials/dynamic-matching.html#dynamic-route-matching).
+1. Under the same main route, we can use a column to sepecify the parameters that we want to pass to the route and the component we want to render on the route.
+1. Note that these dynamic route should be places as the last before any static route. Otherwise, the sub-route can be considered as a dynamic parameter when Vue checking the route.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    import App from './App.vue';
+    import TeamsList from './components/teams/TeamsList.vue';
+    import UsersList from './components/users/UsersList.vue';
+    import TeamMembers from './components/teams/TeamMembers.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/teams', component: TeamsList }, 
+            { path: '/users', component: UsersList },
+            { path: '/teams/new' }, // this route should be placed before dynamic route or 'new' will be considered as a 'teamId'
+            { path: '/teams/:teamId', component: TeamMembers }, 
+        ],
+        linkActiveClass: 'active', 
+        linkExactActiveClass: 'exact-active'
+    });
+
+    const app = createApp(App);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+1. In this case, we can "inject" the data from `App.vue` for `users` and `teams`.
+1. We then use Vue lifecycle method `created` to prepare the `data` before the App is rendered to the screen.
+1. For dynamic routing, we can use a reserved property `$route` (not `$router`!) to retrieve the parameters. This property basically gives the value in the URL. Other properties such as `query`, `hash`, `path`, and `href` are also stored in `this.$route`.
+1. After retrieving the `teamId`, we can use `.find` to match items (team and user) from the "injected data" to store in the `data` of the component.
+1. Therefore, after the components rendered on the screen, all the data has been ready and show elements according to the given parameter.
+    ```html
+    <!-- src/components/teams/TeamMembers.vue -->
+    <template>
+        <section>
+            <h2>{{ teamName }}</h2>
+            <ul>
+                <user-item
+                    v-for="member in members"
+                    :key="member.id"
+                    :name="member.fullName"
+                    :role="member.role"
+                ></user-item>
+            </ul>
+        </section>
+    </template>
+
+    <script>
+    import UserItem from '../users/UserItem.vue';
+
+    export default {
+        inject: ['users', 'teams'],
+        components: {
+            UserItem,
+        },
+        data() {
+            return {
+                teamName: '',
+                members: [],
+            };
+        },
+        created() {
+            const teamId = this.$route.params.teamId;
+            const selectedTeam = this.teams.find((team) => team.id === teamId);
+            const members = selectedTeam.members;
+            const selectedMembers = [];
+            for (const member of members) {
+                const selectedUser = this.users.find((user) => user.id === member);
+                selectedMembers.push(selectedUser);
+            }
+            this.members = selectedMembers;
+            this.teamName = selectedTeam.name;
+        },
+    };
+    </script>
+
+    <style scoped>
+    section {
+        margin: 2rem auto;
+        max-width: 40rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    h2 {
+        margin: 0.5rem 0;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    </style>
+    ```
+
 ## Navigation & Dynamic Paths
-## A Vue Bug
+1. In `TeamsItem.vue`, we can replace the `<a>` with `router-link` tag. 
+1. The `to` property can be bound as other HTML attributes that it can be bound to a variable by Vue.
+1. In this case, we'd like to redirect the user to a list of members when the user selects one of the listed teams.
+1. Therefore, we need the `teamId` passed from the parent component, which is `TeamsList.vue`. 
+    ```html
+    <!-- src/components/teams/TeamsList.vue -->
+    <!-- passing team id  -->
+    <template>
+        <ul>
+            <teams-item
+                v-for="team in teams"
+                :key="team.id"
+                :id="team.id"
+                :name="team.name"
+                :member-count="team.members.length"
+            ></teams-item>
+        </ul>
+    </template>
+    ```
+    ```html
+    <!-- src/components/teams/TeamsItem.vue -->
+    <template>
+        <li>
+            <h3>{{ name }}</h3>
+            <div class="team-members">{{ memberCount }} Members</div>
+            <router-link :to="teamMembersLink">View Members</router-link>
+            <!-- <a href="#">View Members</a> -->
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: ['id', 'name', 'memberCount'],
+        computed: {
+            teamMembersLink() {
+                return '/teams/' + this.id;
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Updating Params Data with Watchers
+1. If the user is on a page that using dynamic paramter, it doesn't work directly if we use `router-link` and point to the same route with the other parameter. For example, if we are on `/teams/t1` and would like to navigate to `/teams/t2` which both are handled by `teams/:teamId`.
+1. However, though the components and elements rendering on the screen doesn't change, the route in the browser search bar **DOES** change.
+1. This is a designed behavior of `vue-router` that it does change the route on the browser search bar but doesn't re-build or re-render the components on the screen.
+1. In addition, the reserved property `this.$route` will always be updated when the route changes.
+1. Therefore, we can use "watcher" with `watch` to keep listening to `this.$route` to check if it is changed.
+1. However, this approach has a bug that when it changes to other route, it returns an error. It's not sure whether it's coming from Vue3 or `vue-router`. 
+1. Nevertheless, we can use another approach by passing the id as `props` to the component which allows the component to be resuable at the other route or project.
+    ```js
+    // TeamMembers.vue
+    import UserItem from '../users/UserItem.vue';
+
+    export default {
+        inject: ['users', 'teams'],
+        components: {
+            UserItem,
+        },
+        data() {
+            return {
+                teamName: '',
+                members: [],
+            };
+        },
+        methods: {
+            loadTeamMembers(route) {
+                const teamId = route.params.teamId;
+                const selectedTeam = this.teams.find((team) => team.id === teamId);
+                const members = selectedTeam.members;
+                const selectedMembers = [];
+                for (const member of members) {
+                    const selectedUser = this.users.find(
+                        (user) => user.id === member
+                    );
+                    selectedMembers.push(selectedUser);
+                }
+                this.members = selectedMembers;
+                this.teamName = selectedTeam.name;
+            },
+        },
+        created() {
+            this.loadTeamMembers(this.$route);
+        },
+        watch: { // this cause an error 
+            $route(newRoute) {
+                this.loadTeamMembers(newRoute);
+            },
+        },
+    };
+    ```
+
 ## Passing Params as Props
+1. We can pass the parameter as `props` to a component by configuring it in `main.js`. This prevents the issue as using `watch` to listen to `$route` changes.
+1. In `TeamMembers.vue`, we can set `teamId` as `props` and use it as argument passing to methods. Besides, unifyin the source of data (as all sending from `props`) would be eaiser to manage than have different source of data. 
+    ```js
+    // src/components/teams/TeamMembers.vue
+    import UserItem from '../users/UserItem.vue';
+
+    export default {
+        inject: ['users', 'teams'],
+        props: ['teamId'],
+        components: {
+            UserItem,
+        },
+        data() {
+            return {
+                teamName: '',
+                members: [],
+            };
+        },
+        methods: {
+            loadTeamMembers(teamId) {
+                const selectedTeam = this.teams.find((team) => team.id === teamId);
+                const members = selectedTeam.members;
+                const selectedMembers = [];
+                for (const member of members) {
+                    const selectedUser = this.users.find(
+                        (user) => user.id === member
+                    );
+                    selectedMembers.push(selectedUser);
+                }
+                this.members = selectedMembers;
+                this.teamName = selectedTeam.name;
+            },
+        },
+        created() {
+            this.loadTeamMembers(this.teamId);
+        },
+        watch: {
+            teamId(newId) {
+                this.loadTeamMembers(newId);
+            },
+        },
+    };
+    ```
+1. In `main.js`
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    import App from './App.vue';
+    import TeamsList from './components/teams/TeamsList.vue';
+    import UsersList from './components/users/UsersList.vue';
+    import TeamMembers from './components/teams/TeamMembers.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/teams', component: TeamsList }, 
+            { path: '/users', component: UsersList },
+            // pass teamId to TeamMembers component as props
+            { path: '/teams/:teamId', component: TeamMembers, props: true },
+        ],
+        linkActiveClass: 'active', 
+    });
+
+    const app = createApp(App);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+
 ## Redirecting & "Catch All" Routes
+1. There are 3 ways to work around and redirect users according to the path. 
+1. When configuring `createRouter` we can 
+    1. Render the same component as a certain route.
+    1. Use `redirect` and set the route to direct to as the key.
+    1. Use `alias` property on a route and show the same component when the user visits the alias route.
+1. The main difference between `redirect` and `alias` is that redirect actually changes the URL in the browser search bar, while `alias` just rendering the same component without changing the URL. 
+1. Besides, we can use a [catch all route](https://next.router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes) that handles the scenario that a user visits an un-existing route. 
+1. Note that we could simply place an asterisk `*` rather than giving any params in previous verions. In new version, we must set a parameter with a custom regex. In this case, we use `.*` which simply means any character `.` that can be repeated at 0 or more times `*`.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    import App from './App.vue';
+    import TeamsList from './components/teams/TeamsList.vue';
+    import UsersList from './components/users/UsersList.vue';
+    import TeamMembers from './components/teams/TeamMembers.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/teams' }, // redirect users to /teams
+            { path: '/teams', component: TeamsList, alias: '/', }, // show TeamsList component without changing URL
+            { path: '/users', component: UsersList },
+            { path: '/teams/:teamId', component: TeamMembers, props: true },
+            { path: '/:notFound(.*)', redirect: '/' }, // catch all unset routes
+        ],
+        linkActiveClass: 'active',
+    });
+
+    const app = createApp(App);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+1. We can either redirect the user to a certain route or create a new component to show that the path isn't available. We create a new component `NotFound.vue` when catching the unset routes.
+1. Note that the "**catch all**" should be set as the last item in the array to prevent catch other set routes by default. 
+    ```vue
+    <!-- src/components/nav/NotFound.vue -->
+    <template>
+        <h2>
+            Page not found! Maybe view our
+            <router-link to="/teams">Teams</router-link>?
+        </h2>
+    </template>
+    ```
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    import App from './App.vue';
+    import TeamsList from './components/teams/TeamsList.vue';
+    import UsersList from './components/users/UsersList.vue';
+    import TeamMembers from './components/teams/TeamMembers.vue';
+    import notFound from './components/nav/NotFound.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/teams' },
+            { path: '/teams', component: TeamsList, alias: '/', }, // our-domain.com/teams => TeamsList
+            { path: '/users', component: UsersList },
+            { path: '/teams/:teamId', component: TeamMembers, props: true, }, // pass params as props
+            { path: '/:notFound(.*)', component: notFound, },
+        ],
+        linkActiveClass: 'active', // change default from 'router-link-active'
+    });
+
+    const app = createApp(App);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+
 ## Using Nested Routes
+1. In some cases, we'd like to have a [router nested](https://router.vuejs.org/guide/essentials/nested-routes.html) in the other router. 
+1. In this case, we can show the list of memebers when the user selects one of the teams, while Vue app just show the list on the same page without redirect or rendering only the appointed component.
+1. Thus, we modify `/teams/:teamId` path and nest it as one of `children` in `/teams`. By nesting the router, it's not a standalone route registered in the root `App.vue`.
+1. Therefore, We will see nothing changes when we click on any of the teams in the list, while the URL in the browser search bar is changed by the router.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    import App from './App.vue';
+    import TeamsList from './components/teams/TeamsList.vue';
+    import UsersList from './components/users/UsersList.vue';
+    import TeamMembers from './components/teams/TeamMembers.vue';
+    import notFound from './components/nav/NotFound.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/teams' },
+            {
+                path: '/teams',
+                component: TeamsList,
+                children: [ // nest :teamId as a child 
+                    { path: ':teamId', component: TeamMembers, props: true, }, 
+                ],
+            }, 
+            { path: '/users', component: UsersList },
+            { path: '/:notFound(.*)*', name: 'not-found', component: notFound, },
+        ],
+        linkActiveClass: 'active', 
+    });
+
+    const app = createApp(App);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+1. Since the `:teamId` route is now nested in `/teams`, we need to modify the component rendered when users visit `/teams` which is `TeamsList.vue`.
+    ```vue
+    <!-- TeamsList.vue -->
+    <template>
+        <!-- add router-view to render TeamsItem.vue -->
+        <router-view></router-view>
+        <ul>
+            <teams-item
+                v-for="team in teams"
+                :key="team.id"
+                :id="team.id"
+                :name="team.name"
+                :member-count="team.members.length"
+            ></teams-item>
+        </ul>
+    </template>
+    ```
+1. Note that the navigation on the top is now `router-link-active` rather than `router-link-exact-active`. We can check [Styling Active Links](#Styling-Active-Links) to check the difference.
+
 ## More Fun with Named Routes & Location Objects
+1. We can have multiple layers of routes by nesting a router inside another route.
+1. However, using multiple layers would have another issue that we have to configure the methods in each component to give dynamic routing setup for `:to` attribute with `router-link` to connect each route and components.
+1. We can pass an object and give a property `path` to set the destination pointing to. 
+1. However, using only `path` isn't different from giving a string for path on `:to`. We can use other properties, such as `name` to [name routes](https://router.vuejs.org/guide/essentials/named-routes.html#named-routes) and [`params`](https://router.vuejs.org/guide/essentials/named-routes.html#named-routes) to pass parameters.
+1. The main benefit of using `name` to name routes is that we may change the paths and components to render on a specific route. By using `name`, we can have an alias pointing to the route, so it can change dynamically if we configure the registered route.
+    ```html
+    <!-- TeamsItem.vue -->
+    <template>
+        <li>
+            <h3>{{ name }}</h3>
+            <div class="team-members">{{ memberCount }} Members</div>
+            <router-link :to="teamMembersLink">View Members</router-link>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: ['id', 'name', 'memberCount'],
+        computed: {
+            teamMembersLink() {
+                // return '/teams/' + this.id;
+                return {
+                    name: 'team-members', // this gives path according to 'team-members'
+                    params: {
+                        teamId: this.id,
+                    },
+                    // path: '/teams' + this.id,
+                };
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Using Query Params
+1. When working with `router-link`, we can also pass query string as the params after the route in the URL. 
+1. We can simply have a `query` property in the object passing to `:to` attribute in `router-link`.
+    ```js
+    // TeamsItem.vue
+    export default {
+        props: ['id', 'name', 'memberCount'],
+        computed: {
+            teamMembersLink() {
+                // return '/teams/' + this.id;
+                return {
+                    name: 'team-members', // this gives path according to 'team-members'
+                    params: {
+                        teamId: this.id,
+                    },
+                    query: {
+                        sort: 'asc',
+                    }
+                };
+            },
+        },
+    };
+    ```
+1. In `TeamMembers.vue`, we can use `this.$route.query` to access the query string passing from the URL.
+    ```js
+    // TeamMembers.vue
+    import UserItem from '../users/UserItem.vue';
+
+    export default {
+        inject: ['users', 'teams'],
+        props: ['teamId'],
+        components: {
+            UserItem,
+        },
+        data() {
+            return {
+                teamName: '',
+                members: [],
+            };
+        },
+        methods: {
+            loadTeamMembers(teamId) {
+                const selectedTeam = this.teams.find((team) => team.id === teamId);
+                const members = selectedTeam.members;
+                const selectedMembers = [];
+                for (const member of members) {
+                    const selectedUser = this.users.find(
+                        (user) => user.id === member
+                    );
+                    selectedMembers.push(selectedUser);
+                }
+                this.members = selectedMembers;
+                this.teamName = selectedTeam.name;
+            },
+        },
+        created() {
+            this.loadTeamMembers(this.teamId);
+            // check query strings
+            console.log(this.$route.query);
+        },
+        watch: {
+            teamId(newId) {
+                this.loadTeamMembers(newId);
+            },
+        },
+    };
+    ```
+
 ## Rendering Multiple Routers with Named Router Views
+1. We can set up multiple `router-view` in a component on [named routes](https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views). Each `router-view` works similar to `slot` tag that we can have a unamed tag as the default one, and multiple named one with attribute `name`. 
+1. For example, we can add a footer when users visit either `teams` or `users`. 
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <the-navigation></the-navigation>
+        <main>
+            <router-view></router-view>
+        </main>
+        <footer>
+            <!-- router-view for footer -->
+            <router-view name="footer"></router-view>
+        </footer>
+    </template>
+    ```
+1. When configuring route, we can use plural `components` as property rather than singular `component`.
+    ```js
+    // main.js
+    import TeamsFooter from './components/teams/TeamsFooter.vue';
+    import UsersFooter from './components/users/UsersFooter.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/teams' },
+            {
+                name: 'teams',
+                path: '/teams',
+                components: { // use multiple components
+                    default: TeamsList,
+                    footer: TeamsFooter,
+                },
+                children: [
+                    { name: 'team-members', path: ':teamId', component: TeamMembers, props: true, }, 
+                ],
+            },
+            {
+                path: '/users',
+                components: {
+                    default: UsersList,
+                    footer: UsersFooter,
+                }
+            },
+            { path: '/:notFound(.*)*', name: 'not-found', component: notFound, },
+        ],
+        linkActiveClass: 'active', 
+    });
+
+    const app = createApp(App);
+
+    app.use(router);
+    ```
+
 ## Controlling Scroll Behavior
+1. If some scenarios, we'd like to navigate the position of the user on a view. For example, when a user goes to another view and clicks backward to get back to the last page, we'd like to return to the position that the user used to read. 
+1. In the `router`, can set `scrollBehavior` which is a method takes 3 arguments, `to`, `from`, and `savedPosition`.
+1. `to` and `from` are similar to accessing `this.$route` to get the meta data when browsing a page. Each of them stores the data of where the user visited. 
+1. `savedPosition` is an object that has `top` and `left` which represents the position of the user on the page. 
+1. When the user firstly visit a route, `savedPosition` is `null` because the user hasn't been to anywhere. 
+1. If the user navigates to other route, this property will store the "**position**" that the user was at and `from` will store the `path`. 
+1. Therefore, we can use this behavior to setup the initial position when the user visits a route, such as on the top of the page. 
+    ```js
+    // main.js
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/teams' },
+            {
+                name: 'teams',
+                path: '/teams',
+                components: {
+                    default: TeamsList,
+                    footer: TeamsFooter,
+                },
+                children: [
+                    {
+                        name: 'team-members',
+                        path: ':teamId',
+                        component: TeamMembers,
+                        props: true,
+                    },
+                ],
+            }, 
+            {
+                path: '/users',
+                components: {
+                    default: UsersList,
+                    footer: UsersFooter,
+                }
+            },
+            { path: '/:notFound(.*)*', name: 'not-found', component: notFound, },
+        ],
+        linkActiveClass: 'active',
+        scrollBehavior(to, from, savedPosition) { // set the position when users visit a route
+            if (savedPosition) return savedPosition;
+            return {
+                left: 0,
+                top: 0,
+            }
+        },
+    });
+    ```
+
 ## Introducing Navigation Guards
+1. This navigation guards can run code when the route changes. This can be useful to check if the user is authenticated or authorized or check unsaved data before the user navigates away. 
+1. For example, on the `router` in `main.js`, we can check before navigating users to a route by using `router.beforeEach()`. 
+1. The method takes a function as argument, which has 3 arguments, `to`, `from`, and `next`. We can setup conditions here as the middleware to ensure the condition fits to certain requirements (such as authentication) before navigating the user to the route.
+1. Note we can pass Boolean `true` or `false` to `next()` to either allow or block the user from accessing the route. Besides, `next` takes `true` by default if we don't pass any arguments to it. 
+1. In addition, we can redirect the user to certain path by giving `path`, `name`, and `params` that is similar to configure a named nested route when registering `router-link`. 
+    ```js
+    // main.js
+    const router = createRouter({
+        // router setup
+    });
+
+    router.beforeEach(function (to, from, next) {
+        console.log('Global beforeEach');
+        console.log(to, from);
+        if (to.name === 'team-members') {
+            next();
+        } else {
+            // this keeps navigating the user to /teams/t2
+            next({ name: 'team-members', params: { teamId: 't2', }, }); 
+        }
+        // next();
+    });
+    ```
+1. However, in this case, we just add the middleware and simply use `next()` to bypass it.
+
 ## Diving Deeper Into Navigation Guards
+1. In the previous section, we set `beforeEach` globally that it works on every route in the App. However, we can actaully register navigation guards on a single route. 
+1. For example, for `users`, we can add `beforeEnter` on this single route to execute code before entering the route.
+    ```js
+    // main.js 
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/teams' },
+            {
+                name: 'teams',
+                path: '/teams',
+                components: {
+                    default: TeamsList,
+                    footer: TeamsFooter,
+                },
+                children: [
+                    {
+                        name: 'team-members',
+                        path: ':teamId',
+                        component: TeamMembers,
+                        props: true, 
+                    },
+                ],
+            },
+            {
+                path: '/users',
+                components: {
+                    default: UsersList,
+                    footer: UsersFooter,
+                },
+                beforeEnter(to, from, next) { // beforeEnter navigation guard
+                    console.log('users beforeEnter');
+                    console.log(to, from);
+                    next();
+                }
+            },
+            { path: '/:notFound(.*)*', name: 'not-found', component: notFound, },
+        ],
+    });
+    ```
+1. We can not only add the navigation guard methods in root level in `main.js` but also in the component directly, which are [in-component guards](https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guards).
+1. The execution order is as the following
+    1. [Global guards](https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards) registered on `router` object in `main.js`.
+    1. [Pre-route guard](https://router.vuejs.org/guide/advanced/navigation-guards.html#per-route-guard) registered on specific route in `main.js`.
+    1. [In-component guards](https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guards) registered in a Vue component directly according to lifecycle.
+        1. `beforeRouteEnter`
+        1. `beforeRouteUpdate`
+        1. `beforeRouteLeave`
+1. In this case, we update `UserList.vue` with `beforeRouteEnter`. We can notice the execution order is from "global" and "pre-route" to "in-component".
+    <img src="images/181-navigation_guard_execution_order.png">
+1. In addition, we can use `beforeRouteUpdate` as the lifecycle method similar to `created` and `watch` to decide the data to render on the screen. 
+1. However, using `props` and Vue lifecycle methods are still more flexible than using route navigation guards in this case.
+    ```js
+    // main.js
+    import UserItem from '../users/UserItem.vue';
+
+    export default {
+        inject: ['users', 'teams'],
+        props: ['teamId'],
+        components: {
+            UserItem,
+        },
+        data() {
+            return {
+                teamName: '',
+                members: [],
+            };
+        },
+        methods: {
+            loadTeamMembers(teamId) {
+                const selectedTeam = this.teams.find((team) => team.id === teamId);
+                const members = selectedTeam.members;
+                const selectedMembers = [];
+                for (const member of members) {
+                    const selectedUser = this.users.find(
+                        (user) => user.id === member
+                    );
+                    selectedMembers.push(selectedUser);
+                }
+                this.members = selectedMembers;
+                this.teamName = selectedTeam.name;
+            },
+        },
+        created() {
+            this.loadTeamMembers(this.teamId);
+            console.log(this.$route.query);
+        },
+        beforeRouteUpdate(to, from, next) { // execute before elements rendered on the screen
+            console.log('TeamMembers Cmp beforeRouteUpdate');
+            console.log(to, from);
+            // this.loadTeamMembers(to.params.teamId);
+            next();
+        },
+        watch: {
+            teamId(newId) {
+                this.loadTeamMembers(newId);
+            },
+        },
+    };
+    ```
+
 ## The Global "afterEach" Guard
+1. Global `afterEach` is similar to `beforeEach` but only executes after the user changes and "leaves" the route. Therefore, this method can't affect to the navigation directly. 
+1. This can be useful to send analytic data such as user behavior and logs.
+1. Since it doesn't affect directly to navigation, `afterEach` doesn't take `next` as the function to navigate the user.
+    ```js
+    // main.js
+    router.afterEach(function (to, from) {
+        // sending analytics data
+        console.log('Global afterEach');
+        console.log(to, from);
+    });
+    ```
 ## Beyond Entering: Route Leave Guards
+1. We can use `beforeRouteLeave` to execute code before navigates out or leave the page. 
+1. This can be useful if the view has a `form` or any `input` for user to insert. If the data hasn't been saved, we can prompt to the user to warn the user before leaving. 
+1. In this case, we create `changesSvaed` in `data` as state to check if user has saved the data.
+1. Create a new button with a method `saveChanges` to "save" the data on the page.
+1. Note that `confirm` (and `prompt`) is a browser function similar to `alert` to prompt a small dialog box to noitce the user. 
+    ```html
+    <!-- UsersList.vue -->
+    <template>
+        <button @click="confirmInput">Confirm</button>
+        <button @click="saveChanges">Save Changes</button>
+        <ul>
+            <user-item
+                v-for="user in users"
+                :key="user.id"
+                :name="user.fullName"
+                :role="user.role"
+            ></user-item>
+        </ul>
+    </template>
+
+    <script>
+    import UserItem from './UserItem.vue';
+
+    export default {
+        components: {
+            UserItem,
+        },
+        inject: ['users'],
+        data() {
+            return { // change if data is saved
+                changesSaved: false,
+            };
+        },
+        methods: {
+            confirmInput() {
+                this.$router.push('/teams');
+            },
+            saveChanges() {
+                this.changesSaved = true;
+            },
+        },
+        beforeRouteEnter(to, from, next) {
+            console.log('UserList Cmp beforeRouteEnter');
+            console.log(to, from);
+            next();
+        },
+        beforeRouteLeave(to, from, next) { // use confirm to prompt and warn user before leaving the page
+            console.log('UsersList Cmp beforeRouteLeave');
+            console.log(to, from);
+
+            if (this.changesSaved) {
+                next();
+            } else {
+                const userWantsToLeave = confirm(
+                    'Are you sure? You got unsaved changes'
+                );
+                next(userWantsToLeave);
+            }
+        },
+        unmounted() {
+            console.log('unmounted');
+        },
+    };
+    </script>
+    ```
+
 ## Utilizing Route Metadata
+1. In every route registered in `main.js`, we can give a `meta` property, which is also known as [route meta fields](https://router.vuejs.org/guide/advanced/meta.html#route-meta-fields).
+1. This property can be accessed from any `this.$route` or `to` and `from` in the route guard. 
+1. For example, we can have a property `needsAuth` on `teams` path. In the global navigation guard, `beforeEach`, we can use `to.meta.needsAuth` to check whether the user is authenticated before navigating to the route. 
+1. In this case, the console only prints the prompt when users visit routes in `teams`, while users don't need to be authenticated when navigating `users`.
+    ```js
+    // main.js
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/teams' },
+            {
+                name: 'teams',
+                path: '/teams',
+                meta: { needsAuth: true }, // set meta data
+                components: {
+                    default: TeamsList,
+                    footer: TeamsFooter,
+                },
+                children: [
+                    {
+                        name: 'team-members',
+                        path: ':teamId',
+                        component: TeamMembers,
+                        props: true, 
+                    },
+                ],
+            },
+            {
+                path: '/users',
+                components: {
+                    default: UsersList,
+                    footer: UsersFooter,
+                },
+                beforeEnter(to, from, next) {
+                    console.log('users beforeEnter');
+                    console.log(to, from);
+                    next();
+                }
+            },
+            { path: '/:notFound(.*)*', name: 'not-found', component: notFound, },
+        ],
+        linkActiveClass: 'active', 
+        scrollBehavior(to, from, savedPosition) {
+            if (savedPosition) return savedPosition;
+            return {
+                left: 0,
+                top: 0,
+            }
+        },
+    });
+
+    router.beforeEach(function (to, from, next) {
+        console.log('Global beforeEach');
+        console.log(to, from);
+        if (to.meta.needsAuth) {
+            console.log('Needs auth!');
+            next();
+        } else {
+            next();
+        }
+    });
+    ```
+
 ## Organizing Route Files
+1. In larger scale projects or apps, we can separate components that actually renders a whole page from `components` directory to `pages`.
+1. Therefore, for regular `components` directory, we only keep those are used in the other component or aren't standalone Vue component to differentiate their purpose. 
+1. In addition, we can keep router configurations in a separated JavaScript file and import it with Javascript module system. Thus, we can keep our `main.js` neat and clean.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+
+    import App from './App.vue';
+    import router from './router.js';
+
+    const app = createApp(App);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+    ```js
+    // router.js
+    import { createRouter, createWebHistory } from 'vue-router';
+    import TeamsList from './pages/TeamsList.vue';
+    import UsersList from './pages/UsersList.vue';
+    import TeamMembers from './components/teams/TeamMembers.vue';
+    import notFound from './pages/NotFound.vue';
+    import TeamsFooter from './pages/TeamsFooter.vue';
+    import UsersFooter from './pages/UsersFooter.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/teams' },
+            {
+                name: 'teams',
+                path: '/teams',
+                meta: { needsAuth: true },
+                components: {
+                    default: TeamsList,
+                    footer: TeamsFooter,
+                },
+                children: [
+                    {
+                        name: 'team-members',
+                        path: ':teamId',
+                        component: TeamMembers,
+                        props: true, // pass params as props
+                    },
+                ],
+            }, // our-domain.com/teams => TeamsList
+            {
+                path: '/users',
+                components: {
+                    default: UsersList,
+                    footer: UsersFooter,
+                },
+                beforeEnter(to, from, next) {
+                    console.log('users beforeEnter');
+                    console.log(to, from);
+                    next();
+                }
+            },
+            { path: '/:notFound(.*)*', name: 'not-found', component: notFound, },
+        ],
+        linkActiveClass: 'active', // change default from 'router-link-active'
+        scrollBehavior(to, from, savedPosition) {
+            if (savedPosition) return savedPosition;
+            return {
+                left: 0,
+                top: 0,
+            }
+        },
+    });
+
+    router.beforeEach(function (to, from, next) {
+        console.log('Global beforeEach');
+        console.log(to, from);
+        if (to.meta.needsAuth) {
+            console.log('Needs auth!');
+            next();
+        } else {
+            next();
+        }
+        // if (to.name === 'team-members') {
+        //     next();
+        // } else {
+        //     next({ name: 'team-members', params: { teamId: 't2', }, });
+        // }
+    });
+
+    router.afterEach(function (to, from) {
+        // sending analytics data
+        console.log('Global afterEach');
+        console.log(to, from);
+    });
+
+    export default router;
+    ```
 
 
 
