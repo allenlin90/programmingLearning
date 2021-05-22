@@ -173,7 +173,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. [Animate List Item Movement](#Animate-List-Item-Movement)
     1. [Animate Route Changes](#Animate-Route-Changes)
 1. [Vuex](#Vuex)
-    1. [What & Why?](#What--Why?)
+    1. [What & Why?](#What-and-Why-vuex?)
     1. [Creating & Using a Store](#Creating--Using-a-Store)
     1. [Connecting Components to State](#Connecting-Components-to-State)
     1. [Introducing Mutations - A Better Way of Changing Data](#Introducing-Mutations---A-Better-Way-of-Changing-Data)
@@ -8840,19 +8840,1096 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 # Vuex
-## What & Why?
+## What and why vuex?
+1. When managing larger scale projects and apps, it's hard to manage and control all the data and state of each component building up the app. `vuex` can be considered a counterpart to `redux` when using `React` framework. 
+    <img src="images/208-what_and_why_using_vuex.png">
+
 ## Creating & Using a Store
+1. To use `vuex` with state management, we install `vuex` and import `createStore` function similar to `createApp` and `createRouter` to create a `store` object.
+1. `createStore` takes an object as argument which has `state` method that manage the stored data and state. This syntax is very similar to using `data` in a vue component.
+    ```js
+    // main.js
+    import { createStore } from 'vuex';
+
+    const store = createStore({
+        state() {
+            return {};
+        }
+    })
+    ```
+1. In this case, we'd like to create a button which keeps adding one when users clicks on it. 
+    ```html
+    <!-- App.vue -->
+    <template>
+        <base-container title="Vuex">
+            <h3>0</h3> <!-- this shows the counter -->
+            <button>Add 1</button>
+        </base-container>
+    </template>
+
+    <script>
+        import BaseContainer from './components/BaseContainer.vue';
+
+        export default {
+        components: {
+            BaseContainer,
+        },
+        };
+    </script>
+    ```
+1. We therefore setup in `main.js` that we have a `counter` state in the `store` object.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createStore } from 'vuex';
+
+    import App from './App.vue';
+
+
+    const store = createStore({
+        state() {
+            return {
+                counter: 0,
+            }
+        }
+    });
+    const app = createApp(App);
+
+    app.use(store);
+
+    app.mount('#app');
+    ```
+1. This `store` can be accessed globally with `this.$store` after we use `app.use(store)` to import the store object. This is similar to `this.$router` and `this.$route` after we use `vue-router`.
+1. Note that we haven't connected the following code and variables, so it doesn't work yet.
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <base-container title="Vuex">
+        <h3> {{ $store.state.counter }} </h3>
+            <button>Add 1</button>
+        </base-container>
+    </template>
+    ```
+
 ## Connecting Components to State
+1. We can either use the data stored in `$store.state` directly in the component or separate the item into the other component.
+1. In this case, we give a method `addOne` and assign to the button which will add 1 to the state every time the button is clicked.
+    ```html
+    <!-- App.vue -->
+    <template>
+        <base-container title="Vuex">
+            <the-counter></the-counter>
+            <button @click="addOne">Add 1</button>
+        </base-container>
+    </template>
+
+    <script>
+    import BaseContainer from './components/BaseContainer.vue';
+    import TheCounter from './components/TheCounter.vue';
+
+    export default {
+        components: {
+            BaseContainer,
+            TheCounter,
+        },
+        computed: {
+            counter() {
+                return this.$store.state.counter;
+            }
+        },
+        methods: {
+            addOne() {
+                this.$store.state.counter++;
+            }
+        },
+    };
+    </script>
+    ```
+1. Besides, we can either pass the data from `$store.state` directly or use `computed` to listen to the changing of the `state`. 
+    ```html
+    <!-- TheCounter.vue -->
+    <template>
+        <h3>{{ counter }}</h3>
+    </template>
+
+    <script>
+    export default {
+        computed: {
+            counter() {
+                return this.$store.state.counter;
+            }
+        }
+    }
+    </script>
+    ```
+
 ## Introducing Mutations - A Better Way of Changing Data
+1. Though we can modify states in `store` directly, this isn't an ideal approach that it still can cause unexpeceted errors.
+1. Therefore, we can use `mutations` feature as the middleware to modify the data stored in `$store`
+1. In this case, we create another component, `ChangeCounter.vue` to modify the data in `store`. This approach can be beneficial that the state maybe used in multiple components.
+    ```html
+    <!-- TheCounter.vue -->
+    <template>
+        <h3>{{ counter }}</h3>
+    </template>
+
+    <script>
+    export default {
+        computed: {
+            counter() {
+                return this.$store.state.counter;
+            }
+        }
+    }
+    </script>
+    ```
+1. When modifying the formula or behavior of modifying the component, we may need to change the code in multiple components which may have further hustle on management.
+1. In addition, we can have `mutations` property registered in `main.js` when creating the `store` by `vuex`.
+1. In `mutations`, we can create methods which has `state` by default that we can access the data stored in vuex `store`.
+    ```js
+    // main.js
+    const store = createStore({
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment(state){
+                state.counter++;
+            },
+        }
+    });
+    ```
+1. In componenets, we can use `this.$store.commit()` which takes the name of the method in `mutations` to execute. Note that the argument is a String value which is the name of the method.
+1. Therefore, for each component using the data in `store`, we can use `$store.commit` to modify the state.
+    ```html
+    <!-- ChangeCounter.vue -->
+    <template>
+        <button @click="addOne">Add 1</button>
+    </template>
+
+    <script>
+    export default {
+        methods: {
+            addOne() {
+                this.$store.commit('increment');
+            },
+        }
+    }
+    </script>
+    ```
+
 ## Passing Data to Mutations with Payloads
+1. In some scenarios, we'd like to pass a custom value to `mutations` rather using hardcorded value. 
+    ```js
+    // main.js
+    const store = createStore({
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                state.counter += payload.value;
+            },
+        }
+    });
+    ```
+    <img src="images/213-vuex_getters.png">
+1. We either pass 2 arguments to `$store.commit()` or have it in [object-style commit](https://vuex.vuejs.org/guide/mutations.html#object-style-commit) that we pass a single object and pass the name of the method in `mutations` as the value with `type` property.
+    ```js
+    // App.vue
+    export default {
+        components: {
+            BaseContainer,
+            TheCounter,
+            ChangeCounter,
+        },
+        computed: {
+            counter() {
+                return this.$store.state.counter;
+            }
+        },
+        methods: {
+            addOne() {
+                //   this.$store.commit('increase', { value: 10,});
+                this.$store.commit({ // object-style commit
+                    type: 'increase', 
+                    value: 10,
+                });
+            }
+        },
+    };
+    ```
+
 ## Introducing Getters - A Better Way Of Getting Data
+1. Besides retrieving data from `$store` directly, we can use `getters` to fetch data. The concept is similar to `mutaitons` that in some cases, we may need to calculate the data before using it in the components. It can be very tedious to update all the computations in the component that use such data.
+1. Therefore, in `main.js`, we can register methods in `getters` in `store` which works similar to `mutations`. 
+1. However, the method should return the value that the component will get. Note that the main difference between `getters` and `mutations` is that `getters` chagne and return a new data, while `mutations` chagne on the state directly.
+1. Each getter method takes 2 arguments, `state` and `getters` which are the other registerd `getters`. 
+    ```js
+    // main.js
+    const store = createStore({
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                state.counter += payload.value;
+            },
+        },
+        getters: {
+            finalCounter(state) { // return twice the value of the counter
+                return state.counter * 2;
+            }
+        }
+    });
+    ```
+1. In the component, we can simply refer to the method in the `getters` rather than calling it. This is similar to using `computed` in a Vue component. 
+1. In the following example, the value rendered by `FavoriteValue.vue` uses `normalizedCounter` in `getters` which shows only numbers between 0 and 100. 
+    ```html
+    <!-- TheCounter.vue -->
+    <template>
+        <h3>{{ counter }}</h3>
+        <p>We do more...</p>
+    </template>
+
+    <script>
+    export default {
+        computed: {
+            counter() { // don't call the method directly as using computed methods 
+                return this.$store.getters.finalCounter;
+            }
+        }
+    }
+    </script>
+    ```
+1. In the other scenatio, we can use values calculated from the other `getters`.
+    ```js
+    // main.js
+    const store = createStore({
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                state.counter += payload.value;
+            },
+        },
+        getters: {
+            finalCounter(state) {
+                return state.counter * 2;
+            },
+            normalizedCounter(_, getters) { // use values from the other getter
+                const finalCounter = getters.finalCounter;
+                if (finalCounter < 0) return 0;
+                if (finalCounter > 100) return 100;
+                return finalCounter;
+            }
+        }
+    });
+    ```
+    ```html
+    <!-- FavoriteValue.vue -->
+    <template>
+        <h3>{{ counter }}</h3>
+        <p>We do more...</p>
+    </template>
+
+    <script>
+    export default {
+        computed: {
+            counter() {
+                return this.$store.getters.normalizedCounter;
+            }
+        }
+    }
+    </script>
+    ```
+1. Note that in some cases, we can use underscore `_` to replace the argument to indicate that it's only a placeholder. Otherwise, Vue would catch the unused argument and return an error.
+
 ## Running Async Code with Actions
+1. In some cases, we need to fetch data from an endpoint or server via HTTP protocol. We need to use async JavaScript to fulfill the requirment. However, we can't use `mutations` with asynchornous code directly.
+1. In `vuex`, we can use [`actions`](https://vuex.vuejs.org/guide/actions.html#dispatching-actions) and it's always a good practice to use `actions` to call `mutations` rather than using `mutations` directly. This is similar to use `redux-thunk` and create async action creator in `redux` for `React` app. 
+1. In `main.js`, we can registers methods in `actions` as `mutations` and `getters`. In `actions`, we can declare methods which have the same name as those in `mutations`. This is a good approach, so know what methods we want to work with between `actions` and `mutations`.
+1. Methods in `actions` has an argument `context`. We therefore can call `context.commit()` and give the name of the method in `mutations` we want to work with. 
+1. This syntax works similar to call a mutation method in a component with `this.$store.commit('mutation_method', payload)` or `this.$store.commit({type: 'mutation_method', payload})`. 
+1. In `actions`, we can run Async JavaScript.
+    ```js
+    // main.js
+    const store = createStore({
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                state.counter += payload.value;
+            },
+        },
+        actions: {
+            increment(context) {
+                setTimeout(function(){
+                    context.commit('increment');
+                }, 2000);
+            }
+        },
+        getters: {
+            finalCounter(state) {
+                return state.counter * 2;
+            },
+            normalizedCounter(_, getters) {
+                const finalCounter = getters.finalCounter;
+                if (finalCounter < 0) return 0;
+                if (finalCounter > 100) return 100;
+                return finalCounter;
+            }
+        }
+    });
+    ```
+1. To use `actions`, we can call `this.$store.dispatch()` in componenets which works as `this.$store.commit()` and it takes either 2 arguments with the name of the method as a string and an object for payload or an object with `type` property and orther keys we want to pass.
+    ```js
+    // App.vue
+    export default {
+        components: {
+            BaseContainer,
+            TheCounter,
+            ChangeCounter,
+            FavoriteValue,
+        },
+        computed: {
+            counter() {
+                return this.$store.state.counter;
+            },
+        },
+        methods: {
+            addOne() {
+                //   this.$store.commit('increase', { value: 10,});
+                this.$store.dispatch({ 
+                    type: 'increase', 
+                    value: 10,
+                });
+            }
+        },
+    };
+    ```
+
 ## Understanding the Action "Context"
+1. With `context`, we can access other properties and methods in the `store.` For example, we can check data with `context.state` and `context.getters`. 
+1. We can even check other actions with `context.dispatch`. This can be useful as an middleware that we can call a HTTP request and check whether the response is desirable to show either success or failure message to users.
+1. Note that we can use ES6 syntax to simplify the code and makes it cleaner.
+    ```js
+    const store = createStore({
+        state: {
+            counter: 0,
+        },
+        mutations: {
+            increment(state){
+                state.counter++;
+            }
+        },
+        actions: {
+            increment({commit}) {
+                commit('increment');
+            }
+        }
+    });
+    ```
+
 ## Using Mapper Helpers
+1. In case that we have multiple (and way many) `getters` or data to call from `vuex` we can use `mapGetters` function, which take an array with name in string of the methods that we want to use. We then can use the method in `template` directly. 
+    ```html
+    <!-- TheCounter.vue -->
+    <template>
+        <!-- use mapped getter method directly -->
+        <h3>{{ finalCounter }}</h3>
+    </template>
+
+    <script>
+    import { mapGetters } from 'vuex';
+
+    export default {
+        computed: {
+            // counter() {
+            //     return this.$store.getters.finalCounter;
+            // }
+            ...mapGetters(['finalCounter']),
+        },
+    }
+    </script>
+    ```
+1. Not only `getters` but also `state`, `mutations`, and `actions` have mapping feature. All of them work in similar syntax and behavior.
+1. To pass `payload`, we can pass an object to the method when using it directly.
+1. Besides passing an array, we can give an object and change the name as the alias. Note that the name we want to use is the property/key and the value is the name of the method in stirng. 
+    ```html
+    <!-- ChangeCounter.vue -->
+    <template>
+        <button @click="inc">Add 2</button>
+        <!-- pass a payload object -->
+        <button @click="increase({value: 11})">Add 11</button>
+    </template>
+
+    <script>
+    import {mapActions} from 'vuex';
+
+    export default {
+        methods: {
+            // addOne() {
+            //     this.$store.dispatch('increment');
+            // },
+            // ...mapActions(['increase', 'increment']),
+            ...mapActions({
+                inc: 'increment',
+                increase: 'increase',
+            }),
+        }
+    }
+    </script>
+    ```
+
+## Example: Adding more state
+1. In this case, we'd like to add a new section and state for login/logout.
+1. We create new `state` in the `store` which is a Boolean value to indicate that if the user has logged in.
+    ```js
+    // main.js
+    const store = createStore({
+        state() {
+            return {
+                counter: 0,
+                isLoggedIn: false, // check if the user has logged in
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                state.counter += payload.value;
+            },
+            setAuth(state, payload){ // login/logout the user
+                state.isLoggedIn = payload.isAuth;
+            },
+        },
+        actions: {
+            increment(context) {
+                setTimeout(function(){
+                    context.commit('increment');
+                }, 2000);
+            },
+            increase(context, payload){
+                console.log(context);
+                context.commit('increase', payload);
+            },
+            login(context) { // action to login user
+                context.commit('setAuth', {isAuth: true,});
+            },
+            logout(context) { // action to logout user
+                context.commit('setAuth', {isAuth: false,});
+            },
+        },
+        getters: {
+            finalCounter(state) {
+                return state.counter * 2;
+            },
+            normalizedCounter(_, getters) {
+                const finalCounter = getters.finalCounter;
+                if (finalCounter < 0) return 0;
+                if (finalCounter > 100) return 100;
+                return finalCounter;
+            },
+            userIsAuthenticated(state) { // check current login status
+                return state.isLoggedIn;
+            }
+        }
+    });
+    ```
+1. Show the function section only if the user has logged in. 
+    ```html
+    <!-- App.vue -->
+    <template>
+        <base-container v-if="isAuthed" title="Vuex">
+            <the-counter></the-counter>
+            <favorite-value></favorite-value>
+            <button @click="addOne">Add 10</button>
+            <change-counter></change-counter>
+        </base-container>
+        <base-container title="auth">
+            <user-auth></user-auth>
+        </base-container>
+    </template>
+
+    <script>
+        import BaseContainer from './components/BaseContainer.vue';
+        import TheCounter from './components/TheCounter.vue';
+        import ChangeCounter from './components/ChangeCounter.vue';
+        import FavoriteValue from './components/FavoriteValue.vue';
+        import UserAuth from './components/UserAuth.vue';
+
+        export default {
+        components: {
+            BaseContainer,
+            TheCounter,
+            ChangeCounter,
+            FavoriteValue,
+            UserAuth,
+        },
+        computed: {
+            counter() {
+                return this.$store.state.counter;
+            },
+            isAuthed() { // user login status
+                return this.$store.getters.userIsAuthenticated;
+            }
+        },
+        methods: {
+            addOne() {
+                this.$store.dispatch({ 
+                    type: 'increase', 
+                    value: 10,
+                });
+            }
+        },
+    };
+    </script>
+    ```
+1. Section to allow user to either login or logout.
+    ```html
+    <!-- UserAuth.vue -->
+    <template>
+        <button v-if="!isAuth" @click="login">Login</button>
+        <button v-else @click="logout">Logout</button>
+    </template>
+
+    <script>
+    export default {
+        methods: {
+            login() {
+                this.$store.dispatch('login');
+            },
+            logout() {
+                this.$store.dispatch('logout');
+            }
+        },
+        computed: {
+            isAuth() {
+                return this.$store.getters.userIsAuthenticated;
+            }
+        }
+    }
+    </script>
+    ```
+
 ## Organizing your Store with Modules
+1. When App/project goes large, we can have multiple states in the `store` which can be hard to manage.
+1. `vuex` provide module system that we can split the states up into different modules.
+1. For example, in the previous case, we can separate `counter` and `authentication` into different modules.
+1. Note that `vuex` would return error any find no actions. This would be from naming issues or incorrect configuration during setup, such as mispelling for `actions`. 
+    ```js
+    // main.js
+    const counterModule = {
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                state.counter += payload.value;
+            },
+        },
+        actions: {
+            increment(context) {
+                setTimeout(function(){
+                    context.commit('increment');
+                }, 2000);
+            },
+            increase(context, payload){
+                console.log(context);
+                context.commit('increase', payload);
+            },
+        },
+        getters: {
+            finalCounter(state) {
+                return state.counter * 2;
+            },
+            normalizedCounter(_, getters) {
+                const finalCounter = getters.finalCounter;
+                if (finalCounter < 0) return 0;
+                if (finalCounter > 100) return 100;
+                return finalCounter;
+            },
+        },
+    }
+
+    const store = createStore({
+        modules: { // imoprt counterModule object with any property name
+            number: counterModule
+        },
+        state() {
+            return {
+                isLoggedIn: false,
+            }
+        },
+        mutations: {
+            setAuth(state, payload){
+                state.isLoggedIn = payload.isAuth;
+            },
+        },
+        actions: {
+            login(context) {
+                context.commit('setAuth', {isAuth: true,});
+            },
+            logout(context) {
+                context.commit('setAuth', {isAuth: false,});
+            },
+        },
+        getters: {
+            userIsAuthenticated(state) {
+                return state.isLoggedIn;
+            }
+        }
+    });
+    ```
+
 ## Understanding Local Module State
+1. Since we have separate `store` into modules, the `state` in `mutations` and `getters` can only access the local states which are in the same module. 
+1. This would be confusing as the `states` in the store module can actually be accessed from as those store in the root.
+1. For example, if we try use a getter in `counterModule` to check whether the user is authenticated which is store in the root `store`. It return nothing as the module can only access the local states in the same object.
+    ```js
+    // main.js
+    const counterModule = {
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                console.log(state);
+                state.counter += payload.value;
+            },
+        },
+        actions: {
+            increment(context) {
+                setTimeout(function(){
+                    context.commit('increment');
+                }, 2000);
+            },
+            increase(context, payload){
+                console.log(context);
+                context.commit('increase', payload);
+            },
+        },
+        getters: {
+            testAuth(state) { // check isLoggedIn state from store root. This returns nothing
+                return state.isLoggedIn;
+            },
+            finalCounter(state) {
+                return state.counter * 2;
+            },
+            normalizedCounter(_, getters) {
+                const finalCounter = getters.finalCounter;
+                if (finalCounter < 0) return 0;
+                if (finalCounter > 100) return 100;
+                return finalCounter;
+            },
+        },
+    }
+    ```
+1. In modules, we can pass 2 more arguments, [`rootState` and `rootGetters`](https://vuex.vuejs.org/guide/modules.html#module-local-state) to use the data in the root `store`.
+    ```js
+    // main.js
+    const counterModule = {
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                state.counter += payload.value;
+            },
+        },
+        actions: {
+            increment(context) {
+                setTimeout(function(){
+                    context.commit('increment');
+                }, 2000);
+            },
+            increase(context, payload){
+                console.log(context);
+                context.commit('increase', payload);
+            },
+        },
+        getters: {
+            testAuth(state, getters, rootState) {
+                return rootState.isLoggedIn; // get state from root store
+            },
+            finalCounter(state) {
+                return state.counter * 2;
+            },
+            normalizedCounter(_, getters) {
+                const finalCounter = getters.finalCounter;
+                if (finalCounter < 0) return 0;
+                if (finalCounter > 100) return 100;
+                return finalCounter;
+            },
+        },
+    }
+    ```
+
 ## Namespacing Modules
+1. In some cases or larger projects, we may have name clashes for methods in `actions` and `getters`. This feature can be useful to manage large scale projects and prevent accidentally calling the actions and getters in the root store with similar or the same name.
+1. We can use [`namespacing`](https://vuex.vuejs.org/guide/modules.html#namespacing) to keep modules separated. Therefore, we can't access the state and properties from a "**named**" module. To enable `namespacing` feature, we can simply add `namespaced:true` in the module object. 
+    ```js
+    // mani.js
+    const counterModule = {
+        namespaced: true, // enable namespacing
+        state() {
+            return {
+                counter: 0,
+            }
+        },
+        mutations: {
+            increment (state){
+                state.counter++;
+            },
+            increase(state, payload) {
+                console.log(state);
+                state.counter += payload.value;
+            },
+        },
+        actions: {
+            increment(context) {
+                setTimeout(function(){
+                    context.commit('increment');
+                }, 2000);
+            },
+            increase(context, payload){
+                console.log(context);
+                context.commit('increase', payload);
+            },
+        },
+        getters: {
+            testAuth(state, getters, rootState) {
+                return rootState.isLoggedIn;
+            },
+            finalCounter(state) {
+                return state.counter * 2;
+            },
+            normalizedCounter(_, getters) {
+                const finalCounter = getters.finalCounter;
+                if (finalCounter < 0) return 0;
+                if (finalCounter > 100) return 100;
+                return finalCounter;
+            },
+        },
+    }
+    ```
+1. Thus, to access states and methods in a module, we can check from the name of the module that we link to the root `store`.
+    ```js
+    const store = createStore({
+        modules: {
+            numbers: counterModule, // 'number' key is the name givin to counterModule. It only affects when namespacing: true is given in the module.
+        }
+    })
+    ```
+1. In the component to call the methods from the module, we change the syntax by accessing the named module from `getters`.
+1. For `mapGetters` we pass the namespace as the first argument. 
+    ```js
+    // FavoriteValue.vue
+    export default {
+        computed: {
+            counter() {
+                return this.$store.getters['numbers/normalizedCounter'];
+            }
+        }
+    }
+    ```
+    ```js
+    // TheCounter.vue
+    import { mapGetters } from 'vuex';
+    export default {
+        computed: {
+            // counter() {
+            //     return this.$store.getters.finalCounter;
+            // }
+            ...mapGetters('numbers', ['finalCounter']),
+        },
+    }
+    ```
+1. For `actions`, it's similar while in the object-like commit, we can just put the name space in the type property. 
+    ```js
+    // ChagneCounter.vue
+    export default {
+        methods: {
+            ...mapActions('numbers', {
+                inc: 'increment',
+                increase: 'increase',
+            }),
+        }
+    }
+    ```
+    ```js
+    // App.vue
+    export default {
+        components: {
+            BaseContainer,
+            TheCounter,
+            ChangeCounter,
+            FavoriteValue,
+            UserAuth,
+        },
+        computed: {
+            counter() {
+                return this.$store.state.counter;
+            },
+            isAuthed() {
+                return this.$store.getters.userIsAuthenticated;
+            }
+        },
+        methods: {
+            addOne() {
+                this.$store.dispatch({ 
+                    type: 'numbers/increase', // add namespace as path
+                    value: 10,
+                });
+            }
+        },
+    };
+    ```
+
 ## Structuring Vuex Code & Files
+1. Though we can create a new file `store.js` to keep all the related `store` and `states` code, it can go very large if many states need to be managed. 
+1. We can create another directory `store` as the same level as `components`.
+    1. `src`
+    1. `src/store`
+    1. `src/store/modules`
+    1. `src/store/modules/counter`
+1. We use JavaScript module system and have 4 files in each directory. However, in simple project, we can skip using complicated file structure.
+    1. `index.js`
+    1. `actions.js`
+    1. `mutations.js`
+    1. `getters.js`
+
+## A Challenge
+1. The target is to use `vuex` to manage the data in the shopping app which allows users to add items and sum the price up before checking out.
+
+## Challenge Solution
+1. We firstly create a `store` folder with `index.js` in `src`. In this case, since the app isn't complicated, we can have only `products.js` for `productModule` and `cart.js` for `cartModule`.
+    ```js
+    // src/store/index.js
+    import { createStore } from 'vuex';
+
+    import productModule from './modules/products.js';
+    import cartModule from './modules/cart.js';
+
+    const store = createStore({
+        modules: {
+            productModule,
+            cartModule,
+        },
+        state() {
+            return {
+                isLoggedIn: false,
+            }
+        },
+        getters: {
+            loginStatus(state){
+                return state.isLoggedIn;
+            },
+        },
+        mutations: {
+            setAuth(state, payload) {
+                state.isLoggedIn = payload.isAuth;
+            },
+        },
+        actions: {
+            login(context) {
+                context.commit('setAuth', {isAuth: true,});
+            },
+            logout(context) {
+                context.commit('setAuth', {isAuth: false,});
+            },
+        }
+    });
+
+    export default store;
+    ```
+    ```js
+    // src/store/modules/cart.js
+    export default {
+        state() {
+            return {
+                cart: { 
+                    items: [], 
+                    total: 0, 
+                    qty: 0 
+                },
+            }
+        },
+        getters: {
+            getCart(state) {
+                return state.cart;
+            },
+            products() { return state.items },
+            totalSum() { return state.total },
+            quantity() { return state.qty },
+        },
+        mutations: {
+            addToCart(state, payload) {
+                const productInCartIndex = state.cart.items.findIndex(
+                    (ci) => ci.productId === payload.id
+                );
+        
+                if (productInCartIndex >= 0) {
+                    state.cart.items[productInCartIndex].qty++;
+                } else {
+                    const newItem = {
+                        productId: payload.id,
+                        title: payload.title,
+                        image: payload.image,
+                        price: payload.price,
+                        qty: 1,
+                    };
+                    state.cart.items.push(newItem);
+                }
+                state.cart.qty++;
+                state.cart.total += payload.price;
+            },
+            removeFromCart(state, payload) {
+                const productId = payload.prodId
+                const productInCartIndex = state.cart.items.findIndex(
+                    (cartItem) => cartItem.productId === productId
+                );
+                const prodData = state.cart.items[productInCartIndex];
+                state.cart.items.splice(productInCartIndex, 1);
+                state.cart.qty -= prodData.qty;
+                state.cart.total -= prodData.price * prodData.qty;
+            },
+        },
+        actions: {
+            addToCart(context, payload) {
+                context.commit('addToCart', payload);
+            },
+            removeFromCart(context, payload) {
+                context.commit('removeFromCart', payload);
+            },
+        }
+    }
+    ```
+1. Configure `main.js` to import correct JavaScript modules
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+
+    import router from './router.js';
+    import App from './App.vue';
+    import store from './store/index.js';
+    import BaseBadge from './components/ui/BaseBadge.vue';
+
+    const app = createApp(App)
+
+    app.use(router);
+
+    app.use(store);
+
+    app.component('base-badge', BaseBadge);
+
+    app.mount('#app');
+    ```
+1. In addition, we'd like to use `namespacing` feature, so we set both `products.js` and `cart.js` with `namespaced: true`.
+    ```js
+    // src/store/modules/cart.js
+    export default {
+        namespaced: true,
+        state() {
+            return {
+                cart: { 
+                    items: [], 
+                    total: 0, 
+                    qty: 0 
+                },
+            }
+        },
+        getters: {
+            getCart(state) {
+                return state.cart;
+            },
+            products(state) { return state.cart.items },
+            totalSum(state) { return state.cart.total },
+            quantity(state) { return state.cart.qty },
+        },
+        mutations: {
+            addToCart(state, payload) {
+                const productInCartIndex = state.cart.items.findIndex(
+                    (ci) => ci.productId === payload.id
+                );
+        
+                if (productInCartIndex >= 0) {
+                    state.cart.items[productInCartIndex].qty++;
+                } else {
+                    const newItem = {
+                        productId: payload.id,
+                        title: payload.title,
+                        image: payload.image,
+                        price: payload.price,
+                        qty: 1,
+                    };
+                    state.cart.items.push(newItem);
+                }
+                state.cart.qty++;
+                state.cart.total += payload.price;
+            },
+            removeFromCart(state, payload) {
+                const productId = payload.prodId
+                const productInCartIndex = state.cart.items.findIndex(
+                    (cartItem) => cartItem.productId === productId
+                );
+                const prodData = state.cart.items[productInCartIndex];
+                state.cart.items.splice(productInCartIndex, 1);
+                state.cart.qty -= prodData.qty;
+                state.cart.total -= prodData.price * prodData.qty;
+            },
+        },
+        actions: {
+            addToCart(context, payload) {
+                context.commit('addToCart', payload);
+            },
+            removeFromCart(context, payload) {
+                context.commit('removeFromCart', payload);
+            },
+        }
+    }
+    ```
 
 
 
