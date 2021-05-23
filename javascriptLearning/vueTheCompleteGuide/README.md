@@ -9966,12 +9966,566 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Vue & Authentication
 ## How Authentication Works in Vue Apps (or any SPA)
+1. In this case, we can generate a token on the server side and store on the client side. Every time the client (user) wants to request data from the server, the server (backend) will verify the attached token to ensure the request is verified and valid. 
+
 ## Locking / Protecting Backend Resources
+1. We can set up rules for realtime database to decide how can we read and write the data. For further information, we can look up [Firebase Realtime Database Rules](https://firebase.google.com/docs/database/security).
+    ```json
+    // firebase rules for realtime database
+    {
+        "rules": {
+            "coaches": {
+            ".read": true,
+            ".write": "auth != null"
+        },
+            "requests": {
+            ".read": "auth != null",
+            ".write": true
+            }
+        }
+    }
+    ```
+
 ## Adding an Authentication Page (Login & Signup)
+1. In `pages` directory, we create a new folder `auth` and a new component `UserAuth.vue`.
+    ```html
+    <!-- UserAuth.vue -->
+    <template>
+        <base-card>
+            <form action="">
+                <div class="form-control">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <base-button>Login</base-button>
+                <base-button type="button" mode="flat">Signup instead</base-button>
+            </form>
+        </base-card>
+    </template>
+
+    <style scoped>
+    form {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .form-control {
+        margin: 0.5rem 0;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    input,
+    textarea {
+        display: block;
+        width: 100%;
+        font: inherit;
+        border: 1px solid #ccc;
+        padding: 0.15rem;
+    }
+
+    input:focus,
+    textarea:focus {
+        border-color: #3d008d;
+        background-color: #faf6ff;
+        outline: none;
+    }
+    </style>
+    ```
+1. We then register the new page component in `router.js`.
+    ```js
+    // router.js
+    import UserAuth from './pages/auth/UserAuth.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/coaches' },
+            { path: '/coaches', component: CoachesList },
+            {
+            path: '/coaches/:id',
+            component: CoachDetail,
+            props: true,
+            children: [
+                { path: 'contact', component: ContactCoach } 
+            ]
+            },
+            { path: '/register', component: CoachRegistation },
+            { path: '/requests', component: RequestsReceived },
+            { path: '/auth', component: UserAuth }, // register UserAuth
+            { path: '/:notFound(.*)', component: NotFound }
+        ]
+    });
+    ```
+1. After configuring the component, we can set up the JavaScript to work on it. Besides, we allow users to either sign in or sign up by the form and can switch the function by a button. 
+    ```html
+    <!-- src/pages/auth/UserAuth.vue -->
+    <template>
+        <base-card>
+            <form @submit.prevent="submitForm">
+                <div class="form-control">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" v-model.trim="email" required>
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" v-model.trim="password" required>
+                </div>
+                <p v-if="!formIsValid">Please enter a valid email and password (must be at least 6 characters long).</p>
+                <base-button>{{ submitButtonCaption }}</base-button>
+                <base-button type="button" mode="flat" @click="switchAuthMode">{{ switchModeButtonCaption }}</base-button>
+            </form>
+        </base-card>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                email: '',
+                password: '',
+                formIsValid: true,
+                mode: 'login',
+            }
+        },
+        computed: {
+            submitButtonCaption() {
+                if (this.mode === 'login') {
+                    return 'Login';
+                }
+                return 'Signup';
+            }, 
+            switchModeButtonCaption() {
+                if (this.mode === 'login') {
+                    return 'Signup instead';
+                }
+                return 'Login instead';
+            },
+        },
+        methods: {
+            submitForm() {
+                this.formIsValid = true;
+                if (!this.email || !this.includes('@') || this.password.length < 6) {
+                    this.formIsValid = false;
+                    return;
+                }
+                // send HTTP request...
+            },
+            switchAuthMode() {
+                if (this.mode === 'login') {
+                    this.mode = 'signup';
+                } else {
+                    this.mode = 'login';
+                }
+            }
+        }
+    }
+    ```
+
 ## Preparing Vuex
+1. In Firebase, we check in authentication on the left panel and enable email/password in sign-in method. Note that we just allow the first option to allow users to sign with in both email and password (not email link only).
+1. In addition, we can look up Firebase Auth REST API and check its [sign up with email / password](https://firebase.google.com/docs/reference/rest/auth#section-create-email-password) and [sign in with email / password](https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password). 
+1. Note that Firebase Auth REST API for email / password only works if we enable the feature in Firebase project control.
+1. In this case, we can use `vuex` to help use manage the data. Therefore, we create `auth` in modules under `store` directory.
+1. We then import the new `authModule` into `index.js` in `store`. Besides, the `getters` and `state` are actually for authentication.
+    ```js
+    // src/store/index.js
+    import { createStore } from 'vuex';
+
+    import coachesModule from './modules/coaches/index.js';
+    import requestsModule from './modules/requests/index.js';
+    import authModule from './modules/auth/index.js';
+
+    const store = createStore({
+    modules: {
+        coaches: coachesModule,
+        requests: requestsModule,
+        auth: authModule,
+    },
+    });
+
+    export default store;
+    ```
+1. At this stage, we haven't set up `mutations` and `actions` of `auth` yet. However, to ensure Vue app works correctly we just export empty objects at this moment.
+    ```js
+    // src/store/modules/auth/index.js
+    import mutations from './mutations.js';
+    import actions from './actions.js';
+    import getters from './getters.js';
+
+    export default {
+        state() {
+            return {
+            userId: 'c3'
+            };
+        },
+        mutations,
+        actions,
+        getters,
+    }
+
+    // src/store/modules/auth/getters.js
+    export default { 
+        userId(state) {
+            return state.userId;
+        }
+    }
+
+    // src/store/modules/auth/mutations.js
+    export default {}
+    
+    // src/store/modules/auth/actions.js
+    export default {}
+    ```
+
 ## Adding a "Signup" Action & Flow
+1. We can set up `src/store/modules/auth/mutations.js`
+    ```js
+    // src/store/modules/auth/mutations.js
+    export default {
+        setUser(state, payload) {
+            state.token = payload.token;
+            state.userId = payload.userId;
+            state.tokenExpiration = payload.tokenExpiration;
+        }
+    }
+    ```
+1. We then set up `src/store/modules/auth/action.js`
+    ```js
+    // src/store/modules/auth/actions.js
+    export default {
+        login() {},
+        async signup(context, payload) {
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyASn8qrowxxFAy9tZ1glSMpZNr2Lx5JXvg', {
+                method: 'post',
+                body: JSON.stringify({
+                    email: payload.email,
+                    password: payload.password,
+                    returnSecureToken: true,
+                }),
+            });
+
+            const responseData = await response.json();
+            if (!response.ok) {
+                console.log(responseData);
+                const error = new Error(responseData.message || 'Failed to authenticate');
+                throw error;
+            }
+
+            console.log(responseData);
+            context.commit('setUser', {
+                token: responseData.idToken,
+                userId: responseData.localId,
+                tokenExpiration: responseData.expiresIn
+            })
+        }
+    }
+    ```
+1. We then update `src/store/modules/auth/index.js`
+    ```js
+    // src/store/modules/auth/index.js
+    import mutations from './mutations.js';
+    import actions from './actions.js';
+    import getters from './getters.js';
+
+    export default {
+        state() {
+            return {
+            userId: null,
+            token: null,
+            tokenExpiration: null,
+            };
+        },
+        mutations,
+        actions,
+        getters,
+    }
+    ```
+1. We then use `this.$store.dispatch('signup')` to call the action and register a new account.
+    ```js
+    // src/pages/auth/UserAuth.vue
+    export default {
+        data() {
+            return {
+                email: '',
+                password: '',
+                formIsValid: true,
+                mode: 'login',
+            }
+        },
+        computed: {
+            submitButtonCaption() {
+                if (this.mode === 'login') {
+                    return 'Login';
+                }
+                return 'Signup';
+            }, 
+            switchModeButtonCaption() {
+                if (this.mode === 'login') {
+                    return 'Signup instead';
+                }
+                return 'Login instead';
+            },
+        },
+        methods: {
+            submitForm() {
+                this.formIsValid = true;
+                if (!this.email || !this.email.includes('@') || this.password.length < 6) {
+                    this.formIsValid = false;
+                    return;
+                }
+                
+                if (this.mode === 'login') {
+                    // ...
+                } else {
+                    this.$store.dispatch('signup', {
+                        email: this.email,
+                        password: this.password,
+                    })
+                }
+            },
+            switchAuthMode() {
+                if (this.mode === 'login') {
+                    this.mode = 'signup';
+                } else {
+                    this.mode = 'login';
+                }
+            }
+        }
+    }
+    ```
+1. If the request and sign up process works correctly, we will get response from Firebase with the desirable `userId`, `token` and `tokenExpiration`.
+1. Besides, in `Users` in `Authentication` in the Firebase project, we can refresh and check the latest user which just registered.
+1. If we try to register anthoer account with the same email, Firebase will return an error and notice that the email has been used. 
+
 ## Better UX: Loading Spinner & Error Handling
+1. We add 2 more states in `UserAuth.vue` for `isLoading: false` and `error: null`.
+1. We then turn `submitForm` into async function. As it should wait for authentication to be done before changing any state.
+1. Create a loading spinner with `base-dialog` and get it controlled by `isLoading`.
+    ```html
+    <!-- src/pages/auth/UserAuth.vue -->
+    <template>
+        <base-dialog :show="!!error" title="An error occurred" @close="handleError">
+            <p>{{ error }}</p>
+        </base-dialog>
+        <base-dialog :show="isLoading" title="authenticating..." fixed>
+            <base-spinner></base-spinner>
+        </base-dialog>
+        <base-card>
+            <form @submit.prevent="submitForm">
+                <div class="form-control">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" v-model.trim="email" required>
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" v-model.trim="password" required>
+                </div>
+                <p v-if="!formIsValid">Please enter a valid email and password (must be at least 6 characters long).</p>
+                <base-button>{{ submitButtonCaption }}</base-button>
+                <base-button type="button" mode="flat" @click="switchAuthMode">{{ switchModeButtonCaption }}</base-button>
+            </form>
+        </base-card>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                email: '',
+                password: '',
+                formIsValid: true,
+                mode: 'login',
+                isLoading: false,
+                error: null,
+            }
+        },
+        computed: {
+            submitButtonCaption() {
+                if (this.mode === 'login') {
+                    return 'Login';
+                }
+                return 'Signup';
+            }, 
+            switchModeButtonCaption() {
+                if (this.mode === 'login') {
+                    return 'Signup instead';
+                }
+                return 'Login instead';
+            },
+        },
+        methods: {
+            async submitForm() {
+                this.formIsValid = true;
+                if (!this.email || !this.email.includes('@') || this.password.length < 6) {
+                    this.formIsValid = false;
+                    return;
+                }
+
+                this.isLoading = true;
+
+                try {
+                    if (this.mode === 'login') {
+                    // ...
+                    } else {
+                        await this.$store.dispatch('signup', {
+                            email: this.email,
+                            password: this.password,
+                        });
+                    }
+                } catch (err) {
+                    this.error = err.message || 'Failed to authenticate, Try later.';
+                }
+
+                this.isLoading = false;
+            },
+            switchAuthMode() {
+                if (this.mode === 'login') {
+                    this.mode = 'signup';
+                } else {
+                    this.mode = 'login';
+                }
+            },
+            handleError() {
+                this.error = null;
+            }
+        }
+    }
+    </script>
+    ```
+
 ## Adding a "Login" Action & Flow
+1. To allow users to login, we can configure the method and endpoint in `src/store/modules/auth/actions.js`. This is similar to the sign up flow for a user.
+    ```js
+    // actions.js
+    export default {
+        async login(context, payload) {
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyASn8qrowxxFAy9tZ1glSMpZNr2Lx5JXvg', {
+                method: 'post',
+                body: JSON.stringify({
+                    email: payload.email,
+                    password: payload.password,
+                    returnSecureToken: true,
+                }),
+            });
+
+            const responseData = await response.json();
+            if (!response.ok) {
+                console.log(responseData);
+                const error = new Error(responseData.message || 'Failed to authenticate. Check your login data');
+                throw error;
+            }
+
+            console.log(responseData);
+            context.commit('setUser', {
+                token: responseData.idToken,
+                userId: responseData.localId,
+                tokenExpiration: responseData.expiresIn
+            });
+        },
+        async signup(context, payload) {
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyASn8qrowxxFAy9tZ1glSMpZNr2Lx5JXvg', {
+                method: 'post',
+                body: JSON.stringify({
+                    email: payload.email,
+                    password: payload.password,
+                    returnSecureToken: true,
+                }),
+            });
+
+            const responseData = await response.json();
+            if (!response.ok) {
+                console.log(responseData);
+                const error = new Error(responseData.message || 'Failed to authenticate. Check your login data');
+                throw error;
+            }
+
+            console.log(responseData);
+            context.commit('setUser', {
+                token: responseData.idToken,
+                userId: responseData.localId,
+                tokenExpiration: responseData.expiresIn
+            });
+        }
+    }
+    ```
+1. We then update the method `submitForm` in `UserAuth.vue` for the login condition. 
+    ```js
+    // UserAuth.vue
+    export default {
+        data() {
+            return {
+                email: '',
+                password: '',
+                formIsValid: true,
+                mode: 'login',
+                isLoading: false,
+                error: null,
+            }
+        },
+        computed: {
+            submitButtonCaption() {
+                if (this.mode === 'login') {
+                    return 'Login';
+                }
+                return 'Signup';
+            }, 
+            switchModeButtonCaption() {
+                if (this.mode === 'login') {
+                    return 'Signup instead';
+                }
+                return 'Login instead';
+            },
+        },
+        methods: {
+            async submitForm() {
+                this.formIsValid = true;
+                if (!this.email || !this.email.includes('@') || this.password.length < 6) {
+                    this.formIsValid = false;
+                    return;
+                }
+
+                this.isLoading = true;
+
+                const actionPayload = {
+                    email: this.email,
+                    password: this.password,
+                };
+
+                try {
+                    if (this.mode === 'login') { // login path
+                        await this.$store.dispatch('login', actionPayload)
+                    } else {
+                        await this.$store.dispatch('signup', actionPayload);
+                    }
+                } catch (err) {
+                    this.error = err.message || 'Failed to authenticate, Try later.';
+                }
+
+                this.isLoading = false;
+            },
+            switchAuthMode() {
+                if (this.mode === 'login') {
+                    this.mode = 'signup';
+                } else {
+                    this.mode = 'login';
+                }
+            },
+            handleError() {
+                this.error = null;
+            }
+        }
+    }
+    ```
+
 ## Attaching the Token to Outgoing Requests
 ## Updating the UI Based on Auth State
 ## Adding a "Logout" Action & Flow
