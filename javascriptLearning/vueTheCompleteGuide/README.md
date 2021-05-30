@@ -640,7 +640,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         </form>
     </section>
     ```
-1. Besides `.prevent`, we can do `click.right` for click event to change default from left click on a mouse to right click, so the function will only be trigerred when the user right clicks on the element.
+1. Besides `.prevent`, we can do `click.right` for click event to change default from left click on a mouse to right click, so the function will only be triggered when the user right clicks on the element.
     ```html
     <!-- HTML -->
     <section id="events">
@@ -823,7 +823,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 ## Introducing Computed Properties
 1. In the other case, we can use `computed` (another reserved property) which works similar to `methods`. The main difference between them is that `methods` will be re-rendered when there's any thing changes on the page. On the other hand, `computed` only changes when any of its dependency is modified.
 1. To use methods in `computed`, we just put the method name in the interpolation in HTML **WITHOUT** parenthesis. Vue will call the method instead.
-1. With this approach, the `fullname` method in the following case won't be trigereed every time when other dependency is modified. 
+1. With this approach, the `fullname` method in the following case won't be triggered every time when other dependency is modified. 
     ```html
     <!-- HTML -->
     <section id="events">
@@ -2190,7 +2190,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
             attackMonster() {
                 const attackValue = getRandomValue(5, 12);
                 this.monsterHealth -= attackValue;
-                this.attackPlayer(); // triger the monster to attackwhen it is attacked by the player
+                this.attackPlayer(); // trigger the monster to attackwhen it is attacked by the player
             },
             attackPlayer() {
                 const attackValue = getRandomValue(8, 15);
@@ -2776,7 +2776,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     message = 'Hola';
     console.log(longMessage); // Hello World!
     ```
-1. If we use a proxy, we can notice that the object is modifed and the `set` method is trigerred. Besides, the `data` object is modifed by the proxy as well. 
+1. If we use a proxy, we can notice that the object is modifed and the `set` method is triggered. Besides, the `data` object is modifed by the proxy as well. 
     ```js
     const data = {
         message: 'Hello!',
@@ -2920,7 +2920,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. `beforeMount()` is right before when the instances are going to be rendered on the screen.
     1. `mounted()` is when Vue has added all the contents to HTML. 
     1. "**Mounted Vue Instance**" - When all Vue instances are mounted, it stays and listens if there's any changes to the `data`. 
-    1. "**Data Changed**" - Vue listens to `data` and its instances. When there's any changes, it trigerrs and starts a new lifecycle.
+    1. "**Data Changed**" - Vue listens to `data` and its instances. When there's any changes, it triggers and starts a new lifecycle.
         1. `beforeUpdate()` is similar to `beforeMount()` when the Vue instance gets updated with its `data` on the screen.
         1. `updated()` is similar to `mounted()` when the Vue instance has updated `data` and been rendered on the screen.
     1. "**Instance Unmounted**" - This triggers when a Vue instance is removed from the screen and simiar to other hooks in the lifecycle, it has both `beforeUnmount()` and `unmounted()`.
@@ -3813,7 +3813,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 1. In addition, if the data is fetched and stored in a database that if the user toggle the "favorite" button, we should send the data back to the server to store the preference that the user has made. Therefore, rather than just passing the props from parent to child compoennt, we should be able to send the data back from child to the parent as well. 
 1. In Vue, we can use a prebuilt method `$emit()`, which is simialar to `$refs`, in the child component. Therefore, the parent component can "**listen**" to the event sending from the child component. The 1st argument is the event name that the parent can "catch". 
 1. We can pass a 2nd arguement to the `$emit()` method, so the "**listener**" in the parent component can catch the value and work on other features.
-1. In this case, we can pass the `id` of the `friend` object to the child and pass it back when the user clicks on the "Toggle Favorite" button to triger the listener.
+1. In this case, we can pass the `id` of the `friend` object to the child and pass it back when the user clicks on the "Toggle Favorite" button to trigger the listener.
 1. In `App.vue`, we can put a listener matching the event name in on the child component and use its own `methods` to handle the data. 
 1. In this case, we can use `.find` array method to refer to the `friend` object and toggle its `isFavorite` property. 
 1. Though the concept is very similar to React app, React app passes the method directly from parent to the child to allow the child component toggles the property of a data in the parent. However, both ways can be workaround in both frameworks.
@@ -6326,7 +6326,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         </ul>
     </template>
     ```
-1. In `LearningResource`, we use `inject` to catch the method sending from `TheResources.vue` and triger it when the user clicks on the "delete" button.
+1. In `LearningResource`, we use `inject` to catch the method sending from `TheResources.vue` and trigger it when the user clicks on the "delete" button.
     ```vue
     <!-- src/components/learning-resources/LearningResource.vue -->
     <template>
@@ -6705,7 +6705,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## Adding Basic Form Validation
-1. We can use a input event [`blur`](https://www.w3schools.com/jsref/event_onblur.asp) (similar to [`onfocusout`](https://www.w3schools.com/jsref/event_onfocusout.asp)) which trigers when the user leaves an `input` field if it has been focused on.
+1. We can use a input event [`blur`](https://www.w3schools.com/jsref/event_onblur.asp) (similar to [`onfocusout`](https://www.w3schools.com/jsref/event_onfocusout.asp)) which triggers when the user leaves an `input` field if it has been focused on.
 1. We can have another state `userNameValidity` in `data` to check whether to show the error message and add `invalid` class to the `input` and `label` tag. 
     ```html
     <!-- TheForm.vue -->
@@ -8821,21 +8821,1006 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Animations & Transitions
 ## Animation Basics & CSS Transitions
+1. To animate and move an object on the screen, we can use CSS `transform` and `transition` for the animation. 
+1. To move the block to its left, we can use `transform: translateX()` with negative value to move it to the left on the main axis. 
+1. We assign a new data `animatedBlock` as Boolean value to check if the class should be assigned to the element. 
+1. `animateBlock` method is added to toggle the `animatedBlock` state.
+    ```html
+    <!-- App.vue -->
+    <template>
+        <div class="container">
+            <div class="block" :class="{ animate: animatedBlock }"></div>
+            <button @click="animateBlock">Animate</button>
+        </div>
+        <base-modal @close="hideDialog" v-if="dialogIsVisible">
+            <p>This is a test dialog!</p>
+            <button @click="hideDialog">Close it!</button>
+        </base-modal>
+        <div class="container">
+            <button @click="showDialog">Show Dialog</button>
+        </div>
+    </template>  
+
+    <script>
+    export default {
+        data() {
+            return { animatedBlock: false, dialogIsVisible: false };
+        },
+        methods: {
+            animateBlock() {
+                this.animatedBlock = !this.animatedBlock;
+            },
+            showDialog() {
+                this.dialogIsVisible = true;
+            },
+            hideDialog() {
+                this.dialogIsVisible = false;
+            },
+        },
+    };
+    </script>
+
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+    html {
+        font-family: sans-serif;
+    }
+    body {
+        margin: 0;
+    }
+    button {
+        font: inherit;
+        padding: 0.5rem 2rem;
+        border: 1px solid #810032;
+        border-radius: 30px;
+        background-color: #810032;
+        color: white;
+        cursor: pointer;
+    }
+    button:hover,
+    button:active {
+        background-color: #a80b48;
+        border-color: #a80b48;
+    }
+    .block {
+        width: 8rem;
+        height: 8rem;
+        background-color: #290033;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease-out;
+    }
+    .container {
+        max-width: 40rem;
+        margin: 2rem auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 2rem;
+        border: 2px solid #ccc;
+        border-radius: 12px;
+    }
+
+    .animate {
+        transform: translateX(-150px);
+    }
+    </style>
+    ```
+
 ## Understanding CSS Animations
+1. To create animation, we can use `keyframe` in CSS to define the behavior and actions of the animation.
+1. We use `forwards` value in `animation` to keep the last state at "100%" on the element. Otherwise, the element will return back to its original state.
+1. Note that if we toggle the element by clicking the button, the element is "jumping" back to its original state rather than having a smooth transition.
+    ```css
+    /* App.vue */
+    .block {
+        /* transition: transform 0.3s ease-out; */
+    }
+
+    .animate {
+        /* transform: translateX(-150px); */
+        animation: slide-fade 0.3s ease-out forwards;
+    }
+
+    @keyframes slide-fade {
+        0% {
+            transform: translateX(0) scale(1);
+        }
+        70% {
+            transform: translateX(-120px) scale(1.1);
+        }
+        100% {
+            transform: translateX(-150px) scale(1);
+        }
+    }
+    ```
+
 ## Why is "Just CSS" Not Enough?
+1. When we applying animations by `transform` with `transition` or `keyframes` with `animation`, it only works when the element comes in but not when the element is removed. 
+1. This is simply because CSS animation works when an element is added as the transition of adding the element on the screen. However, when we "close" the added element, it will be removed immediately from the DOM if we use `v-show` or `v-if`. Therefore, CSS animation won't work when the element is removed. 
+1. For example, we create a "**modal**" with a dark filter to cover the whole viewport and place the `dialog` element right at the center.
+    ```html
+    <!-- BaseModal.vue -->
+    <template>
+        <div class="backdrop" @click="$emit('close')"></div>
+        <dialog open>
+            <slot></slot>
+        </dialog>
+    </template>
+
+    <script>
+    export default {
+        emits: ['close'],
+    };
+    </script>
+
+    <style scoped>
+    .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 10;
+        background-color: rgba(0, 0, 0, 0.75);
+    }
+
+    dialog {
+        position: fixed;
+        top: 30vh;
+        width: 30rem;
+        left: calc(50% - 15rem);
+        margin: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        border-radius: 12px;
+        padding: 1rem;
+        background-color: white;
+        z-index: 100;
+        border: none;
+
+        animation: modal 0.3s ease-out forwards;
+    }
+
+    @keyframes modal {
+        0% {
+            opacity: 0;
+            transform: translateY(-50px) scale(0.9);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    </style>
+    ```
+
 ## Playing CSS Animations with Vue's Help
+1. To have animated transition on both in/out of the element, we can sue `transition` which is a Vue specific tag to wrap the element. Note that in most of the cases, we should have only one single direct child in `transition` component.
+1. By wrapping the element, we can access [transition classes](https://v3.vuejs.org/guide/transitions-enterleave.html#transition-classes) to create the animation for both in and out. Note that this solution is suitable for only a single element, and it doesn't work well if we want to animate nested elements. 
+    <img src="images/192-animating_enter_leave_state.png">
+
 ## Using the Transition Component
+1. We then can use `.v-enter-from`, `.v-enter-active`, `.v-enter-to`, `.v-leave-from`, `.v-leave-active`, and `.v-leave-to` to create the animation. 
+1. Note that this `transition` component in Vue is only required when the element is controlled by `v-if`, which can be added and removed from the DOM list. 
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <div class="container">
+            <transition>
+                <p v-if="paraIsVisible">This is only sometimes visible...</p>
+            </transition>
+            <button @click="toggleParagraph">Toggle Paragraph</button>
+        </div>
+    </template>
+    ```
+    ```css
+    /* App.vue */
+    .v-enter-from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    .v-enter-active {
+        transition: all 0.3s ease-out;
+    }
+
+    .v-enter-to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .v-leave-from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .v-leave-active {
+        transition: all 0.3s ease-in;
+    }
+
+    .v-leave-to {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    ```
+
 ## CSS Animations with the Transition Component
+1. Besides having animations in all the Vue transition classes, we can simply put the `animation` defined with `keyframes` in the `.v-enter-active` and `.v-leave-active` class.
+1. Note that we don't need to have `forward` in `animation` value because the class will be removed when the element warpped by `transition` is mounted or unmounted. 
+1. Besdies, the example can look funny as we just play the same animation twice when the element is mounted and unmounted. 
+    ```css
+    /* App.vue */
+    .v-enter-active {
+        animation: slide-scale 0.3s ease-out;
+    }
+
+    .v-enter-to {
+        /* opacity: 1;
+        transform: translateY(0); */
+    }
+
+    .v-leave-from {
+        /* opacity: 1;
+        transform: translateY(0); */
+    }
+
+    .v-leave-active {
+        /* transition: all 0.3s ease-in; */
+        animation: slide-scale 0.3s ease-out;
+    }
+
+    .v-leave-to {
+        /* opacity: 0;
+        transform: translateY(-30px); */
+    }
+
+    @keyframes slide-scale {
+        0% {
+            transform: translateX(0) scale(1);
+        }
+        70% {
+            transform: translateX(-120px) scale(1.1);
+        }
+        100% {
+            transform: translateX(-150px) scale(1);
+        }
+    }
+    ```
+
 ## Using Custom CSS Class Names
+1. When we have multiple `transition` components, we can [change prefix](https://v3.vuejs.org/guide/transitions-enterleave.html#transition-classes)  by giving `name` attribute to `transition` component tag to replce it from "**v**" to something else 
+1. In addition, we can also create [custom transtion classes](https://v3.vuejs.org/guide/transitions-enterleave.html#custom-transition-classes) with `enter-from-class`, `enter-active-class`, `enter-to-class`, `leave-from-class`, `leave-active-class`, and `leave-to-class` to have custom classes. This is especially useful to work with 3rd party CSS libraries that animations are predefined in certain names. 
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <div class="container">
+            <transition 
+                name="para"
+                enter-active-class="..."
+            >
+                <p v-if="paraIsVisible">This is only sometimes visible...</p>
+            </transition>
+            <button @click="toggleParagraph">Toggle Paragraph</button>
+        </div>
+    </template>
+    ```
+    ```css
+    .para-enter-from {
+        /* opacity: 0;
+        transform: translateY(-30px); */
+    }
+
+    .para-enter-active {
+        animation: slide-scale 0.3s ease-out;
+    }
+
+    .para-enter-to {
+        /* opacity: 1;
+        transform: translateY(0); */
+    }
+
+    .para-leave-from {
+        /* opacity: 1;
+        transform: translateY(0); */
+    }
+
+    .para-leave-active {
+        /* transition: all 0.3s ease-in; */
+        animation: slide-scale 0.3s ease-out;
+    }
+
+    .para-leave-to {
+        /* opacity: 0;
+        transform: translateY(-30px); */
+    }
+
+    @keyframes slide-scale {
+        0% {
+            transform: translateX(0) scale(1);
+        }
+        70% {
+            transform: translateX(-120px) scale(1.1);
+        }
+        100% {
+            transform: translateX(-150px) scale(1);
+        }
+    }
+    ```
+
 ## Example: Animating a Modal
+1. For the "Modal" component, we can wrap `transition` it to performan animation. However, it won't work in this case becasue there's 2 siblings `div` and `dialog` tag. 
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <transition name="modal">
+            <!-- send open prop to BaseModal -->
+            <base-modal @close="hideDialog" :open="dialogIsVisible">
+                <p>This is a test dialog!</p>
+                <button @click="hideDialog">Close it!</button>
+            </base-modal>
+        </transition>
+    </template>
+    ```
+1. Since the `transition` component takes only one direct child element inside, we can move the `transition` component from `App.vue` to `BaseModal.vue`.
+1. Use `props` to take `open` sending from `App.vue`.
+1. We put both `v-if` on the first `div` and `dialog` to ensure both of them shows only when it's "**opened**". Otherwise, all the elements will be rendered on the page when `App.vue` is loaded.
+1. To use the same animation but work on the other way, we can simply use `reserve` for the animation, so the animation will be execute from "to" to "from" or "100%" to "0%".
+    ```vue
+    <!-- BaseModal.vue -->
+    <template>
+        <div v-if="open" class="backdrop" @click="$emit('close')"></div>
+        <transition name="modal">
+            <dialog open v-if="open">
+                <slot></slot>
+            </dialog>
+        </transition>
+    </template>
+    ```
+    ```html
+    <script>
+    export default {
+        props: ['open'],
+        emits: ['close'],
+    };
+    </script>
+
+    <style scoped>
+    .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 10;
+        background-color: rgba(0, 0, 0, 0.75);
+    }
+
+    dialog {
+        position: fixed;
+        top: 30vh;
+        width: 30rem;
+        left: calc(50% - 15rem);
+        margin: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        border-radius: 12px;
+        padding: 1rem;
+        background-color: white;
+        z-index: 100;
+        border: none;
+        /* animation: modal 0.3s ease-out forwards; */
+    }
+
+    .modal-enter-active {
+        animation: modal 0.3s ease-out;
+    }
+
+    .modal-leave-active {
+        animation: modal 0.3s ease-in reverse;
+    }
+
+    @keyframes modal {
+        0% {
+            opacity: 0;
+            transform: translateY(-50px) scale(0.9);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    </style>
+    ```
+
 ## Transitioning Between Multiple Elements
+1. In cases that we want to apply animations on multiple elements, we can use `transition` to wrap the elements and ensure that only one of the elements will be added to the DOM.
+1. For example, we have 2 buttons in a container and only each of the buttons will show. When one shows, the other one will be hidden.
+1. However, multiple elements still won't work if we use multiple `v-if` as Vue doesn't analyze the structure and output if there's really onle one single element will be reneder. Therefore, we should use `v-else-if` or `v-else` instead. 
+1. During transition, we may find the animation works funny as all the elements may appear on the screen during transition. 
+1. We can adjust [transition modes](https://v3.vuejs.org/guide/transitions-enterleave.html#transition-modes)by giving `mode` attribute on `transtion` which takes either `in-out` or `out-in` to perform the transition. Note that `out-in` is much useful at most of the time because it firstly removes the element then runs the animation, while `in-out` works in contrast.
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <transition name="fase-button" mode="out-in">
+            <div class="container">
+                <button @click="showUsers" v-if="!usersAreVisible">Show Users</button>
+                <button @click="hideUsers" v-if="usersAreVisible">Hide Users</button>
+                <button @click="hideUsers" v-else-if="usersAreVisible">Hide Users</button>
+                <button @click="hideUsers" v-else>Hide Users</button>
+            </div>
+        </transition>
+    </template>
+    ```
+    ```html
+    <!-- App.vue -->
+    <script>
+    export default {
+        data() {
+            return {
+                usersAreVisible: false,
+            }
+        },
+        methods: {
+            showUsers() {this.usersAreVisible = true;},
+            hideUsers() {this.usersAreVisible = false;},
+        }
+    }
+    </script>
+    <style>
+    .fade-button-enter-from,
+    .fade-button-leave-to {
+        opacity: 0;
+    }
+
+    .fade-button-enter-active {
+        transition: opacity 0.3s ease-out;
+    }
+    .fade-button-enter-active {
+        transition: opacity 0.3s ease-in;
+    }
+
+    .fade-button-enter-to,
+    .fade-button-leave-from {
+        opacity: 1;
+    }
+    </style>
+    ```
+
 ## Using Transition Events
+1. In some cases, we'd like to control the transition with [JavaScript hooks](https://v3.vuejs.org/guide/transitions-enterleave.html#javascript-hooks). 
+1. For example, we can add `@before-enter="beforeEnter"` listener on `transition` component. This triggers when the the root element in `transition` is added `v-enter-from` class and start to be animated.
+1. On the other hand, `@before-leave="beforeLeave"` listener which triggers when the component is removed.
+1. In addition, the methods having `el` as the argument by default as JavaScript event handler for `event`. This `el` is the DOM selector of the element adding. Note that we can name the methods as other handlers by our own.
+1. Besides, `enter` and `leave` are the same as `v-enter-active` and `v-leave-active`.
+    1. `@before-enter="beforeEnter"`
+    1. `@enter="enter"`
+    1. `@after-enter="afterEnter"`
+    1. `@before-leave="beforeLeave"`
+    1. `@leave="leave"`
+    1. `@after-leave="afterLeave"`
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <div class="container">
+            <transition
+                name="para"
+                @before-enter="beforeEnter"
+                @enter="enter"
+                @after-enter="afterEnter"
+                @before-leave="beforeLeave"
+                @leave="leave"
+                @after-leave="afterLeave"
+            >
+                <p v-if="paraIsVisible">This is only sometimes visible...</p>
+            </transition>
+            <button @click="toggleParagraph">Toggle Paragraph</button>
+        </div>
+    </template>
+    ```
+    <img src="images/198-transition_events_javascript_hooks.png">
+
 ## Building JavaScript Transitions (instead of CSS)
+1. In some cases, such as using 3rd party CSS library like [green sock](https://greensock.com/scrolltrigger/), we can use JavaScript hooks to leverage the usage. Besides, the hooks will still be triggered without CSS.
+1. Since we are not using CSS, Vue couldn't analyze the duration of animation given in `transition` property. Therefore, we can use `setInterval` to keep looping until it's cancelled. In this case, we can keep changing the `opacity` of the element. 
+    ```js
+    // App.vue
+    export default {
+        methods: {
+            enter(el, done) {
+                console.log('enter');
+                console.log(el);
+                let round = 1;
+                const interval = setInterval(function() {
+                    el.style.opacity = round * 0.01;
+                    round++;
+                    if (round > 100) {
+                        clearInterval(interval);
+                        done();
+                    }
+                }, 20);
+            },
+            leave(el, done) {
+                console.log('leave');
+                console.log(el);
+                let round = 1;
+                const interval = setInterval(function() {
+                    el.style.opacity = 1 - round * 0.01;
+                    round++;
+                    if (round > 100) {
+                        clearInterval(interval);
+                        done();
+                    }
+                }, 20);
+            },
+        }
+    }
+    ```
+1. However, by using the code above, we will get glitches during transition if we cancel the animation. Therefore, we can check other 2 methods which will be automatically triggered when the animation is cancelled. 
+1. In this case, we can only cancel `setInterval` if the interval poniter is accessible from the outside. Therefore, we need to put in on `data` as of the states. 
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <div class="container">
+            <transition
+                name="para"
+                @before-enter="beforeEnter"
+                @enter="enter"
+                @after-enter="afterEnter"
+                @before-leave="beforeLeave"
+                @leave="leave"
+                @after-leave="afterLeave"
+                @enter-cancelled="enterCancelled"
+                @leave-cancelled="leaveCancelled"
+            >
+                <p v-if="paraIsVisible">This is only sometimes visible...</p>
+            </transition>
+            <button @click="toggleParagraph">Toggle Paragraph</button>
+        </div>
+    </template>
+    ```
+    ```js
+    // App.vue
+    export default {
+        data() {
+            return {
+                enterInterval: null,
+                leaveInterval: null,
+            };
+        },
+        methods: {
+            enterCancelled(el) {
+                console.log(el);
+                clearInterval(this.enterInterval);
+            },
+            leaveCancelled(el) {
+                console.log(el);
+                clearInterval(this.leaveInterval);
+            },
+            beforeEnter(el) {
+                console.log('before enter');
+                console.log(el);
+                el.style.opacity = 0;
+            },
+            enter(el, done) {
+                console.log('enter');
+                console.log(el);
+                let round = 1;
+                this.enterInterval = setInterval(() => {
+                    el.style.opacity = round * 0.01;
+                    round++;
+                    if (round > 100) {
+                        clearInterval(this.enterInterval);
+                        done();
+                    }
+                }, 20);
+            },
+            afterEnter(el) {
+                console.log('after enter');
+                console.log(el);
+            },
+            beforeLeave(el) {
+                console.log('before leave');
+                console.log(el);
+                el.style.opacity = 1;
+            },
+            leave(el, done) {
+                console.log('leave');
+                console.log(el);
+                let round = 1;
+                this.leaveInterval = setInterval(() => {
+                    el.style.opacity = 1 - round * 0.01;
+                    round++;
+                    if (round > 100) {
+                        clearInterval(this.leaveInterval);
+                        done();
+                    }
+                }, 20);
+            },
+            afterLeave(el) {
+                console.log('after leave');
+                console.log(el);
+            },
+        },
+    };
+    ```
+
 ## Disabling CSS Transitions
+1. If we use only JavaScript hooks to control the animation with hooks, we can add `:css="false"` to indicate to Vue that Vue doesn't need to scan through CSS to apply animation on the component.
+1. The configuration can improve the performance by prevent Vue scanning through CSS. 
+
 ## Getting Started with Animated Lists
+1. We can build up a new component for a list of users `UserList.vue`. 
+1. This components allow users to add new users to the list and remove a user by clicking the item in the list. 
+    ```html
+    <!-- UserList.vue -->
+    <template>
+        <ul>
+            <li v-for="user in users" :key="user" @click="removeUser(user)">
+                {{ user }}
+            </li>
+        </ul>
+        <div>
+            <input type="text" ref="userNameInput" />
+            <button @click="addUser">Add User</button>
+        </div>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                users: ['Max', 'Manu', 'Julie', 'Angela', 'Michael'],
+            };
+        },
+        methods: {
+            addUser() {
+                const enteredUserName = this.$refs.userNameInput.value;
+                this.users.unshift(enteredUserName);
+            },
+            removeUser(user) {
+                this.users = this.users.filter((item) => item !== user);
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    ul {
+        list-style: none;
+        margin: 1rem 0;
+        padding: 0;
+    }
+
+    li {
+        border: 1px solid #ccc;
+        padding: 1rem;
+        text-align: center;
+    }
+    </style>
+    ```
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <div class="container">
+            <user-list></user-list>
+        </div>
+    </template>
+    ```
+    
 ## Animating Lists with "transition-group"
+1. When adding animation to list of elements, we can use `transition-group` rather than `transition` component for [list transitions](https://v3.vuejs.org/guide/transitions-list.html#list-entering-leaving-transitions).
+1. The main difference between `transition` and `transition-group` is that `transition` doesn't really add a DOM to HTML but give Vue instruction to work on the transition.
+1. Therefore, when using `transition-group` we can give `tag` attribute and have a valid HTML tag as the value, so it will create an HTML element. For exmaple, we use `ul` to wrap `li`. 
+1. However, this still creates a small issue that the space of the item will be kept while transition is executing, but the item in the list will suddenly merged when the item is removed from the DOM. 
+    ```vue
+    <!-- UserList.vue -->
+    <template>
+        <transition-group tag="ul" name="user-list">
+            <li v-for="user in users" :key="user" @click="removeUser(user)">
+                {{ user }}
+            </li>
+        </transition-group>
+        <div>
+            <input type="text" ref="userNameInput" />
+            <button @click="addUser">Add User</button>
+        </div>
+    </template>
+    ```
+    ```html
+    <script>
+    export default {
+        data() {
+            return {
+                users: ['Max', 'Manu', 'Julie', 'Angela', 'Michael'],
+            };
+        },
+        methods: {
+            addUser() {
+                const enteredUserName = this.$refs.userNameInput.value;
+                this.users.unshift(enteredUserName);
+            },
+            removeUser(user) {
+                this.users = this.users.filter((item) => item !== user);
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    ul {
+        list-style: none;
+        margin: 1rem 0;
+        padding: 0;
+    }
+
+    li {
+        border: 1px solid #ccc;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .user-list-enter-from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    .user-list-enter-active,
+    .user-list-leave-active {
+        transition: all 1s ease-out;
+    }
+    .user-list-enter-to,
+    .user-list-leave-from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .user-list-leave-active {
+        transition: all 1s ease-out;
+    }
+    .user-list-leave-to {
+        opacity: 1;
+        transform: translateX(30px);
+    }
+    </style>
+    ```
+    <img src="./images/202-transition_group_animation.gif">
+
 ## Animate List Item Movement
+1. When using `transition-group`, the transition works not only on the added or removed element but the other items in the list.
+1. Therefore, we need to control the other elements in the list. In this case, we can use `v-move` class for [List Move Transitions](https://v3.vuejs.org/guide/transitions-list.html#list-move-transitions). We can use `[name]-move` if we give `name` attribute to `transition-group`. Besides, we can change the name for move class by passing `move-class` attribute.
+1. Since Vue uses `transform` property to perform animation under the hood, we can use `transition` property to work on `transform` in `move` class. However, this only works on adding an item to the list. 
+1. To add transition when removing an item from the list, we add in `.v-leave-active` class with `position: absolute`. 
+    ```css
+    /* UserList.vue */
+    .user-list-enter-from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    .user-list-enter-active,
+    .user-list-leave-active {
+        transition: all 1s ease-out;
+    }
+    .user-list-enter-to,
+    .user-list-leave-from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .user-list-leave-active {
+        transition: all 1s ease-out;
+        position: absolute; /* this makes transition smooth when an item is removed from the list */
+    }
+    .user-list-leave-to {
+        opacity: 1;
+        transform: translateX(30px);
+    }
+
+    .user-list-move { 
+        transition: transform 0.8s ease;
+        /* 
+          triggers when a DOM is added 
+          Vue uses transform to animate the transition        
+        */
+    }
+    ```
+
 ## Animate Route Changes
+1. When switching routes using `vue-router`, we can also add [transitions](https://next.router.vuejs.org/guide/advanced/transitions.html#transitions) animation for smoother transtion. However, the syntax could be weird that we can't use `transition` Vue component to wrap the `router-view` directly.
+1. Instead, `transition` should be placed inside `router-view`, while `router-view` shall pass the `v-slot` object with the component to render with `component` tag in `transition`. 
+1. In regular cases, we don't need [`v-slot` with `router-view`](https://next.router.vuejs.org/api/#router-view-s-v-slot) componenet. We mainly require to work with it when using `transition` or `keep-alive` component to render the inner components on Vue router.
+    ```vue
+    <!-- App.vue -->
+    <template>
+        <router-view v-slot="slotProps">
+            <transition mode="out-in">
+                <component :is="slotProps.Component"> </component>
+            </transition>
+        </router-view>
+    </template>
+
+    <!-- Use ES6 destructive assigning syntax -->
+    <template>
+        <router-view v-slot="{ component }">
+            <transition mode="out-in">
+                <component :is="component"> </component>
+            </transition>
+        </router-view>
+    </template>
+    ```
+1. In this example, we create 2 other components as pages `AllUsers.vue` and `CourseGoals.vue` which has nothing but represents a page.
+    ```vue
+    <!-- AllUsers.vue -->
+    <template>
+        <div class="container">
+            <h2>All Users</h2>
+            <router-link to="/goals">Course Goals</router-link>
+        </div>
+    </template>
+
+    <!-- CourseGoals.vue -->
+    <template>
+        <div class="container">
+            <h2>Course Goals</h2>
+            <router-link to="/">All Users</router-link>
+        </div>
+    </template>
+    ```
+1. In `main.js`, we can modify and configure to use with `vue-router`
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from "vue-router";
+
+    import App from './App.vue';
+    import AllUsers from './pages/AllUsers.vue';
+    import CourseGoals from './pages/CourseGoals.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', component: AllUsers },
+            { path: '/goals', component: CourseGoals },
+        ],
+    });
+
+    const app = createApp(App);
+
+    app.component('base-modal', BaseModal);
+
+    app.use(router);
+
+    app.mount('#app');
+    ```
+1. We can give `name` property to `transition` to use the previous configured animation. Note that we only need to execute in `.route-enter-active { animation: slide-scale .4s ease-out }` and `.route-leave-active { animation: slide-scale .4s ease-in }`, though this traisntion animation looks very weird here.
+1. In addition, we can use another animation `fade-button` which changes only `opacity` on the elements. 
+    ```vue
+    <template>
+        <router-view v-slot="slotProps">
+            <!-- <transition name="route" mode="out-in"> -->
+            <transition name="fade-button" mode="out-in">
+                <component :is="slotProps.Component"> </component>
+            </transition>
+        </router-view>
+    </template>
+    ```
+    ```css
+    * {
+        box-sizing: border-box;
+    }
+    html {
+        font-family: sans-serif;
+    }
+    body {
+        margin: 0;
+    }
+    button {
+        font: inherit;
+        padding: 0.5rem 2rem;
+        border: 1px solid #810032;
+        border-radius: 30px;
+        background-color: #810032;
+        color: white;
+        cursor: pointer;
+    }
+    button:hover,
+    button:active {
+        background-color: #a80b48;
+        border-color: #a80b48;
+    }
+    .block {
+        width: 8rem;
+        height: 8rem;
+        background-color: #290033;
+        margin-bottom: 2rem;
+        /* transition: transform 0.3s ease-out; */
+    }
+    .container {
+        max-width: 40rem;
+        margin: 2rem auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 2rem;
+        border: 2px solid #ccc;
+        border-radius: 12px;
+    }
+
+    .animate {
+        /* transform: translateX(-150px); */
+        animation: slide-fade 0.3s ease-out forwards;
+    }
+
+    .fade-button-enter-from,
+    .fade-button-leave-to {
+        opacity: 0;
+    }
+
+    .fade-button-enter-active {
+        transition: opacity 0.3s ease-out;
+    }
+    .fade-button-enter-active {
+        transition: opacity 0.3s ease-in;
+    }
+
+    .fade-button-enter-to,
+    .fade-button-leave-from {
+        opacity: 1;
+    }
+
+    .route-enter-active { /* works when the router view component is mounted */
+        animation: slide-scale 0.4s ease-out;
+    }
+
+    .route-leave-active { /* works when the router view component is unmounted */
+        animation: slide-scale 0.4s ease-in;
+    }
+
+    @keyframes slide-scale {
+        0% {
+            transform: translateX(0) scale(1);
+        }
+        70% {
+            transform: translateX(-120px) scale(1.1);
+        }
+        100% {
+            transform: translateX(-150px) scale(1);
+        }
+    }
+    ```
+1. However, the component will still run the animation when it is rendered on the page. Therefore, in `main.js` we can use [`router.isReady`](https://next.router.vuejs.org/api/#isready) on `router` variable.
+1. `router.isReady()` returns a `Promise` that only works after all the initial navigation has completed. In this case, though the root path has been set, the page will actually be redirected by `vue-router` back to `/` and render `AllUsers.vue` on the page. 
+1. Therefore, we can ensure the page won't be redirected again after the user is redirected to the path and thus the animation runs when the user firstly visit the page.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+    import { createRouter, createWebHistory } from "vue-router";
+
+    import App from './App.vue';
+    import BaseModal from './components/BaseModal.vue';
+    import AllUsers from './pages/AllUsers.vue';
+    import CourseGoals from './pages/CourseGoals.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', component: AllUsers },
+            { path: '/goals', component: CourseGoals },
+        ],
+    });
+
+    const app = createApp(App);
+
+    app.component('base-modal', BaseModal);
+
+    app.use(router);
+
+    router.isReady().then(function () {
+        app.mount('#app'); // mount the components in isReady
+    });
+    ```
 
 
 
