@@ -10920,21 +10920,1642 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # Main Project: "Find a Coach" Web App
 ## Planning the Project / Web App
+1. The Web Vue app has 2 main features to "find a coach" and "send message to a coach". 
+1. Find a coach
+    1. List all available coaches
+    1. View coach details
+    1. Register as a coach
+    1. Contact a coach
+1. Requests (Messages)
+    1. Contact a coach
+    1. View incoming requests
+1. When planning an app, we can follow the following steps
+    1. Define features
+    1. Derive Data Models / Vuex Store Layout which includes `state`, `getters`, `actions`, and `mutations`.
+    1. Derive "Design" and Components / Layout
+
 ## Planning the Data Requirements
+1. For the data, we have "**coaches**" and "**requests**".
+1. Coaches
+    1. List of coaches
+    1. A coach can include
+        1. id
+        1. Firstname
+        1. Lastname
+        1. Description
+        1. Rate (hourly service charge)
+    1. Mutations
+        1. Register as a coach
+        1. Set coaches (fetch data from backend/database)
+1. Requests
+    1. List of requests
+    1. A request should be linked to a coach, include message to the coach, and an email for the coach to respond.
+    1. Mutations
+        1. Contact a coach
+        1. Set requests (fetch data from backend/database)
+
 ## Planning the Layout / Components
+1. Coach related routes
+    1. `/coaches` renders a list of coaches
+    1. `/coaches/:id` renders details of a coach
+    1. `register` allow users to register as a coach
+1. Request related routes
+    1. `/contact` allow users to contact a coach
+    1. `/request` renders requests received
+
 ## Registering Routes
+1. According to the general plans in the previous section, we can build up the routers with `vue-router`.
+    ```js
+    // src/router.js
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/coaches' },
+            { path: '/coaches', component: null, },
+            {
+                path: '/coaches/:id', component: null, children: [
+                    { path: 'contact', component: null }, // /coaches/c1/contact
+                ]
+            },
+            { path: '/register', component: null, },
+            { path: '/requests', component: null, },
+            { path: '/:notFound(.*)', component: null, },
+        ],
+    });
+
+    export default router;
+    ```
+
 ## Adding Route Page Components
+1. We create the file structures and components
+    1. `src/pages/coaches`
+        1. `CoachDetails.vue`
+        1. `CoachesList.vue`
+        1. `CoachRegistration.vue`
+    1. `src/pages/requests`
+        1. `ContactCoach.vue`
+        1. `RequestsReceived.vue`
+    1. `src/pages/NotFound.vue`
+1. We import and configure all the components in `router.js`.
+    ```js
+    // router.js
+    import { createRouter, createWebHistory } from 'vue-router';
+
+    import CoachDetail from './pages/coaches/CoachDetail.vue';
+    import CoachesList from './pages/coaches/CoachesList.vue';
+    import CoachRegistration from './pages/coaches/CoachRegistration.vue';
+    import ContactCoach from './pages/requests/ContactCoach.vue';
+    import RequestsReceived from './pages/requests/RequestsReceived.vue';
+    import NotFound from './pages/NotFound.vue';
+
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { path: '/', redirect: '/coaches' },
+            { path: '/coaches', component: CoachesList, },
+            {
+                path: '/coaches/:id', component: CoachDetail, children: [
+                    { path: 'contact', component: ContactCoach }, // /coaches/c1/contact
+                ]
+            },
+            { path: '/register', component: CoachRegistration, },
+            { path: '/requests', component: RequestsReceived, },
+            { path: '/:notFound(.*)', component: NotFound, },
+        ],
+    });
+
+    export default router;
+    ```
+    
 ## Working on the Main Layout & Styling
+1. In `CoachesList.vue`, we just added some content as placeholder. This component has 2 main sections which are "Filter" and "List of coaches".
+1. We then create `TheHeader.vue` which is stored in `src/components/layout`.
+    ```html
+    <!-- src/components/layout/TheHeader.vue -->
+    <template>
+        <header>
+            <nav>
+                <h1><router-link to="/">Find a Coach</router-link></h1>
+                <ul>
+                    <li><router-link to="/coaches">All Coaches</router-link></li>
+                    <li><router-link to="/requests">Requests</router-link></li>
+                </ul>
+            </nav>
+        </header>
+    </template>
+
+    <style scoped>
+    header {
+        width: 100%;
+        height: 5rem;
+        background-color: #3d008d;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    header a {
+        text-decoration: none;
+        color: #f391e3;
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border: 1px solid transparent;
+    }
+
+    a:active,
+    a:hover,
+    a.router-link-active {
+        border: 1px solid #f391e3;
+    }
+
+    h1 {
+        margin: 0;
+    }
+
+    h1 a {
+        color: white;
+        margin: 0;
+    }
+
+    h1 a:hover,
+    h1 a:active,
+    h1 a.router-link-active {
+        border-color: transparent;
+    }
+
+    header nav {
+        width: 90%;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    li {
+        margin: 0 0.5rem;
+    }
+    </style>
+    ```
+1. We register and have some gobal styling in `App.vue`.
+    ```html
+    <!-- App.vue -->
+    <template>
+        <the-header></the-header>
+        <router-view></router-view>
+    </template>
+
+    <script>
+    import TheHeader from './components/layout/TheHeader.vue';
+    export default {
+        components: {
+            TheHeader,
+        },
+    };
+    </script>
+
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+        margin: 0;
+    }
+    </style>
+    ```
+
 ## Wiring Up Pages
+1. We put some dummy data to ensure the pages are linked correctly. In this case, we updated `RequestsReceived.vue`, `CoachRegistreation.vue`, `ContactCoach.vue`, and `CoachDetail.vue`.
+1. Besides, we can try to access the coach details with a dummy id in URL.
+1. In the detail view, we can put a `router-link` to `/coaches/:id/contact` to access the child component in `coeaches/:id`. 
+1. Note that `ContactCoach.vue` is a child component in the route. When the user switch to the route, it only adds the component in the child route rather than switching it to other page. Thus, we need to use `router-view` to render the component on the screen.
+    ```html
+    <!-- src/pages/coaches/CoachDetails.vue -->
+    <template>
+    DETAILS FOR COACH
+        <router-view></router-view>
+        <router-link to="/coaches/c1/contact">Contact</router-link>
+    </template>
+    ```
+
 ## Adding Vuex and Coach Data
+1. We set up new directories for `vuex` and store the data in the global scope. 
+1. In `src`, we create `/store` folder.
+    1. `/modules`
+        ```js
+        // src/modules/index.js
+        import { createStore } from 'vuex';
+
+        import coachesModule from './modules/coaches/index.js';
+
+        const store = createStore({
+            modules: { coaches: coachesModule },
+        });
+
+        export default store;
+        ```
+        1. `/coaches`
+            1. `index.js`
+                ```js
+                // src/store/modules/coaches/index.js
+                import mutations from './mutations.js';
+                import actions from './actions.js';
+                import getters from './getters.js';
+
+                export default {
+                    namespaced: true,
+                    state() {
+                        return {
+                            coaches: [
+                                {
+                                    id: 'c1',
+                                    firstName: 'Maximilian',
+                                    lastName: 'Schwarzmüller',
+                                    areas: ['frontend', 'backend', 'career'],
+                                    description:
+                                        "I'm Maximilian and I've worked as a freelance web developer for years. Let me help you become a developer as well!",
+                                    hourlyRate: 30
+                                },
+                                {
+                                    id: 'c2',
+                                    firstName: 'Julie',
+                                    lastName: 'Jones',
+                                    areas: ['frontend', 'career'],
+                                    description:
+                                        'I am Julie and as a senior developer in a big tech company, I can help you get your first job or progress in your current role.',
+                                    hourlyRate: 30
+                                }
+                            ],
+                        };
+                    },
+                    mutations,
+                    actions,
+                    getters,
+                }
+                ```
+            1. `getters.js`
+                ```js
+                // src/store/modules/coaches/getters.js
+                export default {
+                    coaches(state) {
+                        return state.coaches;
+                    },
+                    hasCoaches(state) {
+                        return state.coaches && state.coaches.length > 0;
+                    }
+                };
+                ```
+            1. `mutations.js` - No setting yet 
+            1. `actions.js` - No setting yet 
+1. We then update `CoachesList.vue` to check if all the data is connected.
+    ```html
+    <!-- src/pages/coaches/CoachesList.vue -->
+    <template>
+        <section>FILTER</section>
+        <section>
+            <div class="controls">
+                <button>Refresh</button>
+                <router-link to="/register">Register as Coach</router-link>
+            </div>
+            <ul v-if="hasCoaches">
+                <li v-for="coach in filteredCoaches" :key="coach.id">
+                    {{ coach.firstName }}
+                </li>
+            </ul>
+            <h3 v-else>No coaches found.</h3>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        computed: {
+            filteredCoaches() {
+                return this.$store.getters['coaches/coaches'];
+            },
+            hasCoaches() {
+                return this.$store.getters['coaches/hasCoaches'];
+            },
+        },
+    };
+    </script>
+    ```
+
 ## Working on the Coaches List and List Items
+1. We create another component to render each single coach from the list. 
+    ```html
+    <!-- src/components/coaches/CoachItem.vue -->
+    <template>
+        <li>
+            <h3>{{ fullName }}</h3>
+            <h4>${{ rate }}/hour</h4>
+            <div>
+                <span v-for="area in areas" :key="area">{{ area }}</span>
+            </div>
+            <div class="actions">
+                <router-link :to="coachContactLink">Contact</router-link>
+                <router-link :to="coachDetailsLink">View Details</router-link>
+            </div>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: ['id', 'firstName', 'lastName', 'rate', 'areas'],
+        computed: {
+            fullName() {
+                return this.firstName + ' ' + this.lastName;
+            },
+            coachContactLink() {
+                return this.$route.path + '/coaches/' + this.id + '/contact'; // /coaches/c1/contact
+            },
+            coachDetailsLink() {
+                return this.$route.path + '/coaches/' + this.id; // /coaches/c1
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    li {
+        margin: 1rem 0;
+        border: 1px solid #424242;
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    h3,
+    h4 {
+        margin: 0.5rem 0;
+    }
+
+    div {
+        margin: 0.5rem 0;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+    </style>
+    ```
+1. After creating the `CoachItem.vue` component, we import and use it in `CoachesList.vue`.
+    ```html
+    <template>
+        <section>FILTER</section>
+        <section>
+            <div class="controls">
+                <button>Refresh</button>
+                <router-link to="/register">Register as Coach</router-link>
+            </div>
+            <ul v-if="hasCoaches">
+                <coach-item
+                    v-for="coach in filteredCoaches"
+                    :key="coach.id"
+                    :id="coach.id"
+                    :first-name="coach.firstName"
+                    :last-name="coach.lastName"
+                    :rate="coach.hourlyRate"
+                    :areas="coach.areas"
+                ></coach-item>
+            </ul>
+            <h3 v-else>No coaches found.</h3>
+        </section>
+    </template>
+
+    <script>
+    import CoachItem from '../../components/coaches/CoachItem.vue';
+
+    export default {
+        components: {
+            CoachItem,
+        },
+        computed: {
+            filteredCoaches() {
+                return this.$store.getters['coaches/coaches'];
+            },
+            hasCoaches() {
+                return this.$store.getters['coaches/hasCoaches'];
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: space-between;
+    }
+    </style>
+    ```
+
 ## Adding a Couple of Base Components (Base Card, Base Button, Base Badge)
+1. We create 3 universal components to use in the project `BaseCard.vue`, `BaseButton.vue`, and `BaseBadge`. We put all these components in `ui` directory in `components`.
+1. In these components, we pass `mode` and `type` which has pre-configured styling and effects for different values from the `props`.
+    ```html
+    <!-- src/components/ui/BaseCard.vue -->
+    <template>
+        <div class="card">
+            <slot></slot>
+        </div>
+    </template>
+
+    <style scoped>
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+        padding: 1rem;
+        margin: 2rem auto;
+        max-width: 40rem;
+    }
+    </style>
+    ```
+    ```html
+    <!-- src/components/ui/BaseButton.vue -->
+    <template>
+        <button v-if="!link" :class="mode">
+            <slot></slot>
+        </button>
+        <router-link v-else :to="to" :class="mode">
+            <slot></slot>
+        </router-link>
+    </template>
+
+    <script>
+    export default {
+        props: {
+            mode: {
+                type: String,
+                required: false,
+                default: null,
+            },
+            link: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
+            to: {
+                type: String,
+                required: false,
+                default: '',
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    button,
+    a {
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        font: inherit;
+        background-color: #3a0061;
+        border: 1px solid #3a0061;
+        color: white;
+        cursor: pointer;
+        border-radius: 30px;
+        margin-right: 0.5rem;
+        display: inline-block;
+    }
+
+    a:hover,
+    a:active,
+    button:hover,
+    button:active {
+        background-color: #270041;
+        border-color: #270041;
+    }
+
+    .flat {
+        background-color: transparent;
+        color: #3a0061;
+        border: none;
+    }
+
+    .outline {
+        background-color: transparent;
+        border-color: #270041;
+        color: #270041;
+    }
+
+    .flat:hover,
+    .flat:active,
+    .outline:hover,
+    .outline:active {
+        background-color: #edd2ff;
+    }
+    </style>
+    ```
+    ```html
+    <!-- src/components/ui/BaseBadge.vue -->
+    <template>
+        <span class="badge" :class="type">
+            {{ text }}
+        </span>
+    </template>
+
+    <script>
+    export default {
+        props: ['type', 'title'],
+        computed: {
+            text() {
+                return this.title.toUpperCase();
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    .badge {
+        background-color: #ccc;
+        color: #252525;
+        border-radius: 30px;
+        padding: 0.5rem 1.5rem;
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+
+    .frontend {
+        background-color: #3d008d;
+        color: white;
+    }
+
+    .backend {
+        background-color: #71008d;
+        color: white;
+    }
+
+    .career {
+        background-color: #8d006e;
+        color: white;
+    }
+    </style>
+    ```
+1. Since these components are for general purpose, we can register all of them globally in `main.js`.
+    ```js
+    // main.js
+    import { createApp } from 'vue';
+
+    import router from './router.js';
+    import store from './store/index.js';
+    import App from './App.vue';
+
+    import BaseCard from './components/ui/BaseCard.vue';
+    import BaseButton from './components/ui/BaseButton.vue';
+    import BaseBadge from './components/ui/BaseBadge.vue';
+
+    const app = createApp(App);
+
+    app.use(router);
+    app.use(store);
+
+    app.component('base-card', BaseCard);
+    app.component('base-button', BaseButton);
+    app.component('base-badge', BaseBadge);
+
+    app.mount('#app');
+    ```
+1. We then can import and use the componenets in both `CoachesList.vue` and `CoachItem.vue`.
+    ```html
+    <!-- CoachesList.vue -->
+    <template>
+        <section>FILTER</section>
+        <section>
+            <base-card>
+                <div class="controls">
+                    <base-button mode="outline">Refresh</base-button>
+                    <base-button link to="/register">Register as Coach</base-button>
+                </div>
+                <ul v-if="hasCoaches">
+                    <coach-item
+                        v-for="coach in filteredCoaches"
+                        :key="coach.id"
+                        :id="coach.id"
+                        :first-name="coach.firstName"
+                        :last-name="coach.lastName"
+                        :rate="coach.hourlyRate"
+                        :areas="coach.areas"
+                    ></coach-item>
+                </ul>
+                <h3 v-else>No coaches found.</h3>
+            </base-card>
+        </section>
+    </template>
+
+    <script>
+    import CoachItem from '../../components/coaches/CoachItem.vue';
+
+    export default {
+        components: {
+            CoachItem,
+        },
+        computed: {
+            filteredCoaches() {
+                return this.$store.getters['coaches/coaches'];
+            },
+            hasCoaches() {
+                return this.$store.getters['coaches/hasCoaches'];
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: space-between;
+    }
+    </style>
+    ```
+    ```html
+    <!-- CoachItem.vue -->
+    <template>
+        <li>
+            <h3>{{ fullName }}</h3>
+            <h4>${{ rate }}/hour</h4>
+            <div>
+                <base-badge
+                    v-for="area in areas"
+                    :key="area"
+                    :type="area"
+                    :title="area"
+                ></base-badge>
+            </div>
+            <div class="actions">
+                <base-button mode="outline" :to="coachContactLink"
+                    >Contact</base-button
+                >
+                <base-button link :to="coachDetailsLink">View Details</base-button>
+            </div>
+        </li>
+    </template>
+
+    <script>
+    export default {
+        props: ['id', 'firstName', 'lastName', 'rate', 'areas'],
+        computed: {
+            fullName() {
+                return this.firstName + ' ' + this.lastName;
+            },
+            coachContactLink() {
+                return this.$route.path + '/coaches/' + this.id + '/contact'; // /coaches/c1/contact
+            },
+            coachDetailsLink() {
+                return this.$route.path + '/coaches/' + this.id; // /coaches/c1
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    li {
+        margin: 1rem 0;
+        border: 1px solid #424242;
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    h3,
+    h4 {
+        margin: 0.5rem 0;
+    }
+
+    div {
+        margin: 0.5rem 0;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+    </style>
+    ```
+
 ## Building the Coach Detail Component
+    ```html
+    <!-- src/pages/coaches/CoachDetails.vue -->
+    <template>
+        <section>
+            <base-card>
+                <h2>{{ fullName }}</h2>
+                <h3>${{ rate }}/hour</h3>
+            </base-card>
+        </section>
+        <section>
+            <base-card>
+                <header>
+                    <h2>Interested? Reach out now!</h2>
+                    <base-button link :to="contactLink">Contact</base-button>
+                </header>
+                <router-view></router-view>
+            </base-card>
+        </section>
+        <section>
+            <base-card>
+                <base-badge
+                    v-for="area in areas"
+                    :key="area"
+                    :type="area"
+                    :title="area"
+                ></base-badge>
+                <p>{{ description }}</p>
+            </base-card>
+        </section>
+    </template>
+
+    <script>
+    export default {
+        props: ['id'],
+        data() {
+            return {
+                selectedCoach: null,
+            };
+        },
+        computed: {
+            fullName() {
+                return (
+                    this.selectedCoach.firstName + ' ' + this.selectedCoach.lastName
+                );
+            },
+            areas() {
+                return this.selectedCoach.areas;
+            },
+            rate() {
+                return this.selectedCoach.hourlyRate;
+            },
+            description() {
+                return this.selectedCoach.description;
+            },
+            contactLink() {
+                return this.$route.path + '/' + this.id + '/contact';
+            },
+        },
+        created() {
+            console.log('created');
+            this.selectedCoach = this.$store.getters['coaches/coaches'].find(
+                (coach) => coach.id === this.id
+            );
+        },
+    };
+    </script>
+    ```
+
 ## Filtering Coaches
+1. 
+    ```html
+    <!-- src/components/coaches/CoachFilter.vue -->
+    <template>
+        <base-card>
+            <h2>Find Your Coach</h2>
+            <span class="filter-option">
+                <input type="checkbox" id="frontend" checked @change="setFilter" />
+                <label for="frontend">Frontend</label>
+            </span>
+            <span class="filter-option">
+                <input type="checkbox" id="backend" checked @change="setFilter" />
+                <label for="backend">Backend</label>
+            </span>
+            <span class="filter-option">
+                <input type="checkbox" id="career" checked @change="setFilter" />
+                <label for="career">Career</label>
+            </span>
+        </base-card>
+    </template>
+
+    <script>
+    export default {
+        emits: ['change-filter'],
+        data() {
+            return {
+                filters: {
+                    frontend: true,
+                    backend: true,
+                    career: true,
+                },
+            };
+        },
+        methods: {
+            setFilter(event) {
+                const inputId = event.target.id;
+                const isActive = event.target.checked;
+                const updatedFilters = {
+                    ...this.filters,
+                    [inputId]: isActive,
+                };
+                this.filters = updatedFilters;
+                this.$emit('change-filter', updatedFilters);
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    h2 {
+        margin: 0.5rem 0;
+    }
+
+    .filter-option {
+        margin-right: 1rem;
+    }
+
+    .filter-option label,
+    .filter-option input {
+        vertical-align: middle;
+    }
+
+    .filter-option label {
+        margin-left: 0.25rem;
+    }
+
+    .filter-option.active label {
+        font-weight: bold;
+    }
+    </style>
+    ```
+1. 
+    ```html
+    <!-- src/components/coaches/CoachesList.vue -->
+    <template>
+        <coach-filter @change-filter="setFilters"></coach-filter>
+        <section>
+            <base-card>
+                <div class="controls">
+                    <base-button mode="outline">Refresh</base-button>
+                    <base-button link to="/register">Register as Coach</base-button>
+                </div>
+                <ul v-if="hasCoaches">
+                    <coach-item
+                        v-for="coach in filteredCoaches"
+                        :key="coach.id"
+                        :id="coach.id"
+                        :first-name="coach.firstName"
+                        :last-name="coach.lastName"
+                        :rate="coach.hourlyRate"
+                        :areas="coach.areas"
+                    ></coach-item>
+                </ul>
+                <h3 v-else>No coaches found.</h3>
+            </base-card>
+        </section>
+    </template>
+
+    <script>
+    import CoachItem from '../../components/coaches/CoachItem.vue';
+    import CoachFilter from '../../components/coaches/CoachFilter.vue';
+
+    export default {
+        components: {
+            CoachItem,
+            CoachFilter,
+        },
+        data() {
+            return {
+                activeFilters: {
+                    frontend: true,
+                    backend: true,
+                    career: true,
+                },
+            };
+        },
+        computed: {
+            filteredCoaches() {
+                const coaches = this.$store.getters['coaches/coaches'];
+                return coaches.filter((coach) => {
+                    if (
+                        this.activeFilters.frontend &&
+                        coach.areas.includes('frontend')
+                    ) {
+                        return true;
+                    }
+                    if (
+                        this.activeFilters.backend &&
+                        coach.areas.includes('backend')
+                    ) {
+                        return true;
+                    }
+                    if (
+                        this.activeFilters.career &&
+                        coach.areas.includes('career')
+                    ) {
+                        return true;
+                    }
+                    return false;
+                });
+            },
+            hasCoaches() {
+                return this.$store.getters['coaches/hasCoaches'];
+            },
+        },
+        methods: {
+            setFilters(updatedFilters) {
+                this.activeFilters = updatedFilters;
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: space-between;
+    }
+    </style>
+    ```
+
 ## Registering as a Coach: The Form
+1. We create a component to allow users to register as a coach.
+    ```html
+    <!-- src/components/coaches/CoachForm.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div class="form-control">
+                <label for="firstname">Firstname</label>
+                <input type="text" id="firstname" v-model.trim="firstName" />
+            </div>
+            <div class="form-control">
+                <label for="lastname">Lastname</label>
+                <input type="text" id="lastname" v-model.trim="lastName" />
+            </div>
+            <div class="form-control">
+                <label for="description">Description</label>
+                <textarea
+                    id="description"
+                    rows="5"
+                    v-model.trim="description"
+                ></textarea>
+            </div>
+            <div class="form-control">
+                <label for="rate">Hourly Rate</label>
+                <input type="number" id="rate" v-model.number="rate" />
+            </div>
+            <div class="form-control">
+                <h3>Areas of Expertise</h3>
+                <div>
+                    <input
+                        type="checkbox"
+                        id="frontend"
+                        value="frontend"
+                        v-model="areas"
+                    />
+                    <label for="frontend">Frontend Development</label>
+                </div>
+                <div>
+                    <input
+                        type="checkbox"
+                        id="backend"
+                        value="backend"
+                        v-model="areas"
+                    />
+                    <label for="backend">Backend Development</label>
+                </div>
+                <div>
+                    <input
+                        type="checkbox"
+                        id="career"
+                        value="career"
+                        v-model="areas"
+                    />
+                    <label for="career">Career Advisory</label>
+                </div>
+            </div>
+            <base-button>Register</base-button>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                firstName: '',
+                lastName: '',
+                description: '',
+                rate: null,
+                areas: [],
+            };
+        },
+        methods: {
+            submitForm() {
+                const formData = {
+                    first: this.firstName,
+                    last: this.lastName,
+                    desc: this.description,
+                    rate: this.rate,
+                    areas: this.areas,
+                };
+
+                console.log(formData);
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    .form-control {
+        margin: 0.5rem 0;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    input[type='checkbox'] + label {
+        font-weight: normal;
+        display: inline;
+        margin: 0 0 0 0.5rem;
+    }
+
+    input,
+    textarea {
+        display: block;
+        width: 100%;
+        border: 1px solid #ccc;
+        font: inherit;
+    }
+
+    input:focus,
+    textarea:focus {
+        background-color: #f0e6fd;
+        outline: none;
+        border-color: #3d008d;
+    }
+
+    input[type='checkbox'] {
+        display: inline;
+        width: auto;
+        border: none;
+    }
+
+    input[type='checkbox']:focus {
+        outline: #3d008d solid 1px;
+    }
+
+    h3 {
+        margin: 0.5rem 0;
+        font-size: 1rem;
+    }
+
+    .invalid label {
+        color: red;
+    }
+
+    .invalid input,
+    .invalid textarea {
+        border: 1px solid red;
+    }
+    </style>
+    ```
+1. We then import and use the component in `CoachRegistration.vue`
+    ```html
+    <!-- src/pages/coaches/CoachRegistration.vue -->
+    <template>
+        <section>
+            <base-card>
+                <h2>Register as a coach now!</h2>
+                <coach-form></coach-form>
+            </base-card>
+        </section>
+    </template>
+
+    <script>
+    import CoachForm from '../../components/coaches/CoachForm.vue';
+    export default {
+        components: {
+            CoachForm,
+        },
+    };
+    </script>
+    ```
+
 ## Adding Coaches to Vuex
+1. After setting up the form and UI, we can store the data in Vuex.
+    ```js
+    // src/store/modules/coaches/mutations.js
+    export default {
+        registerCoach(state, payload) {
+            state.coaches.push(payload);
+        }
+    };
+    ```
+    ```js
+    // src/store/modules/coaches/actions.js
+    export default {
+        registerCoach(context, data) {
+            const coachData = {
+                id: 'c3', // hard coded for now
+                firstName: data.first,
+                lastName: data.last,
+                description: data.desc,
+                hourlyRate: data.rate,
+                areas: data.areas,
+            };
+
+            context.commit('registerCoach', coachData);
+        }
+    }
+    ```
+1. After submitting the coach data, we can use [`this.$router.replace`](https://router.vuejs.org/guide/essentials/navigation.html#router-replace-location-oncomplete-onabort) which is different from `push` that there's no new history entry "pushed" into the records. Therefore, users couldn't get back where they come from.
+    ```js
+    // src/pages/coaches/CoachRegistration.vue
+    import CoachForm from '../../components/coaches/CoachForm.vue';
+    export default {
+        components: {
+            CoachForm,
+        },
+        methods: {
+            saveData(data) {
+                this.$store.dispatch('coaches/registerCoach', data);
+                this.$router.replace('/coaches');
+            },
+        },
+    };
+    ```
+1. We can update the `state` in `index.js` to check whether the user has registered as a coach. 
+    ```js
+    // src/store/index.js
+    import { createStore } from 'vuex';
+
+    import coachesModule from './modules/coaches/index.js';
+
+    const store = createStore({
+        modules: { coaches: coachesModule },
+        state() {
+            return {
+                userId: 'c3', // this is hard coded for now
+            };
+        },
+        getters: {
+            userId(state) {
+                return state.userId;
+            }
+        }
+    });
+
+    export default store;
+    ```
+1. Since we have user ID in the general store, we can update coach module to get user ID from `index.js`.
+    ```js
+    // src/store/modules/coaches/getters.js
+    export default {
+        coaches(state) {
+            return state.coaches;
+        },
+        hasCoaches(state) {
+            return state.coaches && state.coaches.length > 0;
+        },
+        isCoach(state, getters, rootState, rootGetters) {
+            const coaches = getters.coaches;
+            const userId = rootGetters.userId; // get current login user ID
+            return coaches.some(coach => coach.id === userId);
+        },
+    };
+    ```
+1. On the other hand, we can set another data in `state` to check whether the user is a "coach".
+    ```js
+    // src/store/modules/coaches/index.js
+    import mutations from './mutations.js';
+    import actions from './actions.js';
+    import getters from './getters.js';
+
+    export default {
+        namespaced: true,
+        state() {
+            return {
+                userIsCoach: false, // check whether the user is a coach
+                coaches: [
+                    {
+                        id: 'c1',
+                        firstName: 'Maximilian',
+                        lastName: 'Schwarzmüller',
+                        areas: ['frontend', 'backend', 'career'],
+                        description:
+                            "I'm Maximilian and I've worked as a freelance web developer for years. Let me help you become a developer as well!",
+                        hourlyRate: 30
+                    },
+                    {
+                        id: 'c2',
+                        firstName: 'Julie',
+                        lastName: 'Jones',
+                        areas: ['frontend', 'career'],
+                        description:
+                            'I am Julie and as a senior developer in a big tech company, I can help you get your first job or progress in your current role.',
+                        hourlyRate: 30
+                    }
+                ],
+            };
+        },
+        mutations,
+        actions,
+        getters,
+    }
+    ```
+1. After all, we can use getter in `CoachList.vue` to check whether to show "registration" button by checking if the user has registered as a coach.
+    ```js
+    // src/pages/coaches/CoachesList.vue 
+    export default {
+        components: {
+            CoachItem,
+            CoachFilter,
+        },
+        data() {
+            return {
+                activeFilters: {
+                    frontend: true,
+                    backend: true,
+                    career: true,
+                },
+            };
+        },
+        computed: {
+            isCoach() { // check if the user is a coach and show registration button
+                return this.$store.getters['coaches/isCoach'];
+            },
+            filteredCoaches() {
+                const coaches = this.$store.getters['coaches/coaches'];
+                return coaches.filter((coach) => {
+                    if (
+                        this.activeFilters.frontend &&
+                        coach.areas.includes('frontend')
+                    ) {
+                        return true;
+                    }
+                    if (
+                        this.activeFilters.backend &&
+                        coach.areas.includes('backend')
+                    ) {
+                        return true;
+                    }
+                    if (
+                        this.activeFilters.career &&
+                        coach.areas.includes('career')
+                    ) {
+                        return true;
+                    }
+                    return false;
+                });
+            },
+            hasCoaches() {
+                return this.$store.getters['coaches/hasCoaches'];
+            },
+        },
+        methods: {
+            setFilters(updatedFilters) {
+                this.activeFilters = updatedFilters;
+            },
+        },
+    };
+    ```
+
 ## Adding Form Validation
+1. We add validation and `blur` event handler for each input to apply `invalid` when the user has no input and remove the class when the user has tried to give any input.
+    ```html
+    <!-- src/components/coaches/CoachForm.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div class="form-control" :class="{ invalid: !firstName.isValid }">
+                <label for="firstname">Firstname</label>
+                <input
+                    type="text"
+                    id="firstname"
+                    v-model.trim="firstName.val"
+                    @blur="clearValidity('firstName')"
+                />
+                <p v-if="!firstName.isValid">Firstname must not be empty</p>
+            </div>
+            <div class="form-control" :class="{ invalid: !lastName.isValid }">
+                <label for="lastname">Lastname</label>
+                <input
+                    type="text"
+                    id="lastname"
+                    v-model.trim="lastName.val"
+                    @blur="clearValidity('lastName')"
+                />
+                <p v-if="!lastName.isValid">Lastname must not be empty</p>
+            </div>
+            <div class="form-control" :class="{ invalid: !description.isValid }">
+                <label for="description">Description</label>
+                <textarea
+                    id="description"
+                    rows="5"
+                    v-model.trim="description.val"
+                    @blur="clearValidity('description')"
+                ></textarea>
+                <p v-if="!description.isValid">Description must not be empty</p>
+            </div>
+            <div class="form-control" :class="{ invalid: !rate.isValid }">
+                <label for="rate">Hourly Rate</label>
+                <input
+                    type="number"
+                    id="rate"
+                    v-model.number="rate.val"
+                    @blur="clearValidity('rate')"
+                />
+                <p v-if="!rate.isValid">Rate must be greater than 0</p>
+            </div>
+            <div class="form-control" :class="{ invalid: !areas.isValid }">
+                <h3>Areas of Expertise</h3>
+                <div>
+                    <input
+                        type="checkbox"
+                        id="frontend"
+                        value="frontend"
+                        v-model="areas.val"
+                        @blur="clearValidity('areas')"
+                    />
+                    <label for="frontend">Frontend Development</label>
+                </div>
+                <div>
+                    <input
+                        type="checkbox"
+                        id="backend"
+                        value="backend"
+                        v-model="areas.val"
+                    />
+                    <label for="backend">Backend Development</label>
+                </div>
+                <div>
+                    <input
+                        type="checkbox"
+                        id="career"
+                        value="career"
+                        v-model="areas.val"
+                    />
+                    <label for="career">Career Advisory</label>
+                </div>
+                <p v-if="!areas.isValid">At least one expertise must be selected</p>
+            </div>
+            <p v-if="!formIsValid">Please fix the above errors and submit again.</p>
+            <base-button>Register</base-button>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        emits: ['save-data'],
+        data() {
+            return {
+                firstName: {
+                    val: '',
+                    isValid: true,
+                },
+                lastName: {
+                    val: '',
+                    isValid: true,
+                },
+                description: {
+                    val: '',
+                    isValid: true,
+                },
+                rate: {
+                    val: null,
+                    isValid: true,
+                },
+                areas: {
+                    val: [],
+                    isValid: true,
+                },
+                formIsValid: true,
+            };
+        },
+        methods: {
+            clearValidity(input) {
+                this[input].isValid = true;
+            },
+            validateForm() {
+                this.formIsValid = true;
+                if (!this.firstName.val) {
+                    this.firstName.isValid = false;
+                    this.formIsValid = false;
+                }
+                if (!this.lastName.val) {
+                    this.lastName.isValid = false;
+                    this.formIsValid = false;
+                }
+                if (!this.description.val) {
+                    this.description.isValid = false;
+                    this.formIsValid = false;
+                }
+                if (!this.rate.val || this.rate.val < 0) {
+                    this.rate.isValid = false;
+                    this.formIsValid = false;
+                }
+                if (!this.areas.val.length) {
+                    this.areas.isValid = false;
+                    this.formIsValid = false;
+                }
+            },
+            submitForm() {
+                this.validateForm();
+
+                if (!this.formIsValid) {
+                    return;
+                }
+
+                const formData = {
+                    first: this.firstName,
+                    last: this.lastName,
+                    desc: this.description,
+                    rate: this.rate,
+                    areas: this.areas,
+                };
+
+                this.$emit('save-data', formData);
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    .form-control {
+        margin: 0.5rem 0;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    input[type='checkbox'] + label {
+        font-weight: normal;
+        display: inline;
+        margin: 0 0 0 0.5rem;
+    }
+
+    input,
+    textarea {
+        display: block;
+        width: 100%;
+        border: 1px solid #ccc;
+        font: inherit;
+    }
+
+    input:focus,
+    textarea:focus {
+        background-color: #f0e6fd;
+        outline: none;
+        border-color: #3d008d;
+    }
+
+    input[type='checkbox'] {
+        display: inline;
+        width: auto;
+        border: none;
+    }
+
+    input[type='checkbox']:focus {
+        outline: #3d008d solid 1px;
+    }
+
+    h3 {
+        margin: 0.5rem 0;
+        font-size: 1rem;
+    }
+
+    .invalid label {
+        color: red;
+    }
+
+    .invalid input,
+    .invalid textarea {
+        border: 1px solid red;
+    }
+    </style>
+    ```
+
 ## Working on the Contact Form
+1. We update `ContactCoach.vue` component.
+    ```html
+    <!-- src/pages/requests/ContactCoach.vue -->
+    <template>
+        <form @submit.prevent="submitForm">
+            <div class="form-control">
+                <label for="email">Your E-mail</label>
+                <input type="email" id="email" v-model.trim="email" />
+            </div>
+            <div class="form-control">
+                <label for="message">Message</label>
+                <textarea id="message" rows="5" v-model.trim="message"></textarea>
+            </div>
+            <p class="errors" v-if="!formIsValid">
+                Please enter a valid email and non-empty message.
+            </p>
+            <div class="actions">
+                <base-button>Send Message</base-button>
+            </div>
+        </form>
+    </template>
+
+    <script>
+    export default {
+        data() {
+            return {
+                email: '',
+                message: '',
+                formIsValid: true,
+            };
+        },
+        methods: {
+            submitForm() {
+                this.formIsValid = true;
+                if (!this.email || !this.includes('@') || !this.message) {
+                    this.formIsValid = false;
+                    return;
+                }
+                
+            },
+        },
+    };
+    </script>
+
+    <style scoped>
+    form {
+        margin: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    .form-control {
+        margin: 0.5rem 0;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    input,
+    textarea {
+        display: block;
+        width: 100%;
+        font: inherit;
+        border: 1px solid #ccc;
+        padding: 0.15rem;
+    }
+
+    input:focus,
+    textarea:focus {
+        border-color: #3d008d;
+        background-color: #faf6ff;
+        outline: none;
+    }
+
+    .errors {
+        font-weight: bold;
+        color: red;
+    }
+
+    .actions {
+        text-align: center;
+    }
+    </style>
+    ```
+
 ## Storing Requests (Messages) with Vuex
 ## Outputting Incoming Requests (Messages)
 ## Filtering Requests for teh Active Coach
