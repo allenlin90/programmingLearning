@@ -22,6 +22,15 @@ Course Link [https://www.udemy.com/course/advanced-node-for-developers/](https:/
     1. [Review](#Review)
     1. [Crazy Node Behavior](#Crazy-Node-Behavior)
     1. [Unexpected Event Loop Events](#Unexpected-Event-Loop-Events)
+1. [Enhancing Node Performance](#Enhancing-Node-Performance)
+    1. [Enhancing Performance](#Enhancing-Performance)
+    1. [Express Setup](#Express-Setup)
+    1. [Blocking the Event Loop](#Blocking-the-Event-Loop)
+    1. [Clustering in Theory](#Clustering-in-Theory)
+    1. [Forking Children](#Forking-Children)
+    1. [Clustering in Action](#Clustering-in-Action)
+    1. [Benchmarking Server Performance](#Benchmarking-Server-Performance)
+    1. [Benchmark Refactor](#Benchmark-Refactor)
 ---
 
 # The Internals of Node
@@ -391,3 +400,168 @@ Course Link [https://www.udemy.com/course/advanced-node-for-developers/](https:/
 1. Therefore, with the execution order above, we will always see the HTTP request finishes first (as it takes very little time and out of threadpool execution) and have 1 hashing function finishes, so we can have FS function done which followed by other hashing function calls. 
 1. In addition, if we configure to have 5 threads in the threadpool, we can notice that the FS function is executed and response at first as there's no handled function left and a single thread can be assigned to execute the FS from the start to the end.
 1. On the other hand, if we have only a single thread in the threadpool, FS function will be executed only after all other functions are hanlded, so it will finish execution as the very last one.
+
+# Enhancing Node Performance
+## Enhancing Performance
+1. We can enhance NodeJS server in 2 ways, "Cluster" mode or "Worker Threads".
+1. Cluster mode is to duplicate the Node instance which can provide use multiple event loops and hence increase the number of threads for processing. 
+1. Worker threads is a more experimental appraoch that the lecturer recommends to look into and start with "cluster mode". 
+
+## Express Setup
+```js
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+    res.send('Hi there');
+});
+
+app.listen(3000);
+```
+
+## Blocking the Event Loop
+1. In this case, we can create a function which takes duration to execute the function.
+1. For example, we pass "5000", which is 5000ms or 5 seconds that the user can only get the response from server after 5 seconds.
+1. Function `doWork` is occupying the event loop and prevent the server from proceeding any other tasks.
+    ```js
+    const express = require('express');
+    const app = express();
+
+    function doWork(duration) {
+        const start = Date.now();
+        while (Date.now() - start < duration) {}
+    }
+
+    app.get('/', (req, res) => {
+        doWork(5000); // process in event loop
+        res.send('Hi there');
+    });
+
+    app.listen(3000);
+    ```
+1. If we have multiple requests from different browers or users, the server can only handle one request at a time, so it wouldn't be responsive. 
+1. For example, the 2nd request will only get the response after 1st request is fulfilled. It may take 10 seconds to get the response. 
+
+## Clustering in Theory
+1. To apply clusters, we shall have at least 1 cluster manager which handles multiple single threaded node server. 
+    <img src="images/26-cluster_manager.png">
+1. In regular conditions, we run `node index.js` to start the server in the terminal and has a single node instance working with one event loop. 
+1. When we use cluster manager, it uses `cluster` module from Node standard library. Besides, the cluster manager use `cluster.fork()` method to create worker instance which is a node instance that respond to requests to the server. 
+
+## Forking Children
+1. We can use `cluster` in Node JS and use `cluster.isMaster` method to check whether the execution is in master mode.
+1. If we simply execute and print the result from `cluster.isMaster`, we will get `true` as the result. 
+    ```js
+    const cluster = require('cluster');
+    console.log(cluster.isMaster); // true
+    ```
+1. Therefore, we can use `if` statement to check whether the execution is in master mode to decide whether to `fork` a child (slave) instance.
+1. In this case, if the instance is a child, we simply execute the instance as a regular express server.
+    ```js
+    const cluster = require('cluster');
+
+    // console.log(cluster.isMaster);
+
+    // Is the file being executed in master mode?
+    if (cluster.isMaster) {
+        // Cause index.js to be executed *again* but 
+        // in child (slave) mode
+        cluster.fork();
+    } else {
+        // I'm a child, I'm going to act like a server
+        // and do nothing else
+        const express = require('express');
+        const app = express();
+
+        function doWork(duration) {
+            const start = Date.now();
+            while (Date.now() - start < duration) {}
+        }
+
+        app.get('/', (req, res) => {
+            doWork(5000); // process in event loop
+            res.send('Hi there');
+        });
+
+        app.listen(3000);
+    }
+    ```
+
+## Clustering in Action
+1. We create another route `/fast` in the server which simply responds some text.
+1. If we executes `cluster.fork()` multiple times, we may get several NodeJS worker instance as different servers.
+1. When there are 1 request to `/` and 1 to `/fast` at the same time, we can notice the resolving time on `/fast` route is almost instant, while the root route `/` takes 5 seconds as its configuration. 
+1. However, if we have only 1 single worker instance by calling `cluster.fork()` only once, we will notice the requests are queued up. The resolving time on `/fast` is increased to nearly 5 seconds. 
+    ```js
+    const cluster = require('cluster');
+
+    // Is the file being executed in master mode?
+    if (cluster.isMaster) {
+        // Cause index.js to be executed *again* but 
+        // in child (slave) mode
+        cluster.fork();
+        // cluster.fork();
+        // cluster.fork();
+        // cluster.fork();
+    } else {
+        // I'm a child, I'm going to act like a server
+        // and do nothing else
+        const express = require('express');
+        const app = express();
+
+        function doWork(duration) {
+            const start = Date.now();
+            while (Date.now() - start < duration) {}
+        }
+
+        app.get('/', (req, res) => {
+            doWork(5000); // process in event loop
+            res.send('Hi there');
+        });
+
+        app.get('/fast', (req, res) => {
+            res.send('This was fast');
+        });
+
+        app.listen(3000);
+    }
+    ```
+
+## Benchmarking Server Performance
+1. Though we can create multiple worker instances by calling `cluster.fork()`, it doesn't promise the server can process the requests fast and smooth. 
+1. On MacOS or Linux, we can use apache benchmark by `ab -c 50 -n 500 localhost:3000/fast` which means to make 50 concurrent requests to `localhost:3000/fast` 500 times. 
+1. The terminal will then show the benchmark of the execution results. 
+    <img src="images/29-apache_benchmark.png">
+
+## Benchmark Refactor
+1. In this case, we refactor `index.js` and have only one worker instance and use `crypto` library to do hashing.
+1. Besides, we can use `process.env.UV_THREADPOOL_SIZE` to force all instances have only single thread in the threadpool. Note that every instance has 4 threads in their threadpool by default.
+    ```js
+    process.env.UV_THREADPOOL_SIZE = 1; // ensure all instances have only one single thread
+    const cluster = require('cluster');
+
+    // Is the file being executed in master mode?
+    if (cluster.isMaster) {
+        // Cause index.js to be executed *again* but 
+        // in child (slave) mode
+        cluster.fork();
+    } else {
+        // I'm a child, I'm going to act like a server
+        // and do nothing else
+        const express = require('express');
+        const crypto = require('crypto');
+        const app = express();
+
+        app.get('/', (req, res) => {
+            crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
+                res.send('Hi there');
+            });
+        });
+
+        app.get('/fast', (req, res) => {
+            res.send('This was fast');
+        });
+
+        app.listen(3000);
+    }
+    ```
