@@ -31,6 +31,11 @@ Course Link [https://www.udemy.com/course/advanced-node-for-developers/](https:/
     1. [Clustering in Action](#Clustering-in-Action)
     1. [Benchmarking Server Performance](#Benchmarking-Server-Performance)
     1. [Benchmark Refactor](#Benchmark-Refactor)
+    1. [Need More Children](#Need-More-Children)
+    1. [PM2 Installation](#PM2-Installation)
+    1. [PM2 Configuration](#PM2-Configuration)
+    1. [Webworker Threads](#Webworker-Threads)
+    1. [Worker Threads in Actions](#Worker-Threads-in-Actions)
 ---
 
 # The Internals of Node
@@ -565,3 +570,72 @@ app.listen(3000);
         app.listen(3000);
     }
     ```
+
+## Need More Children
+1. We can start the server with `node index.js` in the terminal and open another terminal window and use `ab -c 1 -n 1 localhost:3000/` which request to the root route. The result is about 0.5 second (though it's 1.1 seconds from the lecture. This number can vary by the machine running the function).
+    <img src="images/31-1_instances.png">
+1. In addition, it's suggested to give the root path `/` as part of the URL. 
+1. We then modify the request to make 2 requests to the server concurrently and check the performance. The command is `ab -c 2 -n 2 localhost:3000/`. 
+1. In this case, we may notice the execution takes around 2 seconds because each function call takes 1 second to finish and is executed in queue. 
+1. If we fork twice to have 2 worker instances, we can execute the functions in parallel, so it only takes around 1 second to finish 2 function calls. 
+1. Note that when learning this lecture the machine I used is with Intel Core i7 - 8th Gen. which is a 6-core CPU. It provides a very different result from the performance from the lecture which used dual-core CPU. 
+    ```js
+    // handling 2 concurrent requests at the same time
+    // 2 worker instances which has single thread
+    process.env.UV_THREADPOOL_SIZE = 1;
+    const cluster = require('cluster');
+    if (cluster.isMaster) {
+        cluster.fork();
+        cluster.fork();
+    }
+    ```
+    <img src="images/31-2_instances.png">
+1. However, only replicating worker instance isn't the solution to improve performance due to hardware limitation. For example, on the dual-core machine, we can replicate 6 instances and have 6 concurrent requests. From the lecture, it takes 3.5 seconds to resolve all requests. It is significantly slower than regular process. Therefore, only adding the worker instance can't handle the high traffic with multiple concurrent requests. Such feature can even slow down all the requests and give very poor experience. 
+1. This is mainly because all the functions calls are started and respond at the same time according to the worker instance as we set configure the server to handle 6 requests at the same time, while the hardware couldn't support such feature. Therefore, the results of all requests can be responded only after all the functions are executed. 
+    <img src="images/31-6_instances.png">
+1. On the other hand, if we reduce the instances to only 2, can notice the requests can be fulfilled by every 1 second when the function is executed. As the machine has dual-core CPU, it can resolve 2 requests at the same time and respond the results. The machine can resolve 2 requests at once as batches, which provides a better experience that the 6 requests will receive 2 responses at once for 3 times. 
+    <img src="images/31-2_instances_6_concurrent_requests.png">
+1. Therefore, it's suggested to create instances to match up the number of physical or logical cores of the machine runs the program. 
+
+## PM2 Installation
+1. In real-practice, we can use [`PM2`](https://github.com/unitech/pm2) which is a process manager to help us handle the traffic. 
+1. To use the software, we can use `npm install -g pm2` to install it globally on the machine.
+
+## PM2 Configuration
+1. We rewrite the server code before we start using `pm2`. Since we use the software for process management, we can remove the cluster related functions and let `pm2` manage it. 
+    ```js
+    const express = require('express');
+    const crypto = require('crypto');
+    const app = express();
+
+    app.get('/', (req, res) => {
+        crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
+            res.send('Hi there');
+        });
+    });
+
+    app.get('/fast', (req, res) => {
+        res.send('This was fast');
+    });
+
+    app.listen(3000);
+    ```
+1. To start a server and manage process with `pm2`, we can use `pm2 start [app] -i [number_instance]`. We can simply give `0` or `max` for the number of instance we want to create. `pm2` will detect the hardware of local machine and create instances at the maximum that the machine can handle. 
+1. Note that `pm2` detects the number of "logical cores" rather than "physical cores". For example, the dual-core Intel i5 Macbook pro has dual-core CPU which has 2 threads on each, so it's 4 logical cores in total, while the Intel i7 is a 6-core CPU has 11 logical cores can be used.
+1. We can find the command at "Usage" section in `pm2` [documentation](https://pm2.keymetrics.io/docs/usage/cluster-mode/).
+1. To stop the `pm2` instances, we can use `pm2 delete [app]`.
+1. We may use commands to monitor and manage `pm2` instances.
+    1. `pm2 list` shows the list of instances running and managed by `pm2`.
+    1. `pm2 show index` shows the status and conditions in details of each instance.
+    1. `pm2 monit` shows a dashboard which we can check the logs of each instance.
+    1. `pm2 delete [app]` can kill the process from the group of instances. We can check [here](https://pm2.keymetrics.io/docs/usage/process-management/) for other process management commands.
+1. `pm2` is usually used in production servers and is rarely used in development environment.
+
+## Webworker Threads
+1. This section is about `worker threads` which at the time is still an experimental feature on NodeJS, and an additional option to be used to improve NodeJS performance besides using Node "Cluster Mode".
+1. In this case, we use another package `webworker-threads` to work on the project. 
+1. We simply use `npm install --save webworker-threads` to install the package.
+1. `webworker-threads` npm module can't be installed in WSL1 in windows 10. The testing trail is made in Goorm IDE.However, the hardware is a single-core virtual machine hosted on AWS.
+
+## Worker Threads in Actions
+1. One scenario to use worker threads is to separate workload from heavy duty business logic into multiple event loops.
