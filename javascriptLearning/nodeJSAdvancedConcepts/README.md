@@ -36,6 +36,7 @@ Course Link [https://www.udemy.com/course/advanced-node-for-developers/](https:/
     1. [PM2 Configuration](#PM2-Configuration)
     1. [Webworker Threads](#Webworker-Threads)
     1. [Worker Threads in Actions](#Worker-Threads-in-Actions)
+    1. [Benchmarking Workers](#Benchmarking-Workers)
 ---
 
 # The Internals of Node
@@ -639,3 +640,74 @@ app.listen(3000);
 
 ## Worker Threads in Actions
 1. One scenario to use worker threads is to separate workload from heavy duty business logic into multiple event loops.
+1. We remvoe the `pbkdf2` hashing function and creates a counter which counts from 0 to 10 to the power of 9, which represents as `1e9`. 
+    ```js
+    // index.js
+    const express = require('express');
+    const crypto = require('crypto');
+    const app = express();
+    const Worker = require('webworker-threads').Worker;
+
+    app.get('/', (req, res) => {
+        const worker = new Worker(function() {
+            // this refers to the working thread, so we can't use arrow function
+            this.onmessage = function() {
+                let counter = 0;
+                while (counter < 1e9) {
+                    counter++;
+                }
+                
+                postMessage(counter);
+            };
+        });
+        
+        worker.onmessage = function(myCounter) {
+            console.log(myCounter);
+        }
+        
+        worker.postMessage();
+    });
+
+    app.get('/fast', (req, res) => {
+        res.send('This was fast');
+    });
+
+    app.listen(3000);
+    ```
+
+## Benchmarking Workers
+1. We can show the result from the requests to the server. In this case, we can use `ab -c 2 -n 2 http://localhost:3000` to make 2 concurrent requests.
+1. However, using the machine from free tier on Goorm IDE couldn't show the benefits from distributing workload to multiple threads, as it has very limited hardware resource to compute and handle the requests.
+    ```js
+    const express = require('express');
+    const crypto = require('crypto');
+    const app = express();
+    const Worker = require('webworker-threads').Worker;
+
+    app.get('/', (req, res) => {
+        const worker = new Worker(function() {
+            // this refers to the working thread, so we can't use arrow function
+            this.onmessage = function() {
+                let counter = 0;
+                while (counter < 1e9) {
+                    counter++;
+                }
+                
+                postMessage(counter);
+            };
+        });
+        
+        worker.onmessage = function(message) {
+            console.log(message.data);
+            res.send('' + message.data);
+        }
+        
+        worker.postMessage();
+    });
+
+    app.get('/fast', (req, res) => {
+        res.send('This was fast');
+    });
+
+    app.listen(3000);
+    ```
