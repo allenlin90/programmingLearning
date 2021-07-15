@@ -7,3 +7,4 @@ goorm.manifest
 .eslintcache
 debug.log
 .env
+.DS_Store
