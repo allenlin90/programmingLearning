@@ -37,6 +37,9 @@ Course Link [https://www.udemy.com/course/advanced-node-for-developers/](https:/
     1. [Webworker Threads](#Webworker-Threads)
     1. [Worker Threads in Actions](#Worker-Threads-in-Actions)
     1. [Benchmarking Workers](#Benchmarking-Workers)
+1. [Project setup](#Project-setup)
+    1. [The next phase](#The-next-phase)
+    1. [Project Walkthrough](#Project-Walkthrough)
 ---
 
 # The Internals of Node
@@ -711,3 +714,13 @@ app.listen(3000);
 
     app.listen(3000);
     ```
+
+# Project setup
+## The next phase
+1. We will clone an existing NodeJS app with basic routing and auth setup.
+1. We then add several features to have a solid, production ready app.
+    1. Redis-Backed Caching
+    1. Browser Based Integration Testing
+    1. Continuous Integration Setup
+    1. Scalable File/Image Upload
+## Project Walkthrough
