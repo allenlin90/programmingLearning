@@ -20,6 +20,10 @@
     1. [IAM Roles hands-on](#IAM-Roles-hands-on)
     1. [IAM Security Tools](#IAM-Security-Tools)
     1. [IAM Security Tools hands-on](#IAM-Security-Tools-hands-on)
+    1. [IAM Best Practices](#IAM-Best-Practices)
+    1. [Shared Responsibility Model for IAM](#Shared-Responsibility-Model-for-IAM)
+1. [EC2 - Elastic Compute Cloud](#EC2---Elastic-Compute-Cloud)
+    1. [AWS Budget Setup](#AWS-Budget-Setup)
 ---
 
 # Course Introduction
@@ -174,3 +178,24 @@
     1. We can use the information to revise IAM policies.
 
 ## IAM Security Tools hands-on
+1. In IAM, we can look up "credential report" to download all the users and settings in CSV.
+1. For each user in "users", we can check "Access Advisor" to check what permission(s) is assigned to the user and when did the user last access the permission.
+
+## IAM Best Practices
+<img src="images/52.jpg">
+
+## Shared Responsibility Model for IAM
+1. The main take away is that AWS obvious is responsible for all the infrastructure and hardware maintainence an AWS user subscribes. The user must be reponsible for the security, management, and monitoring the usage of AWS services of the AWS account.
+    <img src="images/53.jpg">
+
+## IAM Summary
+<img src="images/54.jpg">
+
+# EC2 - Elastic Compute Cloud
+## AWS Budget Setup
+1. We can check the bill of an AWS account firstly with Root user access. By clicking the account and go to "My Bill Dashboard".
+1. We can check "Bills" in the navigation panel on the left. This shows the services the account used and list of service fee on each service.
+    1. Each services groups regions that the AWS account access and uses the service at.
+    1. The region group includes all the details in the list that how the account uses the service.
+1. We can navigate back to the "Home" page of bills to check usage on free-tier services on AWS. 
+1. To create a limited budget spending for each billing cycle, we can create a budget plan in "Budgets" 
