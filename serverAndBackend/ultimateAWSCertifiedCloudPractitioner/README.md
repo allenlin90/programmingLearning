@@ -24,6 +24,8 @@
     1. [Shared Responsibility Model for IAM](#Shared-Responsibility-Model-for-IAM)
 1. [EC2 - Elastic Compute Cloud](#EC2---Elastic-Compute-Cloud)
     1. [AWS Budget Setup](#AWS-Budget-Setup)
+    1. [EC2 Basics](#EC2-Basics)
+    1. [Create an EC2 Instance with EC2 User Data to have a Website hands-on](#Create-an-EC2-Instance-with-EC2-User-Data-to-have-a-Website-hands-on)
 ---
 
 # Course Introduction
@@ -198,4 +200,35 @@
     1. Each services groups regions that the AWS account access and uses the service at.
     1. The region group includes all the details in the list that how the account uses the service.
 1. We can navigate back to the "Home" page of bills to check usage on free-tier services on AWS. 
-1. To create a limited budget spending for each billing cycle, we can create a budget plan in "Budgets" 
+1. To create a limited budget spending for each billing cycle, we can create a budget plan in "Budgets".
+
+## EC2 Basics
+1. We can rent a virtual server from AWS with sepcific hardware.
+    <img src="images/56.jpg">
+    <img src="images/57.jpg">
+    <img src="images/58.jpg">
+1. We can also setup "**EC2 User data**" script to bootstrap an instance when the machine starts.
+    <img src="images/59.jpg">
+
+## Create an EC2 Instance with EC2 User Data to have a Website hands-on
+1. In EC2, we can check "Instances" under Instances and create a new instance by clicking "Launch Instances". It takes several steps to setup a new instance.
+    1. Choose AMI
+        1. This is to select the image for OS and environment of the machine. For example, we can choose Ubuntu 18.04. 
+    1. Choose Instance Type
+        1. This is the hardware specs such as how many CPU and how much RAM we'd like to have for the machine. 
+    1. Configure Instance
+        1. We can configure the instance with "User data" in "Advanced Details" down below. This scripts will execute when the machine starts or reboot.
+    1. Add Storage
+        1. We can have this by default and set if the extra storage should be bound to the instance, so when the instance is removed, the attached storage will be removed. 
+    1. Add Tags
+        1. We can attach tags with key/value pairs on the instance for up to 50 tags.
+    1. Configure Security Group
+        1. This allows the server open certain ports to allow conneciton with specified protocol.
+        1. For example, the instance has port 22 for TCP connection to allow users to connect through SSH.
+        1. We can set up port 80 for TCP connection with HTTP and allow the source at `0.0.0.0/0, ::/0` which means granted all requests that accepts connection from any other machine. This will allow users to connect to the server for website contents with a regular browser.
+    1. Review
+        1. AWS may give a warning as we open the instance to the world by setting source at `0.0.0.0/0, ::/0`. We may ignore this since we intend to setup the server for website hosting and allow all users to visit the website.
+        1. After clicking launch, AWS will ask to select an exisiting key pair or create a new one. This is to allow the AWS user to connect to the instance through SSH.
+        1. Note that the `.pem` file is critical for SSH connection as the password and can only be downloaded once. Besides, anyone has the `.pem` file can connect to the instnace through SSH. For security reason, we should carefully manage the file.
+1. After creating a new instance, we can manage instances to start, stop, or terminate and dispose the instance if we don't need it.
+1. Note that every time the instance stop and start as rebooting, the public IPv4 address will change. 
