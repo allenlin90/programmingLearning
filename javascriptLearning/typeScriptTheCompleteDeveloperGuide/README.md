@@ -44,8 +44,9 @@ Finished on
   - [7.2. Long Type Annotatoins](#72-long-type-annotatoins)
   - [7.3. Fixing Long Annotations with Interfaces](#73-fixing-long-annotations-with-interfaces)
   - [7.4. Syntax Around Interfaces](#74-syntax-around-interfaces)
-  - [7.5. Code Reuse with Interfaces](#75-code-reuse-with-interfaces)
-  - [7.6. General Plan with Interfaces](#76-general-plan-with-interfaces)
+  - [7.5. Functions in Interfaces](#75-functions-in-interfaces)
+  - [7.6. Code Reuse with Interfaces](#76-code-reuse-with-interfaces)
+  - [7.7. General Plan with Interfaces](#77-general-plan-with-interfaces)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -534,13 +535,166 @@ Finished on
 
 # 7. The All-important Interface
 ## 7.1. Interfaces
+1. An interface creates a new type, describing the property names and value types of an object.
 
 ## 7.2. Long Type Annotatoins
+1. Though regular annotations can work on declaring value and property types, the annotation can be very long and hard to read.
+2. Besides, every time we declare a function to work with the object, we need to add annotation on each function.
+  ```ts
+  const oldCivic = {
+    name: 'civic',
+    year: 2000,
+    broken: true,
+  };
+
+  const printVehicle = (vehicle: {
+    name: string;
+    year: number;
+    broken: boolean;
+  }): void => {
+    console.log(`Name: ${vehicle.name}`);
+    console.log(`Year: ${vehicle.year}`);
+    console.log(`Broken: ${vehicle.broken}`);
+  };
+
+  printVehicle(oldCivic);
+  ```
 
 ## 7.3. Fixing Long Annotations with Interfaces
+1. We can use `interface` to create new data type for object. In the following function, we can simply refer to the data type and object structure by the interface.
+  ```ts
+  interface Vehicle {
+    name: string;
+    year: number;
+    broken: boolean;
+  }
+
+  const oldCivic = {
+    name: 'civic',
+    year: 2000,
+    broken: true,
+  };
+
+  const logVehicle = (vehicle: Vehicle): void => {
+    console.log(`Name: ${vehicle.name}`);
+    console.log(`Year: ${vehicle.year}`);
+    console.log(`Broken: ${vehicle.broken}`);
+  };
+
+  logVehicle(oldCivic);
+  ```
 
 ## 7.4. Syntax Around Interfaces
+1. We can not only assign primitive type values but also complicated object data structure or functions
+  ```ts
+  interface Vehicle {
+    name: string;
+    year: Date;
+    broken: boolean;
+    summary(): string; // requrie a method which returns string type value
+  }
 
-## 7.5. Code Reuse with Interfaces
+  const oldCivic = {
+    name: 'civic',
+    year: new Date(),
+    broken: true,
+    summary(): string {
+      return `Name: ${this.name}`;
+    },
+  };
 
-## 7.6. General Plan with Interfaces
+  const printVehicle = (vehicle: Vehicle): void => {
+    console.log(`Name: ${vehicle.name}`);
+    console.log(`Year: ${vehicle.year}`);
+    console.log(`Broken: ${vehicle.broken}`);
+  };
+
+  printVehicle(oldCivic);
+  ```
+
+## 7.5. Functions in Interfaces
+1. If we remove all the other properties in the interfaces, Typescript will still see the code as valid because there's only one single condition is checked if the object as a method as defined in the interface.
+2. Thus, the naming to the `interface` can be tricky as in the following example, "Vehicle" doesn't seem to be proper without other properties. 
+  ```ts
+  interface Vehicle {
+    summary(): string; // check if the object has 'summary' method
+  }
+
+  const oldCivic = {
+    name: 'civic',
+    year: new Date(),
+    broken: true,
+    summary(): string {
+      return `Name: ${this.name}`;
+    },
+  };
+
+  const printVehicle = (vehicle: Vehicle): void => {
+    console.log(vehicle.summary());
+  };
+
+  printVehicle(oldCivic);
+  ```
+3. We can refactor and change the name of each variable for its purpose.
+  ```ts
+  interface Reportable {
+    summary(): string;
+  }
+
+  const oldCivic = {
+    name: 'civic',
+    year: new Date(),
+    broken: true,
+    summary(): string {
+      return `Name: ${this.name}`;
+    },
+  };
+
+  const printSummary = (item: Reportable): void => {
+    console.log(item.summary());
+  };
+
+  printSummary(oldCivic);
+  ```
+
+## 7.6. Code Reuse with Interfaces
+1. We can create general `interface` to be used for different kinds of objects. 
+2. For example, we can use `printSummary` function on both the "drink" and "oldCivic" though these objects are very different items and may server different purposes in the code. 
+  ```ts
+  interface Reportable {
+    summary(): string;
+  }
+
+  const oldCivic = {
+    name: 'civic',
+    year: new Date(),
+    broken: true,
+    summary(): string {
+      return `Name: ${this.name}`;
+    },
+  };
+
+  const drink = {
+    color: 'brown',
+    carbonated: true,
+    sugar: 40,
+    summary() {
+      return `My drink has ${this.sugar} grams of sugar`;
+    },
+  };
+
+  const printSummary = (item: Reportable): void => {
+    console.log(item.summary());
+  };
+
+  printSummary(oldCivic);
+  printSummary(drink);
+  ```
+
+## 7.7. General Plan with Interfaces
+1. In this case, we can use the `interface` as the gate keeper to check if all the objects used in the code are following certain standard or requirements. 
+2. In the previous example, `Reportable` interface is the gatekeeper for `printSummary` function to ensure all the objects passing to the function will have `summary` method which returns string type value.
+3. On the other hand, both `oldCivic` and `drink` must satisfy the `Reportable` interface to work with `printSummary`.
+4. In summary, general strategy for reusable code in Typescript
+   1. Create functions that accept arguments that are typed with interfaces
+   2. Objects/Classes can decide to 'implement' a given interface to work with a function
