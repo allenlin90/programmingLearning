@@ -47,6 +47,13 @@ Finished on
   - [7.5. Functions in Interfaces](#75-functions-in-interfaces)
   - [7.6. Code Reuse with Interfaces](#76-code-reuse-with-interfaces)
   - [7.7. General Plan with Interfaces](#77-general-plan-with-interfaces)
+- [8. Building Functionality with Classes](#8-building-functionality-with-classes)
+  - [8.1. Classes](#81-classes)
+  - [8.2. Basic Inheritance](#82-basic-inheritance)
+  - [8.3. Instance Method Modifiers](#83-instance-method-modifiers)
+  - [8.4. Fields in Classes](#84-fields-in-classes)
+  - [8.5. Fields with Inheritance](#85-fields-with-inheritance)
+  - [8.6. Where to use Classes](#86-where-to-use-classes)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -698,3 +705,52 @@ Finished on
 4. In summary, general strategy for reusable code in Typescript
    1. Create functions that accept arguments that are typed with interfaces
    2. Objects/Classes can decide to 'implement' a given interface to work with a function
+
+# 8. Building Functionality with Classes
+## 8.1. Classes
+1. A class is a blueprint to create objects with some fields (values) and methods (functions) to represent a thing.
+  ```ts
+  class Vehicle {
+    driver(): void {
+      console.log('chugga chugga');
+    }
+
+    honk(): void {
+      console.log('beep');
+    }
+  }
+
+  const vehicle = new Vehicle();
+  vehicle.driver();
+  vehicle.honk();
+  ```
+
+## 8.2. Basic Inheritance
+1. We can "extend" the methods or properties from a class to create a sub-class.
+2. Note that this is not Typescript specific that it's the same syntax and features of JavaScript.
+  ```ts
+  class Vehicle {
+    driver(): void {
+      console.log('chugga chugga');
+    }
+
+    honk(): void {
+      console.log('beep');
+    }
+  }
+
+  class Car extends Vehicle {}
+
+  const car = new Car();
+  car.driver();
+  car.honk();
+
+  ```
+
+## 8.3. Instance Method Modifiers
+
+## 8.4. Fields in Classes
+
+## 8.5. Fields with Inheritance
+
+## 8.6. Where to use Classes
