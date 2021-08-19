@@ -1,4 +1,121 @@
-# Intro and course structure
+- [1. Intro and course structure](#1-intro-and-course-structure)
+- [2. JavaScript in the Browser: DOM Manipulation and Events](#2-javascript-in-the-browser-dom-manipulation-and-events)
+    - [2.0.1. First DOM Access and Manipulation](#201-first-dom-access-and-manipulation)
+    - [2.0.2. Events and Event Handling: Rolling the Dice](#202-events-and-event-handling-rolling-the-dice)
+    - [2.0.3. Updating scores and changing the active player](#203-updating-scores-and-changing-the-active-player)
+    - [2.0.4. Implementing "Hold" function and the DRY principle](#204-implementing-hold-function-and-the-dry-principle)
+    - [2.0.5. Creating a Game Initialization Function](#205-creating-a-game-initialization-function)
+    - [2.0.6. State Variables](#206-state-variables)
+- [3. Advanced JavaScript: Objects and Functions](#3-advanced-javascript-objects-and-functions)
+    - [3.0.1. Everything is an Object: Inheritance and the Prototype Chain](#301-everything-is-an-object-inheritance-and-the-prototype-chain)
+    - [3.0.2. Creating Objects: Function Constructors](#302-creating-objects-function-constructors)
+    - [3.0.3. The Prototype Chain in the Console](#303-the-prototype-chain-in-the-console)
+    - [3.0.4. Creating Objects: Object.create()](#304-creating-objects-objectcreate)
+    - [3.0.5. Primitives vs Objects](#305-primitives-vs-objects)
+    - [3.0.6. First Class Functions: Passing Functions as Arguments](#306-first-class-functions-passing-functions-as-arguments)
+    - [3.0.7. First Class Functions: Functions returning Functions](#307-first-class-functions-functions-returning-functions)
+    - [3.0.8. Immediately invoked function expression (IIFE)](#308-immediately-invoked-function-expression-iife)
+    - [3.0.9. Closures](#309-closures)
+    - [3.0.10. Bind, Call, and Apply](#3010-bind-call-and-apply)
+    - [3.0.11. Coding Challenge 7](#3011-coding-challenge-7)
+    - [3.0.12. Solutions - Basics](#3012-solutions---basics)
+    - [3.0.13. Solutions - Expert](#3013-solutions---expert)
+- [4. The Budget App Project](#4-the-budget-app-project)
+    - [4.0.1. Project planning and architecture: Step 1](#401-project-planning-and-architecture-step-1)
+    - [4.0.2. Implementing the Module Pattern](#402-implementing-the-module-pattern)
+    - [4.0.3. Setting up first event listener](#403-setting-up-first-event-listener)
+    - [4.0.4. Reading input data](#404-reading-input-data)
+    - [4.0.5. Creating an initialization function](#405-creating-an-initialization-function)
+    - [4.0.6. Creating income and expense function constructors](#406-creating-income-and-expense-function-constructors)
+    - [4.0.7. Adding a new item to budget controller](#407-adding-a-new-item-to-budget-controller)
+    - [4.0.8. Adding a new item to the UI](#408-adding-a-new-item-to-the-ui)
+    - [4.0.9. Clearing our input fields](#409-clearing-our-input-fields)
+    - [4.0.10. Updating the budget: Controller](#4010-updating-the-budget-controller)
+    - [4.0.11. Update the budget: Budget Controller](#4011-update-the-budget-budget-controller)
+    - [4.0.12. Updating the budget: UI Controller](#4012-updating-the-budget-ui-controller)
+    - [4.0.13. Summary of Step 1](#4013-summary-of-step-1)
+    - [4.0.14. Project planning and architecture: Step 2](#4014-project-planning-and-architecture-step-2)
+    - [4.0.15. Event delegation](#4015-event-delegation)
+    - [4.0.16. Setting up the delete event listener using event delegation](#4016-setting-up-the-delete-event-listener-using-event-delegation)
+    - [4.0.17. Deleting an item from the budget controller](#4017-deleting-an-item-from-the-budget-controller)
+    - [4.0.18. Deleting an item from the UI](#4018-deleting-an-item-from-the-ui)
+    - [4.0.19. Summary of Step 2](#4019-summary-of-step-2)
+    - [4.0.20. Project planning and architecture: Step 3](#4020-project-planning-and-architecture-step-3)
+    - [4.0.21. Updating the percentages: Controller](#4021-updating-the-percentages-controller)
+    - [4.0.22. Updating the percentages: Budget Controller](#4022-updating-the-percentages-budget-controller)
+    - [4.0.23. Updating the percentages: UI Controller](#4023-updating-the-percentages-ui-controller)
+    - [4.0.24. Formatting budget numbers: String manipulation](#4024-formatting-budget-numbers-string-manipulation)
+    - [4.0.25. Displaying the current month and year](#4025-displaying-the-current-month-and-year)
+    - [4.0.26. Finishing touches: Improving the UX](#4026-finishing-touches-improving-the-ux)
+- [5. ES6/ES2015 JavaScript](#5-es6es2015-javascript)
+    - [5.0.1. Variable declarations with `let` and `const`](#501-variable-declarations-with-let-and-const)
+    - [5.0.2. Blocks and IIFEs](#502-blocks-and-iifes)
+    - [5.0.3. Strings in ES6 / ES2015](#503-strings-in-es6--es2015)
+    - [5.0.4. Arrow functions: Basics](#504-arrow-functions-basics)
+    - [5.0.5. Arrow functions: Lexical `this` keyword](#505-arrow-functions-lexical-this-keyword)
+    - [5.0.6. Destructuring](#506-destructuring)
+    - [5.0.7. Arrays in ES6/ES2015](#507-arrays-in-es6es2015)
+    - [5.0.8. The spread operator](#508-the-spread-operator)
+    - [5.0.9. Rest parameters](#509-rest-parameters)
+    - [5.0.10. Default parameters](#5010-default-parameters)
+    - [5.0.11. Maps](#5011-maps)
+    - [5.0.12. Classes](#5012-classes)
+    - [5.0.13. Classes with subclasses](#5013-classes-with-subclasses)
+    - [5.0.14. Coding Challenge 8](#5014-coding-challenge-8)
+    - [5.0.15. Coding Challenge 8 (Solution)](#5015-coding-challenge-8-solution)
+- [6. Asynchronous JavaScript: Promise, Async/Await and AJAX](#6-asynchronous-javascript-promise-asyncawait-and-ajax)
+    - [6.0.1. Understanding Synchronous JavaScript: The event loop](#601-understanding-synchronous-javascript-the-event-loop)
+    - [6.0.2. The Old Way: Asychronous JavaScript with Callbacks](#602-the-old-way-asychronous-javascript-with-callbacks)
+    - [6.0.3. From Callback Hell to Promises](#603-from-callback-hell-to-promises)
+    - [6.0.4. From Promise to Async/Await](#604-from-promise-to-asyncawait)
+    - [6.0.5. AJAX and APIs](#605-ajax-and-apis)
+    - [6.0.6. Making AJAX calls with Fetch and Promises](#606-making-ajax-calls-with-fetch-and-promises)
+    - [6.0.7. Making AJAX Calls with Fetch and Async/Await](#607-making-ajax-calls-with-fetch-and-asyncawait)
+- [7. Modern JavaScript: Using ES6, NPM, Babel and Webpack](#7-modern-javascript-using-es6-npm-babel-and-webpack)
+    - [7.0.1. Project Overview](#701-project-overview)
+    - [7.0.2. An Overview of Modern JavaScript](#702-an-overview-of-modern-javascript)
+    - [7.0.3. A Brief introduction to the command line](#703-a-brief-introduction-to-the-command-line)
+    - [7.0.4. Installing Node.js and NPM](#704-installing-nodejs-and-npm)
+    - [7.0.5. Configuring Webpack](#705-configuring-webpack)
+    - [7.0.6. The Webpack Dev Server](#706-the-webpack-dev-server)
+    - [7.0.7. Babel](#707-babel)
+    - [7.0.8. Planning our Project Architecture with MVC](#708-planning-our-project-architecture-with-mvc)
+    - [7.0.9. How ES6 module works](#709-how-es6-module-works)
+    - [7.0.10. Changes to Project API](#7010-changes-to-project-api)
+    - [7.0.11. Making our first API calls](#7011-making-our-first-api-calls)
+    - [7.0.12. Building the Search Model](#7012-building-the-search-model)
+    - [7.0.13. Building the Search Controller](#7013-building-the-search-controller)
+    - [7.0.14. Building the Search View - Part 1](#7014-building-the-search-view---part-1)
+    - [7.0.15. Building the Search View - Part 2](#7015-building-the-search-view---part-2)
+    - [7.0.16. Rendering an AJAX Loading Spinner](#7016-rendering-an-ajax-loading-spinner)
+    - [7.0.17. Implementing Search Results Pagination](#7017-implementing-search-results-pagination)
+    - [7.0.18. Building the Recipe Model - Part 1](#7018-building-the-recipe-model---part-1)
+    - [7.0.19. Building the Recipe Controller](#7019-building-the-recipe-controller)
+    - [7.0.20. Building the Recipe Model - Part 2](#7020-building-the-recipe-model---part-2)
+    - [7.0.21. Building the Recipe View - Part 1](#7021-building-the-recipe-view---part-1)
+    - [7.0.22. Building the Recipe View - Part 2](#7022-building-the-recipe-view---part-2)
+    - [7.0.23. Update Recipe Servings](#7023-update-recipe-servings)
+    - [7.0.24. Building the Shopping List Model](#7024-building-the-shopping-list-model)
+    - [7.0.25. Building the Shopping List View](#7025-building-the-shopping-list-view)
+    - [7.0.26. Building the Shopping List Controller](#7026-building-the-shopping-list-controller)
+    - [7.0.27. Building the Likes Model](#7027-building-the-likes-model)
+    - [7.0.28. Building the Likes Controller](#7028-building-the-likes-controller)
+    - [7.0.29. Building the Likes View](#7029-building-the-likes-view)
+    - [7.0.30. Implementing Persistent Data with Local Storage](#7030-implementing-persistent-data-with-local-storage)
+    - [7.0.31. Wrapping up: Final Considerations](#7031-wrapping-up-final-considerations)
+- [8. Laptop Store Project](#8-laptop-store-project)
+    - [8.0.1. Laptop Store Project - Part 1](#801-laptop-store-project---part-1)
+      - [8.0.1.1. Setup server](#8011-setup-server)
+      - [8.0.1.2. Set up URL (Routing)](#8012-set-up-url-routing)
+      - [8.0.1.3. Retrieve paremeters from the URL](#8013-retrieve-paremeters-from-the-url)
+    - [8.0.2. Laptop Store Project - Part 2](#802-laptop-store-project---part-2)
+      - [8.0.2.1. Create HTML templates](#8021-create-html-templates)
+      - [8.0.2.2. Set up page and route to render the contents](#8022-set-up-page-and-route-to-render-the-contents)
+      - [8.0.2.3. Create the cards on the overview page accordingly](#8023-create-the-cards-on-the-overview-page-accordingly)
+
+---
+
+# 1. Intro and course structure
 
 1. JavaScript Basics
 1. How JavaScript works behind the Scenes
@@ -18,7 +135,7 @@ Update: Finished course on 2020/07/23
 
 All the files are in "complete-javascript-course-master" directory which is copied from [complete-javascript-course](https://github.com/jonasschmedtmann/complete-javascript-course)
 
-# JavaScript in the Browser: DOM Manipulation and Events
+# 2. JavaScript in the Browser: DOM Manipulation and Events
 
 1. DOM stands for Document Object Model and is used to connect webpages and scripts like JavaScript. For each HTML box, there's an object in the DOM that we can access and interact with.
 1. We will learning the materials and build a "pigGame" proejct by learning "**DOM**".
@@ -33,7 +150,7 @@ GAME RULES:
 - The first player to reach 100 points on GLOBAL score wins the game
   <img src="./pigGame/pigGame.PNG">
 
-### First DOM Access and Manipulation
+### 2.0.1. First DOM Access and Manipulation
 
 1. We build up the variables to use in the initial stage.
 1. Use `Math.random()` to create a random number from 0 to 1 (not including 1) and use `.floor()` to chop off the decimals. For the dice points, we can use `Math.floor(Math.random()*6) + 1` to get a random number from 1 to 6.
@@ -41,36 +158,36 @@ GAME RULES:
 1. After selecting an element, we can use `textContent` method to change the text value of the element or `innerHTML` to change the HTML value. The main difference between how the methods affect to the HTML elements on the page. These selectors and methods allow us to check values of HTML elements or change the value that renders on the page.
 1. We can use the selector change CSS properties as well. Give `.style` to the selector object after selecting an object and give the property name. For example, we can change an element's `display` property as `none` to hide the element from the page. `document.querySelector('element').style.dispaly = 'none'`.
 
-### Events and Event Handling: Rolling the Dice
+### 2.0.2. Events and Event Handling: Rolling the Dice
 
 1. `Events` are notification that send to notify the code that something happened on the webpage. Events are tricked by user activities, such as clicking button, resizing browser, scrolling, and pressing a key.
 1. `Event listener` is a function that performs an action based on a certain event. The function will be added to an object and wait a specific event to happen.
 1. A `callback` function is called only when the event listener catches an event and gets trigerred. This function can be set in advance (but remember that it should not be called and passed as a function value). Besides, we can pass an anonymous function, which is only for one-time use for the event.
 1. Besides `querySelector()`, we can use `getElementById()` to select an element by its "id". In this case, though the scores in HTML is given, we can use JavaScript and DOM to reset the values to 0.
 
-### Updating scores and changing the active player
+### 2.0.3. Updating scores and changing the active player
 
 1. In this section, we will use ternary operator `?`, so we can have one-line succinct code rather than using `IF/ELSE`, and use DOM to toggle HTML classes.
 1. We can use `document.querySelector('element').classList.toggle('class')` to turn on/off (add/remove) a class to an element. This method will add the class to element that doesn't have it or remove the class if the element has it.
 
-### Implementing "Hold" function and the DRY principle
+### 2.0.4. Implementing "Hold" function and the DRY principle
 
 1. If a section of code can be used in different part or event, we can make it as a "**function**" to be called accordingly and reduce repetitive code.
 1. In this secion, we focus on changing the record of accumulated points of rolling dice and let the DOM selector edit HTML elements accordingly.
 
-### Creating a Game Initialization Function
+### 2.0.5. Creating a Game Initialization Function
 
 1. The part is to create a function to initilize the game to the initial state, such as reseting scores and player state.
 1. By using DRY concept, we can have a section of code used in different part part of the program or be called according to events.
 
-### State Variables
+### 2.0.6. State Variables
 
 1. A state variable is to tell the user the condition of the system. In this case, we set this variable to prevent the game keeping going after one of the player wins. Therefore, we can use the state to know if the game is playing or not.
 1. In this game, the state control is relatively simple that there are only "playing" or "not playing" state for the game. Therefore, we can set up a single variable that holds `true` or `false` to indicate the state of the program. Besides, we can use this variable to be the indicator that whether some of the functions should be working by using `IF` statement.
 
-# Advanced JavaScript: Objects and Functions
+# 3. Advanced JavaScript: Objects and Functions
 
-### Everything is an Object: Inheritance and the Prototype Chain
+### 3.0.1. Everything is an Object: Inheritance and the Prototype Chain
 
 1. In JavaScript there are "Primitives" and "Objects"
    1. **Primitives** include `Numbers`, `Strings`, `Booleans`, `Undefined`, and `Null`.
@@ -84,7 +201,7 @@ GAME RULES:
 1. The prototype property of an object is where we put methods and properties that we want other objects to inherit.
 1. The constructor's prototype property is **NOT** the prototype of the constructor itself, it's the prototype of **ALL** instances that are created through it.
 
-### Creating Objects: Function Constructors
+### 3.0.2. Creating Objects: Function Constructors
 
 1. By convention, the variable name of constructor function starts with an uppercase.
 1. When we use keyword `new`, an empty `Object` is created and the constructor function is called. The properties with `this` are assigned to the `Object` and given to the variable.
@@ -110,13 +227,13 @@ GAME RULES:
    mark.calculateAge();
    ```
 
-### The Prototype Chain in the Console
+### 3.0.3. The Prototype Chain in the Console
 
 1. We can check with `__proto__` of an `Object` to check its constructor properties.
 1. `.hasOwnProperty()` method can be used to check if the `Object` has a property or method by the `Object` itself, or is from its constructor.
 1. key word `instanceof` can be used to check if an `Object` is an instance of another `Object`, such as `ObjectA instanceof ObjectB`.
 
-### Creating Objects: Object.create()
+### 3.0.4. Creating Objects: Object.create()
 
 1. Besides using `new` keyword, we can use `Object.create()` which takes a function as argument to create an `Object` as using the function as prototype.
 
@@ -140,7 +257,7 @@ GAME RULES:
    });
    ```
 
-### Primitives vs Objects
+### 3.0.5. Primitives vs Objects
 
 1. Variables assigned with "**primitive**" values keeps the values. However, variables assigned with "**objects**" only point to the location of the storage in memory rather than having the copy of the `Object`.
 
@@ -176,7 +293,7 @@ GAME RULES:
    console.log(obj.city);
    ```
 
-### First Class Functions: Passing Functions as Arguments
+### 3.0.6. First Class Functions: Passing Functions as Arguments
 
 1. A function is an instance of the Object type.
 1. A function behaves like any other object.
@@ -185,7 +302,7 @@ GAME RULES:
 1. We can return a function from a function.
 1. "**callback**" functions are function that are passed as arguments to another function and only runs in the function scope. Note that we should be careful with the syntax that the callback function usually not execute for the result and be passed as argument. It'd be pass as function value and execute as a callback.
 
-### First Class Functions: Functions returning Functions
+### 3.0.7. First Class Functions: Functions returning Functions
 
 1. We can make a function that returns another function and assign the value to a variable. The variable can be called and passed arguments.
 1. If a function return a function as value, we can use another parenthesis to pass argument and to execute the returned function directly.
@@ -217,7 +334,7 @@ GAME RULES:
    // What subject do you teach, John?
    ```
 
-### Immediately invoked function expression (IIFE)
+### 3.0.8. Immediately invoked function expression (IIFE)
 
 1. IIFEs are used to keep data privacy, as the variables in the function scope can't be reached from outside.
    ```js
@@ -236,7 +353,7 @@ GAME RULES:
    })(5);
    ```
 
-### Closures
+### 3.0.9. Closures
 
 1. Closure is an inner function has always access to the variables and parameters of its outer function, even after the outer function has returned.
 
@@ -272,7 +389,7 @@ GAME RULES:
    console.log(score); // 10
    ```
 
-### Bind, Call, and Apply
+### 3.0.10. Bind, Call, and Apply
 
 1. With `.bind()`, `.call()`, and `.apply()` method can borrow methods from other `Objects` to work on an `Object`.
 
@@ -361,7 +478,7 @@ GAME RULES:
    console.log(fullJapan);
    ```
 
-### Coding Challenge 7
+### 3.0.11. Coding Challenge 7
 
 1. Build a function constructor called Question to describe a question. A question should include:
    1. question itself
@@ -381,7 +498,7 @@ GAME RULES:
 1. Track the user's score to make the game more fun! So each time an answer is correct, add 1 point to the score (Hint: I'm going to use the power of closures for this, but you don't have to just do this)
 1. Display the score in the console. Use yet another method for this.
 
-### Solutions - Basics
+### 3.0.12. Solutions - Basics
 
 1. Note that data collect from `prompt()` method is a `String`. We can use plus sign `+`, `Number()`, or `parseInt()` to turn a `String` value into a `Number`.
 1. We use "**IIFE**" to wrap the values and variables into a function, so it won't affect to the variables outside the scope, and can't be accessed as well.
@@ -440,7 +557,7 @@ GAME RULES:
    })();
    ```
 
-### Solutions - Expert
+### 3.0.13. Solutions - Expert
 
 1. We use a closure here to record the score if the user give a correct answer. The variable `sc` can't be accessed not modified from the outside. Therefore, we can ensure the score is correct and can't be "**hacked**".
    ```js
@@ -455,7 +572,7 @@ GAME RULES:
    }
    ```
 
-# The Budget App Project
+# 4. The Budget App Project
 
 1. The project is to create a dashboard that allows users to
    1. Add "**income**" of the month
@@ -467,7 +584,7 @@ GAME RULES:
 1. In this project, we focus on the JavaScript part of the project only. HTML and CSS styling are given.
 1. One goal to achieve here is to learn how to plan and structure the plan to develop a program.
 
-### Project planning and architecture: Step 1
+### 4.0.1. Project planning and architecture: Step 1
 
 1. To-do list
    1. Add event handler
@@ -492,7 +609,7 @@ GAME RULES:
    1. Controller Module
       1. Add event handler
 
-### Implementing the Module Pattern
+### 4.0.2. Implementing the Module Pattern
 
 1. Learning Objects
    1. Learn how to use module pattern
@@ -533,7 +650,7 @@ GAME RULES:
    console.log(controller.anotherPublic());
    ```
 
-### Setting up first event listener
+### 4.0.3. Setting up first event listener
 
 1. Learning Objects
    1. Set up event listeners for keypress events
@@ -563,7 +680,7 @@ GAME RULES:
    })(budgetController, UIController);
    ```
 
-### Reading input data
+### 4.0.4. Reading input data
 
 1. Learning Objects: Read data from different HTML input types.
 1. The same concepts of using closure and IIFEs are used here. We can set up the `UIController` to get the input from the webpage. Therefore, it returns an `Object` that contains the input from the user which we can manipulate it in the `controller` function.
@@ -597,7 +714,7 @@ GAME RULES:
    })();
    ```
 
-### Creating an initialization function
+### 4.0.5. Creating an initialization function
 
 1. In the `controller` function, we create an `init` function which can be called by its API. The `controller` function that returns an `Object` which has a method for outside to call the function. Therefore, without this initiation, the event listeners aren't applied.
 
@@ -641,7 +758,7 @@ GAME RULES:
    controller.init();
    ```
 
-### Creating income and expense function constructors
+### 4.0.6. Creating income and expense function constructors
 
 1. Learning Objects
    1. Choose function constructors that meet our application's needs.
@@ -680,7 +797,7 @@ GAME RULES:
    })();
    ```
 
-### Adding a new item to budget controller
+### 4.0.7. Adding a new item to budget controller
 
 1. Learning Objects
    1. Avoid conflicts in the data structure.
@@ -756,7 +873,7 @@ GAME RULES:
 
 1. Note that all this data are only in the backend can be checked only on the console, as we haven't use the data to update the HTML elements.
 
-### Adding a new item to the UI
+### 4.0.8. Adding a new item to the UI
 
 1. Learning Objects
    1. A technique for adding big chunks of HTML into the DOM.
@@ -834,7 +951,7 @@ GAME RULES:
    }
    ```
 
-### Clearing our input fields
+### 4.0.9. Clearing our input fields
 
 1. Learning Objects
    1. Clear HTML fields
@@ -862,7 +979,7 @@ GAME RULES:
    },
    ```
 
-### Updating the budget: Controller
+### 4.0.10. Updating the budget: Controller
 
 1. Learning Objects
    1. Convert field inputs to numbers
@@ -904,7 +1021,7 @@ GAME RULES:
    };
    ```
 
-### Update the budget: Budget Controller
+### 4.0.11. Update the budget: Budget Controller
 
 1. Learning Objects
    1. Understand how and why create simple, reusable functions with only one purpose.
@@ -939,7 +1056,7 @@ GAME RULES:
    }
    ```
 
-### Updating the budget: UI Controller
+### 4.0.12. Updating the budget: UI Controller
 
 1. Learning Objects: Practice DOM manipulation by updating the budget and total values.
 1. In `UIController`, we create the DOM manipulation to change the text contents of the HTML elements. However, the `obj.percentage` returns `-1` when the income is 0. Therefore, we can have another `IF` statement to deal with the conditions. We can set the condition as if `obj.percentage` is greater than `0`, so it includes both 0 and negative numbers such as `-1`. This is why we set the percentage as `-1` when the income is 0.
@@ -972,11 +1089,11 @@ GAME RULES:
    };
    ```
 
-### Summary of Step 1
+### 4.0.13. Summary of Step 1
 
 <img src="budgetAppStructure1.png">
 
-### Project planning and architecture: Step 2
+### 4.0.14. Project planning and architecture: Step 2
 
 1. The main target here is to enable the "**delete**" button and the aligned manipulations with the event.
 1. To-do list
@@ -986,7 +1103,7 @@ GAME RULES:
    1. Re-calculate budget
    1. Update the UI
 
-### Event delegation
+### 4.0.15. Event delegation
 
 1. "**Event Bubbling**" - For example, when a button on the webpage is "**clicked**", its parent elements (which holds the button element until `HTML` tag) will also be triggered with the event.
 1. By this feature, we can put the event listener on the parent element and wait for the event bubbles up. This is called "**event delegation**".
@@ -994,7 +1111,7 @@ GAME RULES:
    1. When we have an element with lots of child elements that we are interested in. Therefore, we don't need to add event listeners to each of them one by one.
    1. When we want an event handler attached to an element that is not yet in the DOM when the page is loaded. For example, a submit button element is only added after filling up an input form. We can put the listener on its parent rather than the new button itself, so the button element will still work, though the element doesn't exist when the page loads.
 
-### Setting up the delete event listener using event delegation
+### 4.0.16. Setting up the delete event listener using event delegation
 
 1. Learning Objects
    1. Use event delegation in practice
@@ -1022,7 +1139,7 @@ GAME RULES:
    };
    ```
 
-### Deleting an item from the budget controller
+### 4.0.17. Deleting an item from the budget controller
 
 1. Learning Objects
    1. Another method to loop over an `Array`: `.map()`.
@@ -1046,7 +1163,7 @@ GAME RULES:
    }
    ```
 
-### Deleting an item from the UI
+### 4.0.18. Deleting an item from the UI
 
 1. Learning Object: Remove an element from the DOM
 1. In DOM, we can only use `.removeChild()` method to delete an element. Therefore, we have to select the parent element of the element we want to delete and pass the selected element again. We can save the parent element object in a variable first as well.
@@ -1059,11 +1176,11 @@ GAME RULES:
    }
    ```
 
-### Summary of Step 2
+### 4.0.19. Summary of Step 2
 
 <img src="budgetAppStructure2.png">
 
-### Project planning and architecture: Step 3
+### 4.0.20. Project planning and architecture: Step 3
 
 1. The main target here is to update the percentage of an expense item of total income.
 1. To-do list
@@ -1073,12 +1190,12 @@ GAME RULES:
    1. Number formatting
    1. Improve input field UX
 
-### Updating the percentages: Controller
+### 4.0.21. Updating the percentages: Controller
 
 1. Learning Object: Reinforce concepts and techniques we have learnt so far.
 1. This task is simple that we just add the function and execute it in other function sets, such as run the function after we add or delete an item.
 
-### Updating the percentages: Budget Controller
+### 4.0.22. Updating the percentages: Budget Controller
 
 1. Learning Object: Make the budget controller interact with the `Expense` prototype.
 1. We update the function constructor of `Expense` by giving a new property `percentage`. This property is set to be default at `-1`. We then create 2 methods that can be called on each expense object. Therefore, the percentage will be calculated everytime a new item (either income or expense) is added.
@@ -1119,7 +1236,7 @@ GAME RULES:
    },
    ```
 
-### Updating the percentages: UI Controller
+### 4.0.23. Updating the percentages: UI Controller
 
 1. Learning Object: Create own `.forEach()` method but for `nodeLists` instead of arrays.
 1. Since there may be multiple items in the list and should all be updated, we can use `.querySelectorAll()` method to parse and update all the contents of percentage at the same time. In this case, we make a customized `forEach()` function which can loop through a DOM "**list**". Note that though a `list` object is not an array, it still has `length` property.
@@ -1144,7 +1261,7 @@ GAME RULES:
    }
    ```
 
-### Formatting budget numbers: String manipulation
+### 4.0.24. Formatting budget numbers: String manipulation
 
 1. Learning Object: Use different String methods to manipulate strings.
 1. There are 3 patterns for the numbers in the App
@@ -1180,7 +1297,7 @@ GAME RULES:
    };
    ```
 
-### Displaying the current month and year
+### 4.0.25. Displaying the current month and year
 
 1. Learning Object: Get the current date by using the Date object constructor
 1. Since `.getMonth()` method returns a zero based number, we can create an `Array` which includes all months and be called by the result from `.getMonth()` as the index.
@@ -1197,7 +1314,7 @@ GAME RULES:
    }
    ```
 
-### Finishing touches: Improving the UX
+### 4.0.26. Finishing touches: Improving the UX
 
 1. Learning Objects: How and when to use '**change**' events.
 1. We will change the color of inputs in the form when it is focus and according to whether it's an "**income**" or "**expense**" by checking whether the sign in the beginning is a '+' or '-' sign.
@@ -1221,7 +1338,7 @@ GAME RULES:
 1. Final Structure
    <img src="budgetAppStructure_final.png">
 
-# ES6/ES2015 JavaScript
+# 5. ES6/ES2015 JavaScript
 
 1. The new version of JavaScript works on modern browsers but may not be available on old version, such as IE 9 or under. Besides, there's only new features and syntax different that most of the old usage and functions are still available. In this section, we will check the new versoin in the following topics.
    1. Variable Declarations with `let` and `const`.
@@ -1235,19 +1352,19 @@ GAME RULES:
    1. Maps
    1. Classes and subclasses
 
-### Variable declarations with `let` and `const`
+### 5.0.1. Variable declarations with `let` and `const`
 
-### Blocks and IIFEs
+### 5.0.2. Blocks and IIFEs
 
 1. When we declare a variable with keyword `const`, the variable is immutable that we can't change the value of the variable.
 1. The main difference between ES5 `var` and ES6 variable declaration `let and const` is that `var` is function scoped, and `let and const` are block scoped, which means that a variable declared by `var` can be accesses anywhere in the function. For `let and const` the scope is only limited to the curly braces `{}` where the variables are at.
 1. Therefore, if ES5 and previous version, we can use IIFEs with `(function(){})()` to call an anonymous function immediately and limited accessibility for variables declared by `var`.
 
-### Strings in ES6 / ES2015
+### 5.0.3. Strings in ES6 / ES2015
 
 1. In ES6, we can use backticks "\`" and dollar sign with curly braces `${}` to make multi-line strings and pass variables directly in `${}`.
 
-### Arrow functions: Basics
+### 5.0.4. Arrow functions: Basics
 
 1. In ES5, we can only use keyword `function` to use a function in JavaScript. However, Since ES6, we can use a shorthand "**arrow function**" notation. We can use arrow function notation for IIFEs or anonymous functions.
 1. For example, we'd like to return a `'hi'` string.
@@ -1265,7 +1382,7 @@ GAME RULES:
    };
    ```
 
-### Arrow functions: Lexical `this` keyword
+### 5.0.5. Arrow functions: Lexical `this` keyword
 
 1. In ES5, if we would like to add an event listener to an element, keyword `this` may refer to the wrong `Object` (usually global object). We have 2 ways for the solution by either save the `this` object first or use `.bind()` method.
 
@@ -1356,7 +1473,7 @@ GAME RULES:
    new Person("John").myFriends5(friends);
    ```
 
-### Destructuring
+### 5.0.6. Destructuring
 
 1. We can use `Array` and `Objects` to create variables in the other way as the followings.
 
@@ -1383,7 +1500,7 @@ GAME RULES:
    console.log(retirement);
    ```
 
-### Arrays in ES6/ES2015
+### 5.0.7. Arrays in ES6/ES2015
 
 1. In ES5, we can use `Array.prototype.slice.call(DOMList)` to turn an DOM list into a JavaScript `Array`. In ES6, we can use `Array.from(DOMList)` to create an `Array` from the DOM list directly.
 
@@ -1474,7 +1591,7 @@ GAME RULES:
    // [8, 10, "*", 123, "*", 55, "*", 12, "*", 1, 3, 13, "*"]
    ```
 
-### The spread operator
+### 5.0.8. The spread operator
 
 1. Triple dots `...` is the spread operator which can takes all the elements out from an `Array` and pass it to a function as arguments.
 1. In ES5, we can use `.apply(null, array)` to pass elements of an `Array` to a function.
@@ -1521,7 +1638,7 @@ GAME RULES:
     all.forEach( e => e.style.color = '#333');
     ```
 
-### Rest parameters
+### 5.0.9. Rest parameters
 
 1. "**Rest parameters**" is similar to "**spread operators**" that using triple dots.
 1. In a function, we can use keyword `arguments` to represent an "**array-like**" object that holds all the arguments passed to the function. With spread operator, we can turn them into a real `Array`.
@@ -1574,7 +1691,7 @@ GAME RULES:
    isFullAge6(21, 1990, 1999, 1965, 2016, 1987);
    ```
 
-### Default parameters
+### 5.0.10. Default parameters
 
 1. We can predefine the value of variables or properties of a function by giving condition in the function constructor to work on prototypes.
 1. In a function declaration, the paramters without given value when being called, the parameters will be assigned with `undefined` value. Therefore, in ES5, we can use the feature to give default values to parameters if they are not given when called.
@@ -1611,7 +1728,7 @@ GAME RULES:
     let emily = new SmithPerson('Emily', 1983, 'Diaz', 'spanish');
     ```
 
-### Maps
+### 5.0.11. Maps
 
 1. `Objects` in JavaScript are usually used as "**hash maps**" as key/value pairs. However, `Objects` takes only `String` values as its property names.
 1. `Maps` which are introduced in ES6 can take any type of value as the "**key**" of the key/value pair. We can even use another `function` or `Object` as a key.
@@ -1689,7 +1806,7 @@ GAME RULES:
    console.log(question.get(ans === question.get("correct")));
    ```
 
-### Classes
+### 5.0.12. Classes
 
 1. Keyword `class` in JavaScript is only the "**syntactic sugar**" that is easier to read and write. However, it works and functions exactly the same as using function constructor and with `.prototype` property to add methods to create a "**type**" of `Objects`.
 1. We can also add `static` function which WILL NOT inherit by the instances of the class, but we can call it from the Prototype object.
@@ -1733,7 +1850,7 @@ GAME RULES:
     Person6.greeting(); // Hey there
     ```
 
-### Classes with subclasses
+### 5.0.13. Classes with subclasses
 
 1. To create a subclass from a prototype as extensions, we can create another constructor function and have the same parameters with additional ones. We then use `.call(this, ...parameters)` with additional properties. Recalling that keyword `new` creates an empty `Object` when it is called and `this` in the new constructor function refers to the new empty `Object`, while we can use `.call()` method to refer the original prototype.
 1. After that we connect `.prototype` property by `Object.create()` to ensure the properties share the same methods on the prototype. However, we use the function `Object.create()` is to duplicate the methods rather than linking them. Therefore, modifying methods on the `.prototype` of the new subclass will not affect to its superclass. Note that this has can only be made after we duplicate the methods from `.property` of its superset.
@@ -1814,7 +1931,7 @@ GAME RULES:
    johnAthlete6.calculateAge();
    ```
 
-### Coding Challenge 8
+### 5.0.14. Coding Challenge 8
 
 1. Suppose that you're working in a small town administration, and you're in charge of two town elements.
    1. Parks
@@ -1829,7 +1946,7 @@ GAME RULES:
 1. All the report data should be printed to the console.
 1. Hint: Use some of the ES6 features: classes, subclasses, template strings, default parameters, maps, arrow functions, destructuring, etc.
 
-### Coding Challenge 8 (Solution)
+### 5.0.15. Coding Challenge 8 (Solution)
 
 1. Create a superclass for both elements, which has 2 properties in common that are "**name**" and "**buildYear**"
 1. We then use `extends` keyword to have subclass from the superclass.
@@ -1951,7 +2068,7 @@ GAME RULES:
    reportStreets(allStreets);
    ```
 
-# Asynchronous JavaScript: Promise, Async/Await and AJAX
+# 6. Asynchronous JavaScript: Promise, Async/Await and AJAX
 
 1. A regualr **synchronous** code is that the engine reading the script and execute it in a top-down order.
 1. An example for asynchronous JavaScript is to use `setTimeout()` function which takes 2 arguments, a "**callback function**" and "**duration**" in milli-seconds. Therefore, in the following code, the function `second` will print the text to console after 2 seconds.
@@ -1973,7 +2090,7 @@ GAME RULES:
    first();
    ```
 
-### Understanding Synchronous JavaScript: The event loop
+### 6.0.1. Understanding Synchronous JavaScript: The event loop
 
 1. The engine allows asynchronous functions to run in the "**background**".
 1. We pass in callback functions that run once the function has finished its work.
@@ -1987,7 +2104,7 @@ GAME RULES:
 1. Note that tasks in "**execution stack**" is a stack (first in last out), and "**message queue**" is a queue (first in first out).
 1. Tasks in "**message queue**" are pushed back to "**execution stack**" as `event loop`.
 
-### The Old Way: Asychronous JavaScript with Callbacks
+### 6.0.2. The Old Way: Asychronous JavaScript with Callbacks
 
 1. `setTimeout()` function takes 3 arguments
    1. Callback function to be called after the duration of time.
@@ -2031,7 +2148,7 @@ GAME RULES:
    getRecipe();
    ```
 
-### From Callback Hell to Promises
+### 6.0.3. From Callback Hell to Promises
 
 1. A `promise` is an `Object` that keeps track about whether a certain event has happened already or not.
 1. It determines what happens after the event has happened.
@@ -2119,7 +2236,7 @@ GAME RULES:
      });
    ```
 
-### From Promise to Async/Await
+### 6.0.4. From Promise to Async/Await
 
 1. Though `promise` has made the tasks easier to manage, it's still complicated to work on. Therefore, new syntax `async` and `await` are introduced in ES8/ES2017.
 1. Based on `promise` objects, we can use keyword `async` to create a "**asynchronous function**" and use `await` to get the `promise` object. Therefore, the execution context will wait the functions called with `await` to be finished before it goes further.
@@ -2158,14 +2275,14 @@ GAME RULES:
    getRecipeAW().then((result) => console.log(`${result} is the best ever`));
    ```
 
-### AJAX and APIs
+### 6.0.5. AJAX and APIs
 
 1. AJAX stands for "**Asynchronous JavaScript and XML**"
 1. We can use a JavaScript app on the browser to request data from the server and handle the data asynchronously on the background, so the user can use the App without reload the page.
 1. API stands for "**Application Programming Interface**"
 1. API is part of the remote server service that it can be own API or 3rd party APIs, such as from Google Maps, Youtube video, and movies data.
 
-### Making AJAX calls with Fetch and Promises
+### 6.0.6. Making AJAX calls with Fetch and Promises
 
 1. We can use `fetch()` function to request data from a server. However, this has an issue fo fetching data from different domain, as the engine blocks the event with CORS policy to protect the data. However, we can use [crossorigin.me](https://corsproxy.github.io/) to solve the problem.
 1. It's very simple that we just add `https://crossorigin.me/` at the front of the URL given to `fetch()` function. (Note that at the time when learning this course. The original link didn't work. The URL has changed to "https://cors-anywhere.herokuapp.com/"). Therefore, we can use https://cors-anywhere.herokuapp.com/`[URL to fetch]`.
@@ -2196,7 +2313,7 @@ GAME RULES:
    getWeather(121231278931); // Example for .catch() method
    ```
 
-### Making AJAX Calls with Fetch and Async/Await
+### 6.0.7. Making AJAX Calls with Fetch and Async/Await
 
 1. We can use `try` and `catch` which are JavaScript function to handle errors. This is similar to `try` and `except` in Python. So the code will not stop executing though it gets an error.
 1. Note that `async` functions return `promise` object, so we can use `.then()` and `.catch()` method to manipulate it asynchronously.
@@ -2246,15 +2363,15 @@ GAME RULES:
    });
    ```
 
-# Modern JavaScript: Using ES6, NPM, Babel and Webpack
+# 7. Modern JavaScript: Using ES6, NPM, Babel and Webpack
 
-### Project Overview
+### 7.0.1. Project Overview
 
 1. A search platform that users can search for food recipes.
 1. Link the front-end page to an API to all data.
 1. We can use local cache to store the data, so the user can keep the input and data for a while.
 
-### An Overview of Modern JavaScript
+### 7.0.2. An Overview of Modern JavaScript
 
 **3rd-party packages**
 
@@ -2268,15 +2385,15 @@ GAME RULES:
 
 <img src="./modernJSOverview.PNG">
 
-### A Brief introduction to the command line
+### 7.0.3. A Brief introduction to the command line
 
 This section is skipped, as I've learnt it from other materials.
 
-### Installing Node.js and NPM
+### 7.0.4. Installing Node.js and NPM
 
 This section is skipped, as I've learnt it from other materials.
 
-### Configuring Webpack
+### 7.0.5. Configuring Webpack
 
 1. We create a `webpack.config.js` file in the root directory of the website. In the file, we simply use `module.exports = {}` to export an `Object` with our configurations.
    ```js
@@ -2336,7 +2453,7 @@ This section is skipped, as I've learnt it from other materials.
    ```
 1. By this configuration, we can take `mode: 'development'` off in the last line in `webpack.config.js`.
 
-### The Webpack Dev Server
+### 7.0.6. The Webpack Dev Server
 
 1. In the root directory, we usually separate code into to direcotries `src` (source) is for development purpose, while `dist` (distribution) is for production (shipped to clients).
 1. We then change the code in `webpack.config.js` to add the contents when the live-server is on. `devServer` with an `Object` with `contentBase: 'filePath'`.
@@ -2397,7 +2514,7 @@ This section is skipped, as I've learnt it from other materials.
 1. We then can use `npm run start` again and will see the live server opens the HTML file generated from the source code and has assigned with `<script>` tag that has a `src` attribute with `js/bundle.js`. Note that though this file is generated from the source code, the rendered version isn't actually stored in the `dist` directory.
 1. If we use `npm run dev`, a new HTML file generated from the template source code will be generated in the `dist` directory.
 
-### Babel
+### 7.0.7. Babel
 
 npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env`
 
@@ -2442,14 +2559,14 @@ npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env
    1. Setup `.babelrc` and indicate what files that we want to convert to ES5.
    1. Install and include `babel-polyfill` to be able to convert some features which don't exist in ES5.
 
-### Planning our Project Architecture with MVC
+### 7.0.8. Planning our Project Architecture with MVC
 
 1. MVC stands for `Model`, `Controller`, and `View`.
 1. Though we've used the concept in the budgetApp with IFFEs and closure, we can use `module` which is a new feature in ES6 to implement to concept in an easier way.
 1. For a certain function in the web app, we can separate it into 2 parts, model and view, and get them integrated with the controller module.
    <img src="mvcRecipeApp.PNG">
 
-### How ES6 module works
+### 7.0.9. How ES6 module works
 
 1. Learning objectives
    1. How to use ES6 modules
@@ -2483,7 +2600,7 @@ npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env
    );
    ```
 
-### Changes to Project API
+### 7.0.10. Changes to Project API
 
 1. The original `food2fork` API isn't working, so the instructor made another `forkify-api` that we can work with.
    1. No API key is required
@@ -2500,7 +2617,7 @@ npm module `babel-core`, `babel-loader`, `babel-polyfill`, and `babel-preset-env
    const res = await axios(`https://forkify-api.herokuapp.com/api/get?rId=${this.id});
    ```
 
-### Making our first API calls
+### 7.0.11. Making our first API calls
 
 The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
 
@@ -2541,7 +2658,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    getResults("sweet potato"); // this is supported
    ```
 
-### Building the Search Model
+### 7.0.12. Building the Search Model
 
 1. Learning Object: Build a simple data model using ES6 classes.
 1. In `Search.js`, we build the class `Search` with an async function to call data from the API. We then `import` the class to the controller `index.js` and make a call.
@@ -2580,7 +2697,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    console.log(search);
    ```
 
-### Building the Search Controller
+### 7.0.13. Building the Search Controller
 
 1. Learning Object:
    1. The concept of application state
@@ -2632,7 +2749,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
      });
    ```
 
-### Building the Search View - Part 1
+### 7.0.14. Building the Search View - Part 1
 
 1. Learning Objects
    1. Advanced DOM manipulation techniques
@@ -2762,7 +2879,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    });
    ```
 
-### Building the Search View - Part 2
+### 7.0.15. Building the Search View - Part 2
 
 1. The main target is to reduce the title of returned title of recipe if it's longer than 1 line. For example, when we search for "pizza", some recipes (such as `BALSAMIC STRAWBERRY AND CHICKEN PIZZA WITH SWEET ONIONS AND SMOKED BACON CLOSET COOKING`) have very long title.
 1. In `searchView.js`, we updat a function `limitRecipeTitle` which is closed and limited to use only in `searchViews.js`.
@@ -2787,7 +2904,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    };
    ```
 
-### Rendering an AJAX Loading Spinner
+### 7.0.16. Rendering an AJAX Loading Spinner
 
 1. This loading spinner is an animation to notice the user when the `async` functions is working. In this case, this animaiton should be placed in both query result list and recipe list. This is using svg icons with CSS animation.
 1. Since this code will be used in other sections, we will put in `base.js` to be shared. Besides, we add a new selector in the `elements` object.
@@ -2860,7 +2977,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    clearLoader();
    ```
 
-### Implementing Search Results Pagination
+### 7.0.17. Implementing Search Results Pagination
 
 1. Learning Objects
    1. Use the `.closest` method for easier event handling
@@ -2970,7 +3087,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    });
    ```
 
-### Building the Recipe Model - Part 1
+### 7.0.18. Building the Recipe Model - Part 1
 
 1. Since we are going to use the same API endpoint, keys, and proxy if needed throughout the models, we can create another model for configuration. We create a new model `config.js` and put it in the same folder as `index.js`. However, we should never store any sensitive data on client side.
 1. We then create our Recipe data model in `Recipe.js`. The `Object` is created based on the API response.
@@ -3021,7 +3138,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    console.log(result);
    ```
 
-### Building the Recipe Controller
+### 7.0.19. Building the Recipe Controller
 
 1. Learning Objects
    1. Read data from the Page URL
@@ -3082,7 +3199,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    });
    ```
 
-### Building the Recipe Model - Part 2
+### 7.0.20. Building the Recipe Model - Part 2
 
 1. Learning Objects
    1. Use array methods like `.map()`, `.slice()`, `.findIndex()`, `.includes()`
@@ -3227,7 +3344,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
      }
    ```
 
-### Building the Recipe View - Part 1
+### 7.0.21. Building the Recipe View - Part 1
 
 1. We create a new view model `recipeViews.js` in `views` directory. As we get multiple ingredients and each of them should be listed as a group HTML elements (according to template). We can use multi-line `String` as backtick notation `${}` can take not only a varible but an expression. We use `${recipe.ingredients.map(createIngredients).join("")}` in the HTML strings and use `.map()` method to create a manipulated `Array`, then use `.join()` method to concatenate the text as a large piece of message.
 
@@ -3383,7 +3500,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
 
    <img src="forkifyRecipeView.gif">
 
-### Building the Recipe View - Part 2
+### 7.0.22. Building the Recipe View - Part 2
 
 1. Since we have some fractions of ingredients such as '1.5 cup of milk', we can use a npm package `fractional` to turn the string into text. For example, `1.5` can be `1 1/2` one and a half, and `2.25` can be `2 1/4` 2 and one quarter.
 
@@ -3438,7 +3555,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    }
    ```
 
-### Update Recipe Servings
+### 7.0.23. Update Recipe Servings
 
 1. Learning Object: Another way of implementing event delegation `.matches`
 1. The target here is to update the number of required ingredients in the recipe when the user changes the number of "**servings**".
@@ -3517,7 +3634,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    };
    ```
 
-### Building the Shopping List Model
+### 7.0.24. Building the Shopping List Model
 
 1. Learning Objects
    1. How and Why to create unique IDs using external package
@@ -3566,7 +3683,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
 
 1. To test the function, we can create a variable in the global scope and assign it to `window`, which is the global object.
 
-### Building the Shopping List View
+### 7.0.25. Building the Shopping List View
 
 1. We create `listView.js` in `views` directory.
 1. We use `data-*` attribute in the HTML tag here as to ease the process to locate the correct element on the page. As the event is going to bubble up and elements are sharing classes, the easier way to find a certain element is to search for its unique ID. However, by using `id` directly may have issue that CSS styling may use the same id to work on (though not usual), we can use `data` attribute.
@@ -3598,7 +3715,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    };
    ```
 
-### Building the Shopping List Controller
+### 7.0.26. Building the Shopping List Controller
 
 1. In `index.js`, we update the controller to add items in the shopping list and create a `list` in the `state` object if the list hasn't been created.
 
@@ -3688,7 +3805,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
 
    <img src="forkifyListView.gif">
 
-### Building the Likes Model
+### 7.0.27. Building the Likes Model
 
 1. The target to achieve here is to add a item of the query result to the "liked" list on the top, so user can navigate back to the item easily. This model is very similar to `List.js`. However, since they are in different structure and for different purpose, we don't make a subclass of them.
 
@@ -3726,7 +3843,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    }
    ```
 
-### Building the Likes Controller
+### 7.0.28. Building the Likes Controller
 
 1. We try with the event handler and print the result on the console to check if they are working.
 
@@ -3766,7 +3883,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    };
    ```
 
-### Building the Likes View
+### 7.0.29. Building the Likes View
 
 1. `likesView.js`
 
@@ -3855,7 +3972,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    };
    ```
 
-### Implementing Persistent Data with Local Storage
+### 7.0.30. Implementing Persistent Data with Local Storage
 
 1. Learning Objectives
    1. Use the localStorage API
@@ -3923,7 +4040,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    });
    ```
 
-### Wrapping up: Final Considerations
+### 7.0.31. Wrapping up: Final Considerations
 
 1. There's a bug from the fractional package that some nubmers are not rounded and has very long digits, such as 100 divded by 3 will get 33.3333...
 1. We therefore get back to fix the issue in `recipeView.js` to round up the numbers before `fractional` package deals with it. In this case, we just multiply the result from `Math.round()` which is an integer by ten thousand and divide it by ten thousand again.
@@ -3940,13 +4057,13 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    1. Come up with an algorithm for calculating the amount of servings
    1. Improve error handling
 
-# Laptop Store Project
+# 8. Laptop Store Project
 
 1. This is an introduction about the use of `Node.js` and how to use it to render a webpage dynamically.
 
-### Laptop Store Project - Part 1
+### 8.0.1. Laptop Store Project - Part 1
 
-#### Setup server
+#### 8.0.1.1. Setup server
 
 1. Node.js allow us to access files in the system which browser can't perform such tasks. For example, we can read a JSON file stored locally.
 1. We can use `fs` module which is prebuilt package installed with Node.js
@@ -4002,7 +4119,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
 1. We then can check the condition in `Network` tab in developer console in the browser.
 1. Note that until this point, we haven't set up routing, so any path on the URL goes only to the homepage.
 
-#### Set up URL (Routing)
+#### 8.0.1.2. Set up URL (Routing)
 
 1. We can use prebuilt package `url` in Node.js for routing.
    in the callback funtion of `http.createServer()`, we can access `req` which is the request sent from the client browser. We can get the route of the user currently access to by checking `req.url`. For example, if we type `localhost:1337/testroute`, we will get `/testroute` printed in the console.
@@ -4033,7 +4150,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    });
    ```
 
-#### Retrieve paremeters from the URL
+#### 8.0.1.3. Retrieve paremeters from the URL
 
 1. As we can find `url` can find the path that users access, the other main function we want to get benefited from is to parse the parameters passed in the URL.
 1. We can check the paremeter input on URL on `url.parse(req.url, true).query` this is the value we pass in the URL that after question mark `?`. For example, the parameter of `localhost:1337/?id=1` is `{'id': '1'}`.
@@ -4081,9 +4198,9 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    });
    ```
 
-### Laptop Store Project - Part 2
+### 8.0.2. Laptop Store Project - Part 2
 
-#### Create HTML templates
+#### 8.0.2.1. Create HTML templates
 
 1. In this section, we focus on visualize the webpage with Node.js without `express` framework.
 1. For each page with similar contents, we can create `templates` and change only the content on the page, so we can reuse the code in an efficient way.
@@ -4091,7 +4208,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    1. `./templates/template-laptop.html`
    1. `./templates/template-overview.html`
 
-#### Set up page and route to render the contents
+#### 8.0.2.2. Set up page and route to render the contents
 
 `index.js`
 
@@ -4123,7 +4240,7 @@ The API endpoint to call [forkify-api.herokuapp.com](forkify-api.herokuapp.com)
    }
    ```
 
-#### Create the cards on the overview page accordingly
+#### 8.0.2.3. Create the cards on the overview page accordingly
 
 1. In `template-overview.html`, we should render as many products in "**card**" (HTML elements we defined) according to the JSON file. For example, we use the following `<figure>` tag to show a "card" of product on the overview page. Therefore, we create another template to hold a "card" element, so later we can use the template to iterate and render all products to the overview page. Besides, we can put a single placeholder `{%CARDS%}` in `overview.html`.
 
