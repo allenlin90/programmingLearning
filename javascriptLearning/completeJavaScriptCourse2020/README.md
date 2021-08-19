@@ -60,7 +60,6 @@
     - [5.0.10. Default parameters](#5010-default-parameters)
     - [5.0.11. Maps](#5011-maps)
     - [5.0.12. Classes](#5012-classes)
-    - [5.0.13. Classes with subclasses](#5013-classes-with-subclasses)
     - [5.0.14. Coding Challenge 8](#5014-coding-challenge-8)
     - [5.0.15. Coding Challenge 8 (Solution)](#5015-coding-challenge-8-solution)
 - [6. Asynchronous JavaScript: Promise, Async/Await and AJAX](#6-asynchronous-javascript-promise-asyncawait-and-ajax)
@@ -1825,25 +1824,22 @@ GAME RULES:
    };
 
    var john5 = new Person5("John", 1990, "teacher");
-   ```
-
-
     // ES6
-    class Person6 {
-        constructor (name, yearOfBirth, job) {
-            this.name = name;
-            this.yearOfBirth = yearOfBirth;
-            this.job = job;
-        }
+  class Person6 {
+      constructor (name, yearOfBirth, job) {
+          this.name = name;
+          this.yearOfBirth = yearOfBirth;
+          this.job = job;
+      }
 
-        calculateAge(){
-            let age = new Date().getFullYear - this.yearOfBirth;
-            console.log(age);
-        }
+      calculateAge(){
+          let age = new Date().getFullYear - this.yearOfBirth;
+          console.log(age);
+      }
 
-        static greeting(){
-            console.log('Hey there!');
-        }
+      static greeting(){
+          console.log('Hey there!');
+      }
     }
 
     const john6 = new Person6('John', 1990, 'teacher');
