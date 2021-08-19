@@ -60,6 +60,7 @@
     - [5.0.10. Default parameters](#5010-default-parameters)
     - [5.0.11. Maps](#5011-maps)
     - [5.0.12. Classes](#5012-classes)
+    - [5.0.13. Classes with subclasses](#5013-classes-with-subclasses)
     - [5.0.14. Coding Challenge 8](#5014-coding-challenge-8)
     - [5.0.15. Coding Challenge 8 (Solution)](#5015-coding-challenge-8-solution)
 - [6. Asynchronous JavaScript: Promise, Async/Await and AJAX](#6-asynchronous-javascript-promise-asyncawait-and-ajax)
@@ -1810,41 +1811,41 @@ GAME RULES:
 1. Keyword `class` in JavaScript is only the "**syntactic sugar**" that is easier to read and write. However, it works and functions exactly the same as using function constructor and with `.prototype` property to add methods to create a "**type**" of `Objects`.
 1. We can also add `static` function which WILL NOT inherit by the instances of the class, but we can call it from the Prototype object.
 
-   ```js
-   // ES5
-   function Person5(name, yearOfBirth, job) {
-     this.name = name;
-     this.yearOfBirth = yearOfBirth;
-     this.job = job;
-   }
+  ```js
+  // ES5
+  function Person5(name, yearOfBirth, job) {
+    this.name = name;
+    this.yearOfBirth = yearOfBirth;
+    this.job = job;
+  }
 
-   Person5.prototype.calculateAge = function () {
-     var age = new Date().getFullYear() - this.yearOfBirth;
-     console.log(age);
-   };
+  Person5.prototype.calculateAge = function () {
+    var age = new Date().getFullYear() - this.yearOfBirth;
+    console.log(age);
+  };
 
-   var john5 = new Person5("John", 1990, "teacher");
-    // ES6
+  var john5 = new Person5("John", 1990, "teacher");
+  // ES6
   class Person6 {
-      constructor (name, yearOfBirth, job) {
-          this.name = name;
-          this.yearOfBirth = yearOfBirth;
-          this.job = job;
-      }
-
-      calculateAge(){
-          let age = new Date().getFullYear - this.yearOfBirth;
-          console.log(age);
-      }
-
-      static greeting(){
-          console.log('Hey there!');
-      }
+    constructor (name, yearOfBirth, job) {
+        this.name = name;
+        this.yearOfBirth = yearOfBirth;
+        this.job = job;
     }
 
-    const john6 = new Person6('John', 1990, 'teacher');
-    Person6.greeting(); // Hey there
-    ```
+    calculateAge(){
+        let age = new Date().getFullYear - this.yearOfBirth;
+        console.log(age);
+    }
+
+    static greeting(){
+        console.log('Hey there!');
+    }
+  }
+
+  const john6 = new Person6('John', 1990, 'teacher');
+  Person6.greeting(); // Hey there
+  ```
 
 ### 5.0.13. Classes with subclasses
 
