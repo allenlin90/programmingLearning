@@ -54,6 +54,29 @@ Finished on
   - [8.4. Fields in Classes](#84-fields-in-classes)
   - [8.5. Fields with Inheritance](#85-fields-with-inheritance)
   - [8.6. Where to use Classes](#86-where-to-use-classes)
+- [9. Design Patterns with Typescript](#9-design-patterns-with-typescript)
+  - [9.1. App Overview](#91-app-overview)
+  - [9.2. Bundling with Parcel](#92-bundling-with-parcel)
+  - [9.3. Project Structure](#93-project-structure)
+  - [9.4. Generating Random Data](#94-generating-random-data)
+  - [9.5. Type Definition Files](#95-type-definition-files)
+  - [9.6. Using Type Definition Files](#96-using-type-definition-files)
+  - [9.7. Export Statements in Typescript](#97-export-statements-in-typescript)
+  - [9.8. Defining a Company](#98-defining-a-company)
+  - [9.9. Adding Google Maps Support](#99-adding-google-maps-support)
+  - [9.10. Google Maps Integration](#910-google-maps-integration)
+  - [9.11. Exploring Type Definition Files](#911-exploring-type-definition-files)
+  - [9.12. Hiding Functionality](#912-hiding-functionality)
+  - [9.13. Why Use Private Modifiers?](#913-why-use-private-modifiers)
+  - [9.14. Adding Markers](#914-adding-markers)
+  - [9.15. Duplicate Code](#915-duplicate-code)
+  - [9.16. One Possible Solution](#916-one-possible-solution)
+  - [9.17. Restricting Access with Interface](#917-restricting-access-with-interface)
+  - [9.18. Implicit Type Checks](#918-implicit-type-checks)
+  - [9.19. Showing Popup Windows](#919-showing-popup-windows)
+  - [9.20. Updating Interface Definitions](#920-updating-interface-definitions)
+  - [9.21. Optional Implements Clauses](#921-optional-implements-clauses)
+  - [9.22. App Wrapup](#922-app-wrapup)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -744,13 +767,746 @@ Finished on
   const car = new Car();
   car.driver();
   car.honk();
-
   ```
 
 ## 8.3. Instance Method Modifiers
+1. In Javascript, we can use "modifiers" on methods in classes for different attributes
+   1. `public` makes the method can be called any where, any time. This is the default modifier for methods in a class.
+   2. `private` makes the method can only be called by other methods in this class.
+   3. `protected` makes the method can be called by other methods in this class, or by other methods in child classes.
+2. The main purpose for `private` and `protected` is to prevent other code accidently break the program by calling the method in the wrong way but has no actually effect on security. 
+  ```ts
+  class Vehicle {
+    public drive(): void { // this cause an error because 'drive' in Car class is private
+      console.log('chugga chugga');
+    }
+
+    private honk(): void {
+      console.log('beep');
+    }
+  }
+
+  class Car extends Vehicle {
+    private drive(): void { // this 
+      console.log('vroom');
+    }
+
+    startDrivingProcess(): void {
+      this.drive();
+    }
+  }
+
+  const car = new Car();
+  car.startDrivingProcess();
+  car.honk(); // this can't be called because it's private
+  ```
 
 ## 8.4. Fields in Classes
+1. When declare a class, we can give property with default value and assign a type to it.
+2. With `constructor`, we can pass argument and give a property when create an instance from the class.
+  ```ts
+  class Vehicle {
+    color: string = 'red'; // red will be default value
+
+    constructor(color: string) { // this will overwrite the property and require parameter when creating a new instance
+      this.color = color;
+    }
+
+    public honk(): void {
+      console.log('beep');
+    }
+  }
+
+  const vehicle = new Vehicle('orange');
+  console.log(vehicle.color);
+  ```
+2. We can use shorthand to decalre the class as code above.
+3. Though there's no code in the `constructor` with the shorthand syntax, we still need to delcare it with empty code block.
+  ```ts
+  class Vehicle {
+    constructor(public color: string) {} // code block is empty as property is declared in shorthand syntax
+
+    protected honk():void {
+      console.log('beep');
+    }
+  }
+  ```
 
 ## 8.5. Fields with Inheritance
+1. When a class is extended from another class as sub-class, it inherit all the properties and features from the parenet class.
+2. In the previous case, we need to provide `color` parameter when create a new car instance.
+  ```ts
+  class Vehicle {
+    constructor(public color: string) {}
+
+    public honk(): void {
+      console.log('beep');
+    }
+  }
+
+  const vehicle = new Vehicle('orange');
+  console.log(vehicle.color);
+
+  class Car extends Vehicle {
+    constructor(public wheels: number, color: string) {
+      super(color);
+    }
+
+    private drive(): void {
+      console.log('vroom');
+    }
+
+    startDrivingProcess(): void {
+      this.drive();
+    }
+  }
+
+  const car = new Car(4, 'red');
+  car.startDrivingProcess();
+  ```
+3. When creating a new class by extending from a parent class, we need to call `super` to use the constructor in parent class.
+4. We don't provide moidifier in the sub-class as to prevent duplicates on the property from the parent class. 
+5. We can refer to regular Javascript `class` syntax and conditions form the [note of other course](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/completeJavaScriptCourse2020#5012-classes).
+  ```ts
+  class Vehicle {
+    constructor(public color: string) {}
+
+    public honk(): void {
+      console.log('beep');
+    }
+  }
+
+  const vehicle = new Vehicle('orange');
+  console.log(vehicle.color);
+
+  class Car extends Vehicle {
+    constructor(public wheels: number, color: string) { // color has no modifier as it's from the parent class
+      super(color); // satisfy parent class constructor
+    }
+
+    private drive(): void {
+      console.log('vroom');
+    }
+
+    startDrivingProcess(): void {
+      this.drive();
+    }
+  }
+
+  const car = new Car(4, 'red');
+  car.startDrivingProcess();
+  ```
 
 ## 8.6. Where to use Classes
+1. We use both the features and benefits from "interfaces" and "classes" when coding with Typescript, so we can create more reusable code.
+
+# 9. Design Patterns with Typescript
+## 9.1. App Overview
+1. The web app will random generate 2 entities
+   1. User - random name, age, etc.
+   2. Company - random name, business, etc.
+2. Each entity will have a location property stated as latitude and longitude which can be marked on map such as Google Map.
+
+## 9.2. Bundling with Parcel
+1. We install `parcel-bundler` globally on the machine.
+2. In this case, we create `index.html` on the root directory and keep our Typescript code in `src` as `index.ts`.
+3. After finishing coding, we can use `parcel index.html` which will run the parcel functions to read and compile the Typescript file into regular JavaScript. 
+4. Parcel will run a local server to host the HTML file at port `1234` by default.
+
+## 9.3. Project Structure
+1. We separate the entities into different models, have an additional file to conduct the map view to show markers of each entity on Google Map.
+2. `index.ts`
+   1. `Map.ts`
+   2. `User.ts`
+   3. `Company.ts`
+3. By convnetion, when we use a file to export a class or a model, we name the file with first letter in uppercase.
+
+## 9.4. Generating Random Data
+1. In this case, we use [`faker`](https://www.npmjs.com/package/faker) library to generate random data for `User`.
+  ```ts
+  // User.ts
+  import faker from 'faker';
+
+  class User {
+    name: string;
+    location: {
+      lat: number;
+      lng: number;
+    };
+
+    constructor() {}
+  }
+  ```
+
+## 9.5. Type Definition Files
+1. When using regualr npm libraries, we are importing regular Javascript files into the Typescript code. Therefore, there would be error prompts as Typescript doesn't know exactly what's going on in the JS code.
+2. Therefore, we can use "Type Definition File" to resolve the error.
+3. For most of the libraries on npm, there's already a "type definition file" for the library. For example, we can install the type definition fiel for faker by `npm install @types/faker`.
+4. Some of the popular libraries have already had the type definition file included when installing the package, such as `axios`.
+  ```sh
+  npm install @types/[package]
+  ```
+
+## 9.6. Using Type Definition Files
+1. By convention, type definition file is named with `.d.ts` as suffix.
+2. We can press either <kbd>command</kbd> on Mac or <kbd>Ctrl</kbd> on Windows and mouse click the imported variable to access the type definition file.
+3. We can use this type definition file as documentation to check what type of value should be used at certain functions or methods.
+4. The type definition on the top doesn't initiate the value but only indicates the type of the value should be on the property. 
+5. For example, though `location` property is declared that it has an object which has `lat` and `lng` and both should be number type, we can't assign it with faker directly but should assign an object on it first.
+  ```ts
+  import faker from 'faker';
+
+  class User {
+    // these only declare the type rather than intiate the data
+    name: string;
+    location: {
+      lat: number;
+      lng: number;
+    };
+
+    constructor() {
+      this.name = faker.name.firstName();
+      this.location.lat = faker.address.latitude(); // this is calling .lat on undefined because this.location is now empty
+      this.location = {
+        lat: parseFloat(faker.address.latitude()),
+        lng: parseFloat(faker.address.longitude()),
+      };
+    }
+  }
+  ```
+
+## 9.7. Export Statements in Typescript
+1. When exporting variable or objects with Javascript module system, we can use either `export` or `export default`.
+   1. `export`
+  ```ts
+  // User.ts
+  export class User {}
+  
+  // index.ts
+  import { User } from './User';
+  ```
+   1. `export default`
+  ```ts
+  // User.ts
+  export default class User {}
+  
+  // index.ts
+  import User from './User';
+  ```
+
+## 9.8. Defining a Company
+1. Define `Company` class
+  ```ts
+  import faker from 'faker';
+
+  export class Company {
+    companyName: string;
+    catchPhrase: string;
+    location: {
+      lat: number;
+      lng: number;
+    };
+
+    constructor() {
+      this.companyName = faker.company.companyName();
+      this.catchPhrase = faker.company.catchPhrase();
+      this.location = {
+        lat: parseFloat(faker.address.latitude()),
+        lng: parseFloat(faker.address.longitude()),
+      };
+    }
+  }
+  ```
+1. Import and use both `User` and `Company` in `index.ts`.
+  ```ts
+  import { User } from './User';
+  import { Company } from './Company';
+
+  const user = new User();
+  console.log(user);
+
+  const company = new Company();
+  console.log(company);
+   ```
+
+## 9.9. Adding Google Maps Support
+1. To enable Google Maps API
+   1. Create a new project at [Google Cloud Console](https://console.cloud.google.com/)
+   2. Enable Google Maps JavaScript API.
+   3. Create a key as credentials to access the API service
+   4. We can restrict the API to be called with certain service, domain, and IP to prevent abuse.
+2. Connect to Google Maps JavaScript API at `https://maps.googleapis.com/maps/api/js?key=[cerdential]`.
+
+## 9.10. Google Maps Integration
+1. Use imported Google Maps JavaScript library
+   1. To use the imported Javascript library with Typescript, we can import type definition files by `npm install @types/google.maps`. 
+   2. Besides, we need to add a triple slash directive `/// <reference types="@types/google.maps" />` in `index.ts`.
+   3. We can refer to [https://developers.google.com/maps/documentation/javascript/using-typescript#Module_Import](https://developers.google.com/maps/documentation/javascript/using-typescript#Module_Import) for more information.
+2. We can check by typing `google` in the developer console in the broweser.
+
+## 9.11. Exploring Type Definition Files
+1. After importing the "Definition type file", we can click with <kbd>command</kbd> on Mac or <kbd>Ctrl</kbd> on Windows to check its `index.d.ts` file. 
+2. In that we can click <kbd>command + Shift + p</kbd> on Mac or <kbd>Ctrl + Shift + p</kbd> on Windows to call the command pallet in VS Code for different commands.
+3. In this case, we'd like to fold all the code block on level 2 so we can search "Fold Level 2" in command pallet and execute the function. We then can check all the exporting objects on its highest level.
+4. `Map` is one of the method to focus as we will use it to create map view.
+5. `Marker` will be the other method to focus, as we'd like to pinpoint users and companies on the map view. 
+6. We add `<div id="map" style="height: 100vh"></div>` to `index.html`.
+7. We can refer to `index.d.ts` to check the methods and arguments that each method takes. In this case, we pass `zoom` and `center` for center of th coordinate when showing the map.
+8. Note that we can refer to the arguments and parameters when checking the methods in `index.d.ts`
+  ```ts
+  /// <reference types="@types/google.maps" />
+  import { User } from './User';
+  import { Company } from './Company';
+
+  const mapDiv = document.querySelector('#map');
+  const mapOpt = {
+    zoom: 1, // zoom
+    center: { // latlngliteral
+      lat: 0,
+      lng: 0,
+    },
+  };
+
+  new google.maps.Map(mapDiv, mapOpt);
+  ```
+  <img src="./images/63-type_definition_file.png">
+
+## 9.12. Hiding Functionality
+1. Our application may use only certain methods from the instances of `Map`.
+2. To prevent other engineers calling methods or functions that can break the application, we can "hide" the methods which is originally provided by Google Maps and allow only certain methods available in the new custom `Map` class.
+
+
+## 9.13. Why Use Private Modifiers? 
+1. We create another model as `CustomMap.ts` rather than create the instance from google maps directly.
+2. Besides, we'd like the code to be more reusable, so we can take argument from the constructor when creating the instance. 
+  ```ts
+  export class CustomMap {
+    // this prevent the methods to be called directly on the instance
+    private googleMap: google.maps.Map;
+
+    constructor(divId: string) {
+      this.googleMap = new google.maps.Map(document.querySelector(`#${divId}`), {
+        zoom: 1,
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+      });
+    }
+  }
+  ```
+1. In `index.ts`, we can notice that we can't call on other Google Maps method on the instance directly.
+  ```ts
+  import { CustomMap } from './CustomMap';
+
+  const customMap = new CustomMap('map');
+  ```
+
+## 9.14. Adding Markers
+1. A class in Typescript can be either used to create an instance of the class or be referred as the type of an object.
+2. The following is part of the process of explain why the code is not ideal when defining classes as `addUserMarker` and `addCompanyMarker` can be very similar that we can actually merge it.
+  ```ts
+  // CustomMap.ts
+  // class can be called to create instance or referred as a type
+  import { User } from './User'; 
+  import { Company } from './Company';
+
+  export class CustomMap {
+    private googleMap: google.maps.Map;
+
+    constructor(divId: string) {
+      this.googleMap = new google.maps.Map(document.querySelector(`#${divId}`), {
+        zoom: 1,
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+      });
+    }
+
+    // the following isn't good approach!
+    addUserMarker(user: User): void {
+      new google.maps.Marker({
+        map: this.googleMap,
+        position: {
+          lat: user.location.lat,
+          lng: user.location.lng,
+        },
+      });
+    }
+
+    addCompanyMarker(company: Company): void {}
+  }
+  ```
+3. After adding the method, we can call it in `index.ts` and render a random marker on the map every time we open the page.
+  ```ts
+  // index.ts
+  /// <reference types="@types/google.maps" />
+  import { User } from './User';
+  import { Company } from './Company';
+  import { CustomMap } from './CustomMap';
+
+  const user = new User();
+  const customMap = new CustomMap('map');
+
+  customMap.addUserMarker(user);
+  ```
+
+## 9.15. Duplicate Code
+1. We can find the code for both `addUserMarker` and `addCompanyMarker` are very similar.
+2. The following code will create 2 markers on the map for the "User" and the "company".
+  ```ts
+  // CustomMap.ts
+  import { User } from './User';
+  import { Company } from './Company';
+
+  export class CustomMap {
+    private googleMap: google.maps.Map;
+
+    constructor(divId: string) {
+      this.googleMap = new google.maps.Map(document.querySelector(`#${divId}`), {
+        zoom: 1,
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+      });
+    }
+
+    // the following isn't good approach!
+    addUserMarker(user: User): void {
+      new google.maps.Marker({
+        map: this.googleMap,
+        position: {
+          lat: user.location.lat,
+          lng: user.location.lng,
+        },
+      });
+    }
+
+    addCompanyMarker(company: Company): void {
+      new google.maps.Marker({
+        map: this.googleMap,
+        position: {
+          lat: company.location.lat,
+          lng: company.location.lng,
+        },
+      });
+    }
+  }
+  ```
+  ```ts
+  // index.ts
+  /// <reference types="@types/google.maps" />
+  import { User } from './User';
+  import { Company } from './Company';
+  import { CustomMap } from './CustomMap';
+
+  const user = new User();
+  const company = new Company();
+  const customMap = new CustomMap('map');
+
+  customMap.addUserMarker(user);
+  customMap.addCompanyMarker(company);
+  ```
+  <img src="./images/67-user_and_company_marker.png">
+
+## 9.16. One Possible Solution
+1. One of the solution is to turn the method to be more generic by binding the argument with either `User` or `Company` with pipe character `|`.
+2. However, this approach is still not ideal as if the number of classes increases, we have to keep binding the new class as the type of the argument.
+3. On the other hand, if we only allow exactly the instances from either `User` or `Company` rather than other similar class, we can use this approach to prevent any other classes to call this method.
+  ```ts
+  // relatively generic approach
+  import { User } from './User';
+  import { Company } from './Company';
+  import { name } from 'faker';
+
+  export class CustomMap {
+    private googleMap: google.maps.Map;
+
+    constructor(divId: string) {
+      this.googleMap = new google.maps.Map(document.querySelector(`#${divId}`), {
+        zoom: 1,
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+      });
+    }
+
+    addMarker(mappable: User | Company): void {
+      new google.maps.Marker({
+        map: this.googleMap,
+        position: {
+          lat: mappable.location.lat,
+          lng: mappable.location.lng,
+        },
+      });
+    }
+  }
+  ```
+
+## 9.17. Restricting Access with Interface
+## 9.18. Implicit Type Checks
+1. The other way to work aroudn is to ensure all the objects that we want to execute "addMarker" can be the argument of the method.
+2. In this case, we can use `interface` as the gatekeeper to check if the arugment is aplicable to `addMarker` function.
+  <img src="./images/69-restricting_access_with_interface.png">
+  ```ts
+  // CustomMap.ts
+  // Instruction to every other class
+  // on how they can be an argument to 'addMarker'
+  interface Mappable {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  }
+
+  export class CustomMap {
+    private googleMap: google.maps.Map;
+
+    constructor(divId: string) {
+      this.googleMap = new google.maps.Map(document.querySelector(`#${divId}`), {
+        zoom: 1,
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+      });
+    }
+
+    addMarker(mappable: Mappable): void {
+      new google.maps.Marker({
+        map: this.googleMap,
+        position: {
+          lat: mappable.location.lat,
+          lng: mappable.location.lng,
+        },
+      });
+    }
+  }
+  ```
+3. We then refactor the `index.ts` for the change.
+4. After configuring the code, Typescript will check all the objects implicitly when we pass an argument to the method. If the object doesn't satisfy the requirements from `Mappable`, Typescript will prompt an error.
+  ```ts
+  // index.ts
+  /// <reference types="@types/google.maps" />
+  import { User } from './User';
+  import { Company } from './Company';
+  import { CustomMap } from './CustomMap';
+
+  const user = new User();
+  const company = new Company();
+  const customMap = new CustomMap('map');
+
+  // both user and company satisfy Mappable interface
+  customMap.addMarker(user);
+  customMap.addMarker(company);
+  ```
+
+## 9.19. Showing Popup Windows
+1. We can check the details from the [official documentation](https://developers.google.com/maps/documentation/javascript/infowindows).
+2. According to the documentation
+   1. Create a string with HTML elements that we want to show in the information window
+   2. Call `.InfoWindow` method on the google map instance and pass the HTML content string
+   3. Call `.Marker` method and pass `position` (latlngLiteral), `map` (the google map instance), and `title` (a string to show the title of the marker)
+   4. Add `click` event listener on the marker to open the information window when users click on it.
+  ```ts
+  // Instruction to every other class
+  // on how they can be an argument to 'addMarker'
+  interface Mappable {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  }
+
+  export class CustomMap {
+    private googleMap: google.maps.Map;
+
+    constructor(divId: string) {
+      this.googleMap = new google.maps.Map(document.querySelector(`#${divId}`), {
+        zoom: 1,
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+      });
+    }
+
+    addMarker(mappable: Mappable): void {
+      const marker = new google.maps.Marker({
+        map: this.googleMap,
+        position: {
+          lat: mappable.location.lat,
+          lng: mappable.location.lng,
+        },
+      });
+
+      marker.addListener('click', () => {
+        const infoWindow = new google.maps.InfoWindow({
+          content: 'Hello World',
+        });
+
+        infoWindow.open(this.googleMap, marker);
+      });
+    }
+  }
+  ```
+
+## 9.20. Updating Interface Definitions
+1. To show content properly when adding marker on the map view, we can update the `interface` to require a `markerContent` method which returns string value when calling it.
+2. Update `Company.ts`
+  ```ts
+  // Company.ts
+  import faker from 'faker';
+
+  export class Company {
+    companyName: string;
+    catchPhrase: string;
+    location: {
+      lat: number;
+      lng: number;
+    };
+
+    constructor() {
+      this.companyName = faker.company.companyName();
+      this.catchPhrase = faker.company.catchPhrase();
+      this.location = {
+        lat: parseFloat(faker.address.latitude()),
+        lng: parseFloat(faker.address.longitude()),
+      };
+    }
+
+    markerContent(): string {
+      return `
+        <div>
+          <h1>Company Name: ${this.companyName}</h1>
+          <h3>Catchphrase: ${this.catchPhrase}</h3>
+        </div>
+      `;
+    }
+  }
+  ```
+3. Update `User.ts`
+  ```ts
+  // User.ts
+  import faker from 'faker';
+
+  export class User {
+    name: string;
+    location: {
+      lat: number;
+      lng: number;
+    };
+
+    constructor() {
+      this.name = faker.name.firstName();
+      this.location = {
+        lat: parseFloat(faker.address.latitude()),
+        lng: parseFloat(faker.address.longitude()),
+      };
+    }
+
+    markerContent(): string {
+      return `User Name: ${this.name}`;
+    }
+  }
+  ```
+4. Update `CustomMap.ts`
+  ```ts
+  // CustomMap.ts
+  // Instruction to every other class
+  // on how they can be an argument to 'addMarker'
+  interface Mappable {
+    location: {
+      lat: number;
+      lng: number;
+    };
+    markerContent(): string;
+  }
+
+  export class CustomMap {
+    private googleMap: google.maps.Map;
+
+    constructor(divId: string) {
+      this.googleMap = new google.maps.Map(document.querySelector(`#${divId}`), {
+        zoom: 1,
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+      });
+    }
+
+    addMarker(mappable: Mappable): void {
+      const marker = new google.maps.Marker({
+        map: this.googleMap,
+        position: {
+          lat: mappable.location.lat,
+          lng: mappable.location.lng,
+        },
+      });
+
+      marker.addListener('click', () => {
+        const infoWindow = new google.maps.InfoWindow({
+          content: mappable.markerContent(),
+        });
+
+        infoWindow.open(this.googleMap, marker);
+      });
+    }
+  }
+  ```
+
+## 9.21. Optional Implements Clauses
+1. When we update the `interface` in `CustomMap.ts`, Typescript may prompt an error in `index.ts` as our `User` and `Company` instance is not updated with the latest requirement in the interface. 
+2. However, `index.ts` is not the root cause of the issue as because we are tryign to give `User` and `Company` instance which doesn't satisfy the requirements. Therefore, if we'd still like to pass `User` and `Company` instance, we have to change the class definition of each class.
+3. We can export the `interface` required in `CustomMap.ts` and use it in `User.ts` when declaring the class.
+  ```ts
+  // CustomMap.ts
+  export interface Mappable {
+    location: {
+      lat: number;
+      lng: number;
+    };
+    markerContent(): string;
+    color: string;
+  }
+  ```
+  ```ts
+  // User.ts
+  import faker from 'faker';
+  import { Mappable } from './CustomMap';
+
+  export class User implements Mappable {
+    name: string;
+    location: {
+      lat: number;
+      lng: number;
+    };
+    color: string = 'red';
+
+    constructor() {
+      this.name = faker.name.firstName();
+      this.location = {
+        lat: parseFloat(faker.address.latitude()),
+        lng: parseFloat(faker.address.longitude()),
+      };
+    }
+
+    markerContent(): string {
+      return `User Name: ${this.name}`;
+    }
+  }
+  ```
+
+## 9.22. App Wrapup
+1. `private` class modifier
+   1. We use `private` modifier to declare properties and methods in class to prevent accidental or intentional calls on the functions that may break the app. 
+   2. Though the `private` or `protected` modifier on classes can't really prevent abusing the code if the other programmers intend to do so, it sure limits the change to accidentally miscall or execute inproper methods.
+2. Use `interface` to set up general requirements
+   1. We can use `interface` to merge the requirements and "schema" to the method that can be called by multiple types of instances.
+   2. It only helps checking the "type" but not the exact content can be passed to it. 
+3. Use `interface` on different classes
+   1. We can export and import an `interface` and `implements` it on a class to ensure instances from the class are declared and defined as the requirements from `interface`.

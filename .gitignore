@@ -8,3 +8,6 @@ goorm.manifest
 debug.log
 .env
 .DS_Store
+.cache
+_config.js
+dist
