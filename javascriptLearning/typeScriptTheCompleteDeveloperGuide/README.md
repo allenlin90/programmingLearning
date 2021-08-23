@@ -77,6 +77,30 @@ Finished on
   - [9.20. Updating Interface Definitions](#920-updating-interface-definitions)
   - [9.21. Optional Implements Clauses](#921-optional-implements-clauses)
   - [9.22. App Wrapup](#922-app-wrapup)
+- [10. More on Design Patterns](#10-more-on-design-patterns)
+  - [10.1. App Overview](#101-app-overview)
+  - [10.2. Configuring the TS Compiler](#102-configuring-the-ts-compiler)
+  - [10.3. Concurrent Compilation and Execution](#103-concurrent-compilation-and-execution)
+  - [10.4. A Simple Sorting Algorithm](#104-a-simple-sorting-algorithm)
+  - [10.5. Sorter Scaffolding](#105-sorter-scaffolding)
+  - [10.6. Sorting Implementation](#106-sorting-implementation)
+  - [10.7. Two Huge Issues](#107-two-huge-issues)
+  - [10.8. Typescript is Really Smart](#108-typescript-is-really-smart)
+  - [10.9. Type Guards](#109-type-guards)
+  - [10.10. Why is This Bad?](#1010-why-is-this-bad)
+  - [10.11. Extracing Key Logic](#1011-extracing-key-logic)
+  - [10.12. Separating Swapping and Comparison](#1012-separating-swapping-and-comparison)
+  - [10.13. The Big Reveal](#1013-the-big-reveal)
+  - [10.14. Interface Definition](#1014-interface-definition)
+  - [10.15. Sorting Arbitrary Collection](#1015-sorting-arbitrary-collection)
+  - [10.16. Linked List Implementation](#1016-linked-list-implementation)
+  - [10.17. Just One More Fix](#1017-just-one-more-fix)
+  - [10.18. Integrating the Sort Method](#1018-integrating-the-sort-method)
+  - [10.19. Issues with Inheritance](#1019-issues-with-inheritance)
+  - [10.20. Abstract Classes](#1020-abstract-classes)
+  - [10.21. Why Use Abstract Classes?](#1021-why-use-abstract-classes)
+  - [10.22. Solving All Issues with Abstract Classes](#1022-solving-all-issues-with-abstract-classes)
+  - [10.23. Interfaces vs Abstract Classes](#1023-interfaces-vs-abstract-classes)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -1286,6 +1310,7 @@ Finished on
     }
   }
   ```
+
 3. We then refactor the `index.ts` for the change.
 4. After configuring the code, Typescript will check all the objects implicitly when we pass an argument to the method. If the object doesn't satisfy the requirements from `Mappable`, Typescript will prompt an error.
   ```ts
@@ -1510,3 +1535,561 @@ Finished on
    2. It only helps checking the "type" but not the exact content can be passed to it. 
 3. Use `interface` on different classes
    1. We can export and import an `interface` and `implements` it on a class to ensure instances from the class are declared and defined as the requirements from `interface`.
+
+# 10. More on Design Patterns
+## 10.1. App Overview
+1. The app can sort the data and values in different data strcuture such as `array`, `string` and `linked list`. 
+2. The Goal is to create a sorting algorithm to reorder values in all given types of data.
+
+## 10.2. Configuring the TS Compiler
+1. In this case, we won't use `parcel` to work in browser environment. We'd use `NodeJS` as the environment instead.
+2. Every time we use `tsc` package to compile Typescript to Javascript, it generates a new Javascript file on the same directory by default. 
+3. Therefore, we can separate the source code (Typescript) in `src` and compiled code (Javascript) in `build`. 
+4. To configure the `tsc` compiler, we can run `tsc --init`, so `tsc` will create a `tsconfig.json` file.
+5. In this case, we will modify `rootDir` and `outDir` to configure the entry and output point. 
+  ```json
+  // tsconfig.json
+  {
+    "outDir": "./build",
+    "rootDir": "./src"
+  }
+  ```
+6. After configuring the compiler, we can run `tsc` directly without indicating the file name.
+7. In addition, we can add `-w` flag when using `tsc`, so the compiler will keep watching and compiling the changes to the source code. It's very similar to run Javascript code with `nodemon` that will re-run and watch the chanages to the latest Javascript code.
+  ```shell
+  tsc -w
+  ```
+
+## 10.3. Concurrent Compilation and Execution
+1. Though the compiler can watch and keep recompile Typescript when there's a change, we still need to open another terminal and run `node [yourfile.js]` to execute the code.
+2. We can set up a new project with `npm init -y` and install `nodemon` and `concurrently` which allows to execute multiple commands at the same time.
+3. This process is similar to use `webpack` to compile and bundle Javascript code with `babel` and run a local server which reacts to the changes of the code. We can check the reference in [Webpack Dev Server](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/completeJavaScriptCourse2020#706-the-webpack-dev-server)
+  ```json
+  // package.json
+  {
+    "name": "sort",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "start:build": "tsc -w",
+      "start:run": "nodemon build/index.js",
+      "start": "concurrently npm:start:*"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "concurrently": "^6.2.1",
+      "nodemon": "^2.0.12"
+    }
+  }
+  ```
+
+## 10.4. A Simple Sorting Algorithm
+1. In this case, we will use "Bubble Sort" as the base algorithm to sort the data from the input.
+2. The core concept of bubble sort is to compare values right next to each other and put the smaller value at front, or the greater value will be moved to the right. 
+3. Each pair will be compared and the greatest value will be removed from the dataset and as the value on the right most in the new dataset. 
+4. This process will keep going until all values are compared, so the algorithm is "finished".
+5. Therefore, all data will be sorted and ordered from the smallest to the largest.
+6. Note that this sorting algorithm isn't the best or most efficient way to sort, but suits for the requirments of this projects to sort multiple types of data structure.
+
+## 10.5. Sorter Scaffolding
+1. We create a `Sorter` class which has `collection` as the data (array of numbers) to be sorted and a method `sort` which returns nothing but sort the data stored in `collection` property.
+  ```ts
+  // index.ts
+  class Sorter {
+    constructor(public collection: number[]) {}
+
+    sort(): void {}
+  }
+
+  const sorter = new Sorter([4, 2, 10, -2]);
+  sorter.sort();
+  console.log(sorter.collection);
+  ```
+
+## 10.6. Sorting Implementation
+1. We use a nested for loop to iterate through the array.
+2. The first for loop ensure all elements in the array are iterated.
+3. The 2nd for loop checks the rest elements and put the largest value to the right.
+  ```ts
+  class Sorter {
+    constructor(public collection: number[]) {}
+
+    sort(): void {
+      const { length } = this.collection;
+
+      for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length - i - 1; j++) {
+          if (this.collection[j] > this.collection[j + 1]) {
+            const leftHand = this.collection[j];
+            this.collection[j] = this.collection[j + 1];
+            this.collection[j + 1] = leftHand;
+          }
+        }
+      }
+    }
+  }
+
+  const sorter = new Sorter([4, 2, 10, -2]);
+  sorter.sort();
+  console.log(sorter.collection);
+  ```
+
+## 10.7. Two Huge Issues
+1. In the current condition, we may try to layout the algorithm for each type of data and sort with bubble sort.
+2. In the previous example, we sort an array of numbers, while in this case, we are trying to sort and re-order a string value in alphabatic order. 
+3. However, in Javascript, we can't re-order or assign a string value directly. 
+4. In addition, each character in Javascript is associated with a number which can be checked with `.charCodeAt` method. For example, uppercase letters has smaller numbers than lowercase letters. 
+5. Therefore, every time we compare 2 different characters, Javascript actually checks the number associated with the characte and compare the numbers. 
+6. Thus, uppercase `X` can be smaller than lowercase `a`, though "x" is alphabetically behind "a".
+7. In summary the current solution has 2 problems
+   1. It only works with array of items.
+   2. It can't work with characters but only numbers.
+
+## 10.8. Typescript is Really Smart
+1. One of the solutions (though NOT ideal), is to use "Union Types" by checking the type of the argument passing to the method. In this case, we'd allow `colleciton` argument to be either `:number []` which is an array of numbers or `:string` that is a string.
+  ```ts
+  class Sorter {
+    constructor(public collection: number[] | string) {}
+  }
+  ```
+2. However, according to [previous section](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/typeScriptTheCompleteDeveloperGuide#916-one-possible-solution), it is not ideal because we can then only access the common properties or methods that both the given types have .
+3. In this case, though we can use array notation to retrieve data at certain position in an array, we can't edit or write the element at the position for a string value because strings aren't mutalbe in Javascript.
+4. Therefore, we will find error message indicating that "Index signature in type 'string | number[]' only permits reading."
+
+## 10.9. Type Guards
+1. In this case, we can use a "Type Guard" to check if the data we will manipuldate falls in to certain type of value.
+2. We can check `this.collection` is an `instanceof` array, while in the following code, we can use `typeof` to check if the collection is `string` type value.
+3. In each `IF` statement block, we can use associated methods which are only available on arrays or strings.
+  ```ts
+  class Sorter {
+    constructor(public collection: number[] | string) {}
+
+    sort(): void {
+      const { length } = this.collection;
+
+      for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length - i - 1; j++) {
+          // All of this only works if collection is number[]
+          // If collection is an array of numbers
+          if (this.collection instanceof Array) { // Type Guard
+            // collection === number[]
+            if (this.collection[j] > this.collection[j + 1]) {
+              const leftHand = this.collection[j];
+              this.collection[j] = this.collection[j + 1];
+              this.collection[j + 1] = leftHand;
+            }
+          }
+
+          // Only going to work if colelciton is a string
+          // If collection is a string, do this logic instead:
+          // ~~~logic to compare and swap characters in a string
+          if (typeof this.collection === 'string') {
+            
+          }
+        }
+      }
+    }
+  }
+
+  const sorter = new Sorter([4, 2, 10, -2]);
+  sorter.sort();
+  console.log(sorter.collection);
+  ```
+4. In Javascript, we can use `typeof` to check primitive type values such as `number`, `string`, `boolean`, and `symbol`.
+5. In addition, we can use `instanceof` to check if the object falls into certain type which is created by a constructure function (which is similar to a `class`).
+6. Note that before ES6, Javascript uses "**constructor functions**" as "class" to create objects as its instances. ["class"](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/completeJavaScriptCourse2020#5012-classes) is the syntatic sugar and shorthand to represent such feature in Javascript.
+7. Besides, `Array`, `Function,` and `Object` are all `object` type value when we check with `typeof`. Therefore, besdies primitive values, we'd use `instanceof` to check if an object follows certain type of class. 
+
+## 10.10. Why is This Bad?
+1. This has the same problems as the previous project that we have to keep adding different types of value in the class constructor.
+2. Besides, each type needs a specific type guard to check and execute similar bubble sorting process to iterate through the data.
+
+## 10.11. Extracing Key Logic
+1. There are 2 main operations to iterate the data with bubble sorting process which can vary according to different data type or structure. 
+   1. "**Comparison**" between 2 values and check which is larger/smaller.
+   2. "**The swaping logic**" to move the larger value to the right and smaller value to the left. 
+2. We therefore extract the logics as sub-classes to deal with different types of data.
+3. Other structure in the class such as nested for loops can sit as what it is, such as the nested for loop.
+4. We firstly clean up the code and put the `Sorter` class in `Sorter.ts` in the same directory.
+
+## 10.12. Separating Swapping and Comparison
+1. As we extracts the logic for "comparison" and "swapping", we define a new class to work on array of numbers.
+2. In Javascript classes, we can use `get` modifier on a class method to turn the method like a property-like feature. When the [getter function](https://javascript.info/class#getters-setters) is called, we don't need to execute the function but call it as a regular property of the object.
+  ```ts
+  // NumbersCollection.ts
+  export class NumbersCollection {
+    constructor(public data: number[]) {}
+
+    get length(): number { // getter function 
+      return this.data.length;
+    }
+
+    compare(leftIndex: number, rightIndex: number): boolean {
+      return this.data[leftIndex] > this.data[rightIndex];
+    }
+
+    swap(leftIndex: number, rightIndex: number): void {
+      const leftHand = this.data[leftIndex];
+      this.data[leftIndex] = this.data[rightIndex];
+      this.data[rightIndex] = leftHand;
+    }
+  }
+
+  const collection = new NumbersCollection([1, 2, 3]);
+  collection.length; // get data as calling an object property rather than a method
+  ```
+3. We update `Sorter` class to work with the new class `NumbersCollection`.
+  ```ts
+  import { NumbersCollection } from './NumbersCollection';
+  export class Sorter {
+    constructor(public collection: NumbersCollection) {}
+
+    sort(): void {
+      const { length } = this.collection;
+
+      for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length - i - 1; j++) {
+          if (this.collection.compare(j, j + 1)) {
+            this.collection.swap(j, j + 1);
+          }
+        }
+      }
+    }
+  }
+  ```
+4. Finally, we update `index.ts` to ensure all the classes and methods are defined correctly and can work together.
+  ```ts
+  // index.ts
+  import { Sorter } from './Sorter';
+  import { NumbersCollection } from './NumbersCollection';
+
+  const numberCollection = new NumbersCollection([4, 2, 10, -2]);
+  const sorter = new Sorter(numberCollection);
+  sorter.sort();
+  console.log(numberCollection.data);
+  ```
+
+
+## 10.13. The Big Reveal
+1. In the previous section, we update the type of collection data in `Sorter` from `:number[]` to `NumberCollection`.
+2. However, this still has the issue that we have to keep adding on new data type or structure for different types of values.
+3. Thus, we can use `interface` as in the previous design pattern, we can have a general types that only the types giving to `Sorter` class fits, so it works.
+  <img src="./images/87-reusable_sorter.png">
+
+## 10.14. Interface Definition
+1. We can create an `interface` as `Sortable`. The getter function can be considered as a property of the instance.
+2. We then can work on other types of data such as string and linked list to be sorted. 
+  ```ts
+  // Sorter.ts
+  interface Sortable {
+    length: number;
+    compare(leftIndex: number, rightIndex: number): boolean;
+    swap(leftIndex: number, rightIndex: number): void;
+  }
+
+  export class Sorter {
+    constructor(public collection: Sortable) {}
+
+    sort(): void {
+      const { length } = this.collection;
+
+      for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length - i - 1; j++) {
+          if (this.collection.compare(j, j + 1)) {
+            this.collection.swap(j, j + 1);
+          }
+        }
+      }
+    }
+  }
+  ```
+
+## 10.15. Sorting Arbitrary Collection
+1. We create a new class `CharacterCollections`. 
+2. In this case, we need to turn all letters into lowercase to ensure the characters are fairly compared.
+  ```ts
+  // CharactersCollection.ts
+  export class CharacterCollections {
+    constructor(public data: string) {}
+
+    get length(): number {
+      return this.data.length;
+    }
+
+    compare(leftIndex: number, rightIndex: number): boolean {
+      return (
+        this.data[leftIndex].toLowerCase() > this.data[rightIndex].toLowerCase()
+      );
+    }
+
+    swap(leftIndex: number, rightIndex: number): void {
+      const characters = this.data.split('');
+      const leftHand = characters[leftIndex];
+      characters[leftIndex] = characters[rightIndex];
+      characters[rightIndex] = leftHand;
+
+      this.data = characters.join('');
+    }
+  }
+  ```
+1. We can test the new type `CharactersCollection` in `index.ts` to test it out.
+  ```ts
+  // index.ts
+  import { Sorter } from './Sorter';
+  import { NumbersCollection } from './NumbersCollection';
+  import { CharacterCollection } from './CharactersCollection';
+
+  // const numberCollection = new NumbersCollection([4, 2, 10, -2]);
+  // const sorter = new Sorter(numberCollection);
+  // sorter.sort();
+  // console.log(numberCollection.data);
+
+  const charactersCollection = new CharacterCollection('Xaayb');
+  const sorter = new Sorter(charactersCollection);
+  sorter.sort();
+  console.log(charactersCollection);
+  ```
+
+## 10.16. Linked List Implementation
+1. Each node in the linked list has a "**value**" and "**next**" which is the pointer to the next node in the data. 
+2. In this case, the linked list instance can have the following properties
+   1. `add(number)` - add a new node to the data
+   2. `at(number)` - return the node at specific position by index on in the chain
+   3. `length(number)` - return total number of nodes
+   4. `swap(number, number)`
+   5. `compare(number number)`
+   6. `print()` - print all values in nodes in the chain
+3. In `swap` function, we actually swap the data of the node rather swap the whole node directly as the pointer `next` should be reassigned and the process can be very complicated.
+  ```ts
+  // LinkedList.ts
+  class Node {
+  next: Node | null = null;
+
+  constructor(public data: number) {}
+    compare() {}
+    swap() {}
+  }
+
+  export class LinkedList {
+    head: Node | null = null;
+
+    add(data: number): void {
+      const node = new Node(data);
+      if (!this.head) {
+        this.head = node;
+        return;
+      }
+
+      let tail = this.head;
+      while (tail.next) {
+        tail = tail.next;
+      }
+      tail.next = node;
+    }
+
+    get length(): number {
+      if (!this.head) return 0;
+      let length = 1;
+      let node = this.head;
+      while (node.next) {
+        length++;
+        node = node.next;
+      }
+      return length;
+    }
+
+    at(index: number): Node {
+      if (!this.head) {
+        throw new Error('Index out of bounds');
+      }
+
+      let counter = 0;
+      let node: Node | null = this.head; // either Node or null as the tail node
+      while (node) {
+        if (counter === index) {
+          return node;
+        }
+
+        counter++;
+        node = node.next;
+      }
+
+      // if the function never hits the "return" in while loop
+      throw new Error('Index out of bounds');
+    }
+
+    compare(leftIndex: number, rightIndex: number): boolean {
+      if (!this.head) {
+        throw new Error('List is empty');
+      }
+
+      return this.at(leftIndex).data > this.at(rightIndex).data;
+    }
+
+    swap(leftIndex: number, rightIndex: number): void {
+      const leftNode = this.at(leftIndex);
+      const rightNode = this.at(rightIndex);
+
+      const leftHand = leftNode.data;
+      leftNode.data = rightNode.data;
+      rightNode.data = leftHand;
+    }
+
+    print(): void {
+      if (!this.head) {
+        return;
+      }
+
+      let node: Node | null = this.head; // either Node or null as the tail node
+      while (node) {
+        console.log(node.data);
+        node = node.next;
+      }
+    }
+  }
+  ```
+
+## 10.17. Just One More Fix
+1. We can test the new class `LinkedList`.
+  ```ts
+  // index.ts
+  import { Sorter } from './Sorter';
+  import { NumbersCollection } from './NumbersCollection';
+  import { CharacterCollection } from './CharactersCollection';
+  import { LinkedList } from './LinkedList';
+
+  // const numberCollection = new NumbersCollection([4, 2, 10, -2]);
+  // const sorter = new Sorter(numberCollection);
+  // sorter.sort();
+  // console.log(numberCollection.data);
+
+  // const charactersCollection = new CharacterCollection('Xaayb');
+  // const sorter = new Sorter(charactersCollection);
+  // sorter.sort();
+  // console.log(charactersCollection);
+
+  const linkedList = new LinkedList();
+  linkedList.add(500);
+  linkedList.add(-10);
+  linkedList.add(-3);
+  linkedList.add(4);
+
+  const sorter = new Sorter(linkedList);
+  sorter.sort();
+  linkedList.print();
+  ```
+2. However, it will be more intuitive if each type of data collection can have its own `sorter` function rather than creating an instnace of `Sorter` and run in the general class.
+  ```ts
+  // sort on each data collection directly
+  numberCollection.sort();
+  characterColleciton.sort();
+  linkedList.sort();
+  ```
+
+## 10.18. Integrating the Sort Method
+1. As `sort` can be the general function in `Sorter` that uses `compare` and `swap` function of each colleciton.
+2. Therefore, we can make `Sorter` as the parent class of other type of data structure.
+3. We can refactor the code in `Sorter` that we don't need to declare `length` but rather calling `this.compare()` and `this.swap()` in the nested for loop directly.
+
+## 10.19. Issues with Inheritance
+1. As we can remove the `interface` and collection in `Sorter`, Typescript doesn't know exactly this class will be extended and its instance just want to use the function inherited from this `Sorter` class. 
+2. The sorter itself doesn't have `length`, `compare` and `swap` that only its instance will inherit the function and use directly in the child instances.
+  ```ts
+  // Sorter.ts
+  export class Sorter {
+    sort(): void {
+      const { length } = this; // this returns an error
+
+      for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length - i - 1; j++) {
+          if (this.compare(j, j + 1)) { // this returns an error
+            this.swap(j, j + 1); // this returns an error
+          }
+        }
+      }
+    }
+  }
+  ```
+
+## 10.20. Abstract Classes
+1. In regular Typescript, it checks if the class has the properties or methods that can be called inside of it on its own. 
+2. In this case, `Sorter` has only `sort` method in the class declaration, so Typescript returns error, as there's no `length`, `compare`, and `swap` found in the class.
+3. An abstract class
+   1. Can't be used to create an object directly
+   2. Only used as a parent class
+   3. Can contain real implementation for some methods
+   4. The implemented methods can refer to other methods that don't actually exist yet (we still have to provide names and types for the un-implemented methods)
+   5. Can make child classes promise to implement some other method
+4. The abstract class `Sorter` in this case has to notice Typescript that though `length`, `compare` and `swap` is not in the class but will eventually exist.
+
+## 10.21. Why Use Abstract Classes?
+1. We can refactor `Sorter` class with keyword `abstract`.
+  ```ts
+  // Sorter.ts
+  export abstract class Sorter {
+    abstract length: number;
+    abstract compare(leftIndex: number, rightIndex: number): boolean;
+    abstract swap(leftIndex: number, rightIndex: number): void;
+
+    sort(): void {
+      const { length } = this;
+
+      for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length - i - 1; j++) {
+          if (this.compare(j, j + 1)) {
+            this.swap(j, j + 1);
+          }
+        }
+      }
+    }
+  }
+  ```
+
+## 10.22. Solving All Issues with Abstract Classes
+1. We can refactor `NumbersCollection`, `CharactersCollection`, and `LinkedList` class and the code to execute in `index.ts`.
+2. It's simply adding `extends Sorter` to ensure the class is a sub-class of `Sorter`.  
+  ```ts
+  import { Sorter } from './Sorter';
+
+  export class NumbersCollection extends Sorter {...}
+  export class CharactersCollection extends Sorter {...}
+  export class LinkedList extends Sorter {...}
+  ```
+2. Testing in `index.ts`.
+  ```ts
+  // index.ts
+  import { NumbersCollection } from './NumbersCollection';
+  import { CharacterCollection } from './CharactersCollection';
+  import { LinkedList } from './LinkedList';
+
+  const numberCollection = new NumbersCollection([4, 2, 10, -2]);
+  numberCollection.sort();
+  console.log(numberCollection.data);
+
+  const charactersCollection = new CharacterCollection('Xaayb');
+  charactersCollection.sort();
+  console.log(charactersCollection);
+
+  const linkedList = new LinkedList();
+  linkedList.add(500);
+  linkedList.add(-10);
+  linkedList.add(-3);
+  linkedList.add(4);
+
+  linkedList.sort();
+  linkedList.print();
+  ```
+
+## 10.23. Interfaces vs Abstract Classes
+1. In this case, `interface` won't be used as "**abstract class**" has been enough for the requirements.
+2. Interfaces
+   1. Sets up a contract between different classes
+   2. **Use when we have a very different objects that we want to work together**
+   3. Promotes loose coupling
+3. Inheritance/Abstract Classes
+   1. Sets up a contract between different classes
+   2. **Use when we are trying to build up a definition of an object**
+   3. Strongly couples classes together
