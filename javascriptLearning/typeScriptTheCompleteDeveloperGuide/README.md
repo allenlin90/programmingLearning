@@ -2818,25 +2818,337 @@ console.log(`Man United won ${manUnitedWins} games`);
 ```
 
 ## 11.26. Inheritance vs Composition
+1. "Inheritance" is the case that we create an `abstract` class and create sub-classes that extends from it. 
+2. "Composition", on the other hand, requires a class refer to `interface`
+3. The main points to decide whether to use "Inheritance" and "Composition" are 
+   1. `Inheritance` - Characterized by an "is a" relationship between 2 classes.
+   2. `Composition` - Characterized by a "has a" relationship between 2 classes.
 
 ## 11.27. More on Inheritance vs Composition
+1. To compare "inheritance" and "composition", we can take building a model for "window" of a house as an example.
+2. Inheritance - class Window
+   1. `open: boolean`
+   2. `toggleOpen(): void`
+   3. `height: number`
+   4. `width: number`
+   5. `area(): number`
+3. If we'd like to create another class as components of a house, such as a `Wall`, we can find some properties or functions can be shared between the classes. 
+4. For example, a `Wall` instance may have
+   1. `color: string`
+   2. `height: number`
+   3. `width: number`
+   4. `area(): number`
+5. In this case, both `Wall` and `Window` share `color`, `height`, `width`, and `area`.
+6. Therefore, we may create a class `Rectangle` which has the properties that both `Wall` and `Window` have. Thus, `Wall` and `Window` can be sub-classes that extends from `Rectangle` class.
+7. However, this approach may have problems when there are different types of windows. For example, windows can be "circle" which has `radius` instead `width` and `height`.
+8. In this case, we may need to create 2 different types of windows `RectangleWindow` and `CircleWindow` which extends from different parent class but shares the same properties.
+  <img src="./images/125-class_inheritance.png">
+9. On the other hand, we can use "composition" concept and create `Wall` and `Windows` class.
+10. Each class can refer to other classes when calling certain functions. For exmaple, when calling `dimension` method, it may be different if the class is a "rectangle" or a "circle".
+  <img src="./images/125-class_composition.png">
 
 ## 11.28. A Huge Misconception Around Composition
+1. The "Composition" in this case, is "**Object Composition**" which is creating an object which refers to other objects. 
+1. Literal "**composition**" by English wording it like creating a new object by multiple other objects which are composed to create the new one.
+2. This approach can create fragile instances when the naming of methods or properties having conflict.
+3. Besides, this is actaully "Multiple Inheritance" rather than "Composition".
+  ```js
+  // this IS NOT good pattern!
+  const rectangular = (state) => {
+    return {
+      area: () => {
+        return state.height * state.width;
+      }
+    };
+  };
+
+  const openable = (state) => {
+    return {
+      toggleOpen: () => {
+        state.open = !state.open;
+      }
+    };
+  };
+
+  const buildRectangleWindow = (state) => {
+    return Object.assign(state, rectangular(state), openable(state));
+  }
+
+  const rectangleWindow = buildRectangleWindow({
+    height: 20,
+    width: 20,
+    open: false,
+  });
+  ```
+  <img src="./images/126-misconception_composition.png">
 
 ## 11.29. Goal Moving Forward
+<img src="./images/127-analysis_report_class.png">
 
 ## 11.30. A Composition-Based Approach
+1. We can extract the `MatchData` tuple data type and have its own file.
+  ```ts
+  // MatchData.ts
+  import { MatchResult } from './MatchResult';
+
+  // this is a tuple
+  export type MatchData = [
+    Date,
+    string,
+    string,
+    number,
+    number,
+    MatchResult,
+    string
+  ];
+  ```
+2. We create a `Summary` class which has `Analyzer` and `OutputTarget` `interface`.
+  ```ts
+  // Summary.ts
+  import { MatchData } from './MatchData';
+
+  export interface Analyzer {
+    run(matches: MatchData[]): string;
+  }
+
+  export interface OutputTarget {
+    print(report: string): void;
+  }
+
+  export class Summary {
+    constructor(public analyzer: Analyzer, public outputTarget: OutputTarget) {}
+  }
+  ```
 
 ## 11.31. Implementing an Analyzer Class
+1. We create a new class `WinsAnalysis` and move the nested for loop from `index.ts` to here.
+2. Similar to this class, we can create other classes for different types of analysis upon requirements.
+  ```ts
+  // WinsAnalysis.ts
+  import { Analyzer } from '../Summary';
+  import { MatchData } from '../MatchData';
+  import { MatchResult } from '../MatchResult';
+
+  export class WinsAnalysis implements Analyzer {
+    constructor(public team: string) {}
+
+    run(matches: MatchData[]): string {
+      let wins = 0;
+
+      for (let match of matches) {
+        if (match[1] === 'Man United' && match[5] === MatchResult.HomeWin) {
+          wins++;
+        } else if (
+          match[2] === 'Man United' &&
+          match[5] === MatchResult.AwayWin
+        ) {
+          wins++;
+        }
+      }
+
+      return `Team ${this.team} won ${wins} games`;
+    }
+  }
+  ```
 
 ## 11.32. Building the Reporter
+1. We create a new directory `reportTarget` for different types of report output, such as printint data in console directly or generate HTML files.
+  ```ts
+  // reportTarget/ConsoleReport.ts
+  import { OutputTarget } from '../Summary';
+
+  export class ConsoleReport implements OutputTarget {
+    print(report: string): void {
+      console.log(report);
+    }
+  }
+  ```
+2. We can then update the `Summary` class with `buildAndPrintReport` method.
+3. In this case, we can clearly notice that `Summary` class is like a coordinator rather working much by itself and heavily relies on the objects passing and creating it.
+  ```ts
+  // Summary.ts
+  import { MatchData } from './MatchData';
+
+  export interface Analyzer {
+    run(matches: MatchData[]): string;
+  }
+
+  export interface OutputTarget {
+    print(report: string): void;
+  }
+
+  export class Summary {
+    constructor(public analyzer: Analyzer, public outputTarget: OutputTarget) {}
+
+    buildAndPrintReport(matches: MatchData[]): void {
+      const output = this.analyzer.run(matches);
+
+      this.outputTarget.print(output);
+    }
+  }
+  ```
 
 ## 11.33. Putting it all together
+```ts
+// index.ts
+import { MatchReader } from './MatchReader';
+import { CsvFileReader } from './CsvFileReader';
+import { ConsoleReport } from './reportTargets/ConsoleReport';
+import { WinsAnalysis } from './analyzers/WinsAnalysis';
+import { Summary } from './Summary';
+
+// create an object that satisfies the 'DataReader' interface
+const csvFileReader = new CsvFileReader('football.csv');
+
+// create an instance of MatchReader and pass in something satisfying
+// the 'DataReader' interface
+const matchReader = new MatchReader(csvFileReader);
+matchReader.load();
+
+const summary = new Summary(
+  new WinsAnalysis('Man United'),
+  new ConsoleReport()
+);
+
+summary.buildAndPrintReport(matchReader.matches);
+```
 
 ## 11.34. Generating HTML Reports
+```ts
+// .reportTarget/HtmlReports.ts
+import fs from 'fs';
+import { OutputTarget } from '../Summary';
+
+export class HtmlReport implements OutputTarget {
+  print(report: string): void {
+    const html = `
+    <div>
+      <h1>Analysis Output</h1>
+      <div>${report}</div>
+    </div>
+    `;
+
+    fs.writeFileSync('report.html', html);
+  }
+}
+```
+```ts
+// index.ts
+import { MatchReader } from './MatchReader';
+import { CsvFileReader } from './CsvFileReader';
+import { ConsoleReport } from './reportTargets/ConsoleReport';
+import { WinsAnalysis } from './analyzers/WinsAnalysis';
+import { Summary } from './Summary';
+import { HtmlReport } from './reportTargets/HtmlReport';
+
+// create an object that satisfies the 'DataReader' interface
+const csvFileReader = new CsvFileReader('football.csv');
+
+// create an instance of MatchReader and pass in something satisfying
+// the 'DataReader' interface
+const matchReader = new MatchReader(csvFileReader);
+matchReader.load();
+
+const summary = new Summary(new WinsAnalysis('Man United'), new HtmlReport());
+
+summary.buildAndPrintReport(matchReader.matches);
+```
 
 ## 11.35. One Last Thing!
-
 ## 11.36. Oops, MyBad
+1. In the previous code, we should always use instances from 2 classes to create a `Summary` instance. We can rephrase the code the create a `static` method, which can be called without creating an instance with `new` keyword.
+  ```ts
+  // Summary.ts
+  import { MatchData } from './MatchData';
+  import { WinsAnalysis } from './analyzers/WinsAnalysis';
+  import { HtmlReport } from './reportTargets/HtmlReport';
+
+  export interface Analyzer {
+    run(matches: MatchData[]): string;
+  }
+
+  export interface OutputTarget {
+    print(report: string): void;
+  }
+
+  export class Summary {
+    static winsAnalysisWithHtmlReport(team: string): Summary {
+      return new Summary(new WinsAnalysis(team), new HtmlReport());
+    }
+
+    constructor(public analyzer: Analyzer, public outputTarget: OutputTarget) {}
+
+    buildAndPrintReport(matches: MatchData[]): void {
+      const output = this.analyzer.run(matches);
+      this.outputTarget.print(output);
+    }
+  }
+  ```
+2. Update `MatchReader` and preload `CsvFileReader` in advance.
+  ```ts
+  // MatchReader.ts
+  import { dateStringToDate } from './utils';
+  import { MatchResult } from './MatchResult';
+  import { MatchData } from './MatchData';
+  import { CsvFileReader } from './CsvFileReader';
+
+  interface DataReader {
+    read(): void;
+    data: string[][];
+  }
+
+  export class MatchReader {
+    static fromCsv(filename: string): MatchReader {
+      return new MatchReader(new CsvFileReader(filename));
+    }
+
+    matches: MatchData[] = [];
+    constructor(public reader: DataReader) {}
+
+    load(): void {
+      this.reader.read();
+      this.matches = this.reader.data.map((row: string[]): MatchData => {
+        return [
+          dateStringToDate(row[0]),
+          row[1],
+          row[2],
+          parseInt(row[3]),
+          parseInt(row[4]),
+          row[5] as MatchResult, // use keyword 'as' to use type assertion to change default Typescript type
+          row[6],
+        ];
+      });
+    }
+  }
+  ```
+  ```ts
+  // index.ts
+  import { MatchReader } from './MatchReader';
+  import { Summary } from './Summary';
+
+  const matchReader = MatchReader.fromCsv('football.csv');
+  const summary = Summary.winsAnalysisWithHtmlReport('Man United');
+
+  matchReader.load();
+  summary.buildAndPrintReport(matchReader.matches);
+  ```
 
 ## 11.37. App Wrapup
+1. List of topics
+   1. `enum` - `MatchResult.ts`
+   2. Inheritance concept
+      1. `generic` types `<T>`
+      2. `extends` `abstract` class
+   3. Composition concept
+      1. `interface`
+      2. `tuple`
+2. In this project, we learnt `enum` and used it in `MatchResult.ts`. An `enum` describe a set of values which are closely related.
+3. We use `tuple` in `MatchData.ts`. A tuple is used to describe the order of types of values in an array-like data structure. 
+4. Inheritance concept
+   1. `generic` class is used to create types of the data structure on the fly, as we don't know the type exactly before the instance is created. We can check the reference in `inheritance/CsvFileReader.ts` that we give `<T>` as the generic type.
+   2. We extended the `abstract` class `CsvFileReader` in `inheritance/MatchReader.ts` which we finally provide the type `<MatchData>` to the generic type given in `CsvFileReader`.
+5. Composition concept
+   1. We create `MatchReader` referring to `DataReader` as the source of information which is defined with `interface`.
+   2. Besides, we use `enum` `MatchResult` as a helper and keyword `as` to use type assertion and change the default type given by Typescript.
+   3. The main function of a `MatchReader` is to convert the data aligned to the data type given in the `tuple` `MatchData`. 
+   4. We keep all the classes integrated in `Summary`
