@@ -11,3 +11,4 @@ debug.log
 .cache
 _config.js
 dist
+build

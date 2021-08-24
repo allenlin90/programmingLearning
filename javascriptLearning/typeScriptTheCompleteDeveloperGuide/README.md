@@ -101,6 +101,44 @@ Finished on
   - [10.21. Why Use Abstract Classes?](#1021-why-use-abstract-classes)
   - [10.22. Solving All Issues with Abstract Classes](#1022-solving-all-issues-with-abstract-classes)
   - [10.23. Interfaces vs Abstract Classes](#1023-interfaces-vs-abstract-classes)
+- [11. Resuable Code](#11-resuable-code)
+  - [11.1. Project Overview](#111-project-overview)
+  - [11.2. Project Setup](#112-project-setup)
+  - [11.3. CSV](#113-csv)
+  - [11.4. Type Definition Files - Again!](#114-type-definition-files---again)
+  - [11.5. Reading CSV Files](#115-reading-csv-files)
+  - [11.6. Running an Analysis](#116-running-an-analysis)
+  - [11.7. Losing Dataset Context](#117-losing-dataset-context)
+  - [11.8. Using Enums](#118-using-enums)
+  - [11.9. When to use Enums](#119-when-to-use-enums)
+  - [11.10. Extracting CSV Reading](#1110-extracting-csv-reading)
+  - [11.11. Date Types](#1111-date-types)
+  - [11.12. Converting Data Strings to Dates](#1112-converting-data-strings-to-dates)
+  - [11.13. Converting Row Values](#1113-converting-row-values)
+  - [11.14. Type Assertions](#1114-type-assertions)
+  - [11.15. Describing a Row with a Tuple](#1115-describing-a-row-with-a-tuple)
+  - [11.16. Not Done with FileReader Yet!](#1116-not-done-with-filereader-yet)
+  - [11.17. Understanding Refactor #1](#1117-understanding-refactor-1)
+  - [11.18. Creating Abstract Classes](#1118-creating-abstract-classes)
+  - [11.19. Variable Types with Generics](#1119-variable-types-with-generics)
+  - [11.20. Applying a Type to a Generic Class](#1120-applying-a-type-to-a-generic-class)
+  - [11.21. Alternate Refactor](#1121-alternate-refactor)
+  - [11.22. Interface-Based Approach](#1122-interface-based-approach)
+  - [11.23. Extracting Match References - Again!](#1123-extracting-match-references---again)
+  - [11.24. Transforming Data](#1124-transforming-data)
+  - [11.25. Updating Reader References](#1125-updating-reader-references)
+  - [11.26. Inheritance vs Composition](#1126-inheritance-vs-composition)
+  - [11.27. More on Inheritance vs Composition](#1127-more-on-inheritance-vs-composition)
+  - [11.28. A Huge Misconception Around Composition](#1128-a-huge-misconception-around-composition)
+  - [11.29. Goal Moving Forward](#1129-goal-moving-forward)
+  - [11.30. A Composition-Based Approach](#1130-a-composition-based-approach)
+  - [11.31. Implementing an Analyzer Class](#1131-implementing-an-analyzer-class)
+  - [11.32. Building the Reporter](#1132-building-the-reporter)
+  - [11.33. Putting it all together](#1133-putting-it-all-together)
+  - [11.34. Generating HTML Reports](#1134-generating-html-reports)
+  - [11.35. One Last Thing!](#1135-one-last-thing)
+  - [11.36. Oops, MyBad](#1136-oops-mybad)
+  - [11.37. App Wrapup](#1137-app-wrapup)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -2093,3 +2131,712 @@ Finished on
    1. Sets up a contract between different classes
    2. **Use when we are trying to build up a definition of an object**
    3. Strongly couples classes together
+
+# 11. Resuable Code
+## 11.1. Project Overview
+1. The project is to import (load) data, parse, and analyze data from CSV file and create report.
+
+## 11.2. Project Setup
+1. Similar to previous case, we use `nodemon` and `concurrently` and setup both `package.json` for npm scripts and `tsconfig.json` for the app.
+  ```json
+  // package.json
+  {
+    "scripts": {
+      "start:build": "tsc -w",
+      "start:run": "nodemon build/index.js",
+      "start": "concurrently npm:start:*"
+    }
+  }
+  ```
+
+## 11.3. CSV 
+1. We can use `NodeJS` file system module [`fs.readFileSync`](https://nodejs.org/api/fs.html#fs_fs_readfilesync_path_options) to read a local file.
+
+## 11.4. Type Definition Files - Again!
+1. Typescript doesn't support Node standard library as other Javascript libraries. Therefore, we may use "Type Definition File" as when using other libraries.
+2. Note that every "TDF" for `NodeJS` has been included in a single package, so we can simply install with `npm install @types/node`.
+
+## 11.5. Reading CSV Files
+1. We then can use file system module to read data from the CSV file.
+2. However, the following code doesn't provide useful information as it's simply printing out all the data line by line.
+  ```ts
+  // index.ts
+  import fs from 'fs';
+
+  const matches = fs.readFileSync('football.csv', {
+    encoding: 'utf-8', // buffer data will be returned if this is not specified
+  });
+
+  console.log(matches);
+  ```
+3. We can parse the data by its pattern. For example, we can 
+   1. Split the string by change line character `\n`. The output will be array of strings. Each element is a row in the CSV file.
+   2. Split the string with comma. The output will be 2 dimensional array each element in the nested array is a string separated by the comma.
+  ```ts
+  import fs from 'fs';
+
+  const matches = fs
+    .readFileSync('football.csv', {
+      encoding: 'utf-8', // buffer data will be returned if this is not specified
+    })
+    .split('\n')
+    .map((row: string): string[] => {
+      return row.split(',');
+    });
+
+  console.log(matches);
+  ```
+
+## 11.6. Running an Analysis
+1. We can count on the number winnig games of a given team from the dataset.
+  ```ts
+  import fs from 'fs';
+
+  const matches = fs
+    .readFileSync('football.csv', {
+      encoding: 'utf-8', // buffer data will be returned if this is not specified
+    })
+    .split('\n')
+    .map((row: string): string[] => {
+      return row.split(',');
+    });
+
+  let manUnitedWins = 0;
+
+  for (let match of matches) {
+    if (match[1] === 'Man United' && match[5] === 'H') {
+      manUnitedWins++;
+    } else if (match[2] === 'Man United' && match[5] === 'A') {
+      manUnitedWins++;
+    }
+  }
+
+  console.log(`Man United won ${manUnitedWins} games`);
+  ```
+
+## 11.7. Losing Dataset Context
+1. In the previous example, we compare `match[5]` to check if the team either wins at home or away.
+2. However, such expression can be misleading and consfusing for other developers if they aren't familiar with the dataset. Besides, we'd like to indicate in the code that there are actually 3 types of options for the variable.
+3. Though we can turn the string into a meaningful variable, we don't check "draw" games in the dataset in the code above.
+4. Typescript will indicate that the variable is not in use, so there's high chances that other developers may delete the redundant code to clean up the code base.
+  ```ts
+  import fs from 'fs';
+
+  const matches = fs
+    .readFileSync('football.csv', {
+      encoding: 'utf-8', // buffer data will be returned if this is not specified
+    })
+    .split('\n')
+    .map((row: string): string[] => {
+      return row.split(',');
+    });
+
+  const homeWin = 'H';
+  const awayWin = 'A';
+  const draw = 'D'; // Typescript can indicate this variable is not in use 
+
+  let manUnitedWins = 0;
+
+  for (let match of matches) {
+    if (match[1] === 'Man United' && match[5] === homeWin) {
+      manUnitedWins++;
+    } else if (match[2] === 'Man United' && match[5] === awayWin) {
+      manUnitedWins++;
+    }
+  }
+
+  console.log(`Man United won ${manUnitedWins} games`);
+  ```
+
+## 11.8. Using Enums
+1. We can use either objects in Javascript way or use `enum` (enumeration) in Typescript to indicate a specific type.
+  ```ts
+  // Javascript approach
+  const matchResult = {
+    homeWin: 'H',
+    awayWin: 'A',
+    draw: 'D',
+  }
+
+  matchResult.homeWin
+  matchResult.awayWin
+  matchResult.draw
+
+  // Typescript
+  enum MatchResult { // enum as a type
+    HomeWin = 'H';
+    AwayWin = 'A';
+    Draw = 'D';
+  }
+
+  MatchResult.HomeWin;
+  MatchResult.AwayWin;
+  MatchResult.Draw;
+
+  const returnMatchResult = (): MatchResult => {
+    if (match[5] === 'H') {
+      return MatchResult.HomeWin;
+    }
+
+    return MatchResult.AwayWin;
+  }
+  ```
+
+## 11.9. When to use Enums
+1. Enums 
+   1. follow near-identical syntax rules as normal objects.
+   2. creates an object with the same keys and values when converted from TS to JS.
+   3. Primary goal is to signal to other engineers that these are all closely related values.
+   4. Use whenever we have a small fixed set of values that are all closely related and known at compile time.
+
+## 11.10. Extracting CSV Reading
+1. We can separate the function of reading data from CSV file and change the structure of the code. For example, the CSV reading process can be changed to fetching data from an API.
+  ```ts
+  // CsvFileReader.ts
+  import fs from 'fs';
+
+  export class CsvFileReader {
+    data: string[][] = [];
+
+    constructor(public filename: string) {}
+
+    read(): void {
+      this.data = fs
+        .readFileSync(this.filename, {
+          encoding: 'utf-8', // buffer data will be returned if this is not specified
+        })
+        .split('\n')
+        .map((row: string): string[] => {
+          return row.split(',');
+        });
+    }
+  }
+  ```
+2. We then can refactor the code in `index.ts`.
+  ```ts
+  // index.ts 
+  import { CsvFileReader } from './CsvFileReader';
+
+  const reader = new CsvFileReader('football.csv');
+  reader.read();
+
+  // enum - enumeration
+  enum MatchResult {
+    HomeWin = 'H',
+    AwayWin = 'A',
+    Draw = 'D',
+  }
+
+  let manUnitedWins = 0;
+
+  for (let match of reader.data) {
+    if (match[1] === 'Man United' && match[5] === MatchResult.HomeWin) {
+      manUnitedWins++;
+    } else if (match[2] === 'Man United' && match[5] === MatchResult.AwayWin) {
+      manUnitedWins++;
+    }
+  }
+
+  console.log(`Man United won ${manUnitedWins} games`);
+  ```
+
+## 11.11. Date Types
+1. We'd like to convert data on each row to be aligned data type such as `Date`, `Number`, and `MatchResult`.
+2. For example, we have date stored as `dd/mm/yyyy`, we can turn it into a `Date` type data
+
+## 11.12. Converting Data Strings to Dates
+1. We can use native `Date` class in Javascript to work with `Date` type objects.
+2. Create `utils.ts` as utilities for the code to convert date string to date object.
+  ```ts
+  // utils.ts
+  export const dateStringToDate = (dateString: string): Date => {
+    // 28/10/2018
+    const dateParts = dateString.split('/').map((value: string): number => {
+      return parseInt(value);
+    });
+
+    return new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+  };
+  ```
+
+## 11.13. Converting Row Values
+1. We can chain another `map` to convert the array of string as each row after fetching data from the CSV file. 
+  ```ts
+  // CsvFileReader.ts
+  import fs from 'fs';
+
+  export class CsvFileReader {
+    data: string[][] = [];
+
+    constructor(public filename: string) {}
+
+    read(): void {
+      this.data = fs
+        .readFileSync(this.filename, {
+          encoding: 'utf-8', // buffer data will be returned if this is not specified
+        })
+        .split('\n')
+        .map((row: string): string[] => {
+          return row.split(',');
+        })
+        .map((row: string[]): any => {
+          return [
+            dateStringToDate(row[0]),
+            row[1],
+            row[2],
+            parseInt(row[3]),
+            parseInt(row[4]),
+            ... // not finished
+          ];
+        });
+    }
+  }
+  ```
+
+## 11.14. Type Assertions
+1. We can use keyword `as` to apply "Type Assertions" to overwrite the type checking by Typescript by default. 
+2. However, we still define the data 
+  ```ts
+  // CsvFileReader.ts
+  import fs from 'fs';
+  import { dateStringToDate } from './utils';
+  import { MatchResult } from './MatchResult';
+
+  export class CsvFileReader {
+    data: string[][] = [];
+
+    constructor(public filename: string) {}
+
+    read(): void {
+      this.data = fs
+        .readFileSync(this.filename, {
+          encoding: 'utf-8', // buffer data will be returned if this is not specified
+        })
+        .split('\n')
+        .map((row: string): string[] => {
+          return row.split(',');
+        })
+        .map((row: string[]): any => { // this shouldn't be "any" type
+          return [
+            dateStringToDate(row[0]),
+            row[1],
+            row[2],
+            parseInt(row[3]),
+            parseInt(row[4]),
+            row[5] as MatchResult, // use keyword 'as' to use type assertion to change default Typescript type
+            row[6],
+          ];
+        });
+    }
+  }
+  ```
+  ```ts
+  // index.ts
+  import { CsvFileReader } from './CsvFileReader';
+  import { MatchResult } from './MatchResult';
+
+  const reader = new CsvFileReader('football.csv');
+  reader.read();
+
+  console.log(reader.data);
+
+  let manUnitedWins = 0;
+
+  for (let match of reader.data) {
+    if (match[1] === 'Man United' && match[5] === MatchResult.HomeWin) {
+      manUnitedWins++;
+    } else if (match[2] === 'Man United' && match[5] === MatchResult.AwayWin) {
+      manUnitedWins++;
+    }
+  }
+
+  console.log(`Man United won ${manUnitedWins} games`);
+  ```
+
+## 11.15. Describing a Row with a Tuple
+1. One way to replace `any` type is to use logic "OR" `|` that the type of data in the array can be `Date`, `string`, `number,` or `MatchResult`.
+2. However, this type of annotation has a problem that we need to use type guard to check each value to manipuldate the data.
+3. In this case, we can use `Tuple` which can specify the type of value in each position in an array.
+4. We firstly define the tuple as a new type.
+  ```ts
+  // CsvFileReader.ts
+  import fs from 'fs';
+  import { dateStringToDate } from './utils';
+  import { MatchResult } from './MatchResult';
+
+  // define a tuple
+  type MatchData = [Date, string, string, number, number, MatchResult, string];
+
+  export class CsvFileReader {
+    data: MatchData[] = []; // array of MatchData type (still 2D array)
+
+    constructor(public filename: string) {}
+
+    read(): void {
+      this.data = fs
+        .readFileSync(this.filename, {
+          encoding: 'utf-8', // buffer data will be returned if this is not specified
+        })
+        .split('\n')
+        .map((row: string): string[] => {
+          return row.split(',');
+        })
+        .map((row: string[]): MatchData => {
+          return [
+            dateStringToDate(row[0]),
+            row[1],
+            row[2],
+            parseInt(row[3]),
+            parseInt(row[4]),
+            row[5] as MatchResult, // use keyword 'as' to use type assertion to change default Typescript type
+            row[6],
+          ];
+        });
+    }
+  }
+  ```
+
+## 11.16. Not Done with FileReader Yet!
+1. The current code can still have issues that the `CsvFileReader` class is not general and can't work with other types of data if the it doesn't follow the pattern in `footbal.csv`.
+2. We can back up the current code and create a new version of csv reader.
+
+## 11.17. Understanding Refactor #1
+1. We first extract the `mapRow` method as the last `map` to parse the data in each row to turn elements type aligning to `MatchResult`.
+  ```ts
+  import fs from 'fs';
+  import { dateStringToDate } from './utils';
+  import { MatchResult } from './MatchResult';
+
+  type MatchData = [Date, string, string, number, number, MatchResult, string];
+
+  export class CsvFileReader {
+    data: MatchData[] = [];
+
+    constructor(public filename: string) {}
+
+    read(): void {
+      this.data = fs
+        .readFileSync(this.filename, {
+          encoding: 'utf-8', // buffer data will be returned if this is not specified
+        })
+        .split('\n')
+        .map((row: string): string[] => {
+          return row.split(',');
+        })
+        .map(this.mapRow);
+    }
+
+    mapRow(row: string[]): MatchData {
+      return [
+        dateStringToDate(row[0]),
+        row[1],
+        row[2],
+        parseInt(row[3]),
+        parseInt(row[4]),
+        row[5] as MatchResult, // use keyword 'as' to use type assertion to change default Typescript type
+        row[6],
+      ];
+    }
+  }
+  ```
+2. As we'd like to reuse the code, we can turn `CsvFileReader` into an "abstract class". Therefore, the reader will only focus on reading the file from the file system while we can create other types of `MatchReader` to manipuldate and parse different types of data structure. 
+
+## 11.18. Creating Abstract Classes
+1. We can extract code and create `MatchReader.ts`
+  ```ts
+  // MatchReader.ts
+  import { CsvFileReader } from "./CsvFileReader";
+  import { dateStringToDate } from "./utils";
+  import { MatchResult } from "./MatchResult";
+
+  export class MatchReader extends CsvFileReader {
+    mapRow(row: string[]): MatchData { // this still returns an error as there's no 'MatchData' interface to refer
+      return [
+        dateStringToDate(row[0]),
+        row[1],
+        row[2],
+        parseInt(row[3]),
+        parseInt(row[4]),
+        row[5] as MatchResult, // use keyword 'as' to use type assertion to change default Typescript type
+        row[6],
+      ];
+    }
+  }
+  ```
+2. Then turn `CsvFileReader` into a "abstract class".
+3. However, this still has a problem that the "data" stored in the class is still aligned to `MatchData` which doesn't make the code really "general".
+4. Besides, though we may simply replace `MatchData` to `any` to temprary solve the issue, it is not ideal for Typescript structure to have any arbitrary type.
+  ```ts
+  // CsvFileReader.ts
+  import fs from 'fs';
+  import { MatchResult } from './MatchResult';
+
+  // mapRow method still refers to MatchData type
+  type MatchData = [Date, string, string, number, number, MatchResult, string];
+
+  export abstract class CsvFileReader {
+    data: MatchData[] = [];
+
+    constructor(public filename: string) {}
+
+    abstract mapRow(row: string[]): MatchData; // mapRow method still refers to MatchData type
+
+    read(): void {
+      this.data = fs
+        .readFileSync(this.filename, {
+          encoding: 'utf-8', // buffer data will be returned if this is not specified
+        })
+        .split('\n')
+        .map((row: string): string[] => {
+          return row.split(',');
+        })
+        .map(this.mapRow);
+    }
+  }
+  ```
+
+## 11.19. Variable Types with Generics
+1. We can use `generics` to solve the issue when creating a new abstract class. Generics are 
+   1. like funciton arguments, but for types in class/function definitions.
+   2. allow us to define the type of a property/argument/return value at a future point.
+   3. used heavily when writing reusable code.
+  ```ts
+  // samples for generics
+  const addOne = (a: number):number => {
+    return a + 1;
+  }
+
+  const addTwo = (a: number):number => {
+    return a + 2;
+  }
+
+  addOne(10);
+  addTwo(10);
+
+  const add = (a: number, b: number): number => {
+    return a + b;
+  }
+
+  add(10, 1);
+  add(10, 2);
+  add(10, 3);
+
+  class HoldNumber {
+    data: number
+  }
+
+  class HoldString {
+    data: string
+  }
+
+  const holdNumber = new HoldNumber();
+  holdNumber.data = 123;
+
+  const holdString = new HoldString();
+  holdString.data = 'abcdeefg';
+
+  // using generics
+  class HoldAnyThing<TypeOfData> {
+    data: TypeOfData;
+  }
+
+  const holdNumber = new HoldAnyThing<number>();
+  holdNumber.data = 123;
+
+  const holdString = new HoldAnyThing<string>();
+  holdString.data = 'abcdefg';
+  ```
+2. By convention, we use capital `T` to represent the generic type when declaring a class.
+  ```ts
+  // CsvFileReader.ts
+  import fs from 'fs';
+  import { MatchResult } from './MatchResult';
+
+  export abstract class CsvFileReader<T> {
+    data: T[] = [];
+
+    constructor(public filename: string) {}
+
+    abstract mapRow(row: string[]): T;
+
+    read(): void {
+      // ...
+    }
+  }
+  ```
+
+## 11.20. Applying a Type to a Generic Class
+1. We then can update `MatchReader`
+  ```ts
+  // MatchReader.ts
+  import { CsvFileReader } from './CsvFileReader';
+  import { dateStringToDate } from './utils';
+  import { MatchResult } from './MatchResult';
+
+  type MatchData = [Date, string, string, number, number, MatchResult, string];
+
+  export class MatchReader extends CsvFileReader<MatchData> {
+    mapRow(row: string[]): MatchData {
+      return [
+        dateStringToDate(row[0]),
+        row[1],
+        row[2],
+        parseInt(row[3]),
+        parseInt(row[4]),
+        row[5] as MatchResult, // use keyword 'as' to use type assertion to change default Typescript type
+        row[6],
+      ];
+    }
+  }
+  ```
+2. We then can update `index.ts` to execute the functions. We now don't refer to `CsvFileReader` directly but rather `MatchReader` which is extended from `CsvFileReader`.
+  ```ts
+  // index.ts
+  import { MatchReader } from './MatchReader';
+  import { MatchResult } from './MatchResult';
+
+  const reader = new MatchReader('football.csv');
+  reader.read();
+
+  let manUnitedWins = 0;
+
+  for (let match of reader.data) {
+    if (match[1] === 'Man United' && match[5] === MatchResult.HomeWin) {
+      manUnitedWins++;
+    } else if (match[2] === 'Man United' && match[5] === MatchResult.AwayWin) {
+      manUnitedWins++;
+    }
+  }
+
+  console.log(`Man United won ${manUnitedWins} games`);
+  ```
+
+## 11.21. Alternate Refactor
+1. Though we have extracted the reader function and extends it to different types of data, the data source can be changed as well. For example, the current data is coming from reading data from a CSV file. The data source can be changed to other types of dataset such as Excel and calling from a remote API.
+2. We can then create general `interface` as `DataReader` that all readers shall follow its requirements, so can work further with the data type reader such as `MatchReader`.
+  <img src="./images/119-alternate_refactor.png">
+
+## 11.22. Interface-Based Approach
+1. We create another `MatchReader` to use general `DataReader` that may read data from different types of source or format.
+  ```ts
+  // MatchReader.ts
+  interface DataReader {
+    read(): void;
+    data: string[][];
+  }
+
+  export class MatchReader {
+    constructor(public reader: DataReader) {}
+  }
+  ```
+
+## 11.23. Extracting Match References - Again!
+1. We refactor `CsvFileReader` to be general that can be used in every conditions and it only reads data from CSV files.
+  ```ts
+  // CsvFileReader.ts
+  import fs from 'fs';
+
+  export class CsvFileReade {
+    data: string[][] = [];
+
+    constructor(public filename: string) {}
+
+    read(): void {
+      this.data = fs
+        .readFileSync(this.filename, {
+          encoding: 'utf-8', // buffer data will be returned if this is not specified
+        })
+        .split('\n')
+        .map((row: string): string[] => {
+          return row.split(',');
+        });
+    }
+  }
+  ```
+
+## 11.24. Transforming Data
+1. We then add `load` method in `MatchReader` which can use the data reader and import the data to class instance.
+  ```ts
+  // MatchReader.ts
+  import { dateStringToDate } from './utils';
+  import { MatchResult } from './MatchResult';
+
+  type MatchData = [Date, string, string, number, number, MatchResult, string];
+
+  interface DataReader {
+    read(): void;
+    data: string[][];
+  }
+
+  export class MatchReader {
+    matches: MatchData[] = [];
+    constructor(public reader: DataReader) {}
+
+    load(): void {
+      this.reader.read();
+      this.matches = this.reader.data.map((row: string[]): MatchData => {
+        return [
+          dateStringToDate(row[0]),
+          row[1],
+          row[2],
+          parseInt(row[3]),
+          parseInt(row[4]),
+          row[5] as MatchResult, // use keyword 'as' to use type assertion to change default Typescript type
+          row[6],
+        ];
+      });
+    }
+  }
+  ```
+
+## 11.25. Updating Reader References
+```ts
+// index.ts
+import { MatchReader } from './MatchReader';
+import { CsvFileReader } from './CsvFileReader';
+import { MatchResult } from './MatchResult';
+
+// create an object that satisfies the 'DataReader' interface
+const csvFileReader = new CsvFileReader('football.csv');
+
+// create an instance of MatchReader and pass in something satisfying
+// the 'DataReader' interface
+const matchReader = new MatchReader(csvFileReader);
+matchReader.load();
+
+let manUnitedWins = 0;
+
+for (let match of matchReader.matches) {
+  if (match[1] === 'Man United' && match[5] === MatchResult.HomeWin) {
+    manUnitedWins++;
+  } else if (match[2] === 'Man United' && match[5] === MatchResult.AwayWin) {
+    manUnitedWins++;
+  }
+}
+
+console.log(`Man United won ${manUnitedWins} games`);
+```
+
+## 11.26. Inheritance vs Composition
+
+## 11.27. More on Inheritance vs Composition
+
+## 11.28. A Huge Misconception Around Composition
+
+## 11.29. Goal Moving Forward
+
+## 11.30. A Composition-Based Approach
+
+## 11.31. Implementing an Analyzer Class
+
+## 11.32. Building the Reporter
+
+## 11.33. Putting it all together
+
+## 11.34. Generating HTML Reports
+
+## 11.35. One Last Thing!
+
+## 11.36. Oops, MyBad
+
+## 11.37. App Wrapup
