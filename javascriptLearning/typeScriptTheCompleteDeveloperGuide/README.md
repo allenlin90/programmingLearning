@@ -139,6 +139,11 @@ Finished on
   - [11.35. One Last Thing!](#1135-one-last-thing)
   - [11.36. Oops, MyBad](#1136-oops-mybad)
   - [11.37. App Wrapup](#1137-app-wrapup)
+- [12. Advanced Generics](#12-advanced-generics)
+  - [12.1. More on Generics](#121-more-on-generics)
+  - [12.2. Type Inference with Generics](#122-type-inference-with-generics)
+  - [12.3. Function Generics](#123-function-generics)
+  - [12.4. Generic Constraints](#124-generic-constraints)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -3152,3 +3157,110 @@ summary.buildAndPrintReport(matchReader.matches);
    2. Besides, we use `enum` `MatchResult` as a helper and keyword `as` to use type assertion and change the default type given by Typescript.
    3. The main function of a `MatchReader` is to convert the data aligned to the data type given in the `tuple` `MatchData`. 
    4. We keep all the classes integrated in `Summary`
+
+# 12. Advanced Generics
+## 12.1. More on Generics
+1. When we are working with an array of certain type of values, we can create a general class which can take any types of data.
+2. We consider the `generic` type is an argument passing to the class and give type definition on the fly.
+  ```ts
+  // features/generics.ts
+  class ArrayOfNumbers {
+    constructor(public collection: number[]) {}
+
+    get(index: number): number {
+      return this.collection[index];
+    }
+  }
+
+  class ArrayOfStrings {
+    constructor(public collection: string[]) {}
+
+    get(index: number): string {
+      return this.collection[index];
+    }
+  }
+
+  class ArrayOfAnything<T> {
+    constructor(public collection: T[]) {}
+
+    get(index: number): T {
+      return this.collection[index];
+    }
+  }
+
+  new ArrayOfAnything<string>(['a', 'b', 'c']);
+  ```
+
+## 12.2. Type Inference with Generics
+1. We can create an instance without specifying the type of the data in the array. Typescript can check automatically when we create it because of "**Type Inference**".
+  ```ts
+  // generics.ts
+  // typescript knows we create an array of strings
+  const arr = new ArrayOfAnything(['a', 'b', 'c']); 
+  ```
+
+## 12.3. Function Generics
+1. `generic` type can be used on functions as well. Note that the generic type arugment changes the whole type. It means that if we pass `<string[]>`, it means the data should be a 2D array.
+2. Though returned value type is not required by Typescirpt by default, adding it can help the developers to check if we accidentally returned something not required.
+  ```ts
+  // features/generics.ts
+  function printStrings(arr: string[]): void {
+    for (let i = 0; i < arr.length; i++) {
+      console.log(arr[i]);
+    }
+  }
+
+  function printNumbers(arr: number[]): void {
+    for (let i = 0; i < arr.length; i++) {
+      console.log(arr[i]);
+    }
+  }
+
+  function printAnything<T>(arr: T[]): void {
+    for (let i = 0; i < arr.length; i++) {
+      console.log(arr[i]);
+    }
+  }
+
+  printAnything<string>(['a', 'b', 'c']);
+
+  printAnything(['a', 'b', 'c']); // this also works
+  ```
+
+## 12.4. Generic Constraints
+1. In this case, we'd like to iterate an array of elements which has had `print` feature on it, so we don't need to use `console.log` to print them out.
+2. We can use keyword `extends` to tell the "generic" type to follow certain constraints like `Printable` `interface` in this case.
+  ```ts
+  class Car {
+    print() {
+      console.log('I am a car');
+    }
+  }
+
+  class House {
+    print() {
+      console.log('I am a house');
+    }
+  }
+
+  interface Printable {
+    print(): void;
+  }
+
+  // this can't gurantee that every T data has a 'print' method can be called
+  function printHousesOrCars<T>(arr: T[]): void { 
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].print();
+    }
+  }
+
+  function printHousesOrCars<T extends Printable>(arr: T[]): void {
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].print();
+    }
+  }
+
+  // printHoursesOrCars([1, 2, 3, 4]); // this doesn't fit to Printable
+  printHousesOrCars<House>([new House(), new House()]);
+  printHousesOrCars<Car>([new Car(), new Car()]);
+  ```
