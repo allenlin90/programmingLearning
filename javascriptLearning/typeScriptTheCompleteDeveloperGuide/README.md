@@ -144,6 +144,79 @@ Finished on
   - [12.2. Type Inference with Generics](#122-type-inference-with-generics)
   - [12.3. Function Generics](#123-function-generics)
   - [12.4. Generic Constraints](#124-generic-constraints)
+- [13. Let's Build a Web Framework](#13-lets-build-a-web-framework)
+  - [13.1. App Overview](#131-app-overview)
+  - [13.2. Parcel Setup](#132-parcel-setup)
+  - [13.3. Framework Structure](#133-framework-structure)
+  - [13.4. Designing the User](#134-designing-the-user)
+  - [13.5. Retrieving User Properties](#135-retrieving-user-properties)
+  - [13.6. Optional Interface Properties](#136-optional-interface-properties)
+  - [13.7. An Eventing System](#137-an-eventing-system)
+  - [13.8. Listener Support](#138-listener-support)
+  - [13.9. Storing Event Listeners](#139-storing-event-listeners)
+  - [13.10. Dynamic Array Creation](#1310-dynamic-array-creation)
+  - [13.11. Triggering Event Callbacks](#1311-triggering-event-callbacks)
+  - [13.12. Adding JSON Server](#1312-adding-json-server)
+  - [13.13. Understanding REST conventions](#1313-understanding-rest-conventions)
+  - [13.14. Adding Fetch Functionality](#1314-adding-fetch-functionality)
+  - [13.15. Successfully Fetching Model Data](#1315-successfully-fetching-model-data)
+  - [13.16. Saving User Data](#1316-saving-user-data)
+  - [13.17. Refactoring with Composition](#1317-refactoring-with-composition)
+  - [13.18. Re-Integrating](#1318-re-integrating)
+  - [13.19. Composition with Nested Objects](#1319-composition-with-nested-objects)
+  - [13.20. A More Complicated Extraction](#1320-a-more-complicated-extraction)
+  - [13.21. Options for Adapting Sync](#1321-options-for-adapting-sync)
+  - [13.22. Refactoring Sync](#1322-refactoring-sync)
+  - [13.23. Generic Constraints Around Sync](#1323-generic-constraints-around-sync)
+  - [13.24. Connecting Sync Back to User](#1324-connecting-sync-back-to-user)
+  - [13.25. Optional Properties](#1325-optional-properties)
+  - [13.26. Extracing an Attributes Class](#1326-extracing-an-attributes-class)
+  - [13.27. The Get Method's Shortcoming](#1327-the-get-methods-shortcoming)
+  - [13.28. Two Important Rules](#1328-two-important-rules)
+  - [13.29. An Advanced Generic Constraint](#1329-an-advanced-generic-constraint)
+  - [13.30. Re-Integrating Attributes](#1330-re-integrating-attributes)
+  - [13.31. Composition is Delegation](#1331-composition-is-delegation)
+  - [13.32. Reminder on Accessors](#1332-reminder-on-accessors)
+  - [13.33. Passthrough Methods](#1333-passthrough-methods)
+  - [13.34. A Context Issue](#1334-a-context-issue)
+  - [13.35. Setting Data While Triggering](#1335-setting-data-while-triggering)
+  - [13.36. Fetching User Data](#1336-fetching-user-data)
+  - [13.37. Saving Data](#1337-saving-data)
+  - [13.38. Composition vs Inheritance...Again!](#1338-composition-vs-inheritanceagain)
+  - [13.39. Extracting a Model Class](#1339-extracting-a-model-class)
+  - [13.40. Extending the User](#1340-extending-the-user)
+  - [13.41. Final User Refactor](#1341-final-user-refactor)
+  - [13.42. Model Wrapup](#1342-model-wrapup)
+  - [13.43. Shortened Passthrough Methods](#1343-shortened-passthrough-methods)
+  - [13.44. Users Collection](#1344-users-collection)
+  - [13.45. Implementing a Users Collection](#1345-implementing-a-users-collection)
+  - [13.46. Parsing User JSON](#1346-parsing-user-json)
+  - [13.47. Generic User Collection](#1347-generic-user-collection)
+  - [13.48. A Class Method for Collections](#1348-a-class-method-for-collections)
+  - [13.49. View Classes](#1349-view-classes)
+  - [13.50. Building the UserForm](#1350-building-the-userform)
+  - [13.51. The UserForm's Render Method](#1351-the-userforms-render-method)
+  - [13.52. Rendering HTML](#1352-rendering-html)
+  - [13.53. Defining an Events Map](#1353-defining-an-events-map)
+  - [13.54. Binding Event Handlers](#1354-binding-event-handlers)
+  - [13.55. Adding Model Properties](#1355-adding-model-properties)
+  - [13.56. Binding Events on Class Name](#1356-binding-events-on-class-name)
+  - [13.57. Adding Methods to the User](#1357-adding-methods-to-the-user)
+  - [13.58. Re-Rendering on Model Change](#1358-re-rendering-on-model-change)
+  - [13.59. Reading Input Text](#1359-reading-input-text)
+  - [13.60. Strict Null Checks](#1360-strict-null-checks)
+  - [13.61. Reusable View Logic](#1361-reusable-view-logic)
+  - [13.62. Extracting a View Class](#1362-extracting-a-view-class)
+  - [13.63. Extending with Generic Constraints](#1363-extending-with-generic-constraints)
+  - [13.64. Saving Data From a View](#1364-saving-data-from-a-view)
+  - [13.65. UserEdit and UserShow](#1365-useredit-and-usershow)
+  - [13.66. Nesting with Regions](#1366-nesting-with-regions)
+  - [13.67. Mapping Regions](#1367-mapping-regions)
+  - [13.68. Testing Region Mapping](#1368-testing-region-mapping)
+  - [13.69. View Nesting](#1369-view-nesting)
+  - [13.70. Collection Views](#1370-collection-views)
+  - [13.71. CollectionView Implementation](#1371-collectionview-implementation)
+  - [13.72. App Wrapup](#1372-app-wrapup)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -3264,3 +3337,1529 @@ summary.buildAndPrintReport(matchReader.matches);
   printHousesOrCars<House>([new House(), new House()]);
   printHousesOrCars<Car>([new Car(), new Car()]);
   ```
+
+# 13. Let's Build a Web Framework
+## 13.1. App Overview
+1. This web framework is similar to other front-end web framework such as "React" and "Vue".
+
+## 13.2. Parcel Setup
+1. We firstly ensure `parcel-bundler` is installed globally on the machine.
+
+## 13.3. Framework Structure
+1. In this project, we will build `Model` and `View` classes
+   1. Model Class - Handle data, used to represent `Users`, `Blog Posts`, `Image`, etc.
+   2. View Class - Handle HTML and events caused by the user (like clicks)
+2. When looking into the requirements, we'd notice that we may need to create a class to represent a `User` and all of its data (like name and age).
+3. `User` class needs to have the ability to store some data, retrieve it, and change it.
+4. `User` class needs to have the ability to store some data, retrieve it, and change it and notify the rest of the app when some data is changed.
+5. `User` needs to be able to persist data to an outside server, and then retrieve it at some future point.
+6. Extraction Approach
+   1. Build class `User` as a "mega" class with tons of methods
+   2. Refactor `User` to use composition
+   3. Refactor `User` to be a reusable class that can represent any piece of data, not just a `User`.
+  <img src="./images/142-user_class.png">
+
+## 13.4. Designing the User
+1. A `User` class can have the following properties and methods
+   1. `private data: UserProps` - Object to store information about a particular user (name, age).
+   2. `get('name'): (string | number)` - Gets a single piece of info about this user (name, age).
+   3. `set(update: UserProps):void` - Changes information about this user (name, age).
+   4. `on(eventName: string, callback: () => {}` - Register an event handler with this object, so other parts of the app know when something changes.
+   5. `trigger(eventName: string): void` - Triggers an event to tell other parts of the app that something has changed.
+   6. `fetch(): Promise` - Fetches some data from the server about a particular user.
+   7. `save(): Promise` - Saves some data about this user to the server.
+
+## 13.5. Retrieving User Properties
+1. We create a new model `Users` in `models` directory in `src`
+  ```ts
+  // src/models/User.ts
+  interface UserProps {
+    name: string;
+    age: number;
+  }
+
+  export class User {
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+  }
+  ```
+2. We can try to create an instance and test the class.
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const user = new User({ name: 'Allen', age: 30 });
+
+  console.log(user.get('name'));
+  console.log(user.get('age'));
+  ```
+
+## 13.6. Optional Interface Properties
+1. In the previous setup, we can't update only a specific property after we create the instance.
+2. We can use anther feature in `Typescript` for "**optional interface properties**" by giving a question mark before the column in `interface`. It indicates that the property is optional.
+3. Besides, we can create an empty `User` without any initial value bond to the instance when the user is filling the registration form to sign up. 
+  ```ts
+  // src/models/User.ts
+  interface UserProps {
+    name?: string;
+    age?: number;
+  }
+
+  export class User {
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+  }
+  ```
+
+## 13.7. An Eventing System
+1. This is similar to use the DOM event handler in frontend JavaScript. 
+2. In `User` class, each instance has a `on` and `trigger` methods that work accordingly to the events and data change during the user session.
+
+## 13.8. Listener Support
+1. We can use type alias with keyword `type` to declare a type as variable.
+2. It can be very confusing to put an empty arrow function as type annotation when declaring a property or method
+  ```ts
+  // src/models/User.ts
+  interface UserProps {
+    name?: string;
+    age?: number;
+  }
+
+  // type annotation makes the code more readable
+  // and prevent confusing on passing
+  // an empty function to a property or method
+  type Callback = () => {};
+
+  export class User {
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+
+    on(eventName: string, callback: Callback): void {}
+
+    // this can be very confusing to pass 
+    // empty arrow function while it's only a type annotation
+    on(eventName: string, callback: () => {}): void {}
+  }
+  ```
+
+## 13.9. Storing Event Listeners
+1. We create anther property `events` to store the events that a `User` instance can handle.
+2. In this case, we'd like to keep event handler general so the `key` as the property name is `string`, while it takes an array of callback functions that can be triggered by order when the event happens.
+  ```ts
+  // src/models/User.ts
+  interface UserProps {
+    name?: string;
+    age?: number;
+  }
+
+  // type annotation makes the code more readable
+  // and prevent confusing on passing
+  // an empty function to a property or method
+  type Callback = () => {}; // this is not correct!
+
+  export class User {
+    // property to store events to handle
+    events: { [key: string]: Callback[] } = {};
+
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+
+    on(eventName: string, callback: Callback): void {}
+  }
+  ```
+
+## 13.10. Dynamic Array Creation
+1. In Typescript, the type annotation with an empty function that returns nothing, we should give `type Callback = () => void` rather than `() => {}` which actaully means the function will return an empty object.
+  ```ts
+  // src/models/User.ts
+  interface UserProps {
+    name?: string;
+    age?: number;
+  }
+
+  // type annotation makes the code more readable
+  // and prevent confusing on passing
+  // an empty function to a property or method
+  type Callback = () => void;
+
+  export class User {
+    events: { [key: string]: Callback[] } = {};
+
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+
+    on(eventName: string, callback: Callback): void {
+      const handlers = this.events[eventName] || []; // assign an empty array if this.events[eventName] is undefined
+      handlers.push(callback);
+      this.events[eventName] = handlers;
+    }
+  }
+  ```
+
+## 13.11. Triggering Event Callbacks
+1. Add `trigger` method in `User` class.
+  ```ts
+  // src/models/User.ts
+  interface UserProps {
+    name?: string;
+    age?: number;
+  }
+
+  // type annotation makes the code more readable
+  // and prevent confusing on passing
+  // an empty function to a property or method
+  type Callback = () => void;
+
+  export class User {
+    events: { [key: string]: Callback[] } = {};
+
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+
+    on(eventName: string, callback: Callback): void {
+      const handlers = this.events[eventName] || []; // assign an empty array if this.events[eventName] is undefined
+      handlers.push(callback);
+      this.events[eventName] = handlers;
+    }
+
+    trigger(eventName: string): void {
+      const handlers = this.events[eventName];
+
+      if (!handlers || !handlers.length) return;
+
+      handlers.forEach((callback) => {
+        callback();
+      });
+    }
+  }
+  ```
+
+## 13.12. Adding JSON Server
+1. We set up a server which allows read and store data in JSON foramt. 
+2. We install `npm install -g json-server` and create `db.json` in the root directory.
+  ```json
+  {
+    "users": []
+  }
+  ```
+3. Start the server with `json-server -w db.json` which points the json file as the entry point.
+4. By starting the server, json server knows there's a `users` collection to serve.
+5. In addition, we now need 2 terminal windows to run `json-server -w db.json` and `parcel index.html`. We can also set up the scripts in `package.json`.
+  ```json
+  // package.json
+  {
+    "scripts": {
+      "start:db": "json-server -w db.json",
+      "start:parcel": "parcel index.html"
+    }
+  }
+  ```
+
+## 13.13. Understanding REST conventions
+1. JSON server follow RESTful API conventions so we can easily manipulate with the endpoints.
+   1. `GET` - `/posts` - Retrieve all posts
+   2. `GET` - `posts/:id` - Retrieve post with the given ID
+   3. `POST` - `posts` - Create a new post
+   4. `PUT` - `/posts/:id` - Update a post
+   5. `DELETE` - `/posts/:id` - Delete a post
+2. We can use `axios` to make `POST` and `GET` request to create or fetch data of a user by ID.
+  ```ts
+  // index.ts
+  import axios from 'axios';
+
+  axios.post('http://localhost:3000/users', {
+    name: 'myname',
+    age: 20,
+  });
+
+  axios.get('http://localhost:3000/users/1');
+  ```
+3. The new users create into `db.json` will automatically assign a unique ID. We can use this property to differentiate if the data has been stored in the database or is just created by the `User` model.
+4. Therefore, in the `UserProps` `interface`, it should also indicate that the instance may have an `id`.
+
+## 13.14. Adding Fetch Functionality
+1. The first thing is to add `id` property in `UserProps` in `User` class. 
+2. We add `fetch` method on `User` class which users `set` method to assign incoming data to the instance and update all its properties.
+  ```ts
+  // src/models/User.ts
+  import axios, { AxiosResponse } from 'axios';
+
+  interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  // type annotation makes the code more readable
+  // and prevent confusing on passing
+  // an empty function to a property or method
+  type Callback = () => void;
+
+  export class User {
+    events: { [key: string]: Callback[] } = {};
+
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+
+    on(eventName: string, callback: Callback): void {
+      const handlers = this.events[eventName] || []; // assign an empty array if this.events[eventName] is undefined
+      handlers.push(callback);
+      this.events[eventName] = handlers;
+    }
+
+    trigger(eventName: string): void {
+      const handlers = this.events[eventName];
+
+      if (!handlers || !handlers.length) return;
+
+      handlers.forEach((callback) => {
+        callback();
+      });
+    }
+
+    fetch(): void {
+      axios
+        .get(`http://localhost:3000/users/${this.get('id')}`)
+        .then((response: AxiosResponse): void => {
+          this.set(response.data);
+        });
+    }
+  }
+  ```
+
+## 13.15. Successfully Fetching Model Data
+1. We can pretend that we have got the `id` and use it to fetch data from the server. 
+2. Note that this is incorrect that we don't get ID in advance and fetch its data. This issue will be solved in the future, but now we just hard code this part to check if `fetch` method works on the instance.
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const user = new User({ id: 1 });
+
+  user.fetch();
+  ```
+
+## 13.16. Saving User Data
+1. Note that we can check if a `User` instance has had an ID which means if user is just created or has been stored in the database.
+2. According to the type and state of the user, we can decide whether to send a `POST` request to create a user or `PUT` request to update the user data.
+  ```ts
+  // src/models/User.ts
+  import axios, { AxiosResponse } from 'axios';
+
+  interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  // type annotation makes the code more readable
+  // and prevent confusing on passing
+  // an empty function to a property or method
+  type Callback = () => void;
+
+  export class User {
+    events: { [key: string]: Callback[] } = {};
+
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+
+    on(eventName: string, callback: Callback): void {
+      const handlers = this.events[eventName] || []; // assign an empty array if this.events[eventName] is undefined
+      handlers.push(callback);
+      this.events[eventName] = handlers;
+    }
+
+    trigger(eventName: string): void {
+      const handlers = this.events[eventName];
+
+      if (!handlers || !handlers.length) return;
+
+      handlers.forEach((callback) => {
+        callback();
+      });
+    }
+
+    fetch(): void {
+      axios
+        .get(`http://localhost:3000/users/${this.get('id')}`)
+        .then((response: AxiosResponse): void => {
+          this.set(response.data);
+        });
+    }
+
+    save(): void {
+      const id = this.get('id');
+      if (id) {
+        // put
+        axios.put(`http://localhost:3000/users/${id}`, this.data);
+      } else {
+        // post
+        axios.post('http://localhost:3000/users', this.data);
+      }
+    }
+  }
+  ```
+3. We can test either to update a user data or create a user
+  ```ts
+  // index.ts 
+  import { User } from './models/User';
+
+  const user = new User({ id: 1 });
+
+  user.set({ name: 'NEW NAME', age: 33 });
+
+  user.save();
+
+  const user2 = new User({ name: 'new record', age: 0 });
+
+  user2.save();
+  ```
+
+## 13.17. Refactoring with Composition
+1. We extract the `on` and `trigger` method from `User` class.
+  ```ts
+  //src/models/Eventing.ts
+  type Callback = () => void;
+
+  export class Eventing {
+    events: { [key: string]: Callback[] } = {};
+
+    on(eventName: string, callback: Callback): void {
+      const handlers = this.events[eventName] || []; // assign an empty array if this.events[eventName] is undefined
+      handlers.push(callback);
+      this.events[eventName] = handlers;
+    }
+
+    trigger(eventName: string): void {
+      const handlers = this.events[eventName];
+
+      if (!handlers || !handlers.length) return;
+
+      handlers.forEach((callback) => {
+        callback();
+      });
+    }
+  }
+  ```
+
+## 13.18. Re-Integrating 
+1. After extracting `on` and `trigger` method, we have to integrate it back to ensure `User` class runs normal. 
+  <img src="./images/157-integrating-eventing-class.png">
+2. We have 3 options to solve this issue.
+   1. Accept dependencies as second constructor argument
+    ```ts
+    // refer Eventing in constructor
+    export class User {
+      constructor(
+        private data: UserProps,
+        private events: Eventing
+      ) {}
+    }
+
+    // need to pass an Eventing instance as 2nd argument
+    new User({id: 1}, new Eventing());
+    ```
+   2. Only accept dependecies into constructor and define a `static` class method to preconfigure `User` and assign properties afterwards.
+    ```ts
+    export class User {
+      static fromData(data: UserProps): User {
+        const user = new User(new Eventing());
+        user.set(data);
+        return user;
+      }
+
+      private data: UserProps;
+
+      constructor(private events: Eventing) {}
+    }
+    ```
+   3. Only accept properties into constructor and hard code dependencies as class properties. 
+      1. In this case, though `User` can only the same module fromr `Eventing`, we hardly change the class, as there's nearly no scenraio that we may use other class than `Eventing`.
+      2. The only downside is that we can't change the module used in `User`.
+    ```ts
+    export class User {
+      events: Eventing = new Eventing();
+    }
+    ```
+
+## 13.19. Composition with Nested Objects
+1. We implement the 3 option from the previous section.
+  ```ts
+  // src/models/User.ts
+  import axios, { AxiosResponse } from 'axios';
+  import { Eventing } from './Eventing';
+
+  interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  export class User {
+    public events: Eventing = new Eventing();
+
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+
+    fetch(): void {
+      axios
+        .get(`http://localhost:3000/users/${this.get('id')}`)
+        .then((response: AxiosResponse): void => {
+          this.set(response.data);
+        });
+    }
+
+    save(): void {
+      const id = this.get('id');
+      if (id) {
+        // put
+        axios.put(`http://localhost:3000/users/${id}`, this.data);
+      } else {
+        // post
+        axios.post('http://localhost:3000/users', this.data);
+      }
+    }
+  }
+  ```
+2. After refactoring, we need to call the method by accessing it in the nested object `events`.
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const user = new User({ name: 'new record', age: 0 });
+
+  user.events.on('change', () => {
+    console.log('change');
+  });
+
+  user.events.trigger('change');
+  ```
+
+## 13.20. A More Complicated Extraction
+1. We extract `fetch` and `save` method from `User`.
+2. In this case, we have to map the relationship between `Sync` and `User`, as `Sync` instances use `set` and `get` method from `User`.
+  ```ts
+  // src/Models/Sync.ts
+  import axios, { AxiosResponse } from 'axios';
+
+  export class Sync {
+    fetch(): void {
+      axios
+        .get(`http://localhost:3000/users/${this.get('id')}`)
+        .then((response: AxiosResponse): void => {
+          this.set(response.data);
+        });
+    }
+
+    save(): void {
+      const id = this.get('id');
+      if (id) {
+        // put
+        axios.put(`http://localhost:3000/users/${id}`, this.data);
+      } else {
+        // post
+        axios.post('http://localhost:3000/users', this.data);
+      }
+    }
+  }
+  ```
+
+## 13.21. Options for Adapting Sync
+1. We can solve the integrating issue in several ways.
+   1. Sync gets function arguments that we set `UserProps` as the arugment, whilte the downside is that the method will be bond and can use only on instance from `User`.
+      1. `save(id: number, data: UserProps):void`
+      2. `fetch(id: number): UserProps`
+   2. Sync expects arguments that satisfy interfaces `Serialize` and `Deserialze`.
+      1. Serialize - Convert Data from and object into some save-able format (json).
+      2. Deserialize - Put data on an object using some previously saved data (json).
+   3. Sync is a generic class to customize the type of 'data' coming into `save`.
+    <img src="./images/160-options_adapting_sync.png">
+
+## 13.22. Refactoring Sync
+1. We assume that `Sync` instance only works with `User` instance at the moment and take out data handling logic, so `Sync` instances only returns a `Promise` back for the model to handle.
+  ```ts
+  // src/models/Sync.ts
+  import axios, { AxiosPromise } from 'axios';
+  import { UserProps } from './User';
+
+  export class Sync {
+    constructor(public rootUrl: string) {}
+
+    fetch(id: number): AxiosPromise {
+      // only return a promise rather than set the data
+      return axios.get(`${this.rootUrl}/${id}`);
+    }
+
+    save(data: UserProps): AxiosPromise {
+      const { id } = data;
+      if (id) {
+        // put
+        return axios.put(`${this.rootUrl}/${id}`, data);
+      } else {
+        // post
+        return axios.post(this.rootUrl, data);
+      }
+    }
+  }
+  ```
+
+## 13.23. Generic Constraints Around Sync
+1. After we convert `User` as generic class, we should use `<T>` for the class. 
+2. However, in `save` method below, Typescript doesn't know if the generic type has a specific property or method.
+3. Therefore, we can use `interface` and `extends` the generic type to ensure the incoming data must have the `interface` that has a `id` property.
+  ```ts
+  // src/models/Sync.ts
+  import axios, { AxiosPromise } from 'axios';
+
+  interface HasId {
+    id: number;
+  }
+
+  export class Sync<T extends HasId> {
+    constructor(public rootUrl: string) {}
+
+    fetch(id: number): AxiosPromise {
+      // only return a promise rather than set the data
+      return axios.get(`${this.rootUrl}/${id}`);
+    }
+
+    save(data: T): AxiosPromise {
+      const { id } = data;
+
+      if (id) {
+        // put
+        return axios.put(`${this.rootUrl}/${id}`, data);
+      } else {
+        // post
+        return axios.post(this.rootUrl, data);
+      }
+    }
+  }
+  ```
+
+## 13.24. Connecting Sync Back to User
+1. According to the setup in the previous lecture, we can import `Sync` to use in `User` model.
+2. However, this configuration in `User.ts` is not done yet.
+  ```ts
+  // src/models/User.ts
+  import { Eventing } from './Eventing';
+  import { Sync } from './Sync';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User {
+    public events: Eventing = new Eventing();
+    public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+
+    constructor(private data: UserProps) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: UserProps): void {
+      Object.assign(this.data, update);
+    }
+  }
+  ```
+
+## 13.25. Optional Properties
+1. As to resolve the error of missing `id` property in `Sync` instance, we can turn the property as optional. Note that the only type `id` can be is `number`.
+  ```ts
+  // src/models/Sync.ts
+  interface HasId {
+    id?: number;
+  }
+  ```
+2. We can use `tsc --init` in the terminal to generate a `tsconfig.json` for the compiling setting of Typescript. 
+3. By default, Typescript will turn on `"strict": true` which includes `"strictNullChecks": true`. This setting will turn an optional property in `interface` to undefined when the instance doesn't have the property.
+4. Therefore, if we check the `id` type in the methods, it can be either `number` or `undefined` after we add `tsconfig.ts` and have `strict` mode turning on.
+5. However, we don't want the whole project having strict mode turning on which cause have other undesirable behaviors from Typescript.
+
+## 13.26. Extracing an Attributes Class
+1. We extract the attributes `get` and `set` method from `User` to create a generic class. 
+  ```ts
+  // src/models/Attributes.ts
+  export class Attributes<T> {
+    constructor(private data: T) {}
+
+    get(propName: string): number | string {
+      return this.data[propName];
+    }
+
+    set(update: T): void {
+      Object.assign(this.data, update);
+    }
+  }
+  ```
+
+## 13.27. The Get Method's Shortcoming
+1. In `Attribute`, we have type annotation for `get` method as the returned value can be either `number`, `string`, or `boolean`.
+2. However, we'd like to manipulate the variable on certain type, we can only use "Type Guards" or have the common methods shared between `number`, `string`, and `boolean`.
+  ```ts
+  // src/models/Attributes.ts
+  import { UserProps } from './User';
+
+  export class Attributes<T> {
+    constructor(private data: T) {}
+
+    get(propName: string): number | string | boolean {
+      return this.data[propName];
+    }
+
+    set(update: T): void {
+      Object.assign(this.data, update);
+    }
+  }
+
+  const attrs = new Attributes<UserProps>({ id: 5, name: 'aname', age: 20 });
+
+  // 'name' can be either number, string, or boolean
+  const name = attrs.get('name');
+
+  // this is not ideal as all attribute will be turned into numbers
+  const id = attrs.get('id') as number;
+  ```
+
+## 13.28. Two Important Rules
+1. In Typescript, strings can be types
+   1. Keyword `type` can not only define array of types as "tuples" but other structure. 
+   2. In the following case, we can only call `printName` function if the given string is aligned to the one in `BestName` alias type.
+     ```ts
+     type BestName = 'aname';
+     const printName = (name: BestName):void => {};
+
+     printName('aname');
+     printName('bname'); // this will return error
+     ```
+2. In Javascript, all object keys are strings
+  ```js
+  const colors = {};
+  colors.red = 'red';
+  colors[5] = 'red';
+  console.log(colors);
+  // { red: 'red', '5': 'red' }
+  colors['5'] === colors[5] // true
+  ```
+
+## 13.29. An Advanced Generic Constraint
+1. To make `Attributes` generic, we can use a type constraint with `extends` and `keyof`.
+2. `K` in this case represents any of the properties from type `T`. For example, if we pass `UserProps` as `T`, `K` can be `name` as `string`, `age` as `number`, or `id` as `number`. 
+3. `T[K]` represents object parsing as calling value from a property from the object. 
+  ```ts
+  // src/models/Attributes.ts
+  import { UserProps } from './User';
+
+  export class Attributes<T> {
+    constructor(private data: T) {}
+
+    get<K extends keyof T>(key: K): T[K] {
+      return this.data[key];
+    }
+
+    set(update: T): void {
+      Object.assign(this.data, update);
+    }
+  }
+
+  const attrs = new Attributes<UserProps>({
+    id: 5,
+    age: 20,
+    name: 'name',
+  });
+
+  const name = attrs.get('name');
+  const age = attrs.get('age');
+  const id = attrs.get('id');
+
+  // T[K] 
+  const color = { color: 'red' };
+  color['color'] === 'red'; // true
+  ```
+  <img src="./images/168-generic_constraint.png">
+
+## 13.30. Re-Integrating Attributes
+```ts
+// src/models/User.ts
+import { Eventing } from './Eventing';
+import { Sync } from './Sync';
+import { Attributes } from './Attributes';
+
+export interface UserProps {
+  id?: number;
+  name?: string;
+  age?: number;
+}
+
+const rootUrl = `http://localhost:3000/users`;
+
+export class User {
+  public events: Eventing = new Eventing();
+  public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+  public attributes: Attributes<UserProps>;
+
+  constructor(attrs: UserProps) {
+    this.attributes = new Attributes<UserProps>(attrs);
+  }
+}
+```
+
+## 13.31. Composition is Delegation
+1. After we refactor the code, the process will become cumbersome than we firstly built up the model.
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const user = new User({ name: 'another record', age: 30 });
+
+  const id = user.attributes.get('id');
+  const name = user.attributes.get('name');
+  const age = user.attributes.get('age');
+
+  user.sync.save({ id, name, age });
+
+  // Before
+  user.save(); 
+  ```
+2. We can set up `Caller` in `User`, so when we try to access the methods, we don't need to touch the properties or methods from the composition object reference.
+3. Therefore, we can call the methods on the instance directly with the concept `delegation`.
+  <img src="./images/170_composition_delegation.png">
+
+## 13.32. Reminder on Accessors
+1. There are 2 types of methods to implement on `User`.
+2. Direct passthrough of arguments - `get`, `on`, and `trigger`.
+3. Need coordination between different modules in `User` - `set`, `fetch`, and `save`.
+4. We can use keyword `get` before declaring the method to turn it into a property-like method.
+  ```ts
+  class Person {
+    constructor(public firstName: string, public lastName: string) {}
+
+    get fullName(): string {
+      return `${this.firstName} ${this.lastName}`;
+    }
+  }
+
+  const person = new Person('firstname', 'lastname');
+  console.log(person.fullName);
+  ```
+
+## 13.33. Passthrough Methods
+1. It's not ideal to call the method by passing through the class directly as if the method changes the way of calling, we need to update all the classes composed with the class (`Eventing` in this case).
+2. Therefore, we can use a getter with keyword `get` which simply returns the method from the referred model, which can be called and have simliar syntax as using a native method.
+  ```ts
+  // src/models/User.ts
+  import { Eventing } from './Eventing';
+  import { Sync } from './Sync';
+  import { Attributes } from './Attributes';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User {
+    public events: Eventing = new Eventing();
+    public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+    public attributes: Attributes<UserProps>;
+
+    constructor(attrs: UserProps) {
+      this.attributes = new Attributes<UserProps>(attrs);
+    }
+
+    // this is not ideal as if the on method changes in `Eventing`, all the classes using this method will need to be udpated
+    on(eventName: string, callback: Callback): void {
+      this.events.on(eventName, callback);
+    }
+
+    get on() {
+      return this.events.on;
+    }
+  }
+  ```
+3. We can call `on` directly on the instance.
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const user = new User({ name: 'name', age: 20 });
+
+  // user.on returns the method referring to Eventing class
+  const on = user.on;
+
+  on.('change', () => {});
+
+  // shorthand to call the method directly
+  user.on('change', () => {
+    console.log('user was changed');
+  });
+  ```
+4. We can add getter functions in `User`.
+  ```ts
+  // src/models/User.ts
+  import { Eventing } from './Eventing';
+  import { Sync } from './Sync';
+  import { Attributes } from './Attributes';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User {
+    public events: Eventing = new Eventing();
+    public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+    public attributes: Attributes<UserProps>;
+
+    constructor(attrs: UserProps) {
+      this.attributes = new Attributes<UserProps>(attrs);
+    }
+
+    get on() {
+      return this.events.on;
+    }
+
+    get trigger() {
+      return this.events.trigger;
+    }
+
+    get get() { // this isn't correct yet
+      return this.attributes.get;
+    }
+  }
+  ```
+
+## 13.34. A Context Issue
+1. In Javascript, if we decalre a variable with the method using `this` from an object, the `this` will refer to nothing, as there's no object that `this` pointing to.
+2. When an object refering `this` and calls a method, the conext is similar to replace `this` with the object that the method calls.
+  ```js
+  const colors = {
+    color: 'red',
+    printColor() {
+      console.log(this.color); // 'this.color' is like 'colors.color'
+    },
+  };
+
+  colors.printColor();
+
+  const printColor = colors.printColor; // 'this' is no longer bond to 'colors'
+
+  printColor(); // printColor has nothing to refer on the left
+  ```
+3. Therefore, when we are trying to call `user.get('name')`, `get` method is referring to `User` instance. However, if we look back into `Attributes`, the data is on `this.data[key]`, while in the previous case, we were trying to call the property out from `user.data[key]`, which the instance has no such property.
+4. We can change the method in `Attributes` into an arrow function which technically changes the contect for `this`, so `this` will refer to the correct object holding which is the` Attribute` instance.
+5. We then update the methods in `Eventing`
+  ```ts
+  // src/models/Attributes.ts
+  export class Attributes<T> {
+    constructor(private data: T) {}
+
+    get = <K extends keyof T>(key: K): T[K] => {
+      return this.data[key];
+    };
+
+    set(update: T): void {
+      Object.assign(this.data, update);
+    }
+  }
+
+  // src/models/Eventing.ts
+  type Callback = () => void;
+
+  export class Eventing {
+    events: { [key: string]: Callback[] } = {};
+
+    on = (eventName: string, callback: Callback): void => {
+      const handlers = this.events[eventName] || []; // assign an empty array if this.events[eventName] is undefined
+      handlers.push(callback);
+      this.events[eventName] = handlers;
+    };
+
+    trigger = (eventName: string): void => {
+      const handlers = this.events[eventName];
+
+      if (!handlers || !handlers.length) return;
+
+      handlers.forEach((callback) => {
+        callback();
+      });
+    };
+  }
+  ```
+
+## 13.35. Setting Data While Triggering
+1. We then can test by giving a `set` method in `User`, when the user uses "set", it means some data of the `User` instance is changed.
+2. As we register in `index.ts`, it prints a hint that something is changed.
+  ```ts
+  // user/models/User.ts
+  import { Eventing } from './Eventing';
+  import { Sync } from './Sync';
+  import { Attributes } from './Attributes';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User {
+    public events: Eventing = new Eventing();
+    public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+    public attributes: Attributes<UserProps>;
+
+    constructor(attrs: UserProps) {
+      this.attributes = new Attributes<UserProps>(attrs);
+    }
+
+    get on() {
+      return this.events.on;
+    }
+
+    get trigger() {
+      return this.events.trigger;
+    }
+
+    get get() {
+      return this.attributes.get;
+    }
+
+    set(update: UserProps): void {
+      this.attributes.set(update);
+      this.events.trigger('change');
+    }
+  }
+  ```
+3. In this case, we register a printing function, to log a message when a `User` instance is changed. 
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const user = new User({ name: 'another record', age: 30 });
+
+  console.log(user.get('name'));
+
+  // register a function on 'change'
+  user.on('change', () => {
+    console.log('User was changed, we probably need to update some HTML');
+  });
+
+  user.set({ name: 'New name' });
+  ```
+
+## 13.36. Fetching User Data
+1. In this case, we can use the method directly on the instance (the passthrough method) as it is integrated with trigger that we set up. Note that we can still call it from `this.attributes` directly to set the update.
+  ```ts
+  // src/models/User.ts
+  import { Eventing } from './Eventing';
+  import { Sync } from './Sync';
+  import { Attributes } from './Attributes';
+  import { AxiosResponse } from 'axios';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User {
+    public events: Eventing = new Eventing();
+    public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+    public attributes: Attributes<UserProps>;
+
+    constructor(attrs: UserProps) {
+      this.attributes = new Attributes<UserProps>(attrs);
+    }
+
+    get on() {
+      return this.events.on;
+    }
+
+    get trigger() {
+      return this.events.trigger;
+    }
+
+    get get() {
+      return this.attributes.get;
+    }
+
+    set(update: UserProps): void {
+      this.attributes.set(update);
+      this.events.trigger('change');
+    }
+
+    fetch(): void {
+      const id = this.attributes.get('id'); // we can use this.get('id') as well to use the method directly form this instance
+
+      if (typeof id !== 'number') {
+        throw new Error('Cannot fetch without an id');
+      }
+
+      this.sync.fetch(id).then((response: AxiosResponse): void => {
+        // we don't refer directly as to enjoy the trigger being added in this model
+        // this.attributes.set(response.data);
+        this.set(response.data);
+      });
+    }
+  }
+  ```
+2. We can try to fetch user data by giving the user `id`.
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const user = new User({ id: 1 });
+
+  user.on('change', () => {
+    console.log(user);
+  });
+
+  user.fetch(); // the user instance fetched from server will be printed out 
+  ```
+
+## 13.37. Saving Data
+1. We don't have any method that can return all the properties and data that an instance has from `Attributes`, so we create a new method to return all data at once.
+  ```ts
+  // src/models/Attributes.ts
+  export class Attributes<T> {
+    constructor(private data: T) {}
+
+    get = <K extends keyof T>(key: K): T[K] => {
+      return this.data[key];
+    };
+
+    set(update: T): void {
+      Object.assign(this.data, update);
+    }
+
+    getAll(): T {
+      return this.data;
+    }
+  }
+  ```
+2. We add `save` method in `User` to handle and update data to a specific server in database.
+3. Besides, we can trigger `save` and `error` in case the process succeed or fails.
+  ```ts
+  // src/models/Users.ts
+  import { Eventing } from './Eventing';
+  import { Sync } from './Sync';
+  import { Attributes } from './Attributes';
+  import { AxiosResponse } from 'axios';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User {
+    public events: Eventing = new Eventing();
+    public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+    public attributes: Attributes<UserProps>;
+
+    constructor(attrs: UserProps) {
+      this.attributes = new Attributes<UserProps>(attrs);
+    }
+
+    get on() {
+      return this.events.on;
+    }
+
+    get trigger() {
+      return this.events.trigger;
+    }
+
+    get get() {
+      return this.attributes.get;
+    }
+
+    set(update: UserProps): void {
+      this.attributes.set(update);
+      this.events.trigger('change');
+    }
+
+    fetch(): void {
+      const id = this.attributes.get('id'); // we can use this.get('id') as well to use the method directly form this instance
+
+      if (typeof id !== 'number') {
+        throw new Error('Cannot fetch without an id');
+      }
+
+      this.sync.fetch(id).then((response: AxiosResponse): void => {
+        // we don't refer directly as to enjoy the trigger being added in this model
+        // this.attributes.set(response.data);
+        this.set(response.data);
+      });
+    }
+
+    save(): void {
+      this.sync
+        .save(this.attributes.getAll())
+        .then((response: AxiosResponse): void => {
+          this.trigger('save');
+        })
+        .catch(() => {
+          this.trigger('error');
+        });
+    }
+  }
+  ```
+4. However, at this point, the model is heavily rely on the `User` that we can't use it on other types of instance such as "blog post" or other entities.
+
+## 13.38. Composition vs Inheritance...Again!
+1. Some issues now are that 
+   1. The nested objects are "public", while they probably shouldn't be.
+   2. The nested objects are hardcoded and don't use `interface`.
+   3. We don't want to have to reimplement all these methods for each new "model" we create.
+2. Creating another class `Model` for `User` and the other new entities to refer to with composition concept.
+3. However, all methods have to be re-implemented as we set up for passthrough method we create in `User`. 
+4. The other way to work around is to set all methods from the generic `Model` `public`, so it can be accessed from the instance, while this turns out anthother problems that some methods are available on the `Instance`, and some are only available on `Instance.model`. This can make the coding syntax very confusing.
+5. Therefore, we may use "**Inheritance**" rather than "**Composition**" in this case.
+
+## 13.39. Extracting a Model Class
+1. Rather than referring to other objects, we use `interface` to define the class `Model`.
+  ```ts
+  // src/models/Model.ts
+  import { AxiosPromise } from 'axios';
+
+  type Callback = () => void;
+
+  interface ModelAttributes<T> {
+    set(update: T): void;
+    getAll(): T;
+    get<K extends keyof T>(key: K): T[K];
+  }
+
+  interface Sync<T> { // the returned value can be other types other than AxiosPromise
+    fetch(id: number): AxiosPromise;
+    save(data: T): AxiosPromise;
+  }
+
+  interface Events {
+    on(eventName: string, callback: Callback): void;
+    trigger(eventName: string): void;
+  }
+
+  export class Model {}
+  ```
+
+## 13.40. Extending the User
+1. We then can take the methods declared in `User` to be used in `Model`.
+2. Note that since `T` type data doesn't know if `id` exists from the by incoming data structure, we can create an `interface` and have an optional `id` property and use `T extends HasId` to indicate to Typescript that the incoming data may or may not have `id` property.
+  ```ts
+  // src/models/Model.ts
+  import { AxiosPromise, AxiosResponse } from 'axios';
+  import { Attributes } from './Attributes';
+
+  type Callback = () => void;
+
+  interface ModelAttributes<T> {
+    set(update: T): void;
+    getAll(): T;
+    get<K extends keyof T>(key: K): T[K];
+  }
+
+  interface Sync<T> {
+    fetch(id: number): AxiosPromise;
+    save(data: T): AxiosPromise;
+  }
+
+  interface Events {
+    on(eventName: string, callback: Callback): void;
+    trigger(eventName: string): void;
+  }
+
+  interface HasId {
+    id?: number;
+  }
+
+  export class Model<T extends HasId> {
+    constructor(
+      private attributes: ModelAttributes<T>,
+      private events: Events,
+      private sync: Sync<T>
+    ) {}
+
+    get on() {
+      return this.events.on;
+    }
+
+    get trigger() {
+      return this.events.trigger;
+    }
+
+    get get() {
+      return this.attributes.get;
+    }
+
+    set(update: T): void {
+      this.attributes.set(update);
+      this.events.trigger('change');
+    }
+
+    fetch(): void {
+      const id = this.attributes.get('id');
+
+      if (typeof id !== 'number') {
+        throw new Error('Cannot fetch without an id');
+      }
+
+      this.sync.fetch(id).then((response: AxiosResponse): void => {
+        this.set(response.data);
+      });
+    }
+
+    save(): void {
+      this.sync
+        .save(this.attributes.getAll())
+        .then((response: AxiosResponse): void => {
+          this.trigger('save');
+        })
+        .catch(() => {
+          this.trigger('error');
+        });
+    }
+  }
+  ```
+2. After configuring `Model`, we can extend `User` class from it.
+3. In this case, we pass the `UserProps` interface as the data type when declaring with the generic model.
+  ```ts
+  // src/models/User.ts
+  import { Model } from './Model';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User extends Model<UserProps> {}
+  ```
+
+## 13.41. Final User Refactor
+1. We rename the `Sync.ts` model to `ApiSync.ts`.
+2. We then can create a `static` method that builds a `User` instance rather than passing multiple `new <Class>` to create the instance.
+  ```ts
+  // src/models/User.ts
+  import { Model } from './Model';
+  import { Attributes } from './Attributes';
+  import { ApiSync } from './ApiSync';
+  import { Eventing } from './Eventing';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User extends Model<UserProps> {
+    static buildUser(attrs: UserProps): User {
+      return new User(
+        new Attributes<UserProps>(attrs),
+        new Eventing(),
+        new ApiSync<UserProps>(rootUrl)
+      );
+    }
+  }
+
+  const user = User.buildUser({ id: 1 });
+  user.get('id');
+  user.get('name');
+  user.get('age');
+  user.fetch();
+  ```
+
+## 13.42. Model Wrapup
+1. After the refactor, we can test out and create a `User` instance with `user.buildUser()`.
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const user = User.buildUser({ id: 1 });
+
+  user.on('change', () => {
+    console.log(user);
+  });
+
+  user.fetch();
+  ```
+2. In addition, if we'd like to create an `User` instance and keep the data stored locally such as at `localStorage`, we can creat another method in `User`.
+3. Note that the following methods `buildLocalUser` and `isAdminUser` are only for exmaple.
+  ```ts
+  //src/model/User.ts
+  import { Model } from './Model';
+  import { Attributes } from './Attributes';
+  import { ApiSync } from './ApiSync';
+  import { Eventing } from './Eventing';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User extends Model<UserProps> {
+    static buildUser(attrs: UserProps): User {
+      return new User(
+        new Attributes<UserProps>(attrs),
+        new Eventing(),
+        new ApiSync<UserProps>(rootUrl)
+      );
+    }
+
+    // this is for example
+    static buildLocalUser(attrs: UserProps): User {
+      return new User(
+        new Attributes<UserProps>(attrs),
+        new Eventing(),
+        new LocalSync<UserProps>()
+      );
+    }
+
+    // this is for example
+    static isAdminUser(): boolean {
+      return this.get('id') === 1; // if the admin is the user which has user id as 1
+    }
+  }
+  ```
+
+## 13.43. Shortened Passthrough Methods
+
+## 13.44. Users Collection
+
+## 13.45. Implementing a Users Collection
+
+## 13.46. Parsing User JSON
+
+## 13.47. Generic User Collection
+
+## 13.48. A Class Method for Collections
+
+## 13.49. View Classes
+
+## 13.50. Building the UserForm
+
+## 13.51. The UserForm's Render Method
+
+## 13.52. Rendering HTML
+
+## 13.53. Defining an Events Map
+
+## 13.54. Binding Event Handlers
+
+## 13.55. Adding Model Properties
+
+## 13.56. Binding Events on Class Name
+
+## 13.57. Adding Methods to the User
+
+## 13.58. Re-Rendering on Model Change
+
+## 13.59. Reading Input Text
+
+## 13.60. Strict Null Checks
+
+## 13.61. Reusable View Logic
+
+## 13.62. Extracting a View Class
+
+## 13.63. Extending with Generic Constraints
+
+## 13.64. Saving Data From a View
+
+## 13.65. UserEdit and UserShow
+
+## 13.66. Nesting with Regions
+
+## 13.67. Mapping Regions
+
+## 13.68. Testing Region Mapping
+
+## 13.69. View Nesting
+
+## 13.70. Collection Views
+
+## 13.71. CollectionView Implementation
+
+## 13.72. App Wrapup
