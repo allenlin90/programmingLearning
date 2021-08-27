@@ -4805,61 +4805,1410 @@ export class User {
   ```
 
 ## 13.43. Shortened Passthrough Methods
+1. We can rephrase the methods with shorthands without using a getter with keyword `get`.
+  ```ts
+  import { AxiosPromise, AxiosResponse } from 'axios';
+
+  type Callback = () => void;
+
+  interface ModelAttributes<T> {
+    set(update: T): void;
+    getAll(): T;
+    get<K extends keyof T>(key: K): T[K];
+  }
+
+  interface ApiSync<T> {
+    fetch(id: number): AxiosPromise;
+    save(data: T): AxiosPromise;
+  }
+
+  interface Events {
+    on(eventName: string, callback: Callback): void;
+    trigger(eventName: string): void;
+  }
+
+  interface HasId {
+    id?: number;
+  }
+
+  export class Model<T extends HasId> {
+    constructor(
+      private attributes: ModelAttributes<T>,
+      private events: Events,
+      private sync: ApiSync<T>
+    ) {}
+
+    // rephrase the methods with the shorthands
+    on = this.events.on;
+    trigger = this.events.trigger;
+    get = this.attributes.get;
+  }
+  ```
+2. Note that we couldn't do this rephrase in regular conditions, as when Typescript compile the code, the order of code execution can cause error after it's compiled.
+3. If the following example, we can notice that the method `start` is called before `engine` is initialized.
+  ```ts
+  // Typescript
+  class Engine {
+    start() {
+      console.log('Started');
+    }
+  }
+
+  class Car {
+    engine: Engine;
+
+    constructor() {
+      this.engine = new Engine();
+    }
+
+    start = this.engine.start;
+  }
+  ```
+  ```js
+  // Javascript ES5
+  "use strict";
+  var Engine = /** @class */ (function () {
+      function Engine() {
+      }
+      Engine.prototype.start = function () {
+          console.log('Started');
+      };
+      return Engine;
+  }());
+  var Car = /** @class */ (function () {
+      function Car() {
+          this.start = this.engine.start; // this is called before engine is initialized
+          this.engine = new Engine();
+      }
+      return Car;
+  }());
+  ```
+4. However, if we put the property in the constructor, the property can be initialized before the method call.
+  ```ts
+  // Typescript
+  class Engine {
+    start() {
+      console.log('Started');
+    }
+  }
+
+  class Car {
+    constructor(public engine: Engine) {}
+
+    start = this.engine.start;
+  }
+  ```
+  ```js
+  // Javascript
+  "use strict";
+  var Engine = /** @class */ (function () {
+      function Engine() {
+      }
+      Engine.prototype.start = function () {
+          console.log('Started');
+      };
+      return Engine;
+  }());
+  var Car = /** @class */ (function () {
+      function Car(engine) {
+          this.engine = engine;
+          this.start = this.engine.start;
+      }
+      return Car;
+  }());
+  ```
 
 ## 13.44. Users Collection
+1. In the current workflow, method `fetch` in `ApiSync` has a problem that we don't know the user ID before calling to the API, while the API needs an ID to fetch certain data.
+2. In this case, we can fetch all users from `/users` with a GET request according to RESTful API convention. Besides, we can create a new model `UserColleciton` with `events` and `fetch` method to handle the requests.
+3. Note that we may restructure this `UserCollection` to be `ClassCollection` or `ModelCollection` to make it general that can work on different types of models.
 
 ## 13.45. Implementing a Users Collection
+1. In this case, we create a new model `Collection` but use it for `User` model at the moment.
+  ```ts
+  // src/models/Collection.ts
+  import { User } from './User';
+  import { Eventing } from './Eventing';
+
+  export class Collection {
+    models: User[] = [];
+    events: Eventing = new Eventing();
+
+    get on() {
+      return this.events.on;
+    }
+
+    get trigger() {
+      return this.events.trigger;
+    }
+  }
+  ```
 
 ## 13.46. Parsing User JSON
+1. We update `Collection` and try to fetch the list of users from json server.
+  ```ts
+  // src/models/Collection.ts
+  import axios, { AxiosResponse } from 'axios';
+  import { User, UserProps } from './User';
+  import { Eventing } from './Eventing';
+
+  export class Collection {
+    models: User[] = [];
+    events: Eventing = new Eventing();
+
+    constructor(public rootUrl: string) {}
+
+    get on() {
+      return this.events.on;
+    }
+
+    get trigger() {
+      return this.events.trigger;
+    }
+
+    fetch(): void {
+      axios.get(this.rootUrl).then((response: AxiosResponse) => {
+        response.data.forEach((value: UserProps) => {
+          const user = User.buildUser(value);
+          this.models.push(user);
+        });
+
+        this.trigger('change');
+      });
+    }
+  }
+  ```
+2. We can try executing the model in `index.ts`. 
+  ```ts
+  // index.ts
+  import axios, { AxiosResponse } from 'axios';
+
+  axios.get('http://localhost:3000/users').then((response: AxiosResponse) => {
+    console.log(response.data);
+  });
+
+  import { Collection } from './models/Collection';
+
+  const collection = new Collection('http://localhost:3000/users');
+
+  collection.on('change', () => {
+    console.log(collection);
+  });
+
+  collection.fetch();
+  ```
 
 ## 13.47. Generic User Collection
+1. The generic type passing to declaring the class can have multiple arguments. In this case, we pass not only `T` (`User`) but `K` (`UserProps`).
+2. Besides, the class needs another argument which is a callback function deserialize the data fetching from the API. 
+  ```ts
+  // src/models/Collection.ts
+  import axios, { AxiosResponse } from 'axios';
+  import { Eventing } from './Eventing';
+
+  export class Collection<T, K> {
+    models: T[] = [];
+    events: Eventing = new Eventing();
+
+    constructor(public rootUrl: string, public deserialize: (json: K) => T) {}
+
+    get on() {
+      return this.events.on;
+    }
+
+    get trigger() {
+      return this.events.trigger;
+    }
+
+    fetch(): void {
+      axios.get(this.rootUrl).then((response: AxiosResponse) => {
+        response.data.forEach((value: K) => {
+          this.models.push(this.deserialize(value));
+        });
+
+        this.trigger('change');
+      });
+    }
+  }
+  ```
+2. We then can create a new `Collection` instance by passing the data type to work with, such as `User` and `UserProps` in this case.
+3. However, the process can still be tedious that we need to pass both `rootUrl` and the callback function when creating a new `Colleciton` instance.
+  ```ts
+  // index.ts
+  import { Collection } from './models/Collection';
+  import { User, UserProps } from './models/User';
+
+  const collection = new Collection<User, UserProps>(
+    'http://localhost:3000/users',
+    (json: UserProps) => User.buildUser(json)
+  );
+
+  collection.on('change', () => {
+    console.log(collection);
+  });
+
+  collection.fetch();
+  ```
 
 ## 13.48. A Class Method for Collections
+1. We can create a `static` method back in `User` which refers to `Collection` class.
+  ```ts
+  // src/models/User.ts
+  import { Model } from './Model';
+  import { Attributes } from './Attributes';
+  import { ApiSync } from './ApiSync';
+  import { Eventing } from './Eventing';
+  import { Collection } from './Collection';
+
+  export interface UserProps {
+    id?: number;
+    name?: string;
+    age?: number;
+  }
+
+  const rootUrl = `http://localhost:3000/users`;
+
+  export class User extends Model<UserProps> {
+    static buildUser(attrs: UserProps): User {
+      return new User(
+        new Attributes<UserProps>(attrs),
+        new Eventing(),
+        new ApiSync<UserProps>(rootUrl)
+      );
+    }
+
+    static buildUserCollection(): Collection<User, UserProps> {
+      return new Collection<User, UserProps>(rootUrl, (json: UserProps) =>
+        User.buildUser(json)
+      );
+    }
+  }
+  ```
+2. Therefore, we can call `User.buildUserCollection` directly without passing the arguments.
+  ```ts
+  // index.ts
+  import { User } from './models/User';
+
+  const collection = User.buildUserCollection();
+
+  collection.on('change', () => {
+    console.log(collection);
+  });
+
+  collection.fetch();
+  ```
 
 ## 13.49. View Classes
+1. After we set up the controller and models, we can set up the models for "**views**". 
+2. In this case, we may separate them into `UserEdit`, `UserShow`, and `UserForm` for rendering HTML, while `UserShow` and `UserForm` are the sub-class of `UserEdit`.
+   1. Each view must produce HTML.
+   2. We should be able to nest one view's HTML in another.
+   3. We need to have a good way to handle user events (clicking, typing, etc.).
+   4. There will probably be a tight coupling between a view and a model.
+   5. We need to be able to reach into the HTML produced by a view and get a specific element.
+3. In this case, we may implement `UserForm` and extract reusable logic from it and use that to build `UserShow` and `UserEdit`.
+  <img src="./images/188-view_classes.png">
 
 ## 13.50. Building the UserForm
+1. The class `UserForm` can have 3 properties `parent` which the model inherits from, `template` which returns `string` value that contains HTML code, and `render` which is a function that prints the content from `template` on the screen.
+2. This is a very similar approach to other popular web frontend frameworks, such as React, Vue, and Angular.
+3. We create a new model `UserForm` in `src/views`. The parent is the HTML element that we want to inject the created elements. 
+4. Note that `Element` is a default type in Typescript which is the "Node" for front-end Javascript DOM manipulation.
+  ```ts
+  // src/views/UserForm.ts
+  export class UserForm {
+    parent: Element;
+
+    template(): string {
+      return `
+      <div>
+        <h1>User Form </h1>
+        <input />
+      </div>
+      `;
+    }
+
+    render(): void {
+      
+    }
+  }
+  ```
 
 ## 13.51. The UserForm's Render Method
+1. We can use a specific `template` element in HTML to create the elements as the DOM nodes. 
+  ```ts
+  // src/views/UserForm.ts
+  export class UserForm {
+    constructor(public parent: Element) {}
+
+    template(): string {
+      return `
+      <div>
+        <h1>User Form </h1>
+        <input />
+      </div>
+      `;
+    }
+
+    render(): void {
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.52. Rendering HTML
+1. We can test the `UserForm` model in `index.ts`.
+  ```ts
+  import { UserForm } from './views/UserForm';
+
+  const userForm = new UserForm(document.querySelector('#root'));
+
+  userForm.render();
+  ```
 
 ## 13.53. Defining an Events Map
+1. To bind event handler with the elements, we can declare a method in the model and use event mapping to map the element and the function.
+2. We use `{ [key: string]: () => void }` which means an object have unknown property name as the key, while each property is a function which returns nothing and working by itself.
+  ```ts
+  // src/views/UserForm.ts
+  export class UserForm {
+    constructor(public parent: Element) {}
+
+    eventsMap(): { [key: string]: () => void } {
+      return {
+        'click:button': this.onButtonClick,
+      };
+    }
+
+    onButtonClick(): void {
+      console.log('hello world');
+    }
+
+    template(): string {
+      return `
+      <div>
+        <h1>User Form </h1>
+        <input />
+        <button>Click Me</button>
+      </div>
+      `;
+    }
+
+    render(): void {
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.54. Binding Event Handlers
+1. When we use a selector on `document` to parse the DOM, the selector catches a reference to a `DocumentFragment`.
+2. We name the keys as the event name concatenate with a column `:` and the element binding to that event.
+3. Create a method `bindEvents` which checks the object in `eventsMap` and split up the keys by column and add the event handler by the giving element. 
+4. Note that `querySelectorAll` returns an array-like, iteratable object but IS NOT an array, so only some of the array methods can be applied, including `forEach`. 
+5. We then update `render` method to map all the events and handlers on the HTML node.
+  ```ts
+  // src/views/UserForm.ts
+  export class UserForm {
+    constructor(public parent: Element) {}
+
+    eventsMap(): { [key: string]: () => void } {
+      return {
+        'click:button': this.onButtonClick,
+        'mouseenter:h1': this.onHeaderHover,
+      };
+    }
+
+    onHeaderHover(): void {
+      console.log('H1 was hovered over');
+    }
+
+    onButtonClick(): void {
+      console.log('hello world');
+    }
+
+    template(): string {
+      return `
+      <div>
+        <h1>User Form </h1>
+        <input />
+        <button>Click Me</button>
+      </div>
+      `;
+    }
+
+    bindEvents(fragment: DocumentFragment): void {
+      const eventsMap = this.eventsMap();
+
+      for (let eventKey in eventsMap) {
+        const [eventName, selector] = eventKey.split(':');
+
+        fragment.querySelectorAll(selector).forEach((element) => {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      }
+    }
+
+    render(): void {
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.55. Adding Model Properties
+1. We'd like to show properties and data from the user instance directly.
+2. In `UserForm`, we can add the user data in the string literal. 
+  ```ts
+  // src/views/UserForm.ts
+  import { User } from '../models/User';
+
+  export class UserForm {
+    constructor(public parent: Element, public model: User) {}
+
+    eventsMap(): { [key: string]: () => void } {
+      return {
+        'click:button': this.onButtonClick,
+        'mouseenter:h1': this.onHeaderHover,
+      };
+    }
+
+    onHeaderHover(): void {
+      console.log('H1 was hovered over');
+    }
+
+    onButtonClick(): void {
+      console.log('hello world');
+    }
+
+    template(): string {
+      return `
+      <div>
+        <h1>User Form </h1>
+        <div>User name: ${this.model.get('name')}</div>
+        <div>User age: ${this.model.get('age')}</div>
+        <input />
+        <button>Click Me</button>
+      </div>
+      `;
+    }
+
+    bindEvents(fragment: DocumentFragment): void {
+      const eventsMap = this.eventsMap();
+
+      for (let eventKey in eventsMap) {
+        const [eventName, selector] = eventKey.split(':');
+
+        fragment.querySelectorAll(selector).forEach((element) => {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      }
+    }
+
+    render(): void {
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
+3. In `index.ts`, we create a new user with `User` and pass it to render the `UserForm` view.
+  ```ts
+  // index.ts
+  import { UserForm } from './views/UserForm';
+  import { User } from './models/User';
+
+  const user = User.buildUser({ name: 'NAME', age: 20 });
+
+  const userForm = new UserForm(document.querySelector('#root'), user);
+
+  userForm.render();
+  ```
 
 ## 13.56. Binding Events on Class Name
+1. We'd like to add a new function which allows the user to click a button and regenerate a random age on the `User` instance.
+2. We first add a button on to the view `UserForm`.
+3. In the `eventsMap`, we can give the target to select with regular CSS selector, so it can select only certain elements with specific class or id. 
+  ```ts
+  // src/view/UserForm.ts
+  import { User } from '../models/User';
+
+  export class UserForm {
+    constructor(public parent: Element, public model: User) {}
+
+    eventsMap(): { [key: string]: () => void } {
+      return {
+        'click:.set-age': this.onSetAgeClick,
+      };
+    }
+
+    onSetAgeClick(): void {
+      console.log('button was clicked');
+    }
+
+    template(): string {
+      return `
+      <div>
+        <h1>User Form </h1>
+        <div>User name: ${this.model.get('name')}</div>
+        <div>User age: ${this.model.get('age')}</div>
+        <input />
+        <button>Click Me</button>
+        <button class="set-age">Set Random Age</button>
+      </div>
+      `;
+    }
+
+    bindEvents(fragment: DocumentFragment): void {
+      const eventsMap = this.eventsMap();
+
+      for (let eventKey in eventsMap) {
+        const [eventName, selector] = eventKey.split(':');
+
+        fragment.querySelectorAll(selector).forEach((element) => {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      }
+    }
+
+    render(): void {
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.57. Adding Methods to the User
+1. As the "random age" feature can be used on other view or functions that using `User` model, we can have this feature on `User` instance directly.
+  ```ts
+  // src/models/User.ts
+  export class User extends Model<UserProps> {
+    /* ... */
+
+    setRandomAge(): void {
+      const age = Math.round(Math.random() * 100);
+      this.set({ age });
+    }
+  }
+  ```
+2. In `Userform`, we can call the method in the new `onSetAgeClick`.
+3. Besides, we need to turn `onSetAgeClick` to arrow function to have `this` referring to the correct context when the function is assigned as the event handler in `bindEvents`. Otherwise, it will return an error when we click on the "random age" button. 
+4. Though there's no error happening for the event handling and the data is surely update, we have no reactive behavior that update the data render on the HTML as well, so the user may not understand what has happened after they click the button.
+  ```ts
+  // src/view/UserForm.ts
+  import { User } from '../models/User';
+
+  export class UserForm {
+    constructor(public parent: Element, public model: User) {}
+
+    eventsMap(): { [key: string]: () => void } {
+      return {
+        'click:.set-age': this.onSetAgeClick,
+      };
+    }
+
+    // declare as arrow function
+    onSetAgeClick = (): void => {
+      this.model.setRandomAge();
+    };
+
+    template(): string {
+      return `
+      <div>
+        <h1>User Form </h1>
+        <div>User name: ${this.model.get('name')}</div>
+        <div>User age: ${this.model.get('age')}</div>
+        <input />
+        <button>Click Me</button>
+        <button class="set-age">Set Random Age</button>
+      </div>
+      `;
+    }
+
+    bindEvents(fragment: DocumentFragment): void {
+      const eventsMap = this.eventsMap();
+
+      for (let eventKey in eventsMap) {
+        const [eventName, selector] = eventKey.split(':');
+
+        fragment.querySelectorAll(selector).forEach((element) => {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      }
+    }
+
+    render(): void {
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.58. Re-Rendering on Model Change
+1. In `Model`, when the event `change` is triggered, it has to update the date in the model that it holds to ensure the `view` or other related models will be udpated accordingly.
+2. In the `set` method, a `change` will be triggered every time when something in the model is set.
+  ```ts
+  // src/models/Model.ts
+  import { AxiosPromise, AxiosResponse } from 'axios';
+
+  type Callback = () => void;
+
+  interface ModelAttributes<T> {
+    set(update: T): void;
+    getAll(): T;
+    get<K extends keyof T>(key: K): T[K];
+  }
+
+  interface ApiSync<T> {
+    fetch(id: number): AxiosPromise;
+    save(data: T): AxiosPromise;
+  }
+
+  interface Events {
+    on(eventName: string, callback: Callback): void;
+    trigger(eventName: string): void;
+  }
+
+  interface HasId {
+    id?: number;
+  }
+
+  export class Model<T extends HasId> {
+    constructor(
+      private attributes: ModelAttributes<T>,
+      private events: Events,
+      private sync: ApiSync<T>
+    ) {}
+
+    on = this.events.on;
+    trigger = this.events.trigger;
+    get = this.attributes.get;
+
+    set(update: T): void {
+      this.attributes.set(update);
+      this.events.trigger('change');
+    }
+
+    fetch(): void {
+      const id = this.attributes.get('id');
+
+      if (typeof id !== 'number') {
+        throw new Error('Cannot fetch without an id');
+      }
+
+      this.sync.fetch(id).then((response: AxiosResponse): void => {
+        this.set(response.data);
+      });
+    }
+
+    save(): void {
+      this.sync
+        .save(this.attributes.getAll())
+        .then((response: AxiosResponse): void => {
+          this.trigger('save');
+        })
+        .catch(() => {
+          this.trigger('error');
+        });
+    }
+  }
+  ```
+2. We have to register event handler to `change` to let `Model` knows if something has happened and what function to execute as a callback.
+3. In this case, we can simply add a helper method and execute it in the `constructor`.
+4. However, the current version will keep adding a new block of form on the HTML, as we are using `append` rather than replacing the content in the target DOM.
+  ```ts
+  // src/view/UserForm.ts
+  import { User } from '../models/User';
+
+  export class UserForm {
+    constructor(public parent: Element, public model: User) {
+      this.bindModel();
+    }
+
+    bindModel(): void {
+      this.model.on('change', () => {
+        this.render();
+      });
+    }
+
+    // render is not update, so it keeps adding new elements to the parent node
+  }
+  ```
+5. Therefore, we can remove the content in the parent node which we are going to inject the content.
+  ```ts
+  // src/views/UserForm.ts
+  import { User } from '../models/User';
+
+  export class UserForm {
+    constructor(public parent: Element, public model: User) {
+      this.bindModel();
+    }
+
+    bindModel(): void {
+      this.model.on('change', () => {
+        this.render();
+      });
+    }
+
+    render(): void {
+      this.parent.innerHTML = ``;
+
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.59. Reading Input Text
+1. When click the button to "chagne name", the callback function works on the the button element itself, and we can't access the value in the `input` element directly.
+2. We can refer to the `parent` which is DOM node containing the HTML content of the current model. We can access `input` element with `querySelector`. 
+  ```ts
+  // src/models/UserForm.ts
+  import { User } from '../models/User';
+
+  export class UserForm {
+    constructor(public parent: Element, public model: User) {
+      this.bindModel();
+    }
+
+    bindModel(): void {
+      this.model.on('change', () => {
+        this.render();
+      });
+    }
+
+    eventsMap(): { [key: string]: () => void } {
+      return {
+        'click:.set-age': this.onSetAgeClick,
+        'click:.set-name': this.onSetNameClick,
+      };
+    }
+
+    onSetNameClick = (): void => {
+      const input = this.parent.querySelector('input');
+
+      const name = input.value;
+
+      this.model.set({ name });
+    };
+
+    onSetAgeClick = (): void => {
+      this.model.setRandomAge();
+    };
+
+    template(): string {
+      return `
+      <div>
+        <h1>User Form </h1>
+        <div>User name: ${this.model.get('name')}</div>
+        <div>User age: ${this.model.get('age')}</div>
+        <input />
+        <button class="set-name">Change Name</button>
+        <button class="set-age">Set Random Age</button>
+      </div>
+      `;
+    }
+
+    bindEvents(fragment: DocumentFragment): void {
+      const eventsMap = this.eventsMap();
+
+      for (let eventKey in eventsMap) {
+        const [eventName, selector] = eventKey.split(':');
+
+        fragment.querySelectorAll(selector).forEach((element) => {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      }
+    }
+
+    render(): void {
+      this.parent.innerHTML = ``;
+
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.60. Strict Null Checks
+1. If we use `tsc --init` in the terminal, Typescript compiler will generate a tsconfig.json file to configure the settings of the compiler.
+2. As the "strict" is turning on, we may notice the prompted hint in `UserForm` that the `input` which is selected from `querySelector` can be a `null` object.
+  ```ts
+  // src/Views/UserForm.ts
+  class UserForm {
+    onSetNameClick = (): void => {
+      // 'input' variable could be null
+      const input = this.parent.querySelector('input');
+      const name = input.value;
+      this.model.set({ name });
+    };
+  }
+  ```
+3. `querySelector` method returns either a HTML node object that is or nested in the target DOM or a `null`. 
+4. Therefore, we don't turn on "strict" mode in Typescript, the error prompt wouldn't show up. 
+5. In this case, we can fix the issue by adding a "type guard".
+  ```ts
+  // src/Views/UserForm.ts
+  class UserForm {
+    onSetNameClick = (): void => {
+      // 'input' variable could be null
+      const input = this.parent.querySelector('input');
+      if (input) {
+        const name = input.value;
+        this.model.set({ name });
+      }
+    };
+  }
+  ```
+6. Similar conditions is applied to `index.ts`. We can use a type guard to check and ensure if `root` variable has selected the correct HTML node.
+  ```ts
+  // index.ts
+  import { UserForm } from './views/UserForm';
+  import { User } from './models/User';
+
+  const user = User.buildUser({ name: 'NAME', age: 20 });
+
+  const root = document.querySelector('#root');
+
+  if (root) {
+    const userForm = new UserForm(root, user);
+
+    userForm.render();
+  } else {
+    throw new Error('Root element not found');
+  }
+  ```
 
 ## 13.61. Reusable View Logic
+1. Some of the methods, including `render`, are strictly bond to `UserFrom` model. In the current structure, we have the following properties and methods in `UserForm`.
+   1. `parent: Element`
+   2. `model: User`
+   3. `template(): string`
+   4. `render(): void`
+   5. `eventsMap(): { key: () => void }`
+   6. `bindEvents(): void`
+   7. `bindModel(): void`
+   8. `onSetNameClick(): void`
+   9. `onSetAgeClick(): void`
+   10. `renderer: HtmlRenderer`
+2. We may have a generic class `HtmlRenderer` to form up HTML and render the view related code. We can firstly split up some properties and methods which can be general in `HtmlRenderer`.
+   1. `parent: Element`
+   2. `model: User`
+   3. `render(): void`
+   4. `bindEvents(): void`
+   5. `bindModel(): void`
+3. On the other hand, `UserForm` has the following items
+   1. `template(): string`
+   2. `eventsMap(): { key: () => void }`
+   3. `onSetNameClick(): void`
+   4. `onSetAgeClick(): void`
+   5.  `renderer: HtmlRenderer`
+4. Therefore, we have `UserForm` and `HtmlRenderer` separated as different classes. However, we need a bi-directional relationship between these 2 models. Such as phenomenon is showing that "composition" isn't the proper approach to build up the structure.
+  <img src="./images/200-bidirectional_composition.png">
+5. In this case, `HtmlRenderer` may need an `interface` to check if the class follows certain requirements to ensure it can work normally. For example, the model referring to `HtmlRenderer` must have `template` to return HTML code, `eventsMap` to bind the event handlers.
+6. One of the solution is to have its own `bindEvents` and `render` method in `UserForm` class and have these methods referring back to `HtmlRender`. However, it's not an ideal solution to use this approach in a framework that other users can use.
+7. On the other hand, we may use "Inheritance" approach that we create an `abstract` class and extends the class based on that.
+  <img src="./images/200-abstract_inheritance.pgn">
 
 ## 13.62. Extracting a View Class
+1. We can extract some of the logic from `UserForm`. However, `View` is still bond directly to `User` model that we should convert it to be more generic.
+  ```ts
+  // src/views/View.ts
+  import { User } from '../models/User';
+
+  export abstract class View {
+    constructor(public parent: Element, public model: User) {
+      this.bindModel();
+    }
+
+    abstract eventsMap(): { [key: string]: () => void };
+    abstract template(): string;
+
+    bindModel(): void {
+      this.model.on('change', () => {
+        this.render();
+      });
+    }
+
+    bindEvents(fragment: DocumentFragment): void {
+      const eventsMap = this.eventsMap();
+
+      for (let eventKey in eventsMap) {
+        const [eventName, selector] = eventKey.split(':');
+
+        fragment.querySelectorAll(selector).forEach((element) => {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      }
+    }
+
+    render(): void {
+      this.parent.innerHTML = ``;
+
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.63. Extending with Generic Constraints
+1. To turn `View` to be more generic, we can remove the reference to `User` and use a general `T` instead. 
+2. However, the `T` type doesn't gurantee if the object passing in as an `on` method.
+3. We can therefore create an `interface` and extends `T` from the `interface`. However, by this approach, we have to keep adding the methods could be use in the `interface` which could be very tedious.
+4. Note that `generics` is like passing arguments that we may pass more than one type when calling the class. In this case, the `Model` we'd like to extend is also a generic type, which requires another type to declare.
+5. Therefore, we can pass a 2nd argument which is as the argument passing to extend `Model` class.
+  ```ts
+  // src/views/View.ts
+  import { Model } from '../models/Model';
+
+  // not only `on` could be required but also other methods
+  // we have to keep extending 'HasOn' when working wither other types
+  interface HasOn {
+    on(eventName: string, () => void): void;
+  }
+
+  // Model class extends from K
+  export abstract class View<T extends Model<K>, K> {
+    constructor(public parent: Element, public model: T) {
+      this.bindModel();
+    }
+
+    abstract eventsMap(): { [key: string]: () => void };
+    abstract template(): string;
+
+    // the model is not guranteed to have an `on` method
+    bindModel(): void {
+      this.model.on('change', () => {
+        this.render();
+      });
+    }
+
+    /* ... */
+  }
+  ```
+6. In `UserForm`, we can refer `View` class to both `User` and `UserProps`.
+  ```ts
+  // src/views/UserForm.ts
+  import { User, UserProps } from '../models/User';
+  import { View } from './View';
+
+  export class UserForm extends View<User, UserProps> {
+    /* ... */
+  }
+  ```
 
 ## 13.64. Saving Data From a View
+1. We update a new method `onSaveClick` and add new property to `eventsMap`.
+  ```ts
+  // src/views/UserForm.ts
+  import { User, UserProps } from '../models/User';
+  import { View } from './View';
+
+  export class UserForm extends View<User, UserProps> {
+    eventsMap(): { [key: string]: () => void } {
+      return {
+        'click:.set-age': this.onSetAgeClick,
+        'click:.set-name': this.onSetNameClick,
+        'click:.save-model': this.onSaveClick,
+      };
+    }
+
+    onSaveClick = (): void => {
+      this.model.save();
+    };
+
+    onSetNameClick = (): void => {
+      const input = this.parent.querySelector('input');
+
+      if (input) {
+        const name = input.value;
+
+        this.model.set({ name });
+      }
+    };
+
+    onSetAgeClick = (): void => {
+      this.model.setRandomAge();
+    };
+
+    template(): string {
+      return `
+      <div>
+        <input placeholder="${this.model.get('name')}"/>
+        <button class="set-name">Change Name</button>
+        <button class="set-age">Set Random Age</button>
+        <button class="save-model">Save User</button>
+      </div>
+      `;
+    }
+  }
+  ```
 
 ## 13.65. UserEdit and UserShow
+1. In `UserShow`, some methods such as `eventsMap` is not required.
+2. We can therefore update in `View` to turn `eventsMap` from an `abstract` method to a regular method and return an empty object by default.
+3. Once it's registered with other methods, the object will be updated with key and alinged methods.
+  ```ts
+  // src/views/View.ts
+  import { Model } from '../models/Model';
+
+  export abstract class View<T extends Model<K>, K> {
+    constructor(public parent: Element, public model: T) {
+      this.bindModel();
+    }
+
+    abstract template(): string;
+
+    // this turns eventsMaps to an optional method
+    eventsMap(): { [key: string]: () => void } {
+      return {};
+    }
+    
+    /* ... */
+  }
+  ```
+2. We then can update `UserShow.ts` with a template returns HTML code in string.
+  ```ts
+  // src/views/UserShow.ts
+  import { View } from './View';
+  import { User, UserProps } from '../models/User';
+
+  export class UserShow extends View<User, UserProps> {
+    template() {
+      return `
+        <div>
+          <h1>User Detail</h1>
+          <div>User Name: ${this.model.get('name')}</div>
+          <div>User Age: ${this.model.get('age')}</div>
+        </div>
+      `;
+    }
+  }
+  ```
+3. We create a 3rd model `UserEdit`.
+  ```ts
+  // src/views/UserShow.ts
+  import { View } from './View';
+  import { User, UserProps } from '../models/User';
+
+  export class UserEdit extends View<User, UserProps> {
+    template(): string {
+      return `
+        <div>
+          <div class="user-show"></div>
+          <div class="user-form"></div>
+        </div>
+      `;
+    }
+  }
+  ```
 
 ## 13.66. Nesting with Regions
+1. In `UserEdit`, we can have 2 `div` elements as `Regions` which can contain futher details according to conditions.
+2. We can create a generic method `regionMap` that maps the `Region` which is the container. 
 
 ## 13.67. Mapping Regions
+1. When the model call the `render` method, the following steps are executed.
+   1. Render calls `template`, gets HTML string
+   2. Render inserts HTML string into a template element
+   3. Bind event handlers to the HTML in the template element
+   4. Call `regionMap` for list of regions that need to be created
+   5. Render method populates values in `regions`
+   6. We somehow insert new `child` views in those regions
+   7. Render inserts content of template into DOM
+2. In `View`, we update `regions` property which has unset key name with HTML node, and `regionsMap` method that works similar to `eventsMap` that binds the HTML element.
+  ```ts
+  // src/views/View.ts
+  import { Model } from '../models/Model';
+
+  export abstract class View<T extends Model<K>, K> {
+    // regions with empty object by default
+    regions: { [key: string]: Element } = {};
+
+    constructor(public parent: Element, public model: T) {
+      this.bindModel();
+    }
+
+    abstract template(): string;
+
+    regionsMap(): { [key: string]: string } {
+      return {};
+    }
+
+    eventsMap(): { [key: string]: () => void } {
+      return {};
+    }
+
+    bindModel(): void {
+      this.model.on('change', () => {
+        this.render();
+      });
+    }
+
+    bindEvents(fragment: DocumentFragment): void {
+      const eventsMap = this.eventsMap();
+
+      for (let eventKey in eventsMap) {
+        const [eventName, selector] = eventKey.split(':');
+
+        fragment.querySelectorAll(selector).forEach((element) => {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      }
+    }
+
+    // helper method to map regions
+    mapRegions(fragment: DocumentFragment): void {
+      const regionsMap = this.regionsMap();
+      for (let key in regionsMap) {
+        const selector = regionsMap[key];
+        const element = fragment.querySelector(selector);
+        if (element) {
+          this.regions[key] = element;
+        }
+      }
+    }
+
+    render(): void {
+      this.parent.innerHTML = ``;
+
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+      // call helper method to map regions
+      this.mapRegions(templateElement.content);
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
 
 ## 13.68. Testing Region Mapping
+1. We rephrase `index.ts` and check results from `UserEdit`.
+2. We will see nothing in the browser as there's no content injecting to `user-from` and `user-edit`. 
+  ```ts
+  // index.ts
+  import { UserEdit } from './views/UserEdit';
+  import { User } from './models/User';
+
+  const user = User.buildUser({ name: 'NAME', age: 20 });
+
+  const root = document.querySelector('#root');
+
+  if (root) {
+    const userEdit = new UserEdit(root, user);
+
+    userEdit.render();
+
+    console.log(userEdit);
+  } else {
+    throw new Error('Root element not found');
+  }
+  ```
 
 ## 13.69. View Nesting
+1. In the `render` method, we need the nested nodes to inject content to themselves, so we simply add `onRender` method and call it in `render` method.
+2. Note that the method can does nothing in the generic `View`, as we need it to execute the method in its sub-class.
+  ```ts
+  // src/views/View.ts
+  import { Model } from '../models/Model';
+
+  export abstract class View<T extends Model<K>, K> {
+    regions: { [key: string]: Element } = {};
+
+    constructor(public parent: Element, public model: T) {
+      this.bindModel();
+    }
+
+    abstract template(): string;
+
+    regionsMap(): { [key: string]: string } {
+      return {};
+    }
+
+    eventsMap(): { [key: string]: () => void } {
+      return {};
+    }
+
+    bindModel(): void {
+      this.model.on('change', () => {
+        this.render();
+      });
+    }
+
+    bindEvents(fragment: DocumentFragment): void {
+      const eventsMap = this.eventsMap();
+
+      for (let eventKey in eventsMap) {
+        const [eventName, selector] = eventKey.split(':');
+
+        fragment.querySelectorAll(selector).forEach((element) => {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      }
+    }
+
+    mapRegions(fragment: DocumentFragment): void {
+      const regionsMap = this.regionsMap();
+      for (let key in regionsMap) {
+        const selector = regionsMap[key];
+        const element = fragment.querySelector(selector);
+        if (element) {
+          this.regions[key] = element;
+        }
+      }
+    }
+
+    // this just to keep out the error 
+    // we can't set this as abstract
+    onRender(): void {}
+
+    render(): void {
+      this.parent.innerHTML = ``;
+
+      const templateElement = document.createElement('template');
+      templateElement.innerHTML = this.template();
+
+      this.bindEvents(templateElement.content);
+      this.mapRegions(templateElement.content);
+
+      // simply execute this method from the sub-model
+      this.onRender();
+
+      this.parent.append(templateElement.content);
+    }
+  }
+  ```
+3. In `UserEdit`, we just allow the class to call `onRender` to have the nested models render HTML content in its node, so all the nested nodes will be injected with the contents according to its class and injected into the `parent` node.
+  ```ts
+  // src/views/UserEdit.ts
+  import { View } from './View';
+  import { User, UserProps } from '../models/User';
+  import { UserForm } from './UserForm';
+  import { UserShow } from './UserShow';
+
+  export class UserEdit extends View<User, UserProps> {
+    regionsMap(): { [key: string]: string } {
+      return {
+        userShow: `.user-show`,
+        userForm: `.user-form`,
+      };
+    }
+
+    onRender(): void {
+      new UserShow(this.regions.userShow, this.model).render();
+      new UserForm(this.regions.userForm, this.model).render();
+    }
+
+    template(): string {
+      return `
+        <div>
+          <div class="user-show"></div>
+          <div class="user-form"></div>
+        </div>
+      `;
+    }
+  }
+  ```
 
 ## 13.70. Collection Views
+1. We have had a model `Collection` which fetches all the data from json server of the whole user list. However, we don't have a view class that can render that dataset yet.
+2. `Collection` view can be a collection of models and can render the view for each model we have fetched, so this class may have an `abstract` method `renderItem` which may handle different types of data according to declaration.
 
 ## 13.71. CollectionView Implementation
+```ts
+// src/views/CollectionView.ts
+import { Collection } from '../models/Collection';
+
+export abstract class CollectionView<T, K> {
+  constructor(public parent: Element, public collection: Collection<T, K>) {}
+
+  abstract renderItem(mode: T, itemParent: Element): void;
+
+  render(): void {
+    this.parent.innerHTML = ``;
+
+    const templateElement = document.createElement('template');
+
+    for (let model of this.collection.models) {
+      const itemParent = document.createElement('div');
+      this.renderItem(model, itemParent);
+
+      templateElement.content.append(itemParent);
+    }
+
+    this.parent.append(templateElement.content);
+  }
+}
+```
+```ts
+// src/views/UserList.ts
+import { User, UserProps } from '../models/User';
+import { CollectionView } from './CollectionView';
+import { UserShow } from './UserShow';
+
+export class UserList extends CollectionView<User, UserProps> {
+  renderItem(model: User, itemParent: Element): void {
+    new UserShow(itemParent, model).render();
+  }
+}
+```
+```ts
+// index.ts
+import { UserList } from './views/UserList';
+import { Collection } from './models/Collection';
+import { User, UserProps } from './models/User';
+
+const users = new Collection(
+  'http://localhost:3000/users',
+  (json: UserProps) => {
+    return User.buildUser(json);
+  }
+);
+
+users.on('change', () => {
+  const root = document.querySelector('#root');
+
+  if (root) {
+    new UserList(root, users).render();
+  }
+});
+
+users.fetch();
+```
 
 ## 13.72. App Wrapup
+1. The idea of the code structure in this section of web framework such as `backbone.js` and `marionettejs`.
