@@ -234,14 +234,61 @@ Finished on
   - [14.14. A Closer Integration](#1414-a-closer-integration)
   - [14.15. The Refactoring Process](#1415-the-refactoring-process)
   - [14.16. Prototypes Reminder](#1416-prototypes-reminder)
-- [Decorators](#decorators)
-  - [Decorators in Typescript](#decorators-in-typescript)
-  - [Details on Decorators](#details-on-decorators)
-  - [Property Descriptors](#property-descriptors)
-  - [Wrapping Methods with Descriptors](#wrapping-methods-with-descriptors)
-  - [Decorator Factories](#decorator-factories)
-  - [Decorators Around Properties](#decorators-around-properties)
-  - [More on Decorators](#more-on-decorators)
+- [15. Decorators](#15-decorators)
+  - [15.1. Decorators in Typescript](#151-decorators-in-typescript)
+  - [15.2. Details on Decorators](#152-details-on-decorators)
+  - [15.3. Property Descriptors](#153-property-descriptors)
+  - [15.4. Wrapping Methods with Descriptors](#154-wrapping-methods-with-descriptors)
+  - [15.5. Decorator Factories](#155-decorator-factories)
+  - [15.6. Decorators Around Properties](#156-decorators-around-properties)
+  - [15.7. More on Decorators](#157-more-on-decorators)
+- [Advanced Express and TS Integration](#advanced-express-and-ts-integration)
+  - [A Quick Disclaimer](#a-quick-disclaimer)
+  - [Project Overview](#project-overview)
+  - [WHy is This Hard?](#why-is-this-hard)
+  - [Solution Overview](#solution-overview)
+  - [Basics of Metadata](#basics-of-metadata)
+  - [Practical Metadata](#practical-metadata)
+  - [Let's Refactor!](#lets-refactor)
+  - [The 'Get' Decorator](#the-get-decorator)
+  - [The Controller Decorator](#the-controller-decorator)
+  - [Proof of Concept](#proof-of-concept)
+  - [A Few Fixups](#a-few-fixups)
+  - [Defining a RouteBinder](#defining-a-routebinder)
+  - [Closed Method Sets with Enums](#closed-method-sets-with-enums)
+  - [Metadata Keys](#metadata-keys)
+  - [The 'Use' Decorator](#the-use-decorator)
+  - [Testing Use](#testing-use)
+  - [Body Validators](#body-validators)
+  - [Automated Validation](#automated-validation)
+  - [Testing Automated Validation](#testing-automated-validation)
+  - [Fixing Routes](#fixing-routes)
+  - [Using Property Description for Type Checking](#using-property-description-for-type-checking)
+  - [App Wrapup](#app-wrapup)
+- [16. React and Redux with Typescript](#16-react-and-redux-with-typescript)
+  - [16.1. React and Redux Overview](#161-react-and-redux-overview)
+  - [16.2. App Overview](#162-app-overview)
+  - [16.3. Generating the App](#163-generating-the-app)
+  - [16.4. Simple Components](#164-simple-components)
+  - [16.5. Interface with Props](#165-interface-with-props)
+  - [16.6. Handling Components State](#166-handling-components-state)
+  - [16.7. Confusing Component State!](#167-confusing-component-state)
+  - [16.8. Functional Components](#168-functional-components)
+  - [16.9. Redux Setup](#169-redux-setup)
+  - [16.10. Action Creators with Typescript](#1610-action-creators-with-typescript)
+  - [16.11. Action Types Enum](#1611-action-types-enum)
+  - [16.12. The Generic Dispatch Function](#1612-the-generic-dispatch-function)
+  - [16.13. A Reducer with Enums](#1613-a-reducer-with-enums)
+  - [16.14. Validating Store Structure](#1614-validating-store-structure)
+  - [16.15. Connecting a Component to Redux](#1615-connecting-a-component-to-redux)
+  - [16.16. Rendering a List](#1616-rendering-a-list)
+  - [16.17. Adding in Delete Functionality](#1617-adding-in-delete-functionality)
+  - [16.18. Breaking Out Action as Type Union](#1618-breaking-out-action-as-type-union)
+  - [16.19. Type Guards in Reducers](#1619-type-guards-in-reducers)
+  - [16.20. Wiring up deleteToDo Action](#1620-wiring-up-deletetodo-action)
+  - [16.21. Again, Type Definition Files](#1621-again-type-definition-files)
+  - [16.22. Tracking Loading with Components](#1622-tracking-loading-with-components)
+  - [16.23. App Wrapup](#1623-app-wrapup)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -6772,8 +6819,8 @@ users.fetch();
   boat.sink(); // boat is sinking
   ```
 
-# Decorators
-## Decorators in Typescript
+# 15. Decorators
+## 15.1. Decorators in Typescript
 1. Functions that can be used to modify/change/anything different properties/methods in the class.
 2. Not the same as Javascript decorators
 3. Used inside/on classes only 
@@ -6801,7 +6848,7 @@ users.fetch();
   }
   ```
 
-## Details on Decorators
+## 15.2. Details on Decorators
 1. Decorators on a property, method, accessor.
    1. First argument is the `prototype` of the object
    2. Second argument is the key of the property/method/accessor on the object
@@ -6871,7 +6918,7 @@ users.fetch();
   }
   ```
 
-## Property Descriptors
+## 15.3. Property Descriptors
 1. We can use `PropertyDescriptor` property which is a ES5 feature in Javascript. This type has been available by default in Typescript.
 2. The `PropertyDescriptor` can describe the properties and methods of an object whether they can
    1. `writable` - Whether or not this property can be changed.
@@ -6896,7 +6943,7 @@ users.fetch();
   // { make: 'honda', year: 2000 }
   ```
 
-## Wrapping Methods with Descriptors
+## 15.4. Wrapping Methods with Descriptors
 1. We can use the type decorator to add some feature when executing the function. 
 2. For example, we change the value from the exact method to a custom function that do try and catch. If the method isn't executed successfully, it can print out a customized message for the case.
   ```ts
@@ -6929,7 +6976,7 @@ users.fetch();
   new Boat().pilot();
   ```
 
-## Decorator Factories
+## 15.5. Decorator Factories
 1. We can wrap the decorator function in another function so we can pass arguments to it. This approach is very similar to pass a specific arguemnt to event handler in frontend Javascript, as by default, the event handling function will receive an `event` object.
   ```ts
   class Boat {
@@ -6964,7 +7011,7 @@ users.fetch();
   new Boat().pilot();
   ```
 
-## Decorators Around Properties
+## 15.6. Decorators Around Properties
 1. We cannot access the value of a property from the decorator because the decorator is executed when the class is declared while its instance is not defined yet.
 2. Therefore, the decorator will never have acess to the properties or be able to modify it. The `target` is the `prototype` rather than the created `instance`. We can't use a `prototype` to look up a value in an `instance`.
   ```ts
@@ -6980,7 +7027,7 @@ users.fetch();
   }
   ```
 
-## More on Decorators
+## 15.7. More on Decorators
 1. We can have `parameterDecorator` that works on the arugments passing to each a method. This decorator function works similar to regular decorator that it takes `target` as the `prototype`, `key` as the property name, and `index` as a number which is the position of parameter when passing to the method.
   ```ts
   class Boat {
@@ -7019,3 +7066,126 @@ users.fetch();
     console.log(constructor);
   }
   ```
+
+# Advanced Express and TS Integration
+## A Quick Disclaimer
+
+## Project Overview
+
+## WHy is This Hard?
+
+## Solution Overview
+
+## Basics of Metadata
+
+## Practical Metadata
+
+## Let's Refactor!
+
+## The 'Get' Decorator
+
+## The Controller Decorator
+
+## Proof of Concept
+
+## A Few Fixups
+
+## Defining a RouteBinder
+
+## Closed Method Sets with Enums
+
+## Metadata Keys
+
+## The 'Use' Decorator
+
+## Testing Use
+
+## Body Validators
+
+## Automated Validation
+
+## Testing Automated Validation
+
+## Fixing Routes
+
+## Using Property Description for Type Checking
+
+## App Wrapup
+
+
+# 16. React and Redux with Typescript
+## 16.1. React and Redux Overview
+1. Pros
+   1. Far, far easier to avoid extremely common typos, like incorrect action types.
+   2. Gives dev's a far better understanding of the type of data flowing around.
+   3. Much easier to refactor just about anything.
+2. Cons
+   1. Not the best type definition files (especially around redux)
+   2. Tons of generics flying around
+   3. Tons of imports, as just about everything (action creator, action reducer, store, components) need to be aware of different types.
+   4. Redux inherently functional in nature, tough integration with TS classes.
+
+## 16.2. App Overview
+
+
+## 16.3. Generating the App
+
+
+## 16.4. Simple Components
+
+
+## 16.5. Interface with Props
+
+
+## 16.6. Handling Components State
+
+
+## 16.7. Confusing Component State!
+
+
+## 16.8. Functional Components
+
+
+## 16.9. Redux Setup
+
+
+## 16.10. Action Creators with Typescript
+
+
+## 16.11. Action Types Enum
+
+
+## 16.12. The Generic Dispatch Function
+
+
+## 16.13. A Reducer with Enums
+
+
+## 16.14. Validating Store Structure
+
+
+## 16.15. Connecting a Component to Redux
+
+
+## 16.16. Rendering a List
+
+
+## 16.17. Adding in Delete Functionality
+
+
+## 16.18. Breaking Out Action as Type Union
+
+
+## 16.19. Type Guards in Reducers
+
+
+## 16.20. Wiring up deleteToDo Action
+
+
+## 16.21. Again, Type Definition Files
+
+
+## 16.22. Tracking Loading with Components
+
+
+## 16.23. App Wrapup
