@@ -217,6 +217,23 @@ Finished on
   - [13.70. Collection Views](#1370-collection-views)
   - [13.71. CollectionView Implementation](#1371-collectionview-implementation)
   - [13.72. App Wrapup](#1372-app-wrapup)
+- [14. Express + Typescript Integration](#14-express--typescript-integration)
+  - [14.1. Typescript with JS Libraries](#141-typescript-with-js-libraries)
+  - [14.2. App Overview](#142-app-overview)
+  - [14.3. Project Setup](#143-project-setup)
+  - [14.4. Basic Routes with Express](#144-basic-routes-with-express)
+  - [14.5. Using an Express Router](#145-using-an-express-router)
+  - [14.6. Parsing Form Bodies](#146-parsing-form-bodies)
+  - [14.7. Why Doesn't Express Play Nicely with TS?](#147-why-doesnt-express-play-nicely-with-ts)
+  - [14.8. Issues with Type Definition Files](#148-issues-with-type-definition-files)
+  - [14.9. Dealing with Poor Type Defs](#149-dealing-with-poor-type-defs)
+  - [14.10. Wiring Up Sessions](#1410-wiring-up-sessions)
+  - [14.11. Checking Login Status](#1411-checking-login-status)
+  - [14.12. Loggin out](#1412-loggin-out)
+  - [14.13. Protecting Routes](#1413-protecting-routes)
+  - [14.14. A Closer Integration](#1414-a-closer-integration)
+  - [14.15. The Refactoring Process](#1415-the-refactoring-process)
+  - [14.16. Prototypes Reminder](#1416-prototypes-reminder)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -6212,3 +6229,537 @@ users.fetch();
 
 ## 13.72. App Wrapup
 1. The idea of the code structure in this section of web framework such as `backbone.js` and `marionettejs`.
+
+# 14. Express + Typescript Integration
+## 14.1. Typescript with JS Libraries
+1. Typescript has a distinct OOP style.
+2. Many popular JS libs were written before JS had any solid idea of "classes".
+3. Integrating JS with popular JS libs can be tough
+4. When use Typescript with JS libs
+   1. Use the lib normally, adding in basic type annotations where possible
+   2. Use a Typescript adpater library that has helpers for using your lib with Typescript
+   3. Twist your lib to work with Typescript classes
+5. For example, we can check [`Ts.ED`](https://tsed.io/) or from [`npm`](https://www.npmjs.com/package/ts-express-decorators).
+6. In this section, we'd try to twist the lib to work with Typescript class.
+
+## 14.2. App Overview
+1. We'd build a authentication based app that allows users to login and show if the user is logged in.
+2. We have hard coded user and password set for testing purpose.
+3. 3 routes are provided from this service
+   1. `/` - show if the user is logged in
+   2. `/login` - a form to allow users to login
+   3. `/protected` - show only if the user is logged in
+
+## 14.3. Project Setup
+1. We will use `concurrently` and `nodemon` in this case.
+2. Use `npm init -y` to start an npm project. 
+3. Use `tsc --init` to create `tsconfig.json` file.
+4. Create `src` and `build` directory and update `rootDir` and `outDir` in `tsconfig.ts`
+5. Update `scripts` in `package.json`
+  ```json
+  {
+    "scripts": {
+      "start:build": "tsc -w",
+      "start:run" : "nodemon build/index.js",
+      "start:*": "concurrnetly npm start:*"
+    }
+  }
+  ```
+
+## 14.4. Basic Routes with Express
+1. We install `express` and other middlewares `body-parser` and `cookie-session`.
+2. Since we are using Typescript, each library requires their type definition file, so we can install it with `npm install @types/express @types/cookie-session @types/body-parser`.
+  ```ts
+  // index.ts
+  import express, { Request, Response, Errback } from 'express';
+
+  const app = express();
+
+  app.get('/', (req: Request, res: Response) => {
+    res.send(`
+      <div>
+        <h1>Hi there!</h1>
+      </div>
+    `);
+  });
+
+  app.listen(3000, () => {
+    console.log(`Listening on port 3000`);
+  });
+  ```
+
+## 14.5. Using an Express Router
+1. We create `routes` directory under `src` and create `loginRoute` for the new router.
+  ```ts
+  import { Router } from 'express';
+
+  const router = Router();
+
+  router.get('/', (req, res) => {
+    res.send('login router');
+  });
+
+  export { router };
+  ```
+
+## 14.6. Parsing Form Bodies
+1. To read the data from a request, we need to use `body-parser`.
+2. We can register and use it in the global scale in `index.ts`.
+  ```ts
+  // src/index.ts
+  import express, { Request, Response, Errback } from 'express';
+  import { router } from './routes/loginRoutes';
+  import bodyParser from 'body-parser';
+
+  const app = express();
+
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(router);
+
+  app.get('/', (req: Request, res: Response) => {
+    res.send(`
+      <div>
+        <h1>Hi there!</h1>
+      </div>
+    `);
+  });
+
+  app.listen(3000, () => {
+    console.log(`Listening on port 3000`);
+  });
+  ```
+  ```ts
+  // src/routes/loginRoutes.ts
+  import { Router, Request, Response } from 'express';
+
+  const router = Router();
+
+  router.get('/login', (req: Request, res: Response) => {
+    res.send(`
+      <form method="POST">
+        <div>
+          <label>Email</label>
+          <input name="email" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input name="password" type="password" />
+        </div>
+        <button>Submit</button>
+      </form>
+    `);
+  });
+
+  router.post('/login', (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    // this is only for testing that returns the incoming data and show on screen
+    res.send(email + password);
+  });
+
+  export { router };
+  ```
+
+## 14.7. Why Doesn't Express Play Nicely with TS?
+1. The `body-parser` will check the incoming request from the browser frontend in HTTP(s) protocol.
+2. Without `body-parser`, the there's no `body` property in the `request` object by default. The middleware will parse the request and add the property with data accordingly.
+3. "middlewares" in general has 3 arguments, `request`, `response`, and `next`.
+4. "middlewares" does some processing of `Request` and `Response` and calls `Next` function when complete. 
+5. However, middleware behavior breaks the way how Typescript works as the properties and data strcuture is not static as Typescript requires.
+6. The type definition files doesn't provide Typescript that what properties are added after the middleware process on it.
+7. Besides, as Typescript couldn't handle mutable objects, some properties are given as `any` in the type definition file, which can cause unexpected errors.
+8. For example, the `body` property in the `Request` has `any` type in the type definition file. However, we couldn't access the data if we don't use the middleware.
+9. While Typescript couldn't know if we have applied the middleware to read `body` data either globally or on the spot.
+
+## 14.8. Issues with Type Definition Files
+1. Integration issues between Typescript and Express
+   1. Cons 
+      1. Type definition files alone can't express what's going on in the JS world accurately (example: middleware).
+      2. Type definition files provided to us aren't always accurate.
+      3. Inputs to a server (or any program with external inputs) are not guaranteed to exist, or be of the correct type.
+   2. Pros
+      1. Addressing these type issues with Typescript can force us to write better code.
+2. We can modify the code and set a type guard in `loginRoutes`.
+  ```ts
+  // src/routes/loginRoutes.ts
+  import { Router, Request, Response } from 'express';
+
+  const router = Router();
+
+  router.get('/login', (req: Request, res: Response) => {
+    res.send(`
+      <form method="POST">
+        <div>
+          <label>Email</label>
+          <input name="email" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input name="password" type="password" />
+        </div>
+        <button>Submit</button>
+      </form>
+    `);
+  });
+
+  router.post('/login', (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    if (email) {
+      res.send(email.toUpperCase());
+    } else {
+      res.send('You must provide an email property');
+    }
+  });
+
+  export { router };
+  ```
+
+## 14.9. Dealing with Poor Type Defs
+1. Rather than modifying the type definition file, we can create a custom `interface` and extends it from the poor typed model.
+  ```ts
+  // //src/routes/loginRoutes.ts
+  import { Router, Request, Response } from 'express';
+
+  interface RequestWithBody extends Request {
+    body: { [key: string]: string | undefined };
+  }
+
+  const router = Router();
+
+  router.get('/login', (req: Request, res: Response) => {
+    res.send(`
+      <form method="POST">
+        <div>
+          <label>Email</label>
+          <input name="email" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input name="password" type="password" />
+        </div>
+        <button>Submit</button>
+      </form>
+    `);
+  });
+
+  router.post('/login', (req: RequestWithBody, res: Response) => {
+    const { email, password } = req.body;
+
+    if (email) {
+      res.send(email.toUpperCase());
+    } else {
+      res.send('You must provide an email');
+    }
+  });
+
+  export { router };
+  ```
+
+## 14.10. Wiring Up Sessions
+1. We register and use `cookie-session` as the middleware to add `session` property to request.
+  ```ts
+  // index.ts
+  import express, { Request, Response, Errback } from 'express';
+  import { router } from './routes/loginRoutes';
+  import bodyParser from 'body-parser';
+  import cookieSession from 'cookie-session';
+
+  const app = express();
+
+  app.use(bodyParser.urlencoded({ extended: true })); // add body to request
+  app.use(cookieSession({ keys: ['abcdefg'] })); // add session to request
+  app.use(router);
+
+  app.get('/', (req: Request, res: Response) => {
+    res.send(`
+      <div>
+        <h1>Hi there!</h1>
+      </div>
+    `);
+  });
+
+  app.listen(3000, () => {
+    console.log(`Listening on port 3000`);
+  });
+  ```
+
+## 14.11. Checking Login Status
+1. We add on the root route and check if the user has logged in or not and return the message and view accordingly.
+  ```ts
+  // src/routes/loginRoutes.ts
+  import { Router, Request, Response } from 'express';
+
+  interface RequestWithBody extends Request {
+    body: { [key: string]: string | undefined };
+  }
+
+  const router = Router();
+
+  router.get('/login', (req: Request, res: Response) => {
+    res.send(`
+      <form method="POST">
+        <div>
+          <label>Email</label>
+          <input name="email" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input name="password" type="password" />
+        </div>
+        <button>Submit</button>
+      </form>
+    `);
+  });
+
+  router.post('/login', (req: RequestWithBody, res: Response) => {
+    const { email, password } = req.body;
+
+    if (email && password && email === 'hi@hi.com' && password === 'password') {
+      // mark this person as logged in
+      req.session = { loggedIn: true };
+      // redirect them to the root route
+      res.redirect('/');
+    } else {
+      res.send('Invalid email or password');
+    }
+  });
+
+  router.get('/', (req: Request, res: Response) => {
+    if (req.session && req.session.loggedIn) {
+      res.send(`
+        <div>
+          <div>You are logged in</div>
+          <a href="/logout">Logout</a>
+        </div>
+      `);
+    } else {
+      res.send(`
+        <div>
+          <div>You are not logged in</div>
+          <a href="/login">Login</a>
+        </div>
+      `);
+    }
+  });
+
+  export { router };
+  ```
+
+## 14.12. Loggin out
+1. We add another route `/logout` to allow user log out and clear the data in `session`.
+  ```ts
+  // src/routes/loginRoutes.ts
+  import { Router, Request, Response } from 'express';
+
+  interface RequestWithBody extends Request {
+    body: { [key: string]: string | undefined };
+  }
+
+  const router = Router();
+
+  router.get('/login', (req: Request, res: Response) => {
+    res.send(`
+      <form method="POST">
+        <div>
+          <label>Email</label>
+          <input name="email" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input name="password" type="password" />
+        </div>
+        <button>Submit</button>
+      </form>
+    `);
+  });
+
+  router.post('/login', (req: RequestWithBody, res: Response) => {
+    const { email, password } = req.body;
+
+    if (email && password && email === 'hi@hi.com' && password === 'password') {
+      // mark this person as logged in
+      req.session = { loggedIn: true };
+      // redirect them to the root route
+      res.redirect('/');
+    } else {
+      res.send('Invalid email or password');
+    }
+  });
+
+  router.get('/', (req: Request, res: Response) => {
+    if (req.session && req.session.loggedIn) {
+      res.send(`
+        <div>
+          <div>You are logged in</div>
+          <a href="/logout">Logout</a>
+        </div>
+      `);
+    } else {
+      res.send(`
+        <div>
+          <div>You are not logged in</div>
+          <a href="/login">Login</a>
+        </div>
+      `);
+    }
+  });
+
+  router.get('/logout', (req: Request, res: Response) => {
+    req.session = undefined;
+    res.redirect('/');
+  });
+
+  export { router };
+  ```
+
+## 14.13. Protecting Routes
+1. In an `express` way, it's better to use a middleware to check if request is authenticated and thus "guard" or protect a certain route.
+2. We create a middleware `requireAuth` to check if the user is logged in and authenticated.
+  ```ts
+  import { Router, Request, Response, NextFunction } from 'express';
+
+  interface RequestWithBody extends Request {
+    body: { [key: string]: string | undefined };
+  }
+
+  function requireAuth(req: Request, res: Response, next: NextFunction): void {
+    if (req.session && req.session.loggedIn === true) {
+      next();
+      return;
+    }
+
+    res.status(403).send('Unauthorized');
+  }
+
+  const router = Router();
+
+  router.get('/login', (req: Request, res: Response) => {
+    res.send(`
+      <form method="POST">
+        <div>
+          <label>Email</label>
+          <input name="email" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input name="password" type="password" />
+        </div>
+        <button>Submit</button>
+      </form>
+    `);
+  });
+
+  router.post('/login', (req: RequestWithBody, res: Response) => {
+    const { email, password } = req.body;
+
+    if (email && password && email === 'hi@hi.com' && password === 'password') {
+      // mark this person as logged in
+      req.session = { loggedIn: true };
+      // redirect them to the root route
+      res.redirect('/');
+    } else {
+      res.send('Invalid email or password');
+    }
+  });
+
+  router.get('/', (req: Request, res: Response) => {
+    if (req.session && req.session.loggedIn) {
+      res.send(`
+        <div>
+          <div>You are logged in</div>
+          <a href="/logout">Logout</a>
+        </div>
+      `);
+    } else {
+      res.send(`
+        <div>
+          <div>You are not logged in</div>
+          <a href="/login">Login</a>
+        </div>
+      `);
+    }
+  });
+
+  router.get('/logout', (req: Request, res: Response) => {
+    req.session = undefined;
+    res.redirect('/');
+  });
+
+  router.get('/protected', requireAuth, (req: Request, res: Response) => {
+    res.send('Welcome to protected route, logged in user');
+  });
+
+  export { router };
+  ```
+
+## 14.14. A Closer Integration
+1. One way to integrate `express` and Typescript is to put the code into a class, though the approach could be unneccessary and confusing.
+2. Massaging TS and Express to work better together will take a lot of time and effort. If there's not a good reason to do such as the following benefits, there's no point to use it.
+   1. Get better type safety (help TS do a better job of catching errors)
+   2. Significantly enhance the developer experience.
+  ```ts
+  // index.ts
+  // this isn't useful to use Typescript with Express
+  class Server {
+    app: express.Express = express();
+
+    constructor() {
+      this.app.use(bodyParser.urlencoded({ extended: true })); 
+      this.app.use(cookieSession({ keys: ['abcdefg'] }));
+      this.app.use(router);
+    }
+
+    start(): void {
+      this.app.listen(3000, () => {
+        console.log(`Listening on port 3000`);
+      });
+    }
+  }
+
+  new Server().start();
+  ```
+
+## 14.15. The Refactoring Process
+1. The other approach is not only stick a bunch of express code into classes but use some advanced features of TS, such as `decorators`.
+2. In this case, we can use decorators from [`ts-express-decorators`](https://www.npmjs.com/package/ts-express-decorators).
+3. The goal for coming sections
+   1. Get a quick reminder on what contructors + prototypes are in normal Javascript.
+   2. Do a quick aside on decorators in Typescript.
+   3. Refactor our express app to use classes + decorators.
+
+## 14.16. Prototypes Reminder
+1. Keyword `class` in Javascript is a syntactic sugar or as a shorthand to create an object that has a similar syntax when working with other programming languages that support OOP.
+2. In Javascript, `class` instances are objects created by functions and each object has a special property `prototype` which allows the object to trace back to its parent class. 
+3. Therefore, though some properties and methods aren't visible on the instance directly, we still can call and use the data or methods by calling it.
+  ```ts
+  class Boat {
+    color: string = 'red';
+
+    pilot():void {
+      console.log('switch');
+    }
+  }
+  ```
+  ```js
+  "use strict";
+  var Boat = /** @class */ (function () {
+      function Boat() {
+          this.color = 'red';
+      }
+      Boat.prototype.pilot = function () {
+          console.log('switch');
+      };
+      return Boat;
+  }());
+  ```
+4. However, it has a special feature that we can keep adding on new properties and methods after the instance is created through `prototype` property.
+  ```js
+  class Boat() {}
+
+  const boat = new Boat();
+  boat.sink(); // error as boat has not sink method
+
+  // add new methods after the class is declared
+  Boat.prototype.sink = function() { console.log('boat is sinking') }
+  boat.sink(); // boat is sinking
+  ```
