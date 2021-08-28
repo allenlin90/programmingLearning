@@ -234,6 +234,14 @@ Finished on
   - [14.14. A Closer Integration](#1414-a-closer-integration)
   - [14.15. The Refactoring Process](#1415-the-refactoring-process)
   - [14.16. Prototypes Reminder](#1416-prototypes-reminder)
+- [Decorators](#decorators)
+  - [Decorators in Typescript](#decorators-in-typescript)
+  - [Details on Decorators](#details-on-decorators)
+  - [Property Descriptors](#property-descriptors)
+  - [Wrapping Methods with Descriptors](#wrapping-methods-with-descriptors)
+  - [Decorator Factories](#decorator-factories)
+  - [Decorators Around Properties](#decorators-around-properties)
+  - [More on Decorators](#more-on-decorators)
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -6762,4 +6770,252 @@ users.fetch();
   // add new methods after the class is declared
   Boat.prototype.sink = function() { console.log('boat is sinking') }
   boat.sink(); // boat is sinking
+  ```
+
+# Decorators
+## Decorators in Typescript
+1. Functions that can be used to modify/change/anything different properties/methods in the class.
+2. Not the same as Javascript decorators
+3. Used inside/on classes only 
+4. Understanding the order in which decorators are ran are the key to understanding them
+5. Experiemntal
+6. To enable `decorator` feature, we need to enable it in `tsconfig.json`. We find the option `experimentalDecorators` and `emitDecoratorMetadata` and turn the values to be `true`.
+  ```ts
+  // decorators.ts
+  class Boat {
+    color: string = 'red';
+
+    get formattedColor(): string {
+      return `This boats color is ${this.color}`;
+    }
+
+    @testDecorator
+    pilot(): void {
+      console.log('swish');
+    }
+  }
+
+  function testDecorator(target: any, key: string): void {
+    console.log('Target:', target);
+    console.log('Key: ', key);
+  }
+  ```
+
+## Details on Decorators
+1. Decorators on a property, method, accessor.
+   1. First argument is the `prototype` of the object
+   2. Second argument is the key of the property/method/accessor on the object
+   3. Third argument is the property descriptor 
+   4. Decorators are applied when the code for this class is ran (not when an instance is created). It means the decorator function is executed when the class is declared rather than having its instance created.
+2. The syntax to put the decorator on the spot is just a shorthand, while we can try to call the function manually.
+  ```ts
+  // call decorator manually
+  class Boat {
+    color: string = 'red';
+
+    get formattedColor(): string {
+      return `This boats color is ${this.color}`;
+    }
+
+    // @testDecorator
+    pilot(): void {
+      console.log('swish');
+    }
+  }
+
+  function testDecorator(target: any, key: string): void {
+    console.log('Target:', target);
+    console.log('Key: ', key);
+  }
+
+  testDecorator(Boat.prototype, 'pilot');
+  ```
+3. We can note that the class declaration can be compiled as the following Javascript file. 
+  ```js
+  // compiled Javascript from Boat class with decorator
+  "use strict";
+  var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+  var __metadata = (this && this.__metadata) || function (k, v) {
+      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+  };
+  var Boat = /** @class */ (function () {
+      function Boat() {
+          this.color = 'red';
+      }
+      Object.defineProperty(Boat.prototype, "formattedColor", {
+          get: function () {
+              return "This boats color is " + this.color;
+          },
+          enumerable: false,
+          configurable: true
+      });
+      Boat.prototype.pilot = function () {
+          console.log('swish');
+      };
+      __decorate([
+          testDecorator,
+          __metadata("design:type", Function),
+          __metadata("design:paramtypes", []),
+          __metadata("design:returntype", void 0)
+      ], Boat.prototype, "pilot", null);
+      return Boat;
+  }());
+  function testDecorator(target, key) {
+      console.log('Target:', target);
+      console.log('Key: ', key);
+  }
+  ```
+
+## Property Descriptors
+1. We can use `PropertyDescriptor` property which is a ES5 feature in Javascript. This type has been available by default in Typescript.
+2. The `PropertyDescriptor` can describe the properties and methods of an object whether they can
+   1. `writable` - Whether or not this property can be changed.
+   2. `enumerable` - Whether or not this property get looped over by a `for...in`.
+   3. `value` - Current value
+   4. `configurable` - Property definition can be changed and property can be deleted.
+3. We can check this information of an object by using `Object.getOwnPropertyDescriptor(object, 'key')`.
+  ```js
+  const car = { make: 'honda', year: 2000 };
+  Object.getOwnPropertyDescriptor(car, 'make');
+  // { value: 'honda', writable: true, enumerable: true, configurable: true }
+
+  Object.defineProperty(car, 'make', { writable: false });
+  
+  car
+  // { make: 'honda', year: 2000 }
+
+  // we can't change 'make' property
+  car.make = 'chevy';
+  
+  car
+  // { make: 'honda', year: 2000 }
+  ```
+
+## Wrapping Methods with Descriptors
+1. We can use the type decorator to add some feature when executing the function. 
+2. For example, we change the value from the exact method to a custom function that do try and catch. If the method isn't executed successfully, it can print out a customized message for the case.
+  ```ts
+  class Boat {
+    color: string = 'red';
+
+    get formattedColor(): string {
+      return `This boats color is ${this.color}`;
+    }
+
+    @logError
+    pilot(): void {
+      throw new Error();
+      console.log('swish');
+    }
+  }
+
+  function logError(target: any, key: string, desc: PropertyDescriptor): void {
+    const method = desc.value;
+
+    desc.value = function () {
+      try {
+        method();
+      } catch (e) {
+        console.log('Oops, boat was sunk');
+      }
+    };
+  }
+
+  new Boat().pilot();
+  ```
+
+## Decorator Factories
+1. We can wrap the decorator function in another function so we can pass arguments to it. This approach is very similar to pass a specific arguemnt to event handler in frontend Javascript, as by default, the event handling function will receive an `event` object.
+  ```ts
+  class Boat {
+    color: string = 'red';
+
+    get formattedColor(): string {
+      return `This boats color is ${this.color}`;
+    }
+
+    // pass an argument for custom message
+    @logError('Oops boat was sunk in ocean')
+    pilot(): void {
+      throw new Error();
+      console.log('swish');
+    }
+  }
+
+  function logError(errorMessage: string) { // receiver an argument
+    return function (target: any, key: string, desc: PropertyDescriptor): void {
+      const method = desc.value;
+
+      desc.value = function () {
+        try {
+          method();
+        } catch (e) {
+          console.log(errorMessage);
+        }
+      };
+    };
+  }
+
+  new Boat().pilot();
+  ```
+
+## Decorators Around Properties
+1. We cannot access the value of a property from the decorator because the decorator is executed when the class is declared while its instance is not defined yet.
+2. Therefore, the decorator will never have acess to the properties or be able to modify it. The `target` is the `prototype` rather than the created `instance`. We can't use a `prototype` to look up a value in an `instance`.
+  ```ts
+  class Boat {
+    @testDecorator
+    color: string = 'red';
+  }
+
+  function testDecorator(target: any, key: string) {
+    console.log(target);
+    console.log(key);
+    console.log(target[key]);
+  }
+  ```
+
+## More on Decorators
+1. We can have `parameterDecorator` that works on the arugments passing to each a method. This decorator function works similar to regular decorator that it takes `target` as the `prototype`, `key` as the property name, and `index` as a number which is the position of parameter when passing to the method.
+  ```ts
+  class Boat {
+    pilot(
+      @parameterDecorator speed: string,
+      @parameterDecorator generateWake: boolean
+    ): void {
+      if (speed === 'fast') {
+        console.log('swish');
+      } else {
+        console.log('nothing');
+      }
+    }
+  }
+
+  function parameterDecorator(target: any, key: string, index: number) {
+    console.log(key, index);
+  }
+  // pilot 1
+  // pilot 0
+  ```
+2. In addition, we can have a decorator on class directly.
+  ```ts
+  @classDecorator
+  class Boat {
+    pilot(): void {
+      if (speed === 'fast') {
+        console.log('swish');
+      } else {
+        console.log('nothing');
+      }
+    }
+  }
+
+  function classDecorator(constructor: typeof Boat) {
+    console.log(constructor);
+  }
   ```
