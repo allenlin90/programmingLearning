@@ -17,12 +17,23 @@ Finished on
   - [2.4. Adding Routing Logic](#24-adding-routing-logic)
   - [2.5. Postman Setup](#25-postman-setup)
   - [2.6. VSCode REST Client Extension](#26-vscode-rest-client-extension)
-- [Validating Request Data with Pipes](#validating-request-data-with-pipes)
-  - [Accessing Request Data with Decorators](#accessing-request-data-with-decorators)
-  - [Using Pipes for Validation](#using-pipes-for-validation)
-  - [Adding Validation Rules](#adding-validation-rules)
-  - [Behind the Scenes of Validation](#behind-the-scenes-of-validation)
-  - [How Type Info is Preserved](#how-type-info-is-preserved)
+- [3. Validating Request Data with Pipes](#3-validating-request-data-with-pipes)
+  - [3.1. Accessing Request Data with Decorators](#31-accessing-request-data-with-decorators)
+  - [3.2. Using Pipes for Validation](#32-using-pipes-for-validation)
+  - [3.3. Adding Validation Rules](#33-adding-validation-rules)
+  - [3.4. Behind the Scenes of Validation](#34-behind-the-scenes-of-validation)
+  - [3.5. How Type Info is Preserved](#35-how-type-info-is-preserved)
+- [4. Nest Architecture: Services and Repositories](#4-nest-architecture-services-and-repositories)
+  - [4.1. Services and Repositories](#41-services-and-repositories)
+  - [4.2. Implementing a Repository](#42-implementing-a-repository)
+  - [4.3. Reading and Writing to a Storage File](#43-reading-and-writing-to-a-storage-file)
+  - [4.4. Implementing a Service](#44-implementing-a-service)
+  - [4.5. Manual Testing of the Controller](#45-manual-testing-of-the-controller)
+  - [4.6. Reporting Errors with Exceptions](#46-reporting-errors-with-exceptions)
+  - [4.7. Understanding Inversion of Control](#47-understanding-inversion-of-control)
+  - [4.8. Introduction to Dependency Injection](#48-introduction-to-dependency-injection)
+  - [4.9. Refactoring to Use Dependency Injection](#49-refactoring-to-use-dependency-injection)
+  - [4.10. Few More Notes on DI](#410-few-more-notes-on-di)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -60,6 +71,7 @@ Finished on
 4. NestJS uses much with Typescript decorators. In the following code, we try to make a class `AppController` and use `@Controller` to indicate that it's a "controller".
 5. We then import and use another object from `common` library which is the `Get` object that works with HTTP GET request.
 6. We then can use `Get` to decorate `getRootRoute` to indicate the value to return when the server receivers a GET request on root route.
+
   ```ts
   // src/main.ts
   import { Controller, Module, Get } from '@nestjs/common';
@@ -108,7 +120,8 @@ Finished on
 ## 1.5. File Naming Convention
 1. NestJS have convention on naming its files. Besides, the controller and modules we just created can be separated into different files.
   <img src="./images/7-nestjs_naming_convention.png">
-2. We separate the code into `app.controller.ts` and `app.module.ts`
+2. We separate the code into `app.controller.ts` and `app.module.ts`.
+
   ```ts
   // src/app.controller.ts
   import { Controller, Get } from '@nestjs/common';
@@ -269,14 +282,15 @@ Finished on
   GET http://localhost:3000/messages/123
   ```
 
-# Validating Request Data with Pipes
-## Accessing Request Data with Decorators
+# 3. Validating Request Data with Pipes
+## 3.1. Accessing Request Data with Decorators
 1. In the controllers, we need to fetch some data from the requests such as the `body` for POST request and the `id` for a GET request to fetch specific data.
 2. For example, we can use `@Param`, `@Query`, `@Headers`, and `@Body` for each part of a HTTP request. All these decorators can be imported from the common library of NestJS.
   <img src="./images/15-nest_decorator_for_http_request.png">
 3. These HTTP decorators are used as arguments passing to the request handler. 
 4. `Param` is the query string sending with the requested endpoint. In most of the cases, it can simply be a `string`.
 5. For `Body`, it can be `any` type as it's very hard to expect that what kind of data will the request include.
+
   ```ts
   // src/messages/messagse.controller.ts
   import { Controller, Get, Post, Body, Param } from '@nestjs/common';
@@ -298,11 +312,12 @@ Finished on
   }
   ```
 
-## Using Pipes for Validation
+## 3.2. Using Pipes for Validation
 1. We can use a `Pipe` to validate the incoming data before it's sending to the route handler.
 2. Though we can create the `Pipe` manually, we can use the built-in one provided by Nest JS. We can import `ValidationPipe` from `@nestjs/common`.
 3. After importing the object, we can use `app.useGlobalPipes` and pass an instance of `ValidationPipe`. This will validate all the incoming requests at the global scale.
 4. However, the validation pipe won't work on the routes, if we don't provide pipe validation handler to them.
+
   ```ts
   // main.ts
   import { NestFactory } from '@nestjs/core';
@@ -318,7 +333,7 @@ Finished on
   bootstrap();
   ```
 
-## Adding Validation Rules
+## 3.3. Adding Validation Rules
 1. Steps to set up automatic validation
    1. Tell Nest to use global validation. We have done this in the previous lecture.
    2. Create a class that describe that different properties that the request body should have
@@ -327,12 +342,14 @@ Finished on
 2. Most of the time, we can keep repeating steps from 2 to 4. 
 3. The class we create in step 2 is called a "**Data Transfer Object**" a.k.a `DTO`.
 4. For step 2, we create a new directory `dtos` under `messages` and name the file as `create-message.dto.ts`. In this file, we specify the type structure that we expect sending with the `body` in the request.
+
   ```ts
   // src/messages/dtos/create-message.dto.ts
   export class CreateMessageDto {
     content: string;
   }
   ```
+
 5. For step 3, we add validation rules to the class. Note that we need to install another 2 libraries `class-validator` and `class-transformer` with `npm`. Besides, in the newer version, these 2 libraries are required when using `ValidationPipe` globally in `main.ts`.
 6. We can use `IsString` from `class-validator` as the decorating and check if the content is string.
   ```ts
@@ -368,7 +385,7 @@ Finished on
   }
   ```
 
-## Behind the Scenes of Validation
+## 3.4. Behind the Scenes of Validation
 1. A "Dto" carries data between 2 places. We use both `class-validator` and `class-transformer` in this case.
 2. We can refer to the documentation of [`class-transformer`](https://github.com/typestack/class-transformer). This library helps to transform plain object into an instance of a class.
 3. For example, we have an array of user objects and a `User` class which has useful methods on its instance.
@@ -386,7 +403,7 @@ Finished on
     ```
    3. If there are validation errors, respond immediately, otherwise provide body to request handler.
 
-## How Type Info is Preserved
+## 3.5. How Type Info is Preserved
 1. In regular cases, Typescript files will be compiled and executed as regular Javascript, Note that the type and decorator will eventually vanish as Javascript doesn't support such feature. However, the set up in the previous lectures are still valid when we run the server. 
   ```ts
   // Typescript
@@ -430,3 +447,144 @@ Finished on
       __metadata("design:returntype", void 0)
   ], MessagesController.prototype, "getMessage", null);
   ```
+
+# 4. Nest Architecture: Services and Repositories
+## 4.1. Services and Repositories
+1. It can be very challenging to understand the difference between `Services` and `Repositories` in NestJS.
+  <img src="./images/20-services_vs_repositories.png">
+2. In the current case, we have only 1 service and 1 repository.
+3. In this case, we will create a repository from strach. However, in regular cases, we can use libraries to create it. 
+  <img src="./images/20-service_and_repository.png">
+4. Though `Services` can seem redundant in some cases as its function is not different from calling and sending data from repository directly, we still need `Services` as proxies to interact with `Repositories`.
+
+## 4.2. Implementing a Repository
+1. There are commands in Nest that we can easily create the components as `module` and `controller`. However, we create the files manually in this case.
+2. We create `messages.repository.ts` and `messages.service.ts`.
+3. We then create a file `message.json` to store the data as a local database on the hardrive.
+  ```json
+  // messages.json
+  {
+    "12": {
+      "content": "hi there",
+      "id": 12
+    },
+    "13": {
+      "content": "hi there",
+      "id": 13
+    },
+    "14": {
+      "content": "hi there",
+      "id": 14
+    },
+  }
+  ```
+3. We use `readFile` and `writeFile` from `fs/promise` which is a standard library from NodeJS.
+4. Besides, both reading and writing file can be asynchronous function. It's similar when calling to remote API through HTTP.
+5. In this case, we assume the `messages.json` is always in the root directory in the project, so the app won't automatically creat a new file if it doesn't exist.
+6. We can refer to [`fsPromise.readFile`](https://nodejs.org/api/fs.html#fs_fspromises_readfile_path_options) from NodeJS. We firstly give the filename and the option as how we encode the file.
+7. Note that if we don't provide the encoding method, it will returns a `Buffer` object.
+  ```ts
+  // src/messages/messages.repository.ts
+  import { readFile, writeFile } from 'fs/promises';
+
+  export class MessagesRepository {
+    async fineOne(id: string) {
+      const contents = await readFile('messages.json', 'utf8');
+      const messages = JSON.parse(contents);
+      /* messages data structure
+        {
+          [_id]: {
+            id: [_id],
+            content: [some text and information]
+          }
+        }
+      */
+
+      return messages[id];
+    }
+
+    async findAll() {}
+
+    async create(message: string) {}
+  }
+  ```
+
+## 4.3. Reading and Writing to a Storage File
+1. We set up `findAll` and `create` function.
+  ```ts
+  // src/messages/messages.repository.ts
+  import { readFile, writeFile } from 'fs/promises';
+
+  export class MessagesRepository {
+    async fineOne(id: string) {
+      const contents = await readFile('messages.json', 'utf8');
+      const messages = JSON.parse(contents);
+
+      return messages[id];
+    }
+
+    async findAll() {
+      const contents = await readFile('messages.json', 'utf8');
+      const messages = JSON.parse(contents);
+
+      return messages;
+    }
+
+    async create(content: string) {
+      const contents = await readFile('messages.json', 'utf8');
+      const messages = JSON.parse(contents);
+
+      // randomly generate a number from 0 to 999
+      const id = Math.floor(Math.random() * 999);
+
+      messages[id] = { id, content };
+
+      await writeFile('messages.json', JSON.stringify(messages));
+    }
+  }
+  ```
+
+## 4.4. Implementing a Service
+1. After configuring the `Repository`, we can set up the `Service` for the controller to access data from the data storage.
+2. In this case, we import `MessagesRepository` and ensure the `MessagesService` instance can access the repository.
+3. Note that we can just call the methods from `MessagesRepository` directly without calling it asynchronously.
+4. In regular NestJS, we will use dependency injection rather than linking the classes in the following way. We will use "Dependency Injection" to set up relationship between classes in NestJS.
+  ```ts
+  // src/messages/messages.service.ts
+  import { MessagesRepository } from './messages.repository';
+
+  export class MessagesService {
+    messagesRepo: MessagesRepository;
+
+    constructor() {
+      // Service is creating its own dependencies
+      // DONT DO THIS ON REAL APPS
+      // Use dependency injection instead
+      this.messagesRepo = new MessagesRepository();
+    }
+
+    findOne(id: string) {
+      return this.messagesRepo.findOne(id);
+    }
+
+    findAll() {
+      return this.messagesRepo.findAll();
+    }
+
+    create(content: string) {
+      return this.messagesRepo.create(content);
+    }
+  }
+  ```
+
+## 4.5. Manual Testing of the Controller
+
+## 4.6. Reporting Errors with Exceptions
+
+## 4.7. Understanding Inversion of Control
+
+## 4.8. Introduction to Dependency Injection
+
+## 4.9. Refactoring to Use Dependency Injection
+
+## 4.10. Few More Notes on DI
