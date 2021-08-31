@@ -3,275 +3,283 @@ Finished on
 
 Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://www.udemy.com/course/vuejs-2-the-complete-guide/)
 ---
-1. [Basics and Core Concepts - DOM Interaction with Vue](#Basics-and-Core-Concepts---DOM-Interaction-with-Vue)
-    1. [Creating and Connecting Vue App Instance](#Creating-and-Connecting-Vue-App-Instance)
-    1. [Interpolation and Data Binding](#Interpolation-and-Data-Binding)
-    1. [Binding Attributes with the "v-bind" Directive](#binding-attributes-with-the-v-bind-directive)
-    1. [Understanding "methods" in Vue Apps](Understanding-methods-in-Vue-Apps)
-    1. [Working with Data inside of a Vue App](#Working-with-Data-inside-of-a-Vue-App)
-    1. [Outputting Raw HTML Content with v-html](#Outputting-Raw-HTML-Content-with-v-html)
-    1. [A First Summary](#A-First-Summary)
-    1. [Understanding the Event Binding](#Understanding-the-Event-Binding)
-    1. [Events and Methods](#Events-and-Methods)
-    1. [Working with Event Arguments](#Working-with-Event-Arguments)
-    1. [Using the Native Event Object](#Using-the-Native-Event-Object)
-    1. [Exploring Event Modifiers](#Exploring-Event-Modifiers)
-    1. [Locking Content with v-once](#Locking-Content-with-v-once)
-    1. [Data Binding + Event Binding = Two-way Binding](#data-binding--event-binding--two-way-binding)
-    1. [Methods used for Data Bindings: How it works](#methods-used-for-data-bindings-how-it-works)
-    1. [Introducing Computed Properties](#Introducing-Computed-Properties)
-    1. [Working with Watchers](#Working-with-Watchers)
-    1. [Methods vs Computed Properties vs Watchers](#Methods-vs-Computed-Properties-vs-Watchers)
-    1. [v-bind and v-on Shorthands](#v-bind-and-v-on-Shorthands)
-    1. [Dynamic Styling with Inline Styles](#Dynamic-Styling-with-Inline-Styles)
-    1. [Adding CSS Classes Dynamically](#Adding-CSS-Classes-Dynamically)
-    1. [Classes & Computed Properties](#classes--computed-properties)
-    1. [Dynamic Classes: Array Syntax](#dynamic-classes-array-syntax)
-1. [Redenering Conditional Content & Lists](#Redenering-Conditional-Content--Lists)
-    1. [Understanding the Problem](#Understanding-the-Problem)
-    1. [Rendering Content Conditionally](#Rendering-Content-Conditionally)
-    1. [v-if, v-else and v-else-if](#v-if,-v-else-and-v-else-if)
-    1. [Using v-show Instead of v-if](#Using-v-show-Instead-of-v-if)
-    1. [Rendering Lists of Data](#Rendering-Lists-of-Data)
-    1. [Diving Deeper Into v-for](#Diving-Deeper-Into-v-for)
-    1. [Removing List Items](#Removing-List-Items)
-    1. [Lists & Keys](#Lists--Keys)
-1. [Coure Project: The Monster Slayer Game](#Coure-Project-The-Monster-Slayer-Game)
-    1. [Project Setup & First Methods](#Project-Setup--First-Methods)
-    1. [Updating the Health Bars](#Updating-the-Health-Bars)
-    1. [Adding a "Special Attack"](#adding-a-special-attack)
-    1. [Adding a "Heal" Functionality](#Adding-a-Heal-Functionality)
-    1. [Adding a "Game Over" Screen](#Adding-a-Game-Over-Screen)
-    1. [Finshing the Core Functionality](#Finshing-the-Core-Functionality)
-    1. [Adding a Battle Log](#Adding-a-Battle-Log)
-1. [Vue: Behind the Scenes](#Vue-Behind-the-Scenes)
-    1. [An Introduction to Vue's Reactivity](#An-Introduction-to-Vue's-Reactivity)
-    1. [Vue Reactivity: A Deep Dive](#Vue-Reactivity-A-Deep-Dive)
-    1. [One App vs Multiple Apps](#One-App-vs-Multiple-Apps)
-    1. [Understanding Templates](#Understanding-Templates)
-    1. [Working with Refs](#Working-with-Refs)
-    1. [How Vue Updates the DOM](#How-Vue-Updates-the-DOM)
-    1. [Vue App Lifecycle - Theory](#Vue-App-Lifecycle---Theory)
-    1. [Vue App Lifecycle - Practice](#Vue-App-Lifecycle---Practice)
-1. [Introducing Components](#Introducing-Components)
-    1. [Understanding the Problem](#Understanding-the-Problem)
-    1. [Introducing Components](#Introducing-Components)
-    1. [The Why: Building Complex User Interfaces With Components](#The-Why-Building-Complex-User-Interfaces-With-Components)
-1. [Moving to a Better Development SEtup & Workflow with the Vue CLI](#Moving-to-a-Better-Development-SEtup--Workflow-with-the-Vue-CLI)
-    1. [Why We Need A Development Server](#Why-We-Need-A-Development-Server)
-    1. [WHy We Want A Better Developer Experience](#WHy-We-Want-A-Better-Developer-Experience)
-    1. [Installing & Using the Vue CLI](#Installing--Using-the-Vue-CLI)
-    1. [Inspecting the Created Project](#Inspecting-the-Created-Project)
-    1. [Inspecting the Vue Code & ".vue" Files](#inspecting-the-vue-code--vue-files)
-    1. [Adding the "Vetur" Extension to VS Code](#adding-the-vetur-extension-to-vs-code)
-    1. [More on ".vue" Files](#more-on-vue-files)
-    1. [A New Vue Project](#A-New-Vue-Project)
-    1. [Creating a Basic Vue App](#Creating-a-Basic-Vue-App)
-    1. [Adding a Component](#Adding-a-Component)
-    1. [Adding Styling](#Adding-Styling)
-1. [Component Communication](#Component-Communication)
-    1. [Introducing "Props" (Parent => Child Communication)](#introducing-props-parent--child-communication)
-    1. [Prop Behavior & Changing Props](#Prop-Behavior--Changing-Props)
-    1. [Validating Props](#Validating-Props)
-    1. [Working with Dynamic Props Values](#Working-with-Dynamic-Props-Values)
-    1. [Emitting Custom Events (Child => Parent Communication)](#Eemitting-custom-events-child--parent-communication)
-    1. [Defining & Validating Custom Events](#Defining--Validating-Custom-Events)
-    1. [Prop / Event Fallthrough & Binding All Props](#Prop--Event-Fallthrough--Binding-All-Props)
-    1. [Demo: Adding Components & Connecting Them](#Demo-Adding-Components--Connecting-Them)
-    1. [Demo: Adding More Component Communication](#Demo-Adding-More-Component-Communication)
-    1. [A Potential Problem](#A-Potential-Problem)
-    1. [Provide + Inject To The Rescue](#Provide--Inject-To-The-Rescue)
-    1. [Provide + Inject for Functions / Methods](#Provide--Inject-for-Functions--Methods)
-    1. [Provide + Inject vs Props & Custom Events](#Provide--Inject-vs-Props--Custom-Events)
-1. [Diving Deeper Into Components](#Diving-Deeper-Into-Components)
-    1. [Project Setup](#Project-Setup)
-    1. [Global vs Local Components](#Global-vs-Local-Components)
-    1. [Scoped Styles](#Scoped-Styles)
-    1. [Introducing Slots](#Introducing-Slots)
-    1. [Named Slots](#Named-Slots)
-    1. [Slot Styles & Compilation](#Slot-Styles--Compilation)
-    1. [More on Slots](#More-on-Slots)
-    1. [Scoped Slots](#Scoped-Slots)
-    1. [Dynamic Components](#Dynamic-Components)
-    1. [Keeping Dynamic Components Alive](#Keeping-Dynamic-Components-Alive)
-    1. [Applying What We Know & A Problem](#Applying-What-We-Know--A-Problem)
-    1. [Teleporting Elements](#Teleporting-Elements)
-    1. [Working with Fragments](#Working-with-Fragments)
-    1. [The Vue Style Guide](#The-Vue-Style-Guide)
-    1. [Moving to a Different Folder Structure](#Moving-to-a-Different-Folder-Structure)
-1. [Course Projct: The Learning Resources App](#Course-Projct-The-Learning-Resources-App)
-    1. [Setup & First Steps](#Setup--First-Steps)
-    1. [First Components & Props](#First-Components--Props)
-    1. [Styling and More Components](#Styling-and-More-Components)
-    1. [Header & BaseCard Components](#Header--BaseCard-Components)
-    1. [Adding a Base Button](#Adding-a-Base-Button)
-    1. [Dynamic Components & Attribute Fallthrough](#Dynamic-Components--Attribute-Fallthrough)
-    1. [Adding & Styling Tabs](#Adding--Styling-Tabs)
-    1. [Adding a Form](#Adding-a-Form)
-    1. [Fetching User Input](#Fetching-User-Input)
-    1. [Adding a Modal Dialog](#Adding-a-Modal-Dialog)
-    1. [Deleting Items](#Deleting-Items)
-    1. [Adding "Teleport"](#Adding-Teleport)
-1. [Form](#Form)
-    1. [v-model & Inputs](#v-model--Inputs)
-    1. [Working with v-model Modifiers and Numbers](#Working-with-v-model-Modifiers-and-Numbers)
-    1. [v-model and Dropdowns](#v-model-and-Dropdowns)
-    1. [Using v-model with Checkboxes & Radiobuttons](#Using-v-model-with-Checkboxes--Radiobuttons)
-    1. [Adding Basic Form Validation](#Adding-Basic-Form-Validation)
-    1. [Building a Custom Control Component](#Building-a-Custom-Control-Component)
-    1. [Using v-model on Custom Components](#Using-v-model-on-Custom-Components)
-1. [Sending Http Requests](#Sending-Http-Requests)
-    1. [Starting App & Why we need a Backend](#Starting-App--Why-we-need-a-Backend)
-    1. [Adding a Backend](#Adding-a-Backend)
-    1. [How to (Not) Send Http Requests](#How-to-Not-Send-Http-Requests)
-    1. [Sending a POST Request to Store Data](#Sending-a-POST-Request-to-Store-Data)
-    1. [Getting Data (GET Request) & Transforming Response Data](#Getting-Data-GET-Request--Transforming-Response-Data)
-    1. [Loading Data When a Component Mounts](#Loading-Data-When-a-Component-Mounts)
-    1. [Showing a "Loading..." Message](#Showing-a-Loading...-Message)
-    1. [Handling the "No Data" State](#Handling-the-No-Data-State)
-    1. [Handling Technical / Browser-side Errors](#Handling-Technical--Browser-side-Errors)
-    1. [Handling Error Responses](#Handling-Error-Responses)
-1. [Routing: Building "Multi-Page" Single Page Application](#Routing-Building-Multi-Page-Single-Page-Application)
-    1. [What & Why?](#What--Why?)
-    1. [Routing Setup](#Routing-Setup)
-    1. [Registering & Rendering Routes](#Registering--Rendering-Routes)
-    1. [Navigating with router-link](#Navigating-with-router-link)
-    1. [Styling Active Links](#Styling-Active-Links)
-    1. [Programmatic Navigation](#Programmatic-Navigation)
-    1. [Passing Data with Route Params (Dynamic Segments)](#Passing-Data-with-Route-Params-Dynamic-Segments)
-    1. [Navigation & Dynamic Paths](#Navigation--Dynamic-Paths)
-    1. [A Vue Bug](#A-Vue-Bug)
-    1. [Updating Params Data with Watchers](#Updating-Params-Data-with-Watchers)
-    1. [Passing Params as Props](#Passing-Params-as-Props)
-    1. [Redirecting & "Catch All" Routes](#Redirecting--Catch-All-Routes)
-    1. [Using Nested Routes](#Using-Nested-Routes)
-    1. [More Fun with Named Routes & Location Objects](#More-Fun-with-Named-Routes--Location-Objects)
-    1. [Using Query Params](#Using-Query-Params)
-    1. [Rendering Multiple Routers with Named Router Views](#Rendering-Multiple-Routers-with-Named-Router-Views)
-    1. [Controlling Scroll Behavior](#Controlling-Scroll-Behavior)
-    1. [Introducing Navigation Guards](#Introducing-Navigation-Guards)
-    1. [Diving Deeper Into Navigation Guards](#Diving-Deeper-Into-Navigation-Guards)
-    1. [The Global "afterEach" Guard](#The-Global-afterEach-Guard)
-    1. [Beyond Entering: Route Leave Guards](#Beyond-Entering-Route-Leave-Guards)
-    1. [Utilizing Route Metadata](#Utilizing-Route-Metadata)
-    1. [Organizing Route Files](#Organizing-Route-Files)
-1. [Animations & Transitions](#Animations--Transitions)
-    1. [Animation Basics & CSS Transitions](#Animation-Basics--CSS-Transitions)
-    1. [Understanding CSS Animations](#Understanding-CSS-Animations)
-    1. [Why is "Just CSS" Not Enough?](#Why-is-Just-CSS-Not-Enough?)
-    1. [Playing CSS Animations with Vue's Help](#Playing-CSS-Animations-with-Vue's-Help)
-    1. [Using the Transition Component](#Using-the-Transition-Component)
-    1. [CSS Animations with the Transition Component](#CSS-Animations-with-the-Transition-Component)
-    1. [Using Custom CSS Class Names](#Using-Custom-CSS-Class-Names)
-    1. [Example: Animating a Modal](#Example-Animating-a-Modal)
-    1. [Transitioning Between Multiple Elements](#Transitioning-Between-Multiple-Elements)
-    1. [Using Transition Events](#Using-Transition-Events)
-    1. [Building JavaScript Transitions (instead of CSS)](#Building-JavaScript-Transitions-instead-of-CSS)
-    1. [Disabling CSS Transitions](#Disabling-CSS-Transitions)
-    1. [Getting Started with Animated Lists](#Getting-Started-with-Animated-Lists)
-    1. [Animating Lists with "transition-group"](#Animating-Lists-with-transition-group)
-    1. [Animate List Item Movement](#Animate-List-Item-Movement)
-    1. [Animate Route Changes](#Animate-Route-Changes)
-1. [Vuex](#Vuex)
-    1. [What & Why?](#What-and-Why-vuex?)
-    1. [Creating & Using a Store](#Creating--Using-a-Store)
-    1. [Connecting Components to State](#Connecting-Components-to-State)
-    1. [Introducing Mutations - A Better Way of Changing Data](#Introducing-Mutations---A-Better-Way-of-Changing-Data)
-    1. [Passing Data to Mutations with Payloads](#Passing-Data-to-Mutations-with-Payloads)
-    1. [Introducing Getters - A Better Way Of Getting Data](#Introducing-Getters---A-Better-Way-Of-Getting-Data)
-    1. [Running Async Code with Actions](#Running-Async-Code-with-Actions)
-    1. [Understanding the Action "Context"](#Understanding-the-Action-Context)
-    1. [Using Mapper Helpers](#Using-Mapper-Helpers)
-    1. [Organizing your Store with Modules](#Organizing-your-Store-with-Modules)
-    1. [Understanding Local Module State](#Understanding-Local-Module-State)
-    1. [Namespacing Modules](#Namespacing-Modules)
-    1. [Structuring Vuex Code & Files](#Structuring-Vuex-Code--Files)
-1. [Main Project: "Find a Coach" Web App](#Main-Project-Find-a-Coach-Web-App)
-    1. [Planning the Project / Web App](#Planning-the-Project--Web-App)
-    1. [Planning the Data Requirements](#Planning-the-Data-Requirements)
-    1. [Planning the Layout / Components](#Planning-the-Layout--Components)
-    1. [Registering Routes](#Registering-Routes)
-    1. [Adding Route Page Components](#Adding-Route-Page-Components)
-    1. [Working on the Main Layout & Styling](#Working-on-the-Main-Layout--Styling)
-    1. [Wiring Up Pages](#Wiring-Up-Pages)
-    1. [Adding Vuex and Coach Data](#Adding-Vuex-and-Coach-Data)
-    1. [Working on the Coaches List and List Items](#Working-on-the-Coaches-List-and-List-Items)
-    1. [Adding a Couple of Base Components (Base Card, Base Button, Base Badge)](#Adding-a-Couple-of-Base-Components-Base-Card,-Base-Button,-Base-Badge)
-    1. [Building the Coach Detail Component](#Building-the-Coach-Detail-Component)
-    1. [Filtering Coaches](#Filtering-Coaches)
-    1. [Registering as a Coach: The Form](#Registering-as-a-Coach-The-Form)
-    1. [Adding Coaches to Vuex](#Adding-Coaches-to-Vuex)
-    1. [Adding Form Validation](#Adding-Form-Validation)
-    1. [Working on the Contact Form](#Working-on-the-Contact-Form)
-    1. [Storing Requests (Messages) with Vuex](#Storing-Requests-Messages-with-Vuex)
-    1. [Outputting Incoming Requests (Messages)](#Outputting-Incoming-Requests-Messages)
-    1. [Filtering Requests for teh Active Coach](#Filtering-Requests-for-teh-Active-Coach)
-    1. [Sending a PUT Http Request to Store Coach Data](#Sending-a-PUT-Http-Request-to-Store-Coach-Data)
-    1. [Fetching Coach Data (GET Http Request)](#Fetching-Coach-Data-GET-Http-Request)
-    1. [Rendering a Loading Spinner](#Rendering-a-Loading-Spinner)
-    1. [Adding Http Error Handling](#Adding-Http-Error-Handling)
-    1. [Sending Coaching Requests Http Requests](#Sending-Coaching-Requests-Http-Requests)
-    1. [Caching Http Response Data](#Caching-Http-Response-Data)
-    1. [Adding Route Transitions](#Adding-Route-Transitions)
-    1. [The "Not Found" Page & Summary](#The-Not-Found-Page--Summary)
-1. [Vue & Authentication](#Vue--Authentication)
-    1. [How Authentication Works in Vue Apps (or any SPA)](#How-Authentication-Works-in-Vue-Apps-or-any-SPA)
-    1. [Locking / Protecting Backend Resources](#Locking--Protecting-Backend-Resources)
-    1. [Adding an Authentication Page (Login & Signup)](#Adding-an-Authentication-Page-Login--Signup)
-    1. [Preparing Vuex](#Preparing-Vuex)
-    1. [Adding a "Signup" Action & Flow](#Adding-a-Signup-Action--Flow)
-    1. [Better UX: Loading Spinner & Error Handling](#Better-UX-Loading-Spinner--Error-Handling)
-    1. [Adding a "Login" Action & Flow](#Adding-a-Login-Action--Flow)
-    1. [Attaching the Token to Outgoing Requests](#Attaching-the-Token-to-Outgoing-Requests)
-    1. [Updating the UI Based on Auth State](#Updating-the-UI-Based-on-Auth-State)
-    1. [Adding a "Logout" Action & Flow](#Adding-a-Logout-Action--Flow)
-    1. [Authentication & Routing (incl. Navigation Guards)](#Authentication--Routing-incl.-Navigation-Guards)
-    1. [Adding "Auto Login"](#Adding-Auto-Login)
-    1. [Adding "Auto Logout"](#Adding-Auto-Logout)
-1. [Optimizing & Deploying Vue Apps](#Optimizing--Deploying-Vue-Apps)
-    1. [What To Deploy?](#What-To-Deploy?)
-    1. [Optimization: Using Asynchronous Components](#Optimization-Using-Asynchronous-Components)
-    1. [Building the Project For Production](#Building-the-Project-For-Production)
-    1. [Deploying a Vue App](#Deploying-a-Vue-App)
-1. [The Composition API - Replacing the Options API](#The-Composition-API---Replacing-the-Options-API)
-    1. [Which Problem Does the Composition API Solve?](#Which-Problem-Does-the-Composition-API-Solve?)
-    1. [Replacing "data" with "refs"](#Replacing-data-with-refs)
-    1. [Building "reactive" Objects](#Building-reactive-Objects)
-    1. [Reactivity: A Deep Dive](#Reactivity-A-Deep-Dive)
-    1. [Replacing "methods" with regular Functions](#Replacing-methods-with-regular-Functions)
-    1. [Replacing "Computed Properties" with the "computed" Function](#Replacing-Computed-Properties-with-the-computed-Function)
-    1. [Two-Way-Binding and the Composition API](#Two-Way-Binding-and-the-Composition-API)
-    1. [Working with Watchers](#Working-with-Watchers)
-    1. [A First Summary](#A-First-Summary)
-    1. [How to Use Templates Refs](#How-to-Use-Templates-Refs)
-    1. [Components, Props, & The Composition API](#Components,-Props,--The-Composition-API)
-    1. [Emitting Custom Events](#Emitting-Custom-Events)
-    1. [Working with Provide / Inject](#Working-with-Provide--Inject)
-    1. [Lifecycle Hooks in the Composition API](#Lifecycle-Hooks-in-the-Composition-API)
-    1. [Migrating from Options API to Composition API - an Example Project](#Migrating-from-Options-API-to-Composition-API---an-Example-Project)
-    1. [Migrating a First Component](#Migrating-a-First-Component)
-    1. [Migrating a Big Component](#Migrating-a-Big-Component)
-    1. [Migrating the Remaining Components](#Migrating-the-Remaining-Components)
-    1. [Routing, Params & The Composition API](#Routing,-Params--The-Composition-API)
-    1. [The Route & Router Objects and the Composition API](#The-Route--Router-Objects-and-the-Composition-API)
-    1. [Using Vuex with the Composition API](#Using-Vuex-with-the-Composition-API)
-1. [Reusing Funcitonality: Mixins & Custom Composition Functions](#Reusing-Funcitonality-Mixins--Custom-Composition-Functions)
-    1. [Reusability Concepts](#Reusability-Concepts)
-    1. [Using Mixins](#Using-Mixins)
-    1. [Understanding Mixin Merging](#Understanding-Mixin-Merging)
-    1. [Global Mixins](#Global-Mixins)
-    1. [Disadvantages of Mixins](#Disadvantages-of-Mixins)
-    1. [Custom Hooks / Composables & The Composition API](#Custom-Hooks--Composables--The-Composition-API)
-    1. [More Custom Composition Functions](#More-Custom-Composition-Functions)
-    1. [Why Hookks / Composables Beat Mixins](#Why-Hookks--Composables-Beat-Mixins)
-    1. [Example: Creating a "Search" Hook](#Example-Creating-a-Search-Hook)
-    1. [Custom Hooks Gotchas](#Custom-Hooks-Gotchas)
-    1. [More Thoughts on Custom Hooks / Composables](#More-Thoughts-on-Custom-Hooks--Composables)
-    1. [Example: A Custom "Sort" Hook](#Example-A-Custom-Sort-Hook)
+
+- [1. Basics and Core Concepts - DOM Interaction with Vue](#1-basics-and-core-concepts---dom-interaction-with-vue)
+  - [1.1. Creating and Connecting Vue App Instance](#11-creating-and-connecting-vue-app-instance)
+  - [1.2. Interpolation and Data Binding](#12-interpolation-and-data-binding)
+  - [1.3. Binding Attributes with the "v-bind" Directive](#13-binding-attributes-with-the-v-bind-directive)
+  - [1.4. Understanding "methods" in Vue Apps](#14-understanding-methods-in-vue-apps)
+  - [1.5. Working with Data inside of a Vue App](#15-working-with-data-inside-of-a-vue-app)
+  - [1.6. Outputting Raw HTML Content with v-html](#16-outputting-raw-html-content-with-v-html)
+  - [1.7. A First Summary](#17-a-first-summary)
+  - [1.8. Understanding the Event Binding](#18-understanding-the-event-binding)
+  - [1.9. Events and Methods](#19-events-and-methods)
+  - [1.10. Working with Event Arguments](#110-working-with-event-arguments)
+  - [1.11. Using the Native Event Object](#111-using-the-native-event-object)
+  - [1.12. Exploring Event Modifiers](#112-exploring-event-modifiers)
+  - [1.13. Locking Content with v-once](#113-locking-content-with-v-once)
+  - [1.14. Data Binding + Event Binding = Two-way Binding](#114-data-binding--event-binding--two-way-binding)
+  - [1.15. Methods used for Data Bindings: How it works](#115-methods-used-for-data-bindings-how-it-works)
+  - [1.16. Introducing Computed Properties](#116-introducing-computed-properties)
+  - [1.17. Working with Watchers](#117-working-with-watchers)
+  - [1.18. Methods vs Computed Properties vs Watchers](#118-methods-vs-computed-properties-vs-watchers)
+  - [1.19. v-bind and v-on Shorthands](#119-v-bind-and-v-on-shorthands)
+  - [1.20. Assignmetns 3: Time to practice: Reactivity](#120-assignmetns-3-time-to-practice-reactivity)
+  - [1.21. Dynamic Styling with Inline Styles](#121-dynamic-styling-with-inline-styles)
+  - [1.22. Adding CSS Classes Dynamically](#122-adding-css-classes-dynamically)
+  - [1.23. Classes & Computed Properties](#123-classes--computed-properties)
+  - [1.24. Dynamic Classes: Array Syntax](#124-dynamic-classes-array-syntax)
+  - [1.25. Assignment 4: Time to practice: Dynamic Styling](#125-assignment-4-time-to-practice-dynamic-styling)
+- [2. Redenering Conditional Content & Lists](#2-redenering-conditional-content--lists)
+  - [2.1. Understanding the Problem](#21-understanding-the-problem)
+  - [2.2. Rendering Content Conditionally](#22-rendering-content-conditionally)
+  - [2.3. v-if, v-else and v-else-if](#23-v-if-v-else-and-v-else-if)
+  - [2.4. Using v-show Instead of v-if](#24-using-v-show-instead-of-v-if)
+  - [2.5. Rendering Lists of Data](#25-rendering-lists-of-data)
+  - [2.6. Diving Deeper Into v-for](#26-diving-deeper-into-v-for)
+  - [2.7. Removing List Items](#27-removing-list-items)
+  - [2.8. Lists & Keys](#28-lists--keys)
+  - [2.9. Assignment 5: Time to Practice: Conditional Content & Lists](#29-assignment-5-time-to-practice-conditional-content--lists)
+  - [2.10. Summary](#210-summary)
+- [3. Coure Project: The Monster Slayer Game](#3-coure-project-the-monster-slayer-game)
+  - [3.1. Project Setup & First Methods](#31-project-setup--first-methods)
+  - [3.2. Updating the Health Bars](#32-updating-the-health-bars)
+  - [3.3. Adding a "Special Attack"](#33-adding-a-special-attack)
+  - [3.4. Adding a "Heal" Functionality](#34-adding-a-heal-functionality)
+  - [3.5. Adding a "Game Over" Screen](#35-adding-a-game-over-screen)
+  - [3.6. Finshing the Core Functionality](#36-finshing-the-core-functionality)
+  - [3.7. Adding a Battle Log](#37-adding-a-battle-log)
+- [4. Vue: Behind the Scenes](#4-vue-behind-the-scenes)
+  - [4.1. An Introduction to Vue's Reactivity](#41-an-introduction-to-vues-reactivity)
+  - [4.2. Vue Reactivity: A Deep Dive](#42-vue-reactivity-a-deep-dive)
+  - [4.3. One App vs Multiple Apps](#43-one-app-vs-multiple-apps)
+  - [4.4. Understanding Templates](#44-understanding-templates)
+  - [4.5. Working with Refs](#45-working-with-refs)
+  - [4.6. How Vue Updates the DOM](#46-how-vue-updates-the-dom)
+  - [4.7. Vue App Lifecycle - Theory](#47-vue-app-lifecycle---theory)
+  - [4.8. Vue App Lifecycle - Practice](#48-vue-app-lifecycle---practice)
+- [5. Introducing Components](#5-introducing-components)
+  - [5.1. Understanding the Problem](#51-understanding-the-problem)
+  - [5.2. Introducing Components](#52-introducing-components)
+  - [5.3. The Why: Building Complex User Interfaces With Components](#53-the-why-building-complex-user-interfaces-with-components)
+- [6. Moving to a Better Development SEtup & Workflow with the Vue CLI](#6-moving-to-a-better-development-setup--workflow-with-the-vue-cli)
+  - [6.1. Why We Need A Development Server](#61-why-we-need-a-development-server)
+  - [6.2. WHy We Want A Better Developer Experience](#62-why-we-want-a-better-developer-experience)
+  - [6.3. Installing & Using the Vue CLI](#63-installing--using-the-vue-cli)
+  - [6.4. Inspecting the Created Project](#64-inspecting-the-created-project)
+  - [6.5. Inspecting the Vue Code & ".vue" Files](#65-inspecting-the-vue-code--vue-files)
+  - [6.6. Adding the "Vetur" Extension to VS Code](#66-adding-the-vetur-extension-to-vs-code)
+  - [6.7. More on ".vue" Files](#67-more-on-vue-files)
+  - [6.8. A New Vue Project](#68-a-new-vue-project)
+  - [6.9. Creating a Basic Vue App](#69-creating-a-basic-vue-app)
+  - [6.10. Adding a Component](#610-adding-a-component)
+  - [6.11. Adding Styling](#611-adding-styling)
+- [7. Component Communication](#7-component-communication)
+  - [7.1. Introducing "Props" (Parent => Child Communication)](#71-introducing-props-parent--child-communication)
+  - [7.2. Prop Behavior & Changing Props](#72-prop-behavior--changing-props)
+  - [7.3. Validating Props](#73-validating-props)
+  - [7.4. Working with Dynamic Props Values](#74-working-with-dynamic-props-values)
+  - [7.5. Emitting Custom Events (Child => Parent Communication)](#75-emitting-custom-events-child--parent-communication)
+  - [7.6. Defining & Validating Custom Events](#76-defining--validating-custom-events)
+  - [7.7. Prop / Event Fallthrough & Binding All Props](#77-prop--event-fallthrough--binding-all-props)
+  - [7.8. Demo: Adding Components & Connecting Them](#78-demo-adding-components--connecting-them)
+  - [7.9. Demo: Adding More Component Communication](#79-demo-adding-more-component-communication)
+  - [7.10. Assignment 6: Time to practice: Props and Custom events](#710-assignment-6-time-to-practice-props-and-custom-events)
+  - [7.11. A Potential Problem](#711-a-potential-problem)
+  - [7.12. Provide + Inject To The Rescue](#712-provide--inject-to-the-rescue)
+  - [7.13. Provide + Inject for Functions / Methods](#713-provide--inject-for-functions--methods)
+  - [7.14. Provide + Inject vs Props & Custom Events](#714-provide--inject-vs-props--custom-events)
+- [8. Diving Deeper Into Components](#8-diving-deeper-into-components)
+  - [8.1. Global vs Local Components](#81-global-vs-local-components)
+  - [8.2. Scoped Styles](#82-scoped-styles)
+  - [8.3. Introducing Slots](#83-introducing-slots)
+  - [8.4. Named Slots](#84-named-slots)
+  - [8.5. Slot Styles & Compilation](#85-slot-styles--compilation)
+  - [8.6. More on Slots](#86-more-on-slots)
+  - [8.7. Scoped Slots](#87-scoped-slots)
+  - [8.8. Dynamic Components](#88-dynamic-components)
+  - [8.9. Keeping Dynamic Components Alive](#89-keeping-dynamic-components-alive)
+  - [8.10. Applying What We Know & A Problem](#810-applying-what-we-know--a-problem)
+  - [8.11. Teleporting Elements](#811-teleporting-elements)
+  - [8.12. Working with Fragments](#812-working-with-fragments)
+  - [8.13. The Vue Style Guide](#813-the-vue-style-guide)
+  - [8.14. Moving to a Different Folder Structure](#814-moving-to-a-different-folder-structure)
+- [9. Course Projct: The Learning Resources App](#9-course-projct-the-learning-resources-app)
+  - [9.1. Setup & First Steps](#91-setup--first-steps)
+  - [9.2. First Components & Props](#92-first-components--props)
+  - [9.3. Styling and More Components](#93-styling-and-more-components)
+  - [9.4. Header & BaseCard Components](#94-header--basecard-components)
+  - [9.5. Adding a Base Button](#95-adding-a-base-button)
+  - [9.6. Dynamic Components & Attribute Fallthrough](#96-dynamic-components--attribute-fallthrough)
+  - [9.7. Adding & Styling Tabs](#97-adding--styling-tabs)
+  - [9.8. Adding a Form](#98-adding-a-form)
+  - [9.9. Fetching User Input](#99-fetching-user-input)
+  - [9.10. Adding a Modal Dialog](#910-adding-a-modal-dialog)
+  - [9.11. Deleting Items](#911-deleting-items)
+  - [9.12. Adding "Teleport"](#912-adding-teleport)
+- [10. Form](#10-form)
+  - [10.1. v-model & Inputs](#101-v-model--inputs)
+  - [10.2. Working with v-model Modifiers and Numbers](#102-working-with-v-model-modifiers-and-numbers)
+  - [10.3. v-model and Dropdowns](#103-v-model-and-dropdowns)
+  - [10.4. Using v-model with Checkboxes & Radiobuttons](#104-using-v-model-with-checkboxes--radiobuttons)
+  - [10.5. Adding Basic Form Validation](#105-adding-basic-form-validation)
+  - [10.6. Building a Custom Control Component](#106-building-a-custom-control-component)
+  - [10.7. Using v-model on Custom Components](#107-using-v-model-on-custom-components)
+- [11. Sending Http Requests](#11-sending-http-requests)
+  - [11.1. Starting App & Why we need a Backend](#111-starting-app--why-we-need-a-backend)
+  - [11.2. Adding a Backend](#112-adding-a-backend)
+  - [11.3. How to (Not) Send Http Requests](#113-how-to-not-send-http-requests)
+  - [11.4. Sending a POST Request to Store Data](#114-sending-a-post-request-to-store-data)
+  - [11.5. Getting Data (GET Request) & Transforming Response Data](#115-getting-data-get-request--transforming-response-data)
+  - [11.6. Loading Data When a Component Mounts](#116-loading-data-when-a-component-mounts)
+  - [11.7. Showing a "Loading..." Message](#117-showing-a-loading-message)
+  - [11.8. Handling the "No Data" State](#118-handling-the-no-data-state)
+  - [11.9. Handling Technical / Browser-side Errors](#119-handling-technical--browser-side-errors)
+  - [11.10. Handling Error Responses](#1110-handling-error-responses)
+- [12. Routing: Building "Multi-Page" Single Page Application](#12-routing-building-multi-page-single-page-application)
+  - [12.1. What & Why?](#121-what--why)
+  - [12.2. Routing Setup](#122-routing-setup)
+  - [12.3. Registering & Rendering Routes](#123-registering--rendering-routes)
+  - [12.4. Navigating with router-link](#124-navigating-with-router-link)
+  - [12.5. Styling Active Links](#125-styling-active-links)
+  - [12.6. Programmatic Navigation](#126-programmatic-navigation)
+  - [12.7. Passing Data with Route Params (Dynamic Segments)](#127-passing-data-with-route-params-dynamic-segments)
+  - [12.8. Navigation & Dynamic Paths](#128-navigation--dynamic-paths)
+  - [12.9. Updating Params Data with Watchers](#129-updating-params-data-with-watchers)
+  - [12.10. Passing Params as Props](#1210-passing-params-as-props)
+  - [12.11. Redirecting & "Catch All" Routes](#1211-redirecting--catch-all-routes)
+  - [12.12. Using Nested Routes](#1212-using-nested-routes)
+  - [12.13. More Fun with Named Routes & Location Objects](#1213-more-fun-with-named-routes--location-objects)
+  - [12.14. Using Query Params](#1214-using-query-params)
+  - [12.15. Rendering Multiple Routers with Named Router Views](#1215-rendering-multiple-routers-with-named-router-views)
+  - [12.16. Controlling Scroll Behavior](#1216-controlling-scroll-behavior)
+  - [12.17. Introducing Navigation Guards](#1217-introducing-navigation-guards)
+  - [12.18. Diving Deeper Into Navigation Guards](#1218-diving-deeper-into-navigation-guards)
+  - [12.19. The Global "afterEach" Guard](#1219-the-global-aftereach-guard)
+  - [12.20. Beyond Entering: Route Leave Guards](#1220-beyond-entering-route-leave-guards)
+  - [12.21. Utilizing Route Metadata](#1221-utilizing-route-metadata)
+  - [12.22. Organizing Route Files](#1222-organizing-route-files)
+- [13. Animations & Transitions](#13-animations--transitions)
+  - [13.1. Animation Basics & CSS Transitions](#131-animation-basics--css-transitions)
+  - [13.2. Understanding CSS Animations](#132-understanding-css-animations)
+  - [13.3. Why is "Just CSS" Not Enough?](#133-why-is-just-css-not-enough)
+  - [13.4. Playing CSS Animations with Vue's Help](#134-playing-css-animations-with-vues-help)
+  - [13.5. Using the Transition Component](#135-using-the-transition-component)
+  - [13.6. CSS Animations with the Transition Component](#136-css-animations-with-the-transition-component)
+  - [13.7. Using Custom CSS Class Names](#137-using-custom-css-class-names)
+  - [13.8. Example: Animating a Modal](#138-example-animating-a-modal)
+  - [13.9. Transitioning Between Multiple Elements](#139-transitioning-between-multiple-elements)
+  - [13.10. Using Transition Events](#1310-using-transition-events)
+  - [13.11. Building JavaScript Transitions (instead of CSS)](#1311-building-javascript-transitions-instead-of-css)
+  - [13.12. Disabling CSS Transitions](#1312-disabling-css-transitions)
+  - [13.13. Getting Started with Animated Lists](#1313-getting-started-with-animated-lists)
+  - [13.14. Animating Lists with "transition-group"](#1314-animating-lists-with-transition-group)
+  - [13.15. Animate List Item Movement](#1315-animate-list-item-movement)
+  - [13.16. Animate Route Changes](#1316-animate-route-changes)
+- [14. Vuex](#14-vuex)
+  - [14.1. What and why vuex?](#141-what-and-why-vuex)
+  - [14.2. Creating & Using a Store](#142-creating--using-a-store)
+  - [14.3. Connecting Components to State](#143-connecting-components-to-state)
+  - [14.4. Introducing Mutations - A Better Way of Changing Data](#144-introducing-mutations---a-better-way-of-changing-data)
+  - [14.5. Passing Data to Mutations with Payloads](#145-passing-data-to-mutations-with-payloads)
+  - [14.6. Introducing Getters - A Better Way Of Getting Data](#146-introducing-getters---a-better-way-of-getting-data)
+  - [14.7. Running Async Code with Actions](#147-running-async-code-with-actions)
+  - [14.8. Understanding the Action "Context"](#148-understanding-the-action-context)
+  - [14.9. Using Mapper Helpers](#149-using-mapper-helpers)
+  - [14.10. Example: Adding more state](#1410-example-adding-more-state)
+  - [14.11. Organizing your Store with Modules](#1411-organizing-your-store-with-modules)
+  - [14.12. Understanding Local Module State](#1412-understanding-local-module-state)
+  - [14.13. Namespacing Modules](#1413-namespacing-modules)
+  - [14.14. Structuring Vuex Code & Files](#1414-structuring-vuex-code--files)
+  - [14.15. A Challenge](#1415-a-challenge)
+  - [14.16. Challenge Solution](#1416-challenge-solution)
+- [15. Main Project: "Find a Coach" Web App](#15-main-project-find-a-coach-web-app)
+  - [15.1. Planning the Project / Web App](#151-planning-the-project--web-app)
+  - [15.2. Planning the Data Requirements](#152-planning-the-data-requirements)
+  - [15.3. Planning the Layout / Components](#153-planning-the-layout--components)
+  - [15.4. Registering Routes](#154-registering-routes)
+  - [15.5. Adding Route Page Components](#155-adding-route-page-components)
+  - [15.6. Working on the Main Layout & Styling](#156-working-on-the-main-layout--styling)
+  - [15.7. Wiring Up Pages](#157-wiring-up-pages)
+  - [15.8. Adding Vuex and Coach Data](#158-adding-vuex-and-coach-data)
+  - [15.9. Working on the Coaches List and List Items](#159-working-on-the-coaches-list-and-list-items)
+  - [15.10. Adding a Couple of Base Components (Base Card, Base Button, Base Badge)](#1510-adding-a-couple-of-base-components-base-card-base-button-base-badge)
+  - [15.11. Building the Coach Detail Component](#1511-building-the-coach-detail-component)
+  - [15.12. Filtering Coaches](#1512-filtering-coaches)
+  - [15.13. Registering as a Coach: The Form](#1513-registering-as-a-coach-the-form)
+  - [15.14. Adding Coaches to Vuex](#1514-adding-coaches-to-vuex)
+  - [15.15. Adding Form Validation](#1515-adding-form-validation)
+  - [15.16. Working on the Contact Form](#1516-working-on-the-contact-form)
+  - [15.17. Storing Requests (Messages) with Vuex](#1517-storing-requests-messages-with-vuex)
+  - [15.18. Outputting Incoming Requests (Messages)](#1518-outputting-incoming-requests-messages)
+  - [15.19. Filtering Requests for teh Active Coach](#1519-filtering-requests-for-teh-active-coach)
+  - [15.20. Sending a PUT Http Request to Store Coach Data](#1520-sending-a-put-http-request-to-store-coach-data)
+  - [15.21. Fetching Coach Data (GET Http Request)](#1521-fetching-coach-data-get-http-request)
+  - [15.22. Rendering a Loading Spinner](#1522-rendering-a-loading-spinner)
+  - [15.23. Adding Http Error Handling](#1523-adding-http-error-handling)
+  - [15.24. Sending Coaching Requests Http Requests](#1524-sending-coaching-requests-http-requests)
+  - [15.25. Caching Http Response Data](#1525-caching-http-response-data)
+  - [15.26. Adding Route Transitions](#1526-adding-route-transitions)
+  - [15.27. The "Not Found" Page & Summary](#1527-the-not-found-page--summary)
+- [16. Vue & Authentication](#16-vue--authentication)
+  - [16.1. How Authentication Works in Vue Apps (or any SPA)](#161-how-authentication-works-in-vue-apps-or-any-spa)
+  - [16.2. Locking / Protecting Backend Resources](#162-locking--protecting-backend-resources)
+  - [16.3. Adding an Authentication Page (Login & Signup)](#163-adding-an-authentication-page-login--signup)
+  - [16.4. Preparing Vuex](#164-preparing-vuex)
+  - [16.5. Adding a "Signup" Action & Flow](#165-adding-a-signup-action--flow)
+  - [16.6. Better UX: Loading Spinner & Error Handling](#166-better-ux-loading-spinner--error-handling)
+  - [16.7. Adding a "Login" Action & Flow](#167-adding-a-login-action--flow)
+  - [16.8. Attaching the Token to Outgoing Requests](#168-attaching-the-token-to-outgoing-requests)
+  - [16.9. Updating the UI Based on Auth State](#169-updating-the-ui-based-on-auth-state)
+  - [16.10. Adding a "Logout" Action & Flow](#1610-adding-a-logout-action--flow)
+  - [16.11. Authentication & Routing (incl. Navigation Guards)](#1611-authentication--routing-incl-navigation-guards)
+  - [16.12. Adding "Auto Login"](#1612-adding-auto-login)
+  - [16.13. Adding "Auto Logout"](#1613-adding-auto-logout)
+- [17. Optimizing & Deploying Vue Apps](#17-optimizing--deploying-vue-apps)
+  - [17.1. What To Deploy?](#171-what-to-deploy)
+  - [17.2. Optimization: Using Asynchronous Components](#172-optimization-using-asynchronous-components)
+  - [17.3. Building the Project For Production](#173-building-the-project-for-production)
+  - [17.4. Deploying a Vue App](#174-deploying-a-vue-app)
+- [18. The Composition API - Replacing the Options API](#18-the-composition-api---replacing-the-options-api)
+  - [18.1. Which Problem Does the Composition API Solve?](#181-which-problem-does-the-composition-api-solve)
+  - [18.2. Replacing "data" with "refs"](#182-replacing-data-with-refs)
+  - [18.3. Building "reactive" Objects](#183-building-reactive-objects)
+  - [18.4. Reactivity: A Deep Dive](#184-reactivity-a-deep-dive)
+  - [18.5. Replacing "methods" with regular Functions](#185-replacing-methods-with-regular-functions)
+  - [18.6. Replacing "Computed Properties" with the "computed" Function](#186-replacing-computed-properties-with-the-computed-function)
+  - [18.7. Two-Way-Binding and the Composition API](#187-two-way-binding-and-the-composition-api)
+  - [18.8. Working with Watchers](#188-working-with-watchers)
+  - [18.9. A First Summary](#189-a-first-summary)
+  - [18.10. How to Use Templates Refs](#1810-how-to-use-templates-refs)
+  - [18.11. Components, Props, & The Composition API](#1811-components-props--the-composition-api)
+  - [18.12. Emitting Custom Events](#1812-emitting-custom-events)
+  - [18.13. Working with Provide / Inject](#1813-working-with-provide--inject)
+  - [18.14. Lifecycle Hooks in the Composition API](#1814-lifecycle-hooks-in-the-composition-api)
+  - [18.15. Migrating from Options API to Composition API - an Example Project](#1815-migrating-from-options-api-to-composition-api---an-example-project)
+  - [18.16. Migrating a First Component](#1816-migrating-a-first-component)
+  - [18.17. Migrating a Big Component](#1817-migrating-a-big-component)
+  - [18.18. Migrating the Remaining Components](#1818-migrating-the-remaining-components)
+  - [18.19. Routing, Params & The Composition API](#1819-routing-params--the-composition-api)
+  - [18.20. The Route & Router Objects and the Composition API](#1820-the-route--router-objects-and-the-composition-api)
+  - [18.21. Using Vuex with the Composition API](#1821-using-vuex-with-the-composition-api)
+- [19. Reusing Funcitonality: Mixins & Custom Composition Functions](#19-reusing-funcitonality-mixins--custom-composition-functions)
+  - [19.1. Reusability Concepts](#191-reusability-concepts)
+  - [19.2. Using Mixins](#192-using-mixins)
+  - [19.3. Understanding Mixin Merging](#193-understanding-mixin-merging)
+  - [19.4. Global Mixins](#194-global-mixins)
+  - [19.5. Disadvantages of Mixins](#195-disadvantages-of-mixins)
+  - [19.6. Custom Hooks / Composables & The Composition API](#196-custom-hooks--composables--the-composition-api)
+  - [19.7. More Custom Composition Functions](#197-more-custom-composition-functions)
+  - [19.8. Why Hookks / Composables Beat Mixins](#198-why-hookks--composables-beat-mixins)
+  - [19.9. Example: Creating a "Search" Hook](#199-example-creating-a-search-hook)
+  - [19.10. Custom Hooks Gotchas](#1910-custom-hooks-gotchas)
+  - [19.11. More Thoughts on Custom Hooks / Composables](#1911-more-thoughts-on-custom-hooks--composables)
+  - [19.12. Example: A Custom "Sort" Hook](#1912-example-a-custom-sort-hook)
+
 ---
 
-# Basics and Core Concepts - DOM Interaction with Vue
-## Creating and Connecting Vue App Instance
+# 1. Basics and Core Concepts - DOM Interaction with Vue
+## 1.1. Creating and Connecting Vue App Instance
 1. Starter HTML
     ```html
     <!DOCTYPE html>
@@ -316,7 +324,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#user-goal');
     ```
 
-## Interpolation and Data Binding
+## 1.2. Interpolation and Data Binding
 1. We can put the placeholder in HTML which should match to the property that we want to return its value in `data` method.
 1. Note that we can have multiple placeholder in the component, and all of them will show the same value. 
     1. HTML 
@@ -344,7 +352,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 1. The Vue component can not only show text but also other primitive values or JavaScript array or object, which will be stringified as JSON to be shown as string.
     <img src="images/14-placeholder_vue_component.png">
 
-## Binding Attributes with the "v-bind" Directive
+## 1.3. Binding Attributes with the "v-bind" Directive
 1. Though we can use double curly braces as placeholder for Vue component to import values, it doesn't work with attributes on HTML tags such as `href` of an anchor tag.
 1. We then can use `v-bind` on the attribute to indicate that the HTML attribute should work with Vue. Note that the placeholder for the attribute doesn't require double curly braces.
     ```html
@@ -355,7 +363,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </section>
     ```
 
-## Understanding "methods" in Vue Apps
+## 1.4. Understanding "methods" in Vue Apps
 1. To execute function as the event handler on a HTML element, we need to firstly set up the `methods` in the Vue app. 
 1. Besides `data`, we can pass another property `methods` which holds the callback functions to handle events on HTML elements.
 1. Note that the methods we want to call by Vue app should be declared in `methods` property only. Both `data` and `methods` are reserved properties for a Vue app.
@@ -390,7 +398,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </section>
     ```
 
-## Working with Data inside of a Vue App
+## 1.5. Working with Data inside of a Vue App
 1. Vue provides a shorthand that we can access the properties and methods on the Vue app object directly by `this` (which is not intuitive for regular Javascript objects!). 
 1. The feature just turn all the properties which `data` method can return and methods in `methods` globally accessible with `this`.
     ```js
@@ -417,7 +425,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#user-goal');
     ```
 
-## Outputting Raw HTML Content with v-html
+## 1.6. Outputting Raw HTML Content with v-html
 1. Regular interpolation (double curly braces) can only handle the value as text (similar to `innerText` property on a HTML DOM).
     ```js
     const app = Vue.createApp({
@@ -450,11 +458,11 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 1. However, it's not recommended to have this method as default because it may be vulnerable to XXS attacks.
 
-## A First Summary
+## 1.7. A First Summary
 1. If we use `app = Vue.createApp()` and select a specific HTML element by `app.mount()`, Vue can work on the selected HTML element and its child, while won't affect other HTML elements on the page. 
 1. To manipulate the elements, we can use "**interpolation**" (double curly braces) and `v-html` and `v-bind` on HTML attributes. 
 
-## Understanding the Event Binding
+## 1.8. Understanding the Event Binding
 1. To add event listener on Vue component, we can use `v-on` and follow with a column and the event, such as `v-on:click`, on the HTML element.
 1. We then can add Javascript expression or give the event handler function for the element.
 1. However, `v-on` takes either expression or function and can't execution as a code block. For example, if we try to put `console.log('Hello World')` to execute direclty, browser will return an error.
@@ -485,7 +493,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#events');
     ```
 
-## Events and Methods
+## 1.9. Events and Methods
 1. Though we can give expressions and logic at `v-on` in HTML element, it's not a good practice, as we should separate the purpose of each type of file.
 1. Therefore, we can create a function in the JavaScript. This function should be a method in the Vue component. 
 1. Besides, we can either pass the method or call the method in `v-on` directly. Either approach will work, as Vue can handle the conditions.
@@ -520,7 +528,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#events');
     ```
 
-## Working with Event Arguments
+## 1.10. Working with Event Arguments
 1. Since `v-on` can either take an expression or assign a method, we can pass an argument(s) to the method. 
 1. Therefore, we can make our method dynamic and change the ouptut or feature on the Vue component very fast.
     ```html
@@ -538,15 +546,15 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     const app = Vue.createApp({
         data() {
             return {
-            counter: 0,
+                counter: 0,
             };
         },
         methods: { // both methods take arguments
             add(num) {
-            this.counter += num;
+                this.counter += num;
             },
             reduce(num) {
-            this.counter -= num;
+                this.counter -= num;
             }
         }
     });
@@ -554,7 +562,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#events');
     ```
 
-## Using the Native Event Object
+## 1.11. Using the Native Event Object
 1. In regular cases, browser will provide an `event` argument to the callback function of the event handler. 
 1. If we don't pass any argument to the event handler callback function it takes `event` argument by default. Therefore, we can use it as regular JavaScript to check the properties in the event object. 
 1. In this case, we can track on the value that the user gives to an `input` tag by checking the `input` event. 
@@ -605,7 +613,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     })
     ```
 
-## Exploring Event Modifiers
+## 1.12. Exploring Event Modifiers
 1. In regular `form` element, the browser will return when the user submits the form as it send a HTTP request to server.
 1. However, we'd like to prevent the default feature and stop browser from reloading the page.
 1. We can use regular way in JavaScript to use `event.preventDefault()` in the callback funciton to prevent the browser reloads the page. 
@@ -682,8 +690,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 1. We may refer to [event modifier](https://vuejs.org/v2/guide/events.html#Event-Modifiers) from Vue officail document.
 
-## Locking Content with v-once
-1. In some scenarios, we'd like the Vue controled element to render interpolation at once when the app initiates. 
+## 1.13. Locking Content with v-once
+1. In some scenarios, we'd like the Vue controlled element to render interpolation at once when the app initiates. 
 1. We can give `v-once` to indicate that the interpolation in the element will only happen when the element is firstly rendered. This is similar to the lifecycle method in React to prevent the element being re-rendered when the value or state changes.
     ```html
     <!-- HTML -->
@@ -715,7 +723,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     })
     ```
 
-## Data Binding + Event Binding = Two-way Binding
+## 1.14. Data Binding + Event Binding = Two-way Binding
 1. If we'd like to reset the data when the user clicks a button on the page, we can use regular JavaScript with DOM selector to handle the event.
 1. We can use `v-bind` to bind the attribute with Vue interpolation. In this case, we bind the `value` attribute of the `input` tag with `name` interpolation of Vue. Therefore, when the user clicks on the "reset" button, not only the content in the `p` tag below will be removed but also the data in the `input` tag.
     ```html
@@ -774,7 +782,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#events');
     ```
 
-## Methods used for Data Bindings: How it works
+## 1.15. Methods used for Data Bindings: How it works
 1. When we execute any method of a Vue component, all the elements that has `v-model` or use `v-bind` will be rerendered, and the methods will be executed again to get the lastest value. This is similar to React framework that the whole component will be re-rendered and updated. 
 1. However, this feature wouldn't be useful in some scenario and we don't want this always happens. In the following setup, we can notice that every time we click "add" or "reduce" button, `outputFullName` will be executed.
 1. Note that Vue will update the whole component rather than only the specific item in the component. 
@@ -820,7 +828,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#events');
     ```
 
-## Introducing Computed Properties
+## 1.16. Introducing Computed Properties
 1. In the other case, we can use `computed` (another reserved property) which works similar to `methods`. The main difference between them is that `methods` will be re-rendered when there's any thing changes on the page. On the other hand, `computed` only changes when any of its dependency is modified.
 1. To use methods in `computed`, we just put the method name in the interpolation in HTML **WITHOUT** parenthesis. Vue will call the method instead.
 1. With this approach, the `fullname` method in the following case won't be triggered every time when other dependency is modified. 
@@ -863,7 +871,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     })
     ```
 
-## Working with Watchers
+## 1.17. Working with Watchers
 1. Though "**watchers**" is similar to `computed` or `methods` in Vue, it's binding with the properties in data and don't return the value to use directly. `watch` is the reserved keyword as `computed`, `data`, and `methods` in Vue.
 1. `watch` is bound to the properties in `data` returned and will listen to the change of it. 
     1. The methods created in `watch` should be exactly the same as the property name in `data`. 
@@ -957,7 +965,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#events');    
     ```
 
-## Methods vs Computed Properties vs Watchers
+## 1.18. Methods vs Computed Properties vs Watchers
 1. `methods`
     1. Use with **event** binding OR **data** binding.
     1. Data binding: Method is executed for every "re-render" cycle of the component.
@@ -971,7 +979,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. Allows you to run any code in reaction to some changed data (e.g. send Http request etc.)
     1. Use for any non-data update you want to make.
 
-## v-bind and v-on Shorthands
+## 1.19. v-bind and v-on Shorthands
 1. In Vue, we can use a shorthand to indicate `v-on` attribute in HTML as an `@` sign. Note that we can still put modifiers on the event handler, such as `.right` to listen to right click for "click" event. 
     ```html
     <!-- HTML -->
@@ -985,7 +993,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     <a :href="variable">A Link</a>
     ```
 
-## Assignmetns 3: Time to practice: Reactivity
+## 1.20. Assignmetns 3: Time to practice: Reactivity
 1. HTML source code
     ```html
     <body>
@@ -1167,7 +1175,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#assignment');
     ```
 
-## Dynamic Styling with Inline Styles
+## 1.21. Dynamic Styling with Inline Styles
 1. We can use `v-bind` or its shorthand column `:` to select `style` attribute of a HTML tag. Besides, passing a regular CSS property such as `border-color` we can use curly braces to wrap it and use "**camelCase**" on the property.
 1. We then can refer to the `data` for the Vue component and use tenary statement to check what value to return for the style. Note that we can pass the data variable directly in the curly braces.
 1. Though we can use `methods` to manulate the style with JavaScript DOM, as we can get the `event` object and change the property with DOM selector `event.target.style.borderColor`. 
@@ -1216,7 +1224,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#styling');
     ```
 
-## Adding CSS Classes Dynamically
+## 1.22. Adding CSS Classes Dynamically
 1. In a Vue component, we can use both `v-bind:class` and a regular "**class**" attribute in HTML tag. Therefore, we can keep both dynamic and static classes in the same element. 
 1. With bound attribute, we can use Vue interpolation to check whether th apply the class to the element. 
 1. A bound class can take a JavaScript object which has the name of the class as the property and a boolean value to indicate whether to apply the class or not.
@@ -1260,7 +1268,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#styling');
     ```
 
-## Classes & Computed Properties
+## 1.23. Classes & Computed Properties
 1. Since we can pass an object to bound `class`, we can use `computed` to return an object.
     ```html
     <!-- HTML -->
@@ -1303,7 +1311,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Dynamic Classes: Array Syntax
+## 1.24. Dynamic Classes: Array Syntax
 1. Besides passing an object, we can also pass an array of classes (in `string` or `object`). Therefore, we can have only a bound class attribute in the HTML tag.
     ```html
     <!-- HTML -->
@@ -1359,7 +1367,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#styling');
     ```
 
-## Assignment 4: Time to practice: Dynamic Styling
+## 1.25. Assignment 4: Time to practice: Dynamic Styling
 1. HTML source code 
     ```html
     <!DOCTYPE html>
@@ -1792,8 +1800,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Redenering Conditional Content & Lists
-## Understanding the Problem
+# 2. Redenering Conditional Content & Lists
+## 2.1. Understanding the Problem
 1. In this case, we will show the `p` indicating that there's no goal.
 1. We'd like to allow users to give new values with `input` tag. The new values shoule be added as `li` elements in the list `ul`.
     ```html
@@ -1815,7 +1823,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
   </body>
     ```
 
-## Rendering Content Conditionally
+## 2.2. Rendering Content Conditionally
 1. We can use `v-model` to bind the data of Vue component to collect the value from user input, and declare a method to add the input value to store in the array.
 1. We can use `v-if` in the `p` tag to check whether there's any item in the array and only shows when the array is empty. 
     ```html
@@ -1850,7 +1858,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
     ```
 
-## v-if, v-else and v-else-if
+## 2.3. v-if, v-else and v-else-if
 1. We can use not only `v-if` to control the elements but also `v-else-if` and `v-else` as regular logical statements. However, `v-else-if` and `v-else` should come right after in the element that "adjacent" to the element with `v-if` (not child or parent).
     ```html
     <!-- HTML -->
@@ -1865,12 +1873,12 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
   </section>
     ```
 
-## Using v-show Instead of v-if
+## 2.4. Using v-show Instead of v-if
 1. Besides `v-if`, we can use `v-show` which takes an expression to check whether to show a HTML element. 
 1. The main difference between `v-if` and `v-show` controlled elements is that `v-if` do "remove" the element from the page, while `v-show` just apply `display: none` property to the the element, so the element is still on the page but not visible.
 1. Therefore, in some cases that an element is toggled very often, we can use `v-show` rather than `v-if` to improve App performance.
 
-## Rendering Lists of Data
+## 2.5. Rendering Lists of Data
 1. To render items in an JavaScript `array`, we can use `v-for` on the element.
 1. The syntax for `v-for` is similar to call the properties of JavaScript objects which use `in`, (though `of` keyword also works, it is recommended to use `in`).
 1. We then can use the variable to create dynamic items in the list according to the array data in the `state`. 
@@ -1889,7 +1897,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </section>
     ```
 
-## Diving Deeper Into v-for
+## 2.6. Diving Deeper Into v-for
 1. We can not only declare a variable for the item in the array but also the index of the item.
 1. The syntax is to wrap the variables in the parenthesis and give a 2nd argument as `(var, index) in array`
     ```html
@@ -1919,7 +1927,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </ul>
     ```
 
-## Removing List Items
+## 2.7. Removing List Items
 1. With the power of `v-for`, we can use it with `methods` to "**remove**" items from the list. In this case, we can use [`.splice`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) array method to remove an element from the array at a given position (index).
 1. Note that the variable `index` we pass to the method is only accessible if the method is in the same element as the element using `v-for`.
     ```html
@@ -1956,7 +1964,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#user-goals');
     ```
 
-## Lists & Keys
+## 2.8. Lists & Keys
 1. If we have another element nested in another element and both use event handler for `click` event, we can use the shorthand in Vue to stop propagation.
 1. In the previous example, we have the item in the list to be removed when the user clicks on the element. However, if we now give an `input` tag to collect other data, it will be closed when the user clicks on the nested `input` tag. Therefore, we need to stop propagation for the case.  
     ```html
@@ -1999,7 +2007,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         </ul>
     </section>
     ```
-## Assignment 5: Time to Practice: Conditional Content & Lists
+## 2.9. Assignment 5: Time to Practice: Conditional Content & Lists
 1. HTML source code
     ```html
     <body>
@@ -2113,14 +2121,14 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#assignment');
     ```
 
-## Summary 
+## 2.10. Summary 
 1. **DO NOT** use `v-if` and `v-for` on the same element. Use a wrapper with `v-if` instead.
     <img src="images/47-module_summary.png">
 
 
 
-# Coure Project: The Monster Slayer Game
-## Project Setup & First Methods
+# 3. Coure Project: The Monster Slayer Game
+## 3.1. Project Setup & First Methods
 1. The game allows the uesr acts as a player to slay a monster where both entities have certain amount of health (HP). The player can choose to "**attack**", "**special attack**", "**heal**", or "**surrender**". Both the monster and the player can attack and damage random amount of health on each other. 
 1. HTML source code
     ```html
@@ -2202,7 +2210,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#game');
     ```
 
-## Updating the Health Bars
+## 3.2. Updating the Health Bars
 1. We can use `width` property on the health bar to control the UI. Though we can use inline expression for Vue component direclty, we should follow the principle to have least logical on HTML and use it for only structuring the page.
 1. Note that to change a bond HTML attribute for styling, we should pass an object and change the property name to modify in camelCase. 
 1. In addition, though we don't use expressions in HTML directly, we can use JavaScript template literals in the expression of Vue component.
@@ -2254,7 +2262,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     });
     ```
 
-## Adding a "Special Attack"
+## 3.3. Adding a "Special Attack"
 1. We allow the player to have a "special attack" every 3 rounds to have a higher damage to the monster. 
 1. In HTML, we use `v-bind` on `disabled` HTML attribute to prevent users from abusing special attacks.
     ```html
@@ -2316,7 +2324,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#game');
     ```
 
-## Adding a "Heal" Functionality
+## 3.4. Adding a "Heal" Functionality
 1. We allow the user to "health" the play by recovering a random amount of health, while in the same round the monster should give another attack to the player.
 1. Besides, we should limiat the amount of health of the player to not exceeding `100`.
     ```html
@@ -2388,7 +2396,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#game');
     ```
 
-## Adding a "Game Over" Screen
+## 3.5. Adding a "Game Over" Screen
 1. We add a new section to show "game over" part when there's a winner of the game. Besides, we can use `v-if` to show this section only when the player or monster wins. 
 1. Besides, we use a `watcher` to keep tracking on the `winner` data when it is changed when theres a winner of the game.
     ```html
@@ -2493,7 +2501,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#game');
     ```
 
-## Finshing the Core Functionality
+## 3.6. Finshing the Core Functionality
 1. We add the functionality of "surrender" to assign the monster as the winner when the user clicks on it. 
 1. As the actions section is adjacent to the "game over" section, we can use `v-else` directly to show one of the section according to the scenario.
     ```html
@@ -2604,7 +2612,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#game');
     ```
 
-## Adding a Battle Log
+## 3.7. Adding a Battle Log
 1. We create another array in `data` for `logMessages`. This method will be used in the other methodswhen the player and monster perform any of the actions, such as attacking and healing.
 1. Besides, we need to reset the array to empty when the game starts or restarts.
 1. To add the message, we can use `.unshift` to add the item as the first item in the array. Though we can also use `.splice(0, 0, logMessage)`, `.unshift` works without any argument.
@@ -2761,12 +2769,12 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Vue: Behind the Scenes
-## An Introduction to Vue's Reactivity
+# 4. Vue: Behind the Scenes
+## 4.1. An Introduction to Vue's Reactivity
 1. Vue is set to track on the data if any of its value is changed.
 1. This is acheived by using JavaScript [`proxy`](https://javascript.info/proxy).
 
-## Vue Reactivity: A Deep Dive
+## 4.2. Vue Reactivity: A Deep Dive
 1. In vanilla JavaScript, though we declare a variable with value from the other variable, the data wouldn't change because JavaScript is not dynamic that it follows the execution context and thus lock the value when it's declared.
     ```js
     let message = 'Hello';
@@ -2799,7 +2807,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     console.log(proxy.longMessage); // Hello!!!World
     ```
 
-## One App vs Multiple Apps
+## 4.3. One App vs Multiple Apps
 1. Each Vue app doesn't connect to each other by default. Therefore, though we can declare multiple Vue apps in the same JavaScript file, the `data` properties of each app can't be acccess from one of the other. 
     ```html
     <section id="app">
@@ -2831,7 +2839,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app2.mount('#app2');
     ```
 
-## Understanding Templates
+## 4.4. Understanding Templates
 1. By using `app.mount` method, we have turned the HTML elements as a Vue template.
 1. In addition, we can use `template` (which is a reserved keyword as `data`, `watch`, `computed`, and `methods`) to create template. We can use JavaScript template literal to have multiple lines.
 1. Though the feature is avaialble, there's no strong reason to use Vue to create templates in this way.
@@ -2869,7 +2877,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app');
     ```
 
-## Working with Refs
+## 4.5. Working with Refs
 1. We can give a Vue specific attribute `ref` on a HTML element, so Vue can directly access the element as a DOM selector. This feature is similar to [React Reference System](https://reactjs.org/docs/refs-and-the-dom.html), which can also select a HTML element or an instance of React component. We can look up example from [React learning note](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#using-refs-for-dom-access).
 1. Note that we don't need to put `v-bind` or `:` as using `key` on list items.
 1. It uses a special syntax with `this.$ref.[name_of_ref]`
@@ -2906,12 +2914,12 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app');
     ```
 
-## How Vue Updates the DOM
+## 4.6. How Vue Updates the DOM
 1. Vue component has a "**virtual DOM**" which is a copy of the actual DOM which controlled by JavaScript and stored in memory. This approach is hence improving the performance rather manipulating on the DOM objects directly. 
 1. Besides, Vue has its own internal optimization to update its virtual DOM. 
     <img src="images/64-vue_virtual_dom.png">
 
-## Vue App Lifecycle - Theory
+## 4.7. Vue App Lifecycle - Theory
 1. Vue apps runs and renders instances on the screen in a lifecyle. This is similar to React Apps behavior that we can apply some features or functions at certain stage of the App to work on specific task(s). 
 1. When the Vue App starts from `createApp({})`, it goes through the following stages
     1. `beforeCreate()` is when "**before**" the App is fully initialized.
@@ -2929,7 +2937,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         
     <img src="images/65-vue_instance_lifecycle.png">
 
-## Vue App Lifecycle - Practice
+## 4.8. Vue App Lifecycle - Practice
 1. Vue instance lifecycle is similar to [React component lifecycle](https://reactjs.org/docs/react-component.html#the-component-lifecycle) and [React Lifecycle Diagram](https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/) which deals with the App in certain stage in the lifecycle.
 1. Note that we can use the debugger in developer console in any modern browser to check the order of execution and stop at certain line of code. We can check more information at [Chrome DevTools - Debug JavaScript](https://developer.chrome.com/docs/devtools/javascript/)
     ```html
@@ -2995,8 +3003,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Introducing Components
-## Understanding the Problem
+# 5. Introducing Components
+## 5.1. Understanding the Problem
 1. If we inspect the HTML, we can notice that there are 2 items in the list which is a contact to a person.
 1. HTML source code
     ```html
@@ -3081,7 +3089,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app');
     ```
 
-## Introducing Components
+## 5.2. Introducing Components
 1. To create a Vue component, we can simply use `app.component([compoennt-name])` and give the name to declare as the argument. Note that we may follow the convention to have 2 words naming pattern and use a dash `-` to separate the words. This is to prevent clashing with the default HTML elements such as `div`, `section`, and `header`.
 1. The `.component()` method takes 2 arguments.
     1. The name of the component, which we then can use it as a HTML element in a Vue app. 
@@ -3140,37 +3148,37 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app'); // this is not required for Vue component
     ```
 
-## The Why: Building Complex User Interfaces With Components
+## 5.3. The Why: Building Complex User Interfaces With Components
 1. This approach is very similar to React Apps that it has a main control over multiple reusable components in the app and connect them with `props` for data and properties to control over the specific features and behaviors of each component. 
 
 
 
-# Moving to a Better Development SEtup & Workflow with the Vue CLI
-## Why We Need A Development Server
+# 6. Moving to a Better Development SEtup & Workflow with the Vue CLI
+## 6.1. Why We Need A Development Server
 1. If we don't have a demo server, we can't mock up `http` or `https` connnection protocol. We just open the file with `file` protocol.
 1. Some (modern JavaScript or Browser feateurs will not work).
 1. We'd like to simulate the environment hosting a website in regular server.
 
-## WHy We Want A Better Developer Experience
+## 6.2. WHy We Want A Better Developer Experience
 1. Without a configured local server, we need to reload the page after every change. 
 1. We can use other tools such as auto-complete when using frequently used terms or structure.
 1. As the Vue app goes bigger, we may separate the JavaScript file into different files. Without the tools, we have to use `script` tag in the main HTML to import all the JavaScript file.
 1. For example, we can separate the code for manipulating UIs and calculating the data and properties.
 1. In addition, we can use some modern JavaScript features such as module system with import/export.
 
-## Installing & Using the Vue CLI
+## 6.3. Installing & Using the Vue CLI
 1. We firstly use `npm` to install `@vue/cli` in the global environment. Note that we may need to use `sudo` in linux or MacOS system, while we can simply use `npm install @vue/cli -g` on windows command prompt directly.
 1. After installing the required files, we can use `vue create [project-name]`. Note that we don't have any space to name a project in convention to prevent complexity to access a directory in CLI. This process is similar to use `npx create-react-app [project_name]` to create a React App, which also requires its own package by using [`npm install -g create-react-app`](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#generating-a-react-project).
 1. Note that we can use simply use the default configurations for Vue3 or manually configure some of the setting if it requires.
 1. When the project folder is created, we can use `cd` to change directory and run `npm run serve` to start the developing environment that we can go `http://localhost:8080/` to check Vue project control panel. This is similar to use `npm start` after creating a React project that we can access it at `http://localhost:3000/` by default.
 
-## Inspecting the Created Project
+## 6.4. Inspecting the Created Project
 1. This section is to introduce the directory and file structure when creating a Vue app.
 1. Similar to React App, there's only a single HTML file in `public` folder which has a `<div id="app">` that is similar to `<div id="root">` of a React app by default. 
 1. We can also check `package.json` for the npm commands and depenecies used in the project.
 1. Note that by creating a project with CLI and so as React app, we can `import` the required dependencies to create the app rather than using CDN in the HTML file.
 
-## Inspecting the Vue Code & ".vue" Files
+## 6.5. Inspecting the Vue Code & ".vue" Files
 1. We have a `main.js` and `App.vue` file in `src` directory, which is similar to React that uses `index.js` which is the main control to connect React code to the HTML file. `ReactDOM.render(<App />, document.querySelector('#root'));`
     ```js
     // src/main.js
@@ -3214,10 +3222,10 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Adding the "Vetur" Extension to VS Code
+## 6.6. Adding the "Vetur" Extension to VS Code
 1. [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur) is a very useful extension in VS Code that helps developers to work on Vue apps. It is highly recommended to install this extension for better developing environment.
 
-## More on ".vue" Files
+## 6.7. More on ".vue" Files
 1. In the previous section, we can use `template` property in the Vue app to create a pre-built Vue component. We can use `.vue` suffix to create a Vue component in a separate file and use JavaScript module system to "**import**" the component.
     ```js
     // JavaScript
@@ -3249,11 +3257,11 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 1. In `src` directory, we have `assests` where we can store our media files such as iamges and `components` to store the Vue components.
 
-## A New Vue Project
+## 6.8. A New Vue Project
 1. This section is to have the initial setup for a Vue project. We can just use `vue create [project_name]` and remove all the files in `src` besides `main.js`. 
 1. After all, we run `npm run serve` to start the developing server. 
 
-## Creating a Basic Vue App
+## 6.9. Creating a Basic Vue App
 1. In convention, we create a main Vue controller as `App.vue`.
 1. We firstly create a new object that's similar to the object that we pass to `Vue.createApp()`, which has exactly the same structure for the instance.
 1. After configuring the object, we can use `export default` to export the object and use it in the other JavaScript file. 
@@ -3305,7 +3313,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Adding a Component
+## 6.10. Adding a Component
 1. To manage Vue components, we can create a `components` directory in `src`.
 1. In convention, we can name the files in "**PascalCase**", "**camelCase**", or "**kebap-case**".
     ```html
@@ -3370,7 +3378,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
     <img src="images/84-add_component_to_app_vue.png">
 
-## Adding Styling
+## 6.11. Adding Styling
 1. In each Vue component, including `App.vue`, we can have `style` tag as in HTML and put the CSS code there to style the componet. 
     ```html
     <!-- App.vue -->
@@ -3478,8 +3486,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Component Communication
-## Introducing "Props" (Parent => Child Communication)
+# 7. Component Communication
+## 7.1. Introducing "Props" (Parent => Child Communication)
 1. To enable components to communicate, we can use `props` property which is a reserved keyword as `data` and `methods` to get the data passing from the parent to child components. The idea is exactly the same as [React components](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#communicating-with-props).
 1. So as it does in React, the HTML attribute should be in `kebap-case`, while for JavaScrfipt object property key, we should use `camelCase`. `kebap-case` isn't a legal naming style for JavaScript properties.
     ```html
@@ -3543,7 +3551,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Prop Behavior & Changing Props
+## 7.2. Prop Behavior & Changing Props
 1. From the previous section, we can notice that `App.vue` acts as the "parent" component and `FriendContact` is the "child" component.
 1. Note that we shouldn't mutate (change) the `props` to follow [one-way data flow](https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow). The values should be only changed from where it was passed to the component. For example, we have another property passed from `App.vue` to `FriendContact.vue`.
     ```html
@@ -3665,7 +3673,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         </script>
         ```
 
-## Validating Props
+## 7.3. Validating Props
 1. The `props` data can be complicated, so we would like to [validate the data](https://vuejs.org/v2/guide/components-props.html#Prop-Validation) when we work in larger projects with other developers. 
 1. We can have `type` to check the type of the data value such as `String`, `Number`, and `Boolean`; `required` to check if the prop is required to pass to the component; and `default` to have a default value if the value is not given. Note that `default` can be a function (method) to give a calculated value. 
 1. We can also use `validator` which takes only function to check if the prop is valid. The validator function must return a Boolean value (`true`/`false`).
@@ -3724,7 +3732,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 1. Note that `props` are validated before a component instance is created, so instance properties (e.g. `data`, `computed`, etc) will not be available inside `default` or validator functions.
 
-## Working with Dynamic Props Values
+## 7.4. Working with Dynamic Props Values
 1. To pass a boolean value through `props`, we can use `v-bind` or its shorthand `:` on the HTML attribute. Note that a regular HTML attribute is always a text (`String`).
 1. Besides passing props one by one, we can use `v-for` and the variable to create a dynamic component as a list.
     ```html
@@ -3808,7 +3816,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Emitting Custom Events (Child => Parent Communication)
+## 7.5. Emitting Custom Events (Child => Parent Communication)
 1. In this friend list app, `is-favorite` should not be given as a arbitrary value but as a property of a `friend` object. Therefore, we give another `isFavorite` property to a friend object. 
 1. In addition, if the data is fetched and stored in a database that if the user toggle the "favorite" button, we should send the data back to the server to store the preference that the user has made. Therefore, rather than just passing the props from parent to child compoennt, we should be able to send the data back from child to the parent as well. 
 1. In Vue, we can use a prebuilt method `$emit()`, which is simialar to `$refs`, in the child component. Therefore, the parent component can "**listen**" to the event sending from the child component. The 1st argument is the event name that the parent can "catch". 
@@ -3938,7 +3946,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Defining & Validating Custom Events
+## 7.6. Defining & Validating Custom Events
 1. In a Vue component, we can use another property `emits` (simialr to `porps` and `data`), which we use an `array` to list all the `emits` in the component. It can be easier to manage when the app is developed by multiple developers.
 1. In addition, we can make `emits` an object and have more configuration on it. We can also [validate the value](https://v3.vuejs.org/guide/component-custom-events.html#validate-emitted-events) that the `emits` function returns. Note that the validator can only return a Boolean value.
     ```js
@@ -3956,7 +3964,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     });
     ```
 
-## Prop / Event Fallthrough & Binding All Props
+## 7.7. Prop / Event Fallthrough & Binding All Props
 1. [Prop Fallthrough](https://v3.vuejs.org/guide/component-attrs.html#non-prop-attributes) - You can set props (and listen to events) on a component which you haven't registered inside of that component. 
 1. Besides passing each property from parent to child component, we can use `v-bind`  to send all the properties of an object to the child. Note that we can't use it in `v-for` and can only use this feature when the data property is an JavaScript object.
 1. Note that we should be careful and avoid naming clashes. For example, in the following component, we should avoid using `name` in the `company` object as it may overwrite `name` from a `friend`. 
@@ -4031,7 +4039,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Demo: Adding Components & Connecting Them
+## 7.8. Demo: Adding Components & Connecting Them
 1. In this section, we'd like to have a form to allow users to create a new entry for the friend list. Therefore, we create a new component `NewFriend.vue`.
 1. The following the code from practice to make the component fulfill the desirable feature to take user inputs. The main problem from the practice is forget to use data binding to store the input values in the `stata` by using `v-bind` or `v-model`. Therefore, `data` property is not used in this case.
 1. Besides, users input values in the inputs tags are fetched with regular JavaScript DOM which may not be the optimized way to retrieve data and cause the code looking tedious. However, I chose to create the friend contact object in the component before sending back to `App.vue`.  
@@ -4278,7 +4286,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Demo: Adding More Component Communication
+## 7.9. Demo: Adding More Component Communication
 1. In this case, we add another button to allow users to "delete" a friend from the list. 
 1. We firstly create a `button` and give it another `emits` to send data back to `App.vue` where the friend list stores. Note that though we can use another method to send the `emit` back, we can delcare it directly in the HTML template.
 1. After sending the data back to `App.vue`, we can use a method with [`Array.filter()`](https://www.w3schools.com/jsref/jsref_filter.asp) to remove the friend from the list by its id. Note that `.filter` method only keeps items in the array that matches a given condition. 
@@ -4386,7 +4394,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Assignment 6: Time to practice: Props and Custom events
+## 7.10. Assignment 6: Time to practice: Props and Custom events
 1. Task 1: 
     1. Add two components to the app: 
     1. An ActiveUser component and an UserData component
@@ -4499,7 +4507,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app');
     ```
 
-## A Potential Problem
+## 7.11. A Potential Problem
 1. Since we start to build components with multiple layers, we are passing `props` and `emits` through several component. The components in the middle layers is only used to "open" the channel the ensure the data can be sent from the innermost component.
 1. We use another syntax when there's no method to handle the emits and just pass it upwards. In this case we can [emit a value with an `$event`](https://v3.vuejs.org/guide/component-basics.html#emitting-a-value-with-an-event).
     ```html
@@ -4551,7 +4559,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Provide + Inject To The Rescue
+## 7.12. Provide + Inject To The Rescue
 1. In Vue, we can use [`provide` and `inject`](https://v3.vuejs.org/guide/component-provide-inject.html#working-with-reactivity) (both of which are reserved properties as `data`, `methods,` and `computed`) and use these properties on the component to send data directly. 
 1. In the previous example, an array of `topics` is stored in `App.vue`, while we'd like to use the data in `KnowledgeGrid`. We use provide in the "**parent**" component which sends the data, and use `inject` in the child component which is `KnowledgeGrid` to catch the data. Note that the component to `provide` the data must be a parent or ancestor of the "**injected**" component.
 1. With the feature, we can avoid passing data through `KnowledgeBase` and pass directly from `App` to `KnowledgeGrid`. 
@@ -4633,7 +4641,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Provide + Inject for Functions / Methods
+## 7.13. Provide + Inject for Functions / Methods
 1. `provide` and `inject` can not only be used on data but also for methods (function). Since we can pass the method from `App.vue` to `KnowledgeElement.vue`, we can remove the `$emit()` in `KnowledgeGrid.vue`.
 1. In this case, we can expect a method is provided and to be injected as `selectTopc`. 
     ```html
@@ -4673,15 +4681,15 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Provide + Inject vs Props & Custom Events
+## 7.14. Provide + Inject vs Props & Custom Events
 1. Though `provide` and `inject` can be useful, it can also be very confusing when a team of developers try to understand where both of these are used. At the first sight, we can't know exactly which component in the Vue app is "**injected**".
 1. Therefore, in some scanerios, we can still use pass-through `emit` to ensure other developers can understand the structure in a more obvious way.
     <img src="images/103-module_summary.png">
 
 
 
-# Diving Deeper Into Components
-## Global vs Local Components
+# 8. Diving Deeper Into Components
+## 8.1. Global vs Local Components
 1. If we register components at the main `app` which is in the `main.js`, these components will be "global" components which can be accessed from any component in the Vue app. Thus, we can use them anywhere in the `template` tag.
 1. However, this approach can also be confusing when the app goes large. Besides, Vue needs to load all the components since the app initiates which can reduce app performance. Besides, some of the components may only be used once in the whole app.
 1. To register a component locally, we can use `components` keyword, which is another reserved property as `data` and `methods`, and have key/value pair to indicate the component. Note that we can use either "**kebap-case**" in string or "**PascalCase**" for the property.
@@ -4737,7 +4745,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Scoped Styles
+## 8.2. Scoped Styles
 1. In convention, we can have the styling globally in `App.vue` which styling can be applied to all the child components in it. 
 1. We can add `scoped` on the `style` tag to limit the styling to be applied to only the component itself. The styling won't be applied to its sibling, neighbor, or child component.
     ```html
@@ -4746,7 +4754,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Introducing Slots   
+## 8.3. Introducing Slots   
 1. We may have custom styled components which are used to wrap other elements. In this case, the child element in the wrapper has to be injected to the general component, which is not ideal for its purpose because we create these components with styling for general purpose that we can also import them globally in `main.js`. 
 1. One solution is to pass `content` to props in string. The other solution is to use [`slot`](https://v3.vuejs.org/guide/component-slots.html#slots) in Vue.
      ```html
@@ -4797,7 +4805,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Named Slots
+## 8.4. Named Slots
 1. When using multiple `slot` in a general component, we can give `name` attribute to differentiate each `slot` tag. Note that we can have only one unamed `slot` in the component.
 1. In this case have another `slot` named "**header**" which is inside a header tag. 
     ```html
@@ -4854,7 +4862,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Slot Styles & Compilation
+## 8.5. Slot Styles & Compilation
 1. As we "**scoped**" the styling, it doesn't affect to the content sent to the `slot` and its child elements.
 1. Vue will analyze and compile the `template` and its elements before rendering to the screen. Therefore, the regular CSS scope won't work as the styling is "fixed" to only the general HTML tags in the component. 
 1. Thus, in this case, we need to move the styling for `header` HTML tag into `BaseCard.vue`. 
@@ -4892,7 +4900,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## More on Slots
+## 8.6. More on Slots
 1. We can have default elements in the general component if we have some content in the `slot`. 
     ```html
     <!-- BaseCard.vue -->
@@ -4956,7 +4964,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Scoped Slots
+## 8.7. Scoped Slots
 1. In some scenarios, we would like the `slot` to access data that is only available in a child component using it, which data is usually an array. In this case, we can use [`scoped slots`](https://v3.vuejs.org/guide/component-slots.html#scoped-slots). 
     ```html
     <!-- CourseGoals.vue -->
@@ -4979,7 +4987,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Dynamic Components
+## 8.8. Dynamic Components
 1. We firstly restructure `App.vue` and create another 2 components for demo purpose, `ManageGoals.vue` and `ActiveGoals.vue`.
     ```html
     <!-- ActiveGoals.vue -->
@@ -5089,7 +5097,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Keeping Dynamic Components Alive
+## 8.9. Keeping Dynamic Components Alive
 1. In some cases, we may have components that have `input` tags as part of the elements. However, when the user switch between the component, the inserted value in the `input` will be removed because the component is re-rendered by default.
     ```vue
     <template>
@@ -5120,7 +5128,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Applying What We Know & A Problem
+## 8.10. Applying What We Know & A Problem
 1. In case we want to apply a error catch in `ManageGoals` component that the user submits empty value. We can either use `alert` to show a warning or create another component `ErrorAlert` to show the warning message. 
 1. In this case, we use `dialog` with `open` attribute to show contain the message and use `slot` to have customized elements in the component. 
     ```html
@@ -5191,7 +5199,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Teleporting Elements
+## 8.11. Teleporting Elements
 1. From the previous case, we can inspect the HTML structure and notice that the `dialog` element is nested in the inner component. In this case, we can "teleport" the element and set it at the "root" of the component by using `teleport` which is a Vue only tag.
 1. `teleport` tag has `to` attribute which we can pass a regular CSS selector such as `body` or `#app` to select the element in HTML DOM.
 1. In the following case, `error-alert` component will be rendered in the `body` tag directly rather than nested in `ManageGoals` component.
@@ -5214,7 +5222,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Working with Fragments
+## 8.12. Working with Fragments
 1. In Vue2, the elements in a `template` should be wrapped in a single block element, it means that in the `template` tag, there should be only a single `div`, `section`, or other HTML wrapper tags that contains all the other HTML elements.
     ```vue
     <!-- Vue 2 -->
@@ -5252,17 +5260,17 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## The Vue Style Guide
+## 8.13. The Vue Style Guide
 1. For naming and structuring of a Vue app, we can follow the [Style Guide](https://v3.vuejs.org/style-guide/#rule-categories) from Vue.js.
 
-## Moving to a Different Folder Structure
+## 8.14. Moving to a Different Folder Structure
 1. We can use further file structuring to manage the components.
     <img src="images/121-module_summary.png">
 
 
 
-# Course Projct: The Learning Resources App
-## Setup & First Steps
+# 9. Course Projct: The Learning Resources App
+## 9.1. Setup & First Steps
 1. We firstly create `components` directory in `src` and `App.vue` as the initial files. 
     ```js
     // main.js
@@ -5309,7 +5317,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## First Components & Props
+## 9.2. First Components & Props
 1. We then create a sub-folder in `components` to hold all the learning resource related components.
     ```html
     <!-- src/components/learning-resources/LearningResource.vue -->
@@ -5377,7 +5385,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Styling and More Components
+## 9.3. Styling and More Components
 1. We create another component `StoredResources` to wrap the contents stored in `storedResources` Array. We firstly remove `LearningResources` component from `App.vue` and restructure it. We pass the array as a `prop` to `StoredResources`.
     ```html
     <!-- App.vue -->
@@ -5519,7 +5527,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Header & BaseCard Components
+## 9.4. Header & BaseCard Components
 1. We create `BaseCard` component, which we can use in the whole app, so we can register it in `main.js`.
     ```js
     // main.js
@@ -5602,7 +5610,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Adding a Base Button
+## 9.5. Adding a Base Button
 1. We create another component `BaseButton` similar to `BaseCard` that can be used any where in the Vue app. 
 1. We can use `v-bind` to bind both `type` and `class` HTML attributes to manipulate the behavior of the element. Note that the `class` is scoped to apply only to the button element itself, so we must pass the name of the `class` when calling it from the parent component.
 1. Besides, we use `slot` to allow developers to send custom content in the button.
@@ -5679,7 +5687,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Dynamic Components & Attribute Fallthrough
+## 9.6. Dynamic Components & Attribute Fallthrough
 1. We then create buttons to either "add" new resoruce or "view" all the stored resource. The components are `AddResource.vue` and `TheResources.vue`. 
 1. We use `BaseCard` component to wrap the buttons and use HTML attribute "fall-through" behavior to use "**click**" event handler on the component.
 1. We then use dynamic component by import components (which don't have globally access and isn't registered in `main.js`) with `is` attribute to change the component. 
@@ -5722,7 +5730,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Adding & Styling Tabs
+## 9.7. Adding & Styling Tabs
 1. We restructure `App.vue` and move `storedResources` array from the component to `TheResources`.
     ```html
     <!-- App.vue -->
@@ -5863,7 +5871,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Adding a Form
+## 9.8. Adding a Form
 1. We then add a `form` to `AddResource` component to allow users to input new data to the `storedResources` array.
 1. We have several `input` elements wrapped with `div` and use `BaseButton` as the submit button to the form. Note that we can use the `fall-through` feature by passing `type` attribute on the `<button>` directly without sending the `type` as `props` to `BaseButton` component.
     ```html
@@ -5970,7 +5978,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ````
 
-## Fetching User Input
+## 9.9. Fetching User Input
 1. After setting up the HTML elements, we can work on the event handlers and connects between `TheResources.vue` and `AddResource.vue` component.
     ```vue
     <!-- src/components/learning-resources/AddResources.vue -->
@@ -6100,7 +6108,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Adding a Modal Dialog
+## 9.10. Adding a Modal Dialog
 1. We create another general component `BaseDialog.vue` as `UI` and register it in `main.js`.
 1. In this component, we allow developers to have 3 sections of custom contents, `header`, `main_content` and `actions`, so we need to give `name` to each `slot`. Besides, we give a default header to the `slot`.
 1. Besides, we `emit` the action when the user try to click on the "close" button or on the backdrop (which is the filter-like background) to turn off the `dialog`. Note that in the styling, we have an empty `div` stretching and covering the whole viewport to create a filter-like backdrop.
@@ -6241,7 +6249,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Deleting Items
+## 9.11. Deleting Items
 1. To allow users to delete an item from the resource array, we add a new method `removeResource` in `TheResources.vue`. This method takes the `id` of the item object, so we can remove it from the array. This method should be provided to be used in each child component. 
     ```js
     // src/components/learning-resources/TheResources.vue
@@ -6423,7 +6431,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 1. The main reason of this issue is that the items rendered on the page are created by other Vue components. Since these componets takes data from `provide` and `inject` rather than `props`, it won't re-render because the data has been sent in the initial stage. Therefore, we have to ensure what data each component is referring to and manipulate on the correct `data`.
 
-## Adding "Teleport"
+## 9.12. Adding "Teleport"
 1. We can put the dialog component `BaseDialog.vue` in the outter layer in HTML for semantic purpose. 
 1. For the case, we can use `teleport` tag in `template` and specify the location by using CSS selector. 
     ```vue
@@ -6452,8 +6460,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Form
-## v-model & Inputs
+# 10. Form
+## 10.1. v-model & Inputs
 1. To retrieve the data from `input` tags in `form`, we can use either `methods` on the `input` or use `v-model` which binds to the properties in `data` directly, so we don't need to use `v-bind` and methods to handle the input event.
 1. To prevent the submited `form` to refresh the page, we can use `.prevent` on the event listener on the `form` tag directly.
     ```html
@@ -6538,13 +6546,13 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Working with v-model Modifiers and Numbers
+## 10.2. Working with v-model Modifiers and Numbers
 1. Though the lecture introduced that `v-model` can turn value retrieved from `input[type=number]` into `Number`, it is updated at the latest [Vue framework](https://v3.vuejs.org/guide/component-custom-events.html#handling-v-model-modifiers) (2021/05/15) that we need to use `.modifier` such as `v-model.number=""` to turn the input data into certain data type.
 1. Therefore, in the regular case, `v-model` will still retrieve value as `String` type to store in `data`. This is exactly the same as using `refs` to retrive value from the DOM. 
 1. Note that `v-model.number` works with `input[type=text]` that it can also convert value in `String` to `Number`.
 1. There are other [modifiers](https://v3.vuejs.org/guide/component-custom-events.html#handling-v-model-modifiers) such as `.lazy` and `.trim`.
 
-## v-model and Dropdowns
+## 10.3. v-model and Dropdowns
 1. `v-model` can also work on `select` tag with `option` tags. We can set an initial for it to apply as the value in each option.
     ```html
     <!-- TheForm.vue -->
@@ -6583,7 +6591,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Using v-model with Checkboxes & Radiobuttons
+## 10.4. Using v-model with Checkboxes & Radiobuttons
 1. When working with multiple checkboxs `input[type=checkbox]` sharing the same `name` attribute, we can have them using the same `v-model` and pointing to the same `data`. 
 1. Note that we should have an array to catch the data. Besides, each `input` should have its own unique `value` attribute to let Vue differentiate between them. Each value will be pushed to the array by the order of user clicking on the checkbox.
 1. If there's a single checkbox, it handles with only `Boolean` value. 
@@ -6704,7 +6712,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Adding Basic Form Validation
+## 10.5. Adding Basic Form Validation
 1. We can use a input event [`blur`](https://www.w3schools.com/jsref/event_onblur.asp) (similar to [`onfocusout`](https://www.w3schools.com/jsref/event_onfocusout.asp)) which triggers when the user leaves an `input` field if it has been focused on.
 1. We can have another state `userNameValidity` in `data` to check whether to show the error message and add `invalid` class to the `input` and `label` tag. 
     ```html
@@ -6825,7 +6833,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Building a Custom Control Component
+## 10.6. Building a Custom Control Component
 1. We create a `RatingControl` component to allow users to select one of the 3 options.
     ```html
     <!-- RatingControl.vue -->
@@ -6915,7 +6923,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Using v-model on Custom Components
+## 10.7. Using v-model on Custom Components
 1. `v-model` is actually a shorthand to use both `v-on:input` and `v-bind:value`. However, we have only learnt to how to use `v-model` on `input` and `select` tags so far. We haven't learnt how to work it on custom components such as `RatingControl.vue` that we just made.
 1. When creating a [custom component](https://v3.vuejs.org/guide/migration/v-model.html#overview), Vue will automatically set a `modelValue` as a `prop` to the component behind the scenes. Besides, the custom component will "**emit**" an event `update:modelValue`.
 1. By the feature, we still can use `v-model` on a custom component, while we need to declare both the `props` and `emits` in the custom components.
@@ -7060,16 +7068,16 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Sending Http Requests
-## Starting App & Why we need a Backend
-## Adding a Backend
+# 11. Sending Http Requests
+## 11.1. Starting App & Why we need a Backend
+## 11.2. Adding a Backend
 1. The reseaon here is only that we need a backend to work with HTTP requests.
 1. We just start a new project in [Firebase](https://firebase.google.com/). 
 
-## How to (Not) Send Http Requests
+## 11.3. How to (Not) Send Http Requests
 1. We can use either `axios` or `fetch` API to send HTTP requests to a backend server.
 
-## Sending a POST Request to Store Data
+## 11.4. Sending a POST Request to Store Data
 1. We can check [Firebase realtime database documentation](https://firebase.google.com/docs/reference/rest/database) for the pattern to call REST API served by firebase.
 1. In this case, we can naming anything after the endpoint to call to Firebase and add it a suffix with `.json`. Firebase will create the data and store in its realtime database.
 1. The part is relatively easy that we just use `fetch` to call the endpoint with POST method and send the data.
@@ -7091,7 +7099,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     );
     ```
 
-## Getting Data (GET Request) & Transforming Response Data
+## 11.5. Getting Data (GET Request) & Transforming Response Data
 1. Since we don't have data sending from the parent component, we can take off `props` from the object.
 1. As `fetch` API returns a `Promise`, we can use `.then` to handle the aysnc behavior and update the received data to `data`. 
 1. On the other hand, we can also use `async/await` syntax for async function.
@@ -7157,7 +7165,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Loading Data When a Component Mounts
+## 11.6. Loading Data When a Component Mounts
 1. We can use the lifecycle methods as React app does, to call the endpoint and load the data before the elements rendered to the screen. This approach can significantly improve user experience.
 1. In this case, we can simply call the `loadExperiences` method in `mounted`.
     ```js
@@ -7202,7 +7210,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Showing a "Loading..." Message
+## 11.7. Showing a "Loading..." Message
 1. We can have a new state `isLoading` in `data` and set default as `false`.
 1. When the app starts it runs `loadExperience` and turn the state to `true`.
 1. After it receives data from the endpoint, we can tur nthe state back to `false`.
@@ -7276,7 +7284,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Handling the "No Data" State
+## 11.8. Handling the "No Data" State
 1. We can add other logical expressions to check whether we have received any data after successfully call the endpoint.
 1. We can check whether `isLoading` is `false` as the fetching process has done and if `results` array has `length` more than 0.
     ```vue
@@ -7308,7 +7316,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ````
 
-## Handling Technical / Browser-side Errors
+## 11.9. Handling Technical / Browser-side Errors
 1. We give a new state `error` to check if there's error when calling the endpoint.
 1. We can switch the execution order for `v-if` and `v-else-if` for the desirable results. For example, we firstly check loading is completed, if there's any error on the endpoint call. 
 1. 
@@ -7394,7 +7402,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Handling Error Responses
+## 11.10. Handling Error Responses
 1. This section is about handling error when calling sending POST request to the endpoint. In some scenarios, the server respond an error with hint as the request maybe invalid or there's something wrong on the server-side.
 1. In this case, we can use `.then` to check if `response` object respond by Firebase endpoint has a `true` `.ok` property. If not, we can `throw new Error()` and use `.catch` to react to the error in JavaScript and render a customized hint to the user.
     ```html
@@ -7517,12 +7525,12 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Routing: Building "Multi-Page" Single Page Application
-## What & Why?
+# 12. Routing: Building "Multi-Page" Single Page Application
+## 12.1. What & Why?
 1. Vue is a SPA (single page application) framework, so when user using the app, all the UI and components are controled by JavaScript and it doesn't change the path on the search bar in the browser. 
 1. Therefore, when we share the URL of the web app, the user will always be directed to the initial page of the app.
 
-## Routing Setup
+## 12.2. Routing Setup
 1. To use routing system in Vue, we can install package `vue-router`. In this case, we add a suffix `@next` when install the package `npm install vue-router@next`. 
 1. There are 2 main configuration to setup `vue-router` which are [`history`](https://next.router.vuejs.org/guide/essentials/history-mode.html) and `routes`. 
 1. `history` is to record the path that the user has visited, and it can be 2 modes `hash` and `HTML5`. We use `createWebHistory` which is based on `HTML5` in this case.
@@ -7544,7 +7552,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app');
     ```
 
-## Registering & Rendering Routes
+## 12.3. Registering & Rendering Routes
 1. We can register the components to render with the route. Therefore, we import the component to `main.js` directly.
 1. After registeration, we can use `app.use` to register router to the Vue app. This concept is similar to use `Express` framework in NodeJS.
     ```js
@@ -7633,7 +7641,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Navigating with router-link
+## 12.4. Navigating with router-link
 1. We then change the link from `button` tags to `router-link` which is `vue-router` specific and creates an anchor tag `<a>` behind the scenes.
 1. Since we aren't using `button` tags and to `emit` data from the component, we can simply remove the `script` section from the component.
 1. As the links are changed to anchor tags `<a>`, we need to modify the CSS styling.
@@ -7714,7 +7722,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 1. After rendering the elements on the page, we can notice that the selected anchor tag will have `vue-router` classes added automatically.
 1. We therefore can use such feature to style the element when a link is selected.
 
-## Styling Active Links
+## 12.5. Styling Active Links
 1. The selected anchor tag will add 2 classes [`router-link-exact-active` and `router-link-active`](https://router.vuejs.org/api/#v-slot-api-3-1-0). The main difference between those are that if we have nested `link` tags, all the related elements will be added with `router-link-active`, while the `link` that the user links to exactly (which is the current path) will be added with `router-link-exact-active`.
 1. Therefore, we can just style the anchor tag that has such classes to apply specific styling when it's selected.
     ```css
@@ -7790,7 +7798,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app');
     ```
 
-## Programmatic Navigation
+## 12.6. Programmatic Navigation
 1. In some cases, we'd like to redirect the user to the other path after finishing certain tasks. For example, after a user finishes registration or adding new data, the app can direct the user to the other view to check the results.
 1. We can use [`programmatic navigation`](https://router.vuejs.org/guide/essentials/navigation.html#programmatic-navigation) to redirect the user to certain route that is registered in `vue-router`.
 1. Besides, there are other [router methods](https://router.vuejs.org/api/#router-instance-methods) such as `this.$router.forward()` and `this.$router.back()`.
@@ -7837,7 +7845,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Passing Data with Route Params (Dynamic Segments)
+## 12.7. Passing Data with Route Params (Dynamic Segments)
 1. In routes, we can set parameters similar to the system in `Express` as using [dynamic route segments or route matching](https://router.vuejs.org/guide/essentials/dynamic-matching.html#dynamic-route-matching).
 1. Under the same main route, we can use a column to sepecify the parameters that we want to pass to the route and the component we want to render on the route.
 1. Note that these dynamic route should be places as the last before any static route. Otherwise, the sub-route can be considered as a dynamic parameter when Vue checking the route.
@@ -7940,7 +7948,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Navigation & Dynamic Paths
+## 12.8. Navigation & Dynamic Paths
 1. In `TeamsItem.vue`, we can replace the `<a>` with `router-link` tag. 
 1. The `to` property can be bound as other HTML attributes that it can be bound to a variable by Vue.
 1. In this case, we'd like to redirect the user to a list of members when the user selects one of the listed teams.
@@ -7983,7 +7991,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Updating Params Data with Watchers
+## 12.9. Updating Params Data with Watchers
 1. If the user is on a page that using dynamic paramter, it doesn't work directly if we use `router-link` and point to the same route with the other parameter. For example, if we are on `/teams/t1` and would like to navigate to `/teams/t2` which both are handled by `teams/:teamId`.
 1. However, though the components and elements rendering on the screen doesn't change, the route in the browser search bar **DOES** change.
 1. This is a designed behavior of `vue-router` that it does change the route on the browser search bar but doesn't re-build or re-render the components on the screen.
@@ -8033,7 +8041,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Passing Params as Props
+## 12.10. Passing Params as Props
 1. We can pass the parameter as `props` to a component by configuring it in `main.js`. This prevents the issue as using `watch` to listen to `$route` changes.
 1. In `TeamMembers.vue`, we can set `teamId` as `props` and use it as argument passing to methods. Besides, unifyin the source of data (as all sending from `props`) would be eaiser to manage than have different source of data. 
     ```js
@@ -8106,7 +8114,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app');
     ```
 
-## Redirecting & "Catch All" Routes
+## 12.11. Redirecting & "Catch All" Routes
 1. There are 3 ways to work around and redirect users according to the path. 
 1. When configuring `createRouter` we can 
     1. Render the same component as a certain route.
@@ -8184,7 +8192,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.mount('#app');
     ```
 
-## Using Nested Routes
+## 12.12. Using Nested Routes
 1. In some cases, we'd like to have a [router nested](https://router.vuejs.org/guide/essentials/nested-routes.html) in the other router. 
 1. In this case, we can show the list of memebers when the user selects one of the teams, while Vue app just show the list on the same page without redirect or rendering only the appointed component.
 1. Thus, we modify `/teams/:teamId` path and nest it as one of `children` in `/teams`. By nesting the router, it's not a standalone route registered in the root `App.vue`.
@@ -8242,7 +8250,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 1. Note that the navigation on the top is now `router-link-active` rather than `router-link-exact-active`. We can check [Styling Active Links](#Styling-Active-Links) to check the difference.
 
-## More Fun with Named Routes & Location Objects
+## 12.13. More Fun with Named Routes & Location Objects
 1. We can have multiple layers of routes by nesting a router inside another route.
 1. However, using multiple layers would have another issue that we have to configure the methods in each component to give dynamic routing setup for `:to` attribute with `router-link` to connect each route and components.
 1. We can pass an object and give a property `path` to set the destination pointing to. 
@@ -8277,7 +8285,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Using Query Params
+## 12.14. Using Query Params
 1. When working with `router-link`, we can also pass query string as the params after the route in the URL. 
 1. We can simply have a `query` property in the object passing to `:to` attribute in `router-link`.
     ```js
@@ -8345,7 +8353,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Rendering Multiple Routers with Named Router Views
+## 12.15. Rendering Multiple Routers with Named Router Views
 1. We can set up multiple `router-view` in a component on [named routes](https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views). Each `router-view` works similar to `slot` tag that we can have a unamed tag as the default one, and multiple named one with attribute `name`. 
 1. For example, we can add a footer when users visit either `teams` or `users`. 
     ```vue
@@ -8399,7 +8407,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     app.use(router);
     ```
 
-## Controlling Scroll Behavior
+## 12.16. Controlling Scroll Behavior
 1. If some scenarios, we'd like to navigate the position of the user on a view. For example, when a user goes to another view and clicks backward to get back to the last page, we'd like to return to the position that the user used to read. 
 1. In the `router`, can set `scrollBehavior` which is a method takes 3 arguments, `to`, `from`, and `savedPosition`.
 1. `to` and `from` are similar to accessing `this.$route` to get the meta data when browsing a page. Each of them stores the data of where the user visited. 
@@ -8449,7 +8457,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     });
     ```
 
-## Introducing Navigation Guards
+## 12.17. Introducing Navigation Guards
 1. This navigation guards can run code when the route changes. This can be useful to check if the user is authenticated or authorized or check unsaved data before the user navigates away. 
 1. For example, on the `router` in `main.js`, we can check before navigating users to a route by using `router.beforeEach()`. 
 1. The method takes a function as argument, which has 3 arguments, `to`, `from`, and `next`. We can setup conditions here as the middleware to ensure the condition fits to certain requirements (such as authentication) before navigating the user to the route.
@@ -8475,7 +8483,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 1. However, in this case, we just add the middleware and simply use `next()` to bypass it.
 
-## Diving Deeper Into Navigation Guards
+## 12.18. Diving Deeper Into Navigation Guards
 1. In the previous section, we set `beforeEach` globally that it works on every route in the App. However, we can actaully register navigation guards on a single route. 
 1. For example, for `users`, we can add `beforeEnter` on this single route to execute code before entering the route.
     ```js
@@ -8577,7 +8585,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## The Global "afterEach" Guard
+## 12.19. The Global "afterEach" Guard
 1. Global `afterEach` is similar to `beforeEach` but only executes after the user changes and "leaves" the route. Therefore, this method can't affect to the navigation directly. 
 1. This can be useful to send analytic data such as user behavior and logs.
 1. Since it doesn't affect directly to navigation, `afterEach` doesn't take `next` as the function to navigate the user.
@@ -8589,7 +8597,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         console.log(to, from);
     });
     ```
-## Beyond Entering: Route Leave Guards
+## 12.20. Beyond Entering: Route Leave Guards
 1. We can use `beforeRouteLeave` to execute code before navigates out or leave the page. 
 1. This can be useful if the view has a `form` or any `input` for user to insert. If the data hasn't been saved, we can prompt to the user to warn the user before leaving. 
 1. In this case, we create `changesSvaed` in `data` as state to check if user has saved the data.
@@ -8656,7 +8664,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Utilizing Route Metadata
+## 12.21. Utilizing Route Metadata
 1. In every route registered in `main.js`, we can give a `meta` property, which is also known as [route meta fields](https://router.vuejs.org/guide/advanced/meta.html#route-meta-fields).
 1. This property can be accessed from any `this.$route` or `to` and `from` in the route guard. 
 1. For example, we can have a property `needsAuth` on `teams` path. In the global navigation guard, `beforeEach`, we can use `to.meta.needsAuth` to check whether the user is authenticated before navigating to the route. 
@@ -8720,7 +8728,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     });
     ```
 
-## Organizing Route Files
+## 12.22. Organizing Route Files
 1. In larger scale projects or apps, we can separate components that actually renders a whole page from `components` directory to `pages`.
 1. Therefore, for regular `components` directory, we only keep those are used in the other component or aren't standalone Vue component to differentiate their purpose. 
 1. In addition, we can keep router configurations in a separated JavaScript file and import it with Javascript module system. Thus, we can keep our `main.js` neat and clean.
@@ -8819,8 +8827,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Animations & Transitions
-## Animation Basics & CSS Transitions
+# 13. Animations & Transitions
+## 13.1. Animation Basics & CSS Transitions
 1. To animate and move an object on the screen, we can use CSS `transform` and `transition` for the animation. 
 1. To move the block to its left, we can use `transform: translateX()` with negative value to move it to the left on the main axis. 
 1. We assign a new data `animatedBlock` as Boolean value to check if the class should be assigned to the element. 
@@ -8909,7 +8917,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Understanding CSS Animations
+## 13.2. Understanding CSS Animations
 1. To create animation, we can use `keyframe` in CSS to define the behavior and actions of the animation.
 1. We use `forwards` value in `animation` to keep the last state at "100%" on the element. Otherwise, the element will return back to its original state.
 1. Note that if we toggle the element by clicking the button, the element is "jumping" back to its original state rather than having a smooth transition.
@@ -8937,7 +8945,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Why is "Just CSS" Not Enough?
+## 13.3. Why is "Just CSS" Not Enough?
 1. When we applying animations by `transform` with `transition` or `keyframes` with `animation`, it only works when the element comes in but not when the element is removed. 
 1. This is simply because CSS animation works when an element is added as the transition of adding the element on the screen. However, when we "close" the added element, it will be removed immediately from the DOM if we use `v-show` or `v-if`. Therefore, CSS animation won't work when the element is removed. 
 1. For example, we create a "**modal**" with a dark filter to cover the whole viewport and place the `dialog` element right at the center.
@@ -8997,12 +9005,12 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Playing CSS Animations with Vue's Help
+## 13.4. Playing CSS Animations with Vue's Help
 1. To have animated transition on both in/out of the element, we can sue `transition` which is a Vue specific tag to wrap the element. Note that in most of the cases, we should have only one single direct child in `transition` component.
 1. By wrapping the element, we can access [transition classes](https://v3.vuejs.org/guide/transitions-enterleave.html#transition-classes) to create the animation for both in and out. Note that this solution is suitable for only a single element, and it doesn't work well if we want to animate nested elements. 
     <img src="images/192-animating_enter_leave_state.png">
 
-## Using the Transition Component
+## 13.5. Using the Transition Component
 1. We then can use `.v-enter-from`, `.v-enter-active`, `.v-enter-to`, `.v-leave-from`, `.v-leave-active`, and `.v-leave-to` to create the animation. 
 1. Note that this `transition` component in Vue is only required when the element is controlled by `v-if`, which can be added and removed from the DOM list. 
     ```vue
@@ -9047,7 +9055,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## CSS Animations with the Transition Component
+## 13.6. CSS Animations with the Transition Component
 1. Besides having animations in all the Vue transition classes, we can simply put the `animation` defined with `keyframes` in the `.v-enter-active` and `.v-leave-active` class.
 1. Note that we don't need to have `forward` in `animation` value because the class will be removed when the element warpped by `transition` is mounted or unmounted. 
 1. Besdies, the example can look funny as we just play the same animation twice when the element is mounted and unmounted. 
@@ -9090,7 +9098,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Using Custom CSS Class Names
+## 13.7. Using Custom CSS Class Names
 1. When we have multiple `transition` components, we can [change prefix](https://v3.vuejs.org/guide/transitions-enterleave.html#transition-classes)  by giving `name` attribute to `transition` component tag to replce it from "**v**" to something else 
 1. In addition, we can also create [custom transtion classes](https://v3.vuejs.org/guide/transitions-enterleave.html#custom-transition-classes) with `enter-from-class`, `enter-active-class`, `enter-to-class`, `leave-from-class`, `leave-active-class`, and `leave-to-class` to have custom classes. This is especially useful to work with 3rd party CSS libraries that animations are predefined in certain names. 
     ```vue
@@ -9150,7 +9158,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Example: Animating a Modal
+## 13.8. Example: Animating a Modal
 1. For the "Modal" component, we can wrap `transition` it to performan animation. However, it won't work in this case becasue there's 2 siblings `div` and `dialog` tag. 
     ```vue
     <!-- App.vue -->
@@ -9235,7 +9243,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Transitioning Between Multiple Elements
+## 13.9. Transitioning Between Multiple Elements
 1. In cases that we want to apply animations on multiple elements, we can use `transition` to wrap the elements and ensure that only one of the elements will be added to the DOM.
 1. For example, we have 2 buttons in a container and only each of the buttons will show. When one shows, the other one will be hidden.
 1. However, multiple elements still won't work if we use multiple `v-if` as Vue doesn't analyze the structure and output if there's really onle one single element will be reneder. Therefore, we should use `v-else-if` or `v-else` instead. 
@@ -9289,7 +9297,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Using Transition Events
+## 13.10. Using Transition Events
 1. In some cases, we'd like to control the transition with [JavaScript hooks](https://v3.vuejs.org/guide/transitions-enterleave.html#javascript-hooks). 
 1. For example, we can add `@before-enter="beforeEnter"` listener on `transition` component. This triggers when the the root element in `transition` is added `v-enter-from` class and start to be animated.
 1. On the other hand, `@before-leave="beforeLeave"` listener which triggers when the component is removed.
@@ -9322,7 +9330,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
     <img src="images/198-transition_events_javascript_hooks.png">
 
-## Building JavaScript Transitions (instead of CSS)
+## 13.11. Building JavaScript Transitions (instead of CSS)
 1. In some cases, such as using 3rd party CSS library like [green sock](https://greensock.com/scrolltrigger/), we can use JavaScript hooks to leverage the usage. Besides, the hooks will still be triggered without CSS.
 1. Since we are not using CSS, Vue couldn't analyze the duration of animation given in `transition` property. Therefore, we can use `setInterval` to keep looping until it's cancelled. In this case, we can keep changing the `opacity` of the element. 
     ```js
@@ -9447,11 +9455,11 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Disabling CSS Transitions
+## 13.12. Disabling CSS Transitions
 1. If we use only JavaScript hooks to control the animation with hooks, we can add `:css="false"` to indicate to Vue that Vue doesn't need to scan through CSS to apply animation on the component.
 1. The configuration can improve the performance by prevent Vue scanning through CSS. 
 
-## Getting Started with Animated Lists
+## 13.13. Getting Started with Animated Lists
 1. We can build up a new component for a list of users `UserList.vue`. 
 1. This components allow users to add new users to the list and remove a user by clicking the item in the list. 
     ```html
@@ -9510,7 +9518,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
     
-## Animating Lists with "transition-group"
+## 13.14. Animating Lists with "transition-group"
 1. When adding animation to list of elements, we can use `transition-group` rather than `transition` component for [list transitions](https://v3.vuejs.org/guide/transitions-list.html#list-entering-leaving-transitions).
 1. The main difference between `transition` and `transition-group` is that `transition` doesn't really add a DOM to HTML but give Vue instruction to work on the transition.
 1. Therefore, when using `transition-group` we can give `tag` attribute and have a valid HTML tag as the value, so it will create an HTML element. For exmaple, we use `ul` to wrap `li`. 
@@ -9587,7 +9595,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
     <img src="./images/202-transition_group_animation.gif">
 
-## Animate List Item Movement
+## 13.15. Animate List Item Movement
 1. When using `transition-group`, the transition works not only on the added or removed element but the other items in the list.
 1. Therefore, we need to control the other elements in the list. In this case, we can use `v-move` class for [List Move Transitions](https://v3.vuejs.org/guide/transitions-list.html#list-move-transitions). We can use `[name]-move` if we give `name` attribute to `transition-group`. Besides, we can change the name for move class by passing `move-class` attribute.
 1. Since Vue uses `transform` property to perform animation under the hood, we can use `transition` property to work on `transform` in `move` class. However, this only works on adding an item to the list. 
@@ -9626,7 +9634,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Animate Route Changes
+## 13.16. Animate Route Changes
 1. When switching routes using `vue-router`, we can also add [transitions](https://next.router.vuejs.org/guide/advanced/transitions.html#transitions) animation for smoother transtion. However, the syntax could be weird that we can't use `transition` Vue component to wrap the `router-view` directly.
 1. Instead, `transition` should be placed inside `router-view`, while `router-view` shall pass the `v-slot` object with the component to render with `component` tag in `transition`. 
 1. In regular cases, we don't need [`v-slot` with `router-view`](https://next.router.vuejs.org/api/#router-view-s-v-slot) componenet. We mainly require to work with it when using `transition` or `keep-alive` component to render the inner components on Vue router.
@@ -9824,12 +9832,12 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Vuex
-## What and why vuex?
+# 14. Vuex
+## 14.1. What and why vuex?
 1. When managing larger scale projects and apps, it's hard to manage and control all the data and state of each component building up the app. `vuex` can be considered a counterpart to `redux` when using `React` framework. 
     <img src="images/208-what_and_why_using_vuex.png">
 
-## Creating & Using a Store
+## 14.2. Creating & Using a Store
 1. To use `vuex` with state management, we install `vuex` and import `createStore` function similar to `createApp` and `createRouter` to create a `store` object.
 1. `createStore` takes an object as argument which has `state` method that manage the stored data and state. This syntax is very similar to using `data` in a vue component.
     ```js
@@ -9896,7 +9904,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Connecting Components to State
+## 14.3. Connecting Components to State
 1. We can either use the data stored in `$store.state` directly in the component or separate the item into the other component.
 1. In this case, we give a method `addOne` and assign to the button which will add 1 to the state every time the button is clicked.
     ```html
@@ -9948,7 +9956,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Introducing Mutations - A Better Way of Changing Data
+## 14.4. Introducing Mutations - A Better Way of Changing Data
 1. Though we can modify states in `store` directly, this isn't an ideal approach that it still can cause unexpeceted errors.
 1. Therefore, we can use `mutations` feature as the middleware to modify the data stored in `$store`
 1. In this case, we create another component, `ChangeCounter.vue` to modify the data in `store`. This approach can be beneficial that the state maybe used in multiple components.
@@ -10005,7 +10013,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Passing Data to Mutations with Payloads
+## 14.5. Passing Data to Mutations with Payloads
 1. In some scenarios, we'd like to pass a custom value to `mutations` rather using hardcorded value. 
     ```js
     // main.js
@@ -10052,7 +10060,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Introducing Getters - A Better Way Of Getting Data
+## 14.6. Introducing Getters - A Better Way Of Getting Data
 1. Besides retrieving data from `$store` directly, we can use `getters` to fetch data. The concept is similar to `mutaitons` that in some cases, we may need to calculate the data before using it in the components. It can be very tedious to update all the computations in the component that use such data.
 1. Therefore, in `main.js`, we can register methods in `getters` in `store` which works similar to `mutations`. 
 1. However, the method should return the value that the component will get. Note that the main difference between `getters` and `mutations` is that `getters` chagne and return a new data, while `mutations` chagne on the state directly.
@@ -10148,7 +10156,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 1. Note that in some cases, we can use underscore `_` to replace the argument to indicate that it's only a placeholder. Otherwise, Vue would catch the unused argument and return an error.
 
-## Running Async Code with Actions
+## 14.7. Running Async Code with Actions
 1. In some cases, we need to fetch data from an endpoint or server via HTTP protocol. We need to use async JavaScript to fulfill the requirment. However, we can't use `mutations` with asynchornous code directly.
 1. In `vuex`, we can use [`actions`](https://vuex.vuejs.org/guide/actions.html#dispatching-actions) and it's always a good practice to use `actions` to call `mutations` rather than using `mutations` directly. This is similar to use `redux-thunk` and create async action creator in `redux` for `React` app. 
 1. In `main.js`, we can registers methods in `actions` as `mutations` and `getters`. In `actions`, we can declare methods which have the same name as those in `mutations`. This is a good approach, so know what methods we want to work with between `actions` and `mutations`.
@@ -10218,7 +10226,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Understanding the Action "Context"
+## 14.8. Understanding the Action "Context"
 1. With `context`, we can access other properties and methods in the `store.` For example, we can check data with `context.state` and `context.getters`. 
 1. We can even check other actions with `context.dispatch`. This can be useful as an middleware that we can call a HTTP request and check whether the response is desirable to show either success or failure message to users.
 1. Note that we can use ES6 syntax to simplify the code and makes it cleaner.
@@ -10240,7 +10248,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     });
     ```
 
-## Using Mapper Helpers
+## 14.9. Using Mapper Helpers
 1. In case that we have multiple (and way many) `getters` or data to call from `vuex` we can use `mapGetters` function, which take an array with name in string of the methods that we want to use. We then can use the method in `template` directly. 
     ```html
     <!-- TheCounter.vue -->
@@ -10291,7 +10299,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Example: Adding more state
+## 14.10. Example: Adding more state
 1. In this case, we'd like to add a new section and state for login/logout.
 1. We create new `state` in the `store` which is a Boolean value to indicate that if the user has logged in.
     ```js
@@ -10423,7 +10431,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Organizing your Store with Modules
+## 14.11. Organizing your Store with Modules
 1. When App/project goes large, we can have multiple states in the `store` which can be hard to manage.
 1. `vuex` provide module system that we can split the states up into different modules.
 1. For example, in the previous case, we can separate `counter` and `authentication` into different modules.
@@ -10498,7 +10506,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     });
     ```
 
-## Understanding Local Module State
+## 14.12. Understanding Local Module State
 1. Since we have separate `store` into modules, the `state` in `mutations` and `getters` can only access the local states which are in the same module. 
 1. This would be confusing as the `states` in the store module can actually be accessed from as those store in the root.
 1. For example, if we try use a getter in `counterModule` to check whether the user is authenticated which is store in the root `store`. It return nothing as the module can only access the local states in the same object.
@@ -10591,7 +10599,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Namespacing Modules
+## 14.13. Namespacing Modules
 1. In some cases or larger projects, we may have name clashes for methods in `actions` and `getters`. This feature can be useful to manage large scale projects and prevent accidentally calling the actions and getters in the root store with similar or the same name.
 1. We can use [`namespacing`](https://vuex.vuejs.org/guide/modules.html#namespacing) to keep modules separated. Therefore, we can't access the state and properties from a "**named**" module. To enable `namespacing` feature, we can simply add `namespaced:true` in the module object. 
     ```js
@@ -10712,7 +10720,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Structuring Vuex Code & Files
+## 14.14. Structuring Vuex Code & Files
 1. Though we can create a new file `store.js` to keep all the related `store` and `states` code, it can go very large if many states need to be managed. 
 1. We can create another directory `store` as the same level as `components`.
     1. `src`
@@ -10725,10 +10733,10 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. `mutations.js`
     1. `getters.js`
 
-## A Challenge
+## 14.15. A Challenge
 1. The target is to use `vuex` to manage the data in the shopping app which allows users to add items and sum the price up before checking out.
 
-## Challenge Solution
+## 14.16. Challenge Solution
 1. We firstly create a `store` folder with `index.js` in `src`. In this case, since the app isn't complicated, we can have only `products.js` for `productModule` and `cart.js` for `cartModule`.
     ```js
     // src/store/index.js
@@ -10918,8 +10926,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# Main Project: "Find a Coach" Web App
-## Planning the Project / Web App
+# 15. Main Project: "Find a Coach" Web App
+## 15.1. Planning the Project / Web App
 1. The Web Vue app has 2 main features to "find a coach" and "send message to a coach". 
 1. Find a coach
     1. List all available coaches
@@ -10934,7 +10942,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. Derive Data Models / Vuex Store Layout which includes `state`, `getters`, `actions`, and `mutations`.
     1. Derive "Design" and Components / Layout
 
-## Planning the Data Requirements
+## 15.2. Planning the Data Requirements
 1. For the data, we have "**coaches**" and "**requests**".
 1. Coaches
     1. List of coaches
@@ -10954,7 +10962,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         1. Contact a coach
         1. Set requests (fetch data from backend/database)
 
-## Planning the Layout / Components
+## 15.3. Planning the Layout / Components
 1. Coach related routes
     1. `/coaches` renders a list of coaches
     1. `/coaches/:id` renders details of a coach
@@ -10963,7 +10971,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     1. `/contact` allow users to contact a coach
     1. `/request` renders requests received
 
-## Registering Routes
+## 15.4. Registering Routes
 1. According to the general plans in the previous section, we can build up the routers with `vue-router`.
     ```js
     // src/router.js
@@ -10988,7 +10996,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     export default router;
     ```
 
-## Adding Route Page Components
+## 15.5. Adding Route Page Components
 1. We create the file structures and components
     1. `src/pages/coaches`
         1. `CoachDetails.vue`
@@ -11029,7 +11037,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     export default router;
     ```
     
-## Working on the Main Layout & Styling
+## 15.6. Working on the Main Layout & Styling
 1. In `CoachesList.vue`, we just added some content as placeholder. This component has 2 main sections which are "Filter" and "List of coaches".
 1. We then create `TheHeader.vue` which is stored in `src/components/layout`.
     ```html
@@ -11141,7 +11149,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Wiring Up Pages
+## 15.7. Wiring Up Pages
 1. We put some dummy data to ensure the pages are linked correctly. In this case, we updated `RequestsReceived.vue`, `CoachRegistreation.vue`, `ContactCoach.vue`, and `CoachDetail.vue`.
 1. Besides, we can try to access the coach details with a dummy id in URL.
 1. In the detail view, we can put a `router-link` to `/coaches/:id/contact` to access the child component in `coeaches/:id`. 
@@ -11155,7 +11163,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 
-## Adding Vuex and Coach Data
+## 15.8. Adding Vuex and Coach Data
 1. We set up new directories for `vuex` and store the data in the global scope. 
 1. In `src`, we create `/store` folder.
     1. `/modules`
@@ -11257,7 +11265,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Working on the Coaches List and List Items
+## 15.9. Working on the Coaches List and List Items
 1. We create another component to render each single coach from the list. 
     ```html
     <!-- src/components/coaches/CoachItem.vue -->
@@ -11375,7 +11383,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Adding a Couple of Base Components (Base Card, Base Button, Base Badge)
+## 15.10. Adding a Couple of Base Components (Base Card, Base Button, Base Badge)
 1. We create 3 universal components to use in the project `BaseCard.vue`, `BaseButton.vue`, and `BaseBadge`. We put all these components in `ui` directory in `components`.
 1. In these components, we pass `mode` and `type` which has pre-configured styling and effects for different values from the `props`.
     ```html
@@ -11667,7 +11675,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Building the Coach Detail Component
+## 15.11. Building the Coach Detail Component
     ```html
     <!-- src/pages/coaches/CoachDetails.vue -->
     <template>
@@ -11736,7 +11744,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Filtering Coaches
+## 15.12. Filtering Coaches
 1. 
     ```html
     <!-- src/components/coaches/CoachFilter.vue -->
@@ -11904,7 +11912,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Registering as a Coach: The Form
+## 15.13. Registering as a Coach: The Form
 1. We create a component to allow users to register as a coach.
     ```html
     <!-- src/components/coaches/CoachForm.vue -->
@@ -12070,7 +12078,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Adding Coaches to Vuex
+## 15.14. Adding Coaches to Vuex
 1. After setting up the form and UI, we can store the data in Vuex.
     ```js
     // src/store/modules/coaches/mutations.js
@@ -12249,7 +12257,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     };
     ```
 
-## Adding Form Validation
+## 15.15. Adding Form Validation
 1. We add validation and `blur` event handler for each input to apply `invalid` when the user has no input and remove the class when the user has tried to give any input.
     ```html
     <!-- src/components/coaches/CoachForm.vue -->
@@ -12466,7 +12474,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Working on the Contact Form
+## 15.16. Working on the Contact Form
 1. We update `ContactCoach.vue` component.
     ```html
     <!-- src/pages/requests/ContactCoach.vue -->
@@ -12556,25 +12564,25 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </style>
     ```
 
-## Storing Requests (Messages) with Vuex
-## Outputting Incoming Requests (Messages)
-## Filtering Requests for teh Active Coach
-## Sending a PUT Http Request to Store Coach Data
-## Fetching Coach Data (GET Http Request)
-## Rendering a Loading Spinner
-## Adding Http Error Handling
-## Sending Coaching Requests Http Requests
-## Caching Http Response Data
-## Adding Route Transitions
-## The "Not Found" Page & Summary
+## 15.17. Storing Requests (Messages) with Vuex
+## 15.18. Outputting Incoming Requests (Messages)
+## 15.19. Filtering Requests for teh Active Coach
+## 15.20. Sending a PUT Http Request to Store Coach Data
+## 15.21. Fetching Coach Data (GET Http Request)
+## 15.22. Rendering a Loading Spinner
+## 15.23. Adding Http Error Handling
+## 15.24. Sending Coaching Requests Http Requests
+## 15.25. Caching Http Response Data
+## 15.26. Adding Route Transitions
+## 15.27. The "Not Found" Page & Summary
 
 
 
-# Vue & Authentication
-## How Authentication Works in Vue Apps (or any SPA)
+# 16. Vue & Authentication
+## 16.1. How Authentication Works in Vue Apps (or any SPA)
 1. In this case, we can generate a token on the server side and store on the client side. Every time the client (user) wants to request data from the server, the server (backend) will verify the attached token to ensure the request is verified and valid. 
 
-## Locking / Protecting Backend Resources
+## 16.2. Locking / Protecting Backend Resources
 1. We can set up rules for realtime database to decide how can we read and write the data. For further information, we can look up [Firebase Realtime Database Rules](https://firebase.google.com/docs/database/security).
     ```json
     // firebase rules for realtime database
@@ -12592,7 +12600,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Adding an Authentication Page (Login & Signup)
+## 16.3. Adding an Authentication Page (Login & Signup)
 1. In `pages` directory, we create a new folder `auth` and a new component `UserAuth.vue`.
     ```html
     <!-- UserAuth.vue -->
@@ -12736,7 +12744,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Preparing Vuex
+## 16.4. Preparing Vuex
 1. In Firebase, we check in authentication on the left panel and enable email/password in sign-in method. Note that we just allow the first option to allow users to sign with in both email and password (not email link only).
 1. In addition, we can look up Firebase Auth REST API and check its [sign up with email / password](https://firebase.google.com/docs/reference/rest/auth#section-create-email-password) and [sign in with email / password](https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password). 
 1. Note that Firebase Auth REST API for email / password only works if we enable the feature in Firebase project control.
@@ -12792,7 +12800,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     export default {}
     ```
 
-## Adding a "Signup" Action & Flow
+## 16.5. Adding a "Signup" Action & Flow
 1. We can set up `src/store/modules/auth/mutations.js`
     ```js
     // src/store/modules/auth/mutations.js
@@ -12912,7 +12920,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 1. Besides, in `Users` in `Authentication` in the Firebase project, we can refresh and check the latest user which just registered.
 1. If we try to register anthoer account with the same email, Firebase will return an error and notice that the email has been used. 
 
-## Better UX: Loading Spinner & Error Handling
+## 16.6. Better UX: Loading Spinner & Error Handling
 1. We add 2 more states in `UserAuth.vue` for `isLoading: false` and `error: null`.
 1. We then turn `submitForm` into async function. As it should wait for authentication to be done before changing any state.
 1. Create a loading spinner with `base-dialog` and get it controlled by `isLoading`.
@@ -13008,7 +13016,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </script>
     ```
 
-## Adding a "Login" Action & Flow
+## 16.7. Adding a "Login" Action & Flow
 1. To allow users to login, we can configure the method and endpoint in `src/store/modules/auth/actions.js`. This is similar to the sign up flow for a user.
     ```js
     // actions.js
@@ -13132,58 +13140,58 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     }
     ```
 
-## Attaching the Token to Outgoing Requests
-## Updating the UI Based on Auth State
-## Adding a "Logout" Action & Flow
-## Authentication & Routing (incl. Navigation Guards)
-## Adding "Auto Login"
-## Adding "Auto Logout"
+## 16.8. Attaching the Token to Outgoing Requests
+## 16.9. Updating the UI Based on Auth State
+## 16.10. Adding a "Logout" Action & Flow
+## 16.11. Authentication & Routing (incl. Navigation Guards)
+## 16.12. Adding "Auto Login"
+## 16.13. Adding "Auto Logout"
 
 
 
-# Optimizing & Deploying Vue Apps
-## What To Deploy?
-## Optimization: Using Asynchronous Components
-## Building the Project For Production
-## Deploying a Vue App
+# 17. Optimizing & Deploying Vue Apps
+## 17.1. What To Deploy?
+## 17.2. Optimization: Using Asynchronous Components
+## 17.3. Building the Project For Production
+## 17.4. Deploying a Vue App
 
 
 
-# The Composition API - Replacing the Options API
-## Which Problem Does the Composition API Solve?
-## Replacing "data" with "refs"
-## Building "reactive" Objects
-## Reactivity: A Deep Dive
-## Replacing "methods" with regular Functions
-## Replacing "Computed Properties" with the "computed" Function
-## Two-Way-Binding and the Composition API
-## Working with Watchers
-## A First Summary
-## How to Use Templates Refs
-## Components, Props, & The Composition API
-## Emitting Custom Events
-## Working with Provide / Inject
-## Lifecycle Hooks in the Composition API
-## Migrating from Options API to Composition API - an Example Project
-## Migrating a First Component
-## Migrating a Big Component
-## Migrating the Remaining Components
-## Routing, Params & The Composition API
-## The Route & Router Objects and the Composition API
-## Using Vuex with the Composition API
+# 18. The Composition API - Replacing the Options API
+## 18.1. Which Problem Does the Composition API Solve?
+## 18.2. Replacing "data" with "refs"
+## 18.3. Building "reactive" Objects
+## 18.4. Reactivity: A Deep Dive
+## 18.5. Replacing "methods" with regular Functions
+## 18.6. Replacing "Computed Properties" with the "computed" Function
+## 18.7. Two-Way-Binding and the Composition API
+## 18.8. Working with Watchers
+## 18.9. A First Summary
+## 18.10. How to Use Templates Refs
+## 18.11. Components, Props, & The Composition API
+## 18.12. Emitting Custom Events
+## 18.13. Working with Provide / Inject
+## 18.14. Lifecycle Hooks in the Composition API
+## 18.15. Migrating from Options API to Composition API - an Example Project
+## 18.16. Migrating a First Component
+## 18.17. Migrating a Big Component
+## 18.18. Migrating the Remaining Components
+## 18.19. Routing, Params & The Composition API
+## 18.20. The Route & Router Objects and the Composition API
+## 18.21. Using Vuex with the Composition API
 
 
 
-# Reusing Funcitonality: Mixins & Custom Composition Functions
-## Reusability Concepts
-## Using Mixins
-## Understanding Mixin Merging
-## Global Mixins
-## Disadvantages of Mixins
-## Custom Hooks / Composables & The Composition API
-## More Custom Composition Functions
-## Why Hookks / Composables Beat Mixins
-## Example: Creating a "Search" Hook
-## Custom Hooks Gotchas
-## More Thoughts on Custom Hooks / Composables
-## Example: A Custom "Sort" Hook
+# 19. Reusing Funcitonality: Mixins & Custom Composition Functions
+## 19.1. Reusability Concepts
+## 19.2. Using Mixins
+## 19.3. Understanding Mixin Merging
+## 19.4. Global Mixins
+## 19.5. Disadvantages of Mixins
+## 19.6. Custom Hooks / Composables & The Composition API
+## 19.7. More Custom Composition Functions
+## 19.8. Why Hookks / Composables Beat Mixins
+## 19.9. Example: Creating a "Search" Hook
+## 19.10. Custom Hooks Gotchas
+## 19.11. More Thoughts on Custom Hooks / Composables
+## 19.12. Example: A Custom "Sort" Hook
