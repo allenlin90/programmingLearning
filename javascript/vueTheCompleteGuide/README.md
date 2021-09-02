@@ -1240,8 +1240,9 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         </div>
         <div class="demo" :class="{active: boxBSelected}" @click="boxSelected('B')"></div>
         <div class="demo" :class="{active: boxCSelected}" @click="boxSelected('C')"></div>
-  </section>
+    </section>
     ```
+
     ```js
     // JavaScript
     const app = Vue.createApp({
@@ -1273,12 +1274,13 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```html
     <!-- HTML -->
     <section id="styling">
-    <div class="demo" :class="boxAClasses" @click="boxSelected('A')">
-    </div>
-    <div class="demo" :class="{active: boxBSelected}" @click="boxSelected('B')"></div>
-    <div class="demo" :class="{active: boxCSelected}" @click="boxSelected('C')"></div>
-  </section>
+        <div class="demo" :class="boxAClasses" @click="boxSelected('A')">
+        </div>
+        <div class="demo" :class="{active: boxBSelected}" @click="boxSelected('B')"></div>
+        <div class="demo" :class="{active: boxCSelected}" @click="boxSelected('C')"></div>
+    </section>
     ```
+
     ```js
     // JavaScript
     const app = Vue.createApp({
@@ -1303,6 +1305,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         }
     });
     ```
+
     ```css
     /* CSS */
     .active {
@@ -1320,8 +1323,9 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         </div>
         <div :class="['demo', {active: boxBSelected}]" @click="boxSelected('B')"></div>
         <div class="demo" :class="{active: boxCSelected}" @click="boxSelected('C')"></div>
-  </section>
+    </section>
     ```
+
     ```js
     // JavaScript
     const app = Vue.createApp({
@@ -1807,20 +1811,20 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```html
     <!-- HTML -->
     <body>
-    <header>
-      <h1>Vue Course Goals</h1>
-    </header>
-    <section id="user-goals">
-      <h2>My course goals</h2>
-      <input type="text" />
-      <button>Add Goal</button>
-      <p>No goals have been added yet - please start adding some!</p>
-      <!-- show p tag above when there's nothing in the list -->
-      <ul>
-        <li>Goal</li>
-      </ul>
-    </section>
-  </body>
+        <header>
+        <h1>Vue Course Goals</h1>
+        </header>
+        <section id="user-goals">
+        <h2>My course goals</h2>
+        <input type="text" />
+        <button>Add Goal</button>
+        <p>No goals have been added yet - please start adding some!</p>
+        <!-- show p tag above when there's nothing in the list -->
+        <ul>
+            <li>Goal</li>
+        </ul>
+        </section>
+    </body>
     ```
 
 ## 2.2. Rendering Content Conditionally
@@ -1836,7 +1840,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         <ul>
             <li>Goal</li>
         </ul>
-  </section>
+    </section>
     ```
     ```js
     // JavaScript
