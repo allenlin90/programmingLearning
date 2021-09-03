@@ -4,11 +4,12 @@ This list of learning materials are used when transferring job from operations m
 Personal background - [https://www.linkedin.com/in/lin-meng-ting/](https://www.linkedin.com/in/lin-meng-ting/)
 
 Note:
-0.1. Some of the materials aren't related directly to frontend and resources and notes aren't listed by order of learning. Skills and knowledge are mostly acquired directly depend on the requirements from the projects from time to time. As working in startups in the beginning stages, the skill requirements can be broad but not deep. However, this can be a good chance to explore and study different technology and tools.
+Some of the materials aren't related directly to frontend and resources and notes aren't listed by order of learning. Skills and knowledge are mostly acquired directly depend on the requirements from the projects from time to time. As working in startups in the beginning stages, the skill requirements can be broad but not deep. However, this can be a good chance to explore and study different technology and tools.
+
 ---
 
 - [1. Jounral and events](#1-jounral-and-events)
-  - [1.1. Journal](#11-journal)
+  - [1.1. Posts](#11-posts)
   - [1.2. Events and Summary](#12-events-and-summary)
 - [2. Learning materials and resources](#2-learning-materials-and-resources)
   - [2.1. JavaScript](#21-javascript)
@@ -22,8 +23,8 @@ Note:
 
 ---
 # 1. Jounral and events
-## 1.1. Journal
-[Jounral](./resource/journal.md)
+## 1.1. Posts
+[Posts](./resource/posts)
 
 ## 1.2. Events and Summary
 [Events and Summary](./resource/README.md)
