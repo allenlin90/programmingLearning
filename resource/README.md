@@ -3,11 +3,48 @@ Starting date: [2021-08-30](#2021-08-30)
 
 ---
 
+## 2021-09-04
+1. FE interview day 4
+   1. How does HTML5 document working offline? [Note](./posts/html_and_css/service_worker_appcache.md)
+2. `computed` in Vue component can have not only return a value but have a "setter" when it's called. By default only `get` is availabe. This feature can work with Vues `store` with `v-model` to change a state in the global scale. 
+   1. For exmaple, we want to make an reusable "error dialog" which can pop up when any component updates its state in Vuex. 
+   2. Since the `v-dialog` component not only works with itself but directive such as closing the dialog when the user clicks outside the dialog element. 
+   3. Since `v-model` should be able to manipulate the "state", we can't pass a method in `computed` directly. In this case, we can have have a setter by using `set` to handle the state changing issue in global scale.
+   4. Computed Setter - [https://vuejs.org/v2/guide/computed.html#Computed-Setter](https://vuejs.org/v2/guide/computed.html#Computed-Setter)
+   ```vue
+   <template>
+      <v-dialog v-model="open">
+         Some message...
+      </v-dialog>
+   </template>
+   ```
+   ```js
+   export default {
+      computed: {
+         open: {
+            get() {
+               return this.$store.getters.open;
+            },
+            set(value = false) {
+               this.$store.dispatch({ type: 'open', open: value });
+            }
+         }
+      }
+   }
+   ```
+
 ## 2021-09-03
 1. FE interview day 3
    1. CSS methods to hide HTML elements on page. [Note](../resource/posts/html_and_css/css_methods_hiding_elements.md)
    2. Create a function which takes 2 arguments (string and character) to remove the last character in the string from the given argument. 
 2. Add `auth` module in NuxtJS when developing [MakeSend Driver Web](https://driver-webapp.makesend.asia/) with Vue framework. [Notes](../resource/posts/nuxt/auth_module.md)
+3. [Review Vue notes](../javascript/vueTheCompleteGuide/README.md)
+   1. `ref` attribute can be given to an element in vue, so it can be accessed with `this.$refs[ref_name]`.
+   2. Vue app has multiple stages in its lifecycle since it's created and unmounted from the screen.
+   3. Components can help Vue app manage and reduce repetitive code. A component can be reused in similar context and conditions.
+   4. The entry point of a regualr Vue app is the `main.js` that handles the global setting for the whole Vue app. For example, 
+      1. Adding a component here, so other components can use it directly without importing locally.
+      2. Setting router and Vuex.
 
 ## 2021-09-02
 1. Explain and realize "Holy Grail" and "Double Wing" layout with HTML and CSS. [Notes](../resource/posts/html_and_css/holy_grail_double_wing_layout.md)
