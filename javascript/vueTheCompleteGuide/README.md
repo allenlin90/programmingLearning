@@ -62,9 +62,9 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
   - [5.1. Understanding the Problem](#51-understanding-the-problem)
   - [5.2. Introducing Components](#52-introducing-components)
   - [5.3. The Why: Building Complex User Interfaces With Components](#53-the-why-building-complex-user-interfaces-with-components)
-- [6. Moving to a Better Development SEtup & Workflow with the Vue CLI](#6-moving-to-a-better-development-setup--workflow-with-the-vue-cli)
+- [6. Moving to a Better Development Setup & Workflow with the Vue CLI](#6-moving-to-a-better-development-setup--workflow-with-the-vue-cli)
   - [6.1. Why We Need A Development Server](#61-why-we-need-a-development-server)
-  - [6.2. WHy We Want A Better Developer Experience](#62-why-we-want-a-better-developer-experience)
+  - [6.2. Why We Want A Better Developer Experience](#62-why-we-want-a-better-developer-experience)
   - [6.3. Installing & Using the Vue CLI](#63-installing--using-the-vue-cli)
   - [6.4. Inspecting the Created Project](#64-inspecting-the-created-project)
   - [6.5. Inspecting the Vue Code & ".vue" Files](#65-inspecting-the-vue-code--vue-files)
@@ -1874,7 +1874,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
         <ul v-else>
             <li>Goal</li>
         </ul>
-  </section>
+    </section>
     ```
 
 ## 2.4. Using v-show Instead of v-if
@@ -2882,9 +2882,9 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## 4.5. Working with Refs
-1. We can give a Vue specific attribute `ref` on a HTML element, so Vue can directly access the element as a DOM selector. This feature is similar to [React Reference System](https://reactjs.org/docs/refs-and-the-dom.html), which can also select a HTML element or an instance of React component. We can look up example from [React learning note](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#using-refs-for-dom-access).
-1. Note that we don't need to put `v-bind` or `:` as using `key` on list items.
-1. It uses a special syntax with `this.$ref.[name_of_ref]`
+1. We can give a Vue specific attribute `ref` on a HTML element, so Vue can directly access the element as a DOM selector. This feature is similar to [React Reference System](https://reactjs.org/docs/refs-and-the-dom.html), which can also select a HTML element or an instance of React component. We can look up example from [React learning note](https://github.com/allenlin90/programmingLearning/tree/master/javascript/modernReactWithRedux#using-refs-for-dom-access).
+2. Note that we don't need to put `v-bind` or `:` as using `key` on list items.
+3. It uses a special syntax with `this.$ref.[name_of_ref]`
     ```html
     <!-- HTML -->
     <section id="app">
@@ -3157,13 +3157,13 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 
 
-# 6. Moving to a Better Development SEtup & Workflow with the Vue CLI
+# 6. Moving to a Better Development Setup & Workflow with the Vue CLI
 ## 6.1. Why We Need A Development Server
 1. If we don't have a demo server, we can't mock up `http` or `https` connnection protocol. We just open the file with `file` protocol.
 1. Some (modern JavaScript or Browser feateurs will not work).
 1. We'd like to simulate the environment hosting a website in regular server.
 
-## 6.2. WHy We Want A Better Developer Experience
+## 6.2. Why We Want A Better Developer Experience
 1. Without a configured local server, we need to reload the page after every change. 
 1. We can use other tools such as auto-complete when using frequently used terms or structure.
 1. As the Vue app goes bigger, we may separate the JavaScript file into different files. Without the tools, we have to use `script` tag in the main HTML to import all the JavaScript file.
@@ -3173,8 +3173,8 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 ## 6.3. Installing & Using the Vue CLI
 1. We firstly use `npm` to install `@vue/cli` in the global environment. Note that we may need to use `sudo` in linux or MacOS system, while we can simply use `npm install @vue/cli -g` on windows command prompt directly.
 1. After installing the required files, we can use `vue create [project-name]`. Note that we don't have any space to name a project in convention to prevent complexity to access a directory in CLI. This process is similar to use `npx create-react-app [project_name]` to create a React App, which also requires its own package by using [`npm install -g create-react-app`](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#generating-a-react-project).
-1. Note that we can use simply use the default configurations for Vue3 or manually configure some of the setting if it requires.
-1. When the project folder is created, we can use `cd` to change directory and run `npm run serve` to start the developing environment that we can go `http://localhost:8080/` to check Vue project control panel. This is similar to use `npm start` after creating a React project that we can access it at `http://localhost:3000/` by default.
+2. Note that we can simply use the default configurations for Vue3 or manually configure some of the setting if it requires.
+3. When the project folder is created, we can use `cd` to change directory and run `npm run serve` to start the developing environment that we can go `http://localhost:8080/` to check Vue project control panel. This is similar to use `npm start` after creating a React project that we can access it at `http://localhost:3000/` by default.
 
 ## 6.4. Inspecting the Created Project
 1. This section is to introduce the directory and file structure when creating a Vue app.
