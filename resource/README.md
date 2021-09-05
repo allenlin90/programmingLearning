@@ -2,15 +2,151 @@
 Starting date: [2021-08-30](#2021-08-30)
 
 ---
+## 2021-09-05
+1. Review on Vue framework
+2. If a component has multiple layers and hierarchy of child components, we can use `provide` and `inject` to avoid passing through all the components in between but allow the components to communicate directly. 
+3. Note that this is an one-way communication, and the component that "provides" the data must be the parent or ancestor on the top in the hierarchy.
+4. To keep the provided data dynamic or referring to properties of the component or instance, we can turn it as a function which returns an object.
+5. We can provide not only data but methods from the parent component. 
+   ```js
+   // parent component
+   export default {
+      data() { 
+         return { 
+            data: 'some data',
+            topics: [{ id: 1, title: 'foo' }, { id: 2, title: 'bar' }],
+            activeTopic: null,
+         }
+      },
+      // provide as an object for static data
+      provide: {
+         data: 'some data',
+      }, 
+      // provide as a function returning an object to keep dynamic data
+      provide() {
+         return {
+            data: this.data,
+            selectTopic: activateTopic
+         };
+      },
+      methods: {
+         activateTopic(id) {
+            this.activeTopic = this.topics.find(topic => topic.id === id);
+         }
+      }
+   }
+
+   // child component
+   export default {
+      inject: ['data', 'activateTopic'],
+   }
+   ```
+
 
 ## 2021-09-04
 1. FE interview day 4
    1. How does HTML5 document working offline? [Note](./posts/html_and_css/service_worker_appcache.md)
-2. `computed` in Vue component can have not only return a value but have a "setter" when it's called. By default only `get` is availabe. This feature can work with Vues `store` with `v-model` to change a state in the global scale. 
+2. Review on Vue framework
+3. `props` can be used to communicate from parent to its child component. 
+   1. It's an one-way communication only from parent to child. 
+   2. We can configure the prop such as if it's required, validate if the prop value is valid to use, and a specific data type.
+   ```js
+   export default {
+      props: {
+         value: {
+            type: Number,
+            default: 0,
+            required: true, 
+            validator (value) {
+               return value >= 0;
+            }
+         }
+      }
+   }
+   ```
+4. Besides `props`, we can use `emit` to send a custom event to allow communication from child to parent component. Note that this is alos an one-way communication from child to parent.
+   ```vue
+   <template>
+    <button @click="$emit('send-value', 'value')">Click</button>
+   </template>
+   ```
+   ```js
+   // child component
+   export default {
+     emits: ['update-state', 'send-value'],
+      methods: {
+         reportStatus() {
+            this.$emit('update-state', 'updated');
+         }
+      }
+   }
+   ```
+   ```vue
+   <template>
+      <child-component @update-state="updateStatus">
+      </child-component>
+   </template>
+   ```
+   ```js
+   // parent component 
+   export default {
+      data() {
+         return {
+            status: 'pending',
+         }
+      },
+      methods: {
+         updateStatus(status) {
+            this.status = status;
+         }
+      }
+   }
+   ```
+   1. We can configure further on the `emit` event.
+   ```js
+   const app = Vue.createApp({
+      props: {},
+      emits: ['event-handler'],
+      emits: {
+         'event-handler': function(id) {
+            if (id) true;
+            return false;
+         }
+      }
+      data(){},
+    methods: {}
+   });
+   ```
+5. `computed` in Vue component can have not only return a value but have a "setter" when it's called. By default only `get` is availabe. This feature can work with Vues `store` with `v-model` to change a state in the global scale. 
    1. For exmaple, we want to make an reusable "error dialog" which can pop up when any component updates its state in Vuex. 
    2. Since the `v-dialog` component not only works with itself but directive such as closing the dialog when the user clicks outside the dialog element. 
    3. Since `v-model` should be able to manipulate the "state", we can't pass a method in `computed` directly. In this case, we can have have a setter by using `set` to handle the state changing issue in global scale.
-   4. Computed Setter - [https://vuejs.org/v2/guide/computed.html#Computed-Setter](https://vuejs.org/v2/guide/computed.html#Computed-Setter)
+   4. Note that when [using `v-model` on a component](https://v3.vuejs.org/guide/component-basics.html#using-v-model-on-components), it actually does as the following.
+      1. It sends a `props` or `non-props` attribute as `model-value` to the component
+      2. It listens to `update` event emitting from the child component when the `model-value` is updated, and catches and applies the value to the state.
+      3. Therefore, when we use `v-model` with `v-dialog` which is a cusotm component from vuetify.
+      4. In addition, `v-model` has a breaking change from Vue 2 to 3. The official document clearly explains how does [`v-model`](https://v3.vuejs.org/guide/migration/v-model.html#v-model) works on a custom component and the different between Vue 2 and 3.
+   ```vue
+   <template>
+      <!-- using v-model on input tag -->
+      <input :value="searchText" @input="searchText = $event.target.value" />
+
+      <!-- using v-model on a component -->
+      <!-- Vue 2 syntax -->
+      <!-- input method is the default, though we can change it in the child component -->
+      <custom-input
+         :value="searchText"
+         @input="searchText = $event"
+      ></custom-input>
+
+      <!-- Vue 3 syntax -->
+      <custom-input
+         :model-value="searchText"
+         @update:model-value="searchText = $event"
+      ></custom-input>
+   </template>
+   ```
+   1. Computed Setter - [https://vuejs.org/v2/guide/computed.html#Computed-Setter](https://vuejs.org/v2/guide/computed.html#Computed-Setter)
    ```vue
    <template>
       <v-dialog v-model="open">

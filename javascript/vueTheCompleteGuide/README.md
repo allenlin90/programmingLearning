@@ -3493,7 +3493,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 # 7. Component Communication
 ## 7.1. Introducing "Props" (Parent => Child Communication)
 1. To enable components to communicate, we can use `props` property which is a reserved keyword as `data` and `methods` to get the data passing from the parent to child components. The idea is exactly the same as [React components](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux#communicating-with-props).
-1. So as it does in React, the HTML attribute should be in `kebap-case`, while for JavaScrfipt object property key, we should use `camelCase`. `kebap-case` isn't a legal naming style for JavaScript properties.
+1. So as it does in React, the HTML attribute should be in `kebap-case`, while for JavaScript object property key, we should use `camelCase`. `kebap-case` isn't a legal naming style for JavaScript properties.
     ```html
     <!-- src/App.vue -->
     <template>
@@ -3516,7 +3516,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     </template>
     ```
 1. In this case, we can use an array to catch the passing data from the parent in `FriendContact` component.
-1. We then case access the passed values as the properties in `data` through `this` or its name in the HTML template.
+1. We then can access the passed values as the properties in `data` through `this` or its name in the HTML template.
     ```html
     <!-- src/components/FriendContact.vue -->
     <template>
@@ -4647,7 +4647,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 ## 7.13. Provide + Inject for Functions / Methods
 1. `provide` and `inject` can not only be used on data but also for methods (function). Since we can pass the method from `App.vue` to `KnowledgeElement.vue`, we can remove the `$emit()` in `KnowledgeGrid.vue`.
-1. In this case, we can expect a method is provided and to be injected as `selectTopc`. 
+1. In this case, we can expect a method is provided and to be injected as `selectTopic`. 
     ```html
     <!-- KnowledgeElement.vue -->
     <template>
