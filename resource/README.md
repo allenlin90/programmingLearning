@@ -2,6 +2,32 @@
 Starting date: [2021-08-30](#2021-08-30)
 
 ---
+
+## 2021-09-20
+1. Checked [skeleton loading effect](https://wonderful-goldwasser-8b2175.netlify.app/frontend_uis/skeletonloading/). 
+   1. This provides a smoother transition for users with slow internet speed that loads on the content gradually.
+   2. In developer console, we can check "network" tab and change the environment to simulate slow 3G internet speed to load up the page.
+2. Checked [custom scrollbar](https://wonderful-goldwasser-8b2175.netlify.app/frontend_uis/customscrollbar/)
+   1. Custom color and effect on scrollbar of different browsers.
+
+## 2021-09-13 ~ 2021-09-19
+1. Taking a break and focus on tasks on hands
+2. MAKESEND Express
+   1. Finish task auto assignment alogrithm verion 1.0
+   2. Finish merchant report functions
+      1. Search by "date" and "sender name"
+      2. Rows per page and pagination (connect to server-side API)
+      3. Click to check order details
+      4. Export table as Excel
+   3. Create dropoff service UI
+3. Soi Bear
+   1. Mass order booking (Excel upload)
+
+## 2021-09-06 ~ 2021-09-12
+1. Proceed challenge [https://github.com/jb-engine/challenges](https://github.com/jb-engine/challenges)
+2. [Result](https://github.com/allenlin90/jb-engine)
+3. [DEMO](https://jb-engine.netlify.app/news)
+
 ## 2021-09-05
 1. Review on Vue framework
 2. If a component has multiple layers and hierarchy of child components, we can use `provide` and `inject` to avoid passing through all the components in between but allow the components to communicate directly. 
