@@ -212,7 +212,7 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
   - [15.16. Working on the Contact Form](#1516-working-on-the-contact-form)
   - [15.17. Storing Requests (Messages) with Vuex](#1517-storing-requests-messages-with-vuex)
   - [15.18. Outputting Incoming Requests (Messages)](#1518-outputting-incoming-requests-messages)
-  - [15.19. Filtering Requests for teh Active Coach](#1519-filtering-requests-for-teh-active-coach)
+  - [15.19. Filtering Requests for the Active Coach](#1519-filtering-requests-for-the-active-coach)
   - [15.20. Sending a PUT Http Request to Store Coach Data](#1520-sending-a-put-http-request-to-store-coach-data)
   - [15.21. Fetching Coach Data (GET Http Request)](#1521-fetching-coach-data-get-http-request)
   - [15.22. Rendering a Loading Spinner](#1522-rendering-a-loading-spinner)
@@ -12569,8 +12569,115 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## 15.17. Storing Requests (Messages) with Vuex
+1. We add a new module `requests` in store to handle sending messages to a coach.
+2. Note that the previous setting for router isn't very correct that some of the navigations and buttons don't work correctly.
+3. In the router, we have set up to have the `id` of the coach as a property passing to the component, which we can get the value from either `props` or `this.$route.id`.
+4. In this section, `requests` module is created in `store` directory, and `router.js` and `ContactCoach.vue` in `pages/requests` are updated.
+
 ## 15.18. Outputting Incoming Requests (Messages)
-## 15.19. Filtering Requests for teh Active Coach
+1. We update `ReuestsReceived` component
+  ```vue
+  // pages/requests/RequestsReceived.vue
+  <template>
+    <section>
+      <base-card>
+        <header>
+          <h2>Requests Received</h2>
+        </header>
+        <ul v-if="hasRequests">
+          <request-item
+            v-for="request in receivedRequests"
+            :key="request.id"
+            :email="request.userEmail"
+            :message="request.message"
+          ></request-item>
+        </ul>
+        <h3 v-else>You haven't received any requests yet!</h3>
+      </base-card>
+    </section>
+  </template>
+
+  <script>
+  import RequestItem from '../../components/requests/RequestItem.vue';
+
+  export default {
+    components: { RequestItem },
+    computed: {
+      receivedRequests() {
+        return this.$store.getters['requests/requests'];
+      },
+      hasRequests() {
+        return this.$store.getters['requests/hasRequests'];
+      }
+    }
+  };
+  </script>
+
+  <style scoped>
+  header {
+    text-align: center;
+  }
+
+  ul {
+    list-style: none;
+    margin: 2rem auto;
+    padding: 0;
+    max-width: 30rem;
+  }
+
+  h3 {
+    text-align: center;
+  }
+  </style>
+  ```
+2. We create an other component as the item in the list to iterate.
+  ```vue
+  // components/requests/RequestItem.vue
+  <template>
+    <li>
+      <div>
+        <a :href="emailLink">{{ email }}</a>
+      </div>
+      <p>{{ message }}</p>
+    </li>
+  </template>
+
+  <script>
+  export default {
+    props: ['email', 'message'],
+    computed: {
+      emailLink() {
+        return 'mailto:' + this.email;
+      }
+    }
+  };
+  </script>
+
+  <style scoped>
+  li {
+    margin: 1rem 0;
+    border: 1px solid #ccc;
+    padding: 1rem;
+  }
+
+  a {
+    color: #3d008d;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  a:hover,
+  a:active {
+    color: #8d007a;
+  }
+
+  p {
+    margin: 0.5rem 0 0 0;
+  }
+  </style>
+  ```
+
+## 15.19. Filtering Requests for the Active Coach
 ## 15.20. Sending a PUT Http Request to Store Coach Data
 ## 15.21. Fetching Coach Data (GET Http Request)
 ## 15.22. Rendering a Loading Spinner
