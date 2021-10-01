@@ -12678,14 +12678,805 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
   ```
 
 ## 15.19. Filtering Requests for the Active Coach
+1. In a getter of a module, we can not only access the local `state` but other arguments such as local `getters`, `rootState`, and `rootGetters`.
+2. Therefore, we can update the request getter by getting the `userId` from the rootState with `rootGetters` and filter the message to get only those belong to the user.
+3. Besides, to check if a user has message, we can use the getter rather than checking from the state directly.
+4. In addition, for those arguments not in use, we can use underscore for its naming to prevent error prompt from linters which check unused variables.
+5. However, we don't have a backend at this point to really store the data.
+
 ## 15.20. Sending a PUT Http Request to Store Coach Data
+1. We can use firebase as the serverless backend and the database to store the data.
+2. In this case, we use "realtime database" service in firebase.
+3. We can get additional information on how to use firebase realtime database. In this case, we'd like to store the data under "coaches" with the `userId`. 
+4. We need to add `.json` as the suffix. Besides, we use `PUT` method which will either update and rewrite the data if it exists, or simply create one if there's none.
+5. Note that we haven't fetching the data from firebase, so we can only see dummy data when we refresh the coach list.
+  ```js
+  // store/modules/coaches/actions.js
+  export default {
+    async registerCoach(context, data) {
+      const userId = context.rootGetters.userId;
+      const coachData = {
+        firstName: data.first,
+        lastName: data.last,
+        description: data.desc,
+        hourlyRate: data.rate,
+        areas: data.areas
+      };
+
+      const response = await fetch(
+        `https://[your_firebase_endpoint]/coaches/${userId}.json`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({ coachData })
+        }
+      );
+
+      if (!response.ok) {
+        // error...
+      }
+
+      context.commit('registerCoach', { ...coachData, id: userId });
+    }
+  };
+  ```
+
 ## 15.21. Fetching Coach Data (GET Http Request)
+1. We can create a new action to fetch data from firebase.
+  ```js
+  // store/modules/coaches/actions.js
+  export default {
+    async loadCoaches(context) {
+      const response = await fetch(
+        `https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/coaches.json`
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        // error...
+      }
+
+      const coaches = [];
+
+      for (const key in responseData) {
+        const coach = {
+          id: key,
+          firstName: responseData[key].firstName,
+          lastName: responseData[key].lastName,
+          description: responseData[key].description,
+          hourlyRate: responseData[key].hourlyRate,
+          areas: responseData[key].areas
+        };
+        coaches.push(coach);
+      }
+
+      context.commit('setCoaches', coaches);
+    },
+  }
+  ```
+2. Besides, we can have an aligned mutation to update the state.
+  ```js
+  // store/modules/coaches/mutations.js
+  export default {
+    setCoaches(state, payload) {
+      state.coaches = payload;
+    }
+  }
+  ```
+3. We then can update `CoachesList.vue` and fetch the coach list when the component initiates. This `loadCoaches` can be triggered by the refesh button on the top as well.
+  ```js
+  // pages/coaches/CoachesList.vue
+  export default {
+    created() {
+      this.loadCoaches();
+    },
+    methods: {
+      loadCoaches() {
+        this.$store.dispatch('coaches/loadCoaches');
+      }
+    }
+  }
+  ```
+4. We can add a spinner when the page is loading for a better experience.
+
 ## 15.22. Rendering a Loading Spinner
+1. We can use the `BaseSpinner` provided from the lecturer.
+  ```vue
+  <!-- ./components/ui/BaseSpinner.vue -->
+  <template>
+    <div class="spinner">
+      <div class="lds-roller">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </template>
+
+  <style scoped>
+  .spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .lds-roller {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-roller div {
+    animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    transform-origin: 40px 40px;
+  }
+  .lds-roller div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3d008d;
+    margin: -4px 0 0 -4px;
+  }
+  .lds-roller div:nth-child(1) {
+    animation-delay: -0.036s;
+  }
+  .lds-roller div:nth-child(1):after {
+    top: 63px;
+    left: 63px;
+  }
+  .lds-roller div:nth-child(2) {
+    animation-delay: -0.072s;
+  }
+  .lds-roller div:nth-child(2):after {
+    top: 68px;
+    left: 56px;
+  }
+  .lds-roller div:nth-child(3) {
+    animation-delay: -0.108s;
+  }
+  .lds-roller div:nth-child(3):after {
+    top: 71px;
+    left: 48px;
+  }
+  .lds-roller div:nth-child(4) {
+    animation-delay: -0.144s;
+  }
+  .lds-roller div:nth-child(4):after {
+    top: 72px;
+    left: 40px;
+  }
+  .lds-roller div:nth-child(5) {
+    animation-delay: -0.18s;
+  }
+  .lds-roller div:nth-child(5):after {
+    top: 71px;
+    left: 32px;
+  }
+  .lds-roller div:nth-child(6) {
+    animation-delay: -0.216s;
+  }
+  .lds-roller div:nth-child(6):after {
+    top: 68px;
+    left: 24px;
+  }
+  .lds-roller div:nth-child(7) {
+    animation-delay: -0.252s;
+  }
+  .lds-roller div:nth-child(7):after {
+    top: 63px;
+    left: 17px;
+  }
+  .lds-roller div:nth-child(8) {
+    animation-delay: -0.288s;
+  }
+  .lds-roller div:nth-child(8):after {
+    top: 56px;
+    left: 12px;
+  }
+  @keyframes lds-roller {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  </style>
+  ```
+2. Besides, we can update the logical to show component in `CoachesList.vue`.
+  ```vue
+  <!-- ./pages/coaches/CoachesList.vue -->
+  <template>
+    <coach-filter @change-filter="setFilters"></coach-filter>
+    <section>
+      <base-card>
+        <div class="controls">
+          <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
+          <base-button v-if="!isCoach && !isLoading" link to="/register"
+            >Register as Coach</base-button
+          >
+        </div>
+        <div v-if="isLoading">
+          <base-spinner></base-spinner>
+        </div>
+        <ul v-else-if="hasCoaches">
+          <coach-item
+            v-for="coach in filteredCoaches"
+            :key="coach.id"
+            :id="coach.id"
+            :first-name="coach.firstName"
+            :last-name="coach.lastName"
+            :rate="coach.hourlyRate"
+            :areas="coach.areas"
+          ></coach-item>
+        </ul>
+        <h3 v-else>No coaches found.</h3>
+      </base-card>
+    </section>
+  </template>
+  ```
+
 ## 15.23. Adding Http Error Handling
+1. To handle the error, we can use the component provided by the lecturer.
+  ```vue
+  <!-- ./components/ui/BaseDialog.vue -->
+  <template>
+    <teleport to="body">
+      <div v-if="show" @click="tryClose" class="backdrop"></div>
+      <dialog open v-if="show">
+        <header>
+          <slot name="header">
+            <h2>{{ title }}</h2>
+          </slot>
+        </header>
+        <section>
+          <slot></slot>
+        </section>
+        <menu v-if="!fixed">
+          <slot name="actions">
+            <base-button @click="tryClose">Close</base-button>
+          </slot>
+        </menu>
+      </dialog>
+    </teleport>
+  </template>
+
+  <script>
+  export default {
+    props: {
+      show: {
+        type: Boolean,
+        required: true,
+      },
+      title: {
+        type: String,
+        required: false,
+      },
+      fixed: {
+        type: Boolean,
+        required: false,
+        default: false,
+      },
+    },
+    emits: ['close'],
+    methods: {
+      tryClose() {
+        if (this.fixed) {
+          return;
+        }
+        this.$emit('close');
+      },
+    },
+  };
+  </script>
+
+  <style scoped>
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 10;
+  }
+
+  dialog {
+    position: fixed;
+    top: 20vh;
+    left: 10%;
+    width: 80%;
+    z-index: 100;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    background-color: white;
+  }
+
+  header {
+    background-color: #3a0061;
+    color: white;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  header h2 {
+    margin: 0;
+  }
+
+  section {
+    padding: 1rem;
+  }
+
+  menu {
+    padding: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    dialog {
+      left: calc(50% - 20rem);
+      width: 40rem;
+    }
+  }
+  </style>
+  ```
+2. We import and use the component globally and trigger use it when fetching process has an error.
+  ```vue
+  <!-- ./pages/coaches/CoachesList.vue -->
+  <template>
+    <base-dialog :show="!!error" title="An error occurred!" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <section>
+      <coach-filter @change-filter="setFilters"></coach-filter>
+    </section>
+    <section>
+      <base-card>
+        <div class="controls">
+          <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
+          <base-button v-if="!isCoach && !isLoading" link to="/register"
+            >Register as Coach</base-button
+          >
+        </div>
+        <div v-if="isLoading">
+          <base-spinner></base-spinner>
+        </div>
+        <ul v-else-if="hasCoaches">
+          <coach-item
+            v-for="coach in filteredCoaches"
+            :key="coach.id"
+            :id="coach.id"
+            :first-name="coach.firstName"
+            :last-name="coach.lastName"
+            :rate="coach.hourlyRate"
+            :areas="coach.areas"
+          ></coach-item>
+        </ul>
+        <h3 v-else>No coaches found.</h3>
+      </base-card>
+    </section>
+  </template>
+
+  <script>
+  import CoachItem from '../../components/coaches/CoachItem.vue';
+  import CoachFilter from '../../components/coaches/CoachFilter.vue';
+
+  export default {
+    components: {
+      CoachItem,
+      CoachFilter
+    },
+    data() {
+      return {
+        isLoading: false,
+        error: null,
+        activeFilters: {
+          frontend: true,
+          backend: true,
+          career: true
+        }
+      };
+    },
+    computed: {
+      isCoach() {
+        return this.$store.getters['coaches/isCoach'];
+      },
+      filteredCoaches() {
+        const coaches = this.$store.getters['coaches/coaches'];
+        return coaches.filter(coach => {
+          if (this.activeFilters.frontend && coach.areas.includes('frontend')) {
+            return true;
+          }
+          if (this.activeFilters.backend && coach.areas.includes('backend')) {
+            return true;
+          }
+          if (this.activeFilters.career && coach.areas.includes('career')) {
+            return true;
+          }
+          return false;
+        });
+      },
+      hasCoaches() {
+        return !this.isLoading && this.$store.getters['coaches/hasCoaches'];
+      }
+    },
+    created() {
+      this.loadCoaches();
+    },
+    methods: {
+      setFilters(updatedFilters) {
+        this.activeFilters = updatedFilters;
+      },
+      async loadCoaches() {
+        this.isLoading = true;
+        try {
+          await this.$store.dispatch('coaches/loadCoaches');
+        } catch (error) {
+          this.error = error.message || 'Something went wrong';
+        }
+        this.isLoading = false;
+      },
+      handleError() {
+        this.error = null;
+      }
+    }
+  };
+  </script>
+
+  <style scoped>
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: space-between;
+  }
+  </style>
+  ```
+
 ## 15.24. Sending Coaching Requests Http Requests
+1. We can add new actions to send request to coaches and store the message in firebase.
+  ```js
+  // store/modules/requests/actions.js
+  export default {
+    async fetchRequests(context) {
+      const coachId = context.rootGetters.userId;
+      const response = await fetch(
+        `https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/requests/${coachId}.json`
+      );
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        const error = new Error(
+          responseData.message || 'Failed to fetch requests'
+        );
+        throw error;
+      }
+
+      const requests = [];
+
+      for (const key in responseData) {
+        const request = {
+          id: key,
+          coachId,
+          userEmail: responseData[key].userEmail,
+          message: responseData[key].message
+        };
+        requests.push(request);
+      }
+
+      context.commit('setRequests', requests);
+    }
+  };
+  ```
+2. We then can update `RequestsReceived.vue` component with `BaseDialog` for error message and `BaseSpinner.vue` when loading the data.
+  ```vue
+  <!-- pages/requests/RequestsReceived.vue -->
+  <template>
+    <base-dialog :show="!!error" title="An error occurred!" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <section>
+      <base-card>
+        <header>
+          <h2>Requests Received</h2>
+        </header>
+        <base-spinner v-if="isLoading"></base-spinner>
+        <ul v-else-if="hasRequests && !isLoading">
+          <request-item
+            v-for="request in receivedRequests"
+            :key="request.id"
+            :email="request.userEmail"
+            :message="request.message"
+          ></request-item>
+        </ul>
+        <h3 v-else>You haven't received any requests yet!</h3>
+      </base-card>
+    </section>
+  </template>
+
+  <script>
+  import RequestItem from '../../components/requests/RequestItem.vue';
+
+  export default {
+    components: { RequestItem },
+    data() {
+      return {
+        isLoading: false,
+        error: null
+      };
+    },
+    computed: {
+      receivedRequests() {
+        return this.$store.getters['requests/requests'];
+      },
+      hasRequests() {
+        return this.$store.getters['requests/hasRequests'];
+      }
+    },
+    created() {
+      this.loadRequests();
+    },
+    methods: {
+      async loadRequests() {
+        this.isLoading = true;
+        try {
+          await this.$store.dispatch('requests/fetchRequests');
+        } catch (error) {
+          this.error = error.message || 'Something failed';
+        }
+        this.isLoading = false;
+      },
+      handleError() {
+        this.error = null;
+      }
+    }
+  };
+  </script>
+
+  <style scoped>
+  header {
+    text-align: center;
+  }
+
+  ul {
+    list-style: none;
+    margin: 2rem auto;
+    padding: 0;
+    max-width: 30rem;
+  }
+
+  h3 {
+    text-align: center;
+  }
+  </style>
+  ```
+
 ## 15.25. Caching Http Response Data
+1. This is a simple setting with timestamp to prevent unnecessary requesting to database.
+2. For example, if vuex has loaded the data of coaches, the app can fetch after 60 seconds. Besides, it allows the users to "refresh" and update the list by clicking the button.
+3. In this case, we set a new local state `lastFetch` which holds a Javascript date object with a initial state as `null`.
+4. In `mutations.js`, we can set a method `setFetchTimestamp` which simply updates the `lastFetch` state.
+5. In `getters.js`, we can check if there has any data imported and check when was the data imported.
+  ```js
+   // store/modules/coaches/getters.js
+   export default {
+    shouldUpdate(state) {
+      const lastFetch = state.lastFetch;
+      if (!lastFetch) {
+      return true;
+      }
+      const currentTimestamp = new Date.getTime();
+      return (currentTimestamp - lastFetch) / 1000 > 60;
+    }
+  };
+  ```
+6. In `actions.js`, we can check if `lastFetch` has any data to decide whether to fetch from server and update the timestamp after requesting from the server. Besides, `loadCoaches` can take a parameter to decide whether to 
+  ```js
+  // store/modules/coaches/actions.js
+  export default {
+    async loadCoaches(context, payload) {
+      if (!payload.forceRefresh && !context.getters.shouldUpdate) {
+        return;
+      }
+
+      const response = await fetch(
+        `https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/coaches.json`
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        // error...
+      }
+
+      const coaches = [];
+
+      for (const key in responseData) {
+        const coach = {
+          id: key,
+          firstName: responseData[key].firstName,
+          lastName: responseData[key].lastName,
+          description: responseData[key].description,
+          hourlyRate: responseData[key].hourlyRate,
+          areas: responseData[key].areas
+        };
+        coaches.push(coach);
+      }
+
+      context.commit('setCoaches', coaches);
+      context.commit('setFetchTimestamp');
+    }
+  }
+  ```
+7. After updating vuex, we can update `loadCaoches` method in `CoachesList.vue` by having a default argument as false. While the user clicking the "refresh" button, we can pass a true argument to the method and force the app to fetch the data.
+  ```js
+  // pages/coaches/CoachesList.vue
+  export default {
+    methods: {
+      async loadCoaches(refresh = false) {
+        this.isLoading = true;
+        try {
+          await this.$store.dispatch('coaches/loadCoaches', {
+            forceRefresh: refresh
+          });
+        } catch (error) {
+          this.error = error.message || 'Something went wrong';
+        }
+        this.isLoading = false;
+      },
+    }
+  }
+  ```
+
 ## 15.26. Adding Route Transitions
+1. Some components can add transition animations to provide a smooth user experience, such as the `BaseDialog`.
+  ```vue
+  <template>
+    <teleport to="body">
+      <div v-if="show" @click="tryClose" class="backdrop"></div>
+      <!-- wrap with transtion tag -->
+      <transition name="dialog">
+        <dialog open v-if="show">
+          <header>
+            <slot name="header">
+              <h2>{{ title }}</h2>
+            </slot>
+          </header>
+          <section>
+            <slot></slot>
+          </section>
+          <menu v-if="!fixed">
+            <slot name="actions">
+              <base-button @click="tryClose">Close</base-button>
+            </slot>
+          </menu>
+        </dialog>
+      </transition>
+      <!-- wrap with transition tag -->
+    </teleport>
+  </template>
+  ```
+2. Update CSS of the component
+  ```css
+  /* components/ui/BaseDialog.vue */
+  .dialog-enter-from,
+  .dialog-leave-to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .dialog-enter-active {
+    transition: all 0.3s ease-out;
+  }
+
+  .dialog-leave-active {
+    transition: all 0.3s ease-in;
+  }
+
+  .dialog-enter-to,
+  .dialog-leave-from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  ```
+3. We can use `transition` tag on `router-view` when navigating between main pages. However, there should be only one single element in the component template. Note that in Vue3, we don't need a single wrapper in the `template` tag of each component.
+4. Therefore, we can either add a wrapper in `App.vue` for the components or having all the components wrapped with `div` or `section` tag.
+  ```vue
+  <!-- App.vue -->
+  <template>
+    <the-header></the-header>
+    <router-view v-slot="slotProps">
+      <transition name="route" mode="out-in">
+        <component :is="slotProps.Component"></component>
+      </transition>
+    </router-view>
+  </template>
+
+  <script>
+  import TheHeader from './components/layout/TheHeader.vue';
+  export default {
+    components: {
+      TheHeader
+    }
+  };
+  </script>
+
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: 'Roboto', sans-serif;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .route-enter-from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  .route-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .route-enter-active {
+    transition: all 0.3s ease-out;
+  }
+
+  .route-leave-active {
+    transition: all 0.3s ease-in;
+  }
+
+  .route-enter-to,
+  .route-leave-from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  </style>
+  ```
+
 ## 15.27. The "Not Found" Page & Summary
+1. Set up a not found page when the user enters an incorrect URL.
+  ```vue
+  <!-- pages/NotFound.vue -->
+  <template>
+    <section>
+      <base-card>
+        <h2>Page not found</h2>
+        <p>
+          This page could not be found - maybe checkout all our
+          <router-link to="/coaches">coaches</router-link>
+        </p>
+      </base-card>
+    </section>
+  </template>
+  ```
 
 
 
