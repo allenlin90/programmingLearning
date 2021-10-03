@@ -1,7 +1,7 @@
 Start learning on 2021/04/19
 Finished on 
 
-Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://www.udemy.com/course/vuejs-2-the-complete-guide/)
+0.1. Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://www.udemy.com/course/vuejs-2-the-complete-guide/)
 ---
 
 - [1. Basics and Core Concepts - DOM Interaction with Vue](#1-basics-and-core-concepts---dom-interaction-with-vue)
@@ -246,22 +246,23 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
   - [18.3. Building "reactive" Objects](#183-building-reactive-objects)
   - [18.4. Reactivity: A Deep Dive](#184-reactivity-a-deep-dive)
   - [18.5. Replacing "methods" with regular Functions](#185-replacing-methods-with-regular-functions)
-  - [18.6. Replacing "Computed Properties" with the "computed" Function](#186-replacing-computed-properties-with-the-computed-function)
-  - [18.7. Two-Way-Binding and the Composition API](#187-two-way-binding-and-the-composition-api)
-  - [18.8. Working with Watchers](#188-working-with-watchers)
-  - [18.9. A First Summary](#189-a-first-summary)
-  - [18.10. How to Use Templates Refs](#1810-how-to-use-templates-refs)
-  - [18.11. Components, Props, & The Composition API](#1811-components-props--the-composition-api)
-  - [18.12. Emitting Custom Events](#1812-emitting-custom-events)
-  - [18.13. Working with Provide / Inject](#1813-working-with-provide--inject)
-  - [18.14. Lifecycle Hooks in the Composition API](#1814-lifecycle-hooks-in-the-composition-api)
-  - [18.15. Migrating from Options API to Composition API - an Example Project](#1815-migrating-from-options-api-to-composition-api---an-example-project)
-  - [18.16. Migrating a First Component](#1816-migrating-a-first-component)
-  - [18.17. Migrating a Big Component](#1817-migrating-a-big-component)
-  - [18.18. Migrating the Remaining Components](#1818-migrating-the-remaining-components)
-  - [18.19. Routing, Params & The Composition API](#1819-routing-params--the-composition-api)
-  - [18.20. The Route & Router Objects and the Composition API](#1820-the-route--router-objects-and-the-composition-api)
-  - [18.21. Using Vuex with the Composition API](#1821-using-vuex-with-the-composition-api)
+  - [18.6. Assignment 7](#186-assignment-7)
+  - [18.7. Replacing "Computed Properties" with the "computed" Function](#187-replacing-computed-properties-with-the-computed-function)
+  - [18.8. Two-Way-Binding and the Composition API](#188-two-way-binding-and-the-composition-api)
+  - [18.9. Working with Watchers](#189-working-with-watchers)
+  - [18.10. A First Summary](#1810-a-first-summary)
+  - [18.11. How to Use Templates Refs](#1811-how-to-use-templates-refs)
+  - [18.12. Components, Props, & The Composition API](#1812-components-props--the-composition-api)
+  - [18.13. Emitting Custom Events](#1813-emitting-custom-events)
+  - [18.14. Working with Provide / Inject](#1814-working-with-provide--inject)
+  - [18.15. Lifecycle Hooks in the Composition API](#1815-lifecycle-hooks-in-the-composition-api)
+  - [18.16. Migrating from Options API to Composition API - an Example Project](#1816-migrating-from-options-api-to-composition-api---an-example-project)
+  - [18.17. Migrating a First Component](#1817-migrating-a-first-component)
+  - [18.18. Migrating a Big Component](#1818-migrating-a-big-component)
+  - [18.19. Migrating the Remaining Components](#1819-migrating-the-remaining-components)
+  - [18.20. Routing, Params & The Composition API](#1820-routing-params--the-composition-api)
+  - [18.21. The Route & Router Objects and the Composition API](#1821-the-route--router-objects-and-the-composition-api)
+  - [18.22. Using Vuex with the Composition API](#1822-using-vuex-with-the-composition-api)
 - [19. Reusing Funcitonality: Mixins & Custom Composition Functions](#19-reusing-funcitonality-mixins--custom-composition-functions)
   - [19.1. Reusability Concepts](#191-reusability-concepts)
   - [19.2. Using Mixins](#192-using-mixins)
@@ -14636,26 +14637,376 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
 
 # 18. The Composition API - Replacing the Options API
 ## 18.1. Which Problem Does the Composition API Solve?
+1. What we have worked so far in the course is using `Options API` which is absolutely fine to work with. Besides, it's the fudemental before understanding `Composition API`. 
+2. However, in larger scale apps, developers would have 2 main limitations/issues.
+   1. Code that belongs together logically is split up accross multiple options (data, methods, computed). This could be a problems to scroll and check between functions and properties in `methods`, `computed`, and `watch` or lifecycle hooks.
+   2. Re-using logic accross components can be tricky or cumbersome.
+3. With `Composition API` we can set up the code in a `setup` method.
+4. We therefore integrate the main methods, `methods`, `data`, `computed`, `watch`, and the lifecyle hooks to a single `setup` method.
+
 ## 18.2. Replacing "data" with "refs"
+1. In the `setup` method, we can use `ref` which should be imported from `vue` library (only available in Vue3). This method only runs when the app initiates.
+2. Note that this ref is related to `ref` that we can assign as a directive to elements in the vue template, they are very different in the way of using.
+3. When we use `ref` to create a variable, it actually creates an object with specific methods to work with (like a special class).
+4. By using `.value` method, we can update the value of the object.
+5. Besides, we need to return an object from `setup` method including the properties, functions, and variables we defined in the method. 
+6. In the following example, we change the `userName` variable in 2 seconds after the app initiates. 
+  ```vue
+  <template>
+    <section class="container">
+      <h2>{{ userName }}</h2>
+    </section>
+  </template>
+  ```
+  ```js
+  import { ref } from 'vue';
+
+  export default {
+    setup() {
+      const userName = ref('Max');
+
+      setTimeout(function() {
+        userName.value = 'Allen';
+      }, 2000);
+
+      return { userName };
+    }
+    // data() {
+    //   return {
+    //     userName: 'Maximilian',
+    //   };
+    // },
+  };
+  ```
+
 ## 18.3. Building "reactive" Objects
+1. When we have more than 1 variable as the local "states" in `data` in `Options API`, we can have all the variables as the properties in an object. 
+2. However, we cannot use similar syntax to update the properties with `object.value.property_1` directly. The object created by `ref` is actually a proxy, which has getter and setter to work with.
+3. If we refer to the value on the object directly, the data won't be responsive, as it will stick with the initial value that is assigned to the variable.
+4. Therefore, we need to expose the object and refer to the properties. 
+5. In the following example, we can refer `user.name` and `user.age` which will be updated in 2 seconds by `setTimeout`, while `userName` and `age` are static as it refers to the initial value of the object.  
+  ```vue
+  <template>
+    <section class="container">
+      <!-- userName and age will be static and stay with their initial values -->
+      <h2>{{ userName }}</h2>
+      <h3>{{ age }}</h3>
+      <!-- by referring to values from the object, the value will be responsive -->
+      <h2>{{ user.name }}</h2>
+      <h3>{{ user.age }}</h3>
+      <p>{{ user }}</p>
+    </section>
+  </template>
+  ```
+  ```js
+  import { ref } from 'vue';
+
+  export default {
+    setup() {
+      // const userName = ref('Maximilian');
+      // const age = ref(31);
+      const user = ref({
+        name: 'Maximilian',
+        age: 31
+      });
+
+      setTimeout(function() {
+        // userName.value = 'Allen';
+        // age.value = 32;
+        user.value.name = 'Allen'; // need to modify with value when created by ref
+        user.value.age = 32;
+      }, 2000);
+
+      return {
+        userName: user.value.name, // this is static with the initial value and won't be changed
+        age: user.value.age, // this is static with the initial value and won't be changed
+        user
+      };
+    }
+  };
+  ```
+4. However, there's another option `reactive` which is easier to work with object value than using `ref`. 
+5. Note that while `ref` can work with any types of value, `reactive` can only work with Javascript objects.
+6. `reactive` works differently as it wraps the object argument with proxy. Therefore, we can modify and work with the object directly.
+  ```js
+  import { reactive } from 'vue';
+
+  export default {
+    setup() {
+      const user = reactive({
+        name: 'Maximilian',
+        age: 31
+      });
+
+      setTimeout(function() {
+        user.name = 'Allen'; // interact directly when created by reactive 
+        user.age = 32;
+      }, 2000);
+
+      return {
+        user
+      };
+    }
+  };
+  ```
+7. The main difference between using `ref` and `reactive` to objects is that we need to access and modify the values through `value` property when using `ref`, while we can work on properties as regular objects from objects created by `reactive`.
+
 ## 18.4. Reactivity: A Deep Dive
+1. When we execute the code and refer to a property of an object, it just snapshot the value at the state of the object.
+2. While vue has helper methods `isRef` and `isReactive` can be imported from `vue` to check whether the variable we are using is ref or reactive.
+  ```js
+  import { ref, reactive, isRef, isReactive } from 'vue';
+
+  export default {
+    setup() {
+      // const userName = ref('Maximilian');
+      const age = ref(31);
+      const user = reactive({
+        name: 'Maximilian',
+        age: 31
+      });
+
+      console.log(isRef(age.value)); // false
+      console.log(isRef(age)); // true
+      console.log(isReactive(user.name), user.age); // false 31
+      console.log(isReactive(user), user.age); // true 31
+
+      setTimeout(function() {
+        // userName.value = 'Allen';
+        // age.value = 32;
+        user.name = 'Allen';
+        user.age = 32;
+      }, 2000);
+
+      return {
+        user
+      };
+    }
+  };
+  ```
+3. There's another method `toRefs` that we can use it to turn an object into a `ref` object.
+  ```vue
+  <template>
+    <section class="container">
+      <!-- these are reactive as the object is created with toRefs -->
+      <h2>{{ userName }}</h2>
+      <h3>{{ userAge }}</h3>
+    </section>
+  </template>
+  ```
+  ```js
+  import { reactive, toRefs } from 'vue';
+
+  export default {
+    setup() {
+      const user = reactive({
+        name: 'Maximilian',
+        age: 31
+      });
+
+      setTimeout(function() {
+        user.name = 'Allen';
+        user.age = 32;
+      }, 2000);
+
+      // create turn an object into a ref object
+      const userRefs = toRefs(user);
+
+      return {
+        user,
+        userName: userRefs.name, // this is reactive
+        userAge: userRefs.age // this is reactive
+      };
+    }
+  };
+  ```
+
 ## 18.5. Replacing "methods" with regular Functions
-## 18.6. Replacing "Computed Properties" with the "computed" Function
-## 18.7. Two-Way-Binding and the Composition API
-## 18.8. Working with Watchers
-## 18.9. A First Summary
-## 18.10. How to Use Templates Refs
-## 18.11. Components, Props, & The Composition API
-## 18.12. Emitting Custom Events
-## 18.13. Working with Provide / Inject
-## 18.14. Lifecycle Hooks in the Composition API
-## 18.15. Migrating from Options API to Composition API - an Example Project
-## 18.16. Migrating a First Component
-## 18.17. Migrating a Big Component
-## 18.18. Migrating the Remaining Components
-## 18.19. Routing, Params & The Composition API
-## 18.20. The Route & Router Objects and the Composition API
-## 18.21. Using Vuex with the Composition API
+1. With `Composition API`, we can expose not only objects as for `data` in `Options API` but functions as for `methods`. 
+   ```vue
+   <template>
+    <section class="container">
+      <h2>{{ user.name }}</h2>
+      <h3>{{ user.age }}</h3>
+      <button @click="setAge">Change Age</button>
+    </section>
+  </template>
+  ```
+  ```js
+  import { reactive } from 'vue';
+
+  export default {
+    setup() {
+      const user = reactive({
+        name: 'Maximilian',
+        age: 31
+      });
+
+      function setNewData() {
+        user.age += 1;
+      }
+
+      return {
+        user,
+        setAge: setNewData
+      };
+    }
+  };
+  ```
+2. The method can not only be used with `reactive` objects but `reactive` objects.
+  ```vue
+  <template>
+    <section class="container">
+      <h2>{{ userName }}</h2>
+      <h3>{{ age }}</h3>
+      <button @click="setAge">Change Age</button>
+    </section>
+  </template>
+  ```
+  ```js
+  import { ref } from 'vue';
+
+  export default {
+    setup() {
+      const userName = ref('Maximilian');
+      const age = ref(31);
+
+      function setNewData() {
+        age.value += 1;
+      }
+
+      return {
+        userName,
+        age,
+        setAge: setNewData
+      };
+    }
+  };
+  ```
+
+## 18.6. Assignment 7
+1. Tasks
+   1. Output your main course goal with help of the composition API
+   2. Toggle (show/ hide) the goal with help of the button
+   3. Manage data in three ways
+      1. Seperate `refs`
+      2. Ref Object
+      3. Reactive Object
+2. Solutions
+   1. Separate `refs`
+     ```vue
+     <template>
+       <h2>My Course Goal</h2>
+       <h3 v-if="showGoal">{{ goal }}</h3>
+       <button @click="toggleGoal">Toggle Goal</button>
+     </template>
+     ```
+     ```js
+     import { ref } from 'vue';
+
+     export default {
+       setup() {
+         const goal = ref('Learn Vue 3 composition API');
+         const showGoal = ref(true);
+
+         function toggleGoal() {
+           showGoal.value = !showGoal.value;
+         }
+
+         return { goal, showGoal, toggleGoal };
+       }
+     };
+     ```
+   2. Ref Obj
+    ```vue
+    <template>
+      <h2>My Course Goal</h2>
+      <h3 v-if="goal.showGoal">{{ goal.goal }}</h3>
+      <button @click="toggleGoal">Toggle Goal</button>
+    </template>
+    ```
+    ```js
+    import { ref } from 'vue';
+
+    export default {
+      setup() {
+        const goal = ref({
+          goal: 'Learn Vue 3 composition API',
+          showGoal: true
+        });
+
+        function toggleGoal() {
+          goal.value.showGoal = !goal.value.showGoal;
+        }
+
+        return { goal, toggleGoal };
+      }
+    };
+    ```
+  3. reactive object
+    ```vue
+    <template>
+      <h2>My Course Goal</h2>
+      <h3 v-if="goal.showGoal">{{ goal.goal }}</h3>
+      <button @click="toggleGoal">Toggle Goal</button>
+    </template>
+    ```
+    ```js
+    import { reactive } from 'vue';
+
+    export default {
+      setup() {
+        const goal = reactive({
+          goal: 'Learn Vue 3 composition API',
+          showGoal: true
+        });
+
+        function toggleGoal() {
+          goal.showGoal = !goal.showGoal;
+        }
+
+        return { goal, toggleGoal };
+      }
+    };
+    ```
+  4. Options API
+    ```vue
+    <template>
+      <h2>My Course Goal</h2>
+      <h3 v-if="showGoal">{{ goal }}</h3>
+      <button @click="toggleGoal">Toggle Goal</button>
+    </template>
+    ```
+    ```js
+    export default {
+      data: () => ({
+        goal: 'Learn Vue 3 composition API',
+        showGoal: true
+      }),
+      methods: {
+        toggleGoal() {
+          this.showGoal = !this.showGoal;
+        }
+      }
+    };
+    ```
+
+## 18.7. Replacing "Computed Properties" with the "computed" Function
+## 18.8. Two-Way-Binding and the Composition API
+## 18.9. Working with Watchers
+## 18.10. A First Summary
+## 18.11. How to Use Templates Refs
+## 18.12. Components, Props, & The Composition API
+## 18.13. Emitting Custom Events
+## 18.14. Working with Provide / Inject
+## 18.15. Lifecycle Hooks in the Composition API
+## 18.16. Migrating from Options API to Composition API - an Example Project
+## 18.17. Migrating a First Component
+## 18.18. Migrating a Big Component
+## 18.19. Migrating the Remaining Components
+## 18.20. Routing, Params & The Composition API
+## 18.21. The Route & Router Objects and the Composition API
+## 18.22. Using Vuex with the Composition API
 
 
 
