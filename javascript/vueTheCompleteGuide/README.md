@@ -14043,11 +14043,586 @@ Course Link [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://w
     ```
 
 ## 16.8. Attaching the Token to Outgoing Requests
+1. Since we don't use a namespace for `auth` module, we can access the methods by its name directly. In this case, we can update the actions for `coaches` and `requests` and send along with `auth` query string in the URL. 
+2. When the user login, we store the data in Vuex including the token. We then can use `rootGetters` in the `context` when using actions.
+  ```js
+  // store/module/coaches/actions.js
+  export default {
+    async fetchRequests() {
+      const response = await fetch(
+        `${endpoint}coaches/${userId}.json?auth=${token}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify(coachData)
+        }
+      );
+    }
+  }
+
+  // store/module/requests/actions.js
+  const endpoint = `https://vue-http-demo-3a652-default-rtdb.asia-southeast1.firebasedatabase.app/`;
+
+  export default {
+    async fetchRequests(context) {
+      const coachId = context.rootGetters.userId;
+      const token = context.rootGetters.token;
+      const response = await fetch(`${endpoint}requests/${coachId}.json?auth=${token}`);
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        const error = new Error(responseData.message || 'Failed to fetch requests.');
+        throw error;
+      }
+
+      const requests = [];
+
+      for (const key in responseData) {
+        const request = {
+          id: key,
+          coachId: coachId,
+          userEmail: responseData[key].userEmail,
+          message: responseData[key].message
+        };
+        requests.push(request);
+      }
+
+      context.commit('setRequests', requests);
+    }
+  };
+  ```
+
 ## 16.9. Updating the UI Based on Auth State
+1. In this case, we will hide some the UIs according to the state of the user. For example, "Requests" and "Register as Coach" are only accessible when the user is logged in.
+2. We can update the getters to check if a token is stored in vuex.
+  ```js
+  // store/modules/auth/getters.js
+  export default {
+    isAuthenticated(state) {
+      return !!state.token;
+    }
+  }
+  ```
+3. We update `CoachesList.vue` to show either "Login" or "Register as Coach" according to the login state of the user.
+  ```vue
+  <template>
+    <div>
+      <base-dialog
+        :show="!!error"
+        title="An error occurred!"
+        @close="handleError"
+      >
+        <p>{{ error }}</p>
+      </base-dialog>
+      <section>
+        <coach-filter @change-filter="setFilters"></coach-filter>
+      </section>
+      <section>
+        <base-card>
+          <div class="controls">
+            <base-button mode="outline" @click="loadCoaches(true)"
+              >Refresh</base-button
+            >
+            <base-button link to="/auth" v-if="!isLoggedIn">Login</base-button>
+            <base-button
+              v-if="isLoggedIn && !isCoach && !isLoading"
+              link
+              to="/register"
+              >Register as Coach</base-button
+            >
+          </div>
+          <div v-if="isLoading">
+            <base-spinner></base-spinner>
+          </div>
+          <ul v-else-if="hasCoaches">
+            <coach-item
+              v-for="coach in filteredCoaches"
+              :key="coach.id"
+              :id="coach.id"
+              :first-name="coach.firstName"
+              :last-name="coach.lastName"
+              :rate="coach.hourlyRate"
+              :areas="coach.areas"
+            ></coach-item>
+          </ul>
+          <h3 v-else>No coaches found.</h3>
+        </base-card>
+      </section>
+    </div>
+  </template>
+  ```
+4. We can update `TheHeader` of the layout as well. The header shows either "Requests" or "Login" according to the user login state.
+  ```vue
+  <!-- components/layout/TheHeader.vue -->
+  <template>
+    <header>
+      <nav>
+        <h1>
+          <router-link to="/">Find a Coach</router-link>
+        </h1>
+        <ul>
+          <li>
+            <router-link to="/coaches">All Coaches</router-link>
+          </li>
+          <li v-if="isLoggedIn">
+            <router-link to="/requests">Requests</router-link>
+          </li>
+          <li v-else>
+            <router-link to="/auth">Login</router-link>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  </template>
+
+  <script>
+  export default {
+    computed: {
+      isLoggedIn() {
+        return this.$store.getters.isAuthenticated;
+      }
+    }
+  };
+  </script>
+  ```
+
 ## 16.10. Adding a "Logout" Action & Flow
+1. In the `auth` module, we can create a new method to clear the user related data stored in vuex.
+  ```js
+  // store/modules/auth/actions.js
+  export default {
+    logout(context) {
+      context.commit('setUser', {
+        token: null,
+        userId: null,
+        tokenExpiration: null
+      });
+    }
+  }
+  ```
+2. We can update the header and allow users to logout.
+  ```vue
+  <!-- components/layout/TheHeader.vue -->
+  <template>
+    <header>
+      <nav>
+        <h1>
+          <router-link to="/">Find a Coach</router-link>
+        </h1>
+        <ul>
+          <li>
+            <router-link to="/coaches">All Coaches</router-link>
+          </li>
+          <li v-if="isLoggedIn">
+            <router-link to="/requests">Requests</router-link>
+          </li>
+          <li v-else>
+            <router-link to="/auth">Login</router-link>
+          </li>
+          <li v-if="isLoggedIn">
+            <base-button @click="logout">Logout</base-button>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  </template>
+
+  <script>
+  export default {
+    computed: {
+      isLoggedIn() {
+        return this.$store.getters.isAuthenticated;
+      }
+    },
+    methods: {
+      logout() {
+        this.$store.dispatch('logout');
+      }
+    }
+  };
+  </script>
+  ```
+
 ## 16.11. Authentication & Routing (incl. Navigation Guards)
+1. We can redirect the user after s/he has logged in/out.
+2. Besides, we can pass params with query string in URL when redirecting the user, so the component can check the query string and provide redirections accordingly.
+3. For example, on the coach list, we'd like to show a button to allow the user to login and redirect to sign up as a coach directly. Without sending the "redirect" param through query string, we can simply redirect the user back to the coach list.
+  ```vue
+  <!-- pages/coaches/CoachesList.vue -->
+  <template>
+    <div class="controls">
+      <base-button mode="outline" @click="loadCoaches(true)">
+        Refresh
+      </base-button>
+      <base-button link to="/auth?redirect=register" v-if="!isLoggedIn">
+        Login to Register as Coach
+      </base-button>
+      <base-button
+        v-if="isLoggedIn && !isCoach && !isLoading"
+        link
+        to="/register"
+      >
+        Register as Coach
+      </base-button>
+    </div>
+  </template>
+  ```
+4. On the `auth` route with `UserAuth.vue`, we can check whether a query string is passed, and it can decide to redirect the user to whether `/coaches` or `/register`. 
+  ```js
+  // pages/auth/UserAuth.vue
+  export default {
+    async submitForm() {
+      this.formIsValid = true;
+      if (
+        !this.email ||
+        !this.email.includes('@') ||
+        this.password.length < 6
+      ) {
+        this.formIsValid = false;
+        return;
+      }
+
+      this.isLoading = true;
+
+      const actionPayload = {
+        email: this.email,
+        password: this.password
+      };
+
+      try {
+        if (this.mode === 'login') {
+          await this.$store.dispatch('login', actionPayload);
+        } else {
+          await this.$store.dispatch('signup', actionPayload);
+        }
+        const redirectUrl = `/${this.$route.query.redirect || 'coaches'}`;
+        this.$router.replace(redirectUrl);
+      } catch (err) {
+        this.error = err.message || 'Failed to authenticate, Try later.';
+      }
+
+      this.isLoading = false;
+    },
+  }
+  ```
+5. In addition, the user can type and access `/register` route at the moment though they aren't logged in.
+6. We can use navigation gaurd to check whether the user has logged and allow accessing the route.
+7. We can update the routing navigation guard globally in `router.js`.
+8. In some routes, we give addition `meta` property to indicate whether the route should take certain actions.
+9. Besides, we can import the `store` object from `store/index.js` and use its getters to check user login state from `auth` module.
+  ```js
+  // router.js
+  import { createRouter, createWebHistory } from 'vue-router';
+
+  import CoachDetail from './pages/coaches/CoachDetail.vue';
+  import CoachesList from './pages/coaches/CoachesList.vue';
+  import CoachRegistation from './pages/coaches/CoachRegistration.vue';
+  import ContactCoach from './pages/requests/ContactCoach.vue';
+  import RequestsReceived from './pages/requests/RequestsReceived.vue';
+  import UserAuth from './pages/auth/UserAuth.vue';
+  import NotFound from './pages/NotFound.vue';
+
+  import store from './store/index.js';
+
+  const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+      { path: '/', redirect: '/coaches' },
+      { path: '/coaches', component: CoachesList },
+      {
+        path: '/coaches/:id',
+        component: CoachDetail,
+        props: true,
+        children: [
+          { path: 'contact', component: ContactCoach } // /coaches/c1/contact
+        ]
+      },
+      {
+        path: '/register',
+        component: CoachRegistation,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/requests',
+        component: RequestsReceived,
+        meta: { requiresAuth: true }
+      },
+      { path: '/auth', component: UserAuth, meta: { requiresUnauth: true } },
+      { path: '/:notFound(.*)', component: NotFound }
+    ]
+  });
+
+  router.beforeEach(function(to, from, next) {
+    if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
+      // if the user is not logged in but wants to access protected content
+      next('/auth');
+    } else if (to.meta.requiresUnauth && store.getters.isAuthenticated) {
+      // if the user is logged in but wants to access public content that is not for logged in users
+      next('/coaches');
+    } else {
+      next();
+    }
+  });
+
+  export default router;
+  ```
+
 ## 16.12. Adding "Auto Login"
+1. In the current setup, every time the user has manually type the URL in browser search bar, or the page is refershed, all the data in vuex will be gone.
+2. We can refactor the actions for authentication. Besides, we create a new `tryLogin` in the `created` hook in `App.vue` which always fires when the app is firstly loaded to check whether the user is logged in.
+3. However, we don't have logout process to clear `localStorage` and expire the token according to it's expiary time.
+  ```js
+  // store/modules/auth/actions.js
+  export default {
+    async login(context, payload) {
+      return context.dispatch('auth', {
+        ...payload,
+        mode: 'login'
+      });
+    },
+    async signup(context, payload) {
+      return context.dispatch('auth', {
+        ...payload,
+        mode: 'signup'
+      });
+    },
+    async auth(context, payload) {
+      const mode = payload.mode;
+      let url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyASn8qrowxxFAy9tZ1glSMpZNr2Lx5JXvg`;
+
+      if (mode === 'signup') {
+        url =
+          'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyASn8qrowxxFAy9tZ1glSMpZNr2Lx5JXvg';
+      }
+
+      const response = await fetch(url, {
+        method: 'post',
+        body: JSON.stringify({
+          email: payload.email,
+          password: payload.password,
+          returnSecureToken: true
+        })
+      });
+
+      const responseData = await response.json();
+      if (!response.ok) {
+        const error = new Error(
+          responseData.message || 'Failed to authenticate. Check your login data'
+        );
+        throw error;
+      }
+
+      localStorage.setItem('token', responseData.idToken);
+      localStorage.setItem('userId', responseData.localId);
+
+      context.commit('setUser', {
+        token: responseData.idToken,
+        userId: responseData.localId,
+        tokenExpiration: responseData.expiresIn
+      });
+    },
+    tryLogin(context) {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (token && userId) {
+        context.commit('setUser', {
+          token,
+          userId,
+          tokenExpiration: null
+        });
+      }
+    },
+    logout(context) {
+      context.commit('setUser', {
+        token: null,
+        userId: null,
+        tokenExpiration: null
+      });
+    }
+  };
+  ```
+4. Add `created` hook in `App.vue`.
+  ```js
+  // App.vue
+  export default {
+    async created() {
+      this.$store.dispatch('tryLogin');
+    }
+  };
+  ```
+
 ## 16.13. Adding "Auto Logout"
+1. We need to update the whole `auth` module to work with `localStorage` and set up watchers in `App.vue` to check whether the user is logged in and automatically logout the user if the token expires.
+2. To log out the user automatically, we can set a timer as a local state in `actions.js` and use `setTimeout` to trigger logout method when the time comes.
+3. Besides, everytime the user logs in and out manually, we have to update the timer and also when the page is refreshed.
+4. In addition, we have a new state for `auth` in vuex that is used to check when the user is automatically logged out. We can set a watcher in `App.vue` to handle redirects in certain scenarios.
+  ```js
+  // store/modules/auth
+  // actions.js
+  let timer = null;
+
+  export default {
+    async login(context, payload) {
+      return context.dispatch('auth', {
+        ...payload,
+        mode: 'login'
+      });
+    },
+    async signup(context, payload) {
+      return context.dispatch('auth', {
+        ...payload,
+        mode: 'signup'
+      });
+    },
+    async auth(context, payload) {
+      const mode = payload.mode;
+      let url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyASn8qrowxxFAy9tZ1glSMpZNr2Lx5JXvg`;
+
+      if (mode === 'signup') {
+        url =
+          'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyASn8qrowxxFAy9tZ1glSMpZNr2Lx5JXvg';
+      }
+
+      const response = await fetch(url, {
+        method: 'post',
+        body: JSON.stringify({
+          email: payload.email,
+          password: payload.password,
+          returnSecureToken: true
+        })
+      });
+
+      const responseData = await response.json();
+      if (!response.ok) {
+        const error = new Error(
+          responseData.message || 'Failed to authenticate. Check your login data'
+        );
+        throw error;
+      }
+
+      const expiresIn = +responseData.expiresIn * 1000;
+      const expirationDate = new Date().getTime() + expiresIn;
+
+      localStorage.setItem('token', responseData.idToken);
+      localStorage.setItem('userId', responseData.localId);
+      localStorage.setItem('tokenExpiration', expirationDate);
+
+      timer = setTimeout(function() {
+        context.dispatch('autoLogout');
+      }, expiresIn);
+
+      context.commit('setUser', {
+        token: responseData.idToken,
+        userId: responseData.localId
+      });
+    },
+    tryLogin(context) {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+      const tokenExpiration = localStorage.getItem('tokenExpiration');
+
+      const expiresIn = +tokenExpiration - new Date().getTime();
+
+      if (expiresIn < 0) {
+        // prevent log in the user as the token has expired
+        return;
+      }
+
+      timer = setTimeout(function() {
+        context.dispatch('autoLogout');
+      }, expiresIn);
+
+      if (token && userId) {
+        context.commit('setUser', {
+          token,
+          userId,
+          tokenExpiration: null
+        });
+      }
+    },
+    logout(context) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('tokenExpiration');
+
+      clearTimeout(timer);
+
+      context.commit('setUser', {
+        token: null,
+        userId: null
+      });
+    },
+    autoLogout(context) {
+      context.dispatch('logout');
+      context.commit('setAutoLogout');
+    }
+  };
+
+  // mutations.js
+  export default {
+    setUser(state, payload) {
+      state.token = payload.token;
+      state.userId = payload.userId;
+      state.didAutoLogout = false;
+    },
+    setAutoLogout(state) {
+      state.didAutoLogout = true;
+    }
+  };
+
+  // getters.js
+  export default {
+    userId(state) {
+      return state.userId;
+    },
+    token(state) {
+      return state.token;
+    },
+    isAuthenticated(state) {
+      return !!state.token;
+    },
+    didAutoLogout(state) {
+      return state.didAutoLogout;
+    }
+  };
+
+  // index.js
+  import mutations from './mutations.js';
+  import actions from './actions.js';
+  import getters from './getters.js';
+
+  export default {
+    state() {
+      return {
+        userId: null,
+        token: null,
+        didAutoLogout: false
+      };
+    },
+    mutations,
+    actions,
+    getters
+  };
+  ```
+5. Update `App.vue`
+  ```js
+  // App.vue
+  export default {
+    computed: {
+      didAutoLogout() {
+        return this.$store.didAutoLogout;
+      }
+    },
+    watch: {
+      didAutoLogout(curValue, oldValue) {
+        // redirect the user back to coach list when s/he is logged out by program
+        if (curValue && curValue !== oldValue) {
+          this.$router.replace('/coaches');
+        }
+      }
+    },
+  }
+  ```
 
 
 
