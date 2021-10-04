@@ -14992,7 +14992,104 @@ Finished on
     ```
 
 ## 18.7. Replacing "Computed Properties" with the "computed" Function
+1. To use `computed` method or expressions, we can use `computed` from `vue` which creates a "**readyonly**" `ref` object.
+  ```vue
+  <template>
+    <section class="container">
+        <h2>{{ userName }}</h2>
+        <h3>{{ age }}</h3>
+        <button @click="setAge">Change Age</button>
+        <div>
+        <input type="text" placeholder="First Name" @input="setFirstName" />
+        <input type="text" placeholder="Last Name" @input="setLastName" />
+        </div>
+    </section>
+  </template>
+  ```
+  ```js
+  import { ref, computed } from 'vue';
+
+  export default {
+    setup() {
+      const firstName = ref(''); // initial value
+      const lastName = ref(''); // initial value
+      const age = ref(31);
+
+      const userName = computed(function() {
+        return `${firstName.value} ${lastName.value}`;
+      });
+
+      userName.value; // readonly ref object created with computed
+
+      function setNewData() {
+        age.value += 1;
+      }
+
+      function setFirstName(event) {
+        firstName.value = event.target.value;
+      }
+
+      function setLastName(event) {
+        lastName.value = event.target.value;
+      }
+
+      return {
+        userName,
+        age,
+        setAge: setNewData,
+        setFirstName,
+        setLastName
+      };
+    }
+  };
+  ```
+
 ## 18.8. Two-Way-Binding and the Composition API
+1. We can use `v-model` to bind both the value and event to the element at the same time.
+2. When binding a `ref` object, Vue will automatically access `value` property to work with the `ref` object. 
+3. However, we need to expose the separated `ref` objects, `firstName` and `lastName` in this case, to allow Vue to work with it. 
+  ```vue
+  <template>
+    <section class="container">
+      <h2>{{ userName }}</h2>
+      <h3>{{ age }}</h3>
+      <button @click="setAge">Change Age</button>
+      <div>
+        <!-- vue will work with the ref object directly behind the scene -->
+        <input type="text" placeholder="First Name" v-model="firstName" />
+        <input type="text" placeholder="Last Name" v-model="lastName" />
+      </div>
+    </section>
+  </template>
+  ```
+  ```js
+  import { ref, computed } from 'vue';
+
+  export default {
+    setup() {
+      const firstName = ref('');
+      const lastName = ref('');
+      const age = ref(31);
+
+      const userName = computed(function() {
+        return `${firstName.value} ${lastName.value}`;
+      });
+
+      function setNewData() {
+        age.value += 1;
+      }
+
+      return {
+        userName,
+        age,
+        setAge: setNewData,
+        firstName,
+        lastName
+      };
+    }
+  };
+  ```
+
 ## 18.9. Working with Watchers
 ## 18.10. A First Summary
 ## 18.11. How to Use Templates Refs
