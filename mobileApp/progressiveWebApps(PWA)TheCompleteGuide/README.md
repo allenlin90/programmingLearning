@@ -1,5 +1,9 @@
+Started: 2021/10/10
+End: 
+Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.udemy.com/course/progressive-web-app-pwa-the-complete-guide/)
+
 - [1. Understanding the App Manifest](#1-understanding-the-app-manifest)
-  - [1.1. Usingan App Manifest to Make your App Installable](#11-usingan-app-manifest-to-make-your-app-installable)
+  - [1.1. Using an App Manifest to Make your App Installable](#11-using-an-app-manifest-to-make-your-app-installable)
   - [1.2. Adding the Manifest](#12-adding-the-manifest)
   - [1.3. Understanding App Manifest Properties](#13-understanding-app-manifest-properties)
   - [1.4. Adding Properties to the App Manifest](#14-adding-properties-to-the-app-manifest)
@@ -159,159 +163,188 @@
 ---
 
 # 1. Understanding the App Manifest
-  ## 1.1. Usingan App Manifest to Make your App Installable
-  ## 1.2. Adding the Manifest
-  ## 1.3. Understanding App Manifest Properties
-  ## 1.4. Adding Properties to the App Manifest
-  ## 1.5. PWAs and Browser Support
-  ## 1.6. Using the Chrome Developer Tools
-  ## 1.7. Simulating the Web App on an Emulator
-  ## 1.8. Installing the Web App - Prerequisties
-  ## 1.9. Adding Properties for Safari
-  ## 1.10. Adding Properties for the Internet Explorer
+## 1.1. Using an App Manifest to Make your App Installable
+1. This `Manifest` is a single file that allows the users to add or "install" the web page on the home screen of a mobile device as an app.
+
+## 1.2. Adding the Manifest
+1. We can add `manifest.json` to the root directory of the web. In this case, we put in the `public` folder which is directory storing `index.html`.
+2. Then we add a `link` referring to `manifest.json` in all the HTML file that we will serve. If we are creating a SPA with React or Vue, we can simply add this into the entry, single `index.html`.
+  ```html
+  <html>
+    <link rel="manifest" href="/manifest.json">
+  </html>
+  ```
+
+## 1.3. Understanding App Manifest Properties
+1. We can give a `name` property for the PWA which is different from the "title" of the HTML file. This is the long name of the app and will show such as when using on the "Splashscreen".
+2. A `short_name` can be given and will be shown belown the icon.
+3. `start_url` is to indicate which page to load on startup. Note that this is very different from the URL we type in the search bar in a browser that is handled by a DNS. 
+4. `scope` is to show which pages are included in the PWA experience. 
+5. `display` can be set `standalone` to make the app looks like a standalone app. 
+6. `background_color` can set the background color whilst loading and on Splashscreen. 
+7. `theme_color` is the Theme color of the app which can affect components such as the top bar in task switcher.
+  ```json
+  {
+    "name": "", // long name of the app (e.g. Splashscreen)
+    "short_name": "", // short name of the app (e.g. below icon)
+    "start_url" : "/index.html", // which page to load on startup
+    "scope": ".", // which pages are included in "PWA experience"
+    "display": "standalone", // should it look like a standalone app?
+    "background_color": "#fff", // can set the background color whilst loading and on Splashscreen
+    "theme_color": "#3F51B5", // theme color (e.g. on top bar in task switcher)
+  }
+  ```
+
+## 1.4. Adding Properties to the App Manifest
+## 1.5. PWAs and Browser Support
+## 1.6. Using the Chrome Developer Tools
+## 1.7. Simulating the Web App on an Emulator
+## 1.8. Installing the Web App - Prerequisties
+## 1.9. Adding Properties for Safari
+## 1.10. Adding Properties for the Internet Explorer
 # 2. The Service Workers
-  ## 2.1. Why Service Workers are Aamazing
-  ## 2.2. Understanding Service Worker Events
-  ## 2.3. The Service Worker Lifecycle
-  ## 2.4. Service Worker Browser Support
-  ## 2.5. Registering a Service Worker
-  ## 2.6. Reacting to Incoming Events (in SW)
-  ## 2.7. Updating and Activating Service Worker
-  ## 2.8. Non-Lifecycle Events
-  ## 2.9. Getting that "App Install Banner"
-  ## 2.10. Testing the App on Real Device (and Installing the App)
-  ## 2.11. Deferring the App Install Banner
+## 2.1. Why Service Workers are Aamazing
+## 2.2. Understanding Service Worker Events
+## 2.3. The Service Worker Lifecycle
+## 2.4. Service Worker Browser Support
+## 2.5. Registering a Service Worker
+## 2.6. Reacting to Incoming Events (in SW)
+## 2.7. Updating and Activating Service Worker
+## 2.8. Non-Lifecycle Events
+## 2.9. Getting that "App Install Banner"
+## 2.10. Testing the App on Real Device (and Installing the App)
+## 2.11. Deferring the App Install Banner
 # 3. Promise and Fetch
-  ## 3.1. Async Code in Javascript
-  ## 3.2. Promises - Basics
-  ## 3.3. Rejecting Promises
-  ## 3.4. Where we Use Promises in our Project
-  ## 3.5. Fetch - Basics
-  ## 3.6. Sending Post Requests via Fetch
-  ## 3.7. Fetch and CORS
-  ## 3.8. Comparing Fetch and Ajax
-  ## 3.9. Adding Polyfills (for Legacy Browser Support)
-  ## 3.10. Fetch and Service Workers
+## 3.1. Async Code in Javascript
+## 3.2. Promises - Basics
+## 3.3. Rejecting Promises
+## 3.4. Where we Use Promises in our Project
+## 3.5. Fetch - Basics
+## 3.6. Sending Post Requests via Fetch
+## 3.7. Fetch and CORS
+## 3.8. Comparing Fetch and Ajax
+## 3.9. Adding Polyfills (for Legacy Browser Support)
+## 3.10. Fetch and Service Workers
 # 4. Service Workers - Caching
-  ## 4.1. Why Caching
-  ## 4.2. Understanding the Cache API
-  ## 4.3. Browser Support
-  ## 4.4. Adjusting the Course Project
-  ## 4.5. Indentifying (Pre-) Cacheable Items
-  ## 4.6. Static Caching/Precaching
-  ## 4.7. Retrieving Items from the Cache
-  ## 4.8. Adding and Retrieving Multiple Files (to/from Cache)
-  ## 4.9. Cache Multiple Files with addAll
-  ## 4.10. Dynamic Caching - The Basics
-  ## 4.11. Implementing Deynamic Caching
-  ## 4.12. Handling Errors
-  ## 4.13. Adding Cache Versioning
-  ## 4.14. Different Cache Versions and Cleanup
-  ## 4.15. Optimizing Cache Management
+## 4.1. Why Caching
+## 4.2. Understanding the Cache API
+## 4.3. Browser Support
+## 4.4. Adjusting the Course Project
+## 4.5. Indentifying (Pre-) Cacheable Items
+## 4.6. Static Caching/Precaching
+## 4.7. Retrieving Items from the Cache
+## 4.8. Adding and Retrieving Multiple Files (to/from Cache)
+## 4.9. Cache Multiple Files with addAll
+## 4.10. Dynamic Caching - The Basics
+## 4.11. Implementing Deynamic Caching
+## 4.12. Handling Errors
+## 4.13. Adding Cache Versioning
+## 4.14. Different Cache Versions and Cleanup
+## 4.15. Optimizing Cache Management
 ## 4.16. Service Workers - Advanced Caching
-  ## 4.17. Module Preparation: Adding a Button
-  ## 4.18. Offering "Cache on Demand"
-  ## 4.19. Providing an Offline Fallback Page
-  ## 4.20. Strategy: Cache with Network Fallback
-  ## 4.21. Strategy: Cache Only
-  ## 4.22. Strategy: Network Only
-  ## 4.23. Strategy: Network with Cache Fallback
-  ## 4.24. Strategy: Cache then Network 
-  ## 4.25. Cache then Network and Dynamic Caching
-  ## 4.26. Cache then Network with Offline Support
-  ## 4.27. Cache Strategies and "Routing"
-  ## 4.28. Applying Cache Only
-  ## 4.29. A Better Way of Parsing Static Cache URLs
-  ## 4.30. A Better Way of Serving Fallback Files
-  ## 4.31. Post Request and Cache API
-  ## 4.32. Cleaning/Trimming the Cache
-  ## 4.33. Getting Rid of a Service Worker
-  ## 4.34. Preparing the Project for the Next Steps
+## 4.17. Module Preparation: Adding a Button
+## 4.18. Offering "Cache on Demand"
+## 4.19. Providing an Offline Fallback Page
+## 4.20. Strategy: Cache with Network Fallback
+## 4.21. Strategy: Cache Only
+## 4.22. Strategy: Network Only
+## 4.23. Strategy: Network with Cache Fallback
+## 4.24. Strategy: Cache then Network 
+## 4.25. Cache then Network and Dynamic Caching
+## 4.26. Cache then Network with Offline Support
+## 4.27. Cache Strategies and "Routing"
+## 4.28. Applying Cache Only
+## 4.29. A Better Way of Parsing Static Cache URLs
+## 4.30. A Better Way of Serving Fallback Files
+## 4.31. Post Request and Cache API
+## 4.32. Cleaning/Trimming the Cache
+## 4.33. Getting Rid of a Service Worker
+## 4.34. Preparing the Project for the Next Steps
 # 5. IndexedDB and Dynamic Data
-  ## 5.1. Understanding the Basics
-  ## 5.2. Setting Up Firebase
-  ## 5.3. Connecting Frontend to Backend
-  ## 5.4. Dynamic Caching vs. Caching Dynamic Content
-  ## 5.5. Introducing IndexedDB
-  ## 5.6. IndexedDB Browser Support
-  ## 5.7. Adding the IDB File
-  ## 5.8. Storing Fetched Posts in IndexedDB
-  ## 5.9. Using IndexedDB in the Service Worker
-  ## 5.10. Reading Data from IDB
-  ## 5.11. Clearing IDB and Handling Server-Client Mismatch
-  ## 5.12. Implementing the Clear Database Method
-  ## 5.13. Deleting Single Items from the Database
-  ## 5.14. IndexedDB and Caching Strategies
+## 5.1. Understanding the Basics
+## 5.2. Setting Up Firebase
+## 5.3. Connecting Frontend to Backend
+## 5.4. Dynamic Caching vs. Caching Dynamic Content
+## 5.5. Introducing IndexedDB
+## 5.6. IndexedDB Browser Support
+## 5.7. Adding the IDB File
+## 5.8. Storing Fetched Posts in IndexedDB
+## 5.9. Using IndexedDB in the Service Worker
+## 5.10. Reading Data from IDB
+## 5.11. Clearing IDB and Handling Server-Client Mismatch
+## 5.12. Implementing the Clear Database Method
+## 5.13. Deleting Single Items from the Database
+## 5.14. IndexedDB and Caching Strategies
 # 6. Creating a Responsive user Interface (UI)
-  ## 6.1. Responsive Design in this Course
-  ## 6.2. Responsive Design in this Course
-  ## 6.3. Understanding Responsive Design in our Project
-  ## 6.4. CSS and Media Queries
-  ## 6.5. Using Images in a Responsive Way
-  ## 6.6. Adding Animations
-  ## 6.7. The Viewport and Scaling
+## 6.1. Responsive Design in this Course
+## 6.2. Responsive Design in this Course
+## 6.3. Understanding Responsive Design in our Project
+## 6.4. CSS and Media Queries
+## 6.5. Using Images in a Responsive Way
+## 6.6. Adding Animations
+## 6.7. The Viewport and Scaling
 # 7. Background Sync
-  ## 7.1. Hwo does Background Sync Work
-  ## 7.2. Adding the Basic Setup to our Project
-  ## 7.3. Registering a Synchronization Task
-  ## 7.4. Storing our Post in IndexedDB
-  ## 7.5. Adding a Fallback
-  ## 7.6. Syncing Data in the Service Worker
-  ## 7.7. Understanding Periodic Sync
-  ## 7.8. Adding Server Side Code
-  ## 7.9. Fixing Errors
+## 7.1. Hwo does Background Sync Work
+## 7.2. Adding the Basic Setup to our Project
+## 7.3. Registering a Synchronization Task
+## 7.4. Storing our Post in IndexedDB
+## 7.5. Adding a Fallback
+## 7.6. Syncing Data in the Service Worker
+## 7.7. Understanding Periodic Sync
+## 7.8. Adding Server Side Code
+## 7.9. Fixing Errors
 # 8. Web Push Notifications
-  ## 8.1. Why we need Web Push Notifications
-  ## 8.2. How Push and Notifications Work
-  ## 8.3. Displaying Notifications - Some Theory First
-  ## 8.4. Browser Support
-  ## 8.5. Requesting Permissions
-  ## 8.6. Displaying Notifications
-  ## 8.7. Notifications from Within the Service Worker
-  ## 8.8. Understanding Notification Options
-  ## 8.9. Advanced Options
-  ## 8.10. Adding Actions to Notifications
-  ## 8.11. Reacting to Notification Interaction - Clicks
-  ## 8.12. Reacting to Notification Interaction - Closing
-  ## 8.13. From Notifications to Push Messages
-  ## 8.14. Creating a Push Subscription
-  ## 8.15. Storing Subscription
-  ## 8.16. Connecting Server and Client (PWA)
-  ## 8.17. Sending Push Messges from the Server
-  ## 8.18. Listening to Push Message
-  ## 8.19. Displaying Push Notification on a Real Device
-  ## 8.20. Opening a Page upon User Interaction
-  ## 8.21. Improving our Code
+## 8.1. Why we need Web Push Notifications
+## 8.2. How Push and Notifications Work
+## 8.3. Displaying Notifications - Some Theory First
+## 8.4. Browser Support
+## 8.5. Requesting Permissions
+## 8.6. Displaying Notifications
+## 8.7. Notifications from Within the Service Worker
+## 8.8. Understanding Notification Options
+## 8.9. Advanced Options
+## 8.10. Adding Actions to Notifications
+## 8.11. Reacting to Notification Interaction - Clicks
+## 8.12. Reacting to Notification Interaction - Closing
+## 8.13. From Notifications to Push Messages
+## 8.14. Creating a Push Subscription
+## 8.15. Storing Subscription
+## 8.16. Connecting Server and Client (PWA)
+## 8.17. Sending Push Messges from the Server
+## 8.18. Listening to Push Message
+## 8.19. Displaying Push Notification on a Real Device
+## 8.20. Opening a Page upon User Interaction
+## 8.21. Improving our Code
 # 9. Native Device Features
-  ## 9.1. Preparing the Project
-  ## 9.2. Getting DOM Access
-  ## 9.3. Creating our own Polyfills
-  ## 9.4. Getting the Video Image
-  ## 9.5. Hooking Up the Capture Button
-  ## 9.6. Storing the Image on a Server
-  ## 9.7. Accepting File Upload Example with Firebase
-  ## 9.8. Testing the Camera and Upload
-  ## 9.9. Implementing a Fallback
-  ## 9.10. Getting the User Position
-  ## 9.11. Fixing Bugs
-  ## 9.12. Testing the App on a Real Device
+## 9.1. Preparing the Project
+## 9.2. Getting DOM Access
+## 9.3. Creating our own Polyfills
+## 9.4. Getting the Video Image
+## 9.5. Hooking Up the Capture Button
+## 9.6. Storing the Image on a Server
+## 9.7. Accepting File Upload Example with Firebase
+## 9.8. Testing the Camera and Upload
+## 9.9. Implementing a Fallback
+## 9.10. Getting the User Position
+## 9.11. Fixing Bugs
+## 9.12. Testing the App on a Real Device
 # 10. Service Worker Management with Workbox
-  ## 10.1. Understanding the Basics
-  ## 10.2. Installing Workbox and Using it
-  ## 10.3. Configuring Workbox Precaching
-  ## 10.4. Customizing the Service Worker
-  ## 10.5. Implementing Routing with the Workbox Router
-  ## 10.6. Expanding Dynamic Caching
-  ## 10.7. Options and Setting Up Strategies
-  ## 10.8. Custom Handlers (Example: For IndexedDB)
-  ## 10.9. Providing an Offline HTML Fallback
-  ## 10.10. Handling Background Synchronisation and Push Notification
-  ## 10.11. Understanding the Workbox Documentation
-  ## 10.12. Enhancing the Build Workflow
-  ## 10.13. Running our App on a Real Server
-  ## 10.14. Auditing our Webpage with Lighthouse
+## 10.1. Understanding the Basics
+## 10.2. Installing Workbox and Using it
+## 10.3. Configuring Workbox Precaching
+## 10.4. Customizing the Service Worker
+## 10.5. Implementing Routing with the Workbox Router
+## 10.6. Expanding Dynamic Caching
+## 10.7. Options and Setting Up Strategies
+## 10.8. Custom Handlers (Example: For IndexedDB)
+## 10.9. Providing an Offline HTML Fallback
+## 10.10. Handling Background Synchronisation and Push Notification
+## 10.11. Understanding the Workbox Documentation
+## 10.12. Enhancing the Build Workflow
+## 10.13. Running our App on a Real Server
+## 10.14. Auditing our Webpage with Lighthouse
 # 11. SPAs and PWAs
-  ## 11.1. React with create-react-app
-  ## 11.2. A General Note about SPAs and PWAs
-  ## 11.3. Angular with the CLI
-  ## 11.4. Vue with Vue CLI
+## 11.1. React with create-react-app
+## 11.2. A General Note about SPAs and PWAs
+## 11.3. Angular with the CLI
+## 11.4. Vue with Vue CLI
