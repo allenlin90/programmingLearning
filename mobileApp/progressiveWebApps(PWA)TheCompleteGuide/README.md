@@ -180,10 +180,13 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
 2. A `short_name` can be given and will be shown belown the icon.
 3. `start_url` is to indicate which page to load on startup. Note that this is very different from the URL we type in the search bar in a browser that is handled by a DNS. 
 4. `scope` is to show which pages are included in the PWA experience. 
-5. `display` can be set `standalone` to make the app looks like a standalone app. 
+5. `display` can be set `standalone` to make the app looks like a standalone app. This includes options such as `standalone`, `fullscreen`, `minimal-ui`, `browser`. 
 6. `background_color` can set the background color whilst loading and on Splashscreen. 
 7. `theme_color` is the Theme color of the app which can affect components such as the top bar in task switcher.
+8. `orientation` is used to set and enforce default orientation of the app. It may be `any`, `portrait`, `landscape`, `portrait-primary`.
+9. Other properties can be also useful to set up in the manifest files in the JSON sample below.
   ```json
+  // manifest.json
   {
     "name": "", // long name of the app (e.g. Splashscreen)
     "short_name": "", // short name of the app (e.g. below icon)
@@ -192,16 +195,134 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
     "display": "standalone", // should it look like a standalone app?
     "background_color": "#fff", // can set the background color whilst loading and on Splashscreen
     "theme_color": "#3F51B5", // theme color (e.g. on top bar in task switcher)
-  }
+    "description": "Keep running", // description (e.g. favorite)
+    "dir": "ltr", // read direction of the app
+    "lang": "en-US", // main language of app
+    "orientation": "portrait-primary", // set (and enforce) default orientation
+    "icons": [ // configure icons (e.g. on homescreen)
+      {
+        "src": "/src/images/icons/app-icon-48x48.png", // icon path
+        "type": "image/png", // image type
+        "sizes": "48x48", // icon size, browser chooses best one for given device
+      },
+      {
+        "src": "/src/images/icons/app-icon-96x96.png", // icon path
+        "type": "image/png", // image type
+        "sizes": "96x96", // icon size, browser chooses best one for given device
+      },
+    ], 
+  },
+  "related_application": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.example.app1",
+      "id": "com.example.app1"
+    }
+  ]
   ```
 
 ## 1.4. Adding Properties to the App Manifest
+```json
+{
+  "name": "Instagram as Progressive Web App",
+  "short_name": "PWAGram",
+  "icons": [
+    {
+      "src": "/src/images/icons/app-icon-48x48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "/src/images/icons/app-icon-96x96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "/src/images/icons/app-icon-144x144.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "/src/images/icons/app-icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/src/images/icons/app-icon-256x256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/src/images/icons/app-icon-384x384.png",
+      "type": "image/png",
+      "sizes": "384x384"
+    },
+    {
+      "src": "/src/images/icons/app-icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fff",
+  "theme_color": "#3f51b5",
+  "description": "A simple Instagram Clone, implementing a lot of PWA love.",
+  "dir": "ltr",
+  "lang": "en-US"
+}
+```
+
 ## 1.5. PWAs and Browser Support
+1. Chrome at the time has the most compatibility to use PWA features.
+2. We can check from "[caniuse](https://caniuse.com/?search=PWA)" to see if the browser has fully support on PWA features.
+
 ## 1.6. Using the Chrome Developer Tools
+1. In Chrome browser, we can check on the developer console for detailed data.
+
 ## 1.7. Simulating the Web App on an Emulator
+1. We can download android studio and install a virtual device on the computer to have an emulator of a sepcific android device. 
+2. After installing android studio and the device, we can access the emulator from "Tools" > "AVD Manager".
+3. However, if there's an android device available, we can access the local PWA via WIFI when starting up the project. Note that both the computer serving localhost and the mobile phone must connect to the same WIFI and there shouldn't be any gat threshold besides simple login connection.
+4. The other way to work around is to have the android mobile phone having USB debugging and connect to computer with a cable. 
+
 ## 1.8. Installing the Web App - Prerequisties
+1. We can visit [https://web.dev/customize-install/](https://web.dev/customize-install/) to check the latest requirements to prompt an install banner to let users easily download and add the PWA to their homescreens.
+
 ## 1.9. Adding Properties for Safari
+1. We can add other tags in the HTML tag to enable the PWA works with Safari.
+2. Note that Apple devices having their browser built on Safari and webkit, while these devices don't have fully support as the Chrome browsers on Android devices. 
+3. For example, by the time learnig this course during Oct. 2021, "Push Notification" feature is still not available on PWAs on Apple devices.
+  ```html
+  <html>
+    <!-- other tags of the HTML -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="PWAGramiOS">
+    <link rel="apple-touch-icon" href="/src/images/icons/app-icon-57x57.png" sizes="57x57">
+    <link rel="apple-touch-icon" href="/src/images/icons/app-icon-60x60.png" sizes="60x60">
+    <link rel="apple-touch-icon" href="/src/images/icons/app-icon-72x72.png" sizes="72x72">
+    <link rel="apple-touch-icon" href="/src/images/icons/app-icon-114x114.png" sizes="114x114">
+    <link rel="apple-touch-icon" href="/src/images/icons/app-icon-120x120.png" sizes="120x120">
+    <link rel="apple-touch-icon" href="/src/images/icons/app-icon-144x144.png" sizes="144x144">
+    <link rel="apple-touch-icon" href="/src/images/icons/app-icon-152x152.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="/src/images/icons/app-icon-180x180.png" sizes="180x180">
+  </html>
+  ```
 ## 1.10. Adding Properties for the Internet Explorer
+1. For Internet Exploerer (though it's deprecated by Microsoft in Year 2021), we can specify some `meta` tags
+  ```html
+  <html>
+    <meta name="msapplication-TileImage" content="/src/images/app-icon-144x144.png" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <!-- the following is a fallback which can be helpful on Chrome browser when manifest.json doesn't work -->
+    <meta name="theme-color" content="#3F51B5" />
+  </html>
+  ```
+
 # 2. The Service Workers
 ## 2.1. Why Service Workers are Aamazing
 ## 2.2. Understanding Service Worker Events
