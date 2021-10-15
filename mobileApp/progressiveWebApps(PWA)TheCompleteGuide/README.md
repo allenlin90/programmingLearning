@@ -25,6 +25,7 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [2.9. Getting that "App Install Banner"](#29-getting-that-app-install-banner)
   - [2.10. Testing the App on Real Device (and Installing the App)](#210-testing-the-app-on-real-device-and-installing-the-app)
   - [2.11. Deferring the App Install Banner](#211-deferring-the-app-install-banner)
+  - [2.12. Service Worker FAQ](#212-service-worker-faq)
 - [3. Promise and Fetch](#3-promise-and-fetch)
   - [3.1. Async Code in Javascript](#31-async-code-in-javascript)
   - [3.2. Promises - Basics](#32-promises---basics)
@@ -323,29 +324,295 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   </html>
   ```
 
+
+
 # 2. The Service Workers
 ## 2.1. Why Service Workers are Aamazing
+1. Service worker also works on one signle thread, while this thread is different from the regular context which attached to individual HTML pages.
+2. It can be viewed as there is an additional thread, decoupled from HTML pages, and manage all pages of given scope. (e.g. all pages of a domain)
+
 ## 2.2. Understanding Service Worker Events
+1. "Listenable" Events (in Service Worker) 
+   1. **Fetch** - Browser or Page-related Javascript initiates a Fetch (Http request)
+   2. **Push Notification** - Service worker receives Web Push Notification (from Server)
+   3. **Notification Interaction** - User interacts with dsplayed Notification
+   4. **Background Sync** - Service Worker receives Background Sync Event (e.g. Internet connection was restored)
+   5. **Service Worker Lifecycle** - Service Worker Phase Changes
+
 ## 2.3. The Service Worker Lifecycle
+1. When a page initiates, we can register a service worker to work on the background.
+<img src="./images/31-service_worker_lifecycle.png">
+
 ## 2.4. Service Worker Browser Support
+1. We can check how different browsers in main stream supports service worker and PWA features.
+
 ## 2.5. Registering a Service Worker
+1. To ensure service worker can work on all the pages, including pages in subfolders, we put the service worker registration javascript in the root directory. 
+2. Note that we have the `npm start` script running with `-c-1` flag, which is to prevent browsers to use its default cache. 
+3. Though we can put service worker directly in the HTML files, we will need to update all HTML files once the service worker is updated.
+4. Besides, we can import the service worker to `app.js` in this case, as this file is used by both the `index.html` on the root and in `help` folder. Therefore, it can be a proper entry point for service worker. 
+  ```js
+  // app.js
+  if ('serviceWorker' in navigator) {
+    // this checks if browser supports service worker
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then(() => {
+        console.log('service worker registered!');
+      })
+      .catch((err) => console.log(err));
+  }
+  ```
+
 ## 2.6. Reacting to Incoming Events (in SW)
+1. We can pass a 2nd argument as an object when registering the service worker
+  ```js
+  // app.js
+  if ('serviceWorker' in navigator) {
+    // this checks if browser supports service worker
+    navigator.serviceWorker
+      .register('/sw.js', { scope: '/help/' }) // overwrite the scope
+      .then(() => {
+        console.log('service worker registered!');
+      })
+      .catch((err) => console.log(err));
+  }
+  ```
+2. Service worker and manifest are 2 related files to PWAs but not compulsive to each other.
+3. Besides, server worker only worker on HTTPS protocol. However, it does work on `localhost` for easier developing process.
+  ```js
+  self.addEventListener('install', (event) => {
+    console.log('Service Worker Installing Service Worker...', event);
+  });
+
+  self.addEventListener('activate', (event) => {
+    console.log('Service Worker Activating Service Worker...', event);
+    return self.clients.claim();
+  });
+  ```
+
 ## 2.7. Updating and Activating Service Worker
+1. When we reload the page, the service worker won't be activated immediately if it's updated because the browser tries to prevent 2 different versions of service having conflict.
+2. In the developer console, we can click on "Update on reload" to update the service worker everytime it refreshes.
+
 ## 2.8. Non-Lifecycle Events
+1. We can change the behavior of non-lifecycle event such as `fetch` in service worker.
+2. This event handles all the fetching tasks such as importing css files with `link` tag and `img` tags for loading image and media.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', (event) => {
+    console.log('Service Worker Fetching something...', event);
+    event.respondWith(null); // this makes the page not accessible as nothing is fetched
+    event.respondWith(fetch(event.request)); // this is like middleware to do something before fetching data
+  });
+  ```
+
 ## 2.9. Getting that "App Install Banner"
+1. We can check the install criteria for PWAs. Chrome browser will prompt and ask if the user would like to install the PWA to the homescreen.
+2. We can check more details at [https://web.dev/install-criteria/](https://web.dev/install-criteria)
+
 ## 2.10. Testing the App on Real Device (and Installing the App)
+1. We can open debug mode on android devices and use USB cable to connect to a laptop or PC.
+2. Follow the instruction from [https://developer.chrome.com/docs/devtools/remote-debugging/](https://developer.chrome.com/docs/devtools/remote-debugging/) to access the device from the desktop.
+3. This process can be tricky to get them work on both the mobile and desktop device. Note that we may need to restart the service after certain changes.
+4. This feature is to help developers to check app behavior on a real mobile device.
+5. However, the approach didn't really work to allow adding the app from developer console to the homescreen.
+6. This prompt is triggered automatically by Chrome browser when it meets the following criteria.
+   1. The web app is not already installed
+   2. Meets a user engagement heuristic
+   3. Be served over HTTPS
+   4. Includes a web app manifest that includes:
+      1. `short_name` or `name`
+      2. `icons` - must include a 192px and a 512px icon
+      3. `start_url`
+      4. `display` - must be one of `fullscreen`, `standalone`, or `minimal-ui`
+      5. `prefer_related_applications` must not be present, or be false
+   5.  Registers a service worker with a fetch handler
+
 ## 2.11. Deferring the App Install Banner
+1. Besides the default installation prompt, we can change the behavior and all the app prompt installation to user by using `beforeinstallprompt` event handler.
+2. 
+  ```js
+  // app.js
+  var deferredPrompt; // take event argument from the callback function
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(function () {
+      console.log('Service worker registered!');
+    });
+  }
+
+  // change default beforeinstallprompt event
+  window.addEventListener('beforeinstallprompt', function (event) {
+    console.log('beforeinstallprompt fired');
+    event.preventDefault();
+    deferredPrompt = event;
+    return false;
+  });
+  ```
+2. In `feed.js`, we can update the event handler when the user clicks on adding new posts.
+  ```js
+  // feed.js
+  function openCreatePostModal() {
+    createPostArea.style.display = 'block';
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+
+      deferredPrompt.userChoice.then(function (choiceResult) {
+        console.log(choiceResult.outcome);
+
+        if (choiceResult.outcome === 'dismissed') {
+          console.log('User cancelled installation');
+        } else {
+          console.log('User added to home screen');
+        }
+      });
+
+      deferredPrompt = null;
+    }
+  }
+  ```
+
+## 2.12. Service Worker FAQ
+1. There some features of service workers that we may be aware of. 
+2. If file of service worker is exactly the same, the browser won't reinstall the service worker though the page is reloaded.
+3. However, if the file has been changed, even 1 byte, will trigger the process.
+4. We can check service workers in `navigator` API and unregister them.
+  ```js
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister()
+    } 
+  });
+  ```
+5. Some useful links
+   1. Are Service Workers Ready? - Check Browser Support: [https://jakearchibald.github.io/isserviceworkerready/](https://jakearchibald.github.io/isserviceworkerready/)
+   2. Setting up Remote Debugging on Chrome: [https://developers.google.com/web/tools/chrome-devtools/remote-debugging/](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/)
+   3. Getting that "Web App Install Banner": [https://developers.google.com/web/fundamentals/engage-and-retain/app-install-banners/](https://developers.google.com/web/fundamentals/engage-and-retain/app-install-banners/)
+   4. Getting Started with Service Workers: [https://developers.google.com/web/fundamentals/getting-started/primers/service-workers](https://developers.google.com/web/fundamentals/getting-started/primers/service-workers)
+
+
+
 # 3. Promise and Fetch
 ## 3.1. Async Code in Javascript
+1. Javascript in different context have different behavior.
+2. We can use callback functions to work on the response provide asynchronous behavior. However, the functions will be nested 
+  ```js  
+  setTimeout(function () {
+    resolve('This is executed once timer is done');
+    // console.log('This is executed once timer is done');
+  }, 3000);
+  ```
+
 ## 3.2. Promises - Basics
 ## 3.3. Rejecting Promises
+1. We can use `Promise` to handle asynchronous code in Javascript.
+2. To work with `Promise` instance in Javascript, we can use `then` and `catch` method to handle with `resolve` and `reject` function according to the response.
+  ```js
+  var promise = new Promise((resolve, reject) => {
+    setTimeout(function () {
+      // resolve('This is executed once timer is done');
+      // console.log('This is executed once timer is done');
+      reject({ code: 500, message: 'An error occurred!' });
+    }, 3000);
+  });
+
+  promise
+    .then((text) => {
+      console.log(text);
+      return text;
+    })
+    .then((newText) => {
+      console.log(newText);
+    })
+    .catch((err) => {
+      console.log(err.code, err.message);
+    });
+  ```
+3. Besides using `catch`, we can pass a 2nd argument to `then` to handle error response. Note that readability of this syntax is relatively low.
+
 ## 3.4. Where we Use Promises in our Project
+1. In most of the cases, we don't need to create `Promise` instance by our own. 
+2. We use it when using `fetch` API to requset data remotely. 
+
 ## 3.5. Fetch - Basics
+```js
+fetch(`https://httpbin.org/ip`)
+  .then((res) => res.json())
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err));
+```
+
 ## 3.6. Sending Post Requests via Fetch
+```js
+fetch(`https://httpbin.org/post`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+  body: JSON.stringify({
+    message: 'Does this work',
+  }),
+})
+  .then((res) => res.json())
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err));
+```
+
 ## 3.7. Fetch and CORS
+1. We can set `mode` as an option passing to `fetch` API which will turn the `body` of response as `null`. This can be used in some scenario that the app doesn't consume the data directly such as fetching image to render by `img` tag.
+  ```js
+  fetch(`https://httpbin.org/post`, {
+    method: 'POST',
+    headers: {  
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    mode: 'cors', // no-cors
+    body: JSON.stringify({
+      message: 'Does this work',
+    }),
+  })
+  ```
+
 ## 3.8. Comparing Fetch and Ajax
+1. `xhr` has relatively complicated syntax when working on HTTP requests. 
+2. Besides, it doesn't work in asynchronous scenario, so it can be better to use `fetch` API when fetching data with HTTP protocol.
+```js
+// using XMLHttpRequest
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://httpbin.org/ip');
+xhr.responseType = 'json';
+
+xhr.onload = function () {
+  console.log(xhr.response);
+};
+
+xhr.onerror = function () {
+  console.log('error');
+};
+
+xhr.send();
+```
+
 ## 3.9. Adding Polyfills (for Legacy Browser Support)
+1. Older browser doesn't work with native `fetch` and `Promise`.
+2. We can use polyfill code with older Javascript syntax to work instead.
+  ```js
+  // app.js
+  if (!window.Promise) { 
+    // check if the browser supports native Promise
+    // if not, it will use the code from polyfill 
+    window.Promise = Promise;
+  }
+  ```
+
 ## 3.10. Fetch and Service Workers
+
+
+
+
 # 4. Service Workers - Caching
 ## 4.1. Why Caching
 ## 4.2. Understanding the Cache API
