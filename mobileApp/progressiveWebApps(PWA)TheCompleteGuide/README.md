@@ -36,7 +36,6 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [3.7. Fetch and CORS](#37-fetch-and-cors)
   - [3.8. Comparing Fetch and Ajax](#38-comparing-fetch-and-ajax)
   - [3.9. Adding Polyfills (for Legacy Browser Support)](#39-adding-polyfills-for-legacy-browser-support)
-  - [3.10. Fetch and Service Workers](#310-fetch-and-service-workers)
 - [4. Service Workers - Caching](#4-service-workers---caching)
   - [4.1. Why Caching](#41-why-caching)
   - [4.2. Understanding the Cache API](#42-understanding-the-cache-api)
@@ -48,7 +47,7 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [4.8. Adding and Retrieving Multiple Files (to/from Cache)](#48-adding-and-retrieving-multiple-files-tofrom-cache)
   - [4.9. Cache Multiple Files with addAll](#49-cache-multiple-files-with-addall)
   - [4.10. Dynamic Caching - The Basics](#410-dynamic-caching---the-basics)
-  - [4.11. Implementing Deynamic Caching](#411-implementing-deynamic-caching)
+  - [4.11. Implementing Dynamic Caching](#411-implementing-dynamic-caching)
   - [4.12. Handling Errors](#412-handling-errors)
   - [4.13. Adding Cache Versioning](#413-adding-cache-versioning)
   - [4.14. Different Cache Versions and Cleanup](#414-different-cache-versions-and-cleanup)
@@ -608,25 +607,143 @@ xhr.send();
   }
   ```
 
-## 3.10. Fetch and Service Workers
-
-
 
 
 # 4. Service Workers - Caching
 ## 4.1. Why Caching
+1. In some scenarios, such as poor connection, no connection (e.g. in an elevator), or poor WI-FI connection, this feature can be very useful.
+
 ## 4.2. Understanding the Cache API
+1. The cache API provides another way to store data locally. It simply provdies `key (request)/value (response)` pair. 
+2. Cache API can be accessed by both "service worker" and "normal" Javascript.
+3. Cache data can be retrieved instead of sending Network Request.
+
 ## 4.3. Browser Support
+[https://developer.mozilla.org/en-US/docs/Web/API/Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache)
+
 ## 4.4. Adjusting the Course Project
 ## 4.5. Indentifying (Pre-) Cacheable Items
+1. The project has another card added to the app which is a (fake) dynamic content that the app fetched with `fetch` API.
+2. In an App, we can cache the "shells" which are the static UI such as the top and side navigation bar, text, and buttons.
+
 ## 4.6. Static Caching/Precaching
+1. We can create and store files as caches with `caches` API, which returns a `Promise` instance that we can use both `then` and `catch` to handle it.
+2. If we update service worker, the app will reinstall the service.
+3. However, until this point, it still doesn't work offline because we only store the cache but don't use it.
+  ```js
+  // sw.js
+  self.addEventListener('install', function (event) {
+    console.log('[Service Worker] Installing Service Worker ...', event);
+    event.waitUntil(
+      caches.open('static').then((cache) => {
+        console.log('Service Worker Precaching App Shell');
+        cache.add('/src/js/app.js');
+      }),
+    ); // event.waitUntil returns a promise
+  });
+  ```
+
 ## 4.7. Retrieving Items from the Cache
+1. After storing the data in `caches` we can use `caches.match` to retrive data from cache API.
+2. 
+  ```js
+  self.addEventListener('fetch', function (event) {
+    // console.log('[Service Worker] Fetching something ....', event);
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) return response;
+        return fetch(event.request);
+      }),
+    );
+  });
+  ```
+
 ## 4.8. Adding and Retrieving Multiple Files (to/from Cache)
+1. When we catch the data such as `index.html` on the root route, it doesn't fulfill when the user tries to access the root route as the user is trying to access `/` rather than `/index.html`.
+2. Therefore, to ensure the user can access `index.html` in offline mode, we need to add both `/` and `/index.html` on cache.
+  ```js
+  self.addEventListener('install', function (event) {
+    console.log('[Service Worker] Installing Service Worker ...', event);
+    event.waitUntil(
+      caches.open('static').then((cache) => {
+        console.log('Service Worker Precaching App Shell');
+        cache.add('/'); // this is cached to redner index.html
+        cache.add('/index.html'); // this file will be rendered on root route '/'
+        cache.add('/src/js/app.js');
+      }),
+    ); // event.waitUntil returns a promise
+  });
+  ```
+
 ## 4.9. Cache Multiple Files with addAll
+1. With regular `add` approach, we may need to add on multiple files to make sure the app can work offline in different lines.
+2. We can use `addAll` instead by passing an array of files that we want to cache.
+3. We can ignore and don't add polyfill files to be cached as they have no use on modern browsers, and since old browser doesn't support such feature, there's no use to cache the files.
+  ```js
+  self.addEventListener('install', function (event) {
+    console.log('[Service Worker] Installing Service Worker ...', event);
+    event.waitUntil(
+      caches.open('static').then((cache) => {
+        console.log('Service Worker Precaching App Shell');
+        cache.addAll([
+          '/',
+          '/index.html',
+          '/src/js/app.js',
+          '/src/js/feed.js',
+          '/src/js/promise.js',
+          '/src/js/fetch.js',
+          '/src/js/material.min.js',
+          '/src/css/app.css',
+          '/src/css/feed.css',
+          '/src/images/main-image.jpg',
+          'https://fonts.googleapis.com/css?family=Roboto:400,700',
+          'https://fonts.googleapis.com/icon?family=Material+Icons',
+          'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
+        ]);
+      }),
+    ); 
+  });
+  ```
+
 ## 4.10. Dynamic Caching - The Basics
-## 4.11. Implementing Deynamic Caching
+<img src="./images/69-dynamic_caching.png">
+
+## 4.11. Implementing Dynamic Caching
+1. We can modify the `fetch` event on service worker.
+2. If the app is going to fetch, it checks if the data is stored in cache. If not, it makes fetch request as in regular cases.
+3. With dynamic caching, the app only caches the routes and data where the user visits. For example, if the user has never been to `/help` before turning to offline, the app doesn't work when the user access the route in offline mode because there's no data cached.
+  ```js
+  self.addEventListener('fetch', function (event) {
+    // console.log('[Service Worker] Fetching something ....', event);
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) {
+          return response;
+        } else {
+          // chaining here as to deal only on real request
+          return fetch(event.request).then((res) => {
+            caches.open('dynamic').then((cache) => {
+              console.log('dynamic');
+              // put does similar to add but needs the developer to put key/value pair
+              cache.put(event.request.url, res.clone());
+              // without returning the response, the app doesn't work on the first fetch as it gets nothing back
+              // it only works after the app reload as the response data is cached
+              // we can prevent this behavior by returning the response from the first fetch
+              console.log(res);
+              return res;
+            });
+          });
+        }
+      }),
+    );
+  });
+  ```
+  <img src="./images/70-implement_dynamic_caching.png">
+
 ## 4.12. Handling Errors
+
 ## 4.13. Adding Cache Versioning
+
 ## 4.14. Different Cache Versions and Cleanup
 ## 4.15. Optimizing Cache Management
 ## 4.16. Service Workers - Advanced Caching
