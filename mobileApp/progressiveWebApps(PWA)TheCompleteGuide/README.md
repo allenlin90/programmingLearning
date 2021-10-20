@@ -52,113 +52,114 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [4.13. Adding Cache Versioning](#413-adding-cache-versioning)
   - [4.14. Different Cache Versions and Cleanup](#414-different-cache-versions-and-cleanup)
   - [4.15. Optimizing Cache Management](#415-optimizing-cache-management)
-  - [4.16. Service Workers - Advanced Caching](#416-service-workers---advanced-caching)
-  - [4.17. Module Preparation: Adding a Button](#417-module-preparation-adding-a-button)
-  - [4.18. Offering "Cache on Demand"](#418-offering-cache-on-demand)
-  - [4.19. Providing an Offline Fallback Page](#419-providing-an-offline-fallback-page)
-  - [4.20. Strategy: Cache with Network Fallback](#420-strategy-cache-with-network-fallback)
-  - [4.21. Strategy: Cache Only](#421-strategy-cache-only)
-  - [4.22. Strategy: Network Only](#422-strategy-network-only)
-  - [4.23. Strategy: Network with Cache Fallback](#423-strategy-network-with-cache-fallback)
-  - [4.24. Strategy: Cache then Network](#424-strategy-cache-then-network)
-  - [4.25. Cache then Network and Dynamic Caching](#425-cache-then-network-and-dynamic-caching)
-  - [4.26. Cache then Network with Offline Support](#426-cache-then-network-with-offline-support)
-  - [4.27. Cache Strategies and "Routing"](#427-cache-strategies-and-routing)
-  - [4.28. Applying Cache Only](#428-applying-cache-only)
-  - [4.29. A Better Way of Parsing Static Cache URLs](#429-a-better-way-of-parsing-static-cache-urls)
-  - [4.30. A Better Way of Serving Fallback Files](#430-a-better-way-of-serving-fallback-files)
-  - [4.31. Post Request and Cache API](#431-post-request-and-cache-api)
-  - [4.32. Cleaning/Trimming the Cache](#432-cleaningtrimming-the-cache)
-  - [4.33. Getting Rid of a Service Worker](#433-getting-rid-of-a-service-worker)
-  - [4.34. Preparing the Project for the Next Steps](#434-preparing-the-project-for-the-next-steps)
-- [5. IndexedDB and Dynamic Data](#5-indexeddb-and-dynamic-data)
-  - [5.1. Understanding the Basics](#51-understanding-the-basics)
-  - [5.2. Setting Up Firebase](#52-setting-up-firebase)
-  - [5.3. Connecting Frontend to Backend](#53-connecting-frontend-to-backend)
-  - [5.4. Dynamic Caching vs. Caching Dynamic Content](#54-dynamic-caching-vs-caching-dynamic-content)
-  - [5.5. Introducing IndexedDB](#55-introducing-indexeddb)
-  - [5.6. IndexedDB Browser Support](#56-indexeddb-browser-support)
-  - [5.7. Adding the IDB File](#57-adding-the-idb-file)
-  - [5.8. Storing Fetched Posts in IndexedDB](#58-storing-fetched-posts-in-indexeddb)
-  - [5.9. Using IndexedDB in the Service Worker](#59-using-indexeddb-in-the-service-worker)
-  - [5.10. Reading Data from IDB](#510-reading-data-from-idb)
-  - [5.11. Clearing IDB and Handling Server-Client Mismatch](#511-clearing-idb-and-handling-server-client-mismatch)
-  - [5.12. Implementing the Clear Database Method](#512-implementing-the-clear-database-method)
-  - [5.13. Deleting Single Items from the Database](#513-deleting-single-items-from-the-database)
-  - [5.14. IndexedDB and Caching Strategies](#514-indexeddb-and-caching-strategies)
-- [6. Creating a Responsive user Interface (UI)](#6-creating-a-responsive-user-interface-ui)
-  - [6.1. Responsive Design in this Course](#61-responsive-design-in-this-course)
-  - [6.2. Responsive Design in this Course](#62-responsive-design-in-this-course)
-  - [6.3. Understanding Responsive Design in our Project](#63-understanding-responsive-design-in-our-project)
-  - [6.4. CSS and Media Queries](#64-css-and-media-queries)
-  - [6.5. Using Images in a Responsive Way](#65-using-images-in-a-responsive-way)
-  - [6.6. Adding Animations](#66-adding-animations)
-  - [6.7. The Viewport and Scaling](#67-the-viewport-and-scaling)
-- [7. Background Sync](#7-background-sync)
-  - [7.1. Hwo does Background Sync Work](#71-hwo-does-background-sync-work)
-  - [7.2. Adding the Basic Setup to our Project](#72-adding-the-basic-setup-to-our-project)
-  - [7.3. Registering a Synchronization Task](#73-registering-a-synchronization-task)
-  - [7.4. Storing our Post in IndexedDB](#74-storing-our-post-in-indexeddb)
-  - [7.5. Adding a Fallback](#75-adding-a-fallback)
-  - [7.6. Syncing Data in the Service Worker](#76-syncing-data-in-the-service-worker)
-  - [7.7. Understanding Periodic Sync](#77-understanding-periodic-sync)
-  - [7.8. Adding Server Side Code](#78-adding-server-side-code)
-  - [7.9. Fixing Errors](#79-fixing-errors)
-- [8. Web Push Notifications](#8-web-push-notifications)
-  - [8.1. Why we need Web Push Notifications](#81-why-we-need-web-push-notifications)
-  - [8.2. How Push and Notifications Work](#82-how-push-and-notifications-work)
-  - [8.3. Displaying Notifications - Some Theory First](#83-displaying-notifications---some-theory-first)
-  - [8.4. Browser Support](#84-browser-support)
-  - [8.5. Requesting Permissions](#85-requesting-permissions)
-  - [8.6. Displaying Notifications](#86-displaying-notifications)
-  - [8.7. Notifications from Within the Service Worker](#87-notifications-from-within-the-service-worker)
-  - [8.8. Understanding Notification Options](#88-understanding-notification-options)
-  - [8.9. Advanced Options](#89-advanced-options)
-  - [8.10. Adding Actions to Notifications](#810-adding-actions-to-notifications)
-  - [8.11. Reacting to Notification Interaction - Clicks](#811-reacting-to-notification-interaction---clicks)
-  - [8.12. Reacting to Notification Interaction - Closing](#812-reacting-to-notification-interaction---closing)
-  - [8.13. From Notifications to Push Messages](#813-from-notifications-to-push-messages)
-  - [8.14. Creating a Push Subscription](#814-creating-a-push-subscription)
-  - [8.15. Storing Subscription](#815-storing-subscription)
-  - [8.16. Connecting Server and Client (PWA)](#816-connecting-server-and-client-pwa)
-  - [8.17. Sending Push Messges from the Server](#817-sending-push-messges-from-the-server)
-  - [8.18. Listening to Push Message](#818-listening-to-push-message)
-  - [8.19. Displaying Push Notification on a Real Device](#819-displaying-push-notification-on-a-real-device)
-  - [8.20. Opening a Page upon User Interaction](#820-opening-a-page-upon-user-interaction)
-  - [8.21. Improving our Code](#821-improving-our-code)
-- [9. Native Device Features](#9-native-device-features)
-  - [9.1. Preparing the Project](#91-preparing-the-project)
-  - [9.2. Getting DOM Access](#92-getting-dom-access)
-  - [9.3. Creating our own Polyfills](#93-creating-our-own-polyfills)
-  - [9.4. Getting the Video Image](#94-getting-the-video-image)
-  - [9.5. Hooking Up the Capture Button](#95-hooking-up-the-capture-button)
-  - [9.6. Storing the Image on a Server](#96-storing-the-image-on-a-server)
-  - [9.7. Accepting File Upload Example with Firebase](#97-accepting-file-upload-example-with-firebase)
-  - [9.8. Testing the Camera and Upload](#98-testing-the-camera-and-upload)
-  - [9.9. Implementing a Fallback](#99-implementing-a-fallback)
-  - [9.10. Getting the User Position](#910-getting-the-user-position)
-  - [9.11. Fixing Bugs](#911-fixing-bugs)
-  - [9.12. Testing the App on a Real Device](#912-testing-the-app-on-a-real-device)
-- [10. Service Worker Management with Workbox](#10-service-worker-management-with-workbox)
-  - [10.1. Understanding the Basics](#101-understanding-the-basics)
-  - [10.2. Installing Workbox and Using it](#102-installing-workbox-and-using-it)
-  - [10.3. Configuring Workbox Precaching](#103-configuring-workbox-precaching)
-  - [10.4. Customizing the Service Worker](#104-customizing-the-service-worker)
-  - [10.5. Implementing Routing with the Workbox Router](#105-implementing-routing-with-the-workbox-router)
-  - [10.6. Expanding Dynamic Caching](#106-expanding-dynamic-caching)
-  - [10.7. Options and Setting Up Strategies](#107-options-and-setting-up-strategies)
-  - [10.8. Custom Handlers (Example: For IndexedDB)](#108-custom-handlers-example-for-indexeddb)
-  - [10.9. Providing an Offline HTML Fallback](#109-providing-an-offline-html-fallback)
-  - [10.10. Handling Background Synchronisation and Push Notification](#1010-handling-background-synchronisation-and-push-notification)
-  - [10.11. Understanding the Workbox Documentation](#1011-understanding-the-workbox-documentation)
-  - [10.12. Enhancing the Build Workflow](#1012-enhancing-the-build-workflow)
-  - [10.13. Running our App on a Real Server](#1013-running-our-app-on-a-real-server)
-  - [10.14. Auditing our Webpage with Lighthouse](#1014-auditing-our-webpage-with-lighthouse)
-- [11. SPAs and PWAs](#11-spas-and-pwas)
-  - [11.1. React with create-react-app](#111-react-with-create-react-app)
-  - [11.2. A General Note about SPAs and PWAs](#112-a-general-note-about-spas-and-pwas)
-  - [11.3. Angular with the CLI](#113-angular-with-the-cli)
-  - [11.4. Vue with Vue CLI](#114-vue-with-vue-cli)
+  - [Assignment 2: Time to Practice: Service Workers and Caching](#assignment-2-time-to-practice-service-workers-and-caching)
+- [5. Service Workers - Advanced Caching](#5-service-workers---advanced-caching)
+  - [5.1. Module Preparation: Adding a Button](#51-module-preparation-adding-a-button)
+  - [5.2. Offering "Cache on Demand"](#52-offering-cache-on-demand)
+  - [5.3. Providing an Offline Fallback Page](#53-providing-an-offline-fallback-page)
+  - [5.4. Strategy: Cache with Network Fallback](#54-strategy-cache-with-network-fallback)
+  - [5.5. Strategy: Cache Only](#55-strategy-cache-only)
+  - [5.6. Strategy: Network Only](#56-strategy-network-only)
+  - [5.7. Strategy: Network with Cache Fallback](#57-strategy-network-with-cache-fallback)
+  - [5.8. Strategy: Cache then Network](#58-strategy-cache-then-network)
+  - [5.9. Cache then Network and Dynamic Caching](#59-cache-then-network-and-dynamic-caching)
+  - [5.10. Cache then Network with Offline Support](#510-cache-then-network-with-offline-support)
+  - [5.11. Cache Strategies and "Routing"](#511-cache-strategies-and-routing)
+  - [5.12. Applying Cache Only](#512-applying-cache-only)
+  - [5.13. A Better Way of Parsing Static Cache URLs](#513-a-better-way-of-parsing-static-cache-urls)
+  - [5.14. A Better Way of Serving Fallback Files](#514-a-better-way-of-serving-fallback-files)
+  - [5.15. Post Request and Cache API](#515-post-request-and-cache-api)
+  - [5.16. Cleaning/Trimming the Cache](#516-cleaningtrimming-the-cache)
+  - [5.17. Getting Rid of a Service Worker](#517-getting-rid-of-a-service-worker)
+  - [5.18. Preparing the Project for the Next Steps](#518-preparing-the-project-for-the-next-steps)
+- [6. IndexedDB and Dynamic Data](#6-indexeddb-and-dynamic-data)
+  - [6.1. Understanding the Basics](#61-understanding-the-basics)
+  - [6.2. Setting Up Firebase](#62-setting-up-firebase)
+  - [6.3. Connecting Frontend to Backend](#63-connecting-frontend-to-backend)
+  - [6.4. Dynamic Caching vs. Caching Dynamic Content](#64-dynamic-caching-vs-caching-dynamic-content)
+  - [6.5. Introducing IndexedDB](#65-introducing-indexeddb)
+  - [6.6. IndexedDB Browser Support](#66-indexeddb-browser-support)
+  - [6.7. Adding the IDB File](#67-adding-the-idb-file)
+  - [6.8. Storing Fetched Posts in IndexedDB](#68-storing-fetched-posts-in-indexeddb)
+  - [6.9. Using IndexedDB in the Service Worker](#69-using-indexeddb-in-the-service-worker)
+  - [6.10. Reading Data from IDB](#610-reading-data-from-idb)
+  - [6.11. Clearing IDB and Handling Server-Client Mismatch](#611-clearing-idb-and-handling-server-client-mismatch)
+  - [6.12. Implementing the Clear Database Method](#612-implementing-the-clear-database-method)
+  - [6.13. Deleting Single Items from the Database](#613-deleting-single-items-from-the-database)
+  - [6.14. IndexedDB and Caching Strategies](#614-indexeddb-and-caching-strategies)
+- [7. Creating a Responsive user Interface (UI)](#7-creating-a-responsive-user-interface-ui)
+  - [7.1. Responsive Design in this Course](#71-responsive-design-in-this-course)
+  - [7.2. Responsive Design in this Course](#72-responsive-design-in-this-course)
+  - [7.3. Understanding Responsive Design in our Project](#73-understanding-responsive-design-in-our-project)
+  - [7.4. CSS and Media Queries](#74-css-and-media-queries)
+  - [7.5. Using Images in a Responsive Way](#75-using-images-in-a-responsive-way)
+  - [7.6. Adding Animations](#76-adding-animations)
+  - [7.7. The Viewport and Scaling](#77-the-viewport-and-scaling)
+- [8. Background Sync](#8-background-sync)
+  - [8.1. Hwo does Background Sync Work](#81-hwo-does-background-sync-work)
+  - [8.2. Adding the Basic Setup to our Project](#82-adding-the-basic-setup-to-our-project)
+  - [8.3. Registering a Synchronization Task](#83-registering-a-synchronization-task)
+  - [8.4. Storing our Post in IndexedDB](#84-storing-our-post-in-indexeddb)
+  - [8.5. Adding a Fallback](#85-adding-a-fallback)
+  - [8.6. Syncing Data in the Service Worker](#86-syncing-data-in-the-service-worker)
+  - [8.7. Understanding Periodic Sync](#87-understanding-periodic-sync)
+  - [8.8. Adding Server Side Code](#88-adding-server-side-code)
+  - [8.9. Fixing Errors](#89-fixing-errors)
+- [9. Web Push Notifications](#9-web-push-notifications)
+  - [9.1. Why we need Web Push Notifications](#91-why-we-need-web-push-notifications)
+  - [9.2. How Push and Notifications Work](#92-how-push-and-notifications-work)
+  - [9.3. Displaying Notifications - Some Theory First](#93-displaying-notifications---some-theory-first)
+  - [9.4. Browser Support](#94-browser-support)
+  - [9.5. Requesting Permissions](#95-requesting-permissions)
+  - [9.6. Displaying Notifications](#96-displaying-notifications)
+  - [9.7. Notifications from Within the Service Worker](#97-notifications-from-within-the-service-worker)
+  - [9.8. Understanding Notification Options](#98-understanding-notification-options)
+  - [9.9. Advanced Options](#99-advanced-options)
+  - [9.10. Adding Actions to Notifications](#910-adding-actions-to-notifications)
+  - [9.11. Reacting to Notification Interaction - Clicks](#911-reacting-to-notification-interaction---clicks)
+  - [9.12. Reacting to Notification Interaction - Closing](#912-reacting-to-notification-interaction---closing)
+  - [9.13. From Notifications to Push Messages](#913-from-notifications-to-push-messages)
+  - [9.14. Creating a Push Subscription](#914-creating-a-push-subscription)
+  - [9.15. Storing Subscription](#915-storing-subscription)
+  - [9.16. Connecting Server and Client (PWA)](#916-connecting-server-and-client-pwa)
+  - [9.17. Sending Push Messges from the Server](#917-sending-push-messges-from-the-server)
+  - [9.18. Listening to Push Message](#918-listening-to-push-message)
+  - [9.19. Displaying Push Notification on a Real Device](#919-displaying-push-notification-on-a-real-device)
+  - [9.20. Opening a Page upon User Interaction](#920-opening-a-page-upon-user-interaction)
+  - [9.21. Improving our Code](#921-improving-our-code)
+- [10. Native Device Features](#10-native-device-features)
+  - [10.1. Preparing the Project](#101-preparing-the-project)
+  - [10.2. Getting DOM Access](#102-getting-dom-access)
+  - [10.3. Creating our own Polyfills](#103-creating-our-own-polyfills)
+  - [10.4. Getting the Video Image](#104-getting-the-video-image)
+  - [10.5. Hooking Up the Capture Button](#105-hooking-up-the-capture-button)
+  - [10.6. Storing the Image on a Server](#106-storing-the-image-on-a-server)
+  - [10.7. Accepting File Upload Example with Firebase](#107-accepting-file-upload-example-with-firebase)
+  - [10.8. Testing the Camera and Upload](#108-testing-the-camera-and-upload)
+  - [10.9. Implementing a Fallback](#109-implementing-a-fallback)
+  - [10.10. Getting the User Position](#1010-getting-the-user-position)
+  - [10.11. Fixing Bugs](#1011-fixing-bugs)
+  - [10.12. Testing the App on a Real Device](#1012-testing-the-app-on-a-real-device)
+- [11. Service Worker Management with Workbox](#11-service-worker-management-with-workbox)
+  - [11.1. Understanding the Basics](#111-understanding-the-basics)
+  - [11.2. Installing Workbox and Using it](#112-installing-workbox-and-using-it)
+  - [11.3. Configuring Workbox Precaching](#113-configuring-workbox-precaching)
+  - [11.4. Customizing the Service Worker](#114-customizing-the-service-worker)
+  - [11.5. Implementing Routing with the Workbox Router](#115-implementing-routing-with-the-workbox-router)
+  - [11.6. Expanding Dynamic Caching](#116-expanding-dynamic-caching)
+  - [11.7. Options and Setting Up Strategies](#117-options-and-setting-up-strategies)
+  - [11.8. Custom Handlers (Example: For IndexedDB)](#118-custom-handlers-example-for-indexeddb)
+  - [11.9. Providing an Offline HTML Fallback](#119-providing-an-offline-html-fallback)
+  - [11.10. Handling Background Synchronisation and Push Notification](#1110-handling-background-synchronisation-and-push-notification)
+  - [11.11. Understanding the Workbox Documentation](#1111-understanding-the-workbox-documentation)
+  - [11.12. Enhancing the Build Workflow](#1112-enhancing-the-build-workflow)
+  - [11.13. Running our App on a Real Server](#1113-running-our-app-on-a-real-server)
+  - [11.14. Auditing our Webpage with Lighthouse](#1114-auditing-our-webpage-with-lighthouse)
+- [12. SPAs and PWAs](#12-spas-and-pwas)
+  - [12.1. React with create-react-app](#121-react-with-create-react-app)
+  - [12.2. A General Note about SPAs and PWAs](#122-a-general-note-about-spas-and-pwas)
+  - [12.3. Angular with the CLI](#123-angular-with-the-cli)
+  - [12.4. Vue with Vue CLI](#124-vue-with-vue-cli)
 
 ---
 
@@ -741,115 +742,345 @@ xhr.send();
   <img src="./images/70-implement_dynamic_caching.png">
 
 ## 4.12. Handling Errors
+1. We can add a catch on the promise. 
+2. There's an error caused when the app is going to register the service worker in the offline mode.
+3. We shouldn't register it because it can bring us into an infinitive loop that the app keeps using the older verion of the service worker from the cache.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) {
+          return response;
+        } else {
+          return fetch(event.request)
+            .then((res) => {
+              caches.open('dynamic').then((cache) => {
+                cache.put(event.request.url, res.clone());
+                return res;
+              });
+            })
+            .catch((err) => {}); // add to catch error
+        }
+      }),
+    );
+  }
+  ```
 
 ## 4.13. Adding Cache Versioning
+1. In most of the cases, we wouldn't want to cache JSON data but files such as images, HTML, CSS, and Javascript. 
+2. If we update the Javascript file for different features and behavior, the app isn't updated right away because it's using the older Javascript from the cache.
+3. For example, we can adjust `feed.js` and use Javascript to change the color of the title in a card.
+  ```js
+  // feed.js
+  function createCard() {
+    var cardWrapper = document.createElement('div');
+    cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
+    var cardTitle = document.createElement('div');
+    cardTitle.className = 'mdl-card__title';
+    cardTitle.style.backgroundImage = 'url("/src/images/sf-boat.jpg")';
+    cardTitle.style.backgroundSize = 'cover';
+    cardTitle.style.height = '180px';
+    cardWrapper.appendChild(cardTitle);
+    var cardTitleTextElement = document.createElement('h2');
+    // change color to white
+    cardTitleTextElement.style.color = 'white'; 
+    
+    cardTitleTextElement.className = 'mdl-card__title-text';
+    cardTitleTextElement.textContent = 'San Francisco Trip';
+    cardTitle.appendChild(cardTitleTextElement);
+    var cardSupportingText = document.createElement('div');
+    cardSupportingText.className = 'mdl-card__supporting-text';
+    cardSupportingText.textContent = 'In San Francisco';
+    cardSupportingText.style.textAlign = 'center';
+    cardWrapper.appendChild(cardSupportingText);
+    componentHandler.upgradeElement(cardWrapper);
+    sharedMomentsArea.appendChild(cardWrapper);
+  }
+  ```
+4. However, if we update `sw.js` for any trivial change such as adding comment which has no effect on the code itself, the service worker will be reinstalled and the Javascript is fetched again and get updated.
+5. Nevertheless, this is no an ideal solution to update the content of `sw.js` for no specific purpose. 
+6. In this case, we can create cache by `caches.open` with a different name.
+  ```js
+  // sw.js
+  self.addEventListener('install', function (event) {
+  console.log('[Service Worker] Installing Service Worker ...', event);
+  event.waitUntil(
+    // cache all files with different name for versioning
+    caches.open('static-v2').then((cache) => {
+      cache.addAll([
+        // files to cache...
+      ])
+    });
+  );
+  ```
+7. After updating both code and `sw.js`, we can reload the page and activate the new service worker from developer console.
+8. However, as now we have 2 versions of caches, the app can find the required files from either of the caches. 
+9. We can check the strategies and clean up the files to prevent using files in the wrong version.
 
 ## 4.14. Different Cache Versions and Cleanup
+1. In service worker, there are different stages like lifecycle hooks in frontend framework.
+2. For example, to clean up the cahces, we can do the process in `activate` event handler.
+3. In this case, we remove all the caches that is not in the new version and in the `dynamic` category.
+  ```js
+  // sw.js
+  self.addEventListener('activate', function (event) {
+    console.log('[Service Worker] Activating Service Worker ....', event);
+    event.waitUntil(
+      caches.keys().then((keyList) => {
+        // Promise.all method will wait for an array of promise instance to be done
+        return Promise.all(
+          keyList.map((key) => {
+            if (key !== 'static-v2' && key !== 'dynamic') {
+              console.log('[Service Worker] Removing old cache', key);
+              return caches.delete(key);
+            }
+          }),
+        );
+      }),
+    );
+    return self.clients.claim();
+  });
+  ```
+4. The solution is still not ideal that we have to keep updating the naming for the cache.
+  ```js
+  // sw.js
+  self.addEventListener('install', function (event) {
+    console.log('[Service Worker] Installing Service Worker ...', event);
+    event.waitUntil(
+      // this needs to update for different versions
+      caches.open('static-v3').then((cache) => { 
+        console.log('Service Worker Precaching App Shell');
+        cache.addAll([
+          // ...files to cache
+        ]);
+      }),
+    );
+  });
+
+  self.addEventListener('activate', function (event) {
+    console.log('[Service Worker] Activating Service Worker ....', event);
+    event.waitUntil(
+      caches.keys().then((keyList) => {
+        // Promise.all method will wait for an array of promise instance to be done
+        return Promise.all(
+          keyList.map((key) => {
+            // this needs to update for different versions of caches
+            if (key !== 'static-v3' && key !== 'dynamic') {
+              console.log('[Service Worker] Removing old cache', key);
+              return caches.delete(key);
+            }
+          }),
+        );
+      }),
+    );
+    return self.clients.claim();
+  });
+  ```
+
 ## 4.15. Optimizing Cache Management
-## 4.16. Service Workers - Advanced Caching
-## 4.17. Module Preparation: Adding a Button
-## 4.18. Offering "Cache on Demand"
-## 4.19. Providing an Offline Fallback Page
-## 4.20. Strategy: Cache with Network Fallback
-## 4.21. Strategy: Cache Only
-## 4.22. Strategy: Network Only
-## 4.23. Strategy: Network with Cache Fallback
-## 4.24. Strategy: Cache then Network 
-## 4.25. Cache then Network and Dynamic Caching
-## 4.26. Cache then Network with Offline Support
-## 4.27. Cache Strategies and "Routing"
-## 4.28. Applying Cache Only
-## 4.29. A Better Way of Parsing Static Cache URLs
-## 4.30. A Better Way of Serving Fallback Files
-## 4.31. Post Request and Cache API
-## 4.32. Cleaning/Trimming the Cache
-## 4.33. Getting Rid of a Service Worker
-## 4.34. Preparing the Project for the Next Steps
-# 5. IndexedDB and Dynamic Data
-## 5.1. Understanding the Basics
-## 5.2. Setting Up Firebase
-## 5.3. Connecting Frontend to Backend
-## 5.4. Dynamic Caching vs. Caching Dynamic Content
-## 5.5. Introducing IndexedDB
-## 5.6. IndexedDB Browser Support
-## 5.7. Adding the IDB File
-## 5.8. Storing Fetched Posts in IndexedDB
-## 5.9. Using IndexedDB in the Service Worker
-## 5.10. Reading Data from IDB
-## 5.11. Clearing IDB and Handling Server-Client Mismatch
-## 5.12. Implementing the Clear Database Method
-## 5.13. Deleting Single Items from the Database
-## 5.14. IndexedDB and Caching Strategies
-# 6. Creating a Responsive user Interface (UI)
-## 6.1. Responsive Design in this Course
-## 6.2. Responsive Design in this Course
-## 6.3. Understanding Responsive Design in our Project
-## 6.4. CSS and Media Queries
-## 6.5. Using Images in a Responsive Way
-## 6.6. Adding Animations
-## 6.7. The Viewport and Scaling
-# 7. Background Sync
-## 7.1. Hwo does Background Sync Work
-## 7.2. Adding the Basic Setup to our Project
-## 7.3. Registering a Synchronization Task
-## 7.4. Storing our Post in IndexedDB
-## 7.5. Adding a Fallback
-## 7.6. Syncing Data in the Service Worker
-## 7.7. Understanding Periodic Sync
-## 7.8. Adding Server Side Code
-## 7.9. Fixing Errors
-# 8. Web Push Notifications
-## 8.1. Why we need Web Push Notifications
-## 8.2. How Push and Notifications Work
-## 8.3. Displaying Notifications - Some Theory First
-## 8.4. Browser Support
-## 8.5. Requesting Permissions
-## 8.6. Displaying Notifications
-## 8.7. Notifications from Within the Service Worker
-## 8.8. Understanding Notification Options
-## 8.9. Advanced Options
-## 8.10. Adding Actions to Notifications
-## 8.11. Reacting to Notification Interaction - Clicks
-## 8.12. Reacting to Notification Interaction - Closing
-## 8.13. From Notifications to Push Messages
-## 8.14. Creating a Push Subscription
-## 8.15. Storing Subscription
-## 8.16. Connecting Server and Client (PWA)
-## 8.17. Sending Push Messges from the Server
-## 8.18. Listening to Push Message
-## 8.19. Displaying Push Notification on a Real Device
-## 8.20. Opening a Page upon User Interaction
-## 8.21. Improving our Code
-# 9. Native Device Features
-## 9.1. Preparing the Project
-## 9.2. Getting DOM Access
-## 9.3. Creating our own Polyfills
-## 9.4. Getting the Video Image
-## 9.5. Hooking Up the Capture Button
-## 9.6. Storing the Image on a Server
-## 9.7. Accepting File Upload Example with Firebase
-## 9.8. Testing the Camera and Upload
-## 9.9. Implementing a Fallback
-## 9.10. Getting the User Position
-## 9.11. Fixing Bugs
-## 9.12. Testing the App on a Real Device
-# 10. Service Worker Management with Workbox
-## 10.1. Understanding the Basics
-## 10.2. Installing Workbox and Using it
-## 10.3. Configuring Workbox Precaching
-## 10.4. Customizing the Service Worker
-## 10.5. Implementing Routing with the Workbox Router
-## 10.6. Expanding Dynamic Caching
-## 10.7. Options and Setting Up Strategies
-## 10.8. Custom Handlers (Example: For IndexedDB)
-## 10.9. Providing an Offline HTML Fallback
-## 10.10. Handling Background Synchronisation and Push Notification
-## 10.11. Understanding the Workbox Documentation
-## 10.12. Enhancing the Build Workflow
-## 10.13. Running our App on a Real Server
-## 10.14. Auditing our Webpage with Lighthouse
-# 11. SPAs and PWAs
-## 11.1. React with create-react-app
-## 11.2. A General Note about SPAs and PWAs
-## 11.3. Angular with the CLI
-## 11.4. Vue with Vue CLI
+1. We can have a local variable to store the string name of the version we want, so we don't need to update the values in code directly but on the variables.
+  ```js
+  // sw.js
+  const CACHE_STATIC_NAME = 'static-v4';
+  const CACHE_DYNAMIC_NAME = 'dynamic-v2';
+  ```
+
+## Assignment 2: Time to Practice: Service Workers and Caching
+1. When we firstly initiate the app for assignment, we may find the app on `http://localhost:8080` is still using the old caches from the other app. 
+2. We can go to 'Application' in developer console and clear all site data to clear the caches and records.
+  ```js
+  // main.js
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        console.log('Service worker registered!');
+        console.log(registration.scope);
+      })
+      .catch((error) => console.log(error));
+  }
+  
+  // sw.js
+  const CACHE_STATIC_NAME = 'static';
+  const CACHE_DYNAMIC_NAME = 'dynamic';
+
+  self.addEventListener('install', (event) => {
+    console.log('skip waiting');
+    self.skipWaiting();
+
+    console.log('[Service Worker] Installing Service Worker ...', event);
+    const precache = async () => {
+      const cache = await caches.open(CACHE_STATIC_NAME);
+
+      console.log('Service Worker Precaching App Shell');
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/src/css/app.css',
+        '/src/css/main.css',
+        '/src/js/main.js',
+        '/src/js/material.min.js',
+        'https://fonts.googleapis.com/css?family=Roboto:400,700',
+        'https://fonts.googleapis.com/icon?family=Material+Icons',
+        'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
+      ]);
+    };
+
+    // waitUntil resolve Promise instances
+    // precache returns a Promise which is created from cache.addAll
+    // installation will be considered failed if the Promise can't be resolved
+    event.waitUntil(precache());
+  });
+
+  self.addEventListener('activate', (event) => {
+    console.log('[Service Worker] Activating Service Worker ....', event);
+    event.waitUntil(
+      caches.keys().then((keyList) => {
+        return Promise.all(
+          keyList.map((key) => {
+            if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
+              console.log('[Service Worker] Removing old cache', key);
+              return caches.delete(key);
+            }
+          }),
+        );
+      }),
+    );
+    return self.clients.claim();
+  });
+
+  self.addEventListener('fetch', (event) => {
+    // console.log('[Service Worker] Fetching something ....', event);
+    event.respondWith(
+      (async () => {
+        // event.respondWith interacts with a response or a Promise instance
+        try {
+          const cachedResponse = await caches.match(event.request);
+          if (cachedResponse) {
+            // use files from caches
+            return cachedResponse;
+          } else {
+            // dynamic caching
+            const response = await fetch(event.request);
+            const cache = await caches.open(CACHE_DYNAMIC_NAME);
+            // response.clone is used as response can only be used once by it's nature
+            // without cloning the response, the user can't get the response and can cause error
+            cache.put(event.request.url, response.clone());
+            return response;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })(),
+    );
+  });
+  ```
+
+# 5. Service Workers - Advanced Caching
+## 5.1. Module Preparation: Adding a Button
+## 5.2. Offering "Cache on Demand"
+## 5.3. Providing an Offline Fallback Page
+## 5.4. Strategy: Cache with Network Fallback
+## 5.5. Strategy: Cache Only
+## 5.6. Strategy: Network Only
+## 5.7. Strategy: Network with Cache Fallback
+## 5.8. Strategy: Cache then Network 
+## 5.9. Cache then Network and Dynamic Caching
+## 5.10. Cache then Network with Offline Support
+## 5.11. Cache Strategies and "Routing"
+## 5.12. Applying Cache Only
+## 5.13. A Better Way of Parsing Static Cache URLs
+## 5.14. A Better Way of Serving Fallback Files
+## 5.15. Post Request and Cache API
+## 5.16. Cleaning/Trimming the Cache
+## 5.17. Getting Rid of a Service Worker
+## 5.18. Preparing the Project for the Next Steps
+# 6. IndexedDB and Dynamic Data
+## 6.1. Understanding the Basics
+## 6.2. Setting Up Firebase
+## 6.3. Connecting Frontend to Backend
+## 6.4. Dynamic Caching vs. Caching Dynamic Content
+## 6.5. Introducing IndexedDB
+## 6.6. IndexedDB Browser Support
+## 6.7. Adding the IDB File
+## 6.8. Storing Fetched Posts in IndexedDB
+## 6.9. Using IndexedDB in the Service Worker
+## 6.10. Reading Data from IDB
+## 6.11. Clearing IDB and Handling Server-Client Mismatch
+## 6.12. Implementing the Clear Database Method
+## 6.13. Deleting Single Items from the Database
+## 6.14. IndexedDB and Caching Strategies
+# 7. Creating a Responsive user Interface (UI)
+## 7.1. Responsive Design in this Course
+## 7.2. Responsive Design in this Course
+## 7.3. Understanding Responsive Design in our Project
+## 7.4. CSS and Media Queries
+## 7.5. Using Images in a Responsive Way
+## 7.6. Adding Animations
+## 7.7. The Viewport and Scaling
+# 8. Background Sync
+## 8.1. Hwo does Background Sync Work
+## 8.2. Adding the Basic Setup to our Project
+## 8.3. Registering a Synchronization Task
+## 8.4. Storing our Post in IndexedDB
+## 8.5. Adding a Fallback
+## 8.6. Syncing Data in the Service Worker
+## 8.7. Understanding Periodic Sync
+## 8.8. Adding Server Side Code
+## 8.9. Fixing Errors
+# 9. Web Push Notifications
+## 9.1. Why we need Web Push Notifications
+## 9.2. How Push and Notifications Work
+## 9.3. Displaying Notifications - Some Theory First
+## 9.4. Browser Support
+## 9.5. Requesting Permissions
+## 9.6. Displaying Notifications
+## 9.7. Notifications from Within the Service Worker
+## 9.8. Understanding Notification Options
+## 9.9. Advanced Options
+## 9.10. Adding Actions to Notifications
+## 9.11. Reacting to Notification Interaction - Clicks
+## 9.12. Reacting to Notification Interaction - Closing
+## 9.13. From Notifications to Push Messages
+## 9.14. Creating a Push Subscription
+## 9.15. Storing Subscription
+## 9.16. Connecting Server and Client (PWA)
+## 9.17. Sending Push Messges from the Server
+## 9.18. Listening to Push Message
+## 9.19. Displaying Push Notification on a Real Device
+## 9.20. Opening a Page upon User Interaction
+## 9.21. Improving our Code
+# 10. Native Device Features
+## 10.1. Preparing the Project
+## 10.2. Getting DOM Access
+## 10.3. Creating our own Polyfills
+## 10.4. Getting the Video Image
+## 10.5. Hooking Up the Capture Button
+## 10.6. Storing the Image on a Server
+## 10.7. Accepting File Upload Example with Firebase
+## 10.8. Testing the Camera and Upload
+## 10.9. Implementing a Fallback
+## 10.10. Getting the User Position
+## 10.11. Fixing Bugs
+## 10.12. Testing the App on a Real Device
+# 11. Service Worker Management with Workbox
+## 11.1. Understanding the Basics
+## 11.2. Installing Workbox and Using it
+## 11.3. Configuring Workbox Precaching
+## 11.4. Customizing the Service Worker
+## 11.5. Implementing Routing with the Workbox Router
+## 11.6. Expanding Dynamic Caching
+## 11.7. Options and Setting Up Strategies
+## 11.8. Custom Handlers (Example: For IndexedDB)
+## 11.9. Providing an Offline HTML Fallback
+## 11.10. Handling Background Synchronisation and Push Notification
+## 11.11. Understanding the Workbox Documentation
+## 11.12. Enhancing the Build Workflow
+## 11.13. Running our App on a Real Server
+## 11.14. Auditing our Webpage with Lighthouse
+# 12. SPAs and PWAs
+## 12.1. React with create-react-app
+## 12.2. A General Note about SPAs and PWAs
+## 12.3. Angular with the CLI
+## 12.4. Vue with Vue CLI
