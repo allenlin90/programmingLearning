@@ -98,7 +98,7 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [7.6. Adding Animations](#76-adding-animations)
   - [7.7. The Viewport and Scaling](#77-the-viewport-and-scaling)
 - [8. Background Sync](#8-background-sync)
-  - [8.1. Hwo does Background Sync Work](#81-hwo-does-background-sync-work)
+  - [8.1. How does Background Sync Work](#81-how-does-background-sync-work)
   - [8.2. Adding the Basic Setup to our Project](#82-adding-the-basic-setup-to-our-project)
   - [8.3. Registering a Synchronization Task](#83-registering-a-synchronization-task)
   - [8.4. Storing our Post in IndexedDB](#84-storing-our-post-in-indexeddb)
@@ -1844,8 +1844,24 @@ This section uses `adv-caching-01--prepared-project`
 
 
 # 6. IndexedDB and Dynamic Data
+1. This lecture uses `adv-caching-11--final` from the last lecture. 
+
 ## 6.1. Understanding the Basics
+1. We will set up a simple backend to work with dynamic data.
+
 ## 6.2. Setting Up Firebase
+1. We use `Realtime Database` rather than "Firebase Database" to handle data.
+  ```json
+  // rules for realtime database
+  {
+    "rules": {
+      ".read": true,
+      ".write": true
+    }
+  }
+  ```
+2. We can upload images to `storage` which can generate a public URL that can access the image with GET request. 
+
 ## 6.3. Connecting Frontend to Backend
 ## 6.4. Dynamic Caching vs. Caching Dynamic Content
 ## 6.5. Introducing IndexedDB
@@ -1867,7 +1883,7 @@ This section uses `adv-caching-01--prepared-project`
 ## 7.6. Adding Animations
 ## 7.7. The Viewport and Scaling
 # 8. Background Sync
-## 8.1. Hwo does Background Sync Work
+## 8.1. How does Background Sync Work
 ## 8.2. Adding the Basic Setup to our Project
 ## 8.3. Registering a Synchronization Task
 ## 8.4. Storing our Post in IndexedDB
