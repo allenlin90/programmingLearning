@@ -52,7 +52,7 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [4.13. Adding Cache Versioning](#413-adding-cache-versioning)
   - [4.14. Different Cache Versions and Cleanup](#414-different-cache-versions-and-cleanup)
   - [4.15. Optimizing Cache Management](#415-optimizing-cache-management)
-  - [Assignment 2: Time to Practice: Service Workers and Caching](#assignment-2-time-to-practice-service-workers-and-caching)
+  - [4.16. Assignment 2: Time to Practice: Service Workers and Caching](#416-assignment-2-time-to-practice-service-workers-and-caching)
 - [5. Service Workers - Advanced Caching](#5-service-workers---advanced-caching)
   - [5.1. Module Preparation: Adding a Button](#51-module-preparation-adding-a-button)
   - [5.2. Offering "Cache on Demand"](#52-offering-cache-on-demand)
@@ -66,12 +66,14 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [5.10. Cache then Network with Offline Support](#510-cache-then-network-with-offline-support)
   - [5.11. Cache Strategies and "Routing"](#511-cache-strategies-and-routing)
   - [5.12. Applying Cache Only](#512-applying-cache-only)
-  - [5.13. A Better Way of Parsing Static Cache URLs](#513-a-better-way-of-parsing-static-cache-urls)
-  - [5.14. A Better Way of Serving Fallback Files](#514-a-better-way-of-serving-fallback-files)
-  - [5.15. Post Request and Cache API](#515-post-request-and-cache-api)
-  - [5.16. Cleaning/Trimming the Cache](#516-cleaningtrimming-the-cache)
-  - [5.17. Getting Rid of a Service Worker](#517-getting-rid-of-a-service-worker)
-  - [5.18. Preparing the Project for the Next Steps](#518-preparing-the-project-for-the-next-steps)
+  - [5.13. Assignment - Advanced caching](#513-assignment---advanced-caching)
+    - [5.13.1. Tasks](#5131-tasks)
+    - [5.13.2. Solutions](#5132-solutions)
+  - [5.14. A Better Way of Parsing Static Cache](#514-a-better-way-of-parsing-static-cache)
+  - [5.15. A Better Way of Serving Fallback Files](#515-a-better-way-of-serving-fallback-files)
+  - [5.16. Post Request and Cache API](#516-post-request-and-cache-api)
+  - [5.17. Cleaning/Trimming the Cache](#517-cleaningtrimming-the-cache)
+  - [5.18. Getting Rid of a Service Worker](#518-getting-rid-of-a-service-worker)
 - [6. IndexedDB and Dynamic Data](#6-indexeddb-and-dynamic-data)
   - [6.1. Understanding the Basics](#61-understanding-the-basics)
   - [6.2. Setting Up Firebase](#62-setting-up-firebase)
@@ -886,7 +888,7 @@ xhr.send();
   const CACHE_DYNAMIC_NAME = 'dynamic-v2';
   ```
 
-## Assignment 2: Time to Practice: Service Workers and Caching
+## 4.16. Assignment 2: Time to Practice: Service Workers and Caching
 1. When we firstly initiate the app for assignment, we may find the app on `http://localhost:8080` is still using the old caches from the other app. 
 2. We can go to 'Application' in developer console and clear all site data to clear the caches and records.
   ```js
@@ -978,24 +980,869 @@ xhr.send();
   ```
 
 # 5. Service Workers - Advanced Caching
+This section uses `adv-caching-01--prepared-project`
+
 ## 5.1. Module Preparation: Adding a Button
+1. In some cases, we'd like to cache the files and data according to user event rather than dynamically caching all the data of the app.
+2. For example, in this sample app, we can cache the post that the user just made. The caching process will execute in the regular Javascript rather than the service worker file.
+3. In this case, we can turn off the dynamic caching in service worker.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function(event) {
+    event.respondWith(
+      caches.match(event.request)
+        .then(function(response) {
+          if (response) {
+            return response;
+          } else {
+            return fetch(event.request)
+              .then(function(res) {
+                return caches.open(CACHE_DYNAMIC_NAME)
+                  .then(function(cache) {
+                    // turn off dynamic caching
+                    // cache.put(event.request.url, res.clone());
+                    return res;
+                  })
+              })
+              .catch(function(err) {
+
+              });
+          }
+        })
+    );
+  });
+  ```
+4. The card is created when the user add new post which controlled in `feed.js`.
+5. We can add a button to allow the user to "save" the post on the device.
+  ```js
+  // feed.js
+  var cardSaveButton = document.createElement('button');
+  cardSaveButton.textContent = 'Save';
+  cardSaveButton.addEventListener('click', onSaveButtonClicked);
+
+  function onSaveButtonClicked(event) {
+    console.log('clicked');
+  }
+  ```
+
 ## 5.2. Offering "Cache on Demand"
+1. We can not only access `caches` from service worker but also frontend Javascript code.
+2. From the last section, we can continue working on the event handler after the user clicks the button.
+  ```js
+  // feed.js
+  function onSaveButtonClicked(event) {
+    console.log('clicked');
+    if ('caches' in window) {
+      // we check if caches is available on the browser
+      // to prevent prompting error when the user clicks 'save'
+      caches
+        .open('user-requested')
+        .then((cache) => {
+          cache.add('https://httpbin.org/get');
+          cache.add('/src/images/sf-boat.jpg');
+        })
+        .catch((err) => console.log(err));
+    }
+  }
+  ```
+3. After testing the feature, we can comment out the "save" button on the card and resume the dynamic caching feature.
+
 ## 5.3. Providing an Offline Fallback Page
+1. For pages that we cache the data and files dynamically, if the user hasn't visited the path, the app will prompt an error as there's nothing to show when it's offline.
+2. In this case, we can create `offline.html` and use the code from `index.html` to use the same app shell.
+  ```html
+  <!-- offline.html -->
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta
+        name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+      />
+      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+      <title>PWAGram</title>
+      <link
+        href="https://fonts.googleapis.com/css?family=Roboto:400,700"
+        rel="stylesheet"
+      />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css"
+      />
+      <link rel="stylesheet" href="/src/css/app.css" />
+      <link rel="stylesheet" href="/src/css/feed.css" />
+      <link rel="manifest" href="/manifest.json" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+      <meta name="apple-mobile-web-app-title" content="PWAGram" />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-57x57.png"
+        sizes="57x57"
+      />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-60x60.png"
+        sizes="60x60"
+      />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-72x72.png"
+        sizes="72x72"
+      />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-76x76.png"
+        sizes="76x76"
+      />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-114x114.png"
+        sizes="114x114"
+      />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-120x120.png"
+        sizes="120x120"
+      />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-144x144.png"
+        sizes="144x144"
+      />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-152x152.png"
+        sizes="152x152"
+      />
+      <link
+        rel="apple-touch-icon"
+        href="/src/images/icons/apple-icon-180x180.png"
+        sizes="180x180"
+      />
+      <meta
+        name="msapplication-TileImage"
+        content="/src/images/icons/app-icon-144x144.png"
+      />
+      <meta name="msapplication-TileColor" content="#fff" />
+      <meta name="theme-color" content="#3f51b5" />
+    </head>
+    <body>
+      <div id="app">
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+          <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+              <!-- Title -->
+              <span class="mdl-layout-title">PWAGram</span>
+              <!-- Add spacer, to align navigation to the right -->
+              <div class="mdl-layout-spacer"></div>
+              <!-- Navigation. We hide it in small screens. -->
+              <nav class="mdl-navigation mdl-layout--large-screen-only">
+                <a class="mdl-navigation__link" href="/">Feed</a>
+                <a class="mdl-navigation__link" href="/help">Help</a>
+                <div class="drawer-option">
+                  <button
+                    class="
+                      enable-notifications
+                      mdl-button mdl-js-button
+                      mdl-button--raised mdl-button--colored
+                      mdl-color--accent
+                    "
+                  >
+                    Enable Notifications
+                  </button>
+                </div>
+              </nav>
+            </div>
+          </header>
+          <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title">PWAGram</span>
+            <nav class="mdl-navigation">
+              <a class="mdl-navigation__link" href="/">Feed</a>
+              <a class="mdl-navigation__link" href="/help">Help</a>
+              <div class="drawer-option">
+                <button
+                  class="
+                    enable-notifications
+                    mdl-button mdl-js-button
+                    mdl-button--raised mdl-button--colored
+                    mdl-color--accent
+                  "
+                >
+                  Enable Notifications
+                </button>
+              </div>
+            </nav>
+          </div>
+          <main class="mdl-layout__content mat-typography">
+            <div class="page-content">
+              <h5 class="text-center mdl-color-text--primary">
+                We're sorry. This page hasn't been cached yet.
+              </h5>
+              <p>But why don't you try one of our <a href="/">other pages</a>?</p>
+            </div>
+          </main>
+        </div>
+      </div>
+      <script defer src="/src/js/material.min.js"></script>
+      <script src="/src/js/promise.js"></script>
+      <script src="/src/js/fetch.js"></script>
+      <script src="/src/js/app.js"></script>
+      <script src="/src/js/feed.js"></script>
+    </body>
+  </html>
+  ```
+3. After setting up the HTML file, we can register it to be cached in the service worker.
+4. We then can put the fallback catach all page in the error catch when the service worker can't either find the data or file from cache or the internet.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', (event) => {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) {
+          return response;
+        } else {
+          return fetch(event.request)
+            .then((res) => {
+              return caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+                cache.put(event.request.url, res.clone());
+                return res;
+              });
+            })
+            .catch(function (err) {
+              // return the fallback page if there's nothing in the cache
+              return caches.open(CACHE_STATIC_NAME).then((cache) => {
+                return cache.match('/offline.html');
+              });
+            });
+        }
+      }),
+    );
+  });
+  ```
+
 ## 5.4. Strategy: Cache with Network Fallback
+1. The current strategy of loading the app is to check at the service worker as the intercept and check if there's any cache available to load. 
+2. The pros on this strategy is that the app can be loaded instantly when the user opens it.
+3. However, on the down turn, the app may be up to date as the service worker will take the data in the cache as the priority.
+
 ## 5.5. Strategy: Cache Only
+1. We can turn off and allow the app to use the data only from the cache without accessing any resource from the network though the internet is available.
+2. This strategy wouldn't be useful as the app is totally disconnected from the network and can't be updated.
+  ```js
+  // sw.js
+  Listener('fetch', function (event) {
+    event.respondWith(caches.match(event.request));
+  });
+  ```
+
 ## 5.6. Strategy: Network Only
+1. If we don't use any caches, the app is a regular web app that we can even work with it without any service worker.
+2. The only function of the service worker is as the intercept and let the network requests bypass. 
+3. Though the files and data will be cached, the app doesn't use any benefit from the caches and thus it isn't different from regular web apps.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    event.respondWith(fetch(event.request));
+  });
+  ```
+
 ## 5.7. Strategy: Network with Cache Fallback
-## 5.8. Strategy: Cache then Network 
+1. This strategy can be useful that the app will try to access the resources through network and use data from caches when the `fetch` fails.
+2. However, the potential issue on this strategy can happen when the internet connection is poor that the app wouldn't use files from caches right away. 
+3. This can significantly degrade the user experience, as the user may need to wait for a while to let the connections getting timeout to let the app reach the caches.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    event.respondWith(
+      fetch(event.request)
+        .then((res) => {
+          // allows dynamic caching
+          return caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+            cache.put(event.request.url, res.clone());
+            return res;
+          });
+        })
+        .catch((err) => {
+          // works only when the network isn't available
+          return caches.match(event.request);
+        }),
+    );
+  });
+  ```
+
+## 5.8. Strategy: Cache then Network
+1. This strategy can be useful in most of the cases that the app will get the required resources from caches as fast as possible to be responsive to the user while fetching and updating the app by getting resource through the network.
+2. The app firstly access data and files from caches without passing through service worker.
+3. Note that the app can access caches from `caches` API directly without using service worker. We can check the implementation earlier in [section 5.2](#52-offering-cache-on-demand).
+4. However, we'd be aware that if the app gets resource faster from the network than from the caches, we should avoid overwriting the data from network by the data from caches.
+5. Besides, we create another function `clearCards` to clear duplicate cards before rendering to the app.
+  ```js
+  // feed.js
+  function clearCards() {
+    while (sharedMomentsArea.hasChildNodes()) {
+      sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
+    }
+  }
+
+  const url = 'https://httpbin.org/get';
+  // this checks if the app should use files from caches
+  let networkDataReceived = false;
+
+  fetch(url)
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (data) {
+      // change the state to be true and prevent the app use data from caches
+      networkDataReceived = true;
+      console.log('From web', data);
+      clearCards();
+      createCard();
+    });
+
+  if ('caches' in window) {
+    caches
+      .match(url)
+      .then((res) => {
+        if (res) {
+          return res.json();
+        }
+      })
+      .then((data) => {
+        console.log('From cache', data);
+        if (!networkDataReceived) {
+          // triggeres only when data caches is loaded faster than data from network
+          clearCards();
+          createCard();
+        }
+      });
+  }
+  ```
+
 ## 5.9. Cache then Network and Dynamic Caching
+1. From the previous section, we let the app access data and files stored in caches directly and check with service worker to fetch from the network.
+2. However, the data and files from the networks hasn't been cached locally yet.
+3. We can store the data in the dynamic cache. When we open the cache at the first time, it is empty since nothing has been fetched through the network.
+4. We then store everything that the app requested from the network.
+5. This strategy will also let the app caches all the data and files that have been pre-cached.
+6. However, though all the data and files have been cached, the current strategy still doesn't allow the app to work offline.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    event.respondWith(
+      caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+        return fetch(event.request).then((res) => {
+          cache.put(event.request, res.clone());
+          return res;
+        });
+      }),
+    );
+  });
+  ```
+
 ## 5.10. Cache then Network with Offline Support
+1. From the previous strategy, we can notice that the app does cache the data fetched from the network but doesn't use the caches in any circumstances.
+2. To use the benefits from caches and allow the app works offline, we should check what data and files the app is fetching and ensure `app.js` and `feed.js` are loaded first in the offline mode.
+3. We update the service worker and check if the app is requesting data from certain endpoint such as the API for creating a post card component.
+4. We can use `indexOf` to check if the requesting endpoint includes certain string. 
+5. If the app is not going to request for the dynamic data from a certain endpoint, we can let the app checks and fetches from caches and only request from the network if it is not found in caches.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    const url = 'https://httpbin.org/get';
+
+    if (event.request.url.indexOf(url) > -1) {
+      // check if the data is fetching from certain url
+      event.respondWith(
+        caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+          return fetch(event.request).then((res) => {
+            cache.put(event.request, res.clone());
+            return res;
+          });
+        }),
+      );
+    } else {
+      // if not, allow the app to load data and files with cache first strategy
+      // the app will only fetch data from network when it's not available from caches
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          if (response) {
+            return response;
+          } else {
+            return fetch(event.request)
+              .then((res) => {
+                return caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+                  cache.put(event.request.url, res.clone());
+                  return res;
+                });
+              })
+              .catch((err) => {
+                return caches.open(CACHE_STATIC_NAME).then((cache) => {
+                  return cache.match('/offline.html');
+                });
+              });
+          }
+        }),
+      );
+    }
+  });
+  ```
+
 ## 5.11. Cache Strategies and "Routing"
+1. We now have a fallback page when the `fetch` API doesn't work. However, it can be confusing in some scenarios as if the app fails to fetch CSS files.
+2. Therefore, we can use conditions to check which route the user intends to visit and decide whether to show the fallback page when the app works in offline mode.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    const url = 'https://httpbin.org/get';
+
+    if (event.request.url.indexOf(url) > -1) {
+      event.respondWith(
+        caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+          return fetch(event.request).then((res) => {
+            cache.put(event.request, res.clone());
+            return res;
+          });
+        }),
+      );
+    } else {
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          if (response) {
+            return response;
+          } else {
+            return fetch(event.request)
+              .then((res) => {
+                return caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+                  cache.put(event.request.url, res.clone());
+                  return res;
+                });
+              })
+              .catch((err) => {
+                return caches.open(CACHE_STATIC_NAME).then((cache) => {
+                  if (event.request.url.indexOf('/help')) {
+                    // show offline fallback page 
+                    // only when the user visits '/help' related routes in offline mode
+                    return cache.match('/offline.html');
+                  }
+                });
+              });
+          }
+        }),
+      );
+    }
+  });
+  ```
+
 ## 5.12. Applying Cache Only
-## 5.13. A Better Way of Parsing Static Cache URLs
-## 5.14. A Better Way of Serving Fallback Files
-## 5.15. Post Request and Cache API
-## 5.16. Cleaning/Trimming the Cache
-## 5.17. Getting Rid of a Service Worker
-## 5.18. Preparing the Project for the Next Steps
+1. Though cache only strategy may not be useful and doesn't make sense in some cases, we can use this strategy when the app keeps updating its static files if we can ensure the cache always have the latest data.
+2. When we update any data that is listed in the static files, the app will push a new service worker to the frontend, so we can ensure the app has always had the latest data. 
+3. We can have another condition in `else if` for `fetch` event handler in service worker.
+4. In this case, we use regular expression to help checking if the requesting URL matches any of the endpoints in the static file list.
+5. If the data is the static file list, the app will only get the data from caches.
+6. However, this approach still has an issue that if the user has never visit the site and cache the app shells from the static file list in advance, this strategy will still cause problems that the app won't be able to get any data listed in the static files list through the network.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    const url = 'https://httpbin.org/get';
+
+    if (event.request.url.indexOf(url) > -1) {
+      event.respondWith(
+        caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+          return fetch(event.request).then((res) => {
+            cache.put(event.request, res.clone());
+            return res;
+          });
+        }),
+      );
+      // use regualr expression to help checking the url that 
+      // the app is going to fetch data from 
+    } else if (
+      new RegExp('\\b' + STATIC_FILES.join('\\b|\\b') + '\\b').test(
+        event.request.url,
+      )
+    ) {
+      // if the app is fetching any of the static files
+      // the app will only fetch from caches rather than the network
+      self.addEventListener('fetch', function (event) {
+        event.respondWith(caches.match(event.request));
+      });
+    } else {
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          if (response) {
+            return response;
+          } else {
+            return fetch(event.request)
+              .then((res) => {
+                return caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+                  cache.put(event.request.url, res.clone());
+                  return res;
+                });
+              })
+              .catch((err) => {
+                return caches.open(CACHE_STATIC_NAME).then((cache) => {
+                  if (event.request.url.indexOf('/help')) {
+                    return cache.match('/offline.html');
+                  }
+                });
+              });
+          }
+        }),
+      );
+    }
+  });
+  ```
+
+## 5.13. Assignment - Advanced caching
+### 5.13.1. Tasks
+1. Identify the strategy we currently use in the Service Worker (for caching)
+2. Replace it with a "Network only" strategy => Clear Storage (in Dev Tools), reload & try using your app offline
+3. Replace it with a "Cache only" strategy => Clear Storage (in Dev Tools), reload & try using your app offline
+4. Replace it with "Network, cache fallback" strategy =>  => Clear Storage (in Dev Tools), reload & try using your app offline
+5. Replace it with a "Cache, then network" strategy => Clear Storage (in Dev Tools), reload & try using your app offline
+6. Add "Routing"/ URL Parsing to pick the right strategies: Try to implement "Cache, then network", "Cache with network fallback" and "Cache only" (all of these, with appropriate URL selection)
+
+### 5.13.2. Solutions
+1. Service worker strategy
+   1. The app uses caches-first strategy that it will fetch data from caches if it's available and only fetch from the network if the cache has no required data.
+   2. All the data and files will be cached in the dynamic routes. 
+   3. This is cache, fallback to network strategy (with dynamic caching).
+2. Network only strategy
+   1. The serviec worker is only an intercept before getting data from the network.
+   2. By using this strategy, the app can't work offline.
+    ```js
+    // sw.js
+    // network only strategy
+    self.addEventListener('fetch', function (event) {
+      event.respondWith(
+        fetch(event.request)
+      );
+    });
+    ```
+3. Cache only strategy
+   1. By changing to cache only, the app only fetch data from caches and doesn't get any data through the network.
+   2. The app does work normally at the first time when everything is fetched from the network and cached locally. 
+   3. However, after first reload on the page, some of the resources such as the icons are not loaded. 
+   4. Besides, the resources in dynamic route are listed in the static files when the service worker is installed. 
+   5. Therefore, the app prompts an error when we try to visit `/dynamic` route.
+    ```js
+    // sw.js
+    // cache only strategy
+    self.addEventListener('fetch', function (event) {
+      event.respondWith(
+        caches.match(event.request)
+      );
+    });
+    ```
+4. Network, cache fallback strategy
+  1. There may have 2 solutions for this. We can bypass the response directly if the data and resources can be fetched through the network.
+   ```js
+   // sw.js
+   // network, fallback to cache
+   self.addEventListener('fetch', function(event) {
+     event.respondWith(
+       fetch(event.request)
+         .catch(err => {
+           return caches.match(event.request);
+         })
+     );
+   });
+   ```
+  2. The other choice is to cache all the resource dynamically.
+   ```js
+   // sw.js
+   // network, fallback to cache with dynamic caching
+   const CACHE_DYNAMIC_NAME = 'dynamic-v1';
+   self.addEventListener('fetch', function (event) {
+     event.respondWith(
+       fetch(event.request)
+         .then((res) => {
+           return caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+             cache.put(event.request.url, res.clone());
+             return res;
+           });
+         })
+         .catch((err) => {
+           return caches.match(event.request);
+         }),
+     );
+   });
+   ```
+5. Cache, then network strategy
+    1. We can update from the service worker with cache first and network strategy.
+      ```js
+      // sw.js
+      self.addEventListener('fetch', function (event) {
+        event.respondWith(
+          caches.open(CACHE_DYNAMIC_CACHE)
+           .then((cache) => {
+             return fetch(event.request)
+               .then(res => {
+                 cache.put(event.request.url, res.clone());
+                 return res;
+               })
+           })
+        );
+      });
+      ```
+    2. We can update in `main.js` with a condition that if the app fetches data from network faster than from caches, the app won't use the data stored in caches to prevent overwriting the app with older data.
+      ```js
+      // main.js
+      const url = 'https://httpbin.org/ip';
+      let networkDataReceived = false;
+
+      fetch(url)
+        .then(function (res) {
+          networkDataReceived = true;
+          return res.json();
+        })
+        .then(function (data) {
+          console.log('From network', data);
+          // console.log(data.origin);
+          box.style.height = data.origin.substr(0, 2) * 5 + 'px';
+        });
+
+      if ('caches' in window) {
+        caches
+          .match(url)
+          .then((res) => {
+            if (res) {
+              return res.json();
+            }
+          })
+          .then((data) => {
+            console.log('From cache', data);
+            if (!networkDataReceived) {
+              // triggeres only when data caches is loaded faster than data from network
+              box.style.height = data.origin.substr(0, 2) * 20 + 'px';
+            }
+          });
+      }
+      ```
+    3. However, this strategy and solution doesn't allow the app works offline.
+6. Routing"/ URL Parsing to pick the right strategies
+  ```js
+  // sw.js
+  // helper function
+  function isInArray(string, array) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === string) return true;
+      return false;
+    }
+  }
+
+  // Dynamic caching for Cache, then network strategy
+  self.addEventListener('fetch', (event) => {
+    if (event.request.url.indexOf('https://httpbin.org/ip')) {
+      event.respondWith(
+        caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+          return fetch(event.request).then((res) => {
+            cache.put(event.request.url, res.clone());
+            return res;
+          });
+        }),
+      );
+    } else if (isInArray(event.request.url, STATIC_FILES)) {
+      // cache only
+      event.respondWith(caches.match(event.request));
+    } else {
+      // cache, network fallback strategy
+      event.respondWith(
+        caches.match(event.request).then(function (response) {
+          if (response) {
+            return response;
+          } else {
+            return fetch(event.request)
+              .then(function (res) {
+                return caches.open(CACHE_DYNAMIC_NAME).then(function (cache) {
+                  cache.put(event.request.url, res.clone());
+                  return res;
+                });
+              })
+              .catch(function (err) {});
+          }
+        }),
+      );
+    }
+  });
+  ```
+
+## 5.14. A Better Way of Parsing Static Cache 
+1. Besides, using regular expression, we can use helper function as we made in the assignment to iterate through the list of static files in the array to check whether the app can request the resource from caches.
+  ```js
+  // helper function to check from the list of static resources
+  const STATIC_FILES = [
+    '/',
+    '/index.html',
+    '/src/css/app.css',
+    '/src/css/main.css',
+    '/src/js/main.js',
+    '/src/js/material.min.js',
+    'https://fonts.googleapis.com/css?family=Roboto:400,700',
+    'https://fonts.googleapis.com/icon?family=Material+Icons',
+    'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
+  ];
+
+  function isInArray(string, array) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === string) {
+        return true
+      };
+      return false;
+    }
+  }
+
+  // a better version to match the strings
+  function isInArray(string, array) {
+    var cachePath;
+    if (string.indexOf(self.origin) === 0) { // request targets domain where we serve the page from (i.e. NOT a CDN)
+      console.log('matched ', string);
+      cachePath = string.substring(self.origin.length); // take the part of the URL AFTER the domain (e.g. after localhost:8080)
+    } else {
+      cachePath = string; // store the full request (for CDNs)
+    }
+    return array.indexOf(cachePath) > -1;
+  }
+  ```
+
+## 5.15. A Better Way of Serving Fallback Files
+1. Our current solution can only take route one by one, and it can becomes hard to manage if we have more than 1 route to have fallback catches in offline mode.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    const url = 'https://httpbin.org/get';
+
+    if (event.request.url.indexOf(url) > -1) {
+      event.respondWith(
+        caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+          return fetch(event.request).then((res) => {
+            cache.put(event.request, res.clone());
+            return res;
+          });
+        }),
+      );
+    } else if (isInArray(event.request.url, STATIC_FILES)) {
+      event.respondWith(caches.match(event.request));
+    } else {
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          if (response) {
+            return response;
+          } else {
+            return fetch(event.request)
+              .then((res) => {
+                return caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+                  cache.put(event.request.url, res.clone());
+                  return res;
+                });
+              })
+              .catch((err) => {
+                return caches.open(CACHE_STATIC_NAME).then((cache) => {
+                  // the fallback works only on '/help'
+                  if (event.request.url.indexOf('/help')) {
+                    return cache.match('/offline.html');
+                  }
+                });
+              });
+          }
+        }),
+      );
+    }
+  });
+  ```
+2. We can update the code in `catch` to show the fallback HTML when the user tries to access any HTML file that is not available at the time. 
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    const url = 'https://httpbin.org/get';
+
+    if (event.request.url.indexOf(url) > -1) {
+      event.respondWith(
+        caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+          return fetch(event.request).then((res) => {
+            cache.put(event.request, res.clone());
+            return res;
+          });
+        }),
+      );
+    } else if (isInArray(event.request.url, STATIC_FILES)) {
+      event.respondWith(caches.match(event.request));
+    } else {
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          if (response) {
+            return response;
+          } else {
+            return fetch(event.request)
+              .then((res) => {
+                return caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+                  cache.put(event.request.url, res.clone());
+                  return res;
+                });
+              })
+              .catch((err) => {
+                return caches.open(CACHE_STATIC_NAME).then((cache) => {
+                  // this handles all the request to html files
+                  // if the html file is not static, 
+                  // the app will direct to the fallback page
+                  if (event.request.headers.get('accept').includes('text/html')) {
+                    return cache.match('/offline.html');
+                  }
+                });
+              });
+          }
+        }),
+      );
+    }
+  });
+  ```
+
+## 5.16. Post Request and Cache API
+1. Technically, caches can't store POST request but the response from the POST request. 
+2. Though the data is cached, the POST request will fail when the app goes offline.
+
+## 5.17. Cleaning/Trimming the Cache
+1. We can create a helper function to clear caches. In this case, we have maximum cached files at 4.
+2. Note that the app can not only access caches from service worker but regular frontend Javascript.
+  ```js
+  // sw.js
+  function trimCache(cacheName, maxItems) {
+    caches.open(cacheName).then((cache) => {
+      return cache.keys().then((keys) => {
+        if (keys.length > maxItems) {
+          cache.delete(keys[0]).then(trimCache(cacheName, maxItems));
+        }
+      });
+    });
+  }
+
+  // allow only up to 3 files to be cached
+  trimCache(CACHE_DYNAMIC_NAME, 3);
+  ```
+
+## 5.18. Getting Rid of a Service Worker
+1. In some cases, we'd like to remove service worker.
+2. We can firstly check if the service worker is available in the browser and iterate through the registration and clear the registered service workers.
+  ```js
+  // feed.js
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then(function (registration) {
+      for (let i = 0; i < registration.length; i++) {
+        registration[i].unregister();
+      }
+    });
+  }
+  ```
+
+
+
 # 6. IndexedDB and Dynamic Data
 ## 6.1. Understanding the Basics
 ## 6.2. Setting Up Firebase
