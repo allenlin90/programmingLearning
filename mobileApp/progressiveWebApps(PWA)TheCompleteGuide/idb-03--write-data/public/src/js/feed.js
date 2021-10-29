@@ -63,18 +63,18 @@ function createCard(data) {
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   var cardTitle = document.createElement('div');
   cardTitle.className = 'mdl-card__title';
-  cardTitle.style.backgroundImage = `url("${data.image}")`; // use the image url
+  cardTitle.style.backgroundImage = 'url(' + data.image + ')';
   cardTitle.style.backgroundSize = 'cover';
   cardTitle.style.height = '180px';
   cardWrapper.appendChild(cardTitle);
   var cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.style.color = 'white';
   cardTitleTextElement.className = 'mdl-card__title-text';
-  cardTitleTextElement.textContent = `${data.title}`; // title for the card
+  cardTitleTextElement.textContent = data.title;
   cardTitle.appendChild(cardTitleTextElement);
   var cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
-  cardSupportingText.textContent = `${data.location}`; // location of the post
+  cardSupportingText.textContent = data.location;
   cardSupportingText.style.textAlign = 'center';
   // var cardSaveButton = document.createElement('button');
   // cardSaveButton.textContent = 'Save';
@@ -86,7 +86,8 @@ function createCard(data) {
 }
 
 function updateUI(data) {
-  for (let i = 0; i < data.length; i++) {
+  clearCards();
+  for (var i = 0; i < data.length; i++) {
     createCard(data[i]);
   }
 }
@@ -101,31 +102,18 @@ fetch(url)
   .then(function (data) {
     networkDataReceived = true;
     console.log('From web', data);
-    const dataArray = [];
-    for (let key in data) {
+    var dataArray = [];
+    for (var key in data) {
       dataArray.push(data[key]);
     }
-    clearCards();
-    updateUI(Object.values(data));
+    updateUI(dataArray);
   });
 
-if ('caches' in window) {
-  caches
-    .match(url)
-    .then(function (response) {
-      if (response) {
-        return response.json();
-      }
-    })
-    .then(function (data) {
+if ('indexedDB' in window) {
+  readAllData('posts').then(function (data) {
+    if (!networkDataReceived) {
       console.log('From cache', data);
-      if (!networkDataReceived) {
-        const dataArray = [];
-        for (let key in data) {
-          dataArray.push(data[key]);
-        }
-        clearCards();
-        updateUI(Object.values(data));
-      }
-    });
+      updateUI(data);
+    }
+  });
 }

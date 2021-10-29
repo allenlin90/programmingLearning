@@ -1863,17 +1863,318 @@ This section uses `adv-caching-01--prepared-project`
 2. We can upload images to `storage` which can generate a public URL that can access the image with GET request. 
 
 ## 6.3. Connecting Frontend to Backend
+1. Rather than fetching data from the dummy source, we can fetch data from the realtime database from firebase.
+2. We can access it to the table and follows with `.json` work on the dataset as RESTFul API. 
+3. We can update the url in service worker to cache dynamic data if the `fetch` event is requesting data from firebase.
+4. We can update `createCard` function to create the card component from the dynamic data.
+  ```js
+  // feed.js
+  function createCard(data) {
+    var cardWrapper = document.createElement('div');
+    cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
+    var cardTitle = document.createElement('div');
+    cardTitle.className = 'mdl-card__title';
+    cardTitle.style.backgroundImage = `url("${data.image}")`; // use the image url
+    cardTitle.style.backgroundSize = 'cover';
+    cardTitle.style.height = '180px';
+    cardWrapper.appendChild(cardTitle);
+    var cardTitleTextElement = document.createElement('h2');
+    cardTitleTextElement.style.color = 'white';
+    cardTitleTextElement.className = 'mdl-card__title-text';
+    cardTitleTextElement.textContent = `${data.title}`; // title for the card
+    cardTitle.appendChild(cardTitleTextElement);
+    var cardSupportingText = document.createElement('div');
+    cardSupportingText.className = 'mdl-card__supporting-text';
+    cardSupportingText.textContent = `${data.location}`; // location of the post
+    cardSupportingText.style.textAlign = 'center';
+    cardWrapper.appendChild(cardSupportingText);
+    componentHandler.upgradeElement(cardWrapper);
+    sharedMomentsArea.appendChild(cardWrapper);
+  }
+
+  function updateUI(data) {
+    for (let i = 0; i < data.length; i++) {
+      createCard(data[i]);
+    }
+  }
+
+  fetch(url)
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (data) {
+      networkDataReceived = true;
+      console.log('From web', data);
+      const dataArray = [];
+      for (let key in data) {
+        dataArray.push(data[key]);
+      }
+      clearCards();
+      updateUI(dataArray);
+    });
+
+  if ('caches' in window) {
+    caches
+      .match(url)
+      .then(function (response) {
+        if (response) {
+          return response.json();
+        }
+      })
+      .then(function (data) {
+        console.log('From cache', data);
+        if (!networkDataReceived) {
+          const dataArray = Object.values(data);
+          clearCards();
+          updateUI(dataArray);
+        }
+      });
+  }
+  ```
+
 ## 6.4. Dynamic Caching vs. Caching Dynamic Content
+1. Dynamic caching is not caching dynamic content
+2. Dynamic caching is to store received response in cache, so that they can be used in the future.
+3. Caching dynamic content we can use IndexedDB to store the data in browser based database which using JSON format and in key-value pairs.
+  <img src="./images/106-dynamic_caching_vs_caching_dynamic_content.png">
+
 ## 6.5. Introducing IndexedDB
+1. IndexedDB is a transactional "Key-Value" Database in the Browser.
+2. If one action within a Transaction fails, none of the Actions of that Transaction are applied.
+3. IndexedDB can store significant amounts of unstructured data, including Files/Blobs.
+4. Data in IndexedDB can be accessed asynchronously.
+
 ## 6.6. IndexedDB Browser Support
+1. Most of the modern browser support the feature. 
+
 ## 6.7. Adding the IDB File
+1. The regular way to work with IndexedDB is using callback functions which could be very complex and hard to understand. 
+2. We can use [`IDB`](https://www.npmjs.com/package/idb) package which allow us to work with Promise based code.
+3. We can add `idb.js` code in `/src/js/idb.js` and import the file in `index.html`.
+
 ## 6.8. Storing Fetched Posts in IndexedDB
+1. We use "**idb-03--write-data**" repo in this case.
+2. We can import `idb` to use in service worker as well.
+3. In service worker, it has a special syntax to import other Javascript code using `importScripts`. 
+4. Besides, we can cache the `idb` code in the static file.
+  ```js
+  // sw.js
+  importScripts('/src/js/idb.js');
+
+  var CACHE_STATIC_NAME = 'static-v16';
+  var CACHE_DYNAMIC_NAME = 'dynamic-v2';
+  var STATIC_FILES = [
+    '/',
+    '/index.html',
+    '/offline.html',
+    '/src/js/app.js',
+    '/src/js/feed.js',
+    '/src/js/idb.js',
+    // ...
+  ]
+  ```
+4. We then can access `idb` and check and create a new database in IndexedDB. 3 arguments can be given.
+   1. The 1st argument is the name of the database we'd want to open or create.
+   2. The 2nd argument is the version of the database.
+   3. The 3rd argument is a callback function to execute which we can use it open and access the database.
+  ```js
+  var dbPromise = idb.open('posts-store', 1, function(db) {
+      // check if the database has existed
+    if (!db.objectStoreNames.contains('posts')) {
+      // create a database if it doesn't exist
+      db.createObjectStore('posts', { keyPath: 'id' });
+    }
+  });
+  ```
+5. We can remove the callback to store the response in `caches`.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    var url = 'your_firebase_url';
+    if (event.request.url.indexOf(url) > -1) {
+      event.respondWith(fetch(event.request)
+        .then(function (res) {
+          // clone one and return the original
+          var clonedRes = res.clone();
+          // handle as regular response object
+          clonedRes.json().then(function (data) {
+            // save data of posts from firebase
+            for (var key in data) {
+              dbPromise.then(function (db) {
+                // create transaction with target and type
+                var tx = db.transaction('posts', 'readwrite');
+                var store = tx.objectStore('posts');
+                // write in data
+                store.put(data[key]);
+                return tx.complete;
+              });
+            }
+          });
+          // return the response to ensure the code works
+          return res;
+        })
+      );
+    }
+    // ...
+  });
+  ```
+  <img src="./images/110-storing_fetched_posts_in_indexedDB.png">
+
 ## 6.9. Using IndexedDB in the Service Worker
+1. We can create a utility that can be shared in both `sw.js` and `feed.js`.
+  ```js
+  // src/utility.js
+  var dbPromise = idb.open('posts-store', 1, function (db) {
+    if (!db.objectStoreNames.contains('posts')) {
+      db.createObjectStore('posts', { keyPath: 'id' });
+    }
+  });
+
+  function writeData(st, data) {
+    return dbPromise.then(function (db) {
+      var tx = db.transaction(st, 'readwrite');
+      var store = tx.objectStore(st);
+      store.put(data);
+      return tx.complete;
+    });
+  }
+  ```
+
 ## 6.10. Reading Data from IDB
+1. We add another funciton in `utility.js` to read data from IndexedDB.
+  ```js
+  // utlity.js
+  function readAllData(st) {
+    return dbPromise.then(function (db) {
+      var tx = db.transaction(st, 'readonly');
+      var store = tx.objectStore(st);
+      return store.getAll();
+    });
+  }
+  ```
+2. In `feed.js`, since we don't use data from `caches`, we can check if `indexedDB` is supported by the browser. The following code only works when the browser is offline and can't fetch data from the network.
+3. Note that though indexedDB has store the image, it's only the URL pointing to the source of the image. 
+4. The image medai itself is stored in the dynamic cache which allows the app to check the image in offline mode.
+  ```js
+  // feed.js
+  if ('indexedDB' in window) {
+    readAllData('posts').then(function (data) {
+      if (!networkDataReceived) {
+        console.log('From cache', data);
+        updateUI(data);
+      }
+    });
+  }
+  ```
+
 ## 6.11. Clearing IDB and Handling Server-Client Mismatch
+1. As we use `writeData` function in `utility.js`, if the data respond from data changes, the data will be updated in `IndexedDB` on browser as we use `store.put` to modify the data.
+2. However, this code doesn't cover the scenario that if the data is actually removed. 
+3. For example, we get an array of posts from the database to create "post cards" component in the web app. 
+4. If the same "key" isn't in the array, `IndexedDB` won't get it updated or remove the data if it doesn't exist.
+5. Therefore, with the current strategy, we will still find the old data in the offline mode, as the data is stored in IndexeDB.
+  ```js
+  // utility.js
+  function writeData(st, data) {
+    return dbPromise.then(function (db) {
+      var tx = db.transaction(st, 'readwrite');
+      var store = tx.objectStore(st);
+      // this only add or update data from response
+      store.put(data);
+      return tx.complete;
+    });
+  }
+  ```
+6. In this case, we can update the code in service worker to clear out all the data in IndexedDB before writing in new data from the response.
+
 ## 6.12. Implementing the Clear Database Method
+1. We create a new utility function in `utility.js`.
+  ```js
+  // utility.js
+  function clearAllData(st) {
+    return dbPromise
+      .then(function(db) {
+        var tx = db.transaction(st, 'readwrite');
+        var store = tx.objectStore(st);
+        store.clear();
+        return tx.complete;
+      });
+  }
+  ```
+2. We then update the service worker strategy to clear all data before writing in new data from response.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    var url = `your_firebase_url`;
+    if (event.request.url.indexOf(url) > -1) {
+      event.respondWith(
+        fetch(event.request).then(function (res) {
+          var clonedRes = res.clone();
+          // clear all data in IndexedDB
+          clearAllData('posts').then(function () {
+            // write the data into IndexedDB after all data is cleared
+            return clonedRes.json().then(function (data) {
+              for (var key in data) {
+                writeData('posts', data[key]);
+              }
+            });
+          });
+          return res;
+        }),
+      );
+    }
+  });
+  ```
+
 ## 6.13. Deleting Single Items from the Database
+1. We can use `delete` method on the store object to remove a single entry in IndexedDB.
+2. We create a utlity function in `utility.js`.
+  ```js
+  // utility.js
+  function deleteItemFromData(st, id) {
+    dbPromise
+      .then(function (db) {
+        var tx = db.transaction(st, 'readwrite');
+        var store = tx.objectStore(st);
+        store.delete(id);
+        return tx.complete;
+      })
+      .then(function () {
+        console.log('Item deleted');
+      });
+  }
+  ```
+3. We can update in service worker. In this case, we add the function in the `then` after the data is written into IndexedDB for demo purpose.
+  ```js
+  // sw.js
+  self.addEventListener('fetch', function (event) {
+    var url = `your_firebase_url`;
+    if (event.request.url.indexOf(url) > -1) {
+      event.respondWith(
+        fetch(event.request).then(function (res) {
+          var clonedRes = res.clone();
+          clearAllData('posts').then(function () {
+            return clonedRes.json().then(function (data) {
+              for (var key in data) {
+                writeData('posts', data[key]).then(function () {
+                  // remove the item immediately right after the item is added
+                  deleteItemFromData('posts', key);
+                });
+              }
+            });
+          });
+          return res;
+        }),
+      );
+    }
+  });
+  ```
+
 ## 6.14. IndexedDB and Caching Strategies
+1. We now have different tools and strategy to store data on user's browser by using `caches` or `IndexedDB`.
+
+
+
 # 7. Creating a Responsive user Interface (UI)
 ## 7.1. Responsive Design in this Course
 ## 7.2. Responsive Design in this Course
