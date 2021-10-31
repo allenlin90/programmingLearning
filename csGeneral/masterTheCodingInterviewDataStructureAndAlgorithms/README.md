@@ -6,6 +6,34 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
 - [1. Big O](#1-big-o)
   - [1.1. What is Good Code?](#11-what-is-good-code)
   - [1.2. Big O and Scalability](#12-big-o-and-scalability)
+  - [1.3. O(n)](#13-on)
+  - [1.4. O(1)](#14-o1)
+  - [1.5. Exercise: Big O Calculation 1](#15-exercise-big-o-calculation-1)
+  - [1.6. Exercise: Big O Calculation 2](#16-exercise-big-o-calculation-2)
+  - [1.7. Simplifying Big O](#17-simplifying-big-o)
+  - [1.8. Big O Rule 1](#18-big-o-rule-1)
+  - [1.9. Big O Rule 2](#19-big-o-rule-2)
+  - [1.10. Big O Rule 3](#110-big-o-rule-3)
+  - [1.11. O(n^2)](#111-on2)
+  - [1.12. Big O Rule 4](#112-big-o-rule-4)
+  - [1.13. What does this all mean?](#113-what-does-this-all-mean)
+  - [1.14. O(n!)](#114-on)
+  - [1.15. 3 Pillars of Progamming](#115-3-pillars-of-progamming)
+  - [1.16. Space complexity](#116-space-complexity)
+  - [1.17. Exercise: Space complexity](#117-exercise-space-complexity)
+  - [1.18. Exercise: Twitter](#118-exercise-twitter)
+- [2. How to solve coding problems](#2-how-to-solve-coding-problems)
+  - [2.1. What are the companies looking for?](#21-what-are-the-companies-looking-for)
+  - [2.2. What we need for coding interviews](#22-what-we-need-for-coding-interviews)
+  - [2.3. Exercise Interview Question](#23-exercise-interview-question)
+    - [2.3.1. Cheat Sheet](#231-cheat-sheet)
+      - [2.3.1.1. Steps to tackle problems](#2311-steps-to-tackle-problems)
+      - [2.3.1.2. Good code checklist](#2312-good-code-checklist)
+- [3. Data Structure: Introduction](#3-data-structure-introduction)
+  - [3.1. What is data structure](#31-what-is-data-structure)
+  - [3.2. How computers store data](#32-how-computers-store-data)
+  - [3.3. Data structures in different languages](#33-data-structures-in-different-languages)
+  - [3.4. Operations on data structure](#34-operations-on-data-structure)
 ---
 
 # 1. Big O
@@ -16,3 +44,444 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
 2. Code is similar to recipe which developers gives it to the machine to execute for some output.
 
 ## 1.2. Big O and Scalability
+1. The duration of the code execution can vary according to hardware such as the CPU and RAM that the computer has. 
+2. In most of the cases, especially for programs and apps in production, the app may run on a very different machine that is different from the code we execute on the laptop.
+3. Therefore, we have a relatively fair is to count the steps as the complexity and efficency of the code is as Big O notation.
+  <img src="./images/27-big_o_complexity_chart.png">
+
+## 1.3. O(n)
+1. From the example of finding nemo in an array, the function will iterate through the array which gives a linear time complexity to fufill the request.
+2. In this case, we have to iterate through all the items in the list to finish the process. The more the items in the list the more time the function takes to execute. Its big O notation is `O(n)`.
+  ```js
+  // Javascript
+  const nemo = ['nemo'];
+  const everyone = ['nemo', 'dory', 'bruce', 'marlin', 'gill', 'bloat', 'nigel', 'squirt', 'darla', 'hank'];
+
+  const large = new Array(100000).fill('nemo');
+
+  function findNemo(array) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === 'nemo') {
+        console.log('Found NEMO!');
+      }
+    }
+  }
+
+  findNemo(large); // O(n) --> Linear Time
+  ```
+
+## 1.4. O(1)
+1. `O(1)` represents "**constant time**" which means the function only takes a certain amount of time no matter how large the dataset the function deals with.
+
+## 1.5. Exercise: Big O Calculation 1
+1. In some cases, variable assignment and reassignment can be counted as part of the complexity.
+2. If we count all the steps that the function takes it can be `3 + n + n + n + n`, or `3 + 4n`.
+  ```js
+  // Javascript
+  // What is the Big O of the below function? (Hint, you may want to go line by line)
+  function funChallenge(input) {
+    let a = 10; // O(1)
+    a = 50 + 3; // O(1)
+
+    for (let i = 0; i < input.length; i++) { // O(n)
+      anotherFunction(); // O(n)
+      let stranger = true; // O(n)
+      a++; // O(n)
+    }
+    return a; // O(1)
+  }
+
+  // 3 + n + n + n + n
+  ```
+
+## 1.6. Exercise: Big O Calculation 2 
+1. According to the last example, we can calculate the step and check the complexity of the function.
+  ```js
+  // Javascript
+  function anotherFunChallenge(input) {
+    let a = 5; // O(1)
+    let b = 10; // O(1)
+    let c = 50; // O(1)
+    for (let i = 0; i < input; i++) {
+      let x = i + 1; // O(n)
+      let y = i + 2; // O(n)
+      let z = i + 3; // O(n)
+
+    }
+    for (let j = 0; j < input; j++) {
+      let p = j * 2; // O(n)
+      let q = j * 2; // O(n)
+    }
+    let whoAmI = "I don't know"; // O(1)
+
+    // 1 + 1 + 1 + n + n + n + n + n + 1
+    // 4 + 5n
+  }
+  ```
+
+## 1.7. Simplifying Big O
+1. When calculating Big O, there are 4 main rules to follow
+   1. Worst Case
+   2. Remove Constants
+   3. Different terms for inputs
+   4. Drop Non Dominants
+
+## 1.8. Big O Rule 1
+1. Worst Case
+2. From the last example to find `nemo` in the array, the function has to iterate through all the items in the list though the desired item has been found in the list.
+3. In Javascript, we can use `break` keyword in the for loop to stop iteration if the item in found.
+4. However, this doesn't really improve the performance of the function, as in the big O notation, it only considers the worst case.
+5. For the function, `nemo` can be the very first item or the last item in the array, so the function could either run through the whole list. 
+
+## 1.9. Big O Rule 2
+1. Remove Constants
+2. In the example below, we have 2 iterations in the function. 
+3. In this case, we may ignore variable assignments and small calculations.
+4. The main complexity can be `O(1 + n/2 + 100)` which can be simplified as `O(n)`.
+  ```js
+  // Javascript
+  function printFirstItemThenFirstHalfThenSayHi100Times(items) {
+      console.log(items[0]); // O(1)
+
+      var middleIndex = Math.floor(items.length / 2); // O(1)
+      var index = 0; // O(1)
+
+      while (index < middleIndex) { // O(n/2)
+          console.log(items[index]); // O(1)
+          index++; // O(1)
+      }
+
+      for (var i = 0; i < 100; i++) { // O(100)
+          console.log('hi'); // O(1)
+      }
+  }
+  // O(1 + n/2 + 100)
+  ```
+
+## 1.10. Big O Rule 3
+1. Different terms for inputs
+2. Since there are 2 different inputs, we'd count them separately. In the following example, the input can be 2 different arrays and each can have different numbers of items which cause very different output for the case.
+  ```js
+  // Javascript
+  function compressBoxesTwice(boxes, boxes2) {
+    boxes.forEach(function(boxes) {
+      console.log(boxes);
+    });
+
+    boxes2.forEach(function(boxes) {
+      console.log(boxes);
+    });
+  }
+
+  // O(m + n);
+  ```
+
+## 1.11. O(n^2)
+1. In a nested loop or iteration, we use mutiplication for the complexity.
+2. `O(n^2)` is quadratic time.
+3. If iterations execute in the same layer, we can simply add on the complexity, while if the iteration is nested, we can multiply the numbers.
+  ```js
+  // Javascript
+  // Log all pairs of array
+  const boxes = ['a', 'b', 'c', 'd', 'e'];
+
+  function logAllpairsOfArray(array) {
+    for (let i = 0; i < array.length; i++) {
+      for (let j = 0; j < array.length; j++) {
+        console.log(array[i], array[j]);
+      }
+    }
+  }
+
+  // O(m * n)
+  ```
+
+## 1.12. Big O Rule 4
+1. Drop Non Dominants
+2. When calculating complexity, we only consider the dominant terms. 
+3. For example, when we have `n + n^2`, `n` is like a constant in the equation which doesn't affect much as `n^2`. 
+  ```js
+  // Javascript
+  function printAllNumbersThenAllPairSums(numbers) {
+
+    console.log('these are the numbers:');
+    numbers.forEach(function(number) { // O(n)
+      console.log(number);
+    });
+
+    console.log('and these are their sums:');
+    numbers.forEach(function(firstNumber) { // O(n^2)
+      numbers.forEach(function(secondNumber) {
+        console.log(firstNumber + secondNumber);
+      });
+    });
+  }
+
+  // O(n + n^2)
+
+  printAllNumbersThenAllPairSums([1,2,3,4,5])
+  ```
+## 1.13. What does this all mean?
+1. Complexity and big O notation is used to check scalability of the code or funcitons. 
+2. For example, Javascript has some array methods such as 
+   1. `push` - add item as the last element in an array.
+   2. `pop` - remove the last item in an array.
+   3. `shift` - remove the first item in an array.
+   4. `unshift` - add item as the first element in an array.
+3. Data structure + Algorithms = Programs
+4. Learning data structure helps improve the efficiency of functions and code as the fundation. 
+
+## 1.14. O(n!)
+1. Factorial note `O(n!)`. This means the fucntions use multiple layers of nested loop. 
+2. In most of the cases, having this type of complexity means something is wrong with the function or code.
+
+## 1.15. 3 Pillars of Progamming
+1. When programming, we may consider some factors
+2. Readability
+3. Scalability which includes 
+   1. Speed - Time complexity
+   2. Memory
+4. Memory - Space complexity
+5. Speed and memory are usually in contrast to each other.
+6. A function can either be time efficient, space efficient or balanced in between.
+
+## 1.16. Space complexity
+1. Some factors can affect space complexity of a function
+2. Variables 
+3. Data structures
+4. Function call
+5. Allocations
+
+## 1.17. Exercise: Space complexity 
+1. The space complexity of the following example is `O(1)`.
+  ```js
+  // Javascript
+  function boo(n) {
+    for (let i = 0; i < n.length; i++) {
+        console.log('boo');
+    }
+  }
+
+  boo(new Array(5)); // O(1)
+  ```
+2. In the following example, the function returns an array which has a space complexity as `O(n)`.
+  ```js
+  function arrayOfHiNTimes(n) {
+    let hiArray = [];
+    for (let i = 0; i < n; i++) {
+      hiArray[i] = 'hi';
+    }
+    return hiArray;
+  }
+
+  arrayOfHiNTimes(6)); // O(n)
+  // ['hi', 'hi', 'hi', 'hi', 'hi', 'hi',]
+  ```
+
+## 1.18. Exercise: Twitter
+1. In different programming languages, the way handling space (memory) is different.
+2. For example, when we check the `length` property on a string value in Javascript, the language simply respond the number of characters in the string value. 
+3. In this case, the space complexity for a string is simply `O(1)`.
+4. However, in the other language such as "**C**", the string value is like an array of characters.
+5. Therefore, the space complexity vary when using different programming languages.
+  ```js
+  // Javascript
+  // Find 1st, Find Nth...
+  const array = [
+    {
+      tweet: 'hi',
+      date: 2012,
+    },    
+    {
+      tweet: 'my',
+      date: 2014,
+    },    
+    {
+      tweet: 'teddy',
+      date: 2018,
+    },
+  ]; // space complexity O(n^2)
+
+  array[0]; // O(1)
+
+  array[array.length - 1]; // O(1)
+  ```
+
+
+
+# 2. How to solve coding problems
+## 2.1. What are the companies looking for?
+1. 4 main skills are critical for career success
+2. Analytic skills
+3. Coding skills
+4. Technical skills
+5. Communication skills
+
+## 2.2. What we need for coding interviews
+1. Data structures
+   1. Arrays
+   2. Stacks
+   3. Queues
+   4. Linked Lists
+   5. Trees
+   6. Tries
+   7. Graphs
+   8. Hash Tables
+2. Algorithms
+   1. Sorting
+   2. Dynamic Programming
+   3. BFS + DFS (Searching)
+   4. Recursion
+
+## 2.3. Exercise Interview Question
+1. We can refer to the [Google interview](https://youtu.be/XKu_SEDAykw) on YouTube.
+2. Therefore steps we may follow to tackle questions in an interview.
+  ```js
+  // Javascript 
+  // Given 2 arrays, create a function that let's a user know (true/false) whether these two arrays contain any common items
+  //For Example:
+  //const array1 = ['a', 'b', 'c', 'x'];//const array2 = ['z', 'y', 'i'];
+  //should return false.
+  //-----------
+  //const array1 = ['a', 'b', 'c', 'x'];//const array2 = ['z', 'y', 'x'];
+  //should return true.
+
+  // 2 parameters - arrays - no size limit
+  // return true or false
+
+  function containsCommonItem(arr1, arr2) {
+    for (let i=0; i < arr1.length; i++) {
+      for ( let j=0; j < arr2.length; j++) {
+        if(arr1[i] === arr2[j]) {
+          return true;
+        }
+      }
+    }
+    return false
+  }
+
+  //O(a*b)
+  //O(1) - Space Complexity
+
+  const array1 = ['a', 'b', 'c', 'x'];
+  const array2 = ['z', 'y', 'a'];
+
+  function containsCommonItem2(arr1, arr2) {
+    // loop through first array and create object where properties === items in the array
+    // can we assume always 2 params?
+
+    let map = {};
+    for (let i=0; i < arr1.length; i++) {
+      if(!map[arr1[i]]) {
+        const item = arr1[i];
+        map[item] = true;
+      }
+    }
+    // loop through second array and check if item in second array exists on created object. 
+    for (let j=0; j < arr2.length; j++) {
+      if (map[arr2[j]]) {
+        return true;
+      }
+    }
+    return false
+  }
+
+  //O(a + b) Time Complexity
+  //O(a) Space Complexity
+
+  // containsCommonItem2(array1, array2)
+
+  function containsCommonItem3(arr1, arr2) {
+    return arr1.some(item => arr2.includes(item))
+  }
+
+  containsCommonItem(array1, array2)
+  containsCommonItem2(array1, array2)
+  containsCommonItem3(array1, array2)
+  ```
+
+### 2.3.1. Cheat Sheet
+#### 2.3.1.1. Steps to tackle problems
+1. When the interviewer says the question, write down the key points at the top (i.e. sorted
+array). Make sure you have all the details. Show how organized you are.
+2. Make sure you double check: What are the inputs? What are the outputs?
+3. What is the most important value of the problem? Do you have time, and space and memory,
+etc.. What is the main goal?
+4. Don't be annoying and ask too many questions.
+5. Start with the naive/brute force approach. First thing that comes into mind. It shows that
+you’re able to think well and critically (you don't need to write this code, just speak about it).
+6. Tell them why this approach is not the best (i.e. O(n^2) or higher, not readable, etc...)
+7. Walk through your approach, comment things and see where you may be able to break things.
+Any repetition, bottlenecks like O(N^2), or unnecessary work? Did you use all the information
+the interviewer gave you? Bottleneck is the part of the code with the biggest Big O. Focus on
+that. Sometimes this occurs with repeated work as well.
+8. Before you start coding, walk through your code and write down the steps you are going to
+follow.
+9. Modularize your code from the very beginning. Break up your code into beautiful small pieces
+and add just comments if you need to.
+10. Start actually writing your code now. Keep in mind that the more you prepare and understand
+what you need to code, the better the whiteboard will go. So never start a whiteboard
+interview not being sure of how things are going to work out. That is a recipe for disaster.
+Keep in mind: A lot of interviews ask questions that you won’t be able to fully answer on time.
+So think: What can I show in order to show that I can do this and I am better than other
+coders. Break things up in Functions (if you can’t remember a method, just make up a function
+and you will at least have it there. Write something, and start with the easy part.
+11. Think about error checks and how you can break this code. Never make assumptions about the
+input. Assume people are trying to break your code and that Darth Vader is using your
+function. How will you safeguard it? Always check for false inputs that you don’t want. Here is
+a trick: Comment in the code, the checks that you want to do… write the function, then tell the
+interviewer that you would write tests now to make your function fail (but you won't need to
+actually write the tests).
+12. Don’t use bad/confusing names like i and j. Write code that reads well.
+13. Test your code: Check for no params, 0, undefined, null, massive arrays, async code, etc… Ask
+the interviewer if we can make assumption about the code. Can you make the answer return
+an error? Poke holes into your solution. Are you repeating yourself?
+14. Finally talk to the interviewer where you would improve the code. Does it work? Are there
+different approaches? Is it readable? What would you google to improve? How can
+performance be improved? Possibly: Ask the interviewer what was the most interesting
+solution you have seen to this problem
+15. If your interviewer is happy with the solution, the interview usually ends here. It is also
+common that the interviewer asks you extension questions, such as how you would handle the
+problem if the whole input is too large to fit into memory, or if the input arrives as a stream.
+This is a common follow-up question at Google, where they care a lot about scale. The answer
+is usually a divide-and-conquer approach — perform distributed processing of the data and only
+read certain chunks of the input from disk into memory, write the output back to disk and
+combine them later.
+
+#### 2.3.1.2. Good code checklist
+1. It works
+2. Good use of data structures
+3. Code Re-use/ Do Not Repeat Yourself
+4. Modular - makes code more readable, maintainable and testable
+5. Less than O(N^2). We want to avoid nested loops if we can since they are expensive. Two separate loops are better than 2 nested loops
+6. Low Space Complexity --> Recursion can cause stack overflow, copying of large arrays may exceed memory of machine
+
+
+
+# 3. Data Structure: Introduction
+## 3.1. What is data structure
+1. Data structure is a collection of values.
+2. Each data structure is specialized for its own thing and is a type of container in different form.
+3. For example, in daily life, we can use different containers for various purpose, such as waredrob, backpacks, folders, and cabinets which can be very different.
+4. There are many types of data structures in each category. However, there are only few which are frequently used. The others are very specific for certain scenarios.
+
+## 3.2. How computers store data
+1. Computers use mainly 3 parts, CPU, RAM, and Storage to work.
+2. When use code to declare a variable, CPU will make a calculation and store in the RAM and pass and store in the "storage" if it's required for permenant usage.
+3. In the RAM, we have multiple "addresses" to store the data. 
+4. CPU also has a small memory as "cache" to store most recent data to boost the overall performance.
+5. If the data is stored near in the Ram, the faster the computer can manipulate and work on the data.
+6. Computers store types of data differently on the RAM. 
+
+## 3.3. Data structures in different languages
+1. Each programming language has its own specific data types (primitive types). In most of the cases, the default prmitive types of a programming language have covered most of the use case.
+
+## 3.4. Operations on data structure
+1. Insertion - add data to memory
+2. Deletion - remove data from memory
+3. Traversal - check all the data in memory
+4. Searching - find a specific data in memory
+5. Sorting - sort and order data in memory
+6. Access - read data in memory
+
+
