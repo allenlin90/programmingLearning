@@ -106,7 +106,7 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [8.6. Syncing Data in the Service Worker](#86-syncing-data-in-the-service-worker)
   - [8.7. Understanding Periodic Sync](#87-understanding-periodic-sync)
   - [8.8. Adding Server Side Code](#88-adding-server-side-code)
-  - [8.9. Fixing Errors](#89-fixing-errors)
+  - [8.9. Fixing Error](#89-fixing-error)
 - [9. Web Push Notifications](#9-web-push-notifications)
   - [9.1. Why we need Web Push Notifications](#91-why-we-need-web-push-notifications)
   - [9.2. How Push and Notifications Work](#92-how-push-and-notifications-work)
@@ -2183,16 +2183,379 @@ This section uses `adv-caching-01--prepared-project`
 ## 7.5. Using Images in a Responsive Way
 ## 7.6. Adding Animations
 ## 7.7. The Viewport and Scaling
+
+
+
 # 8. Background Sync
 ## 8.1. How does Background Sync Work
+1. In regular conditions, the app wants to send data as a request to the server and manipulate with the response.
+2. When the network is not available, the process can't work normally. 
+3. Besides, service worker can't cache response from POST but GET requests.
+4. However, we can register "sync tasks" on service worker which is the "request" rather the response. 
+5. In addition, we can store this data in IndexedDB. Note that we can store image and media data in IndexedDB as well.
+6. When the network connection is available a "sync" event will be trigger.
+7. Service worker will the create a fetch request to the server. The amazing feature of this is process works even when the tab, browser, or the device is turned off.
+  <img src="./images/130-background_sync_task.png">
+
 ## 8.2. Adding the Basic Setup to our Project
+This section use "background-sync-01--access-form"
+1. To use the benefits from background sync, we can update the create post feature on the page as this function sends data to the server and create a new post by the user.
+2. Therefore, the background sync can be triggered when the user clicks "POST!" in the web app.+
+  ```js
+  // src/feed.js
+  var form = document.querySelector('form');
+  var titleInput = document.querySelector('#title');
+  var locationInput = document.querySelector('#location');
+
+  function closeCreatePostModal() {
+    createPostArea.style.transform = 'translateY(100vh)';
+    // createPostArea.style.display = 'none';
+  }
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    if (titleInput.value.trim() === '' || locationInput.value.trim() === '') {
+      alert('Please enter valid data!');
+      return;
+    }
+
+    closeCreatePostModal();
+  });
+  ```
+  <img src="./images/131-setup_before_adding_background_sync.png">
+
 ## 8.3. Registering a Synchronization Task
+1. To use background synchronization, we need to check if the browser supports both `serviceWorker` in `navigator` and `SyncManager` in `window`.
+2. However, by the time of learning (2021/10/31), only Google Chrome and Microsoft Edge browser supports `SyncManager`. This `SyncManager` API is still not available on both Apple Safari and FireFox.
+3. We can continue working on the event handler on the post button.
+4. When the user clicks on the event, we can check if both service worker and SyncManager in window are available.
+5. We can check by `navigator.serviceWorker.ready` which returns a Promise then we can keep working on the service worker if it's registered and ready. The promise has the "service worker" returned in the Promise as if it's ready.
+6. Note that we add the code and maniuplate service worker in `feed.js` because we can't listen to the event in `sw.js`.
+7. If the service worker is ready, we can use `.sync.register` method which takes a "tag" as the argument to register the synchronizing event.
+  ```js
+  // src/feed.js
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    if (titleInput.value.trim() === '' || locationInput.value.trim() === '') {
+      alert('Please enter valid data!');
+      return;
+    }
+
+    closeCreatePostModal();
+
+    // check if both service worker and SyncManager in window are available
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      // check if service worker is registred and ready to be used
+      // serviceWorker.ready returns a Promise
+      navigator.serviceWorker.ready.then(function (sw) {
+        // the Promise returns the service worker if it's ready
+        // we register the sync event as 'sync-new-post'
+        sw.sync.register('sync-new-post');
+      });
+    }
+  });
+  ```
+
 ## 8.4. Storing our Post in IndexedDB
+1. After registering the background sync event, we can store or cache the data that we want to send to server in IndexedDB (because background sync itself doesn't store or cache data).
+2. We then can use the functions we create in `utility.js` to work with IndexedDB.
+  ```js
+  // src/feed.js
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    if (titleInput.value.trim() === '' || locationInput.value.trim() === '') {
+      alert('Please enter valid data!');
+      return;
+    }
+
+    closeCreatePostModal();
+
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then(function (sw) {
+        var post = {
+          id: new Date().toISOString(),
+          title: titleInput.value,
+          location: locationInput.value,
+        };
+
+        // ensure data is stored in IndexedDB and the background sync event is registered
+        writeData('sync-posts', post)
+          .then(function () {
+            sw.sync.register('sync-new-post');
+          })
+          .then(function () {
+            // the followings are showing snackbar to prompt user for info. which is not necessary
+            var snackbar = document.querySelector('#confirmation-toast');
+            var data = { message: 'Your Post was saved for syncing!' };
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
+          })
+          .catch(function (err) {
+            console.log(err);
+          });
+      });
+    }
+  });
+  ```
+
 ## 8.5. Adding a Fallback
+1. If the browser doesn't support service worker and `SyncManager`, we'd still want the app can work normally.
+2. We can create a fallback function to run if those APIs aren't supported in the browser.
+3. Note that the following solution works only in `feed.js` which we should handle the fetch request in service worker `sw.js`.
+  ```js
+  // src/feed.js
+  function sendData() {
+    fetch(
+      'https://pwagram-69cf3-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          id: new Date().toISOString(),
+          title: titleInput.value,
+          location: locationInput.value,
+          image:
+            'https://firebasestorage.googleapis.com/v0/b/pwagram-69cf3.appspot.com/o/sf-boat.jpg?alt=media&token=6f3fec36-0242-4a6b-89aa-a27d9413e824',
+        }),
+      },
+    ).then(function (res) {
+      console.log('Sent data', res);
+      updateUI();
+    });
+  }
+
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      // if both service worker and background sync work
+    } else {
+      // a fallback logic works when service worker and background sync aren't available
+      sendData();
+    }
+  ```
+
 ## 8.6. Syncing Data in the Service Worker
+1. We add a new event handler in `sw.js` for `sync` event.
+  ```js
+  // sw.js
+  self.addEventListener('sync', function (event) {
+    console.log('[Service Worker] Background syncing', event);
+    // check tag from sync event registered in feed.js
+    if (event.tag === 'sync-new-posts') {
+      // if there's more tags or conditions, we can use switch rather than if/else statement
+      console.log('[Service Worker] Syncing new Posts');
+      // wait until the request finishes sending data
+      event.waitUntil(
+        // fetch data from IndexedDB by using function declared in utility.js
+        readAllData('sync-posts').then(function (data) {
+          for (var dt of data) {
+            fetch(
+              'https://pwagram-69cf3-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                  id: dt.id,
+                  title: dt.title,
+                  location: dt.location,
+                  image:
+                    'https://firebasestorage.googleapis.com/v0/b/pwagram-69cf3.appspot.com/o/sf-boat.jpg?alt=media&token=6f3fec36-0242-4a6b-89aa-a27d9413e824',
+                }),
+              },
+            )
+              .then(function (res) {
+                console.log('Sent data', res);
+                // clear post that has been requested
+                // use function declared in utility.js
+                if (res.ok) {
+                  // ensure the request is successful and remove from IndexedDB
+                  deleteItemFromData('sync-post', dt.id);
+                }
+              })
+              .catch(function (err) {
+                console.log('Error while sending data', err);
+              });
+          }
+        }),
+      );
+    }
+  });
+  ```
+2. Note that the lecture intentionally introduced a type to remind that we should be careful for naming the tag for sync event when register it in the code. 
+3. For example, we had a typo in `feed.js` when registering the sync event.
+  ```js
+  // feed.js
+  // in 'then' block after storing data in IndexedDB
+  sw.sync.register('sync-new-posts');
+  ```
+4. If we can't write data into the firebase endpoint, we can update the database rules and turn both read and write into true without any authentication.
+  ```json
+  // realtime database rules
+  {
+    "rules": {
+      ".read": true,
+      ".write": true
+    }
+  }
+  ```
+5. Besides, the `deleteItemFromData` function doesn't work correctly as we don't use the id responded from the server.
+6. At this point we set up the background sync, we can test the feature by disconnect the network connection on the device.
+7. Note that this doesn't work if we use "offline" simulation on the browser. We should disconnect the network by turning WiFi off.
+8. Since the app is set up as PWA and can work offline, we have saved the request in IndexedDB and register in background sync.
+9. This will work when we turn back on the WiFi connection. The request will be synced and sent to the server.
+10. We can then refresh the app and check there's a new Post created as we have more data stored in database.
+
 ## 8.7. Understanding Periodic Sync
+1. "Periodic Sync" is used to get data from server periodically.
+2. When we register periodic sync task, we can include a "schedule" in service worker.
+3. The schedule will then trigger the periodic sync event to request data from server.
+4. However, this API isn't supported by all browsers.
+
 ## 8.8. Adding Server Side Code
-## 8.9. Fixing Errors
+1. In this case, we will use `firebase-tools` which can be installed with `npm install -g firebase-tools`.
+2. After installing firebase tools, we can use `firebase init` to start a firebase project, but before it works, we should use `firebase login` to login to use firebase CLI tools.
+3. To init the project, we slect "Functions: COnfigure a Cloud Functions directory and its files" and "Hosting: Configure files for Firebase Hosting and (optionally) set up GitHub Action deploys".
+4. We then select the project is set set up on Firebase and install the dependencies.
+5. We are not using SPA (single page application) and can use the `index.html` we have setup without rewriting it.
+6. After initiate the project, firebase tools will generate `firebase.json`, `.firebaserc`, and a `404.html` and `functions` folder at the root directory.
+7. This `functions` directory is actually a server that we can deploy with firebase tools.
+8. We can configure `index.js` in `functinos`. In this case, we need to install and use `firebase-admin` and `cors` packages.
+  ```js
+  // index.js in functions
+  const functions = require('firebase-functions');
+  const admin = require('firebase-admin');
+  const cors = require('cors')({ origin: true });
+
+  // // Create and Deploy Your First Cloud Functions
+  // // https://firebase.google.com/docs/functions/write-firebase-functions
+  //
+  exports.storePostData = functions.https.onRequest((request, response) => {
+    functions.logger.info('Hello logs!', { structuredData: true });
+    response.send('Hello from Firebase!');
+    cors(function (req, res) {
+      admin
+        .database()
+        .ref('posts')
+        .push({
+          id: request.body.id,
+          title: request.body.title,
+          location: request.body.location,
+          image: request.body.image,
+        })
+        .then(function () {
+          response.status(201).json({ message: 'Data stored', id: req.body.id });
+        })
+        .catch((err) => {
+          response.status(500).json({ error: err });
+        });
+    });
+  });
+  ```
+9. After deployment, firebase tool will generate the URL endpoint to connect to. In this case, we should use the "Function URL" and update this URL for the `sync` event handler in `sw.js` and for `sendData` function in `feed.js`. We then can update service worker and test the endpoint.
+10. Besides, our previous code doesn't remove the synced request frmo IndexedDB correclty. It is because the local is created by `new Date().toISOString()` while firebase creates another unique ID when it write the data.
+11. Therefore, we can update the service worker and use the id from the response from firebase.
+  ```js
+  // sw.js
+  self.addEventListener('sync', function (event) {
+    console.log('[Service Worker] Background syncing', event);
+    // check tag from sync event registered in feed.js
+    if (event.tag === 'sync-new-posts') {
+      // if there's more tags or conditions, we can use switch rather than if/else statement
+      console.log('[Service Worker] Syncing new Posts');
+      // wait until the request finishes sending data
+      event.waitUntil(
+        // fetch data from IndexedDB by using function declared in utility.js
+        readAllData('sync-posts').then(function (data) {
+          for (var dt of data) {
+            fetch(
+              'https://us-central1-pwagram-69cf3.cloudfunctions.net/storePostData',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                  id: dt.id,
+                  title: dt.title,
+                  location: dt.location,
+                  image:
+                    'https://firebasestorage.googleapis.com/v0/b/pwagram-69cf3.appspot.com/o/sf-boat.jpg?alt=media&token=6f3fec36-0242-4a6b-89aa-a27d9413e824',
+                }),
+              },
+            )
+              .then(function (res) {
+                console.log('Sent data', res);
+                // clear post that has been requested
+                // use function declared in utility.js
+                if (res.ok) {
+                  // ensure the request is successful and remove from IndexedDB
+                  res.json().then(function (resData) {
+                    // use data from the response to remove data from IndexedDB
+                    deleteItemFromData('sync-post', resData.id);
+                  });
+                }
+              })
+              .catch(function (err) {
+                console.log('Error while sending data', err);
+              });
+          }
+        }),
+      );
+    }
+  });
+  ```
+12. After configuring the service worker, we can try offline by turning off WiFi and create several posts in queue and resume network connection.
+  <img src="./images/138-errors_fetching_to_firebase_function.png">
+
+## 8.9. Fixing Error  
+1. The error from the previous lecture is from the incorrect configuration in firebase function when setting up the server.
+2. We need to download the certificate as the private key to deploy firebase function.
+  <img src="./images/139-download_firebase_certificate.png">
+3. Besides, we can notice that the data is still queued up in IndexedDB as they aren't sent as requests correctly.
+  ```js
+  // functions/index.js
+  const admin = require('firebase-admin');
+  const serviceAccount = require('./pwagram-fb-key.json');
+
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL:
+      'https://pwagram-69cf3-default-rtdb.asia-southeast1.firebasedatabase.app/',
+  });
+
+  exports.storePostData = functions.https.onRequest((request, response) => {
+    // cors take 3 arguments (request, response, function)
+    cors(req, res, function () {
+      admin
+        .database()
+        .ref('posts')
+        .push({
+          id: request.body.id,
+          title: request.body.title,
+          location: request.body.location,
+          image: request.body.image,
+        })
+        .then(function () {
+          response.status(201).json({ message: 'Data stored', id: req.body.id });
+        })
+        .catch((err) => {
+          response.status(500).json({ error: err });
+        });
+    });
+  });
+  ```
+4. After redeploy the firebase function, we can try to create a new post in offline mode.
+5. If the post data successfully creates a post in firebase, it will be removed from IndexedDB, if the request has never been successful, it will be kept in IndexedDB.
+
+
+
 # 9. Web Push Notifications
 ## 9.1. Why we need Web Push Notifications
 ## 9.2. How Push and Notifications Work
