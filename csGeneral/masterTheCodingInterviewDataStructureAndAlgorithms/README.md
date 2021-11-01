@@ -34,6 +34,16 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [3.2. How computers store data](#32-how-computers-store-data)
   - [3.3. Data structures in different languages](#33-data-structures-in-different-languages)
   - [3.4. Operations on data structure](#34-operations-on-data-structure)
+- [4. Data Structure: Array](#4-data-structure-array)
+  - [4.1. Arrays Introduction](#41-arrays-introduction)
+  - [4.2. Static vs Dynamic arrays](#42-static-vs-dynamic-arrays)
+  - [4.3. Implementing an Array](#43-implementing-an-array)
+  - [4.4. Strings and Arrays](#44-strings-and-arrays)
+  - [4.5. Exercise: Reverse a String](#45-exercise-reverse-a-string)
+  - [4.6. Solution: Reverse a String](#46-solution-reverse-a-string)
+  - [4.7. Exercise: Merge Sorted Arrays](#47-exercise-merge-sorted-arrays)
+  - [4.8. Solution: Merge Sorted Arrays](#48-solution-merge-sorted-arrays)
+  - [4.9. Arrays Review](#49-arrays-review)
 ---
 
 # 1. Big O
@@ -485,3 +495,234 @@ combine them later.
 6. Access - read data in memory
 
 
+
+# 4. Data Structure: Array
+## 4.1. Arrays Introduction
+1. In Javascript, we have several array methods to work with and manipulate the array.
+2. `push` add an item at the end of the array
+3. `pop` remove the last item of the array
+4. `unshift` add an item as the first item to an array
+5. `splice` add or remove an item at an abritrary position of an array
+  ```js
+  const strings = ['a', 'b', 'c', 'd'];
+  // 4*4 = 16 bytes of storage
+
+  strings[2];
+
+  // push
+  strings.push('e'); // O(1)
+  console.log(strings); // ['a', 'b', 'c', 'd', 'e']
+
+  // pop
+  strings.pop(); // O(1)
+  console.log(strings); // ['a', 'b', 'c', 'd']
+  strings.pop(); // O(1)
+  console.log(strings); // ['a', 'b', 'c']
+
+  // unshift
+  strings.unshift('x'); // O(n)
+  console.log(strings); // ['x', 'a', 'b', 'c']
+
+  // splice
+  strings.splice(2, 0, 'alien'); // O(n)
+  console.log(strings); // ['x', 'a', 'alien', 'b', 'c']
+  ```
+
+## 4.2. Static vs Dynamic arrays
+1. Static arrays has static size or fixed number of items.
+2. The main difference is if the language is required to manage memory.
+3. When adding or removing items from a dynamic array, the computer will duplicate the current one and relocate the array to other chunk of memory to store the data.
+
+## 4.3. Implementing an Array
+1. How to build one
+2. How to use it
+  ```js
+  // Javascript
+  class MyArray {
+    constructor() {
+      this.length = 0;
+      this.data = {};
+    }
+
+    get(index) {
+      return this.data[index];
+    }
+
+    push(item) {
+      this.data[this.length] = item;
+      this.length++;
+      return this.length;
+    }
+
+    pop() {
+      const lastItem = this.data[this.length - 1];
+      delete this.data[this.length - 1];
+      this.length--;
+      return lastItem;
+    }
+
+    delete(index) {
+      const item = this.data[index];
+      this.shiftItems(index);
+    }
+
+    shiftItems(index) {
+      for (let i = 0; i < this.length; i++) {
+        this.data[i] = this.data[i + 1];
+      }
+      // drop the very last item in the array
+      delete this.data[this.length - 1];
+      this.length--;
+    }
+  }
+
+  const newArray = new MyArray();
+  console.log(newArray); // { length: 0, data: {} }
+  console.log(newArray.get(0)); // undefined
+
+  newArray.push('hi');
+  console.log(newArray); // { length: 0, data: { 0: 'hi' } }
+  newArray.push('you');
+  console.log(newArray); // { length: 0, data: { 0: 'hi', 1: 'you' } }
+  
+  newArray.pop();
+  console.log(newArray); // { length: 0, data: { 0: 'hi' } }
+
+  newArray.push('!');
+  newArray.push('are');
+  newArray.push('nice');
+
+  newArray.delete(1);
+  console.log(newArray); // { length: 0, data: { 0: 'hi' } }
+  ```
+
+## 4.4. Strings and Arrays
+1. Strings are simply array of characters.
+
+## 4.5. Exercise: Reverse a String
+## 4.6. Solution: Reverse a String
+1. Tentative solutions
+  ```js
+  // Javascript
+  // create a function that reverse a string
+
+  // use for loop
+  function reverseString(string) {
+    const array = [];
+    for (let i = string.length - 1; i >= 0; i--) {
+      array.push(string[i]);
+    }
+    const str = array.join('');
+    return str;
+  }
+
+  // use reduce method
+  function reverseString(string) {
+    let length = string.length;
+    return string.split('').reduce((str, char, index, arr) => {
+      str += arr[length - 1];
+      length--;
+      return str;
+    }, '');
+  }
+
+  // use reverse method
+  function reverseString(string) {
+    return string.split('').reverse().join('');
+  }
+  ```
+2. Solution from lecture
+  ```js
+  // Javascript
+  function reverse(str) {
+    // check input
+    if (!str || str.length < 2 || typeof str !== 'string') {
+      return 'hmm that is not good';
+    }
+
+    const backwards = [];
+    const totalItems = str.length - 1;
+    for (let i = totalItems; i === 0; i--) {
+      backwards.push([str[i]);
+    }
+
+    return backwards.join('');
+  }
+
+  function reverse2(str) {
+    return str.split('').reverse().join('');
+  }
+
+  const revser3 = str => str.split('').reverse().join('');
+
+  const revser4 = str => [...str].reverse().join('');
+  ```
+
+## 4.7. Exercise: Merge Sorted Arrays
+## 4.8. Solution: Merge Sorted Arrays
+1. Tentative solutions
+  ```js
+  // Javascript
+  // destructive assign
+  const array1 = [0, 3, 4, 31];
+  const array2 = [4, 6, 30 ];
+
+  function mergeAndSort() {
+    const mergedArray = [...arguments].reduce((list, item) => {
+      list = [...list, ...item];
+      return list;
+    }, []);
+    
+    return mergedArray.sort((a, b) => a - b);
+  };
+
+  mergeAndSort(array1, array2);
+  ```
+2. Solution from the lecture
+  ```js
+  // Javascript
+  function mergeSortedArray(array1, array2) {
+    const mergedArray = [];
+    let array1Item = array1[0];
+    let array2Item = array2[0];
+    let i = 1;
+    let j = 1;
+
+    // check input
+    if (!array1.length) {
+      return array2;
+    }
+
+    if (!array2.length) {
+      return array1;
+    }
+
+    while (array1Item || array2Item) {
+      // we need to check if array2Item is undefined or it will cause infinite loop
+      // as the iteration won't stop when array1Item or array2Item is truthy
+      if (!array2Item || array1Item < array2Item) {
+        mergeArray.push(array1Item);
+        array1Item = array1[i];
+        i++;
+      } else {
+        mergeArray.push(array2Item);
+        array2Item = array2[j];
+        j++;
+      }
+    }
+
+    return mergedArray;
+  }
+
+  mregedSortedArray([0, 3, 4, 31], [4, 6, 30 ]);
+  ```
+
+## 4.9. Arrays Review
+1. Pros
+   1. Fast lookups
+   2. Fast push/pop
+   3. Ordered
+2. Cons
+   1. Slow inserts
+   2. Slow deletes
+   3. Fixed size (if using static array)
