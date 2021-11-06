@@ -2558,26 +2558,148 @@ This section use "background-sync-01--access-form"
 
 # 9. Web Push Notifications
 ## 9.1. Why we need Web Push Notifications
+1. Show up even if App (and Browser) is closed.
+2. Driver User Engagement
+3. Mobile-App-Like Experience
+
 ## 9.2. How Push and Notifications Work
+1. To use notification, the user must enable and allow notification. This is on the browser to prompt the user if s/he allows the app to push notification at certain domain.
+2. With permission, backend server of the web app can push notification to the web app.
+3. Check for existing push subscription. If not, the app can create new subscription.
+4. Though we can use websocket to push notification from the server, it's different technology which can be applied in different scenarios. Besides, it only works when the app is still opened and active.
+5. Every browser has its own push notification server. We use Javascript to get Push API endpoint to access to service "**Browser Vendor Push Server**".
+6. Besides, we should be aware of the security of the push notification endpoint and prevent any outsider or 3rd party to push messages to app users.
+7. The backend server to the web app can be integrated or separated (fullstack app with SSR or SPA with separated front and back).
+8. After connecting to the backend server, the service worker can store subscription on the backend server with persistent data storage.
+9. When the app would like to send push notification, the event triggers from the backend server.
+   1.  Backend server sends push notification to browser vendor push server.
+   2.  Browser vendor push server sends a "push" event to the service worker.
+   3.  Service worker handle the push event and react on the web app.
+  <img src="./images/144-how_push_notification_work.png">
+
 ## 9.3. Displaying Notifications - Some Theory First
+1. To display notifications, we don't actually need "push" event to be triggered.
+2. The notification is executed with "Notification API" which can be accessed without service worker.
+3. However, we do need to use both notification API with service worker to handle "push" event.
+  <img src="./images/145-displaying_notifications.png">
+
 ## 9.4. Browser Support
+1. By the time of learning, Apple still hasn't allowed to use push notification on the mobile versions on iOS.
+2. Therefore, only mobiles with Android system and Desktop can use Notification API.
+
 ## 9.5. Requesting Permissions
+1. In this project, we have buttons to enable push notifications on both the top navigation and the side panel.
+2. We can register the event handler in `app.js` as the buttons for enabling notifications are general and are shown on every page.
+3. We firstly check if the browser supports `Notification` by checking the property in `window` on the global scope.
+4. If it's available, we then iterate through all the buttons to add styling and `click` event listener.
+5. Note that when we request permission to user for push notification, the users will grante 2 permissions for both `Notification` and `push` event from the server.
+6. When users click on the enabling button, the browesr will prompt and ask the user if s/he wants to grant permission to the feature.
+7. However, the browser userflow on granting permission can be tricky as this feature can easily be abused for inproper purposes, such as scamming and create annoying alarms.
+8. Besides, granting permission is an one-time event that if the user grants permission, the feature will be enabled. However, the default behavior wouldn't prompt to the user directly and will turn notifcation off by default.
+9. Once the user denies permission, the user must go to setting to the browser to re-enable the feature for certain website or domain.
+10. After the user has responded to notification request, the app will only get message to check if the feature is granted and CAN NOT prompt to the user again.
+  ```js
+  // src/app.js
+  function askForNotificationPermission() {
+    Notification.requestPermission(function(result) {
+      console.log('User Choice', result);
+      if (result !== 'granted') {
+        console.log('No notification permission granted!');
+      } else {
+
+      }
+    });
+  }
+
+  // check if the browser supports Notification API
+  if ('Notification' in window) {
+    for (var i = 0; i < enableNotificationsButtons.length; i++) {
+      enableNotificationsButtons[i].style.display = 'inline-block';
+      enableNotificationsButtons[i].addEventListener('click', askForNotificationPermission);
+    }
+  }
+  ```
+
 ## 9.6. Displaying Notifications
+1. After registering the notification API and ensure users has granted permission to the feature, we can use `Notifacation` to prompt system notification with mulitple options.
+2. We can simply execute the function below if the notifcation feature is allowed.
+3. The 1st argument for the feature is the "title" of the notification, while we can pass an option which has other features such as setting up the body message of the notification.
+  ```js
+  // app.js
+  function displayConfrimNotification() {
+    var options = {
+      body: 'You successfully subscribed to our Notifaction service',
+    };
+    new Notification('Successfully subscribed!', options); // title
+  }
+  ```
+
 ## 9.7. Notifications from Within the Service Worker
+1. We can work on push notification with service worker by updating `displayConfrimNotification` in `app.js`.
+2. We can check with `navigator.serviceWorker.ready` which returns a `Promise` if service worker is registered and activated for the web app.
+3. We then can call `showNotification` method which is the same as calling `new Notification()` to prompt the system notification.
+  ```js
+  // app.js
+  function displayConfrimNotification() {
+    // check if the browser supports service worker
+    if ('serviceWorker' in navigator) {
+      var options = {
+        body: 'You successfully subscribed to our Notifaction service',
+      };
+      // navigator.serviceWorker.ready returns a Promise
+      navigator.serviceWorker.ready.then(function (swreg) {
+        // swreg is the service worker reistered and active service worker that the web app uses
+        swreg.showNotification('Successfully subscribed (from SW)!', options);
+      });
+    }
+  }
+  ```
+
 ## 9.8. Understanding Notification Options
+
+
 ## 9.9. Advanced Options
+
+
 ## 9.10. Adding Actions to Notifications
+
+
 ## 9.11. Reacting to Notification Interaction - Clicks
+
+
 ## 9.12. Reacting to Notification Interaction - Closing
+
+
 ## 9.13. From Notifications to Push Messages
+
+
 ## 9.14. Creating a Push Subscription
+
+
 ## 9.15. Storing Subscription
+
+
 ## 9.16. Connecting Server and Client (PWA)
+
+
 ## 9.17. Sending Push Messges from the Server
+
+
 ## 9.18. Listening to Push Message
+
+
 ## 9.19. Displaying Push Notification on a Real Device
+
+
 ## 9.20. Opening a Page upon User Interaction
+
+
 ## 9.21. Improving our Code
+
+
+
+
+
 # 10. Native Device Features
 ## 10.1. Preparing the Project
 ## 10.2. Getting DOM Access
