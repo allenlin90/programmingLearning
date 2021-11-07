@@ -143,20 +143,19 @@ Course Material: [Progressive Web App (PWA) - The Complete Guide](https://www.ud
   - [10.11. Fixing Bugs](#1011-fixing-bugs)
   - [10.12. Testing the App on a Real Device](#1012-testing-the-app-on-a-real-device)
 - [11. Service Worker Management with Workbox](#11-service-worker-management-with-workbox)
-  - [11.1. Understanding the Basics](#111-understanding-the-basics)
-  - [11.2. Installing Workbox and Using it](#112-installing-workbox-and-using-it)
-  - [11.3. Configuring Workbox Precaching](#113-configuring-workbox-precaching)
-  - [11.4. Customizing the Service Worker](#114-customizing-the-service-worker)
-  - [11.5. Implementing Routing with the Workbox Router](#115-implementing-routing-with-the-workbox-router)
-  - [11.6. Expanding Dynamic Caching](#116-expanding-dynamic-caching)
-  - [11.7. Options and Setting Up Strategies](#117-options-and-setting-up-strategies)
-  - [11.8. Custom Handlers (Example: For IndexedDB)](#118-custom-handlers-example-for-indexeddb)
-  - [11.9. Providing an Offline HTML Fallback](#119-providing-an-offline-html-fallback)
-  - [11.10. Handling Background Synchronisation and Push Notification](#1110-handling-background-synchronisation-and-push-notification)
-  - [11.11. Understanding the Workbox Documentation](#1111-understanding-the-workbox-documentation)
-  - [11.12. Enhancing the Build Workflow](#1112-enhancing-the-build-workflow)
-  - [11.13. Running our App on a Real Server](#1113-running-our-app-on-a-real-server)
-  - [11.14. Auditing our Webpage with Lighthouse](#1114-auditing-our-webpage-with-lighthouse)
+  - [11.1. Installing Workbox and Using it](#111-installing-workbox-and-using-it)
+  - [11.2. Configuring Workbox Precaching](#112-configuring-workbox-precaching)
+  - [11.3. Customizing the Service Worker](#113-customizing-the-service-worker)
+  - [11.4. Implementing Routing with the Workbox Router](#114-implementing-routing-with-the-workbox-router)
+  - [11.5. Expanding Dynamic Caching](#115-expanding-dynamic-caching)
+  - [11.6. Options and Setting Up Strategies](#116-options-and-setting-up-strategies)
+  - [11.7. Custom Handlers (Example: For IndexedDB)](#117-custom-handlers-example-for-indexeddb)
+  - [11.8. Providing an Offline HTML Fallback](#118-providing-an-offline-html-fallback)
+  - [11.9. Handling Background Synchronization and Push Notification](#119-handling-background-synchronization-and-push-notification)
+  - [11.10. Understanding the Workbox Documentation](#1110-understanding-the-workbox-documentation)
+  - [11.11. Enhancing the Build Workflow](#1111-enhancing-the-build-workflow)
+  - [11.12. Running our App on a Real Server](#1112-running-our-app-on-a-real-server)
+  - [11.13. Auditing our Webpage with Lighthouse](#1113-auditing-our-webpage-with-lighthouse)
 - [12. SPAs and PWAs](#12-spas-and-pwas)
   - [12.1. React with create-react-app](#121-react-with-create-react-app)
   - [12.2. A General Note about SPAs and PWAs](#122-a-general-note-about-spas-and-pwas)
@@ -2519,38 +2518,38 @@ This section use "background-sync-01--access-form"
 2. We need to download the certificate as the private key to deploy firebase function.
   <img src="./images/139-download_firebase_certificate.png">
 3. Besides, we can notice that the data is still queued up in IndexedDB as they aren't sent as requests correctly.
-  ```js
-  // functions/index.js
-  const admin = require('firebase-admin');
-  const serviceAccount = require('./pwagram-fb-key.json');
+    ```js
+    // functions/index.js
+    const admin = require('firebase-admin');
+    const serviceAccount = require('./pwagram-fb-key.json');
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL:
-      'https://pwagram-69cf3-default-rtdb.asia-southeast1.firebasedatabase.app/',
-  });
-
-  exports.storePostData = functions.https.onRequest((request, response) => {
-    // cors take 3 arguments (request, response, function)
-    cors(req, res, function () {
-      admin
-        .database()
-        .ref('posts')
-        .push({
-          id: request.body.id,
-          title: request.body.title,
-          location: request.body.location,
-          image: request.body.image,
-        })
-        .then(function () {
-          response.status(201).json({ message: 'Data stored', id: req.body.id });
-        })
-        .catch((err) => {
-          response.status(500).json({ error: err });
-        });
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      databaseURL:
+        'https://pwagram-69cf3-default-rtdb.asia-southeast1.firebasedatabase.app/',
     });
-  });
-  ```
+
+    exports.storePostData = functions.https.onRequest((request, response) => {
+      // cors take 3 arguments (request, response, function)
+      cors(req, res, function () {
+        admin
+          .database()
+          .ref('posts')
+          .push({
+            id: request.body.id,
+            title: request.body.title,
+            location: request.body.location,
+            image: request.body.image,
+          })
+          .then(function () {
+            response.status(201).json({ message: 'Data stored', id: req.body.id });
+          })
+          .catch((err) => {
+            response.status(500).json({ error: err });
+          });
+      });
+    });
+    ```
 4. After redeploy the firebase function, we can try to create a new post in offline mode.
 5. If the post data successfully creates a post in firebase, it will be removed from IndexedDB, if the request has never been successful, it will be kept in IndexedDB.
 
@@ -2713,21 +2712,527 @@ This section use "background-sync-01--access-form"
 ## 10.10. Getting the User Position
 ## 10.11. Fixing Bugs
 ## 10.12. Testing the App on a Real Device
+
+
+
 # 11. Service Worker Management with Workbox
-## 11.1. Understanding the Basics
-## 11.2. Installing Workbox and Using it
-## 11.3. Configuring Workbox Precaching
-## 11.4. Customizing the Service Worker
-## 11.5. Implementing Routing with the Workbox Router
-## 11.6. Expanding Dynamic Caching
-## 11.7. Options and Setting Up Strategies
-## 11.8. Custom Handlers (Example: For IndexedDB)
-## 11.9. Providing an Offline HTML Fallback
-## 11.10. Handling Background Synchronisation and Push Notification
-## 11.11. Understanding the Workbox Documentation
-## 11.12. Enhancing the Build Workflow
-## 11.13. Running our App on a Real Server
-## 11.14. Auditing our Webpage with Lighthouse
+## 11.1. Installing Workbox and Using it
+1. In this section, we work with `workbox-01--basic-setup` repo and install an older version of workbox by `npm install --save-dev workbox-cli@^2`.
+2. After install the the dev dependency, we can update `scripts` in `package.json` to generate the service worker by `workbox`.
+    ```json
+    // package.json
+    {
+      "scripts": {
+        "generate-sw": "workbox generate:sw"
+      }
+    }
+    ```
+3. By executing the workbox cli tool, it prompts several questions such as checking the target root directory for the webapp and the types of files that we want to cache.
+4. It then generate several files in the target directory which is `public` in this case. The generated files including `service -worker.js` which list all the files available in the `public` directory and give hashes to each of the files.
+5. The hashes is used to check every time we run the workbox generate command to check if any of the files is modified.
+6. This step is the same as what we did manually in the `install` step which import the list of files that we want the PWA to cache.
+7. Then this cached files will be used in the `fetch` event and be used as fallback when network is not available in offline mode.
+8. Note that since we have the new service worker generated by `workbox`, we need to register the correct service worker in `src/js/app.js`.
+9. We can re-open the app in browser and clear the site data to have a clear start. 
+10. However, though current version allows in offline mode, a lot of feature including stylings are note cached, so the app doesn't work correctly in offline mode.
+
+## 11.2. Configuring Workbox Precaching
+1. The default service worker doesn't cache the files the app needs or the css imported from CDN.
+2. After selecting the options when running `npm run generate-sw`, the CLI tool generates `workbox-cli-config.js` in the root directory (`public`).
+3. This workbox configuration file includes some properties such as `swDest` to generate the service worker that will be used in the project and `globPatterns` to cache all the required files in a generic way.
+4. In this case, we cache only the images in `src/images/` with files having `jpg` and `png` as suffix.
+5. If we'd like to cache all the files in the subfolders, we can use `**/*.{[file_suffix]}`.
+6. Note that we have to be careful with the other file paths caching the files.
+    ```js
+    // workbox-cli-config.js
+    module.exports = {
+      globDirectory: 'public/',
+      globPatterns: [
+        '**/*.{html,ico,json,css,png,jpg,js}', // this will cache all the jpg and png files as in subfolders which turn the following pattern invalid
+        'src/images/*.{jpg,png}', // this caches only the files in src/images without files in subfolders such as 'icons'
+        // be careful having conflict and overlapping with other patterns
+      ],
+      swDest: 'public/service-worker.js',
+      globIgnores: [
+        '../workbox-cli-config.js',
+        'help/**', // everything will be ignored in 'help' folder
+      ],
+    };
+    ```
+7. However, the current setting still doesn't cache the data imported from CDN.
+
+## 11.3. Customizing the Service Worker
+1. In previous lectures, we can deploy conditions to check in `fetch` event in service worker to cache data on if the app fetch from certain route.
+2. For example, the current setting is to cache data from `posts`.
+   1. Cache data from `posts` endpoint.
+   2. Cache static data from the list.
+   3. Cache other data and files in dynamic cache.
+    ```js
+    // manual service worker
+    // sw.js
+    self.addEventListener('fetch', function (event) {
+      // cache data from posts in IndexedDB if the data is from certain route
+      var url = 'https://pwagram-99adf.firebaseio.com/posts';
+      if (event.request.url.indexOf(url) > -1) {
+        event.respondWith(fetch(event.request)
+          .then(function (res) {
+            var clonedRes = res.clone();
+            clearAllData('posts')
+              .then(function () {
+                return clonedRes.json();
+              })
+              .then(function (data) {
+                for (var key in data) {
+                  writeData('posts', data[key])
+                }
+              });
+            return res;
+          })
+        );
+      // cache static files in the list
+      } else if (isInArray(event.request.url, STATIC_FILES)) {
+        event.respondWith(
+          caches.match(event.request)
+        );
+      } else {
+        event.respondWith(
+          caches.match(event.request)
+            .then(function (response) {
+              if (response) {
+                return response;
+              } else {
+                return fetch(event.request)
+                  .then(function (res) {
+                    return caches.open(CACHE_DYNAMIC_NAME)
+                      .then(function (cache) {
+                        // trimCache(CACHE_DYNAMIC_NAME, 3);
+                        cache.put(event.request.url, res.clone());
+                        return res;
+                      })
+                  })
+                  .catch(function (err) {
+                    return caches.open(CACHE_STATIC_NAME)
+                      .then(function (cache) {
+                        if (event.request.headers.get('accept').includes('text/html')) {
+                          return cache.match('/offline.html');
+                        }
+                      });
+                  });
+              }
+            })
+        );
+      }
+    });
+    ```
+3. Therefore, we can update `workbox-cli-config.js` generated by workbox CLI.
+4. We can have a base service worker and change the workbox command from `workbox generate-sw` to `workbox inject:manifest`.
+    ```js
+    // workbox-cli-config.js
+    module.exports = {
+      globDirectory: 'public/',
+      globPatterns: [
+        '**/*.{html,ico,json,css,js}',
+        'src/images/*.{jpg,png}', // this caches only the files in src/images without files in subfolders such as 'icons'
+      ],
+      swSrc: 'public/sw-base.js',
+      swDest: 'public/service-worker.js',
+      globIgnores: [
+        '../workbox-cli-config.js',
+        'help/**', // everything will be ignored in 'help' folder
+      ],
+    };
+    ```
+5. `workbox inject:manifest` will update the data generated by workbox and inject into a dedicated service worker.
+6. In the custom file (`sw-base.js` in this case), we have to import the script to allow workbox the relationship between files.
+    ```js
+    // sw-base.js
+    importScripts('workbox-sw.prod.v2.1.3.js');
+
+    const workboxSW = new self.WorkboxSW();
+    workboxSW.precache([]); // give an empty array for workbox cli to inject the list
+    ```
+7. After we run `npm run generate-sw` (which is updated to `workbox inject:manifest`), it will generate `service-worker.js` based on the configuration we made in `sw-base.js`.
+8. We will update the setting to cache data and files from CDN in the next lecture.
+
+## 11.4. Implementing Routing with the Workbox Router
+1. Before workbox instance precache the routes, we can do something to cache from the CDN resources.
+2. We use `router.registerRoute` method which takes 2 arguments.
+   1. The route we want to cache or place a regular expression to check if the URL matches certain pattern.
+   2. The action to take if the route matches. 
+3. We then can use `workboxSW.strategies.staleWithRevalidate` method which works similar to "cache and network" strategy.
+4. The app serves data from the cache while sending a `fetch` to get the lastest data.
+5. If the `fetch` gets new data, new data will be cached and be served in the next udpate such as refresh the page or change tab.
+6. We can pass an object to `staleWithRevalidate` to configure the method. For example, since we cache the data from google fonts, we can set the cache name aligned to it.
+    ```js
+    // sw-base.js
+    importScripts('workbox-sw.prod.v2.1.3.js');
+
+    const workboxSW = new self.WorkboxSW();
+
+    // given Express styling routes or Regular Expression
+    // 1st argument is to check if the URL matches
+    // 2nd argument is the action to take if it matches
+    workboxSW.router.registerRoute(
+      /.*(?:googleapis|gstatic)\.com.*$/g,
+      workboxSW.strategies.staleWhileRevalidate({
+        cacheName: 'google-font'
+      }),
+    );
+    // stateWithRevalidate takes an object for config
+
+    workboxSW.precache([]); // give an empty array for workbox cli to inject the list
+    ```
+6. We can register more routes with different strategy and cache the data.
+7. Note that the current regular expression will cache the images files from firebase as the URL also includes `googleapis`.
+
+## 11.5. Expanding Dynamic Caching
+1. We can register another route for different resources from CDN. For example, the material design CSS file.
+2. Besides, to prevent the images from firebase cached with `google-font`, we can register the other route. If the request has a better match to a route, it won't be cached by the other route though it also matches.
+    ```js
+    // sw-base.js
+    importScripts('workbox-sw.prod.v2.1.3.js');
+
+    const workboxSW = new self.WorkboxSW();
+
+    workboxSW.router.registerRoute(
+      /.*(?:googleapis|gstatic)\.com.*$/g,
+      workboxSW.strategies.staleWhileRevalidate({
+        cacheName: 'google-font',
+      }),
+    );
+
+    // use same strategy 'staleWhileRevalidate' 
+    workboxSW.router.registerRoute(
+      'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
+      workboxSW.strategies.staleWhileRevalidate({
+        cacheName: 'material-css',
+      }),
+    );
+
+    // cache data from firebase
+    // image from firebase.googleapis won't be cached in 'google-fonts'
+    workboxSW.router.registerRoute(
+      /.*(?:firebasestorage\.googleapis)\.com.*$/g,
+      workboxSW.strategies.staleWhileRevalidate({
+        cacheName: 'post-images',
+      }),
+    );
+
+    workboxSW.precache([]);
+    ```
+
+## 11.6. Options and Setting Up Strategies
+1. We can refer to [https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-strategies) for strategies in workbox.
+2. Besides, we can set up options to the strategies (which now becomes plugins) [strategy options](https://developers.google.com/web/tools/workbox/modules/workbox-strategies?hl=en#using_plugins). Therefore various options we can configure such as `cacheExpires`.
+3. Some options can be useful such as `cacheableResponse` to deal with response with certain status code (such as `200` or `404`) and the `headers` property in the response.
+    ```js
+    // sw-base.js
+    importScripts('workbox-sw.prod.v2.1.3.js');
+
+    const workboxSW = new self.WorkboxSW();
+
+    // cache google fonts
+    workboxSW.router.registerRoute(
+      /.*(?:googleapis|gstatic)\.com.*$/g,
+      workboxSW.strategies.staleWhileRevalidate({
+        cacheName: 'google-font',
+        cacheExpiration: {
+          maxEntries: 3,
+          maxAgeSeconds: 60 * 60 * 24 * 30, // a month
+        },
+      }),
+    );
+
+    // cache material design CSS
+    workboxSW.router.registerRoute(
+      'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
+      workboxSW.strategies.staleWhileRevalidate({
+        cacheName: 'material-css',
+      }),
+    );
+
+    // cache data from firebase
+    workboxSW.router.registerRoute(
+      /.*(?:firebasestorage\.googleapis)\.com.*$/g,
+      workboxSW.strategies.staleWhileRevalidate({
+        cacheName: 'post-images',
+      }),
+    );
+
+    workboxSW.precache([]);
+    ```
+4. Note that the version on the website and maintained by Google is very different from the lecture. The verion used in the lecture is `v-2` while it's now `v-6` by the time checking the package (in year 2021).
+
+## 11.7. Custom Handlers (Example: For IndexedDB)
+1. We now have had registered routes and precache data, but the service worker from workbox doesn't handle `posts` from firebase and the offline fallback HTML page.
+2. We can write other code for service worker in `sw-base.js` which for workbox to refer and generate new service workers based on it. For example, we can import both `idb` and the `utility.js` used to work with IndexedDB.
+3. Besides using strategies defined by workbox, we can create our own handler function as the 2nd argument. We can refer to [workbox routing](https://developers.google.com/web/tools/workbox/modules/workbox-routing) for more details.
+4. We can duplicate the logic from the manual service worker `sw.js` to cache posts from firebase in IndexedDB.
+    ```js
+    // sw-base.js
+    importScripts('/src/js/idb.js');
+    importScripts('/src/js/utility.js');
+
+    const url =
+      '[your_firebase_url]/posts.json';
+    workboxSW.router.registerRoute(url, function (args) {
+      return fetch(args.event.request).then(function (res) {
+        var clonedRes = res.clone();
+        clearAllData('posts')
+          .then(function () {
+            return clonedRes.json();
+          })
+          .then(function (data) {
+            for (var key in data) {
+              writeData('posts', data[key]);
+            }
+          });
+        return res;
+      });
+    });
+    ```
+5. Note that the fallback HTML page is still not available yet.
+
+## 11.8. Providing an Offline HTML Fallback
+1. Both arguments for `workboxSW.router.registerRoute` can be functions. 
+2. In the previous case, we pass the 1st argument as a plain text (`string`) or regular expression. 
+3. This argument can be a function that returns boolean value to notice the service worker whether to take actions on the 2nd argument.
+4. In this case, we check if the request is asking for a HTML file which can mean that the user wants to navigate to a route in the web app. We can check if the request has a header of request `text/html` which is to request a HTML file from the server.
+    ```js
+    // function to check whether to take actions
+    function (routeData) {
+      // we can check url from routeData.url
+      return routeData.event.request.headers.get('accept').includes('text/html');
+    }
+
+    // routeData can be destructive with ES6 syntax
+    ({ url, event }) => {
+      return event.request.headers.get('accept').includes('text/html');
+    }
+    ```
+5. We can refer to the function to work on fallback HTML page in the manual service worker `sw.js`.
+    ```js
+    // sw-base.js
+    // fallback html
+    workboxSW.router.registerRoute(
+      function (routeData) {
+        return routeData.event.request.headers.get('accept').includes('text/html');
+      },
+      function (args) {
+        return caches.match(args.event.request).then(function (response) {
+          if (response) {
+            // found in cache
+            return response;
+          } else {
+            return fetch(args.event.request)
+              .then(function (res) {
+                // cache the data in 'dynamic' cache
+                return caches.open('dynamic').then(function (cache) {
+                  cache.put(args.event.request.url, res.clone());
+                  return res;
+                });
+              })
+              .catch(function (err) {
+                // return 'offline.html' if the cache and network aren't available
+                return caches.match('/offline.html').then(function (res) {
+                  return res;
+                });
+              });
+          }
+        });
+      },
+    );
+    ```
+
+## 11.9. Handling Background Synchronization and Push Notification
+1. We can copy and use the logic from the manual service worker to deal with background sync and push notification.
+2. Note that `sw-base.js` is a regular service worker that we can write service worker code here direclty.
+3. Besides, when any of the file is modified, including the service worker, we need to run `npm run generate-sw` to regenerate the service worker by workbox.
+    ```js
+    // sw-base.js
+    self.addEventListener('sync', function(event) {
+      console.log('[Service Worker] Background syncing', event);
+      if (event.tag === 'sync-new-posts') {
+        console.log('[Service Worker] Syncing new Posts');
+        event.waitUntil(
+          readAllData('sync-posts')
+            .then(function(data) {
+              for (var dt of data) {
+                var postData = new FormData();
+                postData.append('id', dt.id);
+                postData.append('title', dt.title);
+                postData.append('location', dt.location);
+                postData.append('rawLocationLat', dt.rawLocation.lat);
+                postData.append('rawLocationLng', dt.rawLocation.lng);
+                postData.append('file', dt.picture, dt.id + '.png');
+
+                fetch('https://us-central1-pwagram-99adf.cloudfunctions.net/storePostData', {
+                  method: 'POST',
+                  body: postData
+                })
+                  .then(function(res) {
+                    console.log('Sent data', res);
+                    if (res.ok) {
+                      res.json()
+                        .then(function(resData) {
+                          deleteItemFromData('sync-posts', resData.id);
+                        });
+                    }
+                  })
+                  .catch(function(err) {
+                    console.log('Error while sending data', err);
+                  });
+              }
+
+            })
+        );
+      }
+    });
+
+    self.addEventListener('notificationclick', function(event) {
+      var notification = event.notification;
+      var action = event.action;
+
+      console.log(notification);
+
+      if (action === 'confirm') {
+        console.log('Confirm was chosen');
+        notification.close();
+      } else {
+        console.log(action);
+        event.waitUntil(
+          clients.matchAll()
+            .then(function(clis) {
+              var client = clis.find(function(c) {
+                return c.visibilityState === 'visible';
+              });
+
+              if (client !== undefined) {
+                client.navigate(notification.data.url);
+                client.focus();
+              } else {
+                clients.openWindow(notification.data.url);
+              }
+              notification.close();
+            })
+        );
+      }
+    });
+
+    self.addEventListener('notificationclose', function(event) {
+      console.log('Notification was closed', event);
+    });
+
+    self.addEventListener('push', function(event) {
+      console.log('Push Notification received', event);
+
+      var data = {title: 'New!', content: 'Something new happened!', openUrl: '/'};
+
+      if (event.data) {
+        data = JSON.parse(event.data.text());
+      }
+
+      var options = {
+        body: data.content,
+        icon: '/src/images/icons/app-icon-96x96.png',
+        badge: '/src/images/icons/app-icon-96x96.png',
+        data: {
+          url: data.openUrl
+        }
+      };
+
+      event.waitUntil(
+        self.registration.showNotification(data.title, options)
+      );
+    });
+    ``` 
+
+## 11.10. Understanding the Workbox Documentation
+1. `https://workboxjs.org/` has been changed to `https://developers.google.com/web/tools/workbox/`.
+2. There are many modules we can use in workbox package. The main entry package that includes all the other modules is [`workbox-sw`](https://www.npmjs.com/package/workbox-sw).
+3. The syntax has changed a lot in different versions. The lecture used `v2` which is class based syntax to work with workbox instance with `workbox-cli`.
+4. In the [tutorial from Google](https://developers.google.com/web/tools/workbox/guides/get-started), developers can create a `service-worker.js` in root directory and register with the regular Javascript code as we did for a manual service worker.
+5. Remember that we get the benefits from workbox CLI that it iterate and parse through the whole project directories and add the file paths to register as the static files.
+
+## 11.11. Enhancing the Build Workflow
+1. We can use `uglify-js` to compile and minimize the Javascript code. Note that we install this package as dev dependency rather than using it in production.
+2. After installing the package, we can add npm script in `package.json`
+3. We can use `-o` flag as the "output" to specify the export path and name of the file.
+4. Besides, we add another 2 commands `compress` and `mangle` to make the output as small as possible.
+    ```json
+    // package.json
+    {
+      "scripts": {
+        "start": "http-server -c-1",
+        "minify": "uglifyjs public/src/js/app.js -o public/src/js/app.min.js --compress --mangle",
+        "generate-sw": "workbox inject:manifest"
+      }
+    }
+    ```
+5. We then can add all files and paths that we want to compress and uglified.
+6. After setting up the command, we add another command `build` to run both `minify` and `generate-sw` to build the production code.
+    ```json
+    // package.json
+    {
+      "scripts": {
+        "start": "http-server -c-1",
+        "minify": "uglifyjs public/src/js/app.js -o public/src/js/app.min.js --compress --mangle && uglifyjs public/src/js/feed.js -o public/src/js/feed.min.js --compress --mangle && uglifyjs public/src/js/fetch.js -o public/src/js/fetch.min.js --compress --mangle && uglifyjs public/src/js/idb.js -o public/src/js/idb.min.js --compress --mangle && uglifyjs public/src/js/promise.js -o public/src/js/promise.min.js --compress --mangle && uglifyjs public/src/js/utility.js -o public/src/js/utility.min.js --compress --mangle",
+        "generate-sw": "workbox inject:manifest",
+        "build": "npm run minify && npm run generate-sw"
+      }
+    }
+    ```
+7. Nevertheless, we need to update the import script tags in `index.html` to import the code from minified Javascript code.
+8. In addition, we need to cache the minified script file rather than the original ones in service worker. We can adjust this in `workbox-cli-config.js`
+    ```js
+    // workbox-cli-config.js
+    module.exports = {
+      globDirectory: 'public/',
+      globPatterns: [
+        '**/*.{html,ico,json,css}', // remove js
+        'src/images/*.{jpg,png}',
+        'src/js/*.min.js', // cache only .min.js files
+      ],
+      swSrc: 'public/sw-base.js',
+      swDest: 'public/service-worker.js',
+      globIgnores: [
+        '../workbox-cli-config.js',
+        'help/**',
+      ],
+    };
+    ```
+
+## 11.12. Running our App on a Real Server
+1. We can deploy the app on firebase hosting as using Heroku service.
+2. We'd need to be aware of how firebase store and handle the `404.html` file in root directory.
+3. In this case, workbox fails to precache the file as it's not at where it is. `404.html` is considered a path of the web app.
+4. Therefore, we can add this in `workbox-cli-config.js` to ignore when precache the file.
+    ```js
+    // workbox-cli-config.js
+    module.exports = {
+      globDirectory: 'public/',
+      globPatterns: [
+        '**/*.{html,ico,json,css}', // remove js
+        'src/images/*.{jpg,png}',
+        'src/js/*.min.js', // cache only .min.js files
+      ],
+      swSrc: 'public/sw-base.js',
+      swDest: 'public/service-worker.js',
+      globIgnores: [
+        '../workbox-cli-config.js',
+        'help/**',
+        '404.html',
+      ],
+    };
+    ```
+
+## 11.13. Auditing our Webpage with Lighthouse
+1. We can use "lighthouse" which is installed as the internal feature in Chrome browser or can be installed as an extension.
+2. We can run audit the web app to check if the app follows best practice of PWAs.
+3. Lighthouse as gives hints and directions to improve the app.
+
+
+
 # 12. SPAs and PWAs
 ## 12.1. React with create-react-app
 ## 12.2. A General Note about SPAs and PWAs
