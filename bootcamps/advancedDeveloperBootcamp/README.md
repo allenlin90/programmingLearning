@@ -4,46 +4,157 @@ Note:
 1. As I just finished a course about HTML and CSS during June and July 2020, I will start the CSS session later to review the techniques and skills of HTML and CSS.
 1. `ES2015 Part 2` and `ES2016 and ES2017` are skipped, as to be reviewed again later. 
 
-# Structure
-1. [CSS Animation: Transforms and Transitions](#CSS-Animation:-Transforms-and-Transitions)
-1. [CSS Animation: Keyframes](#CSS-Animation:-Keyframes)
-1. [Advanced CSS: Layout with Flexbox](#Advanced-CSS:-Layout-with-Flexbox)
-1. [Project: Building A Startup Site](#Project:-Building-A-Startup-Site)
-1. [Async Foundations](#Async-Foundations)
-1. [AJAX Part 1: XHR and Fetch](#AJAX-Part-1:-XHR-and-Fetch)
-1. [AJAX Part 2: jQuery and Axios](#AJAX-Part-2:-jQuery-and-Axios)
-1. [Testing with Jasmine](#Testing-with-Jasmine)
-1. [Advanced Array Methods](#Advanced-Array-Methods)
-1. [Closures and the Keyword 'this'](#Closures-and-the-Keyword-'this')
-1. [Object Oriented Programming with JavaScript](#Object-Oriented-Programming-with-JavaScript)
-1. [Creating JSON API's with Node and Mongo](#Creating-JSON-API's-with-Node-and-Mongo)
-1. [Codealong: Single Page Todo List with Express, Mongo, and jQuery](#Codealong:-Single-Page-Todo-List-with-Express,-Mongo,-and-jQuery)
-1. [ES2015 Part 1](#ES2015-Part-1)
-1. [ES2015 Project - Guess the Password](#ES2015-Project-\--Guess-the-Password)
-1. [ES2015 Part 2](#ES2015-Part-2)
-1. [ES2016 and ES2017](#ES2016-and-ES2017)
-1. [D3 and the DOM](#D3-and-the-DOM)
-1. [Data Joins and Update Patterns in D3](#Data-Joins-and-Update-Patterns-in-D3)
-1. [SVG and D3](#SVG-and-D3)
-1. [D3 Odds and Ends, and Advanced Graph Types](#D3-Odds-and-Ends,-and-Advanced-Graph-Types)
-1. [Project: Building a Data Dashboard with D3](#Project:-Building-a-Data-Dashboard-with-D3)
-1. [Introduction to React and JSX](#Introduction-to-React-and-JSX)
-1. [Create React App and Props](#Create-React-App-and-Props)
-1. [State](#State)
-1. [The Virtual DOM, Events, and Forms](#The-Virtual-DOM,-Events,-and-Forms)
-1. [Component Lifecycle Methods](#Component-Lifecycle-Methods)
-1. [Building A Full-stack App with React](#Building-A-Full\-stack-App-with-React)
-1. [React Router](#React-Router)
-1. [Redux Introduction](#Redux-Introduction)
-1. [In Depth Redux Code Walkthrough](#In-Depth-Redux-Code-Walkthrough)
-1. [Warbler Introduction and Backend Part 1](#Warbler-Introduction-and-Backend-Part-1)
-1. [Warbler Backend Part 2](#Warbler-Backend-Part-2)
-1. [Warbler Frontend Part 1](#Warbler-Frontend-Part-1)
-1. [Warbler Frontend Part 2](#Warbler-Frontend-Part-2)
+- [1. Async Foundations](#1-async-foundations)
+  - [1.1. Callback Functions](#11-callback-functions)
+  - [1.2. Codealong: forEach](#12-codealong-foreach)
+  - [1.3. findIndex](#13-findindex)
+  - [1.4. The Stack and The Heap](#14-the-stack-and-the-heap)
+  - [1.5. setTimeout and setInterval](#15-settimeout-and-setinterval)
+  - [1.6. The Event Loop and the Queue](#16-the-event-loop-and-the-queue)
+  - [1.7. Promise Basics](#17-promise-basics)
+  - [1.8. Promise Chaining](#18-promise-chaining)
+- [2. AJAX Part 1: XHR and Fetch](#2-ajax-part-1-xhr-and-fetch)
+  - [2.1. Intro to AJAX](#21-intro-to-ajax)
+  - [2.2. What's the deal with JSON and XML](#22-whats-the-deal-with-json-and-xml)
+  - [2.3. Making the First Request with XMLHTTPRequest](#23-making-the-first-request-with-xmlhttprequest)
+  - [2.4. AJAX workflow: Building the Random Image App](#24-ajax-workflow-building-the-random-image-app)
+  - [2.5. Bitcoin Price Exercise](#25-bitcoin-price-exercise)
+  - [2.6. Fetch Introduction](#26-fetch-introduction)
+  - [2.7. Fetch options](#27-fetch-options)
+  - [2.8. Fetch error handling](#28-fetch-error-handling)
+  - [2.9. Fetch Random User Profile](#29-fetch-random-user-profile)
+  - [2.10. Problems with Fetch API](#210-problems-with-fetch-api)
+- [3. AJAX Part 2: jQuery and Axios](#3-ajax-part-2-jquery-and-axios)
+  - [3.1. Introduction to jQuery](#31-introduction-to-jquery)
+  - [3.2. jQuery $.ajax method](#32-jquery-ajax-method)
+  - [3.3. jQuery AJAX shorthand methods](#33-jquery-ajax-shorthand-methods)
+  - [3.4. jQuery random cats API exercise](#34-jquery-random-cats-api-exercise)
+  - [3.5. axios intro](#35-axios-intro)
+  - [3.6. Axios Error Handling](#36-axios-error-handling)
+  - [3.7. Ron Swanson Exercise](#37-ron-swanson-exercise)
+- [4. Testing with Jasmine](#4-testing-with-jasmine)
+  - [4.1. Writing Test in the Browser](#41-writing-test-in-the-browser)
+  - [4.2. Jasmine Syntax and Matchers](#42-jasmine-syntax-and-matchers)
+  - [4.3. Writing better tests with Hooks](#43-writing-better-tests-with-hooks)
+  - [4.4. Spies](#44-spies)
+  - [4.5. Clocks](#45-clocks)
+  - [4.6. TDD and BDD](#46-tdd-and-bdd)
+  - [4.7. Different Types of Test](#47-different-types-of-test)
+- [5. Advanced Array Methods](#5-advanced-array-methods)
+  - [5.1. forEach](#51-foreach)
+  - [5.2. Coding Exercise 2: Exercise: forEach](#52-coding-exercise-2-exercise-foreach)
+  - [5.3. map](#53-map)
+  - [5.4. Coding Exercise 3: Exercise: Map](#54-coding-exercise-3-exercise-map)
+  - [5.5. Filter](#55-filter)
+  - [5.6. Coding Exercise 4: Exercise: Filter](#56-coding-exercise-4-exercise-filter)
+  - [5.7. Some](#57-some)
+  - [5.8. Every](#58-every)
+  - [5.9. Exercise: Some and Every](#59-exercise-some-and-every)
+  - [5.10. Reduce](#510-reduce)
+  - [5.11. Exercise: Reduce](#511-exercise-reduce)
+  - [5.12. Recap](#512-recap)
+- [6. Closures and the Keyword 'this'](#6-closures-and-the-keyword-this)
+  - [6.1. Introduction to Closures](#61-introduction-to-closures)
+  - [6.2. Using closures in the wild](#62-using-closures-in-the-wild)
+  - [6.3. Exercise: Closures](#63-exercise-closures)
+  - [6.4. Closures Recap](#64-closures-recap)
+  - [6.5. Introduction to the keyword 'this'](#65-introduction-to-the-keyword-this)
+  - [6.6. 'this' with functions and 'use strict'](#66-this-with-functions-and-use-strict)
+  - [6.7. Object/Implicit Binding](#67-objectimplicit-binding)
+  - [6.8. Explicit Binding](#68-explicit-binding)
+  - [6.9. Call](#69-call)
+  - [6.10. Apply](#610-apply)
+  - [6.11. Bind](#611-bind)
+  - [6.12. Exercise: Call, Apply, and Bind](#612-exercise-call-apply-and-bind)
+  - [6.13. The 'new' keyword and section recap](#613-the-new-keyword-and-section-recap)
+- [7. Object Oriented Programming with JavaScript](#7-object-oriented-programming-with-javascript)
+  - [7.1. Introduction to Object Oriented Programming with JavaScript](#71-introduction-to-object-oriented-programming-with-javascript)
+  - [7.2. The 'new' keyword](#72-the-new-keyword)
+  - [7.3. Multiple Constructors](#73-multiple-constructors)
+  - [7.4. Constructor Function Recap](#74-constructor-function-recap)
+  - [7.5. Exercise: Constructor Functions](#75-exercise-constructor-functions)
+  - [7.6. Introduction to Prototypes](#76-introduction-to-prototypes)
+  - [7.7. The Prototype Chain](#77-the-prototype-chain)
+  - [7.8. Adding Methods to the Prototypes](#78-adding-methods-to-the-prototypes)
+  - [7.9. Exercises: Prototypes](#79-exercises-prototypes)
+  - [7.10. Prototypal inheritance](#710-prototypal-inheritance)
+  - [7.11. Exercise: Inheritance](#711-exercise-inheritance)
+  - [7.12. Recap](#712-recap)
+- [8. Creating JSON API's with Node and Mongo](#8-creating-json-apis-with-node-and-mongo)
+  - [8.1. Preparing for React](#81-preparing-for-react)
+  - [8.2. Defining the API Gameplan](#82-defining-the-api-gameplan)
+  - [8.3. Installing Node.js](#83-installing-nodejs)
+  - [8.4. Installing Node.js locally](#84-installing-nodejs-locally)
+  - [8.5. Creating Our Initial Express Application](#85-creating-our-initial-express-application)
+  - [8.6. Installing Mongo](#86-installing-mongo)
+  - [8.7. Responding with JSON](#87-responding-with-json)
+  - [8.8. Defining Schema](#88-defining-schema)
+  - [8.9. Defining the index route](#89-defining-the-index-route)
+  - [8.10. Defining the Create Route](#810-defining-the-create-route)
+  - [8.11. Defining the Show Route](#811-defining-the-show-route)
+  - [8.12. Defining the Update Route](#812-defining-the-update-route)
+  - [8.13. Defining the Delete Route](#813-defining-the-delete-route)
+  - [8.14. Refactoring API](#814-refactoring-api)
+- [9. Codealong: Single Page Todo List with Express, Mongo, and jQuery](#9-codealong-single-page-todo-list-with-express-mongo-and-jquery)
+  - [9.1. Serving static files and Nodemon](#91-serving-static-files-and-nodemon)
+  - [9.2. Adding jQuery and the Starter CSS](#92-adding-jquery-and-the-starter-css)
+  - [9.3. Writing the Initial AJAX Call](#93-writing-the-initial-ajax-call)
+  - [9.4. Displaying Todos correctly](#94-displaying-todos-correctly)
+  - [9.5. Connecting the Form to our API](#95-connecting-the-form-to-our-api)
+  - [9.6. Making the Delete Button work](#96-making-the-delete-button-work)
+  - [9.7. Toggling Todo Completion](#97-toggling-todo-completion)
+- [10. ES2015 Part 1](#10-es2015-part-1)
+  - [10.1. Introduction to ES2015](#101-introduction-to-es2015)
+  - [10.2. Const](#102-const)
+  - [10.3. Let](#103-let)
+  - [10.4. Template Strings](#104-template-strings)
+  - [10.5. Introduction to Arrow Functions](#105-introduction-to-arrow-functions)
+  - [10.6. Arrow functions continued](#106-arrow-functions-continued)
+  - [10.7. Coding Exercise 12: Coding Exercise - Arrow Functions Exercises](#107-coding-exercise-12-coding-exercise---arrow-functions-exercises)
+  - [10.8. Default parameters](#108-default-parameters)
+  - [10.9. For...of Loop](#109-forof-loop)
+  - [10.10. Rest](#1010-rest)
+  - [10.11. Spread](#1011-spread)
+  - [10.12. Coding exercise - Rest and Spread Exercises](#1012-coding-exercise---rest-and-spread-exercises)
+  - [10.13. Object Enhancements](#1013-object-enhancements)
+  - [10.14. Object Destructuring](#1014-object-destructuring)
+  - [10.15. Array Destructuring](#1015-array-destructuring)
+  - [10.16. Coding Exercise - Destructuring Exercises](#1016-coding-exercise---destructuring-exercises)
+  - [10.17. ES2015 Part 1 Recap](#1017-es2015-part-1-recap)
+- [11. ES2015 Project - Guess the Password](#11-es2015-project---guess-the-password)
+- [12. ES2015 Part 2](#12-es2015-part-2)
+- [13. ES2016 and ES2017](#13-es2016-and-es2017)
+- [14. D3 and the DOM](#14-d3-and-the-dom)
+  - [14.1. An introduction to D3](#141-an-introduction-to-d3)
+  - [14.2. D3 Selections](#142-d3-selections)
+  - [14.3. Selections and Callbacks](#143-selections-and-callbacks)
+  - [14.4. Event Listeners in D3](#144-event-listeners-in-d3)
+- [15. Data Joins and Update Patterns in D3](#15-data-joins-and-update-patterns-in-d3)
+  - [15.1. Objectives](#151-objectives)
+  - [15.2. Basic Data Joins and Enter Selections](#152-basic-data-joins-and-enter-selections)
+  - [15.3. Exit Selection and Key Functions](#153-exit-selection-and-key-functions)
+  - [15.4. The general update pattern in D3](#154-the-general-update-pattern-in-d3)
+    - [Exercise: Character Frequencies](#exercise-character-frequencies)
+- [16. SVG and D3](#16-svg-and-d3)
+- [17. D3 Odds and Ends, and Advanced Graph Types](#17-d3-odds-and-ends-and-advanced-graph-types)
+- [18. Project: Building a Data Dashboard with D3](#18-project-building-a-data-dashboard-with-d3)
+- [19. Introduction to React and JSX](#19-introduction-to-react-and-jsx)
+- [20. Create React App and Props](#20-create-react-app-and-props)
+- [21. State](#21-state)
+- [22. The Virtual DOM, Events, and Forms](#22-the-virtual-dom-events-and-forms)
+- [23. Component Lifecycle Methods](#23-component-lifecycle-methods)
+- [24. Building A Full-stack App with React](#24-building-a-full-stack-app-with-react)
+- [25. React Router](#25-react-router)
+- [26. Redux Introduction](#26-redux-introduction)
+- [27. In Depth Redux Code Walkthrough](#27-in-depth-redux-code-walkthrough)
+- [28. Warbler Introduction and Backend Part 1](#28-warbler-introduction-and-backend-part-1)
+- [29. Warbler Backend Part 2](#29-warbler-backend-part-2)
+- [30. Warbler Frontend Part 1](#30-warbler-frontend-part-1)
+- [31. Warbler Frontend Part 2](#31-warbler-frontend-part-2)
 
-# Async Foundations
+# 1. Async Foundations
 
-### Callback Functions
+## 1.1. Callback Functions
 
 1. Objectives
    1. Define callback functions
@@ -71,7 +182,7 @@ Note:
     1. AJAX Requests
     1. React Development 
 
-### Codealong: forEach
+## 1.2. Codealong: forEach
 1. Objectives 
     1. Describe and use the forEach function
     1. Implement the forEach function
@@ -94,7 +205,7 @@ Note:
     }
     ```
 
-### findIndex 
+## 1.3. findIndex 
 1. Objectives
     1. Describe and use the `.findIndex()` method
     1. Implement `.findIndex()` in practice
@@ -120,7 +231,7 @@ Note:
     }
     ```
 
-### The Stack and The Heap
+## 1.4. The Stack and The Heap
 1. Objectives
     1. Describe what a "stack" is 
     1. Describe stack frame
@@ -131,7 +242,7 @@ Note:
     1. In summary, stack is an ordered set of stack frames. Most recently invoked function is on the top of the stack. The bottom of the stack is the first function invoekd. The stack is processed from the top to bottom. 
 1. "**Heap**" is an area in memory where the data is stored. 
 
-### setTimeout and setInterval
+## 1.5. setTimeout and setInterval
 1. Objectives - Use `setTimeout()` and `setInterval()
 1. `setTimeout()` is a function that asynchronously invokes a callback after a delay of milliseconds.
     ```js
@@ -156,7 +267,7 @@ Note:
     }, 200);
     ```
 
-### The Event Loop and the Queue
+## 1.6. The Event Loop and the Queue
 1. Objectives 
     1. Define event loop and the queue
     1. Describe how the event loop and the queue work with the stack 
@@ -165,7 +276,7 @@ Note:
 1. **Event Loop** is a functionality in JavaScript runtime that checks the queue when the stack is empty. If the stack is empty, the front of the queue is placed in the stack. 
 1. JavaScript is single threaded, which means that code execution is linear. Code that is running cannot be interrupted by something else going on in the program. 
 
-### Promise Basics
+## 1.7. Promise Basics
 1. Objectives 
     1. Define a promise 
     1. Add a `.then()` callback to a promise 
@@ -187,7 +298,7 @@ Note:
     })
     ```
 
-### Promise Chaining
+## 1.8. Promise Chaining
 1. Objectives 
     1. Describe the disadvantages of using nested callbacks
     1. Return a promise from a `.then()` callback function
@@ -241,8 +352,8 @@ Note:
 1. In practice, though it's useful to understand how promises work (resolve, reject), we will often use promises returned to us as values, such as retrievling data from database API. 
 
 
-# AJAX Part 1: XHR and Fetch
-### Intro to AJAX
+# 2. AJAX Part 1: XHR and Fetch
+## 2.1. Intro to AJAX
 1. AJAX stands for `Asynchronous` `JavaScript` and `XML`. 
 1. AJAX is not a library, not a framework, and not a technology. 
 1. AJAX is an approach and concept. Back in 2005, people use the followings to build websites. From the developers at the time, they noticed that all these pieces are here for us to make web apps that can update without refreshing. 
@@ -257,13 +368,13 @@ Note:
     1. The `fetch` API
     1. 3rd Praty Libraries: jQuery, Axios, etc. 
 
-### What's the deal with JSON and XML
+## 2.2. What's the deal with JSON and XML
 1. Both JSON and XML are data formats.
 1. API's don't respond with HTML but pure data, not structure. The efficient data type are formats like JSON and XML. 
 1. `XML` stands for "Extended Markup Language" and is syntacticly similar to HTML, but it doesn't not describe presentation like HTML does. 
 1. `JSON` stands for "JavaScript Object Notation" and looks exactly like JavaScript objects. 
 
-### Making the First Request with XMLHTTPRequest
+## 2.3. Making the First Request with XMLHTTPRequest
 1. We can create a `XMLHttpRequest()` connection, use `.open()` method which takes a type of `HTTP request` and the `endpoint` of the API, and use `.send()` method to make the request. We then can check on `.readuState` of the connection condition. 
 1. According to [MDN](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState), a XML HTTP request has different states from 0 to 4. We can use `.onreadystatechange` and assign a function to check the condition of the state. If the request has `.readyState` at 4 and `.status` at `200`, it means the connection is good the API endpoint has returned the data. 
 1. Library such as `jQuery` and `axios` are built based on these methods. 
@@ -288,7 +399,7 @@ Note:
     XHR.send();
     ```
 
-### AJAX workflow: Building the Random Image App
+## 2.4. AJAX workflow: Building the Random Image App
 1. We can check on some websites such as Pininterst or Facebook main page. Every time we (as the user) scroll the page down to the button, the progarm will make further request to its server and render contents and makes the page never ends. 
 1. We can check the async function working in the developer console with the `Network` tab. Every time we scroll to let the page render new contents, a `XHR` is made for the task. 
     <img src="./images/pinterestAJAX.gif">
@@ -353,7 +464,7 @@ Note:
     ```
     <img src="./images/xmlhttprequest.gif">
 
-### Bitcoin Price Exercise
+## 2.5. Bitcoin Price Exercise
 1. We call an API to get the latest price info. from [coindesk](https://www.coindesk.com/). Its API endpoint is `https://api.coindesk.com/v1/bpi/currentprice.json`. After getting the data, we parse it and use DOM to put the data on the webpage when the user click the button to refresh. 
     ```js
     let btn = document.querySelector('#btn');
@@ -380,7 +491,7 @@ Note:
         XHR.send();
     })
     ```
-### Fetch Introduction 
+## 2.6. Fetch Introduction 
 1. Problems with XHR 
     1. Ugly, Bulky syntax 
     1. It's 16 years old and designed for different design concept and environment
@@ -400,7 +511,7 @@ Note:
     });
     ```
 
-### Fetch options
+## 2.7. Fetch options
 1. `fetch()` API function can not only take an URL as argument but an `option Object` as configurations. The default HTTP method is `"GET"`, while we can change it to `"POST"`. We can use this function to send JSON file to the API endpoint. In the following example, we try to send a JSON that has a `name` and `login` property to the API endpoint. We can check this on the `network` tab in developer console of a browser such as `Chrome`. 
 1. We can check the documentation of `fetch()` API options [here](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch) 
     ```js 
@@ -418,7 +529,7 @@ Note:
         // handle error
     })
 
-### Fetch error handling
+## 2.8. Fetch error handling
 1. `.catch()` only handles `request` and other problems such as internet or connection issues. However, if the API endpoint returns a valid data (though an error message), the promise will still work on the `resolve` callback function. Therefore, we can put an error handling in `.then()` method for the returned content itself.
 1. We can separate the error handling function to make the code succinct. 
     ```js     
@@ -439,7 +550,7 @@ Note:
         return request;
     }
     ```
-### Fetch Random User Profile
+## 2.9. Fetch Random User Profile
 1. The API endpoint is `https://randomuser.me/api/`
 1. HTML
     ```html
@@ -603,11 +714,11 @@ Note:
         return request.json();
     }
     ```
-### Problems with Fetch API
+## 2.10. Problems with Fetch API
 1. Internet Explorer doesn't support `fecth()` function. 
 
-# AJAX Part 2: jQuery and Axios
-### Introduction to jQuery
+# 3. AJAX Part 2: jQuery and Axios
+## 3.1. Introduction to jQuery
 1. jQuery is a JavaScript client library that allows developers to use certain functions in less code. 
     1. Without jQuery
     ```js 
@@ -639,7 +750,7 @@ Note:
     ```
 1. In this section, we will practice on `$.ajax`, `$.get`, `$.post`, and `$.getJSON`.
 
-### jQuery $.ajax method 
+## 3.2. jQuery $.ajax method 
 1. `$.ajax()` works similar to a `promise`, while it takes an `Object` includes `method` and `url` property. The "base" jQuery method just creates an XMLHttpRequest under the hood. Besides, jQuery has smart guessing that it will detect the returned data from a HTTP request and "guess" how to parse it. We can check the [dataType](https://api.jquery.com/jQuery.ajax/) part on jQuery documenation. 
 1. Besides, we can check in the develper console in the "**Network**" tab to check which kind of request is made by the function. 
     ```js 
@@ -655,7 +766,7 @@ Note:
         // do something
     })
     ```
-### jQuery AJAX shorthand methods 
+## 3.3. jQuery AJAX shorthand methods 
 1. All of the following methods are the shorthands for different HTTP requests. Each of them can be replaced with `$.ajax()` by passing certain HTTP methods, while we can simply pass only url as `Strings` to them and to use `.done()` and `.fail()` directly. 
 1. `$.get()` is a shorthand to make a GET HTTP request. 
     ```js 
@@ -687,7 +798,7 @@ Note:
     });
     ```
 
-### jQuery random cats API exercise 
+## 3.4. jQuery random cats API exercise 
 1. The given random cat API doesn't work, so we use the previous dog CEO API for the image URL. 
     1. JavaScript 
     ```js 
@@ -771,7 +882,7 @@ Note:
     </html>
     ```
 
-### axios intro 
+## 3.5. axios intro 
 1. `axios` is a lightweight HTTP request library. According to [axios](https://github.com/axios/axios) Github, it has the following features 
     1. Make XMLHttpRequests from the browser
     1. Make http requests from node.js
@@ -793,7 +904,7 @@ Note:
     });
     ```
 
-### Axios Error Handling 
+## 3.6. Axios Error Handling 
 1. In this case, we try create and append new data on the page. Besides, we use error handler to catch the problems if it is from `request`, `respond`, or something else .
     ```js 
     let btn = document.querySelector('button');
@@ -834,7 +945,7 @@ Note:
     }
     ```
 
-### Ron Swanson Exercise 
+## 3.7. Ron Swanson Exercise 
 1. The exercise is try to use `XHR`, `fetch()`, `jQuery`, and `axios` to call an API and get a JSON as request and change the content on the webpage. All the 4 methods give the same result but use different syntax and code to achieve the goal. 
     1. JavaScript 
     ```js 
@@ -971,8 +1082,8 @@ Note:
     </html>
     ```
 
-# Testing with Jasmine
-### Writing Test in the Browser
+# 4. Testing with Jasmine
+## 4.1. Writing Test in the Browser
 1. Objectives 
     1. Understand what Jasmine and unit testing are
     1. Define describe, it, matchers, and spies
@@ -993,7 +1104,7 @@ Note:
     1. Link CSS and JavaScript tags 
     1. Start writing tests
 
-### Jasmine Syntax and Matchers
+## 4.2. Jasmine Syntax and Matchers
 1. Essential Keywords
     1. **describe** - let me describe __ to your
     1. **it** - let me tell you about __ 
@@ -1030,7 +1141,7 @@ Note:
     1. `toEqual` can compare 2 individual objects with their properties though they have different reference in the memory. This is a handy method to compare 2 `Arrays` or `Objects`. 
     1. `jasmine.any()` is to check the type of the data. For example, we can't use `typeof` to check `Array`, as an `Array` is an `Object` in JavaScript. 
 
-### Writing better tests with Hooks
+## 4.3. Writing better tests with Hooks
 1. If a variable is used multiple times in the flow of testing methods, we can run `beforeEach` before each `it` callback. 
     ```js 
     describe('Arrays', function(){
@@ -1101,14 +1212,14 @@ Note:
     });
     ```
 
-### Spies
+## 4.4. Spies
 1. Jasmine has test double funcitons called spies
 1. A spy can stub (mimic) any function and track calls to it and all arguments 
 1. Spies only exists in the `describe` or `it` block in which it is defined. 
 1. Spies are removed after each spec. 
 1. There are special matchers for interacting with spies. 
 
-### Clocks
+## 4.5. Clocks
 1. The Jasmine Clock is available for testing time dependent code. 
 1. It is installed by invoking jasmine.clock().install()
 1. Be sure to uninstall the clock after you are done to restore the original functions.
@@ -1117,7 +1228,7 @@ Note:
     1. `beforeAll`, `afterAll`, `beforeEach`, `afterEach`, and it take an optional single argument (commonly called 'done') that should be called when the async work is complete. 
     1. A test will not complete until its 'done' is called. 
 
-### TDD and BDD
+## 4.6. TDD and BDD
 1. TDD - Test Driven Development
     1. Write the tests 
     1. See the tests fail 
@@ -1130,7 +1241,7 @@ Note:
     1. Involve being verbose with our style and describing the behavior of the functionality
     1. Helpful when testing the design of the software 
 
-### Different Types of Test
+## 4.7. Different Types of Test
 1. Other types of tests
     1. Integration tests 
     1. Acceptance tests 
@@ -1142,8 +1253,8 @@ Note:
 1. Jasmine provides spies for mimicking the behavior of a function.
 1. Jasmine provides a clock object for testing timers and a callback function for testing asynchronous code.
 
-# Advanced Array Methods
-### forEach
+# 5. Advanced Array Methods
+## 5.1. forEach
 1. Iterates through an `Array`. 
 1. Runs a calbback function on each value in the array. 
 1. `.forEach()` method returns `undefined`. 
@@ -1158,7 +1269,7 @@ Note:
 
     halfValues([2,4,6]); // [1,2,3]
     ```
-### Coding Exercise 2: Exercise: forEach
+## 5.2. Coding Exercise 2: Exercise: forEach
 ```js
 /*
 Write a function called doubleValues which accepts an array and returns a new array with all the values in the array passed to the function doubled
@@ -1271,7 +1382,7 @@ function vowelCount(str) {
 }
 ```
 
-### map 
+## 5.3. map 
 1. Creates a new array
 1. Iterates through an array 
 1. Runs a callback function for each value in the array
@@ -1295,7 +1406,7 @@ function onlyFirstName(arr) {
 onlyFirstName([{first: 'Tim', last: 'Garcia'}, {first: 'Matt', last: 'Lane'}]); // ['Tim', 'Matt']
 ```
 
-### Coding Exercise 3: Exercise: Map
+## 5.4. Coding Exercise 3: Exercise: Map
 ```js
 /*
 Write a function called doubleValues which accepts an array and returns a new array with all the values in the array passed to the function doubled
@@ -1352,7 +1463,7 @@ function extractFullName(arr){
 }
 ```
 
-### Filter
+## 5.5. Filter
 1. Creates a new array.
 1. Iterates through an array. 
 1. Runs a callback function on each value in the array.
@@ -1399,7 +1510,7 @@ function divisibleByThree(arr) {
 divisibleByThree([1,2,3,4,5,6,7,8,9]); // [3,6,9]
 ```
 
-### Coding Exercise 4: Exercise: Filter
+## 5.6. Coding Exercise 4: Exercise: Filter
 ```js 
 /*
 Write a function called filterByValue which accepts an array of objects and a key and returns a new array with all the objects that contain that key.
@@ -1516,7 +1627,7 @@ function doubleOddNumbers(arr){
 }
 ```
 
-### Some
+## 5.7. Some
 1. Iterates through an array.
 1. Runs a callback on each value in the array.
 1. If the callback returns `true` for at least one single value, return `true`.
@@ -1563,7 +1674,7 @@ hasComma('This is wonderful'); //false
 hasComma('This, is wonderful'); // true
 ```
 
-### Every 
+## 5.8. Every 
 1. Iterates through an array.
 1. Runs a callback on each value in the array.
 1. If the callback returns `false` for any single value, returns `false`.
@@ -1607,7 +1718,7 @@ allArrays([[1], [2], [3,4]]); // true
 allArrays([[1], [2], {}]); // false 
 ```
 
-### Exercise: Some and Every 
+## 5.9. Exercise: Some and Every 
 ```js 
 /*
 Write a function called hasOddNumber which accepts an array and returns true if the array contains at least one odd number, otherwise it returns false.
@@ -1746,7 +1857,7 @@ function hasCertainValue(arr, key, searchValue){
 }
 ```
 
-### Reduce
+## 5.10. Reduce
 1. Accepts a callback function and an optional second parameter.
 1. Iterates through an array.
 1. Runs a callback on each value in the array.
@@ -1804,7 +1915,7 @@ createFullName([{first: 'Colt', last: 'Steele'}, {first: 'Matt', last: 'Lane'}])
 // ['Colt Steel', 'Matt Lane']
 ```
 
-### Exercise: Reduce
+## 5.11. Exercise: Reduce
 ```js 
 /*
 Write a function called extractValue which accepts an array of objects and a key and returns a new array with the value of each object at the key.
@@ -1928,7 +2039,7 @@ function partition(arr, callback){
 }
 ```
 
-### Recap 
+## 5.12. Recap 
 1. `.forEach()` iterates over an array, runs a callback on each value and returns `undefined`.
 1. `.map()` creates a new array, runs a callback on each value and pushes the result of each callback in the new array.
 1. `.filter()` creats a new array, runs a callback on each value and if the result of the callback returns `true`, that value is added to the new array.
@@ -1936,8 +2047,8 @@ function partition(arr, callback){
 1. `.every()` iterates through an array and runs a callback on each value, if the callback at any time returns `false`, `.every()` returns `false`. 
 1. `.reduce()` returns an accumulated value which is determined by the result of what is returned to each callback. 
 
-# Closures and the Keyword 'this'
-### Introduction to Closures
+# 6. Closures and the Keyword 'this'
+## 6.1. Introduction to Closures
 1. Objectives 
     1. Understand waht a closure is and what it is not.
     1. Use a closure to emulate private variables. 
@@ -1960,7 +2071,7 @@ function partition(arr, callback){
     storeOuter(10); // 15
     ```
 
-### Using closures in the wild 
+## 6.2. Using closures in the wild 
 1. Private Variables - In other languages, there exists support for variables that can not be modified externally. We call those private variables, but in JavaScript we don't have that built in. 
     ```js 
     function classRoom() {
@@ -1977,7 +2088,7 @@ function partition(arr, callback){
     }
     ```
 
-### Exercise: Closures
+## 6.3. Exercise: Closures
 ```js 
 /* 
 Write a function called specialMultiply which accepts two parameters. If the function is passed both parameters, it should return the product of the two. If the function is only passed one parameter - it should return a function which can later be passed another parameter to return the product. You will have to use closure and arguments to solve this.
@@ -2056,14 +2167,14 @@ function guessingGame(amount){
     }
 }
 ```
-### Closures Recap
+## 6.4. Closures Recap
 1. Closure exists when an inner function makes use of variables declared in an outer function which has previously returned.
 1. Closure doesn't exist if you do not return an inner function and if that inner function doesn't make use of variables returned by an outer function
 1. JavaScript will only remember values that are being used inside of the inner function, not all variables defined in the outer function.
 1. We can use closures to create private variables and write better code that isolates our logic and application. 
 
-### Introduction to the keyword 'this' 
-### 'this' with functions and 'use strict'
+## 6.5. Introduction to the keyword 'this' 
+## 6.6. 'this' with functions and 'use strict'
 1. Objectives
     1. Define what the keyword `this` is.
     1. Understand the four ways to always figure out what the keyword `this` is.
@@ -2087,7 +2198,7 @@ function guessingGame(amount){
     console.log(person); // Elie
     ```
 1. We can use `"use strict"` to invoke strict mode that we can't refer to gobal object by `this`, so we can prevent accidentally creating global variable. 
-### Object/Implicit Binding
+## 6.7. Object/Implicit Binding
 1. Implicit/Object
     1. When the keyword `this` is inside of a declared object 
     ```js 
@@ -2138,7 +2249,7 @@ function guessingGame(amount){
     person.dog.determineContext(); // 'false'
     ```
 
-### Explicit Binding
+## 6.8. Explicit Binding
 1. Choose what we want the context of 'this' to be using `call`, `apply`, or `bind`. These methods can only be used on functions. 
     ```js
     var person = {
@@ -2195,7 +2306,7 @@ function guessingGame(amount){
     sayHi.call(colt); // Hi Colt
     sayHi.call(elie); // Hi Elie
     ```
-### Call
+## 6.9. Call
 1. By using DOM, we can use `document.getElementsByTagName` method to select all `<div>` tags on the page. However, the returned object is an array-like list that we can't use array methods directly. In this case, we can use `.call()` method to turn the object into an `Array`. In this case, we try to get all the `<div>` tags that have text content 'Hello'.
 1. In ES6, we can use `Array.from()` to create or duplicate an `Array` from an `Array` or array-like objects. 
     ```js
@@ -2205,7 +2316,7 @@ function guessingGame(amount){
         return val.innerText === 'Hello';
     })
     ```
-### Apply
+## 6.10. Apply
 1. When a function does not accept an `Array`, `.apply()` will spread out values in an `Array` as the parameters to the function. 
     ```js
     var nums = [5,7,1,4,2];
@@ -2221,7 +2332,7 @@ function guessingGame(amount){
     sumValues.apply(null, values); // 7
     ```
 
-### Bind 
+## 6.11. Bind 
 1. The parameters works like `.call()`, but `.bind()` returns a function with the context of `this` bound already.
     ```js 
     function addNumbers(a,b,c,d) {
@@ -2264,7 +2375,7 @@ function guessingGame(amount){
     colt.sayHi(); // Hi Colt (1000 milliseconds later)
     ```
 
-### Exercise: Call, Apply, and Bind
+## 6.12. Exercise: Call, Apply, and Bind
 1. `.apply()` method can the an `Array` or `array-like object` to send the elements as parameters to the function. Therefore in a function of a function, we can use `function.apply(thisArg, arguments))` directly. 
 1. `Array.prototype.reverse()` method returns an `Array` in the reverse order. 
 1. We can check `length` property of an function which returns the number of arguments a function can take. 
@@ -2462,7 +2573,7 @@ function flip(fn, thisArg){
 }
 ```
 
-### The 'new' keyword and section recap
+## 6.13. The 'new' keyword and section recap
 1. We can set the context of the keyword `this` using the `new` keyword - it does quite a bit more as well which we will discuss further when we talk about OOP. 
     ```js 
     function Person(firstName, lastName){
@@ -2480,8 +2591,8 @@ function flip(fn, thisArg){
 1. To explicitly set the value of the keyword `this`, we use `.call()`, `.apply()`, `.bind()`.
 1. We can also use the `new` keyword to set the context of `this`, which we will discuss when we talk about Object Oriented Programming. 
 
-# Object Oriented Programming with JavaScript
-### Introduction to Object Oriented Programming with JavaScript
+# 7. Object Oriented Programming with JavaScript
+## 7.1. Introduction to Object Oriented Programming with JavaScript
 1. Objectives 
     1. Define what OOP (Object Oriented Programming) is 
     1. Revisit the `new` keyword and understand the four things it does 
@@ -2508,7 +2619,7 @@ function flip(fn, thisArg){
     }
     ```
 
-### The 'new' keyword 
+## 7.2. The 'new' keyword 
 1. We can use `new` keyword and constructor `function` to create an `Object`. When the `new` keyword is used 
     1. It first creates an empty object.
     1. It then sets the keyword `this` to be that empty object. 
@@ -2540,7 +2651,7 @@ function flip(fn, thisArg){
     fido.bark();
     ```
 
-### Multiple Constructors 
+## 7.3. Multiple Constructors 
 1. Let's create two constructor functions, one for Car and one for Motocycle and notice how much duplication is going on in the Motorcycle function. Is there any way to "borrow" the Car function and invoke it inside the Motorcycle function? 
     ```js
     function Car(make, model, year) {
@@ -2581,13 +2692,13 @@ function flip(fn, thisArg){
     }
     ```
 
-### Constructor Function Recap 
+## 7.4. Constructor Function Recap 
 1. Object oriented programming is a model based on objects constructed from a blueprint. We use OOP to write more modular and shareable code. 
 1. In languages that have built-in support for OOP, we call these blueprints "classes" and the objects created from them "instances". 
 1. Since we don't have built-in class support in JavaScript, we mimic classes by using functions. These constructor functions create objects through the use of the `new` keyword. 
 1. We can avoid duplication in multiple constructor functions by using `.call()` or `.apply()`. 
 
-### Exercise: Constructor Functions 
+## 7.5. Exercise: Constructor Functions 
 ```js 
 // PART 1
 
@@ -2621,7 +2732,7 @@ function Child(firstName, lastName, favoriteColor, favoriteFood){
 }
 ```
 
-### Introduction to Prototypes 
+## 7.6. Introduction to Prototypes 
 1. Objectives 
     1. Understand what the prototype object is
     1. Describe and diagram the relationship between `__proto__`, prototype, and constructor. 
@@ -2649,7 +2760,7 @@ function Child(firstName, lastName, favoriteColor, favoriteFood){
     Person.prototype.constructor = Person // true 
     ```
 
-### The Prototype Chain 
+## 7.7. The Prototype Chain 
 1. The `prototype` is shared among all objects created by the constructor function. 
     ```js 
     function Person(name) {
@@ -2672,7 +2783,7 @@ function Child(firstName, lastName, favoriteColor, favoriteFood){
 1. In JavaScript, every object has a method `.hasOwnProperty()` which returns `true` if the given string as the name of the property exists in the object. We can use `dir()` or `console.dir()` function to check the properties of a JavaScript object. For example, if we check an `Array` with `dir([])`, we can see the first `__proto__` includes the methods and properties as regular arrays. While in these array methods and properties, there is another `__proto__` that includes the methods and properties of an `Object`, as `Arrays` are a type of `Object` in JavaScript. 
 1. Since the object properties are the last layer of the prototype of an object, we will find `null`, if we try to access `__proto__` property of an `Object`.
 
-### Adding Methods to the Prototypes
+## 7.8. Adding Methods to the Prototypes
 1. Objects created by the same constructor have a shared prototype. However, the code may be inefficient that every time we make an object using the `new` keyword, we have to redefine the method. Therefore, we can assign the method that we'd like to add on the object's prototype. 
     ```js
     function Person(name) {
@@ -2718,7 +2829,7 @@ function Child(firstName, lastName, favoriteColor, favoriteFood){
     }
     ```
 
-### Exercises: Prototypes
+## 7.9. Exercises: Prototypes
 1. We can use `Array.prototype.indexOf()` method to check if an element is in an `Array`. If the element doesn't exist, the method will return `-1`. We can use this feature as conditions to check if an element IS NOT in the array. For example, we can check if `1` is in array `arr` by `if (arr.indexOf(1) === -1) { [do something] }`.
     ```js 
     // 1 - Create a constructor function for a Person. Each person should have a firstName, lastName, favoriteColor, favoriteNumber)
@@ -2816,7 +2927,7 @@ function Child(firstName, lastName, favoriteColor, favoriteFood){
     }
     ```
 
-### Prototypal inheritance
+## 7.10. Prototypal inheritance
 1. The passing of methods and properties from one class to another. Though we can assign `.prototype` property of 2 constructor functions, as it is not duplicating the object referencing to the same object, when one object is modified, the other will be affected as well. 
 1. We can use `Object.create()` function to inherit properties and methods from another `prototype` without referencing to the same object. Therefore, the newly created object is independant to the original one, and each object will not affect to each other. Besides, we don't use `new` keyword here, as `new` keyword will create a new `Object` instance from the prototype.  
 1. If we use `Object.create()` to inherit prototype from another constructor function, the new class will inherit the original constructor function as well, so we need to assign it back to what it should be
@@ -2871,7 +2982,7 @@ function Child(firstName, lastName, favoriteColor, favoriteFood){
     let p3 = JSON.parse(JSON.stringify(person));
     ```
 
-### Exercise: Inheritance 
+## 7.11. Exercise: Inheritance 
 ```js 
 // 1 - Create a constructor function for a Vehicle. Each vehicle should have a make, model and year property.
 
@@ -2918,18 +3029,18 @@ Motorcycle.prototype = Object.create(Vehicle.prototype);
 Motorcycle.prototype.constructor = Motorcycle;
 ```
 
-### Recap 
+## 7.12. Recap 
 1. Every time the `new` keyword is used, a link between the object created and the prototype property of the constructor is established - this link can be accessed using `__proto__`. 
 1. The prototype object contains a property called constructor, which points back to the constructor function
 1. To share properties and methods for objects created by a constructor function, place them in the prototype as it is the most efficient. 
 1. To pass methods and properties from one prototype object to another, we can use inheritance which involves setting the prototype property to be a newly created object using `Object.create` and reseting the constructor property. 
 
-# Creating JSON API's with Node and Mongo
-### Preparing for React
+# 8. Creating JSON API's with Node and Mongo
+## 8.1. Preparing for React
 1. Build own JSON API
 1. Build a SPA (single page application) with the API
 
-### Defining the API Gameplan
+## 8.2. Defining the API Gameplan
 1. The API is created to make a todo app. 
 1. The data structure of a task in the todo list in `field` - `type`
     1. name - `String`
@@ -2942,16 +3053,16 @@ Motorcycle.prototype.constructor = Motorcycle;
     1. PUT - /api/todos/:todoId - Update a todo
     1. DELETE - /api/todos/:todoId - Delete a todo 
 
-### Installing Node.js 
-### Installing Node.js locally
-### Creating Our Initial Express Application
-### Installing Mongo
+## 8.3. Installing Node.js 
+## 8.4. Installing Node.js locally
+## 8.5. Creating Our Initial Express Application
+## 8.6. Installing Mongo
 1. These sections are skipped as I have learnt from other lectures
 
-### Responding with JSON
+## 8.7. Responding with JSON
 1. In a route in `express`, with `res.send()`, if we send text or `String` value, it returns HTML data. If we pass a JavaScript object, the program will return a JSON type data if a user uses the correct HTTP request method to access the endpoint. Besides, we can use `res.json()` to specify that the endpint is responding JSON to requests. Note that if we return a JSON-like String, the program will treat the data as `String`. 
 
-### Defining Schema 
+## 8.8. Defining Schema 
 1. In the root directory, we create a new folder `models` to keep the schema and data model files for `mongoose` and MongoDB. 
     1. Set up `debug` mode, which is not neccessary. This will allow `mongoose` printing the result of manipulate in the server console.
     1. Connect to database at local host
@@ -2994,7 +3105,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     module.exports.Todo = require('./todo');
     ```
 
-### Defining the index route
+## 8.9. Defining the index route
 1. We'd categorize and keep all the routes in a separated module, so we can manage it easily. We create `routes` in root directory with a `todos.js`.
     ```js 
     var express = require('express');
@@ -3047,7 +3158,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     module.exports = router;
     ```
 
-### Defining the Create Route
+## 8.10. Defining the Create Route
 1. We need npm `body-parser` and use it with `express` to parse the body content of a request. Therefore, in the route handler, we can check the body contents sent with the request by `req.body`. 
     ```js 
     var express = require('express');
@@ -3087,7 +3198,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     module.exports = router;
     ```
 
-### Defining the Show Route
+## 8.11. Defining the Show Route
 1. In `todos.js`, we update the route for show case of a specific task. After root directory, we can add a placeholder to take the parameters that is passed to the URL. Note that it can be any, but it should be the same name for parameters to be retrieved in `req.params.[parameter]`.
     ```js 
     router.get('/:todoId', (req, res) => {
@@ -3101,7 +3212,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     });
     ```
 
-### Defining the Update Route
+## 8.12. Defining the Update Route
 1. We set up a handler for PUT request on a sepcific task. We can pass `req.body` directly with the parameters to update the task object. However, if we use directly with `.findOneAndUpdate()` the endpoint will return the object which is "before" updated. 
     ```js 
     // ./routes/todos.js
@@ -3129,7 +3240,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     });
     ```
 
-### Defining the Delete Route 
+## 8.13. Defining the Delete Route 
 1. We set up a route handler for DELETE request. 
     ```js 
     router.delete('/:todoId', (req, res) => {
@@ -3143,7 +3254,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     });
     ```
 
-### Refactoring API
+## 8.14. Refactoring API
 1. We will separate the logic for data handler in the route handler into another module to keep the file clean and separated. 
 1. We create `todos.js` in folder `helpers` in the root directory. 
     ```js 
@@ -3257,8 +3368,8 @@ Motorcycle.prototype.constructor = Motorcycle;
     module.exports = exports;
     ```
 
-# Codealong: Single Page Todo List with Express, Mongo, and jQuery
-### Serving static files and Nodemon
+# 9. Codealong: Single Page Todo List with Express, Mongo, and jQuery
+## 9.1. Serving static files and Nodemon
 1. We can allow `express` framework to render a static HTML file. We create `index.html` in `views` folder in the root directory. Besides, we can create `public` folder to keep the css stylesheet. We can use `res.sendFile()` to render the static HTML file.
     ```js 
     app.use(express.static(__dirname + '/public'));
@@ -3289,7 +3400,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     </html>
     ```
 
-### Adding jQuery and the Starter CSS 
+## 9.2. Adding jQuery and the Starter CSS 
 1. This is mainly about including jQuery CDN and use pre-built CSS given by the lectuerer. 
     ```css
     @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,700');
@@ -3370,7 +3481,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     }
     ```
 
-### Writing the Initial AJAX Call
+## 9.3. Writing the Initial AJAX Call
 1. We use AJAX function in jQuery to make a GET request to the API endpoint. We add the function in the front-end code. 
     1. Use `$().ready()` to ensure the function runs after the data is loaded. 
     1. Use `$.getJSON()` to parse the data directly. 
@@ -3392,7 +3503,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     }
     ```
 
-### Displaying Todos correctly
+## 9.4. Displaying Todos correctly
 1. We can add effect on the tasks that are completed by adding class `done` which is prebuilt in CSS sheet. 
     ```js
     $(document).ready(function () {
@@ -3412,7 +3523,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     }
     ```
 
-### Connecting the Form to our API
+## 9.5. Connecting the Form to our API
 1. We add an event listener for `keypress` and check if the key pressed is <kbd>Enter</kbd>. Besides, as we can use `addTodo` function in different part such as retrieving all tasks or creating a new task, we can use another function to modulize the code. 
     ```js 
     // ./public/app.js
@@ -3445,7 +3556,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     }
     ```
 
-### Making the Delete Button work 
+## 9.6. Making the Delete Button work 
 1. We can add a `<span>` tag with character X as a delete button. Besides, we need an event listener to manipulate the elements when the button is clicked. However, we can't add the event listener on the `<span>` tag directly, as it may not be loaded and add with the listener when the page is loaded. 
     ```js 
     // ./public/app.js
@@ -3515,7 +3626,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     }
     ```
 
-### Toggling Todo Completion
+## 9.7. Toggling Todo Completion
 1. In this section, we will change the state of the task by toggling its completion status and add `done` class on the element if it's completed. 
 1. `event.stopPropagation()` (jQuery method) is similar to `event.preventDefault()` (vanilla JS method). These methods are used to prevent event bubbling, so the event handler can focus precisely on the same object in different layer. 
     ```js 
@@ -3553,8 +3664,8 @@ Motorcycle.prototype.constructor = Motorcycle;
     }
     ```
 
-# ES2015 Part 1
-### Introduction to ES2015
+# 10. ES2015 Part 1
+## 10.1. Introduction to ES2015
 1. Objectives
     1. Understand what ES2015 is and how the term cam to be. 
     1. Refactor code to use `let` and `const` and explain the implications of using both.
@@ -3581,7 +3692,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     1. Generators
     1. Object, Number, Array methods
 
-### Const 
+## 10.2. Const 
 1. A `const` variable can never redeclare. 
 1. A `cosnt` variable that is object or array can be mutated (only mutate the object rather than reassign), but can't not be declared again. 
     ```js 
@@ -3598,7 +3709,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     numbers = "no!"; // TypeError
     ```
 
-### Let 
+## 10.3. Let 
 1. A variable declared by keyword `let` can be used only in the block scope (curly braces). 
     ```js 
     var instructor = 'Elie';
@@ -3650,10 +3761,10 @@ Motorcycle.prototype.constructor = Motorcycle;
     }
     ```
 
-### Template Strings 
+## 10.4. Template Strings 
 1. We can use backtick "**\`**" and dollar sign with curly braces `${}` to make String templates without using plus sign to concatenate strings. Besides, we can set multiple lines between backticks without using newline character `\n`. 
 
-### Introduction to Arrow Functions
+## 10.5. Introduction to Arrow Functions
 1. Arrow function replace the keyword `function` with `=>`.
 1. One-line arrow functions
     1. We can put arrow functions on one line 
@@ -3689,7 +3800,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     doubleAndFilter([5,10,15,20]); // [30]
     ```
 
-### Arrow functions continued 
+## 10.6. Arrow functions continued 
 1. Arrow functions are not exactly the same as regular functions
 1. Arrow functions do not get their own `this` keyword. 
 1. Inside of an arrow function, the keyword `this` has its original meaning from the enclosing context. 
@@ -3748,7 +3859,7 @@ Motorcycle.prototype.constructor = Motorcycle;
     ```
 1. Arrow functions should **NEVER** be used as methods in objects since we will get the incorrect value of the keyword `this`. ES2015 provides a better alternative. 
 
-### Coding Exercise 12: Coding Exercise - Arrow Functions Exercises 
+## 10.7. Coding Exercise 12: Coding Exercise - Arrow Functions Exercises 
 ```js 
 /* 1 - Refactor the following code to use ES2015 arrow functions - make sure your function is also called tripleAndFilter
 
@@ -3845,7 +3956,7 @@ var instructor = {
 }
 ```
 
-### Default parameters 
+## 10.8. Default parameters 
 1. Give default value to parameters if there's no given argument. 
     ```js 
     function add(a, b) {
@@ -3860,12 +3971,12 @@ var instructor = {
     add(20); // 40
     ```
 
-### For...of Loop
+## 10.9. For...of Loop
 1. We can use `For...of` as the shorthand to iterate through an `Array`. 
 1. However, this syntax doesn't have counter and can't acces the index.
 1. This is syntax acan only be used on data structures with a Symbol.iterator method implemented. Regular objects can't be used. 
 
-### Rest 
+## 10.10. Rest 
 1. The rest operator always returns an `Array`. 
 1. `...[var]` is called the rest operator only when it is a parameter to a function
 1. The rest operator is accessed without the `...` in a function.
@@ -3904,7 +4015,7 @@ var instructor = {
     var sumArguments = (...args) => args.reduce((acc, next) => acc + next);
     ```
 
-### Spread 
+## 10.11. Spread 
 1. Spread operator is used on arrays to spread each value out (as a comma separated value).
 1. Useful when you have an array, but what you are working with expects comma separated values. 
     ```js
@@ -3941,7 +4052,7 @@ var instructor = {
     sumValues(...nums); // 47
     ```
 
-### Coding exercise - Rest and Spread Exercises 
+## 10.12. Coding exercise - Rest and Spread Exercises 
 1. The last 2 examples `flip` and `bind` functions are very confusing and the given solutions can't even pass the test. However, I have tried with the given testers in the comments and the self made ones can work. 
     ```js
     /* 
@@ -4110,7 +4221,7 @@ var instructor = {
     }
     ```
 
-### Object Enhancements
+## 10.13. Object Enhancements
 1. Object shorthand notation 
     ```js 
     var firstName = 'Elie';
@@ -4162,7 +4273,7 @@ var instructor = {
     instructor.Elie; // That's me!
     ```
 
-### Object Destructuring 
+## 10.14. Object Destructuring 
 1. Extracting values from data stored in objects and arrays
     ```js     
     var instructor = {
@@ -4239,7 +4350,7 @@ var instructor = {
     displayInfo(instructor); // ['Elie', 'Purple']
     ```
 
-### Array Destructuring 
+## 10.15. Array Destructuring 
 1. ES5 
     ```js 
     var arr = [1,2,3];
@@ -4297,7 +4408,7 @@ var instructor = {
     swap(10, 5) // [5, 10]
     ```
 
-### Coding Exercise - Destructuring Exercises
+## 10.16. Coding Exercise - Destructuring Exercises
 1. We must pass an empty `Object` as default parameter for functions taking destructuring and default values. Otherwise, the function will return a `TypeError` when there's nothing passed to the function. 
     ```js
     /* 
@@ -4374,7 +4485,7 @@ var instructor = {
     }
     ```
 
-### ES2015 Part 1 Recap
+## 10.17. ES2015 Part 1 Recap
 1. ES2015 gives us two new keywords for decalring variables `let`, `const`. `const` ensures we can't redeclare a variable and `let` gives us block scope. 
 1. Easily evaluate variables in `Strings` and create multi-line strings with ES2015 template `Strings`. Don't forget the backticks
 1. Create more concise functions using the `=>` syntax, but these functions do not get their own `this` and `arguments` keywords.
@@ -4383,15 +4494,19 @@ var instructor = {
 1. Object destructuring is very useful for reducing duplication and passing in default parameters as a destructured object. 
 1. Array destructuring can also be used for swapping variables in an array without a separate swap function. 
 
-# ES2015 Project - Guess the Password
+# 11. ES2015 Project - Guess the Password
 1. The project to be refactored is a guessing game, which has a given list of potential passwords, try to guess the correct one. If you're wrong, we'll tell you how many letters are correct. 
 1. This part is mainly focusing on refactoring code from old ES5 with new features in ES2015. 
 
-# ES2015 Part 2
+# 12. ES2015 Part 2
 
-# ES2016 and ES2017
 
-# D3 and the DOM
+
+# 13. ES2016 and ES2017
+
+
+
+# 14. D3 and the DOM
 1. We will use the following HTML to work and practice D3. 
     ```html
     <!DOCTYPE html>
@@ -4423,10 +4538,10 @@ var instructor = {
     </body>
     </html>
     ```
-### An introduction to D3 
+## 14.1. An introduction to D3 
 1. D3 stands for Data-Driven Documents, `D3.js`, which is a JavaScript library. This can be used for tableau and interactive charts on web. 
 
-### D3 Selections
+## 14.2. D3 Selections
 1. Objectives 
     1. Select elements in the DOM using `d3.select` and `d3.selectAll`.
     1. Set attributes, inner text, and style properties on D3 selections.
@@ -4462,7 +4577,7 @@ var instructor = {
       .classed('new-class', true);
     ```
 
-### Selections and Callbacks 
+## 14.3. Selections and Callbacks 
 1. We can pass a callback function to the selectors in D3. The callback will be invoked once for each element in the selection. For example, we can modify all the `<li>` tags on the page by giving a random size from 0 to 40 px. 
     ```js 
     d3.selectAll('li')
@@ -4494,7 +4609,7 @@ var instructor = {
         .style('border', '8px solid blue');
     ```
 
-### Event Listeners in D3 
+## 14.4. Event Listeners in D3 
 1. We use the following HTML and CSS file from the lecture. 
     1. HTML
     ```html
@@ -4609,36 +4724,194 @@ var instructor = {
     ```
 1. Removing element - D3 also provides method to remove element with `selection.remove()`. For example, we can use `d3.selectAll('p').remove()` to remove all `<p>` tags in the page. 
 
-# Data Joins and Update Patterns in D3
+# 15. Data Joins and Update Patterns in D3
+## 15.1. Objectives
+1. Join data to a d3 selection using the data method
+2. Target nodes to append to the DOM via the enter selection
+3. Target nodes to remove from the DOM via the exit selection
+4. Perform more advanced data join by using a key function
+5. Update existing DOM elemenets with new data
 
-# SVG and D3
+## 15.2. Basic Data Joins and Enter Selections
+1. When we use `selectAll` method on `d3`, it gets the node but if the element has no indicated element, the function returns `selection` object from `d3` without any nodes in it.
+2. We then can use `data` method to bind the element with provided data. After binding an array of data, we can notice that the object has 2 more methods `enter` and `exit`.
+3. The DOMs created in the list aren't rendered on the document yet (no showing on the screen).
+4. Call `enter` method to create "d3 enter node" which is similar to DOM.
+5. Call `append` method to append the elements to the select node as child elements.
+  ```js
+  import * as d3 from 'd3';
 
-# D3 Odds and Ends, and Advanced Graph Types
+  // 5 elements
+  const quotes = [
+    {
+      quote: 'hello wolrd',
+    },
+    {
+      quote: 'neverland',
+    },
+    ...
+  ]
 
-# Project: Building a Data Dashboard with D3
+  d3.select('#list') // an ul element
+      .style('list-style', 'none');
+    .selectAll('li')
+    .data(quotes) // create a list of 5 nodes from array above
+    .enter() // inject data and create d3 enter nodes (similar to DOM)
+    .append('li')
+      .text(function(d, i) {
+        // 1st argument is 'd' for data, which is the data bound to the current element
+        // 2nd argument is the index that the item is in the array
+        return d.quote;
+      })
+      .style('margin', '20px')
+      .style('padding', '20px')
+      .style('font-size', (d) => d.quote.length < 25 ? '2em': '1em');
+  ```
 
-# Introduction to React and JSX
+## 15.3. Exit Selection and Key Functions
+1. After removing items from the data source, such as poping out the last item in the array, we can use `data` method to bind the new data set to `d3` object.
+  ```js
+  const filteredQuotes = quotes.filter(text => text.quote.includes('hello'));
 
-# Create React App and Props
+  d3.selectAll('li')
+    .data(filteredQuotes)
+    .exit()
+    .remove();
+  ```
+2. However, `d3` by default only knows the index of the array. If we remove any item in between such as using `filter` array method to remove some of the items, it will remain the same order of items from the array that build the nodes.
+3. There are 2 approachs that we can update the nodes correctly. 
+   1. Update the style of nodes, so `d3` will render the data accordingly.
+      ```js
+      d3.selectAll('li')
+        .text((d) => d.quote)
+        .style('margin', '20px')
+        .style('padding', '20px')
+        .style('font-size', (d) => d.quote.length < 25 ? '2em' : '1em')
+        .style('border-radius', '8px')
+      ```
+   2. [Pass a callback function](https://github.com/d3/d3-selection/blob/v3.0.0/README.md#selection_data) to match when binding data with `data` method.
+      ```js
+      d3.selectAll('li')
+        .data(filteredQuotes, (d) => d.quote)
+        .exit()
+        .remove()
+      ```
 
-# State
+## 15.4. The general update pattern in D3
+1. Before updating and append element, we need to select the parent element that we want to add elements to.
+2. In `d3`, we can use `enter`, `update`, and `exit` to work with data.
+   1. `enter` data with no elements
+   2. `exit` elements with no data
+   3. `update` works with both data and elements
+3. However, the selection will only affect to the new data modified rather than updating the whole list.
+4. For the case, we can use `merge` method to merge multiple selections into a new selection.
+5. General Update Pattern in D3
+   1. Grab the update selection, make any changes unique to that selection, and store the selection in a variable.
+   2. Grab the exit selection and remove any unncessary elements.
+   3. Grab the enter selection and make any chagnes unique to that selection.
+   4. Merge the enter and update selections, and make any changes that you want to be shared across both selections.
 
-# The Virtual DOM, Events, and Forms
+### Exercise: Character Frequencies
+```js
+d3.select('#reset')
+  .on('click', function() {
+    d3.selectAll('.letter')
+      .remove();
 
-# Component Lifecycle Methods
+      d3.select('#phrase')
+        .text('');
 
-# Building A Full-stack App with React
+      d3.select('#count')
+        .text('');
+  })
 
-# React Router
+d3.select('form')
+  .on('submit', function() {
+    d3.event.preventDefault();
+    const input = d3.select('input')
+    const text = input.property('value');
 
-# Redux Introduction
+    const lettesr = d3.select('#letters')
+      .selectAll('.letter')
+      .data(getFrequencies(text), function(d) {
+        return d.char;
+      });
 
-# In Depth Redux Code Walkthrough
+    letters
+      .classed('new', false)
+      .exit()
+      .remove();
+    
+    letters
+      .enter()
+      .append('div')
+        .classed('letter', true)
+        .classed('new', true)
+      .merge(letters)
+        .style('width', '20px')
+        .style('line-height', '20px')
+        .style('margin-right', '5px')
+        .style('height', function(d) {
+          return d.count * 20 + 'px';
+        })
+        .text(function(d) {
+          return d.char;
+        });
 
-# Warbler Introduction and Backend Part 1
+    d3.select('#phrase')
+      .text('Analysis of: ' + text);
+    
+    d3.select('#count')
+      .text('(New characters: ' + letters.enter().nodes().length + ')');
 
-# Warbler Backend Part 2
+    input.property('value', '');
+  });
 
-# Warbler Frontend Part 1
+function getFrequencies(str) {
+  // the following works as the string array is sorted
+  // same characters are adjacent to each other
+  return str.split('').sort().reduce((list, char) => {
+    const last = list[list.length - 1];
+    if (last && last.char === char) {
+      last.count++;
+    } else {
+      list.push({ char, count: 1 });
+    }
+    return list;
+  }, []);
+}
+```
 
-# Warbler Frontend Part 2
+
+
+# 16. SVG and D3
+
+# 17. D3 Odds and Ends, and Advanced Graph Types
+
+# 18. Project: Building a Data Dashboard with D3
+
+# 19. Introduction to React and JSX
+
+# 20. Create React App and Props
+
+# 21. State
+
+# 22. The Virtual DOM, Events, and Forms
+
+# 23. Component Lifecycle Methods
+
+# 24. Building A Full-stack App with React
+
+# 25. React Router
+
+# 26. Redux Introduction
+
+# 27. In Depth Redux Code Walkthrough
+
+# 28. Warbler Introduction and Backend Part 1
+
+# 29. Warbler Backend Part 2
+
+# 30. Warbler Frontend Part 1
+
+# 31. Warbler Frontend Part 2
