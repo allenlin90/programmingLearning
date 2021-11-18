@@ -134,8 +134,14 @@ Note:
   - [15.2. Basic Data Joins and Enter Selections](#152-basic-data-joins-and-enter-selections)
   - [15.3. Exit Selection and Key Functions](#153-exit-selection-and-key-functions)
   - [15.4. The general update pattern in D3](#154-the-general-update-pattern-in-d3)
-    - [Exercise: Character Frequencies](#exercise-character-frequencies)
+    - [15.4.1. Exercise: Character Frequencies](#1541-exercise-character-frequencies)
 - [16. SVG and D3](#16-svg-and-d3)
+  - [16.1. Intdouction to SVG](#161-intdouction-to-svg)
+  - [16.2. Rectangles, Polygons, and Circles in SVG](#162-rectangles-polygons-and-circles-in-svg)
+    - [16.2.1. Rectangle Elements](#1621-rectangle-elements)
+    - [16.2.2. Ploygon Elements](#1622-ploygon-elements)
+    - [16.2.3. Circle Elements](#1623-circle-elements)
+  - [Text elements in SVG](#text-elements-in-svg)
 - [17. D3 Odds and Ends, and Advanced Graph Types](#17-d3-odds-and-ends-and-advanced-graph-types)
 - [18. Project: Building a Data Dashboard with D3](#18-project-building-a-data-dashboard-with-d3)
 - [19. Introduction to React and JSX](#19-introduction-to-react-and-jsx)
@@ -4811,7 +4817,7 @@ var instructor = {
    3. Grab the enter selection and make any chagnes unique to that selection.
    4. Merge the enter and update selections, and make any changes that you want to be shared across both selections.
 
-### Exercise: Character Frequencies
+### 15.4.1. Exercise: Character Frequencies
 ```js
 d3.select('#reset')
   .on('click', function() {
@@ -4885,6 +4891,135 @@ function getFrequencies(str) {
 
 
 # 16. SVG and D3
+1. Compare and contrast raster and vector graphics
+2. Create SVG elements in the DOM
+3. Draw lines using SVG
+4. Create groups of SVG elements
+5. Draw rectangle, polygons, and circles using SVG
+6. Write text on SVG
+7. Draw general paths on SVG
+8. Use D3 to biuld an SVG bar chart
+
+## 16.1. Intdouction to SVG
+1. SVG 
+   1. Stands for scalable vector graphics
+   2. Vector, not raster
+   3. Raster images use pixels
+   4. Raster image examples: .gif, .jpg, .png
+2. THe main difference between raster and vector is when scaling.
+3. We can use `svg` tag to create a svg element.
+    ```html
+    <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg">
+      <line
+        x1="100"
+        y1="100"
+        x2="700"
+        y2="350"
+        stroke-width="5px"
+        stroke="blue"
+      />
+    </svg>
+    ```
+    ```css
+    svg {
+        border: 1px solid black;
+        width: 480px;
+        height: 450px;
+    }
+    ```
+4. Note that coordinates in SVG is different from regular math class. Though x-axis is same from left to right, y-axis goes from top to bottom in an opposite way.
+5. When we have multiple elements in `svg` tag, we can wrap the elements such as `line` in `g` tag which stands for "group".
+6. `g` tag allow us to combine elements that should share attributes or functionality.
+    ```html
+    <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg">
+      <g stroke-width="5px" stroke="blue">
+        <line x1="100" y1="100" x2="700" y2="350" />
+        <line x1="100" y1="350" x2="700" y2="100" />
+      </g>
+    </svg>
+    ```
+ 7. Note that coordinate attributes such as `x1` and `x2` can't be shared in `g` tag.
+
+## 16.2. Rectangles, Polygons, and Circles in SVG
+### 16.2.1. Rectangle Elements
+1. Rectangle attributes
+   1. `x` - x-coordinate of upper-left corner
+   2. `y` - y-coordinate of upper-left corner
+   3. `width` - width of rectangle
+   4. `height` - height of rectangle
+   5. `stroke` - border color
+   6. `stroke-width` - border thickness
+   7. `rx` - round corner in x direction
+   8. `ry` - round corner in y direction
+2. The layer and "z-index" of the elements in svg is by the order from top to bottom.
+3. In the following example, the 2nd rectangel will overlap and on top of the first rectangle as it's later in the order in `svg`.
+    ```html
+    <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg">
+        <rect
+            rx="30"
+            ry="300"
+            x="100"
+            y="200"
+            width="300"
+            height="400"
+            fill="#e91e63"
+            stroke="#795548"
+            stroke-width="8px"
+        />
+        <rect
+            x="50"
+            y="50"
+            width="300"
+            height="200"
+            fill="#ffc107"
+            stroke="#2196f3"
+            stroke-width="8px"
+        />
+    </svg>
+    ```
+4. Every rectangle in SVG is a ploygon which is created by straight line edges.
+
+### 16.2.2. Ploygon Elements
+1. `points` - space-separated list of points representing vertices of polygon
+2. Points are of the form "x1,y1 x2,y2..."
+    ```html
+    <svg>
+        <polygon
+            fill="yellow"
+            stroke="black"
+            stroke-width="8px"
+            points="400,21.5 450.5,177 614,177 481.5,273 532.5,428.5 400,332.5 267.5,428.5 318.5,273 186,177 349.5,177"
+        />
+    </svg>
+    ```
+### 16.2.3. Circle Elements
+1. `cx` - x-coordinate of center
+2. `cy` - y-coordinate of center
+3. `r` - radius of circle
+    ```html
+    <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg">
+      <polygon
+        fill="yellow"
+        stroke="black"
+        stroke-width="8px"
+        points="400,21.5 450.5,177 614,177 481.5,273 532.5,428.5 400,332.5 267.5,428.5 318.5,273 186,177 349.5,177"
+      />
+      <circle cx="400" cy="250" r="60" fill="black" />
+      <circle cx="400" cy="235" r="65" fill="yellow" />
+      <circle cx="370" cy="210" r="10" fill="black" />
+      <circle cx="430" cy="210" r="10" fill="black" />
+    </svg>
+    ```
+
+## Text elements in SVG
+1. We can use the following attributes to specify the position of the text in SVG.
+   1. `x` - x-coordinate of lower-left corner
+   2. `y` - y-coordinate of lower-left corner
+2. To align the text element, we can use `dx` or `dy` to shift the element from its anchor point.
+3. The other solution is to use `text-anchor` in HTML attributes or CSS properties, and it takes `start`, `middle` and `end`. We can align the text horizontally.
+4. On the other hand, we can use `alignment-baseline` to align text vertically. This attribute takes `start`, `middle` and `end` as well.
+5. There are other attributes, such as `font-size`, `font-family`, `stroke`, `stroke-width`, `fill`, we can use.
+6. To rotate text, we can use `transform="rotate(deg x,y)"`. `deg` is the degree we want to rotate. Postive degress will rotate the element clockwise, while negative will be counter-clockwise.
 
 # 17. D3 Odds and Ends, and Advanced Graph Types
 
