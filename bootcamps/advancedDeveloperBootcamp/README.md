@@ -142,6 +142,7 @@ Note:
     - [16.2.2. Ploygon Elements](#1622-ploygon-elements)
     - [16.2.3. Circle Elements](#1623-circle-elements)
   - [Text elements in SVG](#text-elements-in-svg)
+  - [Path elementts in SVG](#path-elementts-in-svg)
 - [17. D3 Odds and Ends, and Advanced Graph Types](#17-d3-odds-and-ends-and-advanced-graph-types)
 - [18. Project: Building a Data Dashboard with D3](#18-project-building-a-data-dashboard-with-d3)
 - [19. Introduction to React and JSX](#19-introduction-to-react-and-jsx)
@@ -5020,6 +5021,46 @@ function getFrequencies(str) {
 4. On the other hand, we can use `alignment-baseline` to align text vertically. This attribute takes `start`, `middle` and `end` as well.
 5. There are other attributes, such as `font-size`, `font-family`, `stroke`, `stroke-width`, `fill`, we can use.
 6. To rotate text, we can use `transform="rotate(deg x,y)"`. `deg` is the degree we want to rotate. Postive degress will rotate the element clockwise, while negative will be counter-clockwise.
+
+## Path elementts in SVG
+1. `path` can generate all types of shapes in SVG, but the path setting is hard to read.
+2. We can use drawing software to export svg code.
+   1. `M` - "Move" command which moves the cursor to position X, Y.
+   2. `L` - "Line" command that draws a line from the cursor's current position to given position at X, Y. We can chain several L command to draw multiple line segments.
+   3. Uppercase and lowercase
+      1. UPPERCASE X Y - X and Y represent the location you want to go to.
+      2. lowercase X Y - X and Y represent how far you want to go from your current position.
+          ```html
+          <svg>
+            <path
+              d="
+              M 400 100
+              L 500 300
+              L 300 300
+              L 400 100
+              "
+            />
+          </svg>
+
+          <svg>
+            <path
+              d="
+              M 400 100
+              l 100 200
+              l -200 0
+              l 100 -200
+              "
+            />
+          </svg>
+          ```
+   4. Shortcuts
+      1. `Z z` - Close the path with a line
+      2. `H h` - Draw a horizontal line
+      3. `V v` - Draw a vertical line
+   5. Curve commands
+      1. `Q` - **quadratic** curve that takes **2** pairs of positions `cx cy, x y`. 1st pair is the control to the curve, while the 2nd pair is the destionation of the path.
+      2. `C` - **cubic bezier** curve can create a more fine-tuned curve with **3** pairs of positions, `c1x c1y, c2x c2y, x y`. The first 2 positions are for control points, while the 3rd one is the destination.
+      3. `A` **circular arc** has **7** arugments in total, `rx ry rotate largeArc sweep x y`. `rx` and `ry` is for x and y radius.
 
 # 17. D3 Odds and Ends, and Advanced Graph Types
 
