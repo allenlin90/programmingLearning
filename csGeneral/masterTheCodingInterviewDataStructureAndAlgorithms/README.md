@@ -58,6 +58,13 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
     - [5.8.1. Challenge](#581-challenge)
     - [5.8.2. Solution](#582-solution)
   - [5.9. Hash Tables Review](#59-hash-tables-review)
+- [6. Data Structure: Linked Lists](#6-data-structure-linked-lists)
+  - [6.1. Linked Lists](#61-linked-lists)
+  - [6.2. Why Linked List?](#62-why-linked-list)
+  - [6.3. What is a Pointer?](#63-what-is-a-pointer)
+  - [6.4. Our First Linked List](#64-our-first-linked-list)
+  - [6.5. append()](#65-append)
+  - [6.6. prepend()](#66-prepend)
 ---
 
 # 1. Big O
@@ -1077,3 +1084,203 @@ combine them later.
    2. Slow key iteration
 3. Hash tables (objects) can usually be used to improve time complexity but require more space (memory).
 4. Look at the time vs space tradeoff. Sometimes storing extra state in memory can help the time.
+
+# 6. Data Structure: Linked Lists
+## 6.1. Linked Lists
+1. A linked list has both "head" and "tail" which is a pointer to the next element in the list.
+2. If the tail points to a `null`, it simply means that the end of the linked list.
+3. Some programming languages, such as Java, has pre-built "linked list" data structure, while it's not available in JavaScript by default.
+4. In some conditions, linked list provides better efficiency to access data.
+5. We can visualize a linked list data structure at [https://visualgo.net/](https://visualgo.net/).
+
+## 6.2. Why Linked List?
+1. It's relatively simply to insert an item in the middle of a linked list.
+2. In an array, if we'd like to insert an item in the middle of the array, we have to shift all the items at behind to clear a position for the new item.
+3. The process can be long if the array is huge. The time complexity to insert an item in the middle of an array is O(n).
+4. However, to access an item in the middle of a linked list isn't efficient as using an array. It must "**traverse**" through the whole linked list since the beginning.
+5. Besides, unlike arrays, we don't know where the "tail" is in a linked list.
+6. In most of the cases, we can use `while` loop to traverse through the items in a linked list.
+7. A linked has the advantages from hash tables (objects or dictionaries) while keep the data in ordered as an array.
+   1. prepend `O(1)`
+   2. append `O(1)`
+   3. lookup `O(n)`
+   4. insert `O(n)`
+   5. delete `O(n)`
+
+## 6.3. What is a Pointer?
+1. A pointer is a reference to the location of a memory.
+   ```js
+   // Javascript
+   let obj1 = { a: true, };
+   let obj2 = obj1;
+
+   console.log('1', obj1); // { a: true, }
+   console.log('2', obj2); // { a: true, }
+
+   obj1.a = 'booya';
+   delete obj1;
+   console.log('2', obj2); // { a: 'booya' }
+
+   // garbage collect
+   obj2 = 'hello';
+   console.log('2', obj2); // hello
+   ```
+2. When assign an object to a variable in Javascript and assign the variable to the other variable, the data of the last variable is a "pointer" pointing to the data in the memory created by the first variable.
+3. However, if we delete the first object, since the data is pointed by `obj2`, it's not removed from the computer memory.
+4. In addition, if `obj2` is assigned to other value, the data initiated by `obj1` will be "**garbage collected**" to release the memory from not accessible data.
+
+## 6.4. Our First Linked List
+1. When a linked list data initiates, it must has as value to start with.
+2. The very first value in `next` is null as there's no data "linked" to the linked list.
+    ```js
+    let myLinkedList = {
+      head: {
+        value: 10,
+        next: {
+          value: 5,
+          next: {
+            value: 16,
+            next: null,
+          }
+        }
+      }
+    }
+
+    class LinkedList {
+      constructor(value) {
+        this.head {
+          value,
+          next: null, // initiate when the linked list is created
+        }
+
+        this.tail = this.head;
+
+        this.length = 1;
+      }
+    }
+
+    const myLinkedList = new LinkedList(10); // a linked list must has a value to start with
+    ```
+
+## 6.5. append()
+1. Tentative solution
+    ```js
+    class LinkedList {
+      constructor(value) {
+        this.head = {
+          value,
+          next: null, // initiate when the linked list is created
+        }
+
+        this.tail = this.head;
+
+        this.length = 1;
+      }
+
+      append(value) {
+        const newValue = {
+          value,
+          next: null,
+        }
+
+        let head = this.head;
+        while(head.next) {
+          head = head.next;
+        }
+        head.next = newValue;
+        this.length++;
+
+        // update tail to the given data
+        this.tail = newValue;
+      }
+    }
+
+    const myLinkedList = new LinkedList(10); // a linked list must has a value to start with
+
+    myLinkedList.append(5);
+    myLinkedList.append(16);
+    console.log(myLinkedList);
+    ```
+2. Solution from lecture
+  1. In Javascript, when assigning an object to a variable, it is actually pointing the position of the data in the computer memory.
+  2. When we update the object directly, the other variable referring to the same object will be updated as well.
+  3. Therefore, when we update `this.tail` and `this.tail.next`, it is updated to `this.head` at the same time.
+  4. Thus, we don't need to traverse through the object with `while` loop and hold the data in the other variable.
+      ```js
+      // Javascript
+      // solution from lecture
+      class LinkedList {
+        constructor(value) {
+          this.head = {
+            value,
+            next: null, // initiate when the linked list is created
+          }
+
+          this.tail = this.head;
+
+          this.length = 1;
+        }
+
+        append(value) {
+          const newValue = {
+            value,
+            next: null,
+          }
+
+          this.tail.next = newValue;
+          this.tail = newValue;
+          this.length++;
+        }
+      }
+
+      // a linked list must has a value to start with
+      const myLinkedList = new LinkedList(10); 
+
+      myLinkedList.append(5);
+      myLinkedList.append(16);
+      console.log(myLinkedList);
+      ```
+
+## 6.6. prepend()
+1. Tentative solution
+    ```js
+    class LinkedList {
+      constructor(value) {
+        this.head = {
+          value,
+          next: null, // initiate when the linked list is created
+        }
+
+        this.tail = this.head;
+
+        this.length = 1;
+      }
+
+      append(value) {
+        const newValue = {
+          value,
+          next: null,
+        }
+
+        this.tail.next = newValue;
+        this.tail = newValue;
+        this.length++;
+      }
+
+      prepend(value) {
+        const head = this.head;
+        this.head = {
+          value,
+          next: head,
+        }
+        this.length++;
+      }
+    }
+
+    const myLinkedList = new LinkedList(10); // a linked list must has a value to start with
+
+    myLinkedList.append(5);
+    myLinkedList.append(16);
+    myLinkedList.prepend(1);    
+    console.log(myLinkedList);
+    ```
