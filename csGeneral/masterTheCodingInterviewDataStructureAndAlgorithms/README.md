@@ -65,6 +65,9 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [6.4. Our First Linked List](#64-our-first-linked-list)
   - [6.5. append()](#65-append)
   - [6.6. prepend()](#66-prepend)
+  - [Node Class](#node-class)
+  - [insert()](#insert)
+  - [remove()](#remove)
 ---
 
 # 1. Big O
@@ -1281,6 +1284,317 @@ combine them later.
 
     myLinkedList.append(5);
     myLinkedList.append(16);
-    myLinkedList.prepend(1);    
+    myLinkedList.prepend(1);
     console.log(myLinkedList);
+    ```
+
+## Node Class
+1. We have seen similar syntax all around the code when we create an instance, append, or prepend a node. The "node" itself can be considered a repetitive code.
+2. We can apply object-oriented approach to distract the code and create a new class.
+    ```js
+    class Node {
+      constructor(value) {
+        this.value = value;
+        this.next = null;
+      }
+    }
+
+    class LinkedList {
+      constructor(value) {
+        this.head = {
+          value,
+          next: null,
+        }
+        this.tail = this.head;
+        this.length = 1;
+      }
+
+      append(value) {
+        const newNode = new Node(value);
+        this.tail.next = newNode;
+        this.tail = newNode;
+        this.length++;
+        return this;
+      }
+
+      prepend(value) {
+        const newNode = new Node(value);
+        newNode.next = this.head;
+        this.head = newNode;
+        this.length++;
+        return this;
+      }
+    }
+    ```
+
+## insert()
+1. `append` and `prepend` are relatively easy as we can simply refer to the object and modify the data, so their time complexity is at `O(1)`.
+2. Tentative solution
+    ```js
+    // javascript
+    class Node {
+      constructor(value) {
+        this.value = value;
+        this.next = null;
+      }
+    }
+
+    class LinkedList {
+      constructor(value) {
+        this.head = {
+          value,
+          next: null,
+        }
+        this.tail = this.head;
+        this.length = 1;
+      }
+
+      append(value) {
+        const newNode = new Node(value);
+        this.tail.next = newNode;
+        this.tail = newNode;
+        this.length++;
+        return this;
+      }
+
+      prepend(value) {
+        const newNode = new Node(value);
+        newNode.next = this.head;
+        this.head = newNode;
+        this.length++;
+        return this;
+      }
+
+      printList() {
+        const array = [];
+        let currentNode = this.head;
+        while (currentNode !== null) {
+          array.push(currentNode.value);
+          currentNode = currentNode.next;
+        }
+
+        return array;
+      }
+
+      insert(index, value) {
+        if (index === 0) {
+          this.prepend(value);
+        } else if (index > this.length) {
+          this.append(value);
+        } else {
+          let counter = 1;
+          let currentNode = this.head;
+          while (counter <= index) {
+            if (counter === index) {
+              const next = currentNode.next;
+              currentNode.next = {
+                value,
+                next,
+              }
+            } else {
+              currentNode = currentNode.next;
+            }
+            counter++;
+          }
+        }
+        this.length++;
+      }
+    }
+
+    const myLinkedList = new LinkedList(10); 
+    myLinkedList.append(5);
+    myLinkedList.append(16);
+    myLinkedList.prepend(1);
+    myLinkedList.printList();
+    myLinkedList.insert(2, 99);
+    myLinkedList.printList();
+    ```
+3. Solution from lecture
+4. The main idea is to get position at the current chain and reference on the link we want to assign on its `next` and concatenate the followings with
+    ```
+    prev *       * next
+           \   /
+             *
+    ```
+    ```js
+    // javascript
+    class Node {
+      constructor(value) {
+        this.value = value;
+        this.next = null;
+      }
+    }
+
+    class LinkedList {
+      constructor(value) {
+        this.head = {
+          value,
+          next: null,
+        }
+        this.tail = this.head;
+        this.length = 1;
+      }
+
+      append(value) {
+        const newNode = new Node(value);
+        this.tail.next = newNode;
+        this.tail = newNode;
+        this.length++;
+        return this;
+      }
+
+      prepend(value) {
+        const newNode = new Node(value);
+        newNode.next = this.head;
+        this.head = newNode;
+        this.length++;
+        return this;
+      }
+
+      printList() {
+        const array = [];
+        let currentNode = this.head;
+        while (currentNode !== null) {
+          array.push(currentNode.value);
+          currentNode = currentNode.next;
+        }
+
+        return array;
+      }
+
+      insert(index, value) {
+        if (index >= this.length) {
+          return this.append(value);
+        }
+
+        const newNode = {
+          value,
+          next: null,
+        }
+
+        const leader = this.traverseToIndex(index - 1);
+        const holdingPointer = leader.next;
+        leader.next = newNode;
+        newNode.next = holdingPointer;
+        this.length++;
+        return this.printList();
+      }
+
+      traverseToIndex(index) {
+        let counter = 0;
+        let currentNode = this.head;
+        while (counter <= index) {
+          currentNode = currentNode.next;
+          counter++;
+        }
+
+        return currentNode;
+      }
+    }
+
+    const myLinkedList = new LinkedList(10); 
+    myLinkedList.append(5);
+    myLinkedList.append(16);
+    myLinkedList.prepend(1);
+    myLinkedList.insert(2, 99);
+    console.log(myLinkedList.printList());
+    ```
+
+## remove()
+1. Tentative solution
+    ```js
+    // Javascript
+    class Node {
+      constructor(value) {
+        this.value = value;
+        this.next = null;
+      }
+    }
+
+    class LinkedList {
+      constructor(value) {
+        this.head = {
+          value,
+          next: null,
+        }
+        this.tail = this.head;
+        this.length = 1;
+      }
+
+      append(value) {
+        const newNode = new Node(value);
+        this.tail.next = newNode;
+        this.tail = newNode;
+        this.length++;
+        return this;
+      }
+
+      prepend(value) {
+        const newNode = new Node(value);
+        newNode.next = this.head;
+        this.head = newNode;
+        this.length++;
+        return this;
+      }
+
+      printList() {
+        const array = [];
+        let currentNode = this.head;
+        while (currentNode !== null) {
+          array.push(currentNode.value);
+          currentNode = currentNode.next;
+        }
+
+        return array;
+      }
+
+      insert(index, value) {
+        if (index === 0) {
+          return this.prepend(value);
+        }
+
+        if (index >= this.length) {
+          return this.append(value);
+        }
+
+        const newNode = {
+          value,
+          next: null,
+        }
+
+        const leader = this.traverseToIndex(index - 1);
+        const holdingPointer = leader.next;
+        leader.next = newNode;
+        newNode.next = holdingPointer;
+        this.length++;
+        return this.printList();
+      }
+
+      traverseToIndex(index) {
+        let counter = 0;
+        let currentNode = this.head;
+        while (counter < index) {
+          currentNode = currentNode.next;
+          counter++;
+        }
+
+        return currentNode;
+      }
+
+      remove(index) {
+        const node = this.traverseToIndex(index - 1);
+        const nextNode = this.traverseToIndex(index + 1);
+        node.next = nextNode;
+        this.length--;
+        return this.printList();
+      }
+    }
+
+    const myLinkedList = new LinkedList(10); 
+    myLinkedList.append(5);
+    myLinkedList.append(16);
+    myLinkedList.prepend(1);
+    myLinkedList.insert(2, 99);
+    myLinkedList.remove(2);
+    console.log(myLinkedList.printList());
     ```
