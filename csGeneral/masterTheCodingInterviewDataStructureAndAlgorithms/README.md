@@ -72,6 +72,11 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [6.11. Singly vs Doubly linked list](#611-singly-vs-doubly-linked-list)
   - [6.12. Reverse](#612-reverse)
   - [6.13. Linked List Review](#613-linked-list-review)
+- [7. Data Structure: Stack and Queues](#7-data-structure-stack-and-queues)
+  - [7.1. Stacks](#71-stacks)
+  - [7.2. Queues](#72-queues)
+  - [7.3. Stack vs Queue](#73-stack-vs-queue)
+  - [7.4. Stack Implementation (Linked Lists)](#74-stack-implementation-linked-lists)
 ---
 
 # 1. Big O
@@ -2298,3 +2303,145 @@ combine them later.
    1. Slow lookup
    2. More memory
 3. Linked list is a fundemental data structure which can be used in others such as queue, stack, trees, and graphs.
+
+# 7. Data Structure: Stack and Queues
+## 7.1. Stacks
+1. Stacks are similar to place plates. The plates are kept stacking on top of the other.
+2. It's executed in a last in first out "LIFO" manner.
+3. Stacks can be used for browser history that the latest records shows first.
+4. 4 operations are available `lookup`, `pop`, `push`, and `peek`. 
+   1. `pop` `O(1)` is to remove the latest data on the top.
+   2. `push` `O(1)` is to add new data to the stack (on the top).
+   3. `peek` `O(1)` is to check the data on the top of the stack.
+   4. `lookup` `O(n)` is to search through the whole stack as linear operations.
+
+## 7.2. Queues
+1. Queue data structure is like a line-up in real life that implements first in first out.
+2. It has similar operations methods
+   1. `enqueue` `O(1)` that adds item to the queue.
+   2. `dequeue` `O(1)` removes the first item in the queue.
+   3. `peek` `O(1)` checks the first item in the queue. 
+3. Creating queues from an array isn't an ideal approach because it's not efficient.
+4. When we add a new item as `unshift`, we have to modifed the rest items in the array as well. 
+
+## 7.3. Stack vs Queue
+1. Both arrays and linked lists can be used as the base data structure for stack and queue.
+2. Linked list is relatively suitable for both stack and queue as the base data structure.
+
+## 7.4. Stack Implementation (Linked Lists)
+1. Tentative solution
+2. This solution is incorrect, as it forgets to handle `this.bottom` and doesn't consider when the stack is initiated without any value.
+    ```js
+    class Node {
+      constructor(value) {
+        this.value = value;
+        this.next = null;
+      }
+    }
+
+    class Stack {
+      constructor() {
+        this.top = null;
+        this.bottom = null;
+        this.length = 0;
+      }
+
+      peek() {
+        return this.top;
+      }
+
+      push(value) {
+        const newNode = new Node(value);
+
+        newNode.next = this.top;        
+        this.top = newNode;
+
+        this.length++;
+        return this.top;
+      }
+
+      pop() {
+        if (this.top) {
+          this.top = this.top.next;
+          this.length--;
+        }
+        return this.top;
+      }
+      
+      isEmpty() {
+        if (this.top) return false;
+        return true;
+      }
+    }
+
+    const myStack = new Stack();
+    myStack.push('discord');
+    myStack.isEmpty();
+    myStack.pop();
+    myStack.push('google');
+    myStack.push('udemy');
+    myStack.isEmpty();
+    ```
+3. Solution from lecture
+    ```js
+    class Node {
+      constructor(value) {
+        this.value = value;
+        this.next = null;
+      }
+    }
+
+    class Stack {
+      constructor() {
+        this.top = null;
+        this.bottom = null;
+        this.length = 0;
+      }
+
+      peek() {
+        return this.top;
+      }
+
+      push(value) {
+        const newNode = new Node(value);
+        if (this.length === 0) {
+          this.top = newNode;
+          this.bottom = newNode;
+        } else {
+          const holdingPointer = this.top;
+          this.top = newNode;
+          this.top.next = holdingPointer;
+        }
+
+        this.length++;
+        return this;
+      }
+
+      pop() {
+        if (!this.top) {
+          return null;
+        }
+        if (this.top === this.bottom) {
+          this.bottom = null;
+        }
+        this.top = this.top.next;
+        this.length--;
+        return this;
+      }
+      
+      isEmpty() {
+        if (this.top) return false;
+        return true;
+      }
+    }
+
+    const myStack = new Stack();
+    myStack.push('google');
+    myStack.push('udemy');
+    myStack.push('discord');
+    myStack.peek(); // discord
+    myStack.pop();
+    myStack.pop();
+    myStack.pop();
+    myStack.isEmpty();
+    ```
