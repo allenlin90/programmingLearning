@@ -242,53 +242,55 @@ Finished on
   - [15.5. Decorator Factories](#155-decorator-factories)
   - [15.6. Decorators Around Properties](#156-decorators-around-properties)
   - [15.7. More on Decorators](#157-more-on-decorators)
-- [Advanced Express and TS Integration](#advanced-express-and-ts-integration)
-  - [A Quick Disclaimer](#a-quick-disclaimer)
-  - [Project Overview](#project-overview)
-  - [WHy is This Hard?](#why-is-this-hard)
-  - [Solution Overview](#solution-overview)
-  - [Basics of Metadata](#basics-of-metadata)
-  - [Practical Metadata](#practical-metadata)
-  - [Let's Refactor!](#lets-refactor)
-  - [The 'Get' Decorator](#the-get-decorator)
-  - [The Controller Decorator](#the-controller-decorator)
-  - [Proof of Concept](#proof-of-concept)
-  - [A Few Fixups](#a-few-fixups)
-  - [Defining a RouteBinder](#defining-a-routebinder)
-  - [Closed Method Sets with Enums](#closed-method-sets-with-enums)
-  - [Metadata Keys](#metadata-keys)
-  - [The 'Use' Decorator](#the-use-decorator)
-  - [Testing Use](#testing-use)
-  - [Body Validators](#body-validators)
-  - [Automated Validation](#automated-validation)
-  - [Testing Automated Validation](#testing-automated-validation)
-  - [Fixing Routes](#fixing-routes)
-  - [Using Property Description for Type Checking](#using-property-description-for-type-checking)
-  - [App Wrapup](#app-wrapup)
-- [16. React and Redux with Typescript](#16-react-and-redux-with-typescript)
-  - [16.1. React and Redux Overview](#161-react-and-redux-overview)
-  - [16.2. App Overview](#162-app-overview)
-  - [16.3. Generating the App](#163-generating-the-app)
-  - [16.4. Simple Components](#164-simple-components)
-  - [16.5. Interface with Props](#165-interface-with-props)
-  - [16.6. Handling Components State](#166-handling-components-state)
-  - [16.7. Confusing Component State!](#167-confusing-component-state)
-  - [16.8. Functional Components](#168-functional-components)
-  - [16.9. Redux Setup](#169-redux-setup)
-  - [16.10. Action Creators with Typescript](#1610-action-creators-with-typescript)
-  - [16.11. Action Types Enum](#1611-action-types-enum)
-  - [16.12. The Generic Dispatch Function](#1612-the-generic-dispatch-function)
-  - [16.13. A Reducer with Enums](#1613-a-reducer-with-enums)
-  - [16.14. Validating Store Structure](#1614-validating-store-structure)
-  - [16.15. Connecting a Component to Redux](#1615-connecting-a-component-to-redux)
-  - [16.16. Rendering a List](#1616-rendering-a-list)
-  - [16.17. Adding in Delete Functionality](#1617-adding-in-delete-functionality)
-  - [16.18. Breaking Out Action as Type Union](#1618-breaking-out-action-as-type-union)
-  - [16.19. Type Guards in Reducers](#1619-type-guards-in-reducers)
-  - [16.20. Wiring up deleteToDo Action](#1620-wiring-up-deletetodo-action)
-  - [16.21. Again, Type Definition Files](#1621-again-type-definition-files)
-  - [16.22. Tracking Loading with Components](#1622-tracking-loading-with-components)
-  - [16.23. App Wrapup](#1623-app-wrapup)
+- [16. Advanced Express and TS Integration](#16-advanced-express-and-ts-integration)
+  - [16.1. A Quick Disclaimer](#161-a-quick-disclaimer)
+  - [16.2. Project Overview](#162-project-overview)
+  - [16.3. Why is This Hard?](#163-why-is-this-hard)
+  - [16.4. Solution Overview](#164-solution-overview)
+  - [16.5. Basics of Metadata](#165-basics-of-metadata)
+  - [16.6. Practical Metadata](#166-practical-metadata)
+  - [16.7. Let's Refactor!](#167-lets-refactor)
+  - [16.8. The 'Get' Decorator](#168-the-get-decorator)
+  - [16.9. The Controller Decorator](#169-the-controller-decorator)
+  - [16.10. Proof of Concept](#1610-proof-of-concept)
+  - [16.11. A Few Fixups](#1611-a-few-fixups)
+  - [16.12. Defining a RouteBinder](#1612-defining-a-routebinder)
+  - [16.13. Closed Method Sets with Enums](#1613-closed-method-sets-with-enums)
+  - [16.14. Metadata Keys](#1614-metadata-keys)
+  - [16.15. The 'Use' Decorator](#1615-the-use-decorator)
+  - [16.16. Testing Use](#1616-testing-use)
+  - [16.17. Body Validators](#1617-body-validators)
+  - [16.18. Automated Validation](#1618-automated-validation)
+  - [16.19. Testing Automated Validation](#1619-testing-automated-validation)
+  - [16.20. Fixing Routes](#1620-fixing-routes)
+  - [16.21. Using Property Description for Type Checking](#1621-using-property-description-for-type-checking)
+  - [16.22. App Wrapup](#1622-app-wrapup)
+- [17. React and Redux with Typescript](#17-react-and-redux-with-typescript)
+  - [17.1. React and Redux Overview](#171-react-and-redux-overview)
+  - [17.2. App Overview](#172-app-overview)
+  - [17.3. Generating the App](#173-generating-the-app)
+  - [17.4. Simple Components](#174-simple-components)
+  - [17.5. Interface with Props](#175-interface-with-props)
+  - [17.6. Handling Components State](#176-handling-components-state)
+  - [17.7. Confusing Component State!](#177-confusing-component-state)
+  - [17.8. Functional Components](#178-functional-components)
+  - [17.9. Redux Setup](#179-redux-setup)
+  - [17.10. Action Creators with Typescript](#1710-action-creators-with-typescript)
+  - [17.11. Action Types Enum](#1711-action-types-enum)
+  - [17.12. The Generic Dispatch Function](#1712-the-generic-dispatch-function)
+  - [17.13. A Reducer with Enums](#1713-a-reducer-with-enums)
+  - [17.14. Validating Store Structure](#1714-validating-store-structure)
+  - [17.15. Connecting a Component to Redux](#1715-connecting-a-component-to-redux)
+  - [17.16. Rendering a List](#1716-rendering-a-list)
+  - [17.17. Adding in Delete Functionality](#1717-adding-in-delete-functionality)
+  - [17.18. Breaking Out Action as Type Union](#1718-breaking-out-action-as-type-union)
+  - [17.19. Expressing Actions as Type Union](#1719-expressing-actions-as-type-union)
+  - [17.20. Type Guards in Reducers](#1720-type-guards-in-reducers)
+  - [17.21. Wiring up deleteToDo Action](#1721-wiring-up-deletetodo-action)
+  - [17.22. Again, Type Definition Files](#1722-again-type-definition-files)
+  - [17.23. Tracking Loading with Components](#1723-tracking-loading-with-components)
+
+---
 
 # 1. Getting Started with TypeScript
 ## 1.1. Environment Setup
@@ -519,7 +521,7 @@ Finished on
 3. Type inference will always be triggered and checked by Typescript, while in some cases, we need to manually declare and add type annotations.
 
 ## 3.6. The 'Any' type
-1. In some cases such as `JSON.parse`, the function can return `any` type dependingon the input.
+1. In some cases such as `JSON.parse`, the function can return `any` type depending on the input.
 2. Typescript wouldn't know and can't expect what type of value will be returned by the function.
 3. Therefore, in Typescript, `any` type means the returned value can be any type and Typescript can't do error checking for the case.
   ```ts
@@ -7067,54 +7069,54 @@ users.fetch();
   }
   ```
 
-# Advanced Express and TS Integration
-## A Quick Disclaimer
+# 16. Advanced Express and TS Integration
+## 16.1. A Quick Disclaimer
 
-## Project Overview
+## 16.2. Project Overview
 
-## WHy is This Hard?
+## 16.3. Why is This Hard?
 
-## Solution Overview
+## 16.4. Solution Overview
 
-## Basics of Metadata
+## 16.5. Basics of Metadata
 
-## Practical Metadata
+## 16.6. Practical Metadata
 
-## Let's Refactor!
+## 16.7. Let's Refactor!
 
-## The 'Get' Decorator
+## 16.8. The 'Get' Decorator
 
-## The Controller Decorator
+## 16.9. The Controller Decorator
 
-## Proof of Concept
+## 16.10. Proof of Concept
 
-## A Few Fixups
+## 16.11. A Few Fixups
 
-## Defining a RouteBinder
+## 16.12. Defining a RouteBinder
 
-## Closed Method Sets with Enums
+## 16.13. Closed Method Sets with Enums
 
-## Metadata Keys
+## 16.14. Metadata Keys
 
-## The 'Use' Decorator
+## 16.15. The 'Use' Decorator
 
-## Testing Use
+## 16.16. Testing Use
 
-## Body Validators
+## 16.17. Body Validators
 
-## Automated Validation
+## 16.18. Automated Validation
 
-## Testing Automated Validation
+## 16.19. Testing Automated Validation
 
-## Fixing Routes
+## 16.20. Fixing Routes
 
-## Using Property Description for Type Checking
+## 16.21. Using Property Description for Type Checking
 
-## App Wrapup
+## 16.22. App Wrapup
 
 
-# 16. React and Redux with Typescript
-## 16.1. React and Redux Overview
+# 17. React and Redux with Typescript
+## 17.1. React and Redux Overview
 1. Pros
    1. Far, far easier to avoid extremely common typos, like incorrect action types.
    2. Gives dev's a far better understanding of the type of data flowing around.
@@ -7125,67 +7127,750 @@ users.fetch();
    3. Tons of imports, as just about everything (action creator, action reducer, store, components) need to be aware of different types.
    4. Redux inherently functional in nature, tough integration with TS classes.
 
-## 16.2. App Overview
+## 17.2. App Overview
+1. The app is simply fetch data from an endpoint and render the results on the screen using React and Redux.
 
+## 17.3. Generating the App
+1. We can use `npx create-react-app [project] --template typescript` to create a React project with Typescript.
+2. To start with a clean project, we can remove the whole `src` folder.
 
-## 16.3. Generating the App
+## 17.4. Simple Components
+1. We can make a simple `App` component to start the project with Typescript.
+    ```ts
+    import React, { Component } from 'react';
+    import ReactDOM from 'react-dom';
 
+    class App extends Component {
+      render() {
+        return <div>Hi there</div>;
+      }
+    }
 
-## 16.4. Simple Components
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
 
+## 17.5. Interface with Props
+1. In convention, if we want to pass `props` to a component, we need to declare an `interface` out of the class.
+2. However, in the following setup, if `App` component doesn't take `color` as props, it returns an error.
+3. Therefore, we can put a question mark before the type. The prop will be optional to be passed to the component.
+4. In most of the cases, we can find an `interface` above the class component to declare the type of the component.
+    ```ts
+    import React, { Component } from 'react';
+    import ReactDOM from 'react-dom';
 
-## 16.5. Interface with Props
+    // put question mark ? in interface to decalre that the prop is optional
+    interface AppProps {
+      color?: string;
+    }
 
+    class App extends Component<AppProps> {
+      render() {
+        return <div>{this.props.color}</div>;
+      }
+    }
 
-## 16.6. Handling Components State
+    ReactDOM.render(<App color="red" />, document.querySelector('#root'));
+    ```
 
+## 17.6. Handling Components State
+1. We can add methods to handle and modify the state of the component.
+2. In this case, we create 2 buttons to either increase or decrease the counter number.
+    ```ts
+    // src/App.tsx
+    import React, { Component } from 'react';
+    import ReactDOM from 'react-dom';
 
-## 16.7. Confusing Component State!
+    interface AppProps {
+      color?: string;
+    }
 
+    class App extends Component<AppProps> {
+      state = { counter: 0 };
 
-## 16.8. Functional Components
+      onIncrement = (): void => {
+        this.setState({ counter: this.state.counter + 1 });
+      };
 
+      onDecrement = (): void => {
+        this.setState({ counter: this.state.counter - 1 });
+      };
 
-## 16.9. Redux Setup
+      render() {
+        return (
+          <div>
+            <button onClick={this.onIncrement}>Increment</button>
+            <button onClick={this.onDecrement}>Decrement</button>
+            {this.state.counter}
+          </div>
+        );
+      }
+    }
 
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
 
-## 16.10. Action Creators with Typescript
+## 17.7. Confusing Component State!
+1. Besides decalring `state` directly in the class and assign initial values, we can use `constructor` to create `state` in React component.
+2. However, the regular approach with `consturctor` syntax will report error by Typescript though it looks valid in regular Javascript syntax.
+    ```ts
+    // use one or the other to declare state in React component
+    class App extends Component<AppProps> {
+      // shorthand
+      state = { counter: 0 }
 
+      // constructor syntax
+      // the following synax is valid in Javascript but has error in Typescript
+      constructor(props: AppProps) {
+        super(props);
 
-## 16.11. Action Types Enum
+        this.state = { counter: 0 };
+      }
+    }
+    ```
+3. If we look into the docuemnt, a generic React `Component` (which `App` extends) takes 2 arguements (P, S) that is `Props` and `State`.
+4. By default, `S` is a "read-only" empty object.
+5. If we use the shorthand syntax, `App` component redefines the `state` object in the component so that the error is gone.
+6. However, by using constructor syntax, we are trying to overwrite the "read-only", empty `state` object.
+7. Though both 2 syntax are mostly equivalent in regular Javascript, the statements are very different when working with Typescript.
+8. It's suggested to choose only one or the other. When we use shorthand syntax to overwrite the empty `state`, the `AppState` `interface` will be ignored.
+    ```ts
+    interface AppProps {
+      color?: string;
+    }
+    
+    interface AppState {
+      counter: number;
+    }
 
+    class App extends Component<AppProps, AppState> {
+      // having both syntax can cause implicit bugs
+      // interface is having 'counter', while the state is redefined with 'number'
+      // this can cause error that is very hard to find
+      state = { number: 0 }
 
-## 16.12. The Generic Dispatch Function
+      constructor(props: AppProps) {
+        super(props);
 
+        this.state = { counter: 0 };
+      }
+    }
+    ```
 
-## 16.13. A Reducer with Enums
+## 17.8. Functional Components
+1. Functional React components are having similar requirements that we also need to have type annotation.
+    ```ts
+    import React, { Component } from 'react';
+    import ReactDOM from 'react-dom';
 
+    interface AppProps {
+      color?: string;
+    }
 
-## 16.14. Validating Store Structure
+    const App = (props: AppProps): JSX.Element => {
+      return <div>{props.color}</div>;
+    };
 
+    ReactDOM.render(<App color="red" />, document.querySelector('#root'));
+    ```
 
-## 16.15. Connecting a Component to Redux
+## 17.9. Redux Setup
+1. We install more npm packages `redux`, `react-redux`, `axios` and `redux-thunk`.
+2. If we find any of the packages require type files, we can follow the instruction by mousing over the library to check and install the type file.
+3. For example, the lecturer needs to install `npm i @types/react-redux`. However, by the time learning the course, the type file is included when install the package.
+4. We then can have an initial setup with packages.
+    ```ts
+    // src/index.tsx
+    import React, { Component } from 'react';
+    import ReactDOM from 'react-dom';
+    import { createStore, applyMiddleware } from 'redux';
+    import { Provider } from 'react-redux';
+    import thunk from 'redux-thunk';
+    import { App } from './components/App';
+    import { reducers } from './reducers';
 
+    const store = createStore(reducers, applyMiddleware(thunk));
 
-## 16.16. Rendering a List
+    ReactDOM.render(
+      <Provider store={store}>
+        <App />
+      </Provider>,
+      document.querySelector('#root'),
+    );
+    ```
+5. Create `App` component to use in `index.tsx`.
+    ```ts
+    // src/components/App.tsx
+    import React, { Component } from 'react';
 
+    export class App extends Component {
+      render() {
+        return <div>Hi there!</div>;
+      }
+    }
+    ```
+6. We can create a dummy reducer to avoid Typescript from prompting errors.
+    ```ts
+    // src/reducers/index.ts
+    import { combineReducers } from 'redux';
 
-## 16.17. Adding in Delete Functionality
+    export const reducers = combineReducers({
+      counter: () => 1,
+    });
+    ```
 
+## 17.10. Action Creators with Typescript
+1. We can use [jsonplaceholder.typeicode.com](https://jsonplaceholder.typicode.com/)and access its dummy [Todo list](https://jsonplaceholder.typicode.com/todos).
+2. We then can use actions with `axios` to fetch data to `jsonplaceholder` and store in `Redux`.
+3. Besides, we can use `Dispatch` from `redux` type file, so we don't need to declare it ourselves.
+4. We can create `actions` folder in `src`. As for `Redux`, it returns an async function to use `axios` to fetch from the API and pass to the `dispatch` function.
+5. However, the current setup has a downside that it doesn't know what data should be response expect fetching from the API.
+6. Instead of using a string that can easily cause errors, we can use `enum` for action types.
+    ```ts
+    // src/actions/index.ts
+    import axios from 'axios';
+    import { Dispatch } from 'redux';
 
-## 16.18. Breaking Out Action as Type Union
+    const url = 'https://jsonplaceholder.typicode.com/todos';
 
+    export const fetchTodos = () => {
+      return async (dispatch: Dispatch) => {
+        const response = await axios.get(url);
 
-## 16.19. Type Guards in Reducers
+        // we can use enum to prevent using string for typos 
+        // or other possible errors
+        dispatch({
+          type: 'FETCH_TODOS',
+          payload: response.data,
+        });
+      };
+    };
+    ```
 
+## 17.11. Action Types Enum
+1. As we can expect the data fetching from the endpoint, we can create an `interface` to define the data type.
+2. To define different types for `Redux` with enum. We can create `types.ts` in `src/actions`.
+3. Note that we don't give any value to values in `enum`, Typescript will assign unique index from 0 as for iterable list. 
+4. This feature has been enough to separate the values in the `enum` list that we don't need to assign other unique values to the items.
+    ```ts
+    // src/actions/types.ts
+    export enum ActionTypes {
+      fetchTodos,
+    }
 
-## 16.20. Wiring up deleteToDo Action
+    // src/actions/index.ts
+    import axios from 'axios';
+    import { Dispatch } from 'redux';
+    import { ActionTypes } from './types';
 
+    interface Todo {
+      id: number;
+      title: string;
+      completed: boolean;
+    }
 
-## 16.21. Again, Type Definition Files
+    const url = 'https://jsonplaceholder.typicode.com/todos';
 
+    export const fetchTodos = () => {
+      return async (dispatch: Dispatch) => {
+        const response = await axios.get<Todo[]>(url);
 
-## 16.22. Tracking Loading with Components
+        // use ActionTypes enum rather than string
+        dispatch({
+          type: ActionTypes.fetchTodos,
+          payload: response.data,
+        });
+      };
+    };
+    ```
 
+## 17.12. The Generic Dispatch Function
+1. We can add more `interface` on the `dispatch` we are working with.
+2. As the actions can be many, it can be very confusing when it increases.
+3. Besides, the actions we can use in `enum` can grow from time to time. It will be very helpful if we use `interface` to check in advance that which action should be used, so we can easily notice that if we apply the wrong action. 
+    ```ts
+    import axios from 'axios';
+    import { Dispatch } from 'redux';
+    import { ActionTypes } from './types';
 
-## 16.23. App Wrapup
+    interface Todo {
+      id: number;
+      title: string;
+      completed: boolean;
+    }
+
+    interface FetchTodosAction {
+      type: ActionTypes.fetchTodos;
+      payload: Todo[];
+    }
+
+    const url = 'https://jsonplaceholder.typicode.com/todos';
+
+    export const fetchTodos = () => {
+      return async (dispatch: Dispatch) => {
+        const response = await axios.get<Todo[]>(url);
+
+        // the action type here shoul be fetchTodos
+        // the additional interface helps to check if we give the correct one
+        // so as we should pass the correct payload when the actions grows
+        // if it's not array of 'Todo' items Typescript will prompt an error to remind us
+        dispatch<FetchTodosAction>({
+          type: ActionTypes.fetchTodos,
+          payload: response.data,
+        });
+      };
+    };
+    ```
+
+## 17.13. A Reducer with Enums
+1. We then can create reducer with `enum`.
+2. Though we give `state` the type of array, we can assign a default empty array as the argument.
+3. Typescript also help us to catch erros when we are trying to put string values in the `switch` statement, as the `action.type` isn't string value.
+    ```ts
+    // src/reducers/todos.ts
+    import { Todo, FetchTodosAction } from '../actions';
+    import { ActionTypes } from '../actions/types';
+
+    // state should be an array of Todos
+    // the default value for state is an emtpy array
+    export const todosReducer = (state: Todo[] = [], action: FetchTodosAction) => {
+      switch (action.type) {
+        case ActionTypes.fetchTodos:
+          return action.payload;
+        case '': // this returns an error as can't be compared with ActionTypes
+        default:
+          return state;
+      }
+    };
+    ```
+
+## 17.14. Validating Store Structure
+1. When we work on reducers, we can create `interface` to validate the input argument to the reducer function to ensure the data is correct.
+2. For example, we add an `interface` `StoreState` in `src/reduceres/index.ts`
+    ```ts
+    // src/reducers/index.ts
+    import { combineReducers } from 'redux';
+    import { todosReducer } from './todos';
+    import { Todo } from '../actions';
+
+    // this helps to catch errors
+    // by checking the argument passing to 'todos' reducer
+    export interface StoreState {
+      todos: Todo[];
+    }
+
+    export const reducers = combineReducers<StoreState>({
+      // Typescript will prompt error if 'todosReducer'
+      // is returning a different type of value
+      todos: todosReducer,
+    });
+    ```
+3. In this case, if we did something wrong in `src/reducers/todos.ts`, Typescript will prompt an error as the returned value isn't what we want.
+    ```ts
+    // src/reducers/todos.ts
+    import { Todo, FetchTodosAction } from '../actions';
+    import { ActionTypes } from '../actions/types';
+
+    export const todosReducer = (state: Todo[] = [], action: FetchTodosAction) => {
+      // the return value should be action.payload
+      // this is an intended to cause an error in `src/reducers/index.ts`
+      return 5;
+    };
+    ```
+
+## 17.15. Connecting a Component to Redux
+1. We now connect the reducers to the component with `Redux` and use `connect` function from `react-redux` to combine the reducer with the React component.
+2. To prevent name collision, we can rename the `App` to `_App` and given the connected version as the new `App` and export.
+    ```ts
+    // src/components/App.tsx
+    import React, { Component } from 'react';
+    import { connect } from 'react-redux';
+    import { Todo, fetchTodos } from '../actions';
+    import { StoreState } from '../reducers';
+
+    interface AppProps {
+      todos: Todo[];
+      fetchTodos(): any; // fix later
+    }
+
+    // we'd like to export the connected App component
+    // name App to _App to prevent name collision
+    class _App extends Component<AppProps> {
+      render() {
+        return <div>Hi there!</div>;
+      }
+    }
+
+    // can rewrite the 'state' with destructuring
+    const mapStateToProps = (state: StoreState): { todos: Todo[] } => {
+      return { todos: state.todos };
+    };
+
+    // rewrite version
+    const mapStateToProps = ({ todos }: StoreState): { todos: Todo[] } => {
+      return { todos };
+    };
+
+    // export Redux connected App component
+    export const App = connect(mapStateToProps, { fetchTodos })(_App);
+    ```
+
+## 17.16. Rendering a List
+1. We can first test and check if the actions are working as we want.
+    ```ts
+    // src/component/App.tsx
+    class _App extends Component<AppProps> {
+      // for testing purpose to check if the action works
+      componentDidMount() {
+        this.props.fetchTodos();
+      }
+
+      render() {
+        console.log(this.props.todos);
+        return <div>Hi there!</div>;
+      }
+    }
+    ```
+2. We then update the methods in the component to enable fetching button with the action.
+    ```ts
+    // src/components/index.ts
+    import React, { Component } from 'react';
+    import { connect } from 'react-redux';
+    import { Todo, fetchTodos } from '../actions';
+    import { StoreState } from '../reducers';
+
+    interface AppProps {
+      todos: Todo[];
+      fetchTodos(): any; // fix later
+    }
+
+    // we'd like to export the connected App component
+    // name App to _App to prevent name collision
+    class _App extends Component<AppProps> {
+      onButtonClick = (): void => {
+        this.props.fetchTodos();
+      };
+
+      renderList(): JSX.Element[] {
+        return this.props.todos.map((todo: Todo) => {
+          return <div key={todo.id}>{todo.title}</div>;
+        });
+      }
+
+      render() {
+        return (
+          <div>
+            <button onClick={this.onButtonClick}>Fetch</button>
+            {this.renderList()}
+          </div>
+        );
+      }
+    }
+
+    // can rewrite the 'state' with destructuring
+    const mapStateToProps = (state: StoreState): { todos: Todo[] } => {
+      return { todos: state.todos };
+    };
+
+    // export Redux connected App component
+    export const App = connect(mapStateToProps, { fetchTodos })(_App);
+    ```
+
+## 17.17. Adding in Delete Functionality
+1. We add a new action type in `src/actions/types.ts`
+    ```ts
+    // src/actions/types.ts
+    export enum ActionTypes {
+      fetchTodos,
+      deleteTodo,
+    }
+    ```
+2. We then add new `interface` `DeleteTodoAction` for the new action to delete a task from the list.
+    ```ts
+    // src/actions/index.ts
+    import axios from 'axios';
+    import { Dispatch } from 'redux';
+    import { ActionTypes } from './types';
+
+    export interface Todo {
+      id: number;
+      title: string;
+      completed: boolean;
+    }
+
+    export interface FetchTodosAction {
+      type: ActionTypes.fetchTodos;
+      payload: Todo[];
+    }
+
+    export interface DeleteTodoAction {
+      type: ActionTypes.deleteTodo;
+      payload: number; // id of the task
+    }
+
+    const url = 'https://jsonplaceholder.typicode.com/todos';
+
+    export const fetchTodos = () => {
+      return async (dispatch: Dispatch) => {
+        const response = await axios.get<Todo[]>(url);
+
+        dispatch<FetchTodosAction>({
+          type: ActionTypes.fetchTodos,
+          payload: response.data,
+        });
+      };
+    };
+
+    export const deleteTodo = (id: number): DeleteTodoAction => {
+      return {
+        type: ActionTypes.deleteTodo,
+        payload: id,
+      };
+    };
+    ```
+
+## 17.18. Breaking Out Action as Type Union
+1. In Typescript actions, we will have the code base growing twice as fast as using regular Javascript. We can notice this in `src/actions/index.ts`.
+2. It is because we also need to define the `interface` on the top for each action.
+3. In this case, we group or categorize actions for similar purposes in the same file rather than having all of them in `index.ts`.
+4. We move create `todos.ts` and move all the code from `index.ts` to it.
+5. In `index.ts`, it can simply become an export point so all the code in actions can simply import from this file.
+    ```ts
+    // src/actoins/index.ts
+    // become a single exporting point
+    export * from './todos';
+    export * from './types';
+    ```
+6. This also gives another benefit that other files referring code from actions can import directly from `index.ts` in actions.
+7. For example, in `src/reducers/todos.ts`, we can import all the required code from `src/actions/index.ts`.
+    ```ts
+    // import all code from single file
+    import { Todo, FetchTodosAction, ActionTypes } from '../actions';
+
+    // state should be an array of Todos
+    // the default value for state is an emtpy array
+    export const todosReducer = (state: Todo[] = [], action: FetchTodosAction) => {
+      switch (action.type) {
+        case ActionTypes.fetchTodos:
+          return action.payload;
+        default:
+          return state;
+      }
+    };
+    ```
+## 17.19. Expressing Actions as Type Union
+1. In the reducers, we can import different actions `interface` check the types in the `switch` statement.
+2. However, as the project goes, the redcuers and `interfaces` can increase from time to time.
+3. Though we can simply use `|` to declare different `interface`, it can be a very inefficient process in the long run to put the code in every reducer.
+    ```ts
+    import {
+      Todo,
+      FetchTodosAction,
+      DeleteTodoAction,
+      ActionTypes,
+    } from '../actions';
+
+    export const todosReducer = (
+      state: Todo[] = [],
+      // not a good practice to use pipe 
+      // and keep adding the interfaces for types
+      action: FetchTodosAction | DeleteTodoAction, // this can grow crazy long
+    ) => {
+      switch (action.type) {
+        case ActionTypes.fetchTodos:
+          return action.payload;
+        default:
+          return state;
+      }
+    };
+    ```
+4. In this case, we can create a `type` in `src/actions/types.ts`
+    ```ts
+    // src/actions/types.ts
+    import { FetchTodosAction, DeleteTodoAction } from './todos';
+
+    export enum ActionTypes {
+      fetchTodos,
+      deleteTodo,
+    }
+
+    export type Action = FetchTodosAction | DeleteTodoAction;
+    ```
+5. Therefore, we only need to add up the list of possible actions in the single file rather than keep updating all the types in the reducers.
+    ```ts
+    // src/reducers/todos.ts
+    import { Todo, Action, ActionTypes } from '../actions';
+
+    // Action type checking can be simplified
+    // and managed in single file
+    export const todosReducer = (state: Todo[] = [], action: Action) => {
+      switch (action.type) {
+        case ActionTypes.fetchTodos:
+          return action.payload;
+        default:
+          return state;
+      }
+    };
+    ```
+
+## 17.20. Type Guards in Reducers
+1. Since we use type guards in reducers, Typescript can automatically help us checking the method and the type of data that we want to work with in the `switch` statement.
+    ```ts
+    // src/reducers/todos.ts
+    import { Todo, Action, ActionTypes } from '../actions';
+
+    export const todosReducer = (state: Todo[] = [], action: Action) => {
+      switch (action.type) {
+        case ActionTypes.fetchTodos:
+          return action.payload;
+        case ActionTypes.deleteTodo:
+          // Typescript helps to check what type of payload and action will be used in this switch case
+          // keeps only those todos not matching to the given id
+          return state.filter((todo: Todo) => todo.id !== action.payload);
+        default:
+          return state;
+      }
+    };
+    ```
+
+## 17.21. Wiring up deleteToDo Action
+1. We add the `deleteTodo` action to `App` component.
+2. Add `deleteTodo` as a type to the `interface` of `AppProps`.
+3. Before the component is exported, we add `deleteTodo` method to the `connect` function as we did for `fetchTodos`.
+4. Note that the following configuration will cause an error which will be fixed in the next lecture.
+    ```ts
+    // src/components/App.tsx
+    import React, { Component } from 'react';
+    import { connect } from 'react-redux';
+    import { Todo, fetchTodos, deleteTodo } from '../actions';
+    import { StoreState } from '../reducers';
+
+    interface AppProps {
+      todos: Todo[];
+      fetchTodos: typeof fetchTodos;
+      deleteTodo: typeof deleteTodo;
+    }
+
+    class _App extends Component<AppProps> {
+      onButtonClick = (): void => {
+        this.props.fetchTodos();
+      };
+
+      onTodoClick = (id: number): void => {
+        this.props.deleteTodo(id);
+      };
+
+      renderList(): JSX.Element[] {
+        return this.props.todos.map((todo: Todo) => {
+          return (
+            <div onClick={() => this.onTodoClick(todo.id)} key={todo.id}>
+              {todo.title}
+            </div>
+          );
+        });
+      }
+
+      render() {
+        return (
+          <div>
+            <button onClick={this.onButtonClick}>Fetch</button>
+            {this.renderList()}
+          </div>
+        );
+      }
+    }
+
+    const mapStateToProps = ({ todos }: StoreState): { todos: Todo[] } => {
+      return { todos };
+    };
+
+    // add deleteTodo as the method to connect
+    // this doesn't work without further configuration
+    export const App = connect(mapStateToProps, { fetchTodos, deleteTodo })(_App);
+    ```
+
+## 17.22. Again, Type Definition Files
+1. The `connnect` function from `react-redux` expects to receive different actions to wire up with the component.
+2. The issue comes from that we use `redux-thunk` to work with `fetchTodos` to fetch data from the API. 
+3. `fetchTodos` is a `redux-thunk` type action creator. It doesn't return a regular action object but a function which eventually "**dispatch**" an action (a promise in this case as it fetches data from an API).
+4. Therefore, the simpliest way to fix the issue is to update the data type to `Function` as it's not easy to define the function from `redux-thunk`.
+  ```ts
+  // src/components/App.tsx
+  interface AppProps {
+    todos: Todo[];
+    fetchTodos: Function; // change to Function to prevent error
+    deleteTodo: typeof deleteTodo;
+  }
+  ```
+
+## 17.23. Tracking Loading with Components
+1. We then can use state to check in the React component to know if the App is fetching data from the endpoint.
+    ```ts
+    // src/component/App.ts
+    import React, { Component } from 'react';
+    import { connect } from 'react-redux';
+    import { Todo, fetchTodos, deleteTodo } from '../actions';
+    import { StoreState } from '../reducers';
+
+    interface AppProps {
+      todos: Todo[];
+      fetchTodos: Function;
+      deleteTodo: typeof deleteTodo;
+    }
+
+    interface AppState {
+      fetching: boolean;
+    }
+
+    // we'd like to export the connected App component
+    // name App to _App to prevent name collision
+    class _App extends Component<AppProps, AppState> {
+      constructor(props: AppProps) {
+        super(props);
+
+        this.state = { fetching: false };
+      }
+
+      componentDidUpdate(prevProps: AppProps): void {
+        if (!prevProps.todos.length && this.props.todos.length) {
+          this.setState({ fetching: false });
+        }
+      }
+
+      onButtonClick = (): void => {
+        this.props.fetchTodos();
+        this.setState({ fetching: true });
+      };
+
+      onTodoClick = (id: number): void => {
+        this.props.deleteTodo(id);
+      };
+
+      renderList(): JSX.Element[] {
+        return this.props.todos.map((todo: Todo) => {
+          return (
+            <div onClick={() => this.onTodoClick(todo.id)} key={todo.id}>
+              {todo.title}
+            </div>
+          );
+        });
+      }
+
+      render() {
+        return (
+          <div>
+            <button onClick={this.onButtonClick}>Fetch</button>
+            {this.state.fetching ? 'LOADING' : null}
+            {this.renderList()}
+          </div>
+        );
+      }
+    }
+
+    // can rewrite the 'state' with destructuring
+    const mapStateToProps = (state: StoreState): { todos: Todo[] } => {
+      return { todos: state.todos };
+    };
+
+    // export Redux connected App component
+    export const App = connect(mapStateToProps, { fetchTodos, deleteTodo })(_App);
+    ```
