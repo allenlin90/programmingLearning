@@ -373,10 +373,21 @@ Finished
   - [28.7. Video player setup](#287-video-player-setup)
   - [28.8. Implement flv.js](#288-implement-flvjs)
   - [28.9. Creating a FLV player](#289-creating-a-flv-player)
-  - [Optional Player Building](#optional-player-building)
-  - [It works](#it-works)
-  - [Cleaning up with componentWillUnmount](#cleaning-up-with-componentwillunmount)
+  - [28.10. Optional Player Building](#2810-optional-player-building)
+  - [28.11. It works](#2811-it-works)
+  - [28.12. Cleaning up with componentWillUnmount](#2812-cleaning-up-with-componentwillunmount)
 - [29. The Context System with React](#29-the-context-system-with-react)
+  - [29.1. The context system](#291-the-context-system)
+  - [29.2. An app with context](#292-an-app-with-context)
+  - [29.3. App generation](#293-app-generation)
+  - [29.4. Selecting a language](#294-selecting-a-language)
+  - [29.5. A touch more setup](#295-a-touch-more-setup)
+  - [29.6. Creating context objects](#296-creating-context-objects)
+  - [29.7. Consuming the context value](#297-consuming-the-context-value)
+  - [29.8. The context provider](#298-the-context-provider)
+  - [29.9. Gotchas around providers](#299-gotchas-around-providers)
+  - [29.10. Accessing data with consumers](#2910-accessing-data-with-consumers)
+  - [29.11. Pulling from multiple context](#2911-pulling-from-multiple-context)
 - [30. Replacing Redux with Context](#30-replacing-redux-with-context)
 - [31. Working with Older Versions of React](#31-working-with-older-versions-of-react)
 - [32. Ajax Requets with React](#32-ajax-requets-with-react)
@@ -10110,7 +10121,7 @@ export default connect(mapStateToProps, { fetchStream })(StreamDelete);
     export default connect(mapStateToProps, { fetchStream })(StreamShow);
     ```
 
-## Optional Player Building
+## 28.10. Optional Player Building
 1. The error that `this.videoRef` is `undefined` or `null` is because the component firstly renders "Loading..." by the condition if the stream hasn't been available.
 2. Therefore, there's no actual `video` tag available to refer to.
 3. However, if we revisit the stream again, we will find the video player becomes available and the error is gone.
@@ -10185,7 +10196,7 @@ export default connect(mapStateToProps, { fetchStream })(StreamDelete);
     export default connect(mapStateToProps, { fetchStream })(StreamShow);
     ```
 
-## It works
+## 28.11. It works
 1. We then can set up connection between OBS and RTMP server on Node.js.
 2. However, the OS environment is WSL2 on WIN10 that OBS can't connect to `rtmp://localhost/live` directly.
 3. A Naive solution is to setup rtmp server with WIN10 command prompt which also works.
@@ -10193,7 +10204,7 @@ export default connect(mapStateToProps, { fetchStream })(StreamDelete);
 4. One of the issue is that though the user navigates out from the stream, when the stream stops, there's a prompt in the browser console to indicate that the stream is ended.
 5. The event indicates that though the user has change the route on the client, the stream connection to rtmp server is still available
 
-## Cleaning up with componentWillUnmount
+## 28.12. Cleaning up with componentWillUnmount
 1. Though the user has navigated away from the stream, the connection is still available as the component isn't inidicated to stop downloading the vid
 2. We can use the lifecycle method `componentWillUnmount` to destroy the connection.
     ```js
@@ -10266,6 +10277,397 @@ export default connect(mapStateToProps, { fetchStream })(StreamDelete);
 
 
 # 29. The Context System with React 
+## 29.1. The context system
+1. Props system - Gets data from component to a "**direct**" child component.
+2. Context system - Gets data from a parent component to "**any**" nested child component.
+3. React context system is very similar to `provide/inject` in Vue.
+
+## 29.2. An app with context
+1. The new project has a form with language selector. The user can select a pre-set language to swtich the langaue of the UI.
+2. The app has 4 main component 
+   1. App
+   2. UserCreate
+   3. Field
+   4. Button
+3. In this case, we can use `context` to pass the language setting from `App` component to `Field` and `Button` directly without going through `UserCreate`. 
+
+## 29.3. App generation
+1. We have some basic setup for the new React project.
+    ```js
+    // src/index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import App from './components/App';
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
+
+    ```js
+    // src/components/App.js
+    import React from 'react';
+
+    class App extends React.Component {
+    render() {
+        return <div className='ui container'>App</div>;
+    }
+    }
+
+    export default App;
+    ```
+
+## 29.4. Selecting a language
+```js
+// src/components/App.js
+import React from 'react';
+
+class App extends React.Component {
+  state = { language: 'english' };
+
+  onLanguageChange = (language) => {
+    this.setState({ language });
+  };
+
+  render() {
+    return (
+      <div className='ui container'>
+        <div>
+          Select a language:
+          <i
+            className='flag us'
+            onClick={() => this.onLanguageChange('english')}
+          />
+          <i
+            className='flag nl'
+            onClick={() => this.onLanguageChange('dutch')}
+          />
+        </div>
+        {this.state.language}
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+## 29.5. A touch more setup
+1. We set up another components `UserCreate`, `Field` and `Button`
+    ```js
+    // src/components/Field.js
+    import React from 'react';
+
+    class Field extends React.Component {
+    render() {
+        return (
+        <div className='ui field'>
+            <label htmlFor='name'>Name</label>
+            <input type='text' name='name' id='name' />
+        </div>
+        );
+    }
+    }
+
+    export default Field;
+    ```
+    ```js
+    // src/components/UserCreate.js
+    import React from 'react';
+    import Field from './Field';
+    import Button from './Button';
+
+    const UserCreate = () => {
+    return (
+        <div className='ui form'>
+        <Field />
+        <Button />
+        </div>
+    );
+    };
+
+    export default UserCreate;
+    ```
+    ```js
+    // src/components/Button.js
+    import React from 'react';
+
+    class Button extends React.Component {
+    render() {
+        return (
+        <button className='ui button primary' type='button'>
+            Submit
+        </button>
+        );
+    }
+    }
+
+    export default Button;
+    ```
+
+## 29.6. Creating context objects
+1. We create a folder `context` as the sibling to `components`. This is where we keep the context object files and only import and use the objects for certain components.
+    ```js
+    // src/context/LanguageContext.js
+    import React from 'react';
+
+    // set default language as 'english'
+    export default React.createContext('english');
+    ```
+2. We then can wire it up with the component.
+    ```js
+    // src/components/Button.js
+    import React from 'react';
+    import LanguageContext from '../contexts/LanguageContext';
+
+    class Button extends React.Component {
+    static contextType = LanguageContext; // this must be 'contextType'
+
+    render() {
+        return (
+        <button className='ui button primary' type='button'>
+            Submit
+        </button>
+        );
+    }
+    }
+
+    export default Button;
+    ```
+
+## 29.7. Consuming the context value
+1. We can wire the context with `Field` component and set the conditions to switch between the languages.
+    ```js
+    // src/components/Fields.js
+    import React from 'react';
+    import LanguageContext from '../contexts/LanguageContext';
+
+    class Field extends React.Component {
+        static contextType = LanguageContext; // this must be 'contextType'
+
+        render() {
+            const text = this.context === 'english' ? 'Name' : 'Naam';
+
+            return (
+            <div className='ui field'>
+                <label htmlFor='name'>{text}</label>
+                <input type='text' name='name' id='name' />
+            </div>
+            );
+        }
+    }
+
+    export default Field;
+    ```
+    ```js
+    // src/components/Button.js
+    import React from 'react';
+    import LanguageContext from '../contexts/LanguageContext';
+
+    class Button extends React.Component {
+        static contextType = LanguageContext; // this must be 'contextType'
+
+        render() {
+            const text = this.context === 'english' ? 'Submit' : 'Voorleggen';
+
+            return (
+            <button className='ui button primary' type='button'>
+                {text}
+            </button>
+            );
+        }
+    }
+
+    export default Button;
+    ```
+
+## 29.8. The context provider
+1. To modify the value in the context, we wrap the `UserCreate` with `LanguageContext.Provider`.
+2. The context value will then refer to the value of the state in `App.js`.
+3. Note that we have a `value` attribute on `LanguageContext.Provider`
+    ```js
+    // src/components/App.js
+    import React from 'react';
+    import UserCreate from './UserCreate';
+    import LanguageContext from '../contexts/LanguageContext';
+
+    class App extends React.Component {
+        state = { language: 'english' };
+
+        onLanguageChange = (language) => {
+            this.setState({ language });
+        };
+
+        render() {
+            return (
+            <div className='ui container'>
+                <div>
+                Select a language:
+                <i
+                    className='flag us'
+                    onClick={() => this.onLanguageChange('english')}
+                />
+                <i
+                    className='flag nl'
+                    onClick={() => this.onLanguageChange('dutch')}
+                />
+                </div>
+                <LanguageContext.Provider value={this.state.language}>
+                    <UserCreate />
+                </LanguageContext.Provider>
+            </div>
+            );
+        }
+    }
+
+    export default App;
+    ```
+
+## 29.9. Gotchas around providers
+1. When a React app initiates
+   1. Application loads up in the browser.
+   2. We create a context object witha default value of 'english'.
+   3. App component gets rendered, creates a Provider that wraps `UserCreate`.
+   4. Provider updates the value of the context object to `this.state.language`.
+   5. Button and Field reach into context object, see the value from `this.state.language`.
+   6. Button and Field render appropriate text to the screen.
+2. Note that each separate use of LanguageContext.Provider creates a new, separate 'pipe' of information. 
+3. For exmaple, if we have 2 `UserCreate` and wrap with `LanguageContext.Provider` which provides different values.
+4. We can notice that each of the providers are handling and providing different values. 
+
+## 29.10. Accessing data with consumers
+1. Besides accessing data from `this.context`, we can create a consumer and access data from there.
+    ```js
+    // src/components/Button.js
+    import React from 'react';
+    import LanguageContext from '../contexts/LanguageContext';
+
+    class Button extends React.Component {
+        renderSubmit(value) {
+            return value === 'english' ? 'Submit' : 'Voorleggen';
+        }
+
+        render() {
+            return (
+            <button className='ui button primary' type='button'>
+                <LanguageContext.Consumer>
+                {(value) => this.renderSubmit(value)}
+                </LanguageContext.Consumer>
+            </button>
+            );
+        }
+    }
+
+    export default Button;
+    ```
+
+## 29.11. Pulling from multiple context
+1. One main reason that we use consumer as when we are using multiple context in the same component.
+2. The static property approach with `this.context` is only useful when there's a single context to refer. 
+3. For example, we'd like to have another provider from `App.js` to indicate what color should the button be.
+4. For the provider, it doesn't matter which provider is the parent or nested.
+    ```js
+    // src/components/App.js
+    import React from 'react';
+    import UserCreate from './UserCreate';
+    import LanguageContext from '../contexts/LanguageContext';
+    import ColorContext from '../contexts/ColorContext';
+
+    class App extends React.Component {
+        state = { language: 'english' };
+
+        onLanguageChange = (language) => {
+            this.setState({ language });
+        };
+
+        render() {
+            return (
+            <div className='ui container'>
+                <div>
+                Select a language:
+                <i
+                    className='flag us'
+                    onClick={() => this.onLanguageChange('english')}
+                />
+                <i
+                    className='flag nl'
+                    onClick={() => this.onLanguageChange('dutch')}
+                />
+                </div>
+                <ColorContext.Provider value='red'>
+                <LanguageContext.Provider value={this.state.language}>
+                    <UserCreate />
+                </LanguageContext.Provider>
+                </ColorContext.Provider>
+            </div>
+            );
+        }
+    }
+
+    export default App;
+    ```
+5. However, the code to use multiple context in the same component could be messy. 
+    ```js
+    // src/components/Button.js
+    import React from 'react';
+    import LanguageContext from '../contexts/LanguageContext';
+    import ColorContext from '../contexts/ColorContext';
+
+    class Button extends React.Component {
+        renderSubmit(value) {
+            return value === 'english' ? 'Submit' : 'Voorleggen';
+        }
+
+        render() {
+            return (
+                <ColorContext.Consumer>
+                    {(color) => (
+                    <button className={`ui button ${color}`} type='button'>
+                        <LanguageContext.Consumer>
+                        {(value) => this.renderSubmit(value)}
+                        </LanguageContext.Consumer>
+                    </button>
+                    )}
+                </ColorContext.Consumer>
+            );
+        }
+    }
+
+    export default Button;
+    ```
+6. We can refactor the code and render the button in a helper function.
+    ```js
+    // src/components/Button.js
+    import React from 'react';
+    import LanguageContext from '../contexts/LanguageContext';
+    import ColorContext from '../contexts/ColorContext';
+
+    class Button extends React.Component {
+        renderSubmit(value) {
+            return value === 'english' ? 'Submit' : 'Voorleggen';
+        }
+
+        renderButton(color) {
+            return (
+            <button className={`ui button ${color}`} type='button'>
+                <LanguageContext.Consumer>
+                {(value) => this.renderSubmit(value)}
+                </LanguageContext.Consumer>
+            </button>
+            );
+        }
+
+        render() {
+            return (
+            <ColorContext.Consumer>
+                {(color) => this.renderButton(color)}
+            </ColorContext.Consumer>
+            );
+        }
+    }
+
+    export default Button;
+    ```
+
+
 
 # 30. Replacing Redux with Context
 
