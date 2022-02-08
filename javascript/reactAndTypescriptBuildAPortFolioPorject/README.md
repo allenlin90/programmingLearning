@@ -14,6 +14,29 @@ Start learning on 2022/02/06
   - [2.2. Typing standalone event handler](#22-typing-standalone-event-handler)
   - [2.3. Applying types to Refs](#23-applying-types-to-refs)
   - [2.4. More on Refs](#24-more-on-refs)
+- [3. Typescript with Redux](#3-typescript-with-redux)
+  - [3.1. Project setup](#31-project-setup)
+  - [3.2. Redux store design](#32-redux-store-design)
+  - [3.3. Reducer setup](#33-reducer-setup)
+  - [3.4. Annotating the return type](#34-annotating-the-return-type)
+  - [3.5. Typing an action](#35-typing-an-action)
+  - [3.6. Separate interfaces for Actions](#36-separate-interfaces-for-actions)
+  - [3.7. Applying action interfaces](#37-applying-action-interfaces)
+  - [3.8. Adding an action type enum](#38-adding-an-action-type-enum)
+  - [3.9. A better way to organize code](#39-a-better-way-to-organize-code)
+  - [3.10. Adding action creators](#310-adding-action-creators)
+  - [3.11. Adding request logic](#311-adding-request-logic)
+  - [3.12. Applying Typings to Dispatch](#312-applying-typings-to-dispatch)
+  - [3.13. Setting up exports](#313-setting-up-exports)
+  - [3.14. Wiring up to React](#314-wiring-up-to-react)
+  - [3.15. Initial state](#315-initial-state)
+  - [3.16. Reminder on Event Types](#316-reminder-on-event-types)
+  - [3.17. Calling an action creator](#317-calling-an-action-creator)
+  - [3.18. Binding action creators](#318-binding-action-creators)
+  - [3.19. Selecting state](#319-selecting-state)
+  - [3.20. Awkward Typings around React-Redux](#320-awkward-typings-around-react-redux)
+  - [3.21. Creating a typed selector](#321-creating-a-typed-selector)
+  - [Consuming store state](#consuming-store-state)
 
 # 1. Types around Props and State
 ## 1.1. Changes with TypeScript
@@ -416,3 +439,501 @@ export default UserSearch;
 
     export default UserSearch;
     ```
+
+# 3. Typescript with Redux
+## 3.1. Project setup
+```bash
+npx create-react-app redux-ts --template typescript
+
+npm install --save-exact @types/react-redux@7.1.15 axios@0.21.1 react-redux@7.2.2 redux@4.0.5 redux-thunk@2.3.0
+```
+
+## 3.2. Redux store design
+1. In a normal Redux project, it is worth the time to think about the design of the store before writing code
+2. In a TS project, it's recommended to think about the design first.
+3. The search endpoint we will use in the project is `registry.npmjs.org/-/v1/search?text=[search_term]`.
+4. We can request to the endpoint with GET request with the search term in the query string.
+5. The endpoint will return a result from the keyword with a JSON as response.
+6. In this case, the Redux has 3 main parts (repositories)
+   1. data - List of repositories from NPM
+   2. loading - True/false whether we are fetching data
+   3. error - String, error message if one occurred during fetch
+7. Therefore, 3 actions will be aligned to the "states" of the fetching event.
+   1. SearchRepositories
+   2. SearchRepositoriesSuccess
+   3. SearchRepositoriesError
+8. For the project structure, we will have the followings in `src`
+   1. components - `App.tsx` and `RepositoriesList.tsx`
+   2. redux - a single `index.ts` as the entry point which includes 
+      1. `reducers`
+      2. `action creators`
+      3. `middlewares`
+
+## 3.3. Reducer setup
+## 3.4. Annotating the return type
+## 3.5. Typing an action
+1. The following version of reducer has some issues taht the action isn't referring to the correct types.
+2. The reducer can return any abritrary data which could be different from `RepositoriesState` interface.
+3. Therefore, for the returned type on reducers, we can annotate to ensure that the reducer must return an object that has the same structure as `RepositoriesState`.
+4. In addition, we can give `Action` types.
+    ```ts
+    // state/reducers/repositoriesReducer.ts
+    interface RepositoriesState {
+      loading: boolean;
+      error: string | null;
+      data: string[];
+    }
+
+    interface Action {
+      type: string;
+      payload?: any;
+    }
+
+    const reducer = (state: RepositoriesState, action: Action): RepositoriesState => {
+      switch (action.type) {
+        case 'search_repositories':
+          return { loading: true, error: null, data: [] };
+        case 'search_repositories_success':
+          return { loading: false, error: null, data: action.payload };
+        case 'search_repositories_error':
+          return { loading: false, error: action.payload, data: [] };
+        default:
+          return state;
+      }
+    };
+
+    export default reducer;
+    ```
+
+## 3.6. Separate interfaces for Actions
+## 3.7. Applying action interfaces
+## 3.8. Adding an action type enum
+```ts
+// src/state/reducers/repositoriesReducer.ts
+interface RepositoriesState {
+  loading: boolean;
+  error: string | null;
+  data: string[];
+}
+
+enum ActionType {
+  SEARCH_REPOSITORIES = 'search_repositories',
+  SEARCH_REPOSITORIES_SUCCESS = 'search_repositories_success',
+  SEARCH_REPOSITORIES_ERROR = 'search_repositories_error',
+}
+
+interface SearchRepositoriesAction {
+  type: ActionType.SEARCH_REPOSITORIES;
+}
+
+interface SearchRepositoriesSuccessAction {
+  type: ActionType.SEARCH_REPOSITORIES_SUCCESS;
+  payload: string[];
+}
+
+interface SearchRepositoriesErrorAction {
+  type: ActionType.SEARCH_REPOSITORIES_ERROR;
+  payload: string;
+}
+
+type Action =
+  | SearchRepositoriesAction
+  | SearchRepositoriesSuccessAction
+  | SearchRepositoriesErrorAction;
+
+const reducer = (
+  state: RepositoriesState,
+  action: Action
+): RepositoriesState => {
+  switch (action.type) {
+    case ActionType.SEARCH_REPOSITORIES:
+      return { loading: true, error: null, data: [] };
+    case ActionType.SEARCH_REPOSITORIES_SUCCESS:
+      return { loading: false, error: null, data: action.payload };
+    case ActionType.SEARCH_REPOSITORIES_ERROR:
+      return { loading: false, error: action.payload, data: [] };
+    default:
+      return state;
+  }
+};
+
+export default reducer;
+```
+
+## 3.9. A better way to organize code
+1. We can separate the `enum` for action types and `actions` into different folders.
+2. We create another 2 folder `actions` and `action-types` in `state` folder which stores files for Redux.
+
+## 3.10. Adding action creators
+## 3.11. Adding request logic
+## 3.12. Applying Typings to Dispatch
+```ts
+// src/state/action-creators/index.ts
+import axios from 'axios';
+import { Dispatch } from 'redux';
+import { ActionType } from '../action-types';
+import { Action } from '../actions';
+
+export const searchRepositories = (term: string) => {
+  // give dispatch type to ensure the payload type is correct
+  return async (dispatch: Dispatch<Action>) => {
+    dispatch({
+      type: ActionType.SEARCH_REPOSITORIES,
+    });
+
+    try {
+      const { data } = await axios.get(
+        'https://registry.npmjs.org/-/v1/search',
+        {
+          params: {
+            text: term,
+          },
+        }
+      );
+
+      const names = data.objects.map((result: any) => {
+        return result.package.name;
+      });
+
+      dispatch({
+        type: ActionType.SEARCH_REPOSITORIES_SUCCESS,
+        payload: names,
+      });
+    } catch (error: any) {
+      dispatch({
+        type: ActionType.SEARCH_REPOSITORIES_ERROR,
+        payload: error.message,
+      });
+    }
+  };
+};
+
+export default searchRepositories;
+```
+
+## 3.13. Setting up exports
+```ts
+// src/state/reducers/index.ts
+import { combineReducers } from 'redux';
+import repositoriesReducer from './repositoriesReducer';
+
+const reducers = combineReducers({
+  repositories: repositoriesReducer,
+});
+
+export default reducers;
+```
+```ts
+// src/state/store.ts
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import reducers from './reducers';
+
+export const store = createStore(reducers, {}, applyMiddleware(thunk));
+```
+```ts
+// src/state/index.ts
+export * from './store';
+export * as actoinCreators from './action-creators';
+```
+
+## 3.14. Wiring up to React
+```tsx
+// src/components/App.tsx
+import { Provider } from 'react-redux';
+import { store } from '../state';
+import RepositoriesList from './RepositoriesList';
+
+const App = () => {
+  return (
+    <Provider store={store}>
+      <div>
+        <h1>Search For a Package</h1>
+        <RepositoriesList />
+      </div>
+    </Provider>
+  );
+};
+
+export default App;
+```
+```tsx
+// src/components/RepositoriesList.tsx
+const RepositoriesList: React.FC = () => {
+  return (
+    <div>
+      <form action=''>
+        <input type='text' />
+        <button>Search</button>
+      </form>
+    </div>
+  );
+};
+
+export default RepositoriesList;
+```
+
+## 3.15. Initial state
+```ts
+// src/state/reducers/repositoriesReducer.ts
+import { ActionType } from '../action-types';
+import { Action } from '../actions';
+
+interface RepositoriesState {
+  loading: boolean;
+  error: string | null;
+  data: string[];
+}
+
+const initialState = {
+  loading: false,
+  error: null,
+  data: [],
+};
+
+const reducer = (
+  state: RepositoriesState = initialState,
+  action: Action
+): RepositoriesState => {
+  switch (action.type) {
+    case ActionType.SEARCH_REPOSITORIES:
+      return { loading: true, error: null, data: [] };
+    case ActionType.SEARCH_REPOSITORIES_SUCCESS:
+      return { loading: false, error: null, data: action.payload };
+    case ActionType.SEARCH_REPOSITORIES_ERROR:
+      return { loading: false, error: action.payload, data: [] };
+    default:
+      return state;
+  }
+};
+
+export default reducer;
+```
+
+## 3.16. Reminder on Event Types
+```tsx
+// src/components/RepositoriesList.tsx
+import React, { useState } from 'react';
+
+const RepositoriesList: React.FC = () => {
+  const [term, setTerm] = useState('');
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <input
+          type='text'
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+        />
+        <button type='button'>Search</button>
+      </form>
+    </div>
+  );
+};
+
+export default RepositoriesList;
+```
+
+## 3.17. Calling an action creator
+```ts
+// src/components/RepositoriesList.tsx
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { actionCreators } from '../state';
+
+const RepositoriesList: React.FC = () => {
+  const [term, setTerm] = useState('');
+  const dispatch = useDispatch();
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    dispatch(actionCreators.searchRepositories(term));
+  };
+
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <input
+          type='text'
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+        />
+        <button type='button'>Search</button>
+      </form>
+    </div>
+  );
+};
+
+export default RepositoriesList;
+```
+
+## 3.18. Binding action creators
+```ts
+// src/hooks/useActions.ts
+import { useDispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actionCreators } from '../state';
+
+export const useActions = () => {
+  const dispatch = useDispatch();
+
+  return bindActionCreators(actionCreators, dispatch);
+};
+```
+```tsx
+// src/components/RepositoriesList.tsx
+import React, { useState } from 'react';
+import { useActions } from '../hooks/useActions';
+
+const RepositoriesList: React.FC = () => {
+  const [term, setTerm] = useState('');
+  const { searchRepositories } = useActions();
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    searchRepositories(term);
+  };
+
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <input
+          type='text'
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+        />
+        <button type='button'>Search</button>
+      </form>
+    </div>
+  );
+};
+
+export default RepositoriesList;
+```
+
+## 3.19. Selecting state
+1. To refer and check the states in redux store, we can use `useSelector` to check the states in the repositories.
+2. However, the apporach isn't convenient, and there's a simpler syntax for the same purpose.
+    ```tsx
+    // src/components/RepositoriesList.tsx
+    import React, { useState } from 'react';
+    import { useSelector } from 'react-redux';
+    import { useActions } from '../hooks/useActions';
+
+    const RepositoriesList: React.FC = () => {
+      const [term, setTerm] = useState('');
+      const { searchRepositories } = useActions();
+      const { data, error, loading } = useSelector(
+        (state: any) => state.repositories
+      );
+
+      const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        searchRepositories(term);
+      };
+
+      return (
+        <div>
+          <form onSubmit={onSubmit}>
+            <input
+              type='text'
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+            />
+            <button type='button'>Search</button>
+          </form>
+        </div>
+      );
+    };
+
+    export default RepositoriesList;
+    ```
+
+## 3.20. Awkward Typings around React-Redux
+1. When using `useSelector` in the other components to refer to the states, the `state` has a specific type that we define in the reducers. 
+2. We can create a custom type with `ReturnType` and export it in `src/state/index.ts` for the selectors to refer to the type.
+    ```ts
+    // src/state/reducers/index.ts
+    import { combineReducers } from 'redux';
+    import repositoriesReducer from './repositoriesReducer';
+
+    const reducers = combineReducers({
+      repositories: repositoriesReducer,
+    });
+
+    export default reducers;
+
+    // to indicate the type should be the same as the reducers
+    export type RootState = ReturnType<typeof reducers>;
+    ```
+    ```ts
+    // src/state/index.ts
+    export * from './store';
+    export * as actionCreators from './action-creators';
+    // export from src/state/index.ts
+    export * from './reducers';
+    ```
+
+## 3.21. Creating a typed selector
+```ts
+// src/hooks/useTypedSelector.ts
+import { useSelector, TypedUseSelectorHook } from 'react-redux';
+import { RootState } from '../state';
+
+export const useTypeSelector: TypedUseSelectorHook<RootState> = useSelector;
+```
+```ts
+// src/hooks/useTypedSelector.ts
+import { useSelector as _useSelector, TypedUseSelectorHook } from 'react-redux';
+import { RootState } from '../state';
+
+export const useSelector: TypedUseSelectorHook<RootState> = _useSelector;
+```
+
+## Consuming store state
+```tsx
+// src/components/RepositoriesList.tsx
+import React, { useState } from 'react';
+import { useTypeSelector } from '../hooks/useTypeSelector';
+import { useActions } from '../hooks/useActions';
+
+const RepositoriesList: React.FC = () => {
+  const [term, setTerm] = useState('');
+  const { searchRepositories } = useActions();
+  const { data, error, loading } = useTypeSelector(
+    (state) => state.repositories
+  );
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    searchRepositories(term);
+  };
+
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <input
+          type='text'
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+        />
+        <button type='button'>Search</button>
+      </form>
+      {error && <h3>{error}</h3>}
+      {loading && <h3>Loading...</h3>}
+      {!error && !loading && data.map((name) => <div key={name}>{name}</div>)}
+    </div>
+  );
+};
+
+export default RepositoriesList;
+```
