@@ -36,7 +36,17 @@ Start learning on 2022/02/06
   - [3.19. Selecting state](#319-selecting-state)
   - [3.20. Awkward Typings around React-Redux](#320-awkward-typings-around-react-redux)
   - [3.21. Creating a typed selector](#321-creating-a-typed-selector)
-  - [Consuming store state](#consuming-store-state)
+  - [3.22. Consuming store state](#322-consuming-store-state)
+- [4. Code Transpiling in the Browser](#4-code-transpiling-in-the-browser)
+  - [4.1. Transpiliing Options](#41-transpiliing-options)
+  - [4.2. Remote Transpiling](#42-remote-transpiling)
+  - [4.3. Module Systems](#43-module-systems)
+  - [4.4. Behind the Scenes with Webpack](#44-behind-the-scenes-with-webpack)
+  - [4.5. Webpack with ES Modules](#45-webpack-with-es-modules)
+  - [4.6. One Small change](#46-one-small-change)
+  - [4.7. Options for building](#47-options-for-building)
+  - [4.8. So which approach](#48-so-which-approach)
+  - [4.9. A Webpack replacement](#49-a-webpack-replacement)
 
 # 1. Types around Props and State
 ## 1.1. Changes with TypeScript
@@ -898,7 +908,7 @@ import { RootState } from '../state';
 export const useSelector: TypedUseSelectorHook<RootState> = _useSelector;
 ```
 
-## Consuming store state
+## 3.22. Consuming store state
 ```tsx
 // src/components/RepositoriesList.tsx
 import React, { useState } from 'react';
@@ -937,3 +947,82 @@ const RepositoriesList: React.FC = () => {
 
 export default RepositoriesList;
 ```
+
+# 4. Code Transpiling in the Browser
+## 4.1. Transpiliing Options
+1. There are 3 main challenges to work on for the online code editor in browser.
+   1. Code will be provided to Preview as a string. We have to execute it safely.
+   2. This code might have advanced JS syntax in it (like JSX) that your browser can't execute.
+   3. The code might have important statements for other JS files or CSS. We have to deal with those import statements before executing the code.
+2. We can check up [`Codepen`](https://codepen.io/) to transpile code from the user to execute safely in the environment.
+3. The code from user will be sent to backend to get transpiled and sent back to the frontend.
+
+## 4.2. Remote Transpiling
+1. Besides sending and get code transpiled on the backend, we can use in-browser transpiler such as Babel.
+
+## 4.3. Module Systems
+1. Javascript modules are Javascript file that makes some values available to other files and/or cosumes values from other files.
+    ```js
+    // message.js
+    export default 'Hello there!';
+
+    // index.js
+    import message from './message.js';
+    console.log(message);
+    ```
+2. There are several different module systems.
+   1. common js - `require` and `module.exports`
+   2. ES Modules - `import` and `export`
+3. By using Babel, the code in modern syntax such as "ES Modules" will be compiled to common js.
+4. Besides, Babel can help bundling the code from different Javascript files to a single file containing both modules linked together in some way.
+
+## 4.4. Behind the Scenes with Webpack
+1. We firstly install 2 packages `npm install --save-exact webpack@5.11.1 webpack-cli@4.3.0`
+2. Besides, we have a new command for npm scripts as `"build": "webpacke mode=development"` in `package.json`.
+3. After executing webpack, we can find `dist` directory with a compiled code as `main.js` by default.
+4. When we look into the code, we can notice that the required code is executed as a function by giving a file path. 
+    ```js
+    // src/message.js
+    module.exports = 'Hello there!';
+
+    // src/index.js
+    const message = require('./message.js');
+    console.log(message);
+    ```
+
+## 4.5. Webpack with ES Modules
+## 4.6. One Small change
+1. If we use ES module to import/export the code, the compiled result from webpack will be different.
+2. Webpack will decide how the code will be compiled by looking into the syntax.
+    ```js
+    // src/message.js
+    export default 'Hello there!';
+
+    // src/index.js
+    import message from './message.js';
+    console.log(message);
+    ```
+3. The bundler will execute by the following orders
+   1. Read the contents of the entry file (index.js)
+   2. Automatically found all the different require/import/export statements
+   3. Automatically found all the modules on our hard drives
+   4. Linked these files together into a single output file with all values being correctly communicated around.
+4. Therefore, we should configure the modules to get the code from NPM directly rather than local files.
+
+## 4.7. Options for building
+1. To access packages that aren't installed locally, we can use [npm-install-webpack-plugin](https://www.npmjs.com/package/npm-install-webpack-plugin) or [InstallWebpackPlugin](https://webpack.js.org/plugins/install-webpack-plugin/) to work with missing packages.
+
+## 4.8. So which approach
+1. Remote
+   1. We can cache downloaded NPM modules to bundle code faster
+   2. Will work better for users with slow devices or limited internet connections
+2. Local
+   1. Removes an extra request to the API server - faster code execution
+   2. We don't have to maintain an API server
+   3. Less complexity - no moving code back and forth
+3. The lecture tried and tested both approaches and found the local approach has a better performance.
+4. However, webpack doesn't work in the browsers.
+
+## 4.9. A Webpack replacement
+1. Webpack doesn't work in browsers. Therefore, we won't use both Babel and Webpack for the solution.
+2. In this case we can use [ESBuild](https://esbuild.github.io/) to transpile and bundle the code all in browser.
