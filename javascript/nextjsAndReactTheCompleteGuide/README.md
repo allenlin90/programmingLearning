@@ -27,7 +27,21 @@ Started: 2022/01/11
   - [1.25. Updating state based on previous state](#125-updating-state-based-on-previous-state)
   - [1.26. Using context in components](#126-using-context-in-components)
   - [1.27. More context usage](#127-more-context-usage)
-- [Pages and File-based Routing](#pages-and-file-based-routing)
+- [2. Pages and File-based Routing](#2-pages-and-file-based-routing)
+  - [2.1. Starting setup](#21-starting-setup)
+  - [2.2. What is 'File-based Routing'? And why is it helpful?](#22-what-is-file-based-routing-and-why-is-it-helpful)
+  - [2.3. Adding a first page](#23-adding-a-first-page)
+  - [2.4. Adding a Named/Static route file](#24-adding-a-namedstatic-route-file)
+  - [2.5. Working with Nested Paths and Routes](#25-working-with-nested-paths-and-routes)
+  - [2.6. Adding dynamic paths and routes](#26-adding-dynamic-paths-and-routes)
+  - [2.7. Extracting dynamic path segmentdata (dynamic routes)](#27-extracting-dynamic-path-segmentdata-dynamic-routes)
+  - [2.8. Building nested dynamic routes and paths](#28-building-nested-dynamic-routes-and-paths)
+  - [2.9. Adding catch-all routes](#29-adding-catch-all-routes)
+  - [2.10. Navigating with the 'Link' component](#210-navigating-with-the-link-component)
+  - [2.11. Navigating to dynamic routes](#211-navigating-to-dynamic-routes)
+  - [2.12. A different way of setting link hrefs](#212-a-different-way-of-setting-link-hrefs)
+  - [2.13. Navigating programmatically](#213-navigating-programmatically)
+  - [2.14. Adding a custom 404 page](#214-adding-a-custom-404-page)
 
 ---
 
@@ -1266,4 +1280,258 @@ export default NewMeetupForm;
     export default MainNavigation;
     ```
 
-# Pages and File-based Routing
+# 2. Pages and File-based Routing
+## 2.1. Starting setup
+1. We download and setup the starting code from [https://github.com/mschwarzmueller/nextjs-course-code/tree/b9a1b050037ad1e023ac74bc833ad6da5f44d4e9](https://github.com/mschwarzmueller/nextjs-course-code/tree/b9a1b050037ad1e023ac74bc833ad6da5f44d4e9)
+
+## 2.2. What is 'File-based Routing'? And why is it helpful?
+1. Besides setting out the React router, we can create React component files and let NextJS infer the routes from the folder structure starting from `/pages`. 
+2. This is much similar to `Nuxt.js` that we can skip setting up the router and let the framework to handle it.
+3. Unlike `Nuxt.js` uses underscore for variables in the path, `Next.js` uses square brackets `[]` for variables.
+    <img src="./images/53_filebased_routing.png">   
+
+## 2.3. Adding a first page
+1. We can create `index.js` in `/pages`. This will be the root route on the React App.
+2. If we try to visit the other routes, it will return an error of 404. 
+3. Note that the name of exported function doesn't really matter in the case. It can be `HomePage` as in the example, or any arbritrary name.
+    ```js
+    // pages/index.js
+    function HomePage() {
+      return (
+        <div>
+          <h1>The Home Page</h1>
+        </div>
+      );
+    }
+
+    export default HomePage;
+    ```
+
+## 2.4. Adding a Named/Static route file
+1. To have a static page, we can simple create the file with the path.
+2. Note that the route is case sensitive. 
+    ```jsx
+    // pages/about.js
+    function AboutPage() {
+      return (
+        <div>
+          <h1>The About Page</h1>
+        </div>
+      );
+    }
+
+    export default AboutPage;
+    ```
+
+## 2.5. Working with Nested Paths and Routes
+```jsx
+// pages/portfolio/index.js
+function PortfolioPage() {
+  return (
+    <div>
+      <h1>The Portfolio Page</h1>
+    </div>
+  );
+}
+
+export default PortfolioPage;
+
+// pages/portfolio/list.js
+function ListPage() {
+  return (
+    <div>
+      <h1>The List Page</h1>
+    </div>
+  );
+}
+
+export default ListPage;
+```
+
+## 2.6. Adding dynamic paths and routes
+## 2.7. Extracting dynamic path segmentdata (dynamic routes)
+1. To check the variable passing from the path, we can use `useRouter` for functional component or `withRouter` for class-based component from `next/router`.
+2. We need to check the `query` property from router to get the value passing from the path.
+    ```js
+    // pages/portfolio/[projectid].js
+    import { useRouter } from 'next/router';
+
+    function PortfolioProjectPage() {
+      const router = useRouter();
+
+      console.log(router.pathname); // /portfolio/[projectid]
+      console.log(router.query); // { projectid: value_in_the_path }
+
+      return (
+        <div>
+          <h1>The Portfolio Project Page</h1>
+        </div>
+      );
+    }
+
+    export default PortfolioProjectPage;
+    ```
+
+## 2.8. Building nested dynamic routes and paths
+```jsx
+// /pages/clients/[id]/[clientprojectid].js
+import { useRouter } from 'next/router';
+
+function SelectedClientProjectPage() {
+  const router = useRouter();
+
+  console.log(router.query); // 2 properties in the object
+
+  return (
+    <div>
+      <h1>The Project Page for a specific project for a selected client</h1>
+    </div>
+  );
+}
+
+export default SelectedClientProjectPage;
+```
+
+## 2.9. Adding catch-all routes
+1. We can have multiple parameters passing to the path.
+2. To catch multiple parameters, we can name the variable similar to spread assigning operator `...` in Javascript. 
+3. For example, if we access blog post in December 2021, we can visit `/blog/2021/12` at `[...slug].js`.
+4. `2021` and `12` will be passed to `router.query` as in `slug` with 2 different properties in the path query object.
+    ```jsx
+    // pages/blog/[...slug].js
+    import { useRouter } from 'next/router';
+
+    function BlogPostsPage() {
+      const router = useRouter();
+
+      // /blog/2021/12
+      console.log(router.query); // { slug: ['2021', '12'] }
+
+      return (
+        <div>
+          <h1>The Blog Posts</h1>
+        </div>
+      );
+    }
+
+    export default BlogPostsPage;
+    ```
+
+## 2.10. Navigating with the 'Link' component
+1. We don't want to use anchor tag `a` to make another GET request to the server at the path. Such event will refresh the browser and reset all the states.
+2. We can use `Link` from `next/link` which is similar to that from `react` library.
+3. Note that we use `to` attribute on `Link` component from `react` and use `href` as a regular anchor tag for `Link` from `next/link`.
+4. The link component can also do preload the contents when the user hovers on the element before clicking it.
+
+## 2.11. Navigating to dynamic routes
+```jsx
+// pages/clients/index.js
+import Link from 'next/link';
+
+function ClientPage() {
+  const clients = [
+    { id: 'max', name: 'Maximilian' },
+    { id: 'manu', name: 'Manuel' },
+  ];
+
+  return (
+    <div>
+      <h1>The Clients Page</h1>
+      <ul>
+        {clients.map((client) => (
+          <li key={client.id}>
+            <Link href={`/clients/${client.id}`}>{client.name}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default ClientPage;
+```
+
+## 2.12. A different way of setting link hrefs
+1. Besides, giving the path directly for `href` in `Link`, we can pass an object. 
+```jsx
+// pages/clients/index.js
+import Link from 'next/link';
+
+function ClientPage() {
+  const clients = [
+    { id: 'max', name: 'Maximilian' },
+    { id: 'manu', name: 'Manuel' },
+  ];
+
+  return (
+    <div>
+      <h1>The Clients Page</h1>
+      <ul>
+        {clients.map((client) => (
+          <li key={client.id}>
+            <Link
+              href={{ pathname: '/clients/[id]', query: { id: client.id } }}
+            >
+              {client.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default ClientPage;
+```
+
+## 2.13. Navigating programmatically
+1. In some scenarios, we'd like to redirect the user after certain events, such as finishing registration or submit the form. 
+2. We can use `push` method on `router` from `next/router` to redirect the user to the given path.
+3. Besides `push`, we can use `replace` which can also redirect the user while it doesn't allow the user to get back to the last page.
+    ```jsx
+    // /clients/[id]/index.js
+    import { useRouter } from 'next/router';
+
+    function ClientProjectsPage() {
+      const router = useRouter();
+
+      console.log(router.query);
+
+      function loadProjectHandler() {
+        // load data...
+        router.push(`/clients/${'max'}/projecta`); // redirect by string
+        router.replace(`/clients/${'max'}/projecta`); // similar to push but the user can't get back to last page
+
+        // use an object to pass parameters
+        router.push({
+          pathname: '/clients/[id]/[clientprojectid]',
+          query: { id: 'max', clientporjectid: 'projecta' },
+        });
+      }
+
+      return (
+        <div>
+          <h1>The Projects of a Given Client</h1>
+          <button onClick={loadProjectHandler}>Load Project A</button>
+        </div>
+      );
+    }
+
+    export default ClientProjectsPage;
+    ```
+
+## 2.14. Adding a custom 404 page
+1. We can create a `404.js` at the root level of `pages` for a catch-all pages.
+2. Note that `404.js` is a reserved name in `Next.js` to handle have a custom 404 page. 
+    ```jsx
+    // /pages/404.js
+    function NotFoundPage() {
+      return (
+        <div>
+          <h1>Page not found!</h1>
+        </div>
+      );
+    }
+
+    export default NotFoundPage;
+    ```
