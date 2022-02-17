@@ -42,6 +42,21 @@ Started: 2022/01/11
   - [2.12. A different way of setting link hrefs](#212-a-different-way-of-setting-link-hrefs)
   - [2.13. Navigating programmatically](#213-navigating-programmatically)
   - [2.14. Adding a custom 404 page](#214-adding-a-custom-404-page)
+- [3. Project Time: Working with File-based Routing](#3-project-time-working-with-file-based-routing)
+  - [3.1. Planning the project](#31-planning-the-project)
+  - [3.2. Setting up the main pages](#32-setting-up-the-main-pages)
+  - [3.3. Adding dummy data and static files](#33-adding-dummy-data-and-static-files)
+  - [3.4. Adding regular react components](#34-adding-regular-react-components)
+  - [3.5. Adding more react components and connecting components](#35-adding-more-react-components-and-connecting-components)
+  - [3.6. Styling components in Next.js projects](#36-styling-components-in-nextjs-projects)
+  - [3.7. Adding buttons and icons](#37-adding-buttons-and-icons)
+  - [3.8. Adding the 'Event Detail' page (dynamic route)](#38-adding-the-event-detail-page-dynamic-route)
+  - [3.9. Adding a general layout wrapper component](#39-adding-a-general-layout-wrapper-component)
+  - [3.10. Working on the 'All Events' page](#310-working-on-the-all-events-page)
+  - [3.11. Adding a filter form for filtering events](#311-adding-a-filter-form-for-filtering-events)
+  - [3.12. Navigating to the 'Filtered Events' page programmatically](#312-navigating-to-the-filtered-events-page-programmatically)
+  - [3.13. Extracting data on the catch-all page](#313-extracting-data-on-the-catch-all-page)
+  - [3.14. Final steps](#314-final-steps)
 
 ---
 
@@ -1535,3 +1550,668 @@ export default ClientPage;
 
     export default NotFoundPage;
     ```
+
+# 3. Project Time: Working with File-based Routing
+## 3.1. Planning the project
+1. `/` - Starting page (show featured events)
+2. `/events` - Events page (show all events)
+3. `/events/<some-id>` - Event detail page (show selected event)
+4. `/events/...slug` - Filtered events page (show filtered events)
+
+## 3.2. Setting up the main pages
+1. We create `events` folder with `index.js` as we will have sub-routes for events.
+2. We can have other files for the paths
+   1. `index.js`
+   2. `[...slug].js`
+   3. `[eventid].js`
+
+## 3.3. Adding dummy data and static files
+```js
+// dummy-data.js
+const DUMMY_EVENTS = [
+  {
+    id: 'e1',
+    title: 'Programming for everyone',
+    description:
+      'Everyone can learn to code! Yes, everyone! In this live event, we are going to go through all the key basics and get you started with programming as well.',
+    location: 'Somestreet 25, 12345 San Somewhereo',
+    date: '2021-05-12',
+    image: 'images/coding-event.jpg',
+    isFeatured: false,
+  },
+  {
+    id: 'e2',
+    title: 'Networking for introverts',
+    description:
+      "We know: Networking is no fun if you are an introvert person. That's why we came up with this event - it'll be so much easier. Promised!",
+    location: 'New Wall Street 5, 98765 New Work',
+    date: '2021-05-30',
+    image: 'images/introvert-event.jpg',
+    isFeatured: true,
+  },
+  {
+    id: 'e3',
+    title: 'Networking for extroverts',
+    description:
+      'You probably need no help with networking in general. But focusing your energy correctly - that is something where most people can improve.',
+    location: 'My Street 12, 10115 Broke City',
+    date: '2022-04-10',
+    image: 'images/extrovert-event.jpg',
+    isFeatured: true,
+  },
+];
+
+export function getFeaturedEvents() {
+  return DUMMY_EVENTS.filter((event) => event.isFeatured);
+}
+
+export function getAllEvents() {
+  return DUMMY_EVENTS;
+}
+
+export function getFilteredEvents(dateFilter) {
+  const { year, month } = dateFilter;
+
+  let filteredEvents = DUMMY_EVENTS.filter((event) => {
+    const eventDate = new Date(event.date);
+    return eventDate.getFullYear() === year && eventDate.getMonth() === month - 1;
+  });
+
+  return filteredEvents;
+}
+
+export function getEventById(id) {
+  return DUMMY_EVENTS.find((event) => event.id === id);
+}
+```
+1. We can get images from unsplash.
+   1. Coding event
+       <img src="./4_projectFileBasedRouting/public/images/coding-event.jpg">
+   2. Introvert event
+       <img src="./4_projectFileBasedRouting/public/images/introvert-event.jpg">
+   3. Extrovert event
+       <img src="./4_projectFileBasedRouting/public/images/extrovert-event.jpg">
+
+## 3.4. Adding regular react components
+## 3.5. Adding more react components and connecting components
+```js
+// /pages/index.js
+import { getFeaturedEvents } from '../dummy-data';
+import EventList from '../components/events/EventList';
+
+function HomePage() {
+  const featruedEvents = getFeaturedEvents();
+
+  return (
+    <div>
+      <EventList items={featruedEvents} />
+    </div>
+  );
+}
+
+export default HomePage;
+```
+```js
+// components/EventList.js
+import EventItem from './EventItem';
+
+function EventList(props) {
+  const { items } = props;
+
+  return (
+    <ul>
+      {items.map((event) => (
+        <EventItem
+          key={event.id}
+          id={event.id}
+          title={event.title}
+          location={event.location}
+          date={event.date}
+          image={event.image}
+        />
+      ))}
+    </ul>
+  );
+}
+
+export default EventList;
+```
+```js
+// components/EventItem.js
+import Link from 'next/link';
+
+function EventItem(props) {
+  const { title, image, date, location, id } = props;
+
+  const humanReadableDate = new Date(date).toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+  const formattedAddress = location.replace(', ', '\n');
+
+  const exploreLink = `/events/${id}`;
+
+  return (
+    <li>
+      <img src={'/' + image} alt={title} />
+      <div>
+        <div>
+          <h2>{title}</h2>
+          <div>
+            <time>{humanReadableDate}</time>
+          </div>
+          <div>
+            <address>{formattedAddress}</address>
+          </div>
+        </div>
+        <Link href={exploreLink}>Explore Event</Link>
+      </div>
+    </li>
+  );
+}
+
+export default EventItem;
+```
+
+## 3.6. Styling components in Next.js projects
+1. To import scoped css styling, we can put the css file in the same directory of the component file.
+2. Besides, we need to name the css file as `[component].module.css`.
+3. In the component, we need to apply the class by using the object imported from the css module.
+4. The code will be compiled and apply a hashed classes name given by the engine.
+    ```jsx
+    // components/EventItem.js
+    import Link from 'next/link';
+    import classes from './EventItem.module.css';
+
+    function EventItem(props) {
+      const { title, image, date, location, id } = props;
+
+      const humanReadableDate = new Date(date).toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+
+      const formattedAddress = location.replace(', ', '\n');
+
+      const exploreLink = `/events/${id}`;
+
+      return (
+        <li className={classes.item}>
+          <img src={'/' + image} alt={title} />
+          <div className={classes.content}>
+            <div className={classes.summary}>
+              <h2>{title}</h2>
+              <div className={classes.date}>
+                <time>{humanReadableDate}</time>
+              </div>
+              <div className={classes.address}>
+                <address>{formattedAddress}</address>
+              </div>
+            </div>
+            <div className={classes.actions}>
+              <Link href={exploreLink}>Explore Event</Link>
+            </div>
+          </div>
+        </li>
+      );
+    }
+
+    export default EventItem;
+    ```
+
+## 3.7. Adding buttons and icons
+1. To create custom `Link` from `next/link`, we can pass an anchor tag to indicate that we want an anchor tag in custom styling.
+    ```jsx
+    // components/ui/Button.js
+    import Link from 'next/link';
+    import classes from './button.module.css';
+
+    function Button(props) {
+      return (
+        <Link href={props.link}>
+          <a className={classes.btn}>{props.children}</a>
+        </Link>
+      );
+    }
+
+    export default Button;
+    ```
+2. We can add icons as components as well
+    ```jsx
+    // components/events/EventItem.js
+    import Link from 'next/link';
+
+    import Button from '../ui/Button';
+    import DateIcon from '../icons/date-icon';
+    import AddressIcon from '../icons/address-icon';
+    import ArrowRightIcon from '../icons/arrow-right-icon';
+    import classes from './EventItem.module.css';
+
+    function EventItem(props) {
+      const { title, image, date, location, id } = props;
+
+      const humanReadableDate = new Date(date).toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+
+      const formattedAddress = location.replace(', ', '\n');
+
+      const exploreLink = `/events/${id}`;
+
+      return (
+        <li className={classes.item}>
+          <img src={'/' + image} alt={title} />
+          <div className={classes.content}>
+            <div className={classes.summary}>
+              <h2>{title}</h2>
+              <div className={classes.date}>
+                <DateIcon />
+                <time>{humanReadableDate}</time>
+              </div>
+              <div className={classes.address}>
+                <AddressIcon />
+                <address>{formattedAddress}</address>
+              </div>
+            </div>
+            <div className={classes.actions}>
+              <Button link={exploreLink}>
+                <span>Explore Event</span>
+                <span className={classes.icon}>
+                  <ArrowRightIcon />
+                </span>
+              </Button>
+            </div>
+          </div>
+        </li>
+      );
+    }
+
+    export default EventItem;
+    ```
+
+## 3.8. Adding the 'Event Detail' page (dynamic route)
+```js
+// pages/events/[eventid].js
+import { Fragment } from 'react';
+import { useRouter } from 'next/router';
+
+import { getEventById } from '../../dummy-data';
+import EventSummary from '../../components/event-detail/event-summary';
+import EventLogistics from '../../components/event-detail/event-logistics';
+import EventContent from '../../components/event-detail/event-content';
+
+function EventDetailPage() {
+  const router = useRouter();
+
+  const { eventid } = router.query;
+  const event = getEventById(eventid);
+
+  if (!event) {
+    return <p>No event found!</p>;
+  }
+
+  return (
+    <Fragment>
+      <EventSummary title={event.title} />
+      <EventLogistics
+        date={event.date}
+        address={event.location}
+        image={event.image}
+        imageAlt={event.title}
+      />
+      <EventContent>
+        <p>{event.description}</p>
+      </EventContent>
+    </Fragment>
+  );
+}
+
+export default EventDetailPage;
+```
+
+## 3.9. Adding a general layout wrapper component
+1. To have a general layout, we can check `_app.js` on `/pages`. 
+2. We can wrap the components for all the routes.
+    ```jsx
+    // components/layout/main-header.js
+    import Link from 'next/link';
+    import classes from './main-header.module.css';
+
+    function MainHeader() {
+      return (
+        <header className={classes.header}>
+          <div className={classes.logo}>
+            <Link href='/'>NextEvents</Link>
+          </div>
+          <nav className={classes.navigation}>
+            <ul>
+              <li>
+                <Link href='/events'>Browse All Events</Link>
+              </li>
+            </ul>
+          </nav>
+        </header>
+      );
+    }
+
+    export default MainHeader;
+    ```
+    ```jsx
+    // components/layout/layout.js
+    import { Fragment } from 'react';
+    import MainHeader from './main-header';
+
+    function Layout(props) {
+      return (
+        <Fragment>
+          <MainHeader />
+          <main>{props.children}</main>
+        </Fragment>
+      );
+    }
+
+    export default Layout;
+    ```
+    ```jsx
+    // pages/_app.js
+    import '../styles/globals.css';
+    import Layout from '../components/layout/layout';
+
+    function MyApp({ Component, pageProps }) {
+      return (
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      );
+    }
+
+    export default MyApp;
+    ```
+
+## 3.10. Working on the 'All Events' page
+```jsx
+// pages/events/index.js
+import { getAllEvents } from '../../dummy-data';
+import EventList from '../../components/events/EventList';
+
+function AllEventsPage() {
+  const events = getAllEvents();
+
+  return (
+    <div>
+      <EventList items={events} />
+    </div>
+  );
+}
+
+export default AllEventsPage;
+```
+
+## 3.11. Adding a filter form for filtering events
+```jsx
+// components/events/EventsSearch.js
+import Button from '../ui/Button';
+import classes from './EventsSearch.module.css';
+
+function EventsSearch(props) {
+  return (
+    <form className={classes.form}>
+      <div className={classes.controls}>
+        <div className={classes.control}>
+          <label htmlFor='year'>Year</label>
+          <select id='year'>
+            <option value='2021'>2021</option>
+            <option value='2022'>2022</option>
+          </select>
+        </div>
+        <div className={classes.control}>
+          <label htmlFor='month'>Month</label>
+          <select id='month'>
+            <option value='1'>January</option>
+            <option value='2'>February</option>
+            <option value='3'>March</option>
+            <option value='4'>April</option>
+            <option value='5'>May</option>
+            <option value='6'>June</option>
+            <option value='7'>July</option>
+            <option value='8'>August</option>
+            <option value='9'>September</option>
+            <option value='10'>October</option>
+            <option value='11'>November</option>
+            <option value='12'>December</option>
+          </select>
+        </div>
+      </div>
+      <Button>Find Events</Button>
+    </form>
+  );
+}
+
+export default EventsSearch;
+```
+```jsx
+// pages/events/index.js
+import { Fragment } from 'react';
+import { getAllEvents } from '../../dummy-data';
+import EventList from '../../components/events/EventList';
+import EventsSearch from '../../components/events/EventsSearch';
+
+function AllEventsPage() {
+  const events = getAllEvents();
+
+  return (
+    <Fragment>
+      <EventsSearch />
+      <EventList items={events} />
+    </Fragment>
+  );
+}
+
+export default AllEventsPage;
+```
+
+## 3.12. Navigating to the 'Filtered Events' page programmatically
+```jsx
+// components/events/EventsSearch.js
+import { useRef } from 'react';
+
+import Button from '../ui/Button';
+import classes from './EventsSearch.module.css';
+
+function EventsSearch(props) {
+  const yearInputRef = useRef();
+  const monthInputRef = useRef();
+
+  function submitHandler(event) {
+    event.preventDefault();
+
+    const selectedYear = yearInputRef.current.value;
+    const selectedMonth = monthInputRef.current.value;
+
+    props.onSearch(selectedYear, selectedMonth);
+  }
+
+  return (
+    <form className={classes.form} onSubmit={submitHandler}>
+      <div className={classes.controls}>
+        <div className={classes.control}>
+          <label htmlFor='year'>Year</label>
+          <select id='year' ref={yearInputRef}>
+            <option value='2021'>2021</option>
+            <option value='2022'>2022</option>
+          </select>
+        </div>
+        <div className={classes.control}>
+          <label htmlFor='month'>Month</label>
+          <select id='month' ref={monthInputRef}>
+            <option value='1'>January</option>
+            <option value='2'>February</option>
+            <option value='3'>March</option>
+            <option value='4'>April</option>
+            <option value='5'>May</option>
+            <option value='6'>June</option>
+            <option value='7'>July</option>
+            <option value='8'>August</option>
+            <option value='9'>September</option>
+            <option value='10'>October</option>
+            <option value='11'>November</option>
+            <option value='12'>December</option>
+          </select>
+        </div>
+      </div>
+      <Button>Find Events</Button>
+    </form>
+  );
+}
+
+export default EventsSearch;
+```
+```jsx
+// pages/events/index.js
+import { Fragment } from 'react';
+import { useRouter } from 'next/router';
+
+import { getAllEvents } from '../../dummy-data';
+import EventList from '../../components/events/EventList';
+import EventsSearch from '../../components/events/EventsSearch';
+
+function AllEventsPage() {
+  const events = getAllEvents();
+  const router = useRouter();
+
+  function findEventsHandler(year, month) {
+    const fullPath = `/events/${year}/${month}`;
+    router.push(fullPath);
+  }
+
+  return (
+    <Fragment>
+      <EventsSearch onSearch={findEventsHandler} />
+      <EventList items={events} />
+    </Fragment>
+  );
+}
+
+export default AllEventsPage;
+```
+
+## 3.13. Extracting data on the catch-all page
+```jsx
+// pages/events/[...slug].js
+import { useRouter } from 'next/router';
+import { getFilteredEvents } from '../../dummy-data';
+
+function FilteredEventsPage() {
+  const router = useRouter();
+
+  const filterData = router.query.slug;
+
+  if (!filterData) {
+    return <p className='center'>Loading...</p>;
+  }
+
+  const [filteredYear, filteredMonth] = filterData;
+
+  const numYear = +filteredYear;
+  const numMonth = +filteredMonth;
+
+  if (
+    isNaN(numYear) ||
+    isNaN(numMonth) ||
+    numYear > 2030 ||
+    numYear < 2021 ||
+    numMonth > 12 ||
+    numMonth < 1
+  ) {
+    return <p>Invalid filter. Please adjust your values!</p>;
+  }
+
+  const filteredEvents = getFilteredEvents({ year: numYear, month: numMonth });
+
+  if (!filteredEvents || !filteredEvents.length) {
+    return <p>No events found for the chosen filter!</p>;
+  }
+
+  return (
+    <div>
+      <h1>Filtered Events</h1>
+    </div>
+  );
+}
+
+export default FilteredEventsPage;
+```
+
+## 3.14. Final steps
+```jsx
+// pages/events/[...slug].js
+import { useRouter } from 'next/router';
+import { Fragment } from 'react';
+import { getFilteredEvents } from '../../dummy-data';
+import EventList from '../../components/events/EventList';
+import ResultsTitle from '../../components/events/results-title';
+import Button from '../../components/ui/Button';
+import ErrorAlert from '../../components/ui/error-alert';
+
+function FilteredEventsPage() {
+  const router = useRouter();
+
+  const filterData = router.query.slug;
+
+  if (!filterData) {
+    return <p className='center'>Loading...</p>;
+  }
+
+  const [filteredYear, filteredMonth] = filterData;
+
+  const numYear = +filteredYear;
+  const numMonth = +filteredMonth;
+
+  if (
+    isNaN(numYear) ||
+    isNaN(numMonth) ||
+    numYear > 2030 ||
+    numYear < 2021 ||
+    numMonth > 12 ||
+    numMonth < 1
+  ) {
+    return (
+      <Fragment>
+        <ErrorAlert>Invalid filter. Please adjust your values!</ErrorAlert>
+        <div className='center'>
+          <Button link='/events'>Show All Events</Button>
+        </div>
+      </Fragment>
+    );
+  }
+
+  const filteredEvents = getFilteredEvents({ year: numYear, month: numMonth });
+
+  if (!filteredEvents || !filteredEvents.length) {
+    return (
+      <Fragment>
+        <ErrorAlert>No events found for the chosen filter!</ErrorAlert>
+        <div className='center'>
+          <Button link='/events'>Show All Events</Button>
+        </div>
+      </Fragment>
+    );
+  }
+
+  const date = new Date(numYear, numMonth - 1);
+
+  return (
+    <Fragment>
+      <ResultsTitle date={date} />
+      <EventList items={filteredEvents}></EventList>
+    </Fragment>
+  );
+}
+
+export default FilteredEventsPage;
+```
