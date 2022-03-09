@@ -57,6 +57,33 @@ Started: 2022/01/11
   - [3.12. Navigating to the 'Filtered Events' page programmatically](#312-navigating-to-the-filtered-events-page-programmatically)
   - [3.13. Extracting data on the catch-all page](#313-extracting-data-on-the-catch-all-page)
   - [3.14. Final steps](#314-final-steps)
+- [4. Page Pre-Rendering and Data Fetching](#4-page-pre-rendering-and-data-fetching)
+  - [4.1. The problem with traditional React Apps (and Data fetching)](#41-the-problem-with-traditional-react-apps-and-data-fetching)
+  - [4.2. How Next.js prepares and pre-render pages](#42-how-nextjs-prepares-and-pre-render-pages)
+  - [4.3. Introducing static generation with "getStaticProps"](#43-introducing-static-generation-with-getstaticprops)
+  - [4.4. NextJS pre-renders by default](#44-nextjs-pre-renders-by-default)
+  - [4.5. Adding "getStaticProps" to pages](#45-adding-getstaticprops-to-pages)
+  - [4.6. Running server-side code and using the file system](#46-running-server-side-code-and-using-the-file-system)
+  - [4.7. Look Behind the Scenes](#47-look-behind-the-scenes)
+  - [4.8. Utilizing incremental static generation (ISR)](#48-utilizing-incremental-static-generation-isr)
+  - [4.9. ISR: A look behind the scenes](#49-isr-a-look-behind-the-scenes)
+  - [4.10. A closer look at "getStaticProps" and Configuration Options](#410-a-closer-look-at-getstaticprops-and-configuration-options)
+  - [4.11. Working with dynamic parameters](#411-working-with-dynamic-parameters)
+  - [4.12. Introducing "getStaticPaths" for dynamic pages](#412-introducing-getstaticpaths-for-dynamic-pages)
+  - [4.13. Using getStaticPaths](#413-using-getstaticpaths)
+  - [4.14. "getStaticPaths" and link prefetching: Behind the scenes](#414-getstaticpaths-and-link-prefetching-behind-the-scenes)
+  - [4.15. Working with fallback pages](#415-working-with-fallback-pages)
+  - [4.16. Loading paths dynamically](#416-loading-paths-dynamically)
+  - [4.17. Fallback page and "Not found" page](#417-fallback-page-and-not-found-page)
+  - [4.18. Intrducing "getServerSideProps" for server-side rendering (SSR)](#418-intrducing-getserversideprops-for-server-side-rendering-ssr)
+  - [4.19. Using "getServerSideProps"](#419-using-getserversideprops)
+  - [4.20. 'getServerSide' props and its Context](#420-getserverside-props-and-its-context)
+  - [4.21. Dynamic pages and 'getServerSideProps'](#421-dynamic-pages-and-getserversideprops)
+  - [4.22. 'getServerSideProps' behide the scenes](#422-getserversideprops-behide-the-scenes)
+  - [4.23. Introducing client-side data fetching (And when to use it)](#423-introducing-client-side-data-fetching-and-when-to-use-it)
+  - [4.24. Implementing client-side data fetching](#424-implementing-client-side-data-fetching)
+  - [4.25. Using the 'useSWR' NextJS hook](#425-using-the-useswr-nextjs-hook)
+  - [4.26. Combining pre-fetching with client-side fetching](#426-combining-pre-fetching-with-client-side-fetching)
 
 ---
 
@@ -2215,3 +2242,813 @@ function FilteredEventsPage() {
 
 export default FilteredEventsPage;
 ```
+
+# 4. Page Pre-Rendering and Data Fetching
+## 4.1. The problem with traditional React Apps (and Data fetching)
+1. If we inspect the source code, we can notice that the data and content is not loaded.
+2. Users needs to wait for loading before they can access the service.
+3. All data and business logical are controlled by frontend Javascript.
+4. Search engine wouldn't parse any useful information by the time the crawler visits the website.
+
+## 4.2. How Next.js prepares and pre-render pages
+1. When the user request to the server on a route, Next.js will return a pre-rendered page.
+2. When the web app is hosted and served with Next.js, it hanldes request by returning pre-rendered page.
+3. It means the required data and contents are served as HTML file to the client. The feature is good for SEO.
+4. Besides, it provides the features and advantages from React as it is hydrated with React code once loaded, so the app is still interactive as all the other React apps.
+5. Next.js has 2 forms fo pre-rendering
+   1. Static generation - everything is generated at the build-time.
+   2. Server-side Rendering - contents are generated on the fly when clients request.
+
+## 4.3. Introducing static generation with "getStaticProps"
+1. Pre-generate a page (with data prepared on the server-side) during build time.
+2. Pages are prepared ahead to time and can be cached by the server / CDN serving the app.
+3. To use the data to pre-generate, we can use a special function from Next.js. 
+4. This function can be used for credential and sensitive data such as API keys or environment variables which shouldn't be exposed to clients directly. 
+  ```js
+  // Next.js specific function for static generation
+  export async function getStaticProps(context) { /*...*/ }
+  ```
+
+## 4.4. NextJS pre-renders by default
+## 4.5. Adding "getStaticProps" to pages
+## 4.6. Running server-side code and using the file system
+1. By using Next.js, static contents are generated when we develop and build the app. Next.js has made the feature as default. 
+2. `getStaticProps` is a preserved Next.js specific function that will run on the build time and is not visible on the client side.
+3. Besides, Next.js is smart to avoid adding server side (Node.js) modules when build the code.
+4. Therefore, we can use both `path` and `fs` which are native Node.js modules to work on file path and file system.
+5. Note that besides regular `fs`, we can use `fs/promise` module which returns a Javascript `Promise` that we can use `async/await` syntax to work with the code directly.
+    ```js
+    // pages/index.js
+    import path from 'path';
+    import fs from 'fs/promises';
+
+    function HomePage(props) {
+      const { products } = props;
+
+      return (
+        <ul>
+          {products.map((product) => (
+            <li key={product.id}>{product.title}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    // this won't be visible on the client side
+    export async function getStaticProps() {
+      const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+      const jsonData = await fs.readFile(filePath);
+      const data = JSON.parse(jsonData);
+
+      return {
+        props: {
+          products: data.products,
+        },
+      };
+    }
+
+    export default HomePage;
+    ```
+
+## 4.7. Look Behind the Scenes
+1. If we run `npm run build`, we can check the building process by Next.js.
+2. There are different modes with different function hooks such as 
+   1. SSR - `getInitialProps` and `getServerSideProps`
+   2. SSG - `getStaticProps`
+3. The build process creates a 404 page by default if there's no such file.
+
+## 4.8. Utilizing incremental static generation (ISR)
+1. In regular process, we can generate the code at build time which compile and transpile the project into Javascript code. 
+2. This cause a potential issue that if there's any difference on the code though 1 byte is changed, the project will be rebuilt (though not every part will be rebuilt due to building process optimization).
+3. Besides, we can use `getStaticProps` to run certain code when building the project such as fetching the latest data from the server. However, this can still cause a delay to the latest content.
+4. Next.js has a feature to pre-generate the page that the feature can re-generate the page by a given period (such as 60 seconds) and cache the data on the server. 
+5. Therefore, the clients can either vist the cached current, "older" version or the latest content that the server just generates.
+6. To use the feature, we can give another property `revalidate` to the object returned by `getStatisProps`.
+7. `revalidate` takes number (in seconds) as the value which indicates the interval gap to regenerate the content.
+8. Note that in the developing mode, the content will be udpated every time the file is modified and saved.
+9. This feature is useful in the production mode after deployment as the content will be updated routinely by the given interval.
+  ```js
+  // pages/index.js
+  export async function getStaticProps() {
+    const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+    const jsonData = await fs.readFile(filePath);
+    const data = JSON.parse(jsonData);
+
+    return {
+      props: {
+        products: data.products,
+      },
+      revalidate: 10 // in seconds
+    };
+  }
+  ```
+
+## 4.9. ISR: A look behind the scenes
+1. When we run `npm run build`, Next.js will build the project into static code and files. We can notice that ISR feature is triggered and run every 10 seconds as given in `getStaticProps` in `/pages/index.js`.
+    <img src="./images/94_isr_behind_the_scene.png">
+2. If we run `npm run start`, Next.js will create a local server and works as it is in the production mode.
+3. We can notice that the server will execute `getStaticProps`every 10 seconds.
+
+## 4.10. A closer look at "getStaticProps" and Configuration Options
+1. We can give `notFound` property in the returned object from `getStaticProps` and set it to `true` which can be used when there's no data from the endpoint.
+2. Besides, we can use `redirect` the user. This can be useful when the server or service providing data on the backend isn't available. In this case, we can redirect the user to somewhere else.
+    ```js
+    // pages/index.js
+    export async function getStaticProps(context) {
+      const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+      const jsonData = await fs.readFile(filePath);
+      const data = JSON.parse(jsonData);
+
+      // can't fetch data
+      if (!data) {
+        return { redirect: { destination: '/no-data' } };
+      }
+
+      // receive no data
+      if (!data.products.length) {
+        return { notFound: true };
+      }
+
+      return {
+        props: {
+          products: data.products,
+        },
+        revalidate: 10, // in seconds
+      };
+    }
+
+    export default HomePage;
+    ```
+
+## 4.11. Working with dynamic parameters
+1. Besides passing parameters in the query string or using parameters from routers, we can check from the `context` object from `getStaticProps`.
+    ```js
+    // pages/[pid].js
+    import path from 'path';
+    import fs from 'fs/promises';
+    import { Fragment } from 'react';
+
+    function ProductDetailPage(props) {
+      const { loadedProduct } = props;
+      return (
+        <Fragment>
+          <h1>{loadedProduct.title}</h1>
+          <p>{loadedProduct.description}</p>
+        </Fragment>
+      );
+    }
+
+    export async function getStaticProps(context) {
+      const { params } = context;
+
+      const productId = params.pid;
+
+      const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+      const jsonData = await fs.readFile(filePath);
+      const data = JSON.parse(jsonData);
+
+      const product = data.products.find((product) => product.id === productId);
+
+      return {
+        props: {
+          loadedProduct: product,
+        },
+      };
+    }
+
+    export default ProductDetailPage;
+    ```
+2. Besides, we can udpate `index.js` as list of links 
+    ```js
+    // pages/index.js
+    import path from 'path';
+    import fs from 'fs/promises';
+
+    import Link from 'next/link';
+
+    function HomePage(props) {
+      const { products } = props;
+
+      return (
+        <ul>
+          {products.map((product) => (
+            <li key={product.id}>
+              <Link href={`/${props.id}`}>{product.title}</Link>
+            </li>
+          ))}
+        </ul>
+      );
+    }
+
+    // this won't be visible on the client side
+    export async function getStaticProps(context) {
+      const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+      const jsonData = await fs.readFile(filePath);
+      const data = JSON.parse(jsonData);
+
+      if (!data) {
+        return { redirect: { destination: '/no-data' } };
+      }
+
+      if (!data.products.length) {
+        return { notFound: true };
+      }
+
+      return {
+        props: {
+          products: data.products,
+        },
+        revalidate: 10, // in seconds
+      };
+    }
+
+    export default HomePage;
+    ```
+3. Note that though the code above is generally correct, it still doesn't work and returns an error.
+    <img src="./images/96_working_with_dynamic_data.png">
+
+## 4.12. Introducing "getStaticPaths" for dynamic pages
+1. By default, Next.js pre-generate all the pages in the build process.
+2. This can cause problems on dynamic pages as the path and files can be very different according to the data fetching from the server.
+3. Therefore, dynamic pages won't be generated as static files and will be generated only when there's a request.
+4. Therefore, we can indicate to Next.js that which part or instances of a dyanmic page should be pre-generated.
+    <img src="./images/97_getStaticPaths.png">  
+
+## 4.13. Using getStaticPaths
+1. We can use `getStaticPaths` and show what values are available and should be generated.
+    ```js
+    // pages/[pid].js
+    export async function getStaticPaths() {
+      return {
+        paths: [
+          { params: { pid: 'p1' } },
+          { params: { pid: 'p2' } },
+          { params: { pid: 'p3' } },
+        ],
+        fallback: false,
+      };
+    }
+    ```
+
+## 4.14. "getStaticPaths" and link prefetching: Behind the scenes
+1. We can run `npm run build` and use `npm run start` to check the data.
+2. By opening "network" tab, we can notice that 3 product html and related json files are fetched when visiting the page. 
+3. Note that the timing when Next.js fetch the data is determined by Next.js such as when the user hovering mouse on the page. 
+
+## 4.15. Working with fallback pages
+1. In some case, we don't generate and prebuilt all the files for such rarely used resource and items aren't necessary.
+2. Therefore, we can use the `fallback` feature.
+3. For example, we only pre-generate `p1` which is the most frequent visited page and set `fallback` to `true`.
+    ```js
+    // pages/[pid].js
+    export async function getStaticPaths() {
+      return {
+        paths: [{ params: { pid: 'p1' } }],
+        fallback: true,
+      };
+    }
+    ```
+4. However, though we have the fallback feature, if the user types in the URL directly, it will still return an error.
+5. Therefore, in the main conditions, we can add a fallback part when product hasn't be loaded. 
+    ```js
+    // pages/[pid].js
+    function ProductDetailPage(props) {
+      const { loadedProduct } = props;
+
+      if (!loadedProduct) {
+        return <p>Loading...</p>;
+      }
+
+      return (
+        <Fragment>
+          <h1>{loadedProduct.title}</h1>
+          <p>{loadedProduct.description}</p>
+        </Fragment>
+      );
+    }
+    ```
+6. On the other hand, we can give `fallback` a string value `blocking` which the user must wait for the response on the server side before receiving or rendering any UI on the page. 
+    ```js
+    // pages/[pid].js
+    import path from 'path';
+    import fs from 'fs/promises';
+    import { Fragment } from 'react';
+
+    function ProductDetailPage(props) {
+      const { loadedProduct } = props;
+
+      // if (!loadedProduct) {
+      //   return <p>Loading...</p>;
+      // }
+
+      return (
+        <Fragment>
+          <h1>{loadedProduct.title}</h1>
+          <p>{loadedProduct.description}</p>
+        </Fragment>
+      );
+    }
+
+    export async function getStaticProps(context) {
+      const { params } = context;
+
+      const productId = params.pid;
+
+      const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+      const jsonData = await fs.readFile(filePath);
+      const data = JSON.parse(jsonData);
+
+      const product = data.products.find((product) => product.id === productId);
+
+      return {
+        props: {
+          loadedProduct: product,
+        },
+      };
+    }
+
+    export async function getStaticPaths() {
+      return {
+        paths: [{ params: { pid: 'p1' } }],
+        // fallback: true,
+        fallback: 'blocking',
+      };
+    }
+
+    export default ProductDetailPage;
+    ```
+
+## 4.16. Loading paths dynamically
+```js
+// pages/[pid].js
+import path from 'path';
+import fs from 'fs/promises';
+import { Fragment } from 'react';
+
+function ProductDetailPage(props) {
+  const { loadedProduct } = props;
+
+  // if (!loadedProduct) {
+  //   return <p>Loading...</p>;
+  // }
+
+  return (
+    <Fragment>
+      <h1>{loadedProduct.title}</h1>
+      <p>{loadedProduct.description}</p>
+    </Fragment>
+  );
+}
+
+async function getData() {
+  const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+  const jsonData = await fs.readFile(filePath);
+  const data = JSON.parse(jsonData);
+
+  return data;
+}
+
+export async function getStaticProps(context) {
+  const { params } = context;
+
+  const productId = params.pid;
+
+  const data = await getData();
+
+  const product = data.products.find((product) => product.id === productId);
+
+  return {
+    props: {
+      loadedProduct: product,
+    },
+  };
+}
+
+export async function getStaticPaths() {
+  const data = await getData();
+
+  const ids = data.products.map((product) => product.id);
+  const pathsWithParams = ids.map((id) => ({ params: { pid: id } }));
+
+  return {
+    paths: pathsWithParams,
+    fallback: false,
+  };
+}
+
+export default ProductDetailPage;
+```
+
+## 4.17. Fallback page and "Not found" page
+1. By the case that we turn `fallback` to `true`, we should also open the fallback scenario in the main condition as if it can load up data which is not pre-generated and will wait for response from the server.
+2. However, if we visit a product ID which doesn't exist, it eventually will return an error as the data doesn't exist.
+    ```js
+    // pages/[pid].js
+    import path from 'path';
+    import fs from 'fs/promises';
+    import { Fragment } from 'react';
+
+    function ProductDetailPage(props) {
+      const { loadedProduct } = props;
+
+      if (!loadedProduct) {
+        return <p>Loading...</p>;
+      }
+
+      return (
+        <Fragment>
+          <h1>{loadedProduct.title}</h1>
+          <p>{loadedProduct.description}</p>
+        </Fragment>
+      );
+    }
+
+    async function getData() {
+      const filePath = path.join(process.cwd(), 'data', 'dummy-backend.json');
+      const jsonData = await fs.readFile(filePath);
+      const data = JSON.parse(jsonData);
+
+      return data;
+    }
+
+    export async function getStaticProps(context) {
+      const { params } = context;
+
+      const productId = params.pid;
+
+      const data = await getData();
+
+      const product = data.products.find((product) => product.id === productId);
+
+      return {
+        props: {
+          loadedProduct: product,
+        },
+      };
+    }
+
+    export async function getStaticPaths() {
+      const data = await getData();
+
+      const ids = data.products.map((product) => product.id);
+      const pathsWithParams = ids.map((id) => ({ params: { pid: id } }));
+
+      return {
+        paths: pathsWithParams,
+        fallback: true,
+      };
+    }
+
+    export default ProductDetailPage;
+    ```
+3. Therefore, in this case, we can update `getStaticProps` to return an object with property `notFound` is `true` if the data doesn't exist.
+    ```js
+    // pages/[pid].js
+    export async function getStaticProps(context) {
+      const { params } = context;
+
+      const productId = params.pid;
+
+      const data = await getData();
+
+      const product = data.products.find((product) => product.id === productId);
+
+      if (!product) {
+        return { notFound: true };
+      }
+
+      return {
+        props: {
+          loadedProduct: product,
+        },
+      };
+    }
+    ```
+
+## 4.18. Intrducing "getServerSideProps" for server-side rendering (SSR)
+1. Server-side rendering - Sometimes, you need to pre-render for every request OR you need to access to the request object (e.g. for cookies).
+2. Next.js allows you to run "real server-side code" as well.
+3. `export async function getServerSideProps() {}`
+
+## 4.19. Using "getServerSideProps"
+1. `getServerSideProps` 
+    ```js
+    function UserProfilePage(props) {
+      return <h1>{props.username}</h1>;
+    }
+
+    export default UserProfilePage;
+
+    // only works on server side and won't be pre-generated
+    export async function getServerSideProps(context) {
+      return {
+        props: {
+          username: 'Max', // hard coded value
+        },
+      };
+    }
+    ```
+
+## 4.20. 'getServerSide' props and its Context
+1. In `getServerSide`, the `context` argument has not only the params and other data as it is in `getStaticProps` but also the "request" object sending from the client.
+2. In this case, as the function "respond" to the "request", we can manipulate the headers of the response.
+3. We can destructure `req` and `res` objects from `context` (similar to use in the callback function in the Express.js framewrk with Node.js).
+4. Note that we can print the `req` and `res` objects in the local terminal. `getServerSide` is a server side function and will run only when the user visit the route.
+    ```js
+    // pages/user-profile.js
+    function UserProfilePage(props) {
+      return <h1>{props.username}</h1>;
+    }
+
+    export default UserProfilePage;
+
+    export async function getServerSideProps(context) {
+      const { params, req, res } = context;
+
+      return {
+        props: {
+          username: 'Max',
+        },
+      };
+    }
+    ```
+
+## 4.21. Dynamic pages and 'getServerSideProps'
+1. When we build the project, the following dynamic page `/[uid].js` doesn't pre-generate content (html file) and will be a dynamic route which creates on the fly.
+    ```js
+    // pages/[uid].js
+    function UserIdPage(props) {
+      return <h1>{props.id}</h1>;
+    }
+
+    export default UserIdPage;
+
+    export async function getServerSideProps(context) {
+      const { params } = context;
+
+      const uesrId = params.uid;
+
+      return {
+        props: {
+          id: 'userid-' + uesrId,
+        },
+      };
+    }
+    ```
+
+## 4.22. 'getServerSideProps' behide the scenes
+1. When building the project we can find some routes are labeled with lambda sign `λ`.
+2. It means the route doesn't have pre-generated data but served by the server directly.
+    <img src="./images/107_getServerSideProps_build_project.png">
+3. After building the project, we can run `npm start` to serve the web app locally.
+4. When we visit `/user-profile`, we can notice the `console.log` prints the message on the local server.
+    ```js
+    // pages/user-profile.js
+    function UserProfilePage(props) {
+      return <h1>{props.username}</h1>;
+    }
+
+    export default UserProfilePage;
+
+    export async function getServerSideProps(context) {
+      const { params, req, res } = context;
+
+      console.log('Server side code');
+
+      return {
+        props: {
+          username: 'Max',
+        },
+      };
+    }
+    ```
+
+## 4.23. Introducing client-side data fetching (And when to use it)
+1. Some data doesn't need to be pre-rendered
+   1. Data changing with high frequency (e.g. stock data)
+   2. Highly user-specific data (e.g. last orders in an online shop)
+   3. Partial data (e.g. data that's only used on a part of an page)
+2. Pre-fetching the data for page generation might not work or be required.
+3. "Traditional" client-side data feching (e.g. `useEffect` with `fetch` is fine)
+
+## 4.24. Implementing client-side data fetching
+1. Here is a regular React component with native react hooks and conditions
+    ```js
+    // pages/last-sales.js
+    import { useEffect, useState } from 'react';
+
+    function LastSalesPage() {
+      const [sales, setSales] = useState();
+      const [isLoading, setIsLoading] = useState(false);
+
+      useEffect(() => {
+        setIsLoading(true);
+
+        const url =
+          'https://nextjs-course-ab63f-default-rtdb.asia-southeast1.firebasedatabase.app/sales.json';
+
+        fetch(url)
+          .then((res) => res.json())
+          .then((data) => {
+            const transformedSales = [];
+
+            for (const key in data) {
+              transformedSales.push({
+                id: key,
+                username: data[key].username,
+                volume: data[key].volume,
+              });
+            }
+
+            setSales(transformedSales);
+            setIsLoading(false);
+          });
+      }, []);
+
+      if (isLoading) {
+        return <p>Loading...</p>;
+      }
+
+      if (!sales) {
+        return <p>No data yet</p>;
+      }
+
+      return (
+        <ul>
+          {sales.map((sale) => (
+            <li key={sale.id}>
+              {sale.username} - ${sale.volume}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+
+    export default LastSalesPage;
+    ```
+
+## 4.25. Using the 'useSWR' NextJS hook
+1. We can extract the The client-side fetching logic by [`swr`](https://swr.vercel.app/) hook.
+2. Note that `swr` is an additional package out from regular Next.js.
+3. We can use `useSWR` hook from `swr` which uses `fetch` API to fetch data by default.
+4. `useSWR` hook mainly takes 2 arguments. 1st is the url and 2nd is a fetcher function works with fetching data.
+```js
+// pages/last-sales.js
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
+
+function LastSalesPage() {
+  const [sales, setSales] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const url =
+    'https://nextjs-course-ab63f-default-rtdb.asia-southeast1.firebasedatabase.app/sales.json';
+
+  const { data, error } = useSWR(url, (url) =>
+    fetch(url).then((res) => res.json())
+  );
+
+  useEffect(() => {
+    if (data) {
+      const transformedSales = [];
+
+      for (const key in data) {
+        transformedSales.push({
+          id: key,
+          username: data[key].username,
+          volume: data[key].volume,
+        });
+      }
+
+      setSales(transformedSales);
+    }
+  }, [data]);
+
+  if (error) {
+    return <p>Failed to load.</p>;
+  }
+
+  if (!data || !sales) {
+    return <p>Loading...</p>;
+  }
+
+  // useEffect(() => {
+  //   setIsLoading(true);
+
+  //   fetch(url)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       const transformedSales = [];
+
+  //       for (const key in data) {
+  //         transformedSales.push({
+  //           id: key,
+  //           username: data[key].username,
+  //           volume: data[key].volume,
+  //         });
+  //       }
+
+  //       setSales(transformedSales);
+  //       setIsLoading(false);
+  //     });
+  // }, []);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!sales) {
+    return <p>No data yet</p>;
+  }
+
+  return (
+    <ul>
+      {sales.map((sale) => (
+        <li key={sale.id}>
+          {sale.username} - ${sale.volume}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export default LastSalesPage;
+```
+
+## 4.26. Combining pre-fetching with client-side fetching
+1. In some cases, we can use `getStaticProps` to fetch data and build static contents.
+2. After the user visits the route, the app can use `SWR` on the client-side to fetch and render the latest data.
+3. With the featuers, we can have a snapshot to ensure there are some contents pre-generated and rendered on the app while it will fetch and show the latest data.
+    ```js
+    // pages/last-sales.js
+    import { useEffect, useState } from 'react';
+    import useSWR from 'swr';
+
+    const url =
+      'https://nextjs-course-ab63f-default-rtdb.asia-southeast1.firebasedatabase.app/sales.json';
+
+    function LastSalesPage(props) {
+      const [sales, setSales] = useState(props.sales);
+      // const [isLoading, setIsLoading] = useState(false);
+
+      const { data, error } = useSWR(url, (url) =>
+        fetch(url).then((res) => res.json())
+      );
+
+      useEffect(() => {
+        if (data) {
+          const transformedSales = [];
+
+          for (const key in data) {
+            transformedSales.push({
+              id: key,
+              username: data[key].username,
+              volume: data[key].volume,
+            });
+          }
+
+          setSales(transformedSales);
+        }
+      }, [data]);
+
+      if (error) {
+        return <p>Failed to load.</p>;
+      }
+
+      if (!data && !sales) {
+        return <p>Loading...</p>;
+      }
+
+      if (!sales) {
+        return <p>No data yet</p>;
+      }
+
+      return (
+        <ul>
+          {sales.map((sale) => (
+            <li key={sale.id}>
+              {sale.username} - ${sale.volume}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+
+    export async function getStaticProps() {
+      const data = await fetch(url).then((res) => res.json());
+
+      const transformedSales = [];
+
+      for (const key in data) {
+        transformedSales.push({
+          id: key,
+          username: data[key].username,
+          volume: data[key].volume,
+        });
+      }
+
+      return { props: { sales: transformedSales }, revalidate: 10 };
+    }
+
+    export default LastSalesPage;
+    ```
