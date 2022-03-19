@@ -47,6 +47,14 @@ Start learning on 2022/02/06
   - [4.7. Options for building](#47-options-for-building)
   - [4.8. So which approach](#48-so-which-approach)
   - [4.9. A Webpack replacement](#49-a-webpack-replacement)
+- [5. Implementing In-Browser Bundling](#5-implementing-in-browser-bundling)
+  - [5.1. A Demo App](#51-a-demo-app)
+  - [5.2. Project setup](#52-project-setup)
+  - [5.3. Basic form elements](#53-basic-form-elements)
+  - [5.4. Understanding ESBuild](#54-understanding-esbuild)
+  - [5.5. Initializing ESBuild](#55-initializing-esbuild)
+  - [5.6. Using Refs for Arbitrary Values](#56-using-refs-for-arbitrary-values)
+  - [5.7. Transpiling works](#57-transpiling-works)
 
 # 1. Types around Props and State
 ## 1.1. Changes with TypeScript
@@ -1026,3 +1034,169 @@ export default RepositoriesList;
 ## 4.9. A Webpack replacement
 1. Webpack doesn't work in browsers. Therefore, we won't use both Babel and Webpack for the solution.
 2. In this case we can use [ESBuild](https://esbuild.github.io/) to transpile and bundle the code all in browser.
+
+
+
+# 5. Implementing In-Browser Bundling
+## 5.1. A Demo App
+## 5.2. Project setup
+1. We firstly use `npx create-react-app jbook --template typescript` to create the project.
+2. Besides, we install `npm install --save-exact ESBuild-wasm@0.8.27`.
+3. We remove all the files in `src` and start from scratch with `index.tsx`.
+    ```tsx
+    // src/index.tsx
+    import ReactDOM from 'react-dom';
+
+    const App = () => {
+      return <h1>Hi</h1>;
+    };
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
+
+## 5.3. Basic form elements
+1. We can set up the basic elements and states for the use.
+2. The user can put the code in the `textarea` which will be transpiled and executed.
+    ```tsx
+    // src/index.tsx
+    import { useState } from 'react';
+    import ReactDOM from 'react-dom';
+
+    const App = () => {
+      const [input, setInput] = useState('');
+      const [code, setCode] = useState('');
+
+      const onClick = () => {
+        console.log(input);
+      };
+
+      return (
+        <div>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          ></textarea>
+          <div>
+            <button onClick={onClick}>Submit</button>
+          </div>
+          <pre>{code}</pre>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
+
+## 5.4. Understanding ESBuild
+1. ESBuild can be executed in CLI, Javascript, and GO programming language.
+2. Note that ESBuild is written in GO programming language. The GO code is wrapped with Javascript wrapper. 
+3. The package we installed `esbuild-wsam` is actually web assembly which has a small amount of Javascript code which will be used to interact with the React App.
+4. On the other hand, WASM is the GO Language bundler compiled to work in the browser.
+5. In this case, we can copy the web assembly code `esbuild.wasm` from `npm` folder in `esbuild-wasm` and paste in `public` folder.
+6. Note that there's the other more elegant solution rather than simply copying and pasting code from NPM packages.
+
+## 5.5. Initializing ESBuild
+1. We can sue `build` and `transform` method from `service` object from web assembly. 
+    ```tsx
+    // src/index.tsx
+    import * as esbuild from 'esbuild-wasm';
+    import { useState, useEffect } from 'react';
+    import ReactDOM from 'react-dom';
+
+    const App = () => {
+      const [input, setInput] = useState('');
+      const [code, setCode] = useState('');
+
+      // only execute once when the component initiates
+      useEffect(() => {
+        startServce();
+      }, []);
+
+      const startServce = async () => {
+        const service = await esbuild.startService({
+          worker: true,
+          wasmURL: '/esbuild.wasm',
+        });
+
+        // service object is used to bundle the tranpile the code
+        console.log(service);
+      };
+
+      const onClick = () => {
+        console.log(input);
+      };
+
+      return (
+        <div>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          ></textarea>
+          <div>
+            <button onClick={onClick}>Submit</button>
+          </div>
+          <pre>{code}</pre>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
+
+## 5.6. Using Refs for Arbitrary Values
+## 5.7. Transpiling works 
+1. The `service` object is assigned to a reference in React.
+2. In the `onClick` handler we can check if the reference is created or simply leave the execution if it doesn't work.
+    ```tsx
+    // src/index.tsx
+    import * as esbuild from 'esbuild-wasm';
+    import { useState, useEffect, useRef } from 'react';
+    import ReactDOM from 'react-dom';
+
+    const App = () => {
+      const ref = useRef<any>();
+      const [input, setInput] = useState('');
+      const [code, setCode] = useState('');
+
+      // only execute once when the component initiates
+      useEffect(() => {
+        startServce();
+      }, []);
+
+      const startServce = async () => {
+        ref.current = await esbuild.startService({
+          worker: true,
+          wasmURL: '/esbuild.wasm',
+        });
+      };
+
+      const onClick = async () => {
+        // stop execution if no reference is created
+        if (!ref.current) return;
+
+        // transform the code with options and given code from the user
+        const result = await ref.current.transform(input, {
+          loader: 'jsx',
+          target: 'es2015',
+        });
+
+        setCode(result.code);
+      };
+
+      return (
+        <div>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          ></textarea>
+          <div>
+            <button onClick={onClick}>Submit</button>
+          </div>
+          <pre>{code}</pre>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+    ```
+
