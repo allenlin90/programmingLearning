@@ -12,6 +12,8 @@
   - [1.11. Function Parameters](#111-function-parameters)
   - [1.12. Comparing values](#112-comparing-values)
   - [1.13. Generating random number ranges](#113-generating-random-number-ranges)
+- [2. Bulls and Cows](#2-bulls-and-cows)
+  - [2.1. Editing Actors in our level](#21-editing-actors-in-our-level)
 
 1. The course requires several software to work with. It will take some time and space to install all softwares.
    1. EPIC Game launch installed along with VS 2022 community version (free)
@@ -467,3 +469,20 @@ int main()
 10. Use `#include <ctime>`
 11. At the start of main add `srand(time(NULL));`
 12. Creates new random sequence based on the time of day
+
+# 2. Bulls and Cows
+1. The section is more about getting familiar with Unreal Engine with navigation with features and functions on the interfaces.
+2. We can use WASD to contorl the viewpoint (similar to FPS games) horizontally and QE for up and down vertically.
+3. Clicking left mouse can move the view port forward and backward while right click can move the viewport around on the same spot (standing at the place and look around).
+
+## 2.1. Editing Actors in our level
+1. Actors
+   1. Any object that can be placed in your level is called and Actor.
+   2. They all have a transform.
+   3. There are several different types of Actor.
+2. In the viewport, there are several functions we can use to modify the object.
+3. For example, we can choose to drag the object and keep it staying on the surface level at what we build.
+4. Besides, we can use <kbd>w<kbd>, <kbd>e<kbd>, and <kbd>r<kbd> as the shortcut to modify the object.
+5. On the right panel (out of viewport), we can check on "transform" which we can input the parameters in numbers directly to setup the object. The UI is very similar to other graphic processing tools such as Adobe Illustrator and Photoshop.
+6. Besides, tree models in the games can be separated as 2 objects (trunk and leaves on the top).
+7. In the case that we move the trees around and cause the objects separated, we can copy the trunk and paste it on the leaves to rejoin the objects.
