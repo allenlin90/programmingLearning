@@ -84,6 +84,7 @@ Started: 2022/01/11
   - [4.24. Implementing client-side data fetching](#424-implementing-client-side-data-fetching)
   - [4.25. Using the 'useSWR' NextJS hook](#425-using-the-useswr-nextjs-hook)
   - [4.26. Combining pre-fetching with client-side fetching](#426-combining-pre-fetching-with-client-side-fetching)
+- [5. NextJS Summary](#5-nextjs-summary)
 
 ---
 
@@ -3052,3 +3053,5 @@ export default LastSalesPage;
 
     export default LastSalesPage;
     ```
+
+# 5. NextJS Summary
