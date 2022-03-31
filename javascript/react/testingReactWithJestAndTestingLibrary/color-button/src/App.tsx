@@ -1,24 +1,48 @@
-import React from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+enum ButtonColor {
+  red = 'red',
+  blue = 'blue',
+  MediumVioletRed = 'MediumVioletRed',
+  MidnightBlue = 'MidnightBlue',
+}
+
+export const replaceCamelWithSpaces = (colorName: string) => {
+  return colorName.replace(/\B([A-Z])\B/g, ' $1');
+};
+
 function App() {
+  const [buttonColor, setButtonColor] = useState<ButtonColor>(
+    'MediumVioletRed' as ButtonColor
+  );
+
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const newButtonColor =
+    buttonColor === 'MediumVioletRed' ? 'MidnightBlue' : 'MediumVioletRed';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button
+        style={{ backgroundColor: disabled ? 'grey' : buttonColor }}
+        onClick={() => setButtonColor(newButtonColor as ButtonColor)}
+        disabled={disabled}
+      >
+        Change to {replaceCamelWithSpaces(newButtonColor)}
+      </button>
+      <label htmlFor='enable-button-checkbox'>
+        Disable button
+        <input
+          type='checkbox'
+          id='enable-button-checkbox'
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setDisabled(event.target.checked)
+          }
+          aria-checked={disabled}
+          defaultChecked={disabled}
+        />
+      </label>
     </div>
   );
 }
