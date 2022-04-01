@@ -24,6 +24,12 @@ Start learning: 2022/03/29
   - [2.10. Unit Testing Functions](#210-unit-testing-functions)
   - [2.11. Code Quiz! Colors with Spaces](#211-code-quiz-colors-with-spaces)
   - [2.12. When to unit test](#212-when-to-unit-test)
+- [3. ESLint with Testing Library, plus Prettier](#3-eslint-with-testing-library-plus-prettier)
+  - [3.1. ESLint and Prettier](#31-eslint-and-prettier)
+    - [3.1.1. ESLint](#311-eslint)
+    - [3.1.2. Linting vs Formatting](#312-linting-vs-formatting)
+  - [3.2. ESLint Plugins](#32-eslint-plugins)
+  - [3.3. ESLinting for Testing Library and Jest-DOM](#33-eslinting-for-testing-library-and-jest-dom)
 
 # 1. Introduction
 ## 1.1. Testing Library and Jest
@@ -664,3 +670,49 @@ describe('spaces before camel-case capital letters', () => {
 3. Issue with functional tests:
    1. high-level makes them resistant to refactos
    2. high-level makes them difficult to diagnose
+
+# 3. ESLint with Testing Library, plus Prettier
+## 3.1. ESLint and Prettier
+### 3.1.1. ESLint
+1. Popular linter for Javascript
+2. Linting keeps code style consistent, especially for multi-eng projects
+3. Catches errors in code
+   1. using variable before defining
+   2. importing from nonexisting file
+4. Linter: analyzes static text and marks syntax that breaks rules
+5. Static: analyze code as written, not what happens when code is run
+### 3.1.2. Linting vs Formatting
+1. Formatters (like prettier) automatically format code (indents, spacing). E.g.
+   1. `import {useEffect} from 'react';`
+   2. `import { useEffect } from 'react';`
+2. Linter address format and style. E.g. preferred assertion method
+   1. `expect(checkbox).toHaveAttribute(checked);`
+   2. `expect(checkbox).toBeChecked();`
+## 3.2. ESLint Plugins
+1. Plug-ins extend ESLint
+2. Testing Library and jest-dom ESLint plugins
+
+## 3.3. ESLinting for Testing Library and Jest-DOM
+1. `eslint` and `prettier` extensions are required to be installed in VSCode.
+```json
+// .eslintrc.json
+{
+  "plugins": ["testing-library", "jest-dom"],
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "plugin:testing-library/react",
+    "plugin:jest-dom/recommended"
+  ]
+}
+```
+```json
+// .vscode/settings.json
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
+}
+```
