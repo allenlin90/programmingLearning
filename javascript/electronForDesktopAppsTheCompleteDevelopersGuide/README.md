@@ -19,6 +19,7 @@ Start Date: 2022/04/01
   - [2.5. On Menu Click Functionality](#25-on-menu-click-functionality)
   - [2.6. On Menu Click Functionality](#26-on-menu-click-functionality)
   - [2.7. Cross Platform Hotkeys](#27-cross-platform-hotkeys)
+  - [2.8. Creating separate windows](#28-creating-separate-windows)
 
 # 1. Handling Electron Projects
 ## 1.1. Getting started
@@ -440,6 +441,68 @@ const menuTemplate = [
       },
       {
         label: 'Quit',
+        click() {
+          app.quit();
+        },
+      },
+    ],
+  },
+];
+
+if (process.platform === 'darwin') {
+  menuTemplate.unshift({});
+}
+```
+
+## 2.8. Creating separate windows
+1. To create a new window, we can use `BrowserWindow` to create another instance.
+2. In this case, the new window should be smaller than the main window. 
+3. We can pass both `width` and `height` to create the browser instance which takes pixel values.
+4. Note that `width` and `height` take `Number` values.
+5. Besides, we can give it a `title` on the new window instance.
+```js
+// index.js
+const electron = require('electron');
+const { app, BrowserWindow, Menu } = electron;
+
+let mainWindow;
+let addWindow;
+
+app.on('ready', () => {
+  mainWindow = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: false,
+    },
+  });
+  mainWindow.loadURL(`file://${__dirname}/main.html`);
+
+  const mainMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(mainMenu);
+});
+
+function createAddWindow() {
+  addWindow = new BrowserWindow({
+    width: 300,
+    height: 200,
+    title: 'Add New Todo',
+  });
+}
+
+const menuTemplate = [
+  {
+    label: 'MyFile',
+    submenu: [
+      {
+        label: 'New Todo',
+        click() {
+          createAddWindow();
+        },
+      },
+      {
+        label: 'Quit',
+        accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
         click() {
           app.quit();
         },
