@@ -20,6 +20,17 @@ Start Date: 2022/04/01
   - [2.6. On Menu Click Functionality](#26-on-menu-click-functionality)
   - [2.7. Cross Platform Hotkeys](#27-cross-platform-hotkeys)
   - [2.8. Creating separate windows](#28-creating-separate-windows)
+  - [2.9. Another Electron Gotcha](#29-another-electron-gotcha)
+  - [2.10. Adding polish to electron](#210-adding-polish-to-electron)
+  - [2.11. Restoring Developer Tools](#211-restoring-developer-tools)
+  - [2.12. IPC Between Windows](#212-ipc-between-windows)
+  - [2.13. Garbage collection with Electron](#213-garbage-collection-with-electron)
+  - [2.14. Roles Shortcut](#214-roles-shortcut)
+  - [2.15. Clearing List](#215-clearing-list)
+- [3. Status Tray Application](#3-status-tray-application)
+  - [3.1. App Boilerplate](#31-app-boilerplate)
+- [4. Combining Electron with React and Redux](#4-combining-electron-with-react-and-redux)
+  - [4.1. App Overview](#41-app-overview)
 
 # 1. Handling Electron Projects
 ## 1.1. Getting started
@@ -515,3 +526,494 @@ if (process.platform === 'darwin') {
   menuTemplate.unshift({});
 }
 ```
+
+## 2.9. Another Electron Gotcha
+1. After adding a separated window, we can also use `loadURL` to open a HTML file. 
+2. However, the current setting allows users to close the main window, while working on the separate window. 
+3. In convention, we'd like the app to be closed when the main window is closed. 
+    ```js
+    // index.js
+    const electron = require('electron');
+    const { app, BrowserWindow, Menu } = electron;
+
+    let mainWindow;
+    let addWindow;
+
+    app.on('ready', () => {
+      mainWindow = new BrowserWindow({
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+          enableRemoteModule: false,
+        },
+      });
+      mainWindow.loadURL(`file://${__dirname}/main.html`);
+
+      const mainMenu = Menu.buildFromTemplate(menuTemplate);
+      Menu.setApplicationMenu(mainMenu);
+    });
+
+    function createAddWindow() {
+      addWindow = new BrowserWindow({
+        width: 300,
+        height: 200,
+        title: 'Add New Todo',
+      });
+
+      addWindow.loadURL(`file://${__dirname}/add.html`);
+    }
+
+    const menuTemplate = [
+      {
+        label: 'MyFile',
+        submenu: [
+          {
+            label: 'New Todo',
+            click() {
+              createAddWindow();
+            },
+          },
+          {
+            label: 'Quit',
+            accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
+            click() {
+              app.quit();
+            },
+          },
+        ],
+      },
+    ];
+
+    if (process.platform === 'darwin') {
+      menuTemplate.unshift({});
+    }
+    ```
+    ```html
+    <!-- add.html -->
+    <head></head>
+    <body>
+      <form>
+        <div>
+          <label>
+            Enter your todo
+            <input autofocus />
+          </label>
+        </div>
+        <button type="submit">Add</button>
+      </form>
+    </body>
+    ```
+
+## 2.10. Adding polish to electron
+1. To allow users close the app when the main window is closed, we can simply use an event handler to "quit" the app.
+    ```js
+    // index.js
+    const electron = require('electron');
+    const { app, BrowserWindow, Menu } = electron;
+
+    let mainWindow;
+    let addWindow;
+
+    app.on('ready', () => {
+      mainWindow = new BrowserWindow({
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+          enableRemoteModule: false,
+        },
+      });
+      mainWindow.loadURL(`file://${__dirname}/main.html`);
+      mainWindow.on('closed', () => app.quit());
+
+      const mainMenu = Menu.buildFromTemplate(menuTemplate);
+      Menu.setApplicationMenu(mainMenu);
+    });
+
+    function createAddWindow() {
+      addWindow = new BrowserWindow({
+        width: 300,
+        height: 200,
+        title: 'Add New Todo',
+      });
+
+      addWindow.loadURL(`file://${__dirname}/add.html`);
+    }
+
+    const menuTemplate = [
+      {
+        label: 'MyFile',
+        submenu: [
+          {
+            label: 'New Todo',
+            click() {
+              createAddWindow();
+            },
+          },
+          {
+            label: 'Quit',
+            accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
+            click() {
+              app.quit();
+            },
+          },
+        ],
+      },
+    ];
+
+    if (process.platform === 'darwin') {
+      menuTemplate.unshift({});
+    }
+    ```
+
+## 2.11. Restoring Developer Tools
+1. When we want to transfer data between windows, we can use the IPC system. 
+2. Besides, when we remove the default menu, we can't use the shortcut to open developer console or using `debugger` key word.
+3. However, we also don't want the regular users to access the developer console in regular uses. 
+4. Therefore, we can check if the app is running in Production or Development environment.
+5. In this case, we can use `process.env.Node_ENV` to check which environment is the app running.
+6. In this case, we use the 2nd argument `focusedWindow`, in the "click" callback event when the user clicks on the label.
+7. This argument helps to separate and check which window does the user wants to open the developer console.
+8. Note that each window is separated in Electron.
+    ```js
+    // index.js
+    if (process.env.NODE_ENV !== 'production') {
+      menuTemplate.push({
+        label: 'View',
+        submenu: [
+          {
+            label: 'Toggle Developer Tools',
+            accelerator:
+              process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
+            click(item, focusedWindow) {
+              focusedWindow.toggleDevTools();
+            },
+          },
+        ],
+      });
+    }
+    ```
+
+## 2.12. IPC Between Windows
+1. We can use `ipcRenderer` to send the value from the window back to Electron.
+    ```html
+    <!-- add.html -->
+    <head></head>
+    <body>
+      <form>
+        <div>
+          <label>
+            Enter your todo
+            <input autofocus />
+          </label>
+        </div>
+        <button type="submit">Add</button>
+      </form>
+
+      <script>
+        const { ipcRenderer } = require('electron');
+        document.querySelector('form').addEventListener('submit', (event) => {
+          event.preventDefault();
+
+          const { value } = document.querySelector('input');
+
+          ipcRenderer.send('todo:add', value);
+        });
+      </script>
+    </body>
+    ```
+2. In Electron, we can use `ipcMain` with `on` method to handle the data.
+    ```js
+    // index.js
+    const electron = require('electron');
+    const { app, BrowserWindow, Menu, ipcMain } = electron;
+
+    let mainWindow;
+    let addWindow;
+
+    app.on('ready', () => {
+      mainWindow = new BrowserWindow({
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+          enableRemoteModule: false,
+        },
+      });
+      mainWindow.loadURL(`file://${__dirname}/main.html`);
+      mainWindow.on('closed', () => app.quit());
+
+      const mainMenu = Menu.buildFromTemplate(menuTemplate);
+      Menu.setApplicationMenu(mainMenu);
+    });
+
+    function createAddWindow() {
+      addWindow = new BrowserWindow({
+        width: 300,
+        height: 200,
+        title: 'Add New Todo',
+      });
+
+      addWindow.loadURL(`file://${__dirname}/add.html`);
+    }
+
+    ipcMain.on('todo:add', (event, todo) => {
+      mainWindow.webContents.send('todo:add', todo);
+    });
+
+    const menuTemplate = [
+      {
+        label: 'MyFile',
+        submenu: [
+          {
+            label: 'New Todo',
+            click() {
+              createAddWindow();
+            },
+          },
+          {
+            label: 'Quit',
+            accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
+            click() {
+              app.quit();
+            },
+          },
+        ],
+      },
+    ];
+
+    if (process.platform === 'darwin') {
+      menuTemplate.unshift({});
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      menuTemplate.push({
+        label: 'View',
+        submenu: [
+          {
+            label: 'Toggle Developer Tools',
+            accelerator:
+              process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
+            click(item, focusedWindow) {
+              focusedWindow.toggleDevTools();
+            },
+          },
+        ],
+      });
+    }
+    ```
+
+## 2.13. Garbage collection with Electron
+1. After the window is closed, we can remove the reference on `addWindow` varaible to allow Node.js garbage collect the object.
+2. Note that we need to pass the configurations to initiate `new BrowserWindow` to use `require` in the HTML file. 
+3. We can simply set up a listener for `close` function and assign `null` to `addWindow` variable to cancel the reference.
+
+## 2.14. Roles Shortcut
+1. We can add regular frontend Javascript to work with the incoming data from `ipc`.
+2. In addition, we can use `role` in the menu to have shortcut that are preset by [Electron](https://www.electronjs.org/docs/latest/api/menu#examples).
+3. In this case, we can skip setting up `label`, `accelerator` and the other properties. 
+    ```js
+    // index.js
+    const electron = require('electron');
+    const path = require('path');
+    const { app, BrowserWindow, Menu, ipcMain } = electron;
+
+    let mainWindow;
+    let addWindow;
+
+    const windowConfig = {
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: false,
+      },
+    };
+
+    app.on('ready', () => {
+      mainWindow = new BrowserWindow(windowConfig);
+      mainWindow.loadURL(`file://${__dirname}/main.html`);
+      mainWindow.on('closed', () => app.quit());
+
+      const mainMenu = Menu.buildFromTemplate(menuTemplate);
+      Menu.setApplicationMenu(mainMenu);
+    });
+
+    function createAddWindow() {
+      addWindow = new BrowserWindow({
+        ...windowConfig,
+        width: 300,
+        height: 200,
+        title: 'Add New Todo',
+      });
+
+      addWindow.loadURL(`file://${__dirname}/add.html`);
+      addWindow.on('close', () => (addWindow = null));
+    }
+
+    ipcMain.on('todo:add', (event, todo) => {
+      mainWindow.webContents.send('todo:add', todo);
+      addWindow.close();
+    });
+
+    const menuTemplate = [
+      {
+        label: 'MyFile',
+        submenu: [
+          {
+            label: 'New Todo',
+            click() {
+              createAddWindow();
+            },
+          },
+          {
+            label: 'Quit',
+            accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
+            click() {
+              app.quit();
+            },
+          },
+        ],
+      },
+    ];
+
+    if (process.platform === 'darwin') {
+      menuTemplate.unshift({});
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      menuTemplate.push({
+        label: 'View',
+        submenu: [
+          { role: 'reload' },
+          {
+            label: 'Toggle Developer Tools',
+            accelerator:
+              process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
+            click(item, focusedWindow) {
+              focusedWindow.toggleDevTools();
+            },
+          },
+        ],
+      });
+    }
+    ```
+
+## 2.15. Clearing List
+1. We can add a new label to menu have a button to use.
+2. In the click event, we can pass a function to emit an event to the frontend and remove all the children `li` in the `ul` element.
+3. We can use either `innerHTML` or `removeChildren` on the `ul` DOM to remove child elements. 
+    ```js
+    // index.js
+    const electron = require('electron');
+    const path = require('path');
+    const { app, BrowserWindow, Menu, ipcMain } = electron;
+
+    let mainWindow;
+    let addWindow;
+
+    const windowConfig = {
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: false,
+      },
+    };
+
+    app.on('ready', () => {
+      mainWindow = new BrowserWindow(windowConfig);
+      mainWindow.loadURL(`file://${__dirname}/main.html`);
+      mainWindow.on('closed', () => app.quit());
+
+      const mainMenu = Menu.buildFromTemplate(menuTemplate);
+      Menu.setApplicationMenu(mainMenu);
+    });
+
+    function createAddWindow() {
+      addWindow = new BrowserWindow({
+        ...windowConfig,
+        width: 300,
+        height: 200,
+        title: 'Add New Todo',
+      });
+
+      addWindow.loadURL(`file://${__dirname}/add.html`);
+      addWindow.on('close', () => (addWindow = null));
+    }
+
+    ipcMain.on('todo:add', (event, todo) => {
+      mainWindow.webContents.send('todo:add', todo);
+      addWindow.close();
+    });
+
+    const menuTemplate = [
+      {
+        label: 'MyFile',
+        submenu: [
+          {
+            label: 'New Todo',
+            click() {
+              createAddWindow();
+            },
+          },
+          {
+            label: 'Quit',
+            accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
+            click() {
+              app.quit();
+            },
+          },
+        ],
+      },
+    ];
+
+    if (process.platform === 'darwin') {
+      menuTemplate.unshift({});
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      menuTemplate.push({
+        label: 'View',
+        submenu: [
+          { role: 'reload' },
+          {
+            label: 'Toggle Developer Tools',
+            accelerator:
+              process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
+            click(item, focusedWindow) {
+              focusedWindow.toggleDevTools();
+            },
+          },
+        ],
+      });
+    }
+    ```
+    ```html
+    <!-- main.html -->
+    <head></head>
+    <body>
+      <h1>My Todos</h1>
+      <ul></ul>
+      <script>
+        const { ipcRenderer } = require('electron');
+        const ul = document.querySelector('ul');
+        ipcRenderer.on('todo:add', (event, todo) => {
+          const li = document.createElement('li');
+          const text = document.createTextNode(todo);
+
+          li.appendChild(text);
+          ul.appendChild(li);
+        });
+
+        ipcRenderer.on('todo:clear', (event) => {
+          // ul.innerHTML = '';
+          ul.replaceChildren();
+        });
+      </script>
+    </body>
+    ```
+
+# 3. Status Tray Application
+## 3.1. App Boilerplate
+
+
+# 4. Combining Electron with React and Redux
+## 4.1. App Overview
+1. The app allows users to darg and drop a video file and convert to different types of format such as `avi` and `mp4`
