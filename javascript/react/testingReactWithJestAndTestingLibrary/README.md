@@ -30,6 +30,8 @@ Start learning: 2022/03/29
     - [3.1.2. Linting vs Formatting](#312-linting-vs-formatting)
   - [3.2. ESLint Plugins](#32-eslint-plugins)
   - [3.3. ESLinting for Testing Library and Jest-DOM](#33-eslinting-for-testing-library-and-jest-dom)
+- [4. Sundaes On Demand: Form Review and Popover](#4-sundaes-on-demand-form-review-and-popover)
+  - [4.1. Introduction to Sundaes on Demand](#41-introduction-to-sundaes-on-demand)
 
 # 1. Introduction
 ## 1.1. Testing Library and Jest
@@ -716,3 +718,33 @@ describe('spaces before camel-case capital letters', () => {
   "editor.formatOnSave": true
 }
 ```
+
+# 4. Sundaes On Demand: Form Review and Popover
+## 4.1. Introduction to Sundaes on Demand
+1. App summary
+   1. Choose ice cream flavors and toppings and submit order
+   2. Flavors and toppings come from server
+   3. Order is sent to server
+2. Backdrop to test
+   1. More complex user interactions
+      1. Multiple form entry, moving through order phases
+   2. Mouseover popup
+      1. Test that element disappears from DOM
+   3. Simulating server response 
+      1. Mock service worker
+   4. `async` app updates
+      1. awaiting DOM changes
+   5. Global state via context
+3. In this case
+   1. We will not be testing context implementation
+   2. We are only interested in testing behavior as seen by user
+   3. Tests no different if we used Redux, Mobx, etc.
+   4. Only difference is the test setup
+      1. Make sure component is wrapped in context
+      2. Ensure functionality
+      3. Avoid errors
+4. Server
+   1. For order, simply generates random order number
+   2. Server not needed for functional rect app testing
+      1. Use mock-service-worker to mock responses from server
+      2. Server for spec, manual acceptance testing
