@@ -32,6 +32,10 @@ Start learning: 2022/03/29
   - [3.3. ESLinting for Testing Library and Jest-DOM](#33-eslinting-for-testing-library-and-jest-dom)
 - [4. Sundaes On Demand: Form Review and Popover](#4-sundaes-on-demand-form-review-and-popover)
   - [4.1. Introduction to Sundaes on Demand](#41-introduction-to-sundaes-on-demand)
+  - [4.2. ESlint and Prettier setup](#42-eslint-and-prettier-setup)
+  - [4.3. React Bootstrap setup](#43-react-bootstrap-setup)
+  - [4.4. Code organization and introduction to SummaryForm](#44-code-organization-and-introduction-to-summaryform)
+  - [4.5. Code Quiz: Checkbox Enables Button](#45-code-quiz-checkbox-enables-button)
 
 # 1. Introduction
 ## 1.1. Testing Library and Jest
@@ -748,3 +752,91 @@ describe('spaces before camel-case capital letters', () => {
    2. Server not needed for functional rect app testing
       1. Use mock-service-worker to mock responses from server
       2. Server for spec, manual acceptance testing
+
+## 4.2. ESlint and Prettier setup
+1. Install packages by `npm install eslint-plugin-testing-library eslint-plugin-jest-dom`
+2. Remove `eslintConfig` from `package.json`
+3. Add `.eslintcache` and `.vscode` to `.gitignore`
+4. Create `.vscode/settings.json` and add standard config
+5. Test that it worked in `App.test.js`.
+    ```js
+    expect(linkElement).toHaveAttribute('checked');
+
+    import { useEffect } from 'react';
+    ```
+6. After remove `eslintConfig` in `package.json`, we can create `.eslintrc.json` in the root directory.
+    ```json
+    {
+      "plugins": ["jest-dom", "testing-library"],
+      "extends": [
+        "react-app",
+        "react-app/jest",
+        "plugin:testing-library/react",
+        "plugin:jest-dom/recommended"
+      ]
+    }
+    ```
+7. We can create `setting.json` under `.vscode` directory. Note that we need to add more items in `eslint.validate` if we are going to use Typescript.
+    ```json
+    {
+      "eslint.option": {
+        "configFile": "eslintrc.json"
+      },
+      "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+      ],
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+      },
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    }
+    ```
+
+## 4.3. React Bootstrap setup
+1. We can install Boostrap by `npm install react-bootstrap bootstrap` and add the following links for Javascript files. [Reference](https://react-bootstrap.github.io/getting-started/introduction)
+    ```html
+    <script src="https://unpkg.com/react/umd/react.production.min.js" crossorigin></script>
+
+    <script
+      src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"
+      crossorigin></script>
+
+    <script
+      src="https://unpkg.com/react-bootstrap@next/dist/react-bootstrap.min.js"
+      crossorigin></script>
+    ```
+2. We then add `import 'bootstrap/dist/css/bootstrap.min.css';` to `index.js`.
+3. Besides, to enable dark theme, we will modify `index.html` in `public` direclty by giving `style` attribute to `body` tag `<body style="background-color: teal; color: ivory">`.
+
+## 4.4. Code organization and introduction to SummaryForm
+1. In this case, we will create a `SummaryForm` component.
+2. Test and code checkbox/button
+3. Test and code Terms and Conditions "popover"
+   1. syntax to test that element is no longer on page
+4. Test and code summary text
+5. Test and code button functionality
+6. Code Organization
+   1. Organization by pages
+      1. `test` directory for each page
+      2. Jest will find and run any files that end in `.test.js` or `.test.ts`
+   2. `src/pages/summary`
+      1. `OrderSummary.jsx`
+      2. `SummaryForm.jsx`
+   3. `src/pages/summary/test`
+      1. `SummaryForm.test.jsx`
+
+## 4.5. Code Quiz: Checkbox Enables Button
+1. Write tests to ensure that
+   1. Checkbox is unchecked by default
+   2. Checking checkbox enables button
+   3. Unchecking checkbox again disables button
+2. A Chance to setup your own test file from scratch
+   1. Use tests from last section as a model
+   2. Render the `<SummaryForm />` component
+3. Find checkbox and button using `{ name }` option
+   1. Use mockup for `name` option values
+4. Check that tests fail! Read part of read-green testing
