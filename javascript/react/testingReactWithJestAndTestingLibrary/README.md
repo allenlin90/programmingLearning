@@ -36,6 +36,7 @@ Start learning: 2022/03/29
   - [4.3. React Bootstrap setup](#43-react-bootstrap-setup)
   - [4.4. Code organization and introduction to SummaryForm](#44-code-organization-and-introduction-to-summaryform)
   - [4.5. Code Quiz: Checkbox Enables Button](#45-code-quiz-checkbox-enables-button)
+  - [4.6. React Bootstrap Popover and Testing Library userEvent](#46-react-bootstrap-popover-and-testing-library-userevent)
 
 # 1. Introduction
 ## 1.1. Testing Library and Jest
@@ -840,3 +841,88 @@ describe('spaces before camel-case capital letters', () => {
 3. Find checkbox and button using `{ name }` option
    1. Use mockup for `name` option values
 4. Check that tests fail! Read part of read-green testing
+    ```tsx
+    // src/pages/tests/SummaryForm.test.tsx
+    import { render, screen, fireEvent } from '@testing-library/react';
+    import SummaryForm from '../SummaryForm';
+
+    test('Initial conditions', () => {
+      render(<SummaryForm />);
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      expect(checkbox).not.toBeChecked();
+
+      const confirmButton = screen.getByRole('button', { name: /confirm order/i });
+      expect(confirmButton).toBeDisabled();
+    });
+
+    test('Checkbox disable button on first click and enables on second click', () => {
+      render(<SummaryForm />);
+      const checkbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      const confirmButton = screen.getByRole('button', { name: /confirm order/i });
+
+      fireEvent.click(checkbox);
+      expect(confirmButton).toBeEnabled();
+
+      fireEvent.click(checkbox);
+      expect(confirmButton).toBeDisabled();
+    });
+    ```
+
+
+## 4.6. React Bootstrap Popover and Testing Library userEvent
+1. Besides `fireEvent`, we may use `userEvent` to trigger user actions.
+2. Note that we need to install additional packages to work with `userEvent`. 
+3. `npm install --save-dev @testing-library/user-event @testing-library/dom`
+4. Starting from ver. 14, `userEvent` requires to call a setup and simluate an user with `userEvent.setup()`.
+5. We then can use the object to interact with the components.
+6. Besides, we need to turn the testing function into `async` and `await` for the click event as the state in React apps changes asynchronously. 
+    ```tsx
+    // src/pages/tests/SummaryForm.test.tsx
+    import {
+      render,
+      screen,
+      // fireEvent
+    } from '@testing-library/react';
+    import userEvent from '@testing-library/user-event';
+    import SummaryForm from '../SummaryForm';
+
+    test('Initial conditions', () => {
+      render(<SummaryForm />);
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      expect(checkbox).not.toBeChecked();
+
+      const confirmButton = screen.getByRole('button', { name: /confirm order/i });
+      expect(confirmButton).toBeDisabled();
+    });
+
+    test('Checkbox disable button on first click and enables on second click', async () => {
+      render(<SummaryForm />);
+
+      const user = userEvent.setup();
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      const confirmButton = screen.getByRole('button', { name: /confirm order/i });
+
+      await user.click(checkbox);
+      expect(confirmButton).toBeEnabled();
+
+      await user.click(checkbox);
+      expect(confirmButton).toBeDisabled();
+    });
+
+    test('popover respondsto hover', () => {
+      // popover starts out hidden
+      // popover appears upon mouseover of checkbox label
+      // popover disappears when we moust out
+    });
+    ```

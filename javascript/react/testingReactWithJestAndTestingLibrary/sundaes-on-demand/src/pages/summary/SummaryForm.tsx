@@ -21,7 +21,7 @@ export const SummaryFormPage: FC = () => {
           label={checkboxLabel}
         />
       </Form.Group>
-      <Button variant='primary' type='submit' disabled={tcChecked}>
+      <Button variant='primary' type='submit' disabled={!tcChecked}>
         Confirm order
       </Button>
     </Form>
