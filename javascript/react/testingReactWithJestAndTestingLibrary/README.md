@@ -37,6 +37,10 @@ Start learning: 2022/03/29
   - [4.4. Code organization and introduction to SummaryForm](#44-code-organization-and-introduction-to-summaryform)
   - [4.5. Code Quiz: Checkbox Enables Button](#45-code-quiz-checkbox-enables-button)
   - [4.6. React Bootstrap Popover and Testing Library userEvent](#46-react-bootstrap-popover-and-testing-library-userevent)
+  - [4.7. Screen Query Method](#47-screen-query-method)
+  - [4.8. Testing element is not on the page: Start popover tests](#48-testing-element-is-not-on-the-page-start-popover-tests)
+  - [4.9. React code: Popover](#49-react-code-popover)
+  - [4.10. "Not wrapped in act(...)" Error, Async Disappearance](#410-not-wrapped-in-act-error-async-disappearance)
 
 # 1. Introduction
 ## 1.1. Testing Library and Jest
@@ -924,5 +928,211 @@ describe('spaces before camel-case capital letters', () => {
       // popover starts out hidden
       // popover appears upon mouseover of checkbox label
       // popover disappears when we moust out
+    });
+    ```
+
+## 4.7. Screen Query Method
+1. screen Query Method
+   1. command
+      1. `get` expect element to be in DOM
+      2. `query` expect element not to be in DOM
+      3. `find` expect element to appear async
+   2. [All] - returns an array of matches
+      1. (exclude) expect only one match
+      2. (include) expect more than one match
+   3. QueryType
+      1. `Role` (most preferred)
+      2. `AltText` (images)
+      3. `Text` (display elements)
+      4. Form elements
+         1. `PlaceHolderText`
+         2. `LabelText`
+         3. `DisplayValue`
+2. These are useful links for the APIs and methods
+   1. [https://testing-library.com/docs/react-testing-library/cheatsheet/](https://testing-library.com/docs/react-testing-library/cheatsheet/)
+   2. [https://testing-library.com/docs/queries/about/](https://testing-library.com/docs/queries/about/)
+   3. [https://testing-library.com/docs/queries/about/#priority](https://testing-library.com/docs/queries/about/#priority)
+
+## 4.8. Testing element is not on the page: Start popover tests
+## 4.9. React code: Popover
+1. The popover element only shows on the screen when a user hovers on an element to trigger the event.
+2. However, the following testing code doesn't actually work, as the popover doesn't disappear when it "unhovers".
+    ```tsx
+    // src/pages/summary/tests/SummaryForm.test.tsx
+    import {
+      render,
+      screen,
+      // fireEvent
+    } from '@testing-library/react';
+    import userEvent from '@testing-library/user-event';
+    import SummaryForm from '../SummaryForm';
+
+    test('Initial conditions', () => {
+      render(<SummaryForm />);
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      expect(checkbox).not.toBeChecked();
+
+      const confirmButton = screen.getByRole('button', { name: /confirm order/i });
+      expect(confirmButton).toBeDisabled();
+    });
+
+    test('Checkbox disable button on first click and enables on second click', async () => {
+      render(<SummaryForm />);
+
+      const user = userEvent.setup();
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      const confirmButton = screen.getByRole('button', { name: /confirm order/i });
+
+      await user.click(checkbox);
+      expect(confirmButton).toBeEnabled();
+
+      await user.click(checkbox);
+      expect(confirmButton).toBeDisabled();
+    });
+
+    test('popover respondsto hover', async () => {
+      render(<SummaryForm />);
+
+      const popoverRegex = new RegExp(/no ice cream will actually be delivered/i);
+      // popover starts out hidden
+      const nullPopover = screen.queryByText(popoverRegex);
+      expect(nullPopover).not.toBeInTheDocument();
+
+      // popover appears upon mouseover of checkbox label
+      const termsAndConditions = screen.getByText(/terms and conditions/i);
+      await userEvent.hover(termsAndConditions);
+
+      const popover = screen.getByText(popoverRegex);
+      expect(popover).toBeInTheDocument();
+
+      // popover disappears when we moust out
+      await userEvent.unhover(termsAndConditions);
+      const nullPopoverAgain = screen.queryByText(popoverRegex);
+      expect(nullPopoverAgain).not.toBeInTheDocument();
+    });
+    ```
+    ```tsx
+    // src/pages/summary/SummaryForm
+    import { useState, FC, ChangeEvent } from 'react';
+    import { Form, Button, Popover, OverlayTrigger } from 'react-bootstrap';
+
+    export const SummaryFormPage: FC = () => {
+      const [tcChecked, setTcChecked] = useState<boolean>(false);
+
+      const popover = (
+        <Popover id='popover-basic'>
+          <Popover.Header></Popover.Header>
+          <Popover.Body>No ice cream will actually be delivered</Popover.Body>
+        </Popover>
+      );
+
+      const checkboxLabel = (
+        <span>
+          I agree to
+          <OverlayTrigger placement='right' overlay={popover}>
+            <span style={{ color: 'blue' }}>Terms and Conditions</span>
+          </OverlayTrigger>
+        </span>
+      );
+
+      return (
+        <Form>
+          <Form.Group controlId='terms-and-conditions'>
+            <Form.Check
+              type='checkbox'
+              checked={tcChecked}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setTcChecked(e.target.checked)
+              }
+              label={checkboxLabel}
+            />
+          </Form.Group>
+          <Button variant='primary' type='submit' disabled={!tcChecked}>
+            Confirm order
+          </Button>
+        </Form>
+      );
+    };
+
+    export default SummaryFormPage;
+    ```
+
+## 4.10. "Not wrapped in act(...)" Error, Async Disappearance
+1. React updated element after text was finished.
+2. Don't want to follow the advice to wrap in act(...)
+   1. Testing library actually works this for us.
+   2. [https://testing-library.com/docs/preact-testing-library/api/#act](https://testing-library.com/docs/preact-testing-library/api/#act)
+3. To remedy this error:
+   1. Determine what changes after the test is over (async)
+   2. Account for the change in test by
+      1. awaiting the change, and
+      2. asserting on it
+   3. More info: [https://kentcdodds.com/blog/fix-the-not-wrapped-in-act-warning](https://kentcdodds.com/blog/fix-the-not-wrapped-in-act-warning)
+4. We can check on [https://testing-library.com/docs/guide-disappearance/](https://testing-library.com/docs/guide-disappearance/)
+5. Note that we don't need to check with `expect` to know if the element is `.not.toBeInTheDocument`.
+6. According to [https://testing-library.com/docs/guide-disappearance/#waiting-for-disappearance](https://testing-library.com/docs/guide-disappearance/#waiting-for-disappearance), we can return the `queryByText` object in the callback function to check if the element has been removed.
+    ```tsx
+    // src/pages/summary/SummaryFrom.test.tsx
+    import {
+      render,
+      screen,
+      waitForElementToBeRemoved,
+      // fireEvent
+    } from '@testing-library/react';
+    import userEvent from '@testing-library/user-event';
+    import SummaryForm from '../SummaryForm';
+
+    test('Initial conditions', () => {
+      render(<SummaryForm />);
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      expect(checkbox).not.toBeChecked();
+
+      const confirmButton = screen.getByRole('button', { name: /confirm order/i });
+      expect(confirmButton).toBeDisabled();
+    });
+
+    test('Checkbox disable button on first click and enables on second click', async () => {
+      render(<SummaryForm />);
+
+      const user = userEvent.setup();
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      const confirmButton = screen.getByRole('button', { name: /confirm order/i });
+
+      await user.click(checkbox);
+      expect(confirmButton).toBeEnabled();
+
+      await user.click(checkbox);
+      expect(confirmButton).toBeDisabled();
+    });
+
+    test('popover respondsto hover', async () => {
+      render(<SummaryForm />);
+      const popoverRegex = new RegExp(/no ice cream will actually be delivered/i);
+
+      // popover starts out hidden
+      const nullPopover = screen.queryByText(popoverRegex);
+      expect(nullPopover).not.toBeInTheDocument();
+
+      // popover appears upon mouseover of checkbox label
+      const termsAndConditions = screen.getByText(/terms and conditions/i);
+      await userEvent.hover(termsAndConditions);
+      const popover = screen.getByText(popoverRegex);
+      expect(popover).toBeInTheDocument();
+
+      // popover disappears when we moust out
+      await userEvent.unhover(termsAndConditions);
+      await waitForElementToBeRemoved(() => screen.queryByText(popoverRegex));
     });
     ```

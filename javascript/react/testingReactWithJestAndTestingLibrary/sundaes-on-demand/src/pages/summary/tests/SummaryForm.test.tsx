@@ -1,6 +1,7 @@
 import {
   render,
   screen,
+  waitForElementToBeRemoved,
   // fireEvent
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -35,8 +36,21 @@ test('Checkbox disable button on first click and enables on second click', async
   expect(confirmButton).toBeDisabled();
 });
 
-test('popover respondsto hover', () => {
+test('popover respondsto hover', async () => {
+  render(<SummaryForm />);
+  const popoverRegex = new RegExp(/no ice cream will actually be delivered/i);
+
   // popover starts out hidden
+  const nullPopover = screen.queryByText(popoverRegex);
+  expect(nullPopover).not.toBeInTheDocument();
+
   // popover appears upon mouseover of checkbox label
+  const termsAndConditions = screen.getByText(/terms and conditions/i);
+  await userEvent.hover(termsAndConditions);
+  const popover = screen.getByText(popoverRegex);
+  expect(popover).toBeInTheDocument();
+
   // popover disappears when we moust out
+  await userEvent.unhover(termsAndConditions);
+  await waitForElementToBeRemoved(() => screen.queryByText(popoverRegex));
 });
