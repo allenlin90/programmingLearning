@@ -31,6 +31,13 @@ Start Date: 2022/04/01
   - [3.1. App Boilerplate](#31-app-boilerplate)
 - [4. Combining Electron with React and Redux](#4-combining-electron-with-react-and-redux)
   - [4.1. App Overview](#41-app-overview)
+  - [4.2. App Challenges](#42-app-challenges)
+  - [4.3. BrowserWindow Creation](#43-browserwindow-creation)
+  - [4.4. Starting Electron with Webpack](#44-starting-electron-with-webpack)
+  - [4.5. Overview of React and Redux](#45-overview-of-react-and-redux)
+  - [4.6. Receiving a List of videos](#46-receiving-a-list-of-videos)
+  - [4.7. Video metadata](#47-video-metadata)
+  - [4.8. Handling Async Bulk Operations with Promises](#48-handling-async-bulk-operations-with-promises)
 
 # 1. Handling Electron Projects
 ## 1.1. Getting started
@@ -1012,8 +1019,116 @@ if (process.platform === 'darwin') {
 
 # 3. Status Tray Application
 ## 3.1. App Boilerplate
-
+1. We can clone the project from github at [https://github.com/StephenGrider/ElectronCode](https://github.com/StephenGrider/ElectronCode).
+2. We will work on "Tasky" in this section.
 
 # 4. Combining Electron with React and Redux
 ## 4.1. App Overview
-1. The app allows users to darg and drop a video file and convert to different types of format such as `avi` and `mp4`
+1. The app allows users to darg and drop a video file and convert to different types of format such as `avi` and `mp4`.
+
+## 4.2. App Challenges
+1. Challenge and solutions
+   1. Get content to appear on the screen - Wire up the basics of electron
+   2. Show an interface to receive drag and dropped files - Handled by boilerplate using React and Redux
+   3. Once a file is received, show a different window - Handled by boilerplate using React and Redux.
+   4. Show details about the video waiting to be converted (duration, file format) - Use FFMPEF cli
+   5. Convert a video - Use FFMPEF cli
+   6. Show progress bar of conversion process - Handle feedback from FFMPEG cli
+
+## 4.3. BrowserWindow Creation
+1. We can start with `index.js` to initiate the electron app.
+    ```js
+    // index.js
+    const electron = require('electron');
+    const { app, BrowserWindow } = electron;
+
+    let mainWindow;
+    const windowConfig = {
+      height: 600,
+      width: 800,
+      webPreference: {
+        backgroundTHrottling: false,
+      },
+    };
+
+    app.on('ready', () => {
+      mainWindow = new BrowserWindow(windowConfig);
+    });
+    ```
+
+## 4.4. Starting Electron with Webpack
+1. We will use webpack to serve and bundle the react app used by Electorn.
+2. Therefore, we need 2 terminals to run both the webpack server and electron.
+    ```js
+    // index.js
+    const electron = require('electron');
+    const { app, BrowserWindow } = electron;
+
+    let mainWindow;
+    const windowConfig = {
+      height: 600,
+      width: 800,
+      webPreference: {
+        backgroundTHrottling: false,
+      },
+    };
+
+    app.on('ready', () => {
+      mainWindow = new BrowserWindow(windowConfig);
+
+      mainWindow.loadURL(`file://${__dirname}/src/index.html`);
+    });
+    ```
+
+## 4.5. Overview of React and Redux
+1. We can put all the connection logic between React and Electron in `actions` of the reducer. 
+
+## 4.6. Receiving a List of videos
+1. After adding or dropping a video to convert, the app shall show a list of video formats that can be converted to.
+2. App flow
+   1. User selects videos for conversion
+   2. We need to show video metadata (video length)
+   3. Ask electron side of app to discover video length
+   4. Electron side of app uses FFMPEG to get video
+   5. Electron communicates video length back over
+3. We can use `ipcRenderer` in "actions" to send the user added video(s) to Electron on the Node.js side.
+    ```js
+    // src/actions/index.js
+    import { ipcRenderer } from 'electron';
+
+    // TODO: Communicate to MainWindow process that videos
+    // have been added and are pending conversion
+    export const addVideos = (videos) => (dispatch) => {
+      ipcRenderer.send('videos:added', videos);
+    };
+    ```
+
+## 4.7. Video metadata
+1. After sending the video data from the front, we can use `ipcMain` to catch and handle the data on Electron side.
+    ```js
+    // index.js
+    const electron = require('electron');
+    const { app, BrowserWindow, ipcMain } = electron;
+
+    let mainWindow;
+    const windowConfig = {
+      height: 600,
+      width: 800,
+      webPreference: {
+        backgroundTHrottling: false,
+      },
+    };
+
+    app.on('ready', () => {
+      mainWindow = new BrowserWindow(windowConfig);
+
+      mainWindow.loadURL(`file://${__dirname}/src/index.html`);
+    });
+
+    ipcMain.on('videos:added', (event, videos) => {
+      console.log(videos);
+    });
+    ```
+
+## 4.8. Handling Async Bulk Operations with Promises
+
