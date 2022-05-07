@@ -84,7 +84,7 @@ Started: 2022/01/11
   - [4.24. Implementing client-side data fetching](#424-implementing-client-side-data-fetching)
   - [4.25. Using the 'useSWR' NextJS hook](#425-using-the-useswr-nextjs-hook)
   - [4.26. Combining pre-fetching with client-side fetching](#426-combining-pre-fetching-with-client-side-fetching)
-- [5. NextJS Summary](#5-nextjs-summary)
+- [5. Adding Authentication](#5-adding-authentication)
 
 ---
 
@@ -3054,4 +3054,9 @@ export default LastSalesPage;
     export default LastSalesPage;
     ```
 
-# 5. NextJS Summary
+# 5. Adding Authentication
+1. SPAs work with tokens instead of server-side sessions. 
+2. Pages are served directly and populated with logic without hitting the server.
+3. Backend API work in a stateless way. 
+4. Server don't save information about authenticated clients.
+5. Instead, clients should get information that allows them to prove their authentication.
