@@ -312,27 +312,676 @@ End
 ## 1.2. An Overview of the Generated Files and Folders
 ## 1.3. Analyzing the Default App
 ## 1.4. Dart Basics
+1. Dart is a typed language which is similar to C language syntax that has a `main` function to execute.
+2. Dart has data types as the other programming languages.
+   1. Text - `String`
+   2. Number - `Integer`, `Float`, `Double`
+3. In convention, functions in Dart are named in camelCase.
+    ```dart
+    double addNumbers(int num1, double num2) {
+      return num1 + num2;
+    }
+
+    void main () {
+      for(int i = 0; i < 10; i++) {
+        print('hello ${i + 1}');
+      }
+
+      addNumbers(1, 2);
+    }
+    ```
+
 ## 1.5. More Dart Basics
+1. We can use `var` key word to create a generic variable in Dart to take any types of value. 
+2. Besides, we can use a specific type to indicate the type of value that the variable can take.
+3. In addition, we don't need to assign any value to declare a variable.
+    ```dart
+    double addNumbers(int num1, double num2) {
+      return num1 + num2;
+    }
+
+    void main () {
+      double firstResult = addNumbers(1, 2.6);
+      firstResult = addNumbers(1, 2);
+
+      print(firstResult + 1);
+      print('Hello!');
+    }
+    ```
+4. `class` system is also available in Dart language. However, it doesn't require `new` keyword as in the other programming language.
+5. If we print the instance of the class, it prints out that the object is an instance of the class.
+    ```dart
+    class Person {
+      String: name;
+      int age = 30;
+    }
+
+    void main () {
+      var p1 = Person();
+      var p2 = Person();
+      print(p1);
+      p2.name = 'Max';
+      print(p1.name);
+      print(p2.age);
+    }
+    ```
+
 ## 1.6. Building an App From Scratch
+1. Flutter is all about widgets. Each widget is built upon the other widgets and finally becomes a widget tree.
+2. For classes, we can only extend one class at a time.
+3. We can use `import` keyword to use packages in the other files.
+4. The main app class extends `StatelessWidget` from `package:flutter/material.dart` which is an app themed in material design (which also works on iOS).
+5. The class requires `build` method which has a `context` in `Widget` type and returns `MaterialApp()` which is also from the package.
+6. In this case, we use `home` widget and pass a `Text` widget.
+    ```dart
+    import 'package:flutter/material.dart';
+
+    void main () {
+
+    }
+
+    class MyApp extends StatelessWidget {
+      Widget build(BuildContext context) {
+        return MaterialApp(home: Text('Hello!'));
+      }
+    }
+    ```
+
 ## 1.7. Running the App on an Emulator
+1. To initiate the app, we can use `runApp` from `package:flutter/material.dart`.
+    ```dart
+    import 'package:flutter/material.dart';
+
+    void main () {
+      runApp(MyApp());
+    }
+
+    class MyApp extends StatelessWidget {
+      Widget build(BuildContext context) {
+        return MaterialApp(home: Text('Hello!'));
+      }
+    }
+    ```
+
 ## 1.8. Class Constructors and Named Arguments
+1. `constructor` is a method of a class which takes external arguments and assign to properties when creating an instance. 
+2. The `constructor` function is basically repeating the class name with given arguments with types.
+3. Besides, we can use w/n `this` keyword to indicate the variable level of the object. It would be variable in the constructor or properties of the class.
+4. We can wrap the arguments of constructor with curly braces to make them "**named**".
+5. With named arguments, it doesn't matter the order of arguments passing to the function.
+6. We can assign default value to the arguments.
+7. We can add `@require` in Flutter to indicate if the argument is required.
+8. Note that `@require` doesn't work in Dart itself!
+9. In addition, we can use shorthand with `this` to assign argument values to properties directly. Note that we don't need to specify the type as the property has had already.
+    ```dart
+    class Person {
+      String name;
+      int age;
+
+      Person({@require String inputName, @require int age = 30}) {
+        name = inputName;
+        this.age = age;
+      }
+    }
+
+    void main() {
+      var p1 = Person(inputName: 'Max', age: 30)
+      var p2 = Person(age: 31, inputName: 'Manu');
+    }
+
+    class Car {
+      String model;
+      int maxSpeed;
+
+      Car({ @required this.model, this.maxSpeed = 100 })
+    }
+    ```
+
 ## 1.9. First Summary and Additional Syntax
+1. Besides regular syntax, we can use arrow function-like syntax to call the main function.
+2. The shorthand function syntax is either `() =>` which returns a value directly or `() {}` as a regular function without a name.
+    ```dart
+    import 'package:flutter/material.dart';
+    void main => runApp(MyApp());
+    ```
+
 ## 1.10. Building a Widget Tree
+1. We can use `Scaffold` for basic widgets. Besides, we can type <kbd>Ctrl + space</kbd> to check the list of available widgets from `package:flutter/material.dart`.
+    ```dart
+    import 'package:flutter/material.dart';
+
+    void main() {
+      runApp(MyApp());
+    }
+
+    class MyApp extends StatelessWidget {
+      Widget build(BuildContext context) {
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              title: Text('My First App'),
+            ),
+            body: Text('This is my default text!'),
+          ),
+        );
+      }
+    }
+    ```
+
 ## 1.11. Visible (Input/Output) and Invisible (Layout/Control) Widgets
 ## 1.12. Adding Layout Widgets
+1. There are different types of widgets for visible and invisible widgets.
+2. For example, we can use `Column` and `Row` for layout.
+3. We can use `RaisedButton` though this component is deprecated. However, we can update in the setting to turn off warning for deprecated component.
+    ```dart
+    import 'package:flutter/material.dart';
+
+    void main() {
+      runApp(MyApp());
+    }
+
+    class MyApp extends StatelessWidget {
+      Widget build(BuildContext context) {
+        var questions = [
+          'What\'s your favorite color?',
+          'What\'s your faviorite animal?'
+        ];
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              title: Text('My First App'),
+            ),
+            body: Column(
+              children: <Widget>[
+                Text('The question!'),
+                RaisedButton(
+                  child: Text('Answer 1'),
+                  onPressed: null,
+                ),
+                RaisedButton(
+                  child: Text('Answer 2'),
+                  onPressed: null,
+                ),
+                RaisedButton(
+                  child: Text('Answer 3'),
+                  onPressed: null,
+                )
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    ```
+
 ## 1.13. Connecting Functions and Buttons
+1. In the best practice, functions of a widget should stay in the same class to keep the code isolated and clean.
+    ```dart
+    import 'package:flutter/material.dart';
+
+    void main() {
+      runApp(MyApp());
+    }
+
+    class MyApp extends StatelessWidget {
+      void answerQuestion() {
+        print('Answer chosen!');
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        var questions = [
+          'What\'s your favorite color?',
+          'What\'s your faviorite animal?'
+        ];
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              title: Text('My First App'),
+            ),
+            body: Column(
+              children: <Widget>[
+                Text('The question!'),
+                RaisedButton(
+                  child: Text('Answer 1'),
+                  onPressed: answerQuestion,
+                ),
+                RaisedButton(
+                  child: Text('Answer 2'),
+                  onPressed: null,
+                ),
+                RaisedButton(
+                  child: Text('Answer 3'),
+                  onPressed: null,
+                )
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    ```
+
 ## 1.14. Anonymous Functions
+1. Besides a named function, we can use anonymous function.
+    ```dart
+    import 'package:flutter/material.dart';
+
+    void main() {
+      runApp(MyApp());
+    }
+
+    class MyApp extends StatelessWidget {
+      void answerQuestion() {
+        print('Answer chosen!');
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        var questions = [
+          'What\'s your favorite color?',
+          'What\'s your faviorite animal?'
+        ];
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              title: Text('My First App'),
+            ),
+            body: Column(
+              children: <Widget>[
+                Text('The question!'),
+                RaisedButton(
+                  child: Text('Answer 1'),
+                  onPressed: answerQuestion,
+                ),
+                RaisedButton(
+                  child: Text('Answer 2'),
+                  onPressed: () => print('Answer 2 chosen!'),
+                ),
+                RaisedButton(
+                  child: Text('Answer 3'),
+                  onPressed: () {
+                    print('Answer 3 chosen');
+                  },
+                )
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    ```
+
 ## 1.15. Updating Widget Data (Or: Using Stateless Widget Incorrectly)
+1. To access element in a list (array), we can use either square brackets `[]` or `.elementAt` method.
+2. We can have a variable as the property in the class to store values as the "state" of the app when users interacts with it. 
+3. However, we are building the "stateless" widget app that the approach doesn't work right.
+    ```dart
+    import 'package:flutter/material.dart';
+
+    void main() {
+      runApp(MyApp());
+    }
+
+    class MyApp extends StatelessWidget {
+      var questionIndex = 0;
+
+      void answerQuestion() {
+        questionIndex = questionIndex + 1;
+        print(questionIndex);
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        var questions = [
+          'What\'s your favorite color?',
+          'What\'s your faviorite animal?'
+        ];
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              title: Text('My First App'),
+            ),
+            body: Column(
+              children: <Widget>[
+                Text(questions.elementAt(questionIndex)),
+                RaisedButton(
+                  child: Text('Answer 1'),
+                  onPressed: answerQuestion,
+                ),
+                RaisedButton(
+                  child: Text('Answer 2'),
+                  onPressed: () => print('Answer 2 chosen!'),
+                ),
+                RaisedButton(
+                  child: Text('Answer 3'),
+                  onPressed: () {
+                    print('Answer 3 chosen!');
+                  },
+                )
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    ```
+
 ## 1.16. Updating Correctly with Stateful Widgets
+1. The main difference between stateless and statefull widgets is that the UI gets re-rendered when "input data" (external data) changes in stateless app.
+2. In stateful app, the UI re-renders when both "input data" and "local state" changes.
+3. In VS Code, we can use `<kbg>Ctrl + Shift + r</kbd> to get refactor suggestions on a widget.
+4. In this case, we create 2 classes `MyApp extends StatefulWidget` and `MyAppState extends State<MyApp>`.
+    ```dart
+    import 'package:flutter/material.dart';
+
+    void main() {
+      runApp(MyApp());
+    }
+
+    class MyApp extends StatefulWidget {
+      @override
+      State<StatefulWidget> createState() {
+        // TODO: implement createState
+        return MyAppState();
+      }
+    }
+
+    class MyAppState extends State<MyApp> {
+      var questionIndex = 0;
+
+      void answerQuestion() {
+        setState(() {
+          questionIndex = questionIndex + 1;
+        });
+        print(questionIndex);
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        var questions = [
+          'What\'s your favorite color?',
+          'What\'s your faviorite animal?'
+        ];
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              title: Text('My First App'),
+            ),
+            body: Column(
+              children: <Widget>[
+                Text(questions.elementAt(questionIndex)),
+                RaisedButton(
+                  child: Text('Answer 1'),
+                  onPressed: answerQuestion,
+                ),
+                RaisedButton(
+                  child: Text('Answer 2'),
+                  onPressed: () => print('Answer 2 chosen!'),
+                ),
+                RaisedButton(
+                  child: Text('Answer 3'),
+                  onPressed: () {
+                    print('Answer 3 chosen!');
+                  },
+                )
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    ```
+
 ## 1.17. A Brief Look Under The Hood
+1. When the state changes, the instance runs `build` method again to re-render the screen. 
+2. If we separate the widget into different components, the state will only affect where it is and improve the performance.
+
 ## 1.18. Using Private Properties
+1. We can add an underscore `_` right before the class name to turn the class into private. [Dart - Libraries and visibility](https://dart.dev/guides/language/language-tour#libraries-and-visibility)
+
 ## 1.19. Creating a New, Custom Widget
+1. We can extract code for different widgets as components and use `import` to use the widget in different widgets.
+2. Every time the input from the parent widget changes, the widget re-builds, re-render, and update on the UI.
+3. Though the current widget can only be updated from the external input from its parent and is stateless, the editor gives a warning as its property are still mutable. 
+4. In this case, we can use `final` keyword to lock the variable and prevent from changing after it is initiated with the input.
+    ```dart
+    // lib/question.dart
+    import 'package:flutter/material.dart';
+
+    class Question extends StatelessWidget {
+      final String questionText;
+
+      Question(this.questionText);
+
+      @override
+      Widget build(BuildContext context) {
+        return Text(questionText);
+      }
+    }
+    ```
+
 ## 1.20. First Styling and Layouting Steps
+1. To style widget, we can use `style: TextStyle()` and pass the styling to it. 
+2. To center the text, we can pass `textAlign: TextAlign.center`.
+3. However, this doesn't work directly as the widget doesn't take the full width on the screen. Therefore, the text is "centered" in its own container while not in its parent container.
+4. In this case, we can give a `Container` and assign `width` with `double.infinity` which will take the full width of the screen.
+5. Besides, we can assign `margin` to the widget.
+6. The layout system in flutter is much similar to "box model" with `box-sizing: border-box` in HTML and CSS.
+7. The full height and width of the widget is the widget with the margin.
+8. To add margin, we can use `EdgeInsets` which has several methods such as `all`, `only`, and `fromLTRB`
+
+```dart
+// lib/question.dart
+import 'package:flutter/material.dart';
+
+class Question extends StatelessWidget {
+  final String questionText;
+
+  Question(this.questionText);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.all(10),
+      child: Text(
+        questionText,
+        style: TextStyle(fontSize: 28),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+```
+
 ## 1.21. Enums and Multiple Constructors
+1. A Dart class can have function constructor that takes arguments to create different variants.
+2. Similar to Typescript, we can press <kbd>Ctrl</kbd> and click the class to check the definition.
+3. For example, we call `EdgeInsets` with `all` method, which creates a `EdgeInsets` instance has all 4 sides setting in the same given value.
+4. In the following example, we can create a class with a function constructor to create an instance with specific conditions.
+5. By using `veryOld`, we can create a `Person` instance that always has `age` at 60.
+    ```dart
+    class Person {
+      String name;
+      Person({this.name, this.age = 30});
+
+      Person.veryOld(this.name) {
+        age = 60;
+      }
+    }
+    ```
+
 ## 1.22. Offical Docs and the Widget Catalog
+1. At [https://flutter.dev/](https://flutter.dev/), we can check the documentation and look into the [Widget catalog](https://docs.flutter.dev/development/ui/widgets).
+2. For example, we can check out [layout](https://docs.flutter.dev/development/ui/widgets/layout).
+
 ## 1.23. Passing Callback Functions Around
+```dart
+import 'package:flutter/material.dart';
+import './question.dart';
+import './answer.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _MyAppState();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  var _questionIndex = 0;
+
+  void _answerQuestion() {
+    setState(() {
+      _questionIndex = _questionIndex + 1;
+    });
+    print(_questionIndex);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var questions = [
+      'What\'s your favorite color?',
+      'What\'s your faviorite animal?'
+    ];
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('My First App'),
+        ),
+        body: Column(
+          children: <Widget>[
+            Question(
+              questions[_questionIndex],
+            ),
+            Answer(_answerQuestion),
+            Answer(_answerQuestion),
+            Answer(_answerQuestion),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
 ## 1.24. Introducing Maps
+1. In Dart, we can use curly braces to create `Maps` as key/value pairs, much similar to objects in Javascript or Dictionary in Python.
+    ```dart
+    var questions = [
+      {
+        'questionText': 'What\'s your favorite color?',
+        'answers': ['Black', 'Red', 'Green', 'White']
+      },
+      {
+        'questionText': 'What\'s your faviorite animal?',
+        'answers': ['Rabbit', 'Snake', 'Elephant', 'Lion']
+      },
+      {
+        'questionText': 'Who\'s your faviorite instructor?',
+        'answers': ['Max', 'Max', 'Max', 'Max']
+      },
+    ];
+    ```
+
 ## 1.25. Mapping Lists to Widgets
+1. In this case, we update `Answer` widget to take one more argument to show the asnwer text as the options.
+    ```dart
+    // lib/answer.dart
+    import 'package:flutter/material.dart';
+
+    class Answer extends StatelessWidget {
+      final Function selectHandler;
+      final String answerText;
+
+      Answer(this.selectHandler, this.answerText);
+
+      @override
+      Widget build(BuildContext context) {
+        return Container(
+            width: double.infinity,
+            child: RaisedButton(
+              color: Colors.blue,
+              textColor: Colors.white,
+              child: Text(answerText),
+              onPressed: selectHandler,
+            ));
+      }
+    }
+    ```
+2. We then revise the main app class to render a list of widgets (Answers).
+3. We firstly update the following widgets after `Question`.
+4. Note that Dart is very different from Javascript that the `List.map` method returns a lazy iterable which can't be evaluated as a list (array) directly.
+5. In this case, we need to call `List.map.toList()` to turn the object back to a list for iteration.
+6. Besides, Dart doesn't know if `questions[_questionIndex]['answers']` is a list. Therefore, we can add `as List<String>` to indicate the value is a list of string. This is much similar to Typescript.
+7. We then can use spread syntax `...` to destructure the list to individual widget.
+    ```dart
+    import 'package:flutter/material.dart';
+    import './question.dart';
+    import './answer.dart';
+
+    void main() => runApp(MyApp());
+
+    class MyApp extends StatefulWidget {
+      @override
+      State<StatefulWidget> createState() {
+        // TODO: implement createState
+        return _MyAppState();
+      }
+    }
+
+    class _MyAppState extends State<MyApp> {
+      var _questionIndex = 0;
+
+      void _answerQuestion() {
+        setState(() {
+          _questionIndex = _questionIndex + 1;
+        });
+        print(_questionIndex);
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        var questions = [
+          {
+            'questionText': 'What\'s your favorite color?',
+            'answers': ['Black', 'Red', 'Green', 'White']
+          },
+          {
+            'questionText': 'What\'s your faviorite animal?',
+            'answers': ['Rabbit', 'Snake', 'Elephant', 'Lion']
+          },
+          {
+            'questionText': 'Who\'s your faviorite instructor?',
+            'answers': ['Max', 'Max', 'Max', 'Max']
+          },
+        ];
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              title: Text('My First App'),
+            ),
+            body: Column(
+              children: <Widget>[
+                Question(
+                  questions[_questionIndex]['questionText'],
+                ),
+                ...(questions[_questionIndex]['answers'] as List<String>)
+                    .map((answer) {
+                  return Answer(_answerQuestion, answer);
+                }).toList(),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    ```
+
 ## 1.26. final vs const
 ## 1.27. Introducing "if" Statements
 ## 1.28. [DART DEEP DIVE] More on "if" Statements
