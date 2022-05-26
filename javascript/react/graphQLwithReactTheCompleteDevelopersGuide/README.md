@@ -23,6 +23,30 @@
 - [2. The GraphQL Ecosystem](#2-the-graphql-ecosystem)
   - [2.1. GraphQL Clients - Apollo vs Relay](#21-graphql-clients---apollo-vs-relay)
   - [2.2. Sidenote - Apollo Server vs GraphQL Server](#22-sidenote---apollo-server-vs-graphql-server)
+- [3. Clientside GraphQL](#3-clientside-graphql)
+  - [3.1. The Next App](#31-the-next-app)
+  - [3.2. Starter Pack Walkthrough](#32-starter-pack-walkthrough)
+  - [3.3. Working Through the Schema](#33-working-through-the-schema)
+  - [3.4. Apollo client setup](#34-apollo-client-setup)
+  - [3.5. React Component Design](#35-react-component-design)
+  - [3.6. GQL queries in React](#36-gql-queries-in-react)
+  - [3.7. Bonding Queries with Components](#37-bonding-queries-with-components)
+- [4. Gotachs with Queries in React](#4-gotachs-with-queries-in-react)
+  - [4.1. Handling Pending Queries](#41-handling-pending-queries)
+  - [4.2. Fixing Key Warnings](#42-fixing-key-warnings)
+  - [4.3. Architecture Review](#43-architecture-review)
+  - [4.4. Adding React Router](#44-adding-react-router)
+  - [4.5. Creating a Song](#45-creating-a-song)
+- [5. Frontend Mutations](#5-frontend-mutations)
+  - [5.1. Mutations in React](#51-mutations-in-react)
+  - [5.2. Query Params](#52-query-params)
+  - [5.3. Defining Query Variables in React](#53-defining-query-variables-in-react)
+  - [5.4. Navigating on Successful Mutation](#54-navigating-on-successful-mutation)
+  - [5.5. Troubleshooting List Fetching](#55-troubleshooting-list-fetching)
+  - [5.6. Refetching Queries](#56-refetching-queries)
+  - [5.7. Deletion by Mutation](#57-deletion-by-mutation)
+  - [5.8. Associating Mutations with a Component](#58-associating-mutations-with-a-component)
+  - [5.9. Invoking Delete Mutations](#59-invoking-delete-mutations)
 
 # 1. On To GraphQL
 ## 1.1. Registering GraphQL with Express
@@ -942,5 +966,251 @@ mutation {
 
 # 2. The GraphQL Ecosystem
 ## 2.1. GraphQL Clients - Apollo vs Relay
+1. The GraphQL query under the hood is to send the object-like query to the query server as a plain string.
+2. There are 3 packages we can use as GraphQL clients
+   1. [`Lokka`](https://github.com/kadirahq/lokka) - As simple as possible. Basic queries, mutations. Some simple caching.
+   2. [`Apollo Client`](https://github.com/apollographql/apollo-client) - Produced by the same guys as Meteor JS. Good balance between features and complexity.
+   3. [`Relay`](https://github.com/facebook/relay) - Amazingly performance for mobile. By for the most insanely complex.
 
 ## 2.2. Sidenote - Apollo Server vs GraphQL Server
+1. In the previous sections, we use `epxress-graphql` rather than `apollo-server`.
+
+# 3. Clientside GraphQL
+## 3.1. The Next App
+1. We clone and work on the project from [https://github.com/StephenGrider/Lyrical-GraphQL](https://github.com/StephenGrider/Lyrical-GraphQL)
+
+## 3.2. Starter Pack Walkthrough
+1. This "Lyrical-GraphQL" project has `server` and `client` folder.
+
+## 3.3. Working Through the Schema
+1. After setting up the server, we can use mutations such as `addSong` and `addLyricToSong` to modify data.
+
+## 3.4. Apollo client setup
+1. We use `ApolloClient` from `apollo-client` and `ApolloProvider` from `react-apollo` which is similar to `redux` syntax.
+2. In this case, we pass an empty object to create the Apollo client.
+    ```js
+    // client/index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import ApolloClient from 'apollo-client';
+    import { ApolloProvider } from 'react-apollo';
+
+    const client = new ApolloClient({});
+
+    const Root = () => {
+      return (
+        <ApolloProvider client={client}>
+          <div>Lyrical</div>
+        </ApolloProvider>
+      );
+    };
+
+    ReactDOM.render(<Root />, document.querySelector('#root'));
+    ```
+
+## 3.5. React Component Design
+1. We have 2 main components 
+   1. "Song Index Page" - List all the songs stored in the database.
+   2. "Song Detail Page" - Show the details of a song, allow users to like, and add lyrics to the song. 
+    ```jsx
+    // client/components/SongList.js
+    import React, { Component } from 'react';
+
+    export class SongList extends Component {
+      render() {
+        return <div>SongList</div>;
+      }
+    }
+
+    export default SongList;
+    ```
+
+## 3.6. GQL queries in React
+1. GraphQL + React Strategy
+   1. Identify data required
+   2. Write query in Graphql (for practice) and in component file
+   3. Bond query + component
+   4. Access data
+2. To query data from GraphQL we can use `graphql-tag` and import it as `gql`. 
+3. We then can add the query as multi-line strings after `gql` instance.
+    ```js
+    // client/components/SongList.js
+    import React, { Component } from 'react';
+    import gql from 'graphql-tag';
+
+    export class SongList extends Component {
+      render() {
+        return <div>SongList</div>;
+      }
+    }
+
+    const query = gql`
+      {
+        songs {
+          title
+        }
+      }
+    `;
+
+    export default SongList;
+    ```
+
+## 3.7. Bonding Queries with Components
+1. We use `graphql` from `react-apollo` and wrap the component with the query.
+
+# 4. Gotachs with Queries in React
+## 4.1. Handling Pending Queries
+1. When the app initiates, the client is querying to the graphQL server and in "loading" state. 
+2. We can check from `this.props.data.loading` which provies a `boolean` value to indicate whether the query is ongoing.
+3. Therefore, we can simply return a "loading..." hint when the query hasn't finished.
+    ```js
+    // client/components/SongList.js
+    import React, { Component } from 'react';
+    import gql from 'graphql-tag';
+    import { graphql } from 'react-apollo';
+
+    export class SongList extends Component {
+      renderSongs() {
+        if (this.props.data.loading) return <div>Loading...</div>;
+
+        return this.props.data.songs.map((song) => {
+          return <li key={song.title}>{song.title}</li>;
+        });
+      }
+
+      render() {
+        return <div>{this.renderSongs()}</div>;
+      }
+    }
+
+    const query = gql`
+      {
+        songs {
+          title
+        }
+      }
+    `;
+
+    export default graphql(query)(SongList);
+    ```
+
+## 4.2. Fixing Key Warnings
+1. When rendering values in array with `map` method, we need to ensure each element in the list has an unique `key` value.
+
+## 4.3. Architecture Review
+1. We have apollo client sits between the graphQL server and react app.
+2. When React app initiates, the apollo client intiates and provide a global context to the react app. 
+
+## 4.4. Adding React Router
+1. We configure `index.js` and use react router for the project.
+    ```js
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { Router, Route, hashHistory, IndexRoute } from 'react-router';
+    import ApolloClient from 'apollo-client';
+    import { ApolloProvider } from 'react-apollo';
+    import SongList from './components/SongList';
+    import App from './components/App';
+
+    const client = new ApolloClient({});
+
+    const Root = () => {
+      return (
+        <ApolloProvider client={client}>
+          <Router history={hashHistory}>
+            <Route path='/' component={App}>
+              <IndexRoute component={SongList} />
+            </Route>
+          </Router>
+        </ApolloProvider>
+      );
+    };
+
+    ReactDOM.render(<Root />, document.querySelector('#root'));
+    ```
+
+## 4.5. Creating a Song
+1. We create a new component `SongCreate.js` with a form to allow users to create new songs.
+2. We then set up and wire the new component to render with react router.
+    ```js
+    // index.js
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { Router, Route, hashHistory, IndexRoute } from 'react-router';
+    import ApolloClient from 'apollo-client';
+    import { ApolloProvider } from 'react-apollo';
+    import SongList from './components/SongList';
+    import SongCreate from './components/SongCreate';
+    import App from './components/App';
+
+    const client = new ApolloClient({});
+
+    const Root = () => {
+      return (
+        <ApolloProvider client={client}>
+          <Router history={hashHistory}>
+            <Route path='/' component={App}>
+              <IndexRoute component={SongList} />
+              <Route path='song/new' component={SongCreate} />
+            </Route>
+          </Router>
+        </ApolloProvider>
+      );
+    };
+
+    ReactDOM.render(<Root />, document.querySelector('#root'));
+    ```
+    ```js
+    // components/SongCreate.js
+    import React, { Component } from 'react';
+
+    export class SongCreate extends Component {
+      constructor(props) {
+        super(props);
+
+        this.state = { title: '' };
+      }
+
+      render() {
+        return (
+          <div>
+            <h3>Create a New Song</h3>
+            <form>
+              <label for=''>Song Title: </label>
+              <input
+                type=''
+                name=''
+                value={this.state.title}
+                onChange={(event) => this.setState({ title: event.target.value })}
+              />
+            </form>
+          </div>
+        );
+      }
+    }
+
+    export default SongCreate;
+    ```
+
+
+
+# 5. Frontend Mutations
+## 5.1. Mutations in React  
+
+## 5.2. Query Params
+
+## 5.3. Defining Query Variables in React
+
+## 5.4. Navigating on Successful Mutation
+
+## 5.5. Troubleshooting List Fetching
+
+## 5.6. Refetching Queries
+
+## 5.7. Deletion by Mutation
+
+## 5.8. Associating Mutations with a Component
+
+## 5.9. Invoking Delete Mutations
+
