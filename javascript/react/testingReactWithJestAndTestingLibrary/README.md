@@ -41,6 +41,51 @@ Start learning: 2022/03/29
   - [4.8. Testing element is not on the page: Start popover tests](#48-testing-element-is-not-on-the-page-start-popover-tests)
   - [4.9. React code: Popover](#49-react-code-popover)
   - [4.10. "Not wrapped in act(...)" Error, Async Disappearance](#410-not-wrapped-in-act-error-async-disappearance)
+- [5. Simulating Server Resopnse with Mock Service Worker](#5-simulating-server-resopnse-with-mock-service-worker)
+  - [5.1. OrderEntry Server Data Introduction](#51-orderentry-server-data-introduction)
+  - [5.2. Introduction to Mock Service Worker and Handlers](#52-introduction-to-mock-service-worker-and-handlers)
+  - [5.3. Setting up the Mock Service Worker Server](#53-setting-up-the-mock-service-worker-server)
+  - [5.4. Tests with Mock Service Worker: Scoop Options](#54-tests-with-mock-service-worker-scoop-options)
+  - [5.5. OPTIONAL React Code: Options and ScoopOption Components](#55-optional-react-code-options-and-scoopoption-components)
+  - [5.6. Using `await findBy` to Find Elements that Populate Asynchronously](#56-using-await-findby-to-find-elements-that-populate-asynchronously)
+  - [5.7. Code Quiz! Topping Options from Server](#57-code-quiz-topping-options-from-server)
+  - [5.8. REFERENCE: Toubleshooting `Unable to find role="img"` error](#58-reference-toubleshooting-unable-to-find-roleimg-error)
+  - [5.9. Error Server Response Planning](#59-error-server-response-planning)
+  - [5.10. Simulating Server Error Response in Tests](#510-simulating-server-error-response-in-tests)
+  - [5.11. OPTIONAL React Code: React Banner for Options Server Error](#511-optional-react-code-react-banner-for-options-server-error)
+  - [5.12. Running only Selected Test, and `waitFor`](#512-running-only-selected-test-and-waitfor)
+  - [5.13. Review: Server Error Response and Test Debugging Tools](#513-review-server-error-response-and-test-debugging-tools)
+- [6. Testing Components Wrapped in a Provider](#6-testing-components-wrapped-in-a-provider)
+  - [6.1. Intro to Tests for Total and Subtotals](#61-intro-to-tests-for-total-and-subtotals)
+  - [6.2. Entering Text Input: Subtotal Tests](#62-entering-text-input-subtotal-tests)
+  - [6.3. OPTIONAL React Code: OrderDetails Context](#63-optional-react-code-orderdetails-context)
+  - [6.4. OPTIONAL React Code: Use Context to Display Scoops Subtotal](#64-optional-react-code-use-context-to-display-scoops-subtotal)
+  - [6.5. Adding Context to test Setup; Test Catching Error in Code](#65-adding-context-to-test-setup-test-catching-error-in-code)
+  - [6.6. Creating Custom Render to Wrap in Provider](#66-creating-custom-render-to-wrap-in-provider)
+  - [6.7. Review: Scoops Subtotal with Context](#67-review-scoops-subtotal-with-context)
+  - [6.8. Code Quiz! Toppings Subtotal](#68-code-quiz-toppings-subtotal)
+  - [6.9. OPTIONAL React Code: Toppings Checkboxes](#69-optional-react-code-toppings-checkboxes)
+  - [6.10. Code Quiz! Grand Total](#610-code-quiz-grand-total)
+  - [6.11. "Unmounted Component" Error](#611-unmounted-component-error)
+  - [6.12. What Should Functional Test Catch? and Refactor](#612-what-should-functional-test-catch-and-refactor)
+- [7. Final Exam: Order Phases](#7-final-exam-order-phases)
+  - [7.1. Introduction to Final Exam: Order Phases](#71-introduction-to-final-exam-order-phases)
+  - [7.2. Adding a New Handler: Copy/Paste Warning!](#72-adding-a-new-handler-copypaste-warning)
+  - [7.3. Debugging Tips](#73-debugging-tips)
+  - [7.4. OPTIONAL: React Hints for Order Phase Coding](#74-optional-react-hints-for-order-phase-coding)
+  - [7.5. Final Exam Solution](#75-final-exam-solution)
+  - [7.6. OPTIONAL React Code: Order Phases](#76-optional-react-code-order-phases)
+  - [7.7. Jest Mock Functions as Props](#77-jest-mock-functions-as-props)
+  - [7.8. Review: Final Exam, and Introduction to Optional Practice](#78-review-final-exam-and-introduction-to-optional-practice)
+  - [7.9. Common Mistakes with React Testing Library](#79-common-mistakes-with-react-testing-library)
+- [8. Optional Extra Practice](#8-optional-extra-practice)
+  - [8.1. Standard Questions for New Tests and Introduction to Exercises](#81-standard-questions-for-new-tests-and-introduction-to-exercises)
+  - [8.2. Confirm "Loading" Text](#82-confirm-loading-text)
+  - [8.3. Conditional Toppings Section on Summary Page](#83-conditional-toppings-section-on-summary-page)
+  - [8.4. Disable Order Button if No Scoops Ordered](#84-disable-order-button-if-no-scoops-ordered)
+  - [8.5. Red Input Box for Invalid Scoop Count](#85-red-input-box-for-invalid-scoop-count)
+  - [8.6. No Scoops Subtotal Updatefor Invalid Scoop Count](#86-no-scoops-subtotal-updatefor-invalid-scoop-count)
+  - [8.7. Server Error on Order Confirmation Page](#87-server-error-on-order-confirmation-page)
 
 # 1. Introduction
 ## 1.1. Testing Library and Jest
@@ -1136,3 +1181,401 @@ describe('spaces before camel-case capital letters', () => {
       await waitForElementToBeRemoved(() => screen.queryByText(popoverRegex));
     });
     ```
+
+# 5. Simulating Server Resopnse with Mock Service Worker
+## 5.1. OrderEntry Server Data Introduction
+1. In this app, we have 2 options to choose the flavor of and scoops of ice cream. 
+2. Besides, the user is allowed to add up toppings. 
+3. For testing, we 
+   1. Test that option images render
+   2. Mock service worker
+   3. Mock server response for `/scoops` and `/toppings`
+
+## 5.2. Introduction to Mock Service Worker and Handlers
+1. Mock service worker is to 
+   1. intercept network calls and 
+   2. return specified response
+2. Prevents network calls during tests
+3. Set up test conditions using server response
+4. To use mock service worker, we 
+   1. Install with `npm install msw`
+   2. Create handlers
+   3. Create test server
+   4. Make sure test server listens during all tests
+      1. Reset after each test
+5. We create a new folder `mocks` in root directory. Note that the handler can be either `rest` or `graphql`.
+6. We can check more setting from the [doc](https://mswjs.io/docs/basics/response-resolver).
+7. For example, we can use `import { rest } from 'msw'` to mock RESTful API.
+```ts
+// src/mocks/handlers.ts
+import { rest } from 'msw';
+
+export const handlers = [
+  rest.get('http://localhost:3030/scoops', (req, res, ctx) => {
+    return res(
+      ctx.json([
+        { name: 'Chocolate', imagePath: '/images/chocolate.png' },
+        { name: 'Vanilla', imagePath: '/images/vanilla.png' },
+      ])
+    );
+  }),
+];
+```
+
+## 5.3. Setting up the Mock Service Worker Server
+1. To set up the mock server, we create `server.js` file in `src/mock` and import the following code to create a mock Node.js server.
+    ```ts
+    // doc https://mswjs.io/docs/getting-started/integrate/node
+    import { setupServer } from 'msw/node';
+    import { handlers } from './handlers';
+
+    setupServer(...handlers);
+    ```
+2. After setting up and configure the mock server, we can integrate it with Jest and testing library by updating `setupTest.js` in root directory.
+    ```ts
+    // setupTests.ts
+    // jest-dom adds custom jest matchers for asserting on DOM nodes.
+    // allows you to do things like:
+    // expect(element).toHaveTextContent(/react/i)
+    // learn more: https://github.com/testing-library/jest-dom
+    import '@testing-library/jest-dom';
+
+    // src/setupTests.js
+    import { server } from './mocks/server';
+    // Establish API mocking before all tests.
+    beforeAll(() => server.listen());
+
+    // Reset any request handlers that we may add during the tests,
+    // so they don't affect other tests.
+    afterEach(() => server.resetHandlers());
+
+    // Clean up after the tests are finished.
+    afterAll(() => server.close());
+    ```
+
+## 5.4. Tests with Mock Service Worker: Scoop Options
+1. To check all the images rendered on the screen, we can use [`getAllByRole`](https://testing-library.com/docs/queries/byrole/) to get an array of element(s).
+2. We can check with [`.toHaveLength(number)`](https://jestjs.io/docs/expect#tohavelengthnumber) for the number of items in an array of characters of a string value.
+    ```tsx
+    // src/pages/entry/tests/Options.test.tsx
+    import { render, screen } from '@testing-library/react';
+    import Options from '../Options';
+
+    test('displays image for each scoop option from server', () => {
+      render(<Options optionType='scoops' />);
+
+      // find multiple images
+      const scoopImages = screen.getAllByRole('img', { name: /scoop$/i });
+      expect('scoopImages').toHaveLength(2);
+
+      // confirm alt text of images
+      // @ts-ignore
+      const altText = scoopImages.map((element) => element.alt);
+      expect(altText).toEqual(['Chocolate scoop', 'Vanilla scoop']);
+    });
+    ```
+
+## 5.5. OPTIONAL React Code: Options and ScoopOption Components
+1. Though we set up `Options` and `ScoopOption` component, the feature isn't ready and can't pass the test with current setup.
+2. We can notice the component has a single `div` with class `row` with empty content. 
+3. It indicates that the mock server doesn't work and serve the data as it should. 
+    ```tsx
+    // src/pages/entry/ScoopOption.tsx
+    import { FC } from 'react';
+    import { Col } from 'react-bootstrap';
+
+    export interface OptionType {
+      name: string;
+      imagePath: string;
+    }
+
+    export const ScoopOption: FC<OptionType> = ({ name, imagePath }) => {
+      return (
+        <Col xs={12} sx={6} md={4} lg={3} style={{ textAlign: 'center' }}>
+          <img
+            style={{ width: '75%' }}
+            src={`http://localhost:3030/${imagePath}`}
+            alt={`${name}_scoop`}
+          />
+        </Col>
+      );
+    };
+
+    export default ScoopOption;
+    ```
+    ```tsx
+    // src/pages/entry/Options.tsx
+    import axios from 'axios';
+    import { Row } from 'react-bootstrap';
+    import { FC, useEffect, useState } from 'react';
+    import ScoopOption from './ScoopOption';
+    import { OptionType } from './ScoopOption';
+
+    export const Options: FC<{ optionType: string }> = ({ optionType }) => {
+      const [items, setItems] = useState<OptionType[]>([]);
+
+      // optionType is 'scoops' or 'toppings
+      useEffect(() => {
+        axios(`http://localhost:3030/${optionType}`)
+          .then((res) => setItems(res.data))
+          .catch((err) => console.log(err));
+      }, [optionType]);
+
+      const ItemComponent: FC<OptionType> = ({ name, imagePath }) =>
+        optionType === 'scoops' ? (
+          <ScoopOption name={name} imagePath={imagePath} />
+        ) : null;
+
+      const optionItem = items.map(({ name, imagePath }) => (
+        <ItemComponent key={name} name={name} imagePath={imagePath} />
+      ));
+
+      return <Row>{optionItem}</Row>;
+    };
+
+    export default Options;
+    ```
+
+## 5.6. Using `await findBy` to Find Elements that Populate Asynchronously
+1. To fix the issue in the last section, we can use both `await` and `findBy` to simulate the asynchronous behavior.
+    ```tsx
+    // src/pages/entry/tests/Options.test.tsx
+    import { render, screen } from '@testing-library/react';
+    import Options from '../Options';
+
+    test('displays image for each scoop option from server', async () => {
+      render(<Options optionType='scoops' />);
+
+      // find multiple images
+      const scoopImages = await screen.findAllByRole('img', { name: /scoop$/i });
+      expect(scoopImages).toHaveLength(2);
+
+      // confirm alt text of images
+      // @ts-ignore
+      const altText = scoopImages.map((element) => element.alt);
+      expect(altText).toEqual(['Chocolate_scoop', 'Vanilla_scoop']);
+    });
+    ```
+
+## 5.7. Code Quiz! Topping Options from Server
+1. Mock service worker mimics response from server
+   1. Create handler
+   2. Create server
+   3. Update `setupTests` to listen for requests
+2. `getAllByRole`
+   1. Search for more than one match to role
+3. `await` `findAllByRole`
+   1. For asynchronous DOM update of elements
+
+## 5.8. REFERENCE: Toubleshooting `Unable to find role="img"` error
+1. Some reasons for incorrect or unexpected output
+2. Mistyping scoops URL
+3. Mistyping `alt` attribute or `name` option
+4. Omitting `res` from handler return value
+5. Omitting square brackets in handler return value
+6. ScoopOption props not destructured
+7. Importing ScoopOption from the wrong module
+8. Handler Response Resolver Arguments in Incorrect Order
+
+## 5.9. Error Server Response Planning
+1. Fill in that `catch` statement we left as TODO
+2. Display `AlertBanner` component if `axios` fall throw error
+   1. Instead of content from server
+3. Use simple react-bootstrap alert
+   1. [https://react-bootstrap.github.io/components/alerts/](https://react-bootstrap.github.io/components/alerts/)
+   2. role: `alert`
+4. By default, handlers return non-error response
+   1. Override with error response for particular tests
+5. Jest debugging tools
+   1. Running only one test file
+   2. Running only one test within a file
+
+## 5.10. Simulating Server Error Response in Tests
+1. To simluate an error response, we overwrite the service worker by resting and setting up specific error handler.
+2. Note that to pass the test, we need to update `Options` to handle error response with `alert` component which hasn't been deployed in the current progress. 
+    ```tsx
+    // src/entry/__tests__/OrderEntry.test.tsx
+    import { render, screen } from '@testing-library/react';
+    import OrderEntry from '../OrderEntry';
+    import { rest } from 'msw';
+    import { server } from '../../../mocks/server';
+
+    test('handles error for scoops and toppings routes', async () => {
+      server.resetHandlers(
+        rest.get('http://localhost:3030/scoops', (req, res, ctx) =>
+          res(ctx.status(500))
+        ),
+        rest.get('http://localhost:3030/toppings', (req, res, ctx) =>
+          res(ctx.status(500))
+        )
+      );
+
+      render(<OrderEntry />);
+
+      const alerts = await screen.findAllByRole('alert', {
+        name: 'An unexpected error ocurred. Please try again later.',
+      });
+
+      expect(alerts).toHaveLength(2);
+    });
+    ```
+
+## 5.11. OPTIONAL React Code: React Banner for Options Server Error
+1. We create `AlertBanner` component to show when the app gets an error response
+    ```tsx
+    import { FC } from 'react';
+    import Alert from 'react-bootstrap/Alert';
+
+    interface AlertBannerProps {
+      message?: string;
+      variant?: string;
+    }
+
+    export const AlertBanner: FC<AlertBannerProps> = ({
+      message = 'An unexpected error ocurred. Please try again later.',
+      variant = 'danger',
+    }) => {
+      return (
+        <Alert variant={variant} style={{ backgroundColor: 'red' }}>
+          {message}
+        </Alert>
+      );
+    };
+
+    export default AlertBanner;
+    ```
+2. We create `OptionEntry` component to show both scoop options and topping options
+    ```tsx
+    import { FC } from 'react';
+    import Options from './Options';
+
+    export const OrderEntry: FC = () => {
+      return (
+        <>
+          <Options optionType='scoops' />
+          <Options optionType='toppings' />
+        </>
+      );
+    };
+
+    export default OrderEntry;
+    ```
+3. We update `Options` component with `error` state to show `AlertBanner` when the app gets error response.
+    ```tsx
+    import axios from 'axios';
+    import { Row } from 'react-bootstrap';
+    import { FC, useEffect, useState } from 'react';
+    import { OptionType } from 'src/types';
+    import ScoopOption from './ScoopOption';
+    import ToppingOption from './ToppingOption';
+    import AlertBanner from './AlertBanner';
+
+    export const Options: FC<{ optionType: string }> = ({ optionType }) => {
+      const [items, setItems] = useState<OptionType[]>([]);
+      const [error, setError] = useState<boolean>(false);
+
+      // optionType is 'scoops' or 'toppings
+      useEffect(() => {
+        axios(`http://localhost:3030/${optionType}`)
+          .then((res) => setItems(res.data))
+          .catch((err) => setError(true));
+      }, [optionType]);
+
+      if (error) {
+        return <AlertBanner />;
+      }
+
+      const ItemComponent: FC<OptionType> = ({ name, imagePath }) =>
+        optionType === 'scoops' ? (
+          <ScoopOption name={name} imagePath={imagePath} />
+        ) : optionType === 'toppings' ? (
+          <ToppingOption name={name} imagePath={imagePath} />
+        ) : null;
+
+      const optionItem = items.map(({ name, imagePath }) => (
+        <ItemComponent key={name} name={name} imagePath={imagePath} />
+      ));
+
+      return (
+        <>
+          <Row>{optionItem}</Row>;
+        </>
+      );
+    };
+
+    export default Options;
+    ```
+
+## 5.12. Running only Selected Test, and `waitFor`
+1. When run `npm run test` or `yarn test`, the app runs all the tests available in the project.
+2. We can tap <kbd>p</kbd> to run certain test by searching with regular expression.
+3. In a test file, we can use `test.only` method to run a single test if there's multiple tests in the same file.
+4. On the other hand, we can use `test.skip` to skip certain test in the file.
+5. When there are more than 2 async calls, using only `await` isn't enough as the test may run before all API calls are done. 
+6. In this case, we can use [`waitFor`](https://testing-library.com/docs/dom-testing-library/api-async/#waitfor). 
+    ```tsx
+    // src/pages/entry/tests/OrderEntry.test.tsx
+    import { render, screen, waitFor } from '@testing-library/react';
+    import OrderEntry from '../OrderEntry';
+    import { rest } from 'msw';
+    import { server } from '../../../mocks/server';
+
+    test('handles error for scoops and toppings routes', async () => {
+      server.resetHandlers(
+        rest.get('http://localhost:3030/scoops', (req, res, ctx) =>
+          res(ctx.status(500))
+        ),
+        rest.get('http://localhost:3030/toppings', (req, res, ctx) =>
+          res(ctx.status(500))
+        )
+      );
+
+      render(<OrderEntry />);
+
+      await waitFor(async () => {
+        const alerts = await screen.findAllByRole('alert');
+        expect(alerts).toHaveLength(2);
+      });
+    });
+    ```
+
+## 5.13. Review: Server Error Response and Test Debugging Tools
+1. Override mock service worker response for individual tests
+2. Misleading unable to find `role='alert'` errror
+3. Isolate file by typing `p` in Jest watch mode
+4. Isolate test within file with `test.only` or `test.skip`.
+5. `waitFor` for tests where `await findBy` isn't enough.
+
+# 6. Testing Components Wrapped in a Provider
+## 6.1. Intro to Tests for Total and Subtotals
+## 6.2. Entering Text Input: Subtotal Tests
+## 6.3. OPTIONAL React Code: OrderDetails Context
+## 6.4. OPTIONAL React Code: Use Context to Display Scoops Subtotal
+## 6.5. Adding Context to test Setup; Test Catching Error in Code
+## 6.6. Creating Custom Render to Wrap in Provider
+## 6.7. Review: Scoops Subtotal with Context
+## 6.8. Code Quiz! Toppings Subtotal
+## 6.9. OPTIONAL React Code: Toppings Checkboxes
+## 6.10. Code Quiz! Grand Total
+## 6.11. "Unmounted Component" Error
+## 6.12. What Should Functional Test Catch? and Refactor
+
+# 7. Final Exam: Order Phases
+## 7.1. Introduction to Final Exam: Order Phases
+## 7.2. Adding a New Handler: Copy/Paste Warning!
+## 7.3. Debugging Tips
+## 7.4. OPTIONAL: React Hints for Order Phase Coding
+## 7.5. Final Exam Solution
+## 7.6. OPTIONAL React Code: Order Phases
+## 7.7. Jest Mock Functions as Props
+## 7.8. Review: Final Exam, and Introduction to Optional Practice
+## 7.9. Common Mistakes with React Testing Library
+
+# 8. Optional Extra Practice
+## 8.1. Standard Questions for New Tests and Introduction to Exercises
+## 8.2. Confirm "Loading" Text
+## 8.3. Conditional Toppings Section on Summary Page
+## 8.4. Disable Order Button if No Scoops Ordered
+## 8.5. Red Input Box for Invalid Scoop Count
+## 8.6. No Scoops Subtotal Updatefor Invalid Scoop Count
+## 8.7. Server Error on Order Confirmation Page
