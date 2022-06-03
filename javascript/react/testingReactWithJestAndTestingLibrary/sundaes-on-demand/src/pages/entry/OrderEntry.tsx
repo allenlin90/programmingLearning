@@ -1,7 +1,9 @@
-import { FC } from 'react';
+import { FC, Dispatch, SetStateAction } from 'react';
 import Options from './Options';
 
-export const OrderEntry: FC = () => {
+export const OrderEntry: FC<{
+  setOrderPhase?: Dispatch<SetStateAction<string>>;
+}> = () => {
   return (
     <>
       <Options optionType='scoops' />

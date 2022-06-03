@@ -1,7 +1,9 @@
-import { useState, FC, ChangeEvent } from 'react';
+import { useState, Dispatch, FC, ChangeEvent, SetStateAction } from 'react';
 import { Form, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 
-export const SummaryFormPage: FC = () => {
+export const SummaryFormPage: FC<{
+  setOrderPhase?: Dispatch<SetStateAction<string>>;
+}> = () => {
   const [tcChecked, setTcChecked] = useState<boolean>(false);
 
   const popover = (

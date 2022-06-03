@@ -4,11 +4,15 @@ import { FC, useEffect, useState } from 'react';
 import { OptionType } from 'src/types';
 import ScoopOption from './ScoopOption';
 import ToppingOption from './ToppingOption';
-import AlertBanner from './AlertBanner';
+import AlertBanner from '../common/AlertBanner';
+import { pricePerItem } from '../../constants';
+import { useOrderDetails } from '../../contexts/OrderDetails';
+import { formatCurrency } from '../../utilities';
 
 export const Options: FC<{ optionType: string }> = ({ optionType }) => {
   const [items, setItems] = useState<OptionType[]>([]);
   const [error, setError] = useState<boolean>(false);
+  const [orderDetails, updateItemCount] = useOrderDetails();
 
   // optionType is 'scoops' or 'toppings
   useEffect(() => {
@@ -21,20 +25,35 @@ export const Options: FC<{ optionType: string }> = ({ optionType }) => {
     return <AlertBanner />;
   }
 
-  const ItemComponent: FC<OptionType> = ({ name, imagePath }) =>
-    optionType === 'scoops' ? (
-      <ScoopOption name={name} imagePath={imagePath} />
-    ) : optionType === 'toppings' ? (
-      <ToppingOption name={name} imagePath={imagePath} />
-    ) : null;
+  const ItemComponent = optionType === 'scoops' ? ScoopOption : ToppingOption;
+  const title = optionType[0].toUpperCase() + optionType.slice(1).toLowerCase();
 
-  const optionItem = items.map(({ name, imagePath }) => (
-    <ItemComponent key={name} name={name} imagePath={imagePath} />
+  const optionItems = items.map((item) => (
+    <ItemComponent
+      key={item.name}
+      name={item.name}
+      imagePath={item.imagePath}
+      updateItemCount={(itemName, newItemCount) =>
+        updateItemCount(
+          itemName,
+          newItemCount as string,
+          optionType as 'scoops' | 'toppings'
+        )
+      }
+    />
   ));
 
   return (
     <>
-      <Row>{optionItem}</Row>;
+      <h2>{title}</h2>
+      <p>
+        {formatCurrency(pricePerItem[optionType as 'scoops' | 'toppings'])} each
+      </p>
+      <p>
+        {title} total:{' '}
+        {orderDetails.totals[optionType as 'toppings' | 'scoops']}
+      </p>
+      <Row>{optionItems}</Row>
     </>
   );
 };

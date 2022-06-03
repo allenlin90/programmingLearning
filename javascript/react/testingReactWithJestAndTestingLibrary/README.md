@@ -1548,17 +1548,462 @@ export const handlers = [
 
 # 6. Testing Components Wrapped in a Provider
 ## 6.1. Intro to Tests for Total and Subtotals
+1. When the user add scoops and toppings, the subtotal of each section will change accordingly.
+
 ## 6.2. Entering Text Input: Subtotal Tests
+1. When checking and getting an element with `getByText`, we can use either regular expression or string value with an option `{ exact: false }` to look up for substring match. 
+2. This can be useful when the element updates along the usage with different text content. 
+
 ## 6.3. OPTIONAL React Code: OrderDetails Context
+```tsx
+// src/contexts/OrderDetails.tsx
+import { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import { pricePerItem } from '../constants';
+import { formatCurrency } from '../utilities';
+
+// @ts-ignore
+const OrderDetails = createContext<
+  [
+    orderDetails: {
+      scoops: Map<any, any>;
+      toppings: Map<any, any>;
+      totals: { toppings: string; scoops: string };
+    },
+    updateItemCount: (
+      itemName: string,
+      newItemCount: string,
+      optionType: 'scoops' | 'toppings'
+    ) => void,
+    resetOrder: () => void
+  ]
+>();
+
+// create custom hook to check whether we're inside a provider
+export function useOrderDetails() {
+  const context = useContext(OrderDetails);
+
+  if (!context) {
+    throw new Error(
+      'useOrderDetails must be used within an OrderDetailsProvider'
+    );
+  }
+
+  return context;
+}
+
+function calculateSubtotal(optionType: string, optionCounts: any) {
+  let optionCount = 0;
+  for (const count of optionCounts[optionType].values()) {
+    optionCount += count;
+  }
+
+  return optionCount * pricePerItem[optionType as 'scoops' | 'toppings'];
+}
+
+export function OrderDetailsProvider(props: any) {
+  const [optionCounts, setOptionCounts] = useState({
+    scoops: new Map(),
+    toppings: new Map(),
+  });
+  const zeroCurrency = formatCurrency(0);
+  const [totals, setTotals] = useState({
+    scoops: zeroCurrency,
+    toppings: zeroCurrency,
+    grandTotal: zeroCurrency,
+  });
+
+  useEffect(() => {
+    const scoopsSubtotal = calculateSubtotal('scoops', optionCounts);
+    const toppingsSubtotal = calculateSubtotal('toppings', optionCounts);
+    const grandTotal = scoopsSubtotal + toppingsSubtotal;
+    setTotals({
+      scoops: formatCurrency(scoopsSubtotal),
+      toppings: formatCurrency(toppingsSubtotal),
+      grandTotal: formatCurrency(grandTotal),
+    });
+  }, [optionCounts]);
+
+  const value = useMemo(() => {
+    function updateItemCount(
+      itemName: string,
+      newItemCount: string,
+      optionType: 'scoops' | 'toppings'
+    ) {
+      const newOptionCounts = { ...optionCounts };
+
+      // update option count for this item with the new value
+      const optionCountsMap = optionCounts[optionType];
+      optionCountsMap.set(itemName, parseInt(newItemCount));
+
+      setOptionCounts(newOptionCounts);
+    }
+
+    // alternate updateItemCount that DOES NOT mutate state. Reference Q&A:
+    // https://www.udemy.com/course/react-testing-library/learn/#questions/14446658/
+    // function updateItemCount(itemName, newItemCount, optionType) {
+    //   // get option Map and make a copy
+    //   const { [optionType]: optionMap } = optionCounts;
+    //   const newOptionMap = new Map(optionMap);
+
+    //   // update the copied Map
+    //   newOptionMap.set(itemName, parseInt(newItemCount));
+
+    //   // create new object with the old optionCounts plus new map
+    //   const newOptionCounts = { ...optionCounts };
+    //   newOptionCounts[optionType] = newOptionMap;
+
+    //   // update state
+    //   setOptionCounts(newOptionCounts);
+    // }
+
+    function resetOrder() {
+      setOptionCounts({
+        scoops: new Map(),
+        toppings: new Map(),
+      });
+    }
+    // getter: object containing option counts for scoops and toppings, subtotals and totals
+    // setter: updateOptionCount
+    return [{ ...optionCounts, totals }, updateItemCount, resetOrder];
+  }, [optionCounts, totals]);
+  return <OrderDetails.Provider value={value} {...props} />;
+}
+```
+```ts
+// src/contants/index.ts
+export const pricePerItem = {
+  scoops: 2,
+  toppings: 1.5,
+};
+```
+
 ## 6.4. OPTIONAL React Code: Use Context to Display Scoops Subtotal
+```tsx
+// src/App.tsx
+import { useState } from 'react';
+import Container from 'react-bootstrap/Container';
+
+import OrderConfirmation from './pages/confirmation/OrderConfirmation';
+import OrderEntry from './pages/entry/OrderEntry';
+import OrderSummary from './pages/summary/OrderSummary';
+
+import { OrderDetailsProvider } from './contexts/OrderDetails';
+
+export default function App() {
+  // orderPhase needs to be 'inProgress', 'review' or 'completed'
+  const [orderPhase, setOrderPhase] = useState('inProgress');
+
+  let Component = OrderEntry; // default to order page
+  switch (orderPhase) {
+    case 'inProgress':
+      Component = OrderEntry;
+      break;
+    case 'review':
+      Component = OrderSummary;
+      break;
+    case 'completed':
+      Component = OrderConfirmation;
+      break;
+    default:
+  }
+
+  return (
+    <OrderDetailsProvider>
+      <Container>{<Component setOrderPhase={setOrderPhase} />}</Container>
+    </OrderDetailsProvider>
+  );
+}
+```
+```tsx
+// src/pages/entry/Options.tsx
+import axios from 'axios';
+import { Row } from 'react-bootstrap';
+import { FC, useEffect, useState } from 'react';
+import { OptionType } from 'src/types';
+import ScoopOption from './ScoopOption';
+import ToppingOption from './ToppingOption';
+import AlertBanner from '../common/AlertBanner';
+import { pricePerItem } from '../../constants';
+import { useOrderDetails } from '../../contexts/OrderDetails';
+import { formatCurrency } from '../../utilities';
+
+export const Options: FC<{ optionType: string }> = ({ optionType }) => {
+  const [items, setItems] = useState<OptionType[]>([]);
+  const [error, setError] = useState<boolean>(false);
+  const [orderDetails, updateItemCount] = useOrderDetails();
+
+  // optionType is 'scoops' or 'toppings
+  useEffect(() => {
+    axios(`http://localhost:3030/${optionType}`)
+      .then((res) => setItems(res.data))
+      .catch((err) => setError(true));
+  }, [optionType]);
+
+  if (error) {
+    return <AlertBanner />;
+  }
+
+  const ItemComponent = optionType === 'scoops' ? ScoopOption : ToppingOption;
+  const title = optionType[0].toUpperCase() + optionType.slice(1).toLowerCase();
+
+  const optionItems = items.map((item) => (
+    <ItemComponent
+      key={item.name}
+      name={item.name}
+      imagePath={item.imagePath}
+      updateItemCount={(itemName, newItemCount) =>
+        updateItemCount(
+          itemName,
+          newItemCount as string,
+          optionType as 'scoops' | 'toppings'
+        )
+      }
+    />
+  ));
+
+  return (
+    <>
+      <h2>{title}</h2>
+      <p>
+        {formatCurrency(pricePerItem[optionType as 'scoops' | 'toppings'])} each
+      </p>
+      <p>
+        {title} total:{' '}
+        {orderDetails.totals[optionType as 'toppings' | 'scoops']}
+      </p>
+      <Row>{optionItems}</Row>
+    </>
+  );
+};
+
+export default Options;
+```
+```tsx
+// src/pages/entry/ScoopOption.tsx
+import { ChangeEvent, FC, useState } from 'react';
+import { Row, Col, Form } from 'react-bootstrap';
+import { OptionType } from 'src/types';
+
+export const ScoopOption: FC<OptionType> = ({
+  name,
+  imagePath,
+  updateItemCount,
+}) => {
+  const [isValid, setIsValid] = useState(true);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const currentValue = event.target.value;
+
+    // make sure we're using a number and not a string to validate
+    const currentValueFloat = parseFloat(currentValue);
+    const valueIsValid =
+      0 <= currentValueFloat &&
+      currentValueFloat <= 10 &&
+      Math.floor(currentValueFloat) === currentValueFloat;
+
+    // validate
+    setIsValid(valueIsValid);
+
+    // only update context if the value is valid
+    if (valueIsValid && updateItemCount) {
+      updateItemCount(name, currentValueFloat);
+    }
+  };
+
+  return (
+    <Col xs={12} sx={6} md={4} lg={3} style={{ textAlign: 'center' }}>
+      <img
+        style={{ width: '75%' }}
+        src={`http://localhost:3030/${imagePath}`}
+        alt={`${name}_scoop`}
+      />
+      <Form.Group
+        controlId={`${name}-count`}
+        as={Row}
+        style={{ marginTop: '10px' }}
+      >
+        <Form.Label column xs='6' style={{ textAlign: 'right' }}>
+          {name}
+        </Form.Label>
+        <Col xs='5' style={{ textAlign: 'left' }}>
+          <Form.Control
+            type='number'
+            defaultValue={0}
+            onChange={handleChange}
+            isInvalid={!isValid}
+          />
+        </Col>
+      </Form.Group>
+    </Col>
+  );
+};
+
+export default ScoopOption;
+```
+
 ## 6.5. Adding Context to test Setup; Test Catching Error in Code
+1. At the current step, we still can't pass most of the tests we have made.
+2. The main reason is that the components aren't rendered in the context provider that they can't access the data and values in the context.
+3. Therefore, we can pass a 2nd argument to `render` with a `wrapper` property. 
+4. Note that we need to `await` for `userEvent.type` to ensure the component is updated to certain state we want.
+    ```tsx
+    // src/pages/entry/tests/totalUpdates.test.tsx
+    import { render, screen } from '@testing-library/react';
+    import userEvent from '@testing-library/user-event';
+    import Options from '../Options';
+    import { OrderDetailsProvider } from '../../../contexts/OrderDetails';
+
+    test('update scoop subtotal when scoops change', async () => {
+      render(<Options optionType='scoops' />, { wrapper: OrderDetailsProvider });
+      // make sure total starts out $0.00
+      const scoopsSubtotal = screen.getByText('Scoops total: $', { exact: false });
+      expect(scoopsSubtotal).toHaveTextContent('0.00');
+
+      // update vanilla scoops to 1 and check the subtotal
+      const vanillaInput = await screen.findByRole('spinbutton', {
+        name: 'Vanilla',
+      });
+      await userEvent.clear(vanillaInput);
+      await userEvent.type(vanillaInput, '1');
+      expect(scoopsSubtotal).toHaveTextContent('2.00');
+
+      // update chocolate scoops to 2 and check subtotal
+      const chocolateInput = await screen.findByRole('spinbutton', {
+        name: 'Chocolate',
+      });
+      await userEvent.clear(chocolateInput);
+      await userEvent.type(chocolateInput, '2');
+      expect(scoopsSubtotal).toHaveTextContent('6.00');
+    });
+    ```
+    ```tsx
+    // src/contexts/OrderDetails.tsx
+    import { createContext, useContext, useState, useMemo, useEffect } from 'react';
+    import { pricePerItem } from '../constants';
+    import { formatCurrency } from '../utilities';
+
+    // @ts-ignore
+    const OrderDetails = createContext<
+      [
+        orderDetails: {
+          scoops: Map<any, any>;
+          toppings: Map<any, any>;
+          totals: { toppings: string; scoops: string };
+        },
+        updateItemCount: (
+          itemName: string,
+          newItemCount: string,
+          optionType: 'scoops' | 'toppings'
+        ) => void,
+        resetOrder: () => void
+      ]
+    >();
+
+    // create custom hook to check whether we're inside a provider
+    export function useOrderDetails() {
+      const context = useContext(OrderDetails);
+
+      if (!context) {
+        throw new Error(
+          'useOrderDetails must be used within an OrderDetailsProvider'
+        );
+      }
+
+      return context;
+    }
+
+    function calculateSubtotal(optionType: string, optionCounts: any) {
+      let optionCount = 0;
+      for (const count of optionCounts[optionType].values()) {
+        optionCount += count;
+      }
+
+      return optionCount * pricePerItem[optionType as 'scoops' | 'toppings'];
+    }
+
+    export function OrderDetailsProvider(props: any) {
+      const [optionCounts, setOptionCounts] = useState({
+        scoops: new Map(),
+        toppings: new Map(),
+      });
+      const zeroCurrency = formatCurrency(0);
+      const [totals, setTotals] = useState({
+        scoops: zeroCurrency,
+        toppings: zeroCurrency,
+        grandTotal: zeroCurrency,
+      });
+
+      useEffect(() => {
+        const scoopsSubtotal = calculateSubtotal('scoops', optionCounts);
+        const toppingsSubtotal = calculateSubtotal('toppings', optionCounts);
+        const grandTotal = scoopsSubtotal + toppingsSubtotal;
+        setTotals({
+          scoops: formatCurrency(scoopsSubtotal),
+          toppings: formatCurrency(toppingsSubtotal),
+          grandTotal: formatCurrency(grandTotal),
+        });
+      }, [optionCounts]);
+
+      const value = useMemo(() => {
+        function updateItemCount(
+          itemName: string,
+          newItemCount: string,
+          optionType: 'scoops' | 'toppings'
+        ) {
+          const newOptionCounts = { ...optionCounts };
+
+          // update option count for this item with the new value
+          const optionCountsMap = optionCounts[optionType];
+          optionCountsMap.set(itemName, parseInt(newItemCount));
+
+          setOptionCounts(newOptionCounts);
+        }
+
+        // alternate updateItemCount that DOES NOT mutate state. Reference Q&A:
+        // https://www.udemy.com/course/react-testing-library/learn/#questions/14446658/
+        // function updateItemCount(itemName, newItemCount, optionType) {
+        //   // get option Map and make a copy
+        //   const { [optionType]: optionMap } = optionCounts;
+        //   const newOptionMap = new Map(optionMap);
+
+        //   // update the copied Map
+        //   newOptionMap.set(itemName, parseInt(newItemCount));
+
+        //   // create new object with the old optionCounts plus new map
+        //   const newOptionCounts = { ...optionCounts };
+        //   newOptionCounts[optionType] = newOptionMap;
+
+        //   // update state
+        //   setOptionCounts(newOptionCounts);
+        // }
+
+        function resetOrder() {
+          setOptionCounts({
+            scoops: new Map(),
+            toppings: new Map(),
+          });
+        }
+        // getter: object containing option counts for scoops and toppings, subtotals and totals
+        // setter: updateOptionCount
+        return [{ ...optionCounts, totals }, updateItemCount, resetOrder];
+      }, [optionCounts, totals]);
+      return <OrderDetails.Provider value={value} {...props} />;
+    }
+    ```
+
 ## 6.6. Creating Custom Render to Wrap in Provider
+
 ## 6.7. Review: Scoops Subtotal with Context
+
 ## 6.8. Code Quiz! Toppings Subtotal
+
 ## 6.9. OPTIONAL React Code: Toppings Checkboxes
+
 ## 6.10. Code Quiz! Grand Total
+
 ## 6.11. "Unmounted Component" Error
+
 ## 6.12. What Should Functional Test Catch? and Refactor
+
 
 # 7. Final Exam: Order Phases
 ## 7.1. Introduction to Final Exam: Order Phases
