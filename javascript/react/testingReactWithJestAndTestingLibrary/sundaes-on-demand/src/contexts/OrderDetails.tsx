@@ -8,7 +8,7 @@ const OrderDetails = createContext<
     orderDetails: {
       scoops: Map<any, any>;
       toppings: Map<any, any>;
-      totals: { toppings: string; scoops: string };
+      totals: { toppings: string; scoops: string; grandTotal: string };
     },
     updateItemCount: (
       itemName: string,

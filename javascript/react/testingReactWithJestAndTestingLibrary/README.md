@@ -1991,19 +1991,397 @@ export default ScoopOption;
     ```
 
 ## 6.6. Creating Custom Render to Wrap in Provider
+1. We can setup a [custom `render`](https://testing-library.com/docs/react-testing-library/setup/#custom-render) that wraps children and component with providers for context or other global app settings. 
+    ```tsx
+    // test-utils/testing-library-utils.tsx
+    import { render, RenderOptions } from '@testing-library/react';
+    import { ReactElement } from 'react';
+    import { OrderDetailsProvider } from 'src/contexts/OrderDetails';
+
+    export const renderWithContext = (
+      ui: ReactElement,
+      options?: RenderOptions
+    ) => {
+      return render(ui, { wrapper: OrderDetailsProvider, ...options });
+    };
+
+    // re-export everything
+    export * from '@testing-library/react';
+
+    // override render method
+    export { renderWithContext as render };
+    ```
 
 ## 6.7. Review: Scoops Subtotal with Context
+1. Use `getByText` to find total
+   1. `exact` option set to `false`
+2. number inputs
+   1. `await` and `findBy` (coming from server sync)
+   2. `spinbutton` role
+   3. `userEvent.clear` to clear existing text
+   4. `userEvent.type` to enter number
+3. `wrapper` option to redner to apply context provider.
+4. Redefine testing library `render` to access universally.
 
 ## 6.8. Code Quiz! Toppings Subtotal
+1. Assert to default topping subtotal
+2. Find and tick one box assert on updated subtotal
+   1. See `src/mocks/handler.ts` for server response (which toppings)
+   2. use `await` and `find` for checkbox (async)
+3. Tick another box on, assert on subtotal
+   1. Make sure code can handle two simultaneous boxes
+4. Tick one of the boxes off (click it again) and assert on subtotal
+   1. Make sure code can handle box checked then un-checked
+      ```tsx
+      import { render, screen } from '../../../test-utils/testing-library-utils';
+      import userEvent from '@testing-library/user-event';
+      import Options from '../Options';
+
+      test('update scoop subtotal when scoops change', async () => {
+        render(<Options optionType='scoops' />);
+        // make sure total starts out $0.00
+        const scoopsSubtotal = screen.getByText('Scoops total: $', { exact: false });
+        expect(scoopsSubtotal).toHaveTextContent('0.00');
+
+        // update vanilla scoops to 1 and check the subtotal
+        const vanillaInput = await screen.findByRole('spinbutton', {
+          name: 'Vanilla',
+        });
+        await userEvent.clear(vanillaInput);
+        await userEvent.type(vanillaInput, '1');
+        expect(scoopsSubtotal).toHaveTextContent('2.00');
+
+        // update chocolate scoops to 2 and check subtotal
+        const chocolateInput = await screen.findByRole('spinbutton', {
+          name: 'Chocolate',
+        });
+        await userEvent.clear(chocolateInput);
+        await userEvent.type(chocolateInput, '2');
+        expect(scoopsSubtotal).toHaveTextContent('6.00');
+      });
+
+      test('update toppings subtotal when toppings changes', async () => {
+        render(<Options optionType='toppings' />);
+        const toppingsSubtotal = screen.getByText('Toppings total: $', {
+          exact: false,
+        });
+        expect(toppingsSubtotal).toHaveTextContent('0.00');
+
+        // update cherries toppings and check subtotal
+        const cherryiesInput = await screen.findByRole('checkbox', {
+          name: 'Cherries',
+        });
+
+        // update m&ms toppings and check subtotal
+        expect(cherryiesInput).not.toBeChecked();
+        await userEvent.click(cherryiesInput);
+        expect(cherryiesInput).toBeChecked();
+        expect(toppingsSubtotal).toHaveTextContent('1.50');
+
+        const mnms = await screen.findByRole('checkbox', {
+          name: 'M&Ms',
+        });
+
+        expect(mnms).not.toBeChecked();
+        await userEvent.click(mnms);
+        expect(mnms).toBeChecked();
+        expect(toppingsSubtotal).toHaveTextContent('3.00');
+
+        await userEvent.click(mnms);
+        expect(mnms).not.toBeChecked();
+        expect(toppingsSubtotal).toHaveTextContent('1.50');
+      });
+      ```
 
 ## 6.9. OPTIONAL React Code: Toppings Checkboxes
+```tsx
+// src/pages/entry/ToppingOption.tsx
+import { ChangeEvent, FC } from 'react';
+import { Col, Form } from 'react-bootstrap';
+import { OptionType } from 'src/types';
 
+export const ToppingOption: FC<OptionType> = ({
+  name,
+  imagePath,
+  updateItemCount,
+}) => {
+  return (
+    <Col xs={12} sx={6} md={4} lg={3} style={{ textAlign: 'center' }}>
+      <img
+        style={{ width: '75%' }}
+        src={`http://localhost:3030/${imagePath}`}
+        alt={`${name}_topping`}
+      />
+      <Form.Group controlId={`${name}-topping-checkbox`}>
+        <Form.Check
+          type='checkbox'
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            if (updateItemCount) {
+              updateItemCount(name, e.target.checked ? 1 : 0);
+            }
+          }}
+          label={name}
+        />
+      </Form.Group>
+    </Col>
+  );
+};
+
+export default ToppingOption;
+```
 ## 6.10. Code Quiz! Grand Total
+1. Should we do a "black box" test (not consider implementation)
+   1. First update scoops, then toppings
+   2. Should we also test updating toppings first then scoops?
+   3. We know from implementation that it shouldn't make a difference
+   4. Users should be able to do either, and we might change implementation
+2. Do test functions need to be `async`?
+   1. Yes, options still need to load from server/mock service worker
+   2. Await both the scoop element and another await on the topping element
+   3. They're separate operations and either could finish first.
+3. From mockups, grand total should be same size as titles `<h2>`.
+   1. We can search using the `heading` role
+   2. include the text in the `name` option 
+   3. Notice `{ exact: false }` is not an option for `byRole`
+   4. Either use `byRole` and regular expression for `name` option, or
+   5. `screen.getByRole('heading', { name: /grand total: \$/i });`
+   6. `byText` and `{ exact: false }`
+   7. `screen.getByText('Grand total: $', { exact: false });`
+      ```tsx
+      // src/pages/entry/tests/totalUpdates.test.tsx
+      import { render, screen } from '../../../test-utils/testing-library-utils';
+      import userEvent from '@testing-library/user-event';
+      import Options from '../Options';
+      import OrderEntry from '../OrderEntry';
+
+      test('update scoop subtotal when scoops change', async () => {
+        render(<Options optionType='scoops' />);
+        // make sure total starts out $0.00
+        const scoopsSubtotal = screen.getByText('Scoops total: $', { exact: false });
+        expect(scoopsSubtotal).toHaveTextContent('0.00');
+
+        // update vanilla scoops to 1 and check the subtotal
+        const vanillaInput = await screen.findByRole('spinbutton', {
+          name: 'Vanilla',
+        });
+        await userEvent.clear(vanillaInput);
+        await userEvent.type(vanillaInput, '1');
+        expect(scoopsSubtotal).toHaveTextContent('2.00');
+
+        // update chocolate scoops to 2 and check subtotal
+        const chocolateInput = await screen.findByRole('spinbutton', {
+          name: 'Chocolate',
+        });
+        await userEvent.clear(chocolateInput);
+        await userEvent.type(chocolateInput, '2');
+        expect(scoopsSubtotal).toHaveTextContent('6.00');
+      });
+
+      test('update toppings subtotal when toppings changes', async () => {
+        render(<Options optionType='toppings' />);
+        const toppingsSubtotal = screen.getByText('Toppings total: $', {
+          exact: false,
+        });
+        expect(toppingsSubtotal).toHaveTextContent('0.00');
+
+        // update cherries toppings and check subtotal
+        const cherryiesInput = await screen.findByRole('checkbox', {
+          name: 'Cherries',
+        });
+
+        // update m&ms toppings and check subtotal
+        expect(cherryiesInput).not.toBeChecked();
+        await userEvent.click(cherryiesInput);
+        expect(cherryiesInput).toBeChecked();
+        expect(toppingsSubtotal).toHaveTextContent('1.50');
+
+        const mnms = await screen.findByRole('checkbox', {
+          name: 'M&Ms',
+        });
+
+        expect(mnms).not.toBeChecked();
+        await userEvent.click(mnms);
+        expect(mnms).toBeChecked();
+        expect(toppingsSubtotal).toHaveTextContent('3.00');
+
+        await userEvent.click(mnms);
+        expect(mnms).not.toBeChecked();
+        expect(toppingsSubtotal).toHaveTextContent('1.50');
+      });
+
+      describe('grand total', () => {
+        test('grand total starts at $0.00', async () => {
+          render(<OrderEntry />);
+          const grandTotal = screen.getByRole('heading', {
+            name: /grand total: \$/i,
+          });
+
+          expect(grandTotal).toHaveTextContent('0.00');
+        });
+
+        test('grand total updates properly if scoop is added first', async () => {
+          render(<OrderEntry />);
+          const grandTotal = screen.getByRole('heading', {
+            name: /grand total: \$/i,
+          });
+
+          // update vanilla scoops to 2 and check grand total
+          const vanillaInput = await screen.findByRole('spinbutton', {
+            name: 'Vanilla',
+          });
+
+          await userEvent.clear(vanillaInput);
+          await userEvent.type(vanillaInput, '2');
+          expect(grandTotal).toHaveTextContent('4.00');
+
+          // add cherries and check grand total
+          const cherriesCheckbox = await screen.findByRole('checkbox', {
+            name: 'Cherries',
+          });
+          await userEvent.click(cherriesCheckbox);
+          expect(grandTotal).toHaveTextContent('5.50');
+        });
+
+        test('grand total updates properly if topping is added first', async () => {
+          render(<OrderEntry />);
+          const grandTotal = screen.getByRole('heading', {
+            name: /grand total: \$/i,
+          });
+
+          // add cherries and check grand total
+          const cherriesCheckbox = await screen.findByRole('checkbox', {
+            name: 'Cherries',
+          });
+          await userEvent.click(cherriesCheckbox);
+          expect(grandTotal).toHaveTextContent('1.50');
+
+          // update vanilla scoops to 2 and check grand total
+          const vanillaInput = await screen.findByRole('spinbutton', {
+            name: 'Vanilla',
+          });
+          await userEvent.clear(vanillaInput);
+          await userEvent.type(vanillaInput, '2');
+          expect(grandTotal).toHaveTextContent('5.50');
+        });
+
+        test('grand total updates properly if item is removed', async () => {
+          render(<OrderEntry />);
+
+          // add Cherries
+          const cherriesCheckbox = await screen.findByRole('checkbox', {
+            name: 'Cherries',
+          });
+          await userEvent.click(cherriesCheckbox);
+          // grand total $1.50
+
+          // update vanilla scoops to 2; grand total should be $5.50
+          const vanillaInput = await screen.findByRole('spinbutton', {
+            name: 'Vanilla',
+          });
+
+          // remove 1 scoop of vanilla and check grand total
+          await userEvent.clear(vanillaInput);
+          await userEvent.type(vanillaInput, '2');
+
+          // remove 1 scoop of vanilla and check grand total
+          await userEvent.clear(vanillaInput);
+          await userEvent.type(vanillaInput, '1');
+
+          // check grand total
+          const grandTotal = screen.getByRole('heading', {
+            name: /grand total: \$/i,
+          });
+          expect(grandTotal).toHaveTextContent('3.50');
+
+          // remove cherries and check grand total
+          await userEvent.click(cherriesCheckbox);
+          expect(grandTotal).toHaveTextContent('2.00');
+        });
+      });
+      ```
+
 
 ## 6.11. "Unmounted Component" Error
+1. We can use `test.only` to test on a single test or `test.skip` to skip a specific test in a test file.
+2. When a component uses `axios` or the other `async` features, it may run after the test finishes.
+3. Note that every time a test finishes, it does a auto cleanup.
+4. On the other hand, we can mock `useEffect` to bypass server all.
+5. However, it's not recommended as it doesn't work as how the app really does.
+6. Include in the beginning of a test that asserts on state changes.
+   1. One that awaits state changes.
+   2. happen on axios promise resolution.
+   3. Don't need to include in all tests because it only needs to be tested once.
+7. However most of the error that the lecture brings don't occur as we use `await` in the testing flow which is required by latest testing library when learning.
 
 ## 6.12. What Should Functional Test Catch? and Refactor
+1. Functional test generally
+   1. test code processes, and not simply static cosmetics
+   2. test elements that might change with future coding
+2. Art, not science for what to include which types of testing
+    ```tsx
+    // src/pages/entry/Options.tsx
+    import axios from 'axios';
+    import { Row } from 'react-bootstrap';
+    import { FC, useEffect, useState } from 'react';
+    import { OptionType } from 'src/types';
+    import ScoopOption from './ScoopOption';
+    import ToppingOption from './ToppingOption';
+    import AlertBanner from '../common/AlertBanner';
+    import { pricePerItem } from '../../constants';
+    import { useOrderDetails } from '../../contexts/OrderDetails';
+    import { formatCurrency } from '../../utilities';
 
+    export const Options: FC<{ optionType: string }> = ({ optionType }) => {
+      const [items, setItems] = useState<OptionType[]>([]);
+      const [error, setError] = useState<boolean>(false);
+      const [orderDetails, updateItemCount] = useOrderDetails();
+
+      // optionType is 'scoops' or 'toppings
+      useEffect(() => {
+        axios(`http://localhost:3030/${optionType}`)
+          .then((res) => setItems(res.data))
+          .catch((err) => setError(true));
+      }, [optionType]);
+
+      if (error) {
+        return <AlertBanner />;
+      }
+
+      const ItemComponent = optionType === 'scoops' ? ScoopOption : ToppingOption;
+      const title = optionType[0].toUpperCase() + optionType.slice(1).toLowerCase();
+
+      const optionItems = items.map((item) => (
+        <ItemComponent
+          key={item.name}
+          name={item.name}
+          imagePath={item.imagePath}
+          updateItemCount={(itemName, newItemCount) =>
+            updateItemCount(
+              itemName,
+              newItemCount as string,
+              optionType as 'scoops' | 'toppings'
+            )
+          }
+        />
+      ));
+
+      return (
+        <>
+          <h2>{title}</h2>
+          <p>
+            {formatCurrency(pricePerItem[optionType as 'scoops' | 'toppings'])} each
+          </p>
+          <p>
+            {title} total:{' '}
+            {orderDetails.totals[optionType as 'toppings' | 'scoops']}
+          </p>
+          <Row>{optionItems}</Row>
+        </>
+      );
+    };
+
+    export default Options;
+    ```
 
 # 7. Final Exam: Order Phases
 ## 7.1. Introduction to Final Exam: Order Phases
