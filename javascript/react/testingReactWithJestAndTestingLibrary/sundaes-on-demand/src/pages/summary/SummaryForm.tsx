@@ -1,10 +1,25 @@
-import { useState, Dispatch, FC, ChangeEvent, SetStateAction } from 'react';
+import {
+  useState,
+  Dispatch,
+  FC,
+  ChangeEvent,
+  SetStateAction,
+  FormEventHandler,
+} from 'react';
 import { Form, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 
 export const SummaryFormPage: FC<{
-  setOrderPhase?: Dispatch<SetStateAction<string>>;
-}> = () => {
+  setOrderPhase: Dispatch<SetStateAction<string>>;
+}> = ({ setOrderPhase }) => {
   const [tcChecked, setTcChecked] = useState<boolean>(false);
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+
+    // pass along to the next phase.
+    // The next page will handle submitting order from context.
+    setOrderPhase('completed');
+  };
 
   const popover = (
     <Popover id='popover-basic'>
@@ -23,7 +38,7 @@ export const SummaryFormPage: FC<{
   );
 
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Form.Group controlId='terms-and-conditions'>
         <Form.Check
           type='checkbox'

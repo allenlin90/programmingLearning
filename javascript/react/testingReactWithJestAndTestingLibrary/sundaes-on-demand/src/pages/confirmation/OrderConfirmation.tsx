@@ -10,8 +10,8 @@ export default function OrderConfirmation({
   setOrderPhase?: Dispatch<SetStateAction<string>>;
 }) {
   const [, , resetOrder] = useOrderDetails();
-  const [orderNumber, setOrderNumber] = useState(null);
-  const [error, setError] = useState(false);
+  const [orderNumber, setOrderNumber] = useState<number | string | null>(null);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     axios

@@ -5,7 +5,7 @@ import { useOrderDetails } from '../../contexts/OrderDetails';
 export default function OrderSummary({
   setOrderPhase,
 }: {
-  setOrderPhase?: Dispatch<SetStateAction<string>>;
+  setOrderPhase: Dispatch<SetStateAction<string>>;
 }) {
   const [orderDetails] = useOrderDetails();
 

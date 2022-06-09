@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import SummaryForm from '../SummaryForm';
 
 test('Initial conditions', () => {
-  render(<SummaryForm />);
+  render(<SummaryForm setOrderPhase={jest.fn()} />);
 
   const checkbox = screen.getByRole('checkbox', {
     name: /terms and conditions/i,
@@ -20,7 +20,7 @@ test('Initial conditions', () => {
 });
 
 test('Checkbox disable button on first click and enables on second click', async () => {
-  render(<SummaryForm />);
+  render(<SummaryForm setOrderPhase={jest.fn()} />);
 
   const user = userEvent.setup();
 
@@ -37,7 +37,7 @@ test('Checkbox disable button on first click and enables on second click', async
 });
 
 test('popover respondsto hover', async () => {
-  render(<SummaryForm />);
+  render(<SummaryForm setOrderPhase={jest.fn()} />);
   const popoverRegex = new RegExp(/no ice cream will actually be delivered/i);
 
   // popover starts out hidden

@@ -70,9 +70,14 @@ Start learning: 2022/03/29
   - [6.12. What Should Functional Test Catch? and Refactor](#612-what-should-functional-test-catch-and-refactor)
 - [7. Final Exam: Order Phases](#7-final-exam-order-phases)
   - [7.1. Introduction to Final Exam: Order Phases](#71-introduction-to-final-exam-order-phases)
+    - [7.1.1. App orderPhase State](#711-app-orderphase-state)
+    - [7.1.2. What to Test](#712-what-to-test)
   - [7.2. Adding a New Handler: Copy/Paste Warning!](#72-adding-a-new-handler-copypaste-warning)
+    - [7.2.1. POST order to server](#721-post-order-to-server)
   - [7.3. Debugging Tips](#73-debugging-tips)
   - [7.4. OPTIONAL: React Hints for Order Phase Coding](#74-optional-react-hints-for-order-phase-coding)
+    - [7.4.1. Order Confirmation Component](#741-order-confirmation-component)
+    - [7.4.2. App Component](#742-app-component)
   - [7.5. Final Exam Solution](#75-final-exam-solution)
   - [7.6. OPTIONAL React Code: Order Phases](#76-optional-react-code-order-phases)
   - [7.7. Jest Mock Functions as Props](#77-jest-mock-functions-as-props)
@@ -2385,12 +2390,295 @@ export default ToppingOption;
 
 # 7. Final Exam: Order Phases
 ## 7.1. Introduction to Final Exam: Order Phases
+### 7.1.1. App orderPhase State
+1. App passes state setter (setOrderPhase) to compose as prop
+2. Components call setOrderPhase to move to next phase
+### 7.1.2. What to Test
+1. "Happy path" (aka "Happy Day" or "Golden Path") test
+2. Tests that execute customer flow without error
+3. For our app:
+   1. Create order
+   2. Accept terms and submit
+   3. Click "new order" on confirmation page
+4. Don't need to test different combination of orders
+   1. Covered in order page testing
+
+```tsx
+// src/orderPases.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+import App from '../App';
+
+test('order phases for happy path', async () => {
+  // render app
+  // add ice cream scoops and toppings
+  // find and click order button
+  // check summary information based on order
+  // accept term and conditions and click button to confirm order
+  // confirm order number on confirmatoin page
+  // click "new order" button on confirmation page
+  // check that scoops and toppings subtotals have been reset
+  // do we need to await anything to avoid test errors?
+});
+```
+
 ## 7.2. Adding a New Handler: Copy/Paste Warning!
+### 7.2.1. POST order to server
+2. Implementation: call POST via `useEffect` in OrderConfirmation
+   1. make up format of the data sent to server, or send no data
+   2. server simply generates random order number and sends it back as JSON
+3. Mimic POST for order confirmation with Mock Service Worker
+4. We can modify the handler in `/src/mock/handlers.ts`. 
+```ts
+import { rest } from 'msw';
+
+export const handlers = [
+  rest.get('http://localhost:3030/scoops', (req, res, ctx) => {
+    return res(
+      ctx.json([
+        { name: 'Chocolate', imagePath: '/images/chocolate.png' },
+        { name: 'Vanilla', imagePath: '/images/vanilla.png' },
+      ])
+    );
+  }),
+  rest.get('http://localhost:3030/toppings', (req, res, ctx) => {
+    return res(
+      ctx.json([
+        { name: 'Cherries', imagePath: '/images/cherries.png' },
+        { name: 'M&Ms', imagePath: '/images/m-and-ms.png' },
+        { name: 'Hot fudge', imagePath: '/images/hot-fudge.png' },
+      ])
+    );
+  }),
+  rest.post('http://localhost:3030/order', (req, res, ctx) => {
+    return res(
+      ctx.json({
+        orderNumber: Math.floor(Math.random() * 10000000000),
+      })
+    );
+  }),
+];
+```
+
 ## 7.3. Debugging Tips
+1. When testing, we can use `screen.debug()`.
+2. Does `getBy` fail when there a server call or other async action?
+3. need to use `await findBy`
+4. Errors
+   1. Unable to find `role="role"`
+      1. Either role (for example, `button`) doesn't exist, or no element with that role that also matches `name` option.
+   2. Warning: An update to **component** inside a test was not wrapped in act
+      1. There was an update to the component after the test completed. Use `await findBy`.
+   3. Warning: Can't performa a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application
+      1. There was an update to the component state after the test completed. Use `await findBy`
+   4. Error: connect ECONNEREFUSED 127.0.0.1
+      1. There is no Mock Service Worker handler associated with this route and method.
+
 ## 7.4. OPTIONAL: React Hints for Order Phase Coding
+### 7.4.1. Order Confirmation Component
+1. State with `orderNumber` starts out `null`
+2. If `orderNumber` is `null`, display "Loading"
+   1. test "Loading" as optional practice
+3. `useEffect` to call axios when component mounts
+   1. Set `orderNumber` to axios response
+   2. Leave error as "TODO" (optional extra practice)
+
+### 7.4.2. App Component
+1. Keep `orderPhase` in App-level state
+   1. pass setter to top-level page components
+   2. `orderPhase` value determines which page component to display
+   3. for simplicity wrap everything in context provider
+      1. even though the confirmation page doesn't need it
+   4. buttons that update `orderPhase` state in pages
+      1. clicking button calls setter from prop
+   5. reset context `Map`s after clicking "New Order" button
+      1. context needs additional array item `resetOrder`
+
 ## 7.5. Final Exam Solution
+```tsx
+// orderPhase.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+import App from '../App';
+
+test('order phases for happy path', async () => {
+  // render app
+  // Don't need to wrap in provider; already wrapped!
+  render(<App />);
+
+  // add ice cream scoops and toppings
+  const vanillaInput = await screen.findByRole('spinbutton', {
+    name: 'Vanilla',
+  });
+  await userEvent.clear(vanillaInput);
+  await userEvent.type(vanillaInput, '1');
+
+  const chocolateInput = screen.getByRole('spinbutton', { name: 'Chocolate' });
+  await userEvent.clear(chocolateInput);
+  await userEvent.type(chocolateInput, '2');
+
+  const cherriesCheckbox = await screen.findByRole('checkbox', {
+    name: 'Cherries',
+  });
+  await userEvent.click(cherriesCheckbox);
+
+  // find and click order button
+  const orderSummaryButton = screen.getByRole('button', {
+    name: /order sundae/i,
+  });
+  await userEvent.click(orderSummaryButton);
+
+  // check summary information based on order
+  const summaryHeading = screen.getByRole('heading', { name: 'Order Summary' });
+  expect(summaryHeading).toBeInTheDocument();
+
+  const scoopsHeading = screen.getByRole('heading', { name: 'Scoops: $6.00' });
+  expect(scoopsHeading).toBeInTheDocument();
+
+  // check summary option items
+  expect(screen.getByText('1 Vanilla')).toBeInTheDocument();
+  expect(screen.getByText('2 Chocolate')).toBeInTheDocument();
+  expect(screen.getByText('Cherries')).toBeInTheDocument();
+
+  // accept term and conditions and click button to confirm order
+  const tcCheckbox = screen.getByRole('checkbox', {
+    name: /terms and conditions/i,
+  });
+  await userEvent.click(tcCheckbox);
+
+  const confirmOrderButton = screen.getByRole('button', {
+    name: /confirm order/i,
+  });
+  await userEvent.click(confirmOrderButton);
+
+  // confirm order number on confirmatoin page
+  const thankYouHeader = await screen.findByRole('heading', {
+    name: /thank you/i,
+  });
+  expect(thankYouHeader).toBeInTheDocument();
+
+  const orderNumber = await screen.findByText(/order number/i);
+  expect(orderNumber).toBeInTheDocument();
+
+  // click "new order" button on confirmation page
+  const newOrderButton = screen.getByRole('button', { name: /new order/i });
+  await userEvent.click(newOrderButton);
+
+  // check that scoops and toppings subtotals have been reset
+  const scoopsTotal = screen.getByText('Scoops total: $0.00');
+  expect(scoopsTotal).toBeInTheDocument();
+  const toppingsTotal = screen.getByText('Scoops total: $0.00');
+  expect(toppingsTotal).toBeInTheDocument();
+
+  // do we need to await anything to avoid test errors?
+  await screen.findByRole('spinbutton', { name: 'Vanilla' });
+  await screen.findByRole('checkbox', { name: 'Cherries' });
+});
+```
+
 ## 7.6. OPTIONAL React Code: Order Phases
+```tsx
+// src/pages/confirmation/OrderConfirmation.tsx
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import axios from 'axios';
+import Button from 'react-bootstrap/Button';
+import { useOrderDetails } from '../../contexts/OrderDetails';
+import AlertBanner from '../common/AlertBanner';
+
+export default function OrderConfirmation({
+  setOrderPhase,
+}: {
+  setOrderPhase?: Dispatch<SetStateAction<string>>;
+}) {
+  const [, , resetOrder] = useOrderDetails();
+  const [orderNumber, setOrderNumber] = useState<number | string | null>(null);
+  const [error, setError] = useState<boolean>(false);
+
+  useEffect(() => {
+    axios
+      // in a real app we would get order details from context
+      // and send with POST
+      .post(`http://localhost:3030/order`)
+      .then((response) => {
+        setOrderNumber(response.data.orderNumber);
+      })
+      .catch((error) => setError(true));
+  }, []);
+
+  if (error) {
+    return <AlertBanner />;
+  }
+
+  function handleClick() {
+    // clear the order details
+    if (resetOrder) {
+      resetOrder();
+    }
+
+    // send back to order page
+    if (setOrderPhase) {
+      setOrderPhase('inProgress');
+    }
+  }
+
+  if (orderNumber) {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <h1>Thank You!</h1>
+        <p>Your order number is {orderNumber}</p>
+        <p style={{ fontSize: '25%' }}>
+          as per our terms and conditions, nothing will happen now
+        </p>
+        <Button onClick={handleClick}>Create new order</Button>
+      </div>
+    );
+  } else {
+    return <div>Loading</div>;
+  }
+}
+```
+
 ## 7.7. Jest Mock Functions as Props
+1. Added a prop to top level page components `setOrderPhase`
+2. Other components also have functions as props
+3. `updateItemCount` for the ScoopOption/ToppingOption components
+4. Passing a Mock as a Props
+5. `jest.fn()`
+   1. Jest mock function
+   2. Does not do anything
+   3. Merely a placeholder to aviod errors
+```tsx
+// src/pages/entry/tests/OrderEntry.test.tsx
+import {
+  render,
+  screen,
+  waitFor,
+} from '../../../test-utils/testing-library-utils';
+import OrderEntry from '../OrderEntry';
+import { rest } from 'msw';
+import { server } from '../../../mocks/server';
+
+test('handles error for scoops and toppings routes', async () => {
+  server.resetHandlers(
+    rest.get('http://localhost:3030/scoops', (req, res, ctx) =>
+      res(ctx.status(500))
+    ),
+    rest.get('http://localhost:3030/toppings', (req, res, ctx) =>
+      res(ctx.status(500))
+    )
+  );
+
+  render(<OrderEntry setOrderPhase={jest.fn()} />);
+
+  await waitFor(async () => {
+    const alerts = await screen.findAllByRole('alert');
+    expect(alerts).toHaveLength(2);
+  });
+});
+```
+
 ## 7.8. Review: Final Exam, and Introduction to Optional Practice
 ## 7.9. Common Mistakes with React Testing Library
 
