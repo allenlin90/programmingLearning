@@ -81,10 +81,10 @@ Start learning: 2022/03/29
   - [7.5. Final Exam Solution](#75-final-exam-solution)
   - [7.6. OPTIONAL React Code: Order Phases](#76-optional-react-code-order-phases)
   - [7.7. Jest Mock Functions as Props](#77-jest-mock-functions-as-props)
-  - [7.8. Review: Final Exam, and Introduction to Optional Practice](#78-review-final-exam-and-introduction-to-optional-practice)
-  - [7.9. Common Mistakes with React Testing Library](#79-common-mistakes-with-react-testing-library)
 - [8. Optional Extra Practice](#8-optional-extra-practice)
   - [8.1. Standard Questions for New Tests and Introduction to Exercises](#81-standard-questions-for-new-tests-and-introduction-to-exercises)
+    - [8.1.1. Questions to ask](#811-questions-to-ask)
+    - [8.1.2. Exercises](#812-exercises)
   - [8.2. Confirm "Loading" Text](#82-confirm-loading-text)
   - [8.3. Conditional Toppings Section on Summary Page](#83-conditional-toppings-section-on-summary-page)
   - [8.4. Disable Order Button if No Scoops Ordered](#84-disable-order-button-if-no-scoops-ordered)
@@ -2679,14 +2679,375 @@ test('handles error for scoops and toppings routes', async () => {
 });
 ```
 
-## 7.8. Review: Final Exam, and Introduction to Optional Practice
-## 7.9. Common Mistakes with React Testing Library
-
 # 8. Optional Extra Practice
 ## 8.1. Standard Questions for New Tests and Introduction to Exercises
+### 8.1.1. Questions to ask
+1. What to render
+   1. what's the smallest component that encompasses tests?
+2. Do we need to pass any props?
+3. Do we need to wrap in say, `OrderDetailsProvider`?
+   1. Does the provider get used? Is it already wrapped within the component?
+4. Where should the tests go?
+   1. which file? New File needed
+5. What to test?
+   1. What's the behavior that needs testing?
+6. How to test?
+   1. What queries and events?
+7. Do we need to `await`?
+   1. Is there anything async going on?
+
+### 8.1.2. Exercises
+1. Confirm "Loading" shows while contacting server
+   1. async events
+   2. check that element disapperas from DOM
+2. Optionally show "Topppings" on summary page
+   1. "happy path" test with different path
+   2. confirm element is not on page
+3. Disable order button if no scoops are ordered
+   1. conditions for button to be enabled
+4. Validate scoop count value
+   1. Jest mock function passed as prop
+   2. jest-dom `toHaveClass` assertion
+5. Don't update total if scoop count is invalid
+   1. prerequisite: Validate scoop count value
+   2. minimum component to test
+6. Show alert for errro when submitting order
+   1. error response from server
+
 ## 8.2. Confirm "Loading" Text
+1. Confirmation page is set to show "Loading" while order number is loading from server
+2. Update "happy path" test
+   1. Test "Loading" appears and then disappears
+3. Could use `waitForElementToBeRemoved` like we did with Terms and Conditions popover
+   1. not necessary, because we can `await` what should appear after "Loading" is gone
+   2. not possible for popover, since nothing appeared when it disappeared
+4. In this case, can simply use query that expects "Loading" not to be there
+    ```tsx
+    // src/pages/test/orderPhases.test.tsx
+    import { render, screen } from '@testing-library/react';
+    import userEvent from '@testing-library/user-event';
+
+    import App from '../App';
+
+    test('order phases for happy path', async () => {
+      // render app
+      // Don't need to wrap in provider; already wrapped!
+      render(<App />);
+
+      // add ice cream scoops and toppings
+      const vanillaInput = await screen.findByRole('spinbutton', {
+        name: 'Vanilla',
+      });
+      await userEvent.clear(vanillaInput);
+      await userEvent.type(vanillaInput, '1');
+
+      const chocolateInput = screen.getByRole('spinbutton', { name: 'Chocolate' });
+      await userEvent.clear(chocolateInput);
+      await userEvent.type(chocolateInput, '2');
+
+      const cherriesCheckbox = await screen.findByRole('checkbox', {
+        name: 'Cherries',
+      });
+      await userEvent.click(cherriesCheckbox);
+
+      // find and click order button
+      const orderSummaryButton = screen.getByRole('button', {
+        name: /order sundae/i,
+      });
+      await userEvent.click(orderSummaryButton);
+
+      // check summary information based on order
+      const summaryHeading = screen.getByRole('heading', { name: 'Order Summary' });
+      expect(summaryHeading).toBeInTheDocument();
+
+      const scoopsHeading = screen.getByRole('heading', { name: 'Scoops: $6.00' });
+      expect(scoopsHeading).toBeInTheDocument();
+
+      // check summary option items
+      expect(screen.getByText('1 Vanilla')).toBeInTheDocument();
+      expect(screen.getByText('2 Chocolate')).toBeInTheDocument();
+      expect(screen.getByText('Cherries')).toBeInTheDocument();
+
+      // accept term and conditions and click button to confirm order
+      const tcCheckbox = screen.getByRole('checkbox', {
+        name: /terms and conditions/i,
+      });
+      await userEvent.click(tcCheckbox);
+
+      const confirmOrderButton = screen.getByRole('button', {
+        name: /confirm order/i,
+      });
+      await userEvent.click(confirmOrderButton);
+
+      // Expect "loading" to show
+      const loading = screen.getByText(/loading/i);
+      expect(loading).toBeInTheDocument();
+
+      // confirm order number on confirmatoin page
+      const thankYouHeader = await screen.findByRole('heading', {
+        name: /thank you/i,
+      });
+      expect(thankYouHeader).toBeInTheDocument();
+
+      // expect that loading has disappeared
+      const notLoading = screen.queryByText('loading');
+      expect(notLoading).not.toBeInTheDocument();
+
+      const orderNumber = await screen.findByText(/order number/i);
+      expect(orderNumber).toBeInTheDocument();
+
+      // click "new order" button on confirmation page
+      const newOrderButton = screen.getByRole('button', { name: /new order/i });
+      await userEvent.click(newOrderButton);
+
+      // check that scoops and toppings subtotals have been reset
+      const scoopsTotal = screen.getByText('Scoops total: $0.00');
+      expect(scoopsTotal).toBeInTheDocument();
+      const toppingsTotal = screen.getByText('Scoops total: $0.00');
+      expect(toppingsTotal).toBeInTheDocument();
+
+      // do we need to await anything to avoid test errors?
+      await screen.findByRole('spinbutton', { name: 'Vanilla' });
+      await screen.findByRole('checkbox', { name: 'Cherries' });
+    });
+    ```
+
 ## 8.3. Conditional Toppings Section on Summary Page
+1. Don't display toppings heading on summary page if no toppings are ordered
+2. Similar to "final exam happy path" test
+   1. new test, since outcome is different
+1. Standard questions
+   1. What to render? 
+      1. happy path usually means App
+   2. Pass props?
+      1. No, App has no props
+   3. Wrap render?
+      1. No, App already wraps within component
+   4. Which file for tests?
+      1. `orderPhase.test.tsx` works; moving from one phase to another
+   5. What to test?
+      1. Topping header is not there
+      2. Anything else? No hard-and-fast right answers here
+   6. How to test?
+      1. Which query to assert something's **not** on the page?
+   7. Do we need to `async/await`? 
+      1. Is there anything async going on?
+
 ## 8.4. Disable Order Button if No Scoops Ordered
+1. What to render?
+   1.  OrderEntry
+2. Pass Props?
+   1. No, `setOrderPhase` won't be called during test
+3. Wrap render?
+   1. Yes, this will render a component that calls `useOrderDetails`
+4. Which file for tests?
+   1. `OrderEntry.test.tsx`
+5. What to test?
+   1. test scoop count 0 -> 1 -> 0 (disabled/enabled/disabled)
+
+```tsx
+// src/pages/entry/tests/OrderEntry.test.tsx
+import {
+  render,
+  screen,
+  waitFor,
+} from '../../../test-utils/testing-library-utils';
+import OrderEntry from '../OrderEntry';
+import { rest } from 'msw';
+import { server } from '../../../mocks/server';
+import userEvent from '@testing-library/user-event';
+
+test('handles error for scoops and toppings routes', async () => {
+  server.resetHandlers(
+    rest.get('http://localhost:3030/scoops', (req, res, ctx) =>
+      res(ctx.status(500))
+    ),
+    rest.get('http://localhost:3030/toppings', (req, res, ctx) =>
+      res(ctx.status(500))
+    )
+  );
+
+  render(<OrderEntry setOrderPhase={jest.fn()} />);
+
+  await waitFor(async () => {
+    const alerts = await screen.findAllByRole('alert');
+    expect(alerts).toHaveLength(2);
+  });
+});
+
+test('disable order button if there are no scoops ordered', async () => {
+  render(<OrderEntry setOrderPhase={jest.fn()} />);
+
+  // order button should be disabled at first, even before option load
+  let orderButton = screen.getByRole('button', { name: /order sundae/i });
+  expect(orderButton).toBeDisabled();
+
+  // expect button to be enabled after adding scoop
+  const vanillaInput = await screen.findByRole('spinbutton', {
+    name: 'Vanilla',
+  });
+
+  await userEvent.clear(vanillaInput);
+  await userEvent.type(vanillaInput, '1');
+  expect(orderButton).toBeEnabled();
+
+  // expect button to be disabled again after removing scoop
+  await userEvent.clear(vanillaInput);
+  await userEvent.type(vanillaInput, '0');
+  expect(orderButton).toBeDisabled();
+});
+```
+
 ## 8.5. Red Input Box for Invalid Scoop Count
+1. How to test that the box turned red?
+   1. Check at [https://react-bootstrap.github.io/forms/validation/](https://react-bootstrap.github.io/forms/validation/)
+   2. Submit their example form with invalid (no) input
+   3. Use browser inspector to see what class to assert on - `is-invalid`
+2. Use `.toHaveClass` assertion
+   1. [https://github.com/testing-library/jest-dom#tohaveclass](https://github.com/testing-library/jest-dom#tohaveclass)
+3. Spec for this is to show error upon change to field
+   1. different from example on react-boostrap, which requires submit
+4. Standard Questions
+   1. What to render?
+      1. `ScoopOption`
+   2. Pass Props?
+      1. `setItemCount` needs jest mock function valu `jest.fn()`
+   3. Wrap render?
+      1. does `useOrderDetails` get called in the component?
+   4. Which file for tests?
+      1. `ScoopOption.test.tsx`
+   5. What to test?
+      1. "box turns red" (ie. `is-invalid` class from react-boostrap)
+   6. Do we need to `async / await`?
+      1. Is there anything async going on?
+
+```tsx
+// src/pages/entry/tests/ScoopOption.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ScoopOption from '../ScoopOption';
+
+test('indicate if scoop count is non-int or out of range', async () => {
+  render(<ScoopOption name='' imagePath='' updateItemCount={jest.fn()} />);
+
+  // expect input to be invalid with negative number
+  const vanillaInput = screen.getByRole('spinbutton');
+  await userEvent.clear(vanillaInput);
+  await userEvent.type(vanillaInput, '-1');
+  expect(vanillaInput).toHaveClass('is-invalid');
+
+  // replace with decimal input
+  await userEvent.clear(vanillaInput);
+  await userEvent.type(vanillaInput, '2.5');
+  expect(vanillaInput).toHaveClass('is-invalid');
+
+  // replace with input that's too high
+  await userEvent.clear(vanillaInput);
+  await userEvent.type(vanillaInput, '11');
+  expect(vanillaInput).toHaveClass('is-invalid');
+
+  // replace with valid input
+  // note: here we're testing out validation rules (namely that the input can display as valid)
+  // and not react-bootstrap's response
+  await userEvent.clear(vanillaInput);
+  await userEvent.type(vanillaInput, '3');
+  expect(vanillaInput).not.toHaveClass('is-invalid');
+});
+```
+
 ## 8.6. No Scoops Subtotal Updatefor Invalid Scoop Count
+```tsx
+// src/pages/entry/tests/Options.tests.tsx
+import { render, screen } from '../../../test-utils/testing-library-utils';
+import userEvent from '@testing-library/user-event';
+import Options from '../Options';
+
+test('displays image for each scoop option from server', async () => {
+  render(<Options optionType='scoops' />);
+
+  // find multiple images
+  const scoopImages = await screen.findAllByRole('img', { name: /scoop$/i });
+  expect(scoopImages).toHaveLength(2);
+
+  // confirm alt text of images
+  // @ts-ignore
+  const altText = scoopImages.map((element) => element.alt);
+  expect(altText).toEqual(['Chocolate_scoop', 'Vanilla_scoop']);
+});
+
+test('displays image for each topping option from server', async () => {
+  render(<Options optionType='toppings' />);
+
+  // find multiple images
+  const toppingImages = await screen.findAllByRole('img', {
+    name: /topping$/i,
+  });
+  expect(toppingImages).toHaveLength(3);
+
+  // confirm alt text of images
+  // @ts-ignore
+  const altText = toppingImages.map((element) => element.alt);
+  expect(altText).toEqual([
+    'Cherries_topping',
+    'M&Ms_topping',
+    'Hot fudge_topping',
+  ]);
+});
+
+test("dont' update total if scoops input is invalid", async () => {
+  render(<Options optionType='scoops' />);
+
+  // expect button to be enabled after adding scoop
+  const vanillaInput = await screen.findByRole('spinbutton', {
+    name: 'Vanilla',
+  });
+
+  await userEvent.clear(vanillaInput);
+  await userEvent.type(vanillaInput, '-1');
+
+  // make sure scoops subtotal hasn't updated
+  const scoopsSubtotal = screen.getByText('Scoops total: $0.00');
+  expect(scoopsSubtotal).toBeInTheDocument();
+});
+```
+
 ## 8.7. Server Error on Order Confirmation Page
+1. What to render?
+   1. `OrderConfirmation`
+2. Pass Props?
+   1. Jest Mock for `setOrderPhases`
+3. Wrap render?
+   1. `OrderConfirmation` calls `useOrderDetails`
+4. Which file for tests?
+   1. New file for `OrderConfirmation` tests
+5. What to test?
+   1. Alert appears on error from server
+6. How to test?
+   1. Override order POST handler for this test
+7. Do we need to `async / await`?
+   1. Yes, `axios` call
+
+```tsx
+// src/pages/confirmation/tests/OrderConfirmation.test.tsx
+import { screen } from '@testing-library/react';
+import { server } from 'src/mocks/server';
+import { rest } from 'msw';
+import OrderConfirmation from '../OrderConfirmation';
+import { renderWithContext } from 'src/test-utils/testing-library-utils';
+
+test('error response from server for submitting order', async () => {
+  // orderride default msw response for options endpoint with error response
+  server.resetHandlers(
+    rest.post('http://localhost:3030/order', (req, res, ctx) =>
+      res(ctx.status(500))
+    )
+  );
+
+  renderWithContext(<OrderConfirmation setOrderPhase={jest.fn()} />);
+
+  const alert = await screen.findByRole('alert');
+  expect(alert).toHaveTextContent(
+    'An unexpected error occurred. Please try again later.'
+  );
+});
+```

@@ -7,7 +7,7 @@ interface AlertBannerProps {
 }
 
 export const AlertBanner: FC<AlertBannerProps> = ({
-  message = 'An unexpected error ocurred. Please try again later.',
+  message = 'An unexpected error occurred. Please try again later.',
   variant = 'danger',
 }) => {
   return (
