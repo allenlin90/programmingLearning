@@ -1,0 +1,3 @@
+[submodule "javascript/javascript/nodeJSAdvancedConcepts/3_project_setup"]
+	path = javascript/javascript/nodeJSAdvancedConcepts/3_project_setup
+	url = https://github.com/StephenGrider/AdvancedNodeStarter.git
