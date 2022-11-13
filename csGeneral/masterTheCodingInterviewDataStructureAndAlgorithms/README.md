@@ -77,6 +77,8 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [7.2. Queues](#72-queues)
   - [7.3. Stack vs Queue](#73-stack-vs-queue)
   - [7.4. Stack Implementation (Linked Lists)](#74-stack-implementation-linked-lists)
+  - [Stack Impletmentation (Array)](#stack-impletmentation-array)
+  - [Queue Impletmentation](#queue-impletmentation)
 ---
 
 # 1. Big O
@@ -2445,3 +2447,84 @@ combine them later.
     myStack.pop();
     myStack.isEmpty();
     ```
+
+## Stack Impletmentation (Array)
+```js
+class Stack {
+  constructor() {
+    this.array = [];
+  }
+
+  peek() {
+    this.array[this.array.length - 1];
+    return this;
+  }
+
+  push(value) {
+    this.array.push(value);
+    return this;
+  }
+
+  pop() {
+    this.array.pop();
+    return this;
+  }
+  
+  isEmpty() {
+    return !this.array.length;
+  }
+}
+```
+
+## Queue Impletmentation 
+```js
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.first = null;
+    this.last = null;
+    this.length = 0;
+  }
+
+  peek() {
+    return this.first;
+  }
+
+  enqueue(value) {
+    const newNode = new Node(value);
+    if (!this.length) {
+      this.first = newNode
+      this.last = newNode
+    } else {
+      this.last.next = newNode;
+      this.last = newNode;
+    }
+
+    this.length++;
+    return this;
+  }
+
+  dequeue() {
+    // nothing in queue
+    if (!this.first) {
+      return this.first;
+    }
+
+    // only one entity in queue
+    if (this.first === this.last) {
+      this.last = null;
+    }
+
+    // remove very first entity
+    this.first = this.first.next;
+    this.length--;
+    return this;
+  }
+}
+```
