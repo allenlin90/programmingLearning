@@ -77,8 +77,10 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [7.2. Queues](#72-queues)
   - [7.3. Stack vs Queue](#73-stack-vs-queue)
   - [7.4. Stack Implementation (Linked Lists)](#74-stack-implementation-linked-lists)
-  - [Stack Impletmentation (Array)](#stack-impletmentation-array)
-  - [Queue Impletmentation](#queue-impletmentation)
+  - [7.5. Stack Impletmentation (Array)](#75-stack-impletmentation-array)
+  - [7.6. Queue Impletmentation](#76-queue-impletmentation)
+  - [7.7. Queues usings Stacks](#77-queues-usings-stacks)
+  - [7.8. Stacks + Queues Review](#78-stacks--queues-review)
 ---
 
 # 1. Big O
@@ -2448,7 +2450,7 @@ combine them later.
     myStack.isEmpty();
     ```
 
-## Stack Impletmentation (Array)
+## 7.5. Stack Impletmentation (Array)
 ```js
 class Stack {
   constructor() {
@@ -2476,7 +2478,7 @@ class Stack {
 }
 ```
 
-## Queue Impletmentation 
+## 7.6. Queue Impletmentation 
 ```js
 class Node {
   constructor(value) {
@@ -2528,3 +2530,60 @@ class Queue {
   }
 }
 ```
+
+## 7.7. Queues usings Stacks
+1. It'd be easier to use array to implement this solution. 
+```js
+var MyQueue = function() {
+    this.stack1 = [];
+    this.stack2 = [];
+};
+
+/** 
+ * @param {number} x
+ * @return {void}
+ */
+MyQueue.prototype.push = function(x) {
+    this.stack1.push(x);
+};
+
+/**
+ * @return {number}
+ */
+MyQueue.prototype.pop = function() {
+    while(this.stack1.length) {
+        this.stack2.push(this.stack1.pop());
+    }
+
+    const pop = this.stack2.pop();
+
+    while(this.stack2.length) {
+        this.stack1.push(this.stack2.pop());
+    }
+
+    return pop;
+};
+
+/**
+ * @return {number}
+ */
+MyQueue.prototype.peek = function() {
+    return this.stack1[0]
+};
+
+/**
+ * @return {boolean}
+ */
+MyQueue.prototype.empty = function() {
+    return !this.stack1.length
+};
+```
+
+## 7.8. Stacks + Queues Review
+1. Pros
+   1. Fast operations
+   2. Fast peek
+   3. Ordered
+2. Cons
+   1. Slow lookup
+
