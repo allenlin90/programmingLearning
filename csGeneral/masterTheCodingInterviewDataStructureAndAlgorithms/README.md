@@ -81,6 +81,14 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [7.6. Queue Impletmentation](#76-queue-impletmentation)
   - [7.7. Queues usings Stacks](#77-queues-usings-stacks)
   - [7.8. Stacks + Queues Review](#78-stacks--queues-review)
+- [8. Data Structure: Trees](#8-data-structure-trees)
+  - [8.1. Trees Introduction](#81-trees-introduction)
+  - [8.2. Binary tree](#82-binary-tree)
+  - [8.3. O(log N)](#83-olog-n)
+  - [8.4. Binary Search Trees](#84-binary-search-trees)
+  - [8.5. Balanced vs Unbalanced BST](#85-balanced-vs-unbalanced-bst)
+  - [8.6. BST Pros and Cons](#86-bst-pros-and-cons)
+  - [Binary Search Tree](#binary-search-tree)
 ---
 
 # 1. Big O
@@ -2587,3 +2595,193 @@ MyQueue.prototype.empty = function() {
 2. Cons
    1. Slow lookup
 
+# 8. Data Structure: Trees
+## 8.1. Trees Introduction
+1. There are many types of trees for different use cases. 
+2. Tree structure is used everywhere such as a website for HTML DOM. Starting from `body` and down to the least child in the `document`.  
+    <img src="./images/tree_structure_overview.png" />
+
+## 8.2. Binary tree
+1. Each node of the tree can either have either 0, 1, or 2 child nodes.
+2. Each child can have only 1 parent.
+3. If any node has more than 2 child nodes, the data structure is not a binary tree.
+4. When working with binary tree, we aim to look at a "full" tree, which means there's no gap in the tree.
+   1. "**Perfect Binary Tree**" has all child nodes having 2 child nodes to the bottom. All the least nodes at the bottom are filled to the same level. 
+   2. "**Filled Binary Tree**" each node has either 0 or 2 children rather than a single 1 child. 
+      <img src="./images/binary_trees.png" />
+5. Perfect Binary tree is very efficient and has an attribute that each layer of the tree has doubled the number of nodes of the previous layer.
+   1. Layer 1 - 1 Node
+   2. Layer 2 - 2 Nodes
+   3. Layer 3 - 4 Nodes
+   4. ...
+6. Besides, the number of node on a layer is the sum of all of their parent nodes plus 1. For example, layer 4 has 8 nodes which is the sum from layer 1 to layer 3 plus one (1 + 2 + 4 + 1).
+7. In this case, if the data is sorted and stored in the binary perfect binary tree, we can only check on half of the tree to search for the data. 
+8. A binary search tree has the following bigO notation
+   1. lookup `O(log N)`
+   2. insert `O(log N)`
+   3. delete `O(log N)`
+
+## 8.3. O(log N)
+1. If there's a 3 layers binary tree, we can have the following nodes
+   1. Layer 0: 2^0 = 1
+   2. Layer 1: 2^1 = 2
+   3. Layer 2: 2^2 = 4
+   4. Layer 3: 2^3 = 8
+2. The total number of nodes of the tree is `2^(h) - 1` where `h` stands for "height" and is the number of layers. Note that the layer counts from 1 in this case. 
+3. Therefore `log nodes` is `height`. Example to work with log, `log100 = 2`, as `10^2 = 100`.
+4. `log N` means that, based on the height of the tree, the maximum decisions to take when traversing the data. 
+5. For example, we can implement binary search tree. When searching data in the tree, we can take "divide and conquer" approach rather than traversing through the whole dataset. 
+
+## 8.4. Binary Search Trees
+1. The main reason to use a tree structure is to build the relationship between entities.
+2. Though this data structure is less efficient than hash table, it is more efficient than linear approach for various actions. 
+3. For example, when adding/removing a node in the tree, the process starts from the root and traverse down to the target with `log N` approach.
+
+## 8.5. Balanced vs Unbalanced BST
+1. In some cases, if the dataset is a linear, incremental list, the tree based on the data can be unbalanced and has child nodes only to the right as each entity is larger than then previous one. 
+2. In such case, the tree becomes a linked list and lose the benefits of efficiency.
+3. Therefore, ideally, a binary search tree data should be balanced. Besides, there are algorithms helping to sort and manage the data. This derives `AVL tree` and `Red Black tree` from general BST. 
+
+## 8.6. BST Pros and Cons
+1. Pros 
+   1. Better than `O(n)`
+   2. Ordered data structure
+   3. Flexible size
+2. Cons
+   1. No `O(1)` operations
+
+## Binary Search Tree
+1. Tentative solution
+```js
+class Node {
+  constructor(value) {
+    this.left = null;
+    this.right = null;
+    this.value = value;
+  }
+}
+
+class BinarySearchTree {
+  constructor() {
+    this.root = null;
+  }
+
+  insert(value) {
+    const node = new Node(value);
+
+    if (!this.root) {
+      this.root = node;
+      return this;
+    }
+
+    let entry = this.root;
+    const isLarger = value > entry.value;
+    const side = isLarger ? 'right' : 'left'
+
+    while (entry) {
+      if (!entry[side]) {
+        entry[side] = new Node(value);
+
+        entry = null
+      } else {
+        entry = entry[side];
+      }
+    }
+
+    return this;
+  }
+
+  lookup(value) {
+    let entry = this.root;
+    const isLarger = value > entry.value;
+    const side = isLarger ? 'right' : 'left'
+
+    let hasValue = false;
+
+    while (entry) {
+      if (entry.value === value) {
+        hasValue = true;
+
+        entry = null;
+      } else {
+        entry = entry[side];
+      }
+    }
+
+    return hasValue;
+  }
+}
+
+const tree = new BinarySearchTree();
+
+tree.insert(9);
+tree.insert(4);
+tree.insert(6);
+tree.insert(20);
+tree.insert(170);
+tree.insert(15);
+tree.insert(1);
+console.log(JSON.stringify(traverse(tree.root)))
+
+console.log(tree.lookup(10));
+console.log(tree.lookup(9));
+```
+2. Solution from lecture
+```js
+class Node {
+  constructor(value) {
+    this.left = null;
+    this.right = null;
+    this.value = value;
+  }
+}
+
+class BinarySearchTree {
+  constructor() {
+    this.root = null;
+  }
+
+  insert(value) {
+    const newNode = new Node(value);
+
+    if (!this.root) {
+      this.root = newNode;
+    } else {
+      let currentNode = this.root;
+
+      while(true) {
+        if (value < currentNode.value) {
+          if (!currentNode.left) {
+            currentNode.left = newNode;
+            return this;
+          }
+          currentNode = currentNode.left;
+        } else {
+          if (!currentNode.right) {
+            currentNode.right = newNode;
+            return this;
+          }
+          currentNode = currentNode.right;
+        }
+      }
+    }
+  }
+}
+
+const tree = new BinarySearchTree();
+tree.insert(9);
+tree.insert(4);
+tree.insert(6);
+tree.insert(20);
+tree.insert(170);
+tree.insert(15);
+tree.insert(1);
+console.log(JSON.stringify(traverse(tree.root)))
+
+function traverse(node) {
+  const tree = { value: node.value };
+  tree.left = node.left === null ? null : traverse(node.left);
+  tree.right = node.right === null ? null : traverse(node.right);
+  return tree;
+}
+```
