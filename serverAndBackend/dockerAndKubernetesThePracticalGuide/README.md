@@ -27,8 +27,8 @@ End -
   - [2.3. Building and Understanding the Demo App](#23-building-and-understanding-the-demo-app)
   - [2.4. Understanding the Problem](#24-understanding-the-problem)
   - [2.5. Introducing Volumes](#25-introducing-volumes)
-  - [2.6. A First, Unsucessful Try](#26-a-first-unsucessful-try)
-  - [2.7. Named Volumes To THe Rescue!](#27-named-volumes-to-the-rescue)
+  - [2.6. A First, Unsuccessful Try](#26-a-first-unsuccessful-try)
+  - [2.7. Named Volumes To The Rescue!](#27-named-volumes-to-the-rescue)
   - [2.8. Getting Started with Bind Mounts (Coding Sharing)](#28-getting-started-with-bind-mounts-coding-sharing)
   - [2.9. Combining and Merging Different Volumes](#29-combining-and-merging-different-volumes)
   - [2.10. A NodeJS-specific Adjustment: Using Nodemon in a Container](#210-a-nodejs-specific-adjustment-using-nodemon-in-a-container)
@@ -213,37 +213,245 @@ End -
 5. We then can run `docker run -it node` which creates an interactive session that allows users to use CLI to interact with the `Node.js` runtime in the container. 
 
 ## 1.3. Our Goal: A NodeJS App
-## 1.4. Building our own Image with Dockerfile
-## 1.5. Running a Container based on our own Image
-## 1.6. Images are Read-Only!
-## 1.7. Understanding Image Layers
-## 1.8. Managing Images and Containers
-## 1.9. Stopping and Restarting Containers
-## 1.10. Understanding Attached and Detached Containers
-## 1.11. Entering Interactive Mode
-## 1.12. Deleting Images and Containers
-## 1.13. Removing Stopped Containers Automatically
-## 1.14. A Look Behind the Scenes: Inspecting Images
-## 1.15. Copying Files Into and From a Container
-## 1.16. Naming and Tagging Container and Images
-## 1.17. Sharing Images - Overview
-## 1.18. Pushing Images to DockerHub
-## 1.19. Pulling and Using Shared Images
+1. The Node.js app has the following features
+   1. Running the app in `Node.js` runtime as a Docker container
+   2. Having an API endpoint for `POST` request
+   3. Serving static files on its `/public` path
+   4. Using 3rd party dependencies `Express` and `body-parser` listed in `package.json`
 
+## 1.4. Building our own Image with Dockerfile
+1. `FROM` indicates which image should it refer to. For example, we can pull to use `Node.js`. 
+2. `COPY` indicates what code and files should be included in the container. For example, we can use `COPY . .`
+   1. The 1st dot indicates that all the files (besides `Dockerfile`) should be included. 
+   2. The 2nd dot means the directory where should the code go.
+   3. For the destination directory, we can setup the other folder such as `/app`. 
+3. We can specify the working directory with `WORKDIR`.
+   1. Note that the destination can simply be `.` for `COPY` instruction as we have set up `WORKDIR`. 
+   2. However, for clarity, we can keep the destination path the same as the working directory. 
+4. After running all the required commands, we can use `CMD` to run commands to start the service after all the `RUN` are done. 
+   1. In this case, we can use an array and pass the commands. 
+   2. Note that if there's no `CMD` specified, the `CMD` of the base image will be executed.
+   3. Without both `CMD` and image, an error will be prompted. 
+5. Besides running the server app, we need to expose the port to allow outside network connecting to the docker container.
+
+```dockerfile
+FROM node
+
+WORKDIR /app
+
+# by setting WORKDIR, destination to COPY can simply be '.'
+COPY . /app
+
+RUN npm install
+
+# depending on the server port
+EXPOSE 80
+
+CMD ["node", "server.js"]
+```
+
+## 1.5. Running a Container based on our own Image
+1. After setting up the `Dockerfile`, we can run `docker build .`, which `.` means all the files in the current directory.
+2. We then can run the built image by `docker run [IMAGE_ID]`
+3. However, the app is still not accessible from the outside world as we haven't map the port to the local machine. 
+4. We can run the image with `-p` flag with port mapping as `LOCAL_PORT:CONTAINER_EXPOSE_PORT`. 
+5. In this case, we want to map our port at `3000`, we then can use `docker run -p 3000:80 [IMAGE_ID]`. 
+6. We then can use a browser or HTTP client to interact with the server at `http://localhost:3000`.
+
+## 1.6. Images are Read-Only!
+1. Once an image is built, it's not mutable.
+2. It means that though we change the source code, the image is still the same as when we built it.
+3. However, there's the other approach to hot load and rebuilt the image every time we update the source code.
+
+## 1.7. Understanding Image Layers
+1. Docker will build image based on the changes and use the caches in the previous builds. 
+2. Every instruction in a `Dockerfile` can be assessed as a layer.
+3. Since Docker image is read-only, Docker will check on each instruction and see if there's any difference to use caches rather than re-run the instruction if it's the same. 
+4. In the previous case, though we only change the source code, Docker will re-run `npm install` instruction which is not necessary as only the source code is changed (rather than changing `package.json` and dependencies).
+5. Therefore, we can optimize the instructions in `Dockerfile` as the following
+    ```Dockerfile
+    FROM node
+
+    WORKDIR /app
+
+    COPY package.json /app
+
+    RUN npm install
+
+    COPY . /app
+
+    EXPOSE 80
+
+    CMD ["node", "server.js"]
+    ```
+6. In this optimization, we ensure `package.json` and `npm install` happens before Docker copies the other source code. 
+7. Hence, if there's only changes on the source code, Docker will only re-run the instructions for copying the source code while using the cache to implement dependency installation. 
+
+## 1.8. Managing Images and Containers
+1. There are many commands to allow us interact with Docker CLI. 
+2. For example, we can name a docker image, list all built images, analyze an image and remove images. 
+3. For containers, we can name a container, configure a container in detail, list all containers, and remove containers.
+
+## 1.9. Stopping and Restarting Containers
+1. While we can list all containers including the stopped ones, we can re-use those containers without using `docker run`. 
+2. `docker run` will create a new container which is not necessary in some cases. 
+3. To restart a container, we can use `docker start [container_name]`.
+4. However, the behavior of `docker start` is different from `docker run` that it only starts the container and falls back to the terminal, so the user cannot interact with the container through CLI. 
+
+## 1.10. Understanding Attached and Detached Containers
+1. When running `docker run`, docker starts with attached mode by default which redirect the user into container CLI.
+2. On the other hand, running `docker start` starts with detached mode by default, so docker only starts the container while putting the user back to local terminal. 
+3. To run in detach mode with `docker run`, we can put `-d` flag as `docker run -d`, so a new container is built and starts with detached mode. 
+4. We want to enter the container context through CLI, we can use `docker attach [container_name]`, docker will then attach the context of the container, so the user can check the printed logs.
+5. Note that `attach` can be simplified as `-a` flag as for `attach`.
+6. Besides `attach`, we can use `docker logs [container_name]` to check logs printed in a container.
+7. In addition, we can add `-f` follow flag to keep listening the logs printed from a running container.
+8. Note that if we log from a stopped container, it only prints the logs from the records and return the user back to local terminal.
+9. This `docker logs -f [container_name]` is similar to `docker attach` while it also prints the log before the user attaches the container since the container was built.  
+
+## 1.11. Entering Interactive Mode
+1. Though the user is in the attach mode when running `docker run` to create a new container to run an image, the attach mode doesn't allow users to **interact** with the runtime by default.
+2. In this case, we can check `-i` flag which stands for `--interactive` to keep `STDIN` open even if not attached (in attach mode).
+3. We then can use `-t` flag which is `--tty` to allocate a pseudo-TTY (creating a terminal).
+4. When running the container, we can use `-a` for attach mode and `-i` for interactive to work with the CLI of the container runtime. 
+
+## 1.12. Deleting Images and Containers
+1. To delete docker container, we can use `docker rm [container_name]`. 
+2. Note that the command doesn't work if the container is still running. This command only removes a container if it's stopped.
+3. In addition, we can pass multiple `container_name` to interact with at the same time.
+4. For removing docker images, we can use `docker rmi` which includes `i` to work with `rm` and removes docker images.
+5. We can remove images that is not used in any container by using `docker image prune`. Note that it is `image` rather than `images`.
+
+## 1.13. Removing Stopped Containers Automatically
+1. When creating a new container, we can add `--rm` flag as to remove the container right after it stops. 
+
+## 1.14. A Look Behind the Scenes: Inspecting Images
+1. To inspect an image, we can use `docker image inspect [image_hash]`. 
+
+## 1.15. Copying Files Into and From a Container
+1. Docker allows users to copy files to/from a container.
+2. Note that this command works though the container is not running.
+3. `docker cp [from_path] [to_path]`. Note that we need to put a column `:` after the container. 
+4. For example, we can copy a folder which includes files from a local path such as `test/text.txt`.
+   1. `docker cp test/. [container_name]:[container_path]`
+5. Vice versa, we can copy a folder from the container to our local system. 
+6. This could be useful when doing local development as any of the source code changes, we only need to copy the changed files to the container without rebuilding the image. 
+7. However, there's a better solution to develop apps with docker.
+
+## 1.16. Naming and Tagging Container and Images
+1. We can assign name to a container with `--name` when creating it from an image with `docker run`.
+2. Besides assigning name to docker container, we can give docker images tags when building the image with `docker build .`.
+3. `name` and `tag` works with different purposes. For example, we can have a `name` for conventional understanding, such as the function of the app itself, while use `tag` to specify the version of the app. 
+4. When setting up `Dockerfile` and load `node` image, we can specify the version as `FROM node:12` to use `Node.js` version 12. 
+
+## 1.17. Sharing Images - Overview
+1. Every user having the same image can build containers from the image. 
+2. Besides sharing `Dockerfile`, we can share a built image directly. 
+
+## 1.18. Pushing Images to DockerHub
+1. Docker has mechanism to share images through Docker hub or the other private registry. 
+2. To rename an existing docker image, we can use `docker tag [old_image_name] [new_image_name]`. Note that if we'd like to push the image to a registry, we may need to name if with the user ID with a slash `/`. 
+3. By renaming an image, docker creates a clone with the new given name rather than getting rid of the old image. 
+4. We can also use `docker login` to sign in to docker hub by giving username and password. 
+
+## 1.19. Pulling and Using Shared Images
+1. To pull image from the signed in registry, we can use `docker pull [repository]`. 
+2. If the image repository is public, it works similar to `git` and `npm` that everyone can pull the resource. 
+3. Note that we can use `docker logout` to sign out from the docker app. 
 
 
 # 2. Managing Data and Working with Volumes
 ## 2.1. Understanding Data Categories/Different Kinds of Data
+1. There are several types of data when we work with a docker container.
+2. The app itself which is the image that is read-only. 
+3. Temporary data that is fetched or produced by the apps in the container which only exists in RAM or temporary files. The data is scoped in the container. 
+4. Permanent data that is fetched or produced in the container that must not be lost when the container stops or restarts. 
+5. To keep data permanent, we can use docker `Volumes`. 
+
 ## 2.2. Analyzing a Real App
 ## 2.3. Building and Understanding the Demo App
+1. The demo app should be dockerized and run in docker container. 
+2. It collects feedback from users and store in a file.
+3. If the file exists, server will prompt an error that the file has been created. 
+
 ## 2.4. Understanding the Problem
+1. If we don't use `--rm` when creating a container, the container simply stops rather than being removed.
+2. If we restart the container, the files written in the file system will be persist as the container is an isolated environment that the files modification persists.
+
 ## 2.5. Introducing Volumes
-## 2.6. A First, Unsucessful Try
-## 2.7. Named Volumes To THe Rescue!
+1. Volumes are folders on your host machine hard drive which are mounted ("made available", mapped) into containers. 
+2. Though the concept is similar to `COPY` in `Dockerfile`, the files and data in volumes is on the host machine, while `COPY` only happens when the image is built. 
+3. Volumes persist if a container shuts down. If a container (re-)starts and mounts a volume, any data inside of that volume is available in the container. 
+4. A container can write data into a volume and read data from it. 
+
+## 2.6. A First, Unsuccessful Try
+1. To use volumes, we can have `VOLUME` in `Dockerfile` and specify the path to keep the files and data. 
+```dockerfile
+# anonymous volumes
+VOLUME ["[WORKDIR]/[path_or_directory]"]
+```
+
+## 2.7. Named Volumes To The Rescue!
+1. If we create a volume in Dockerfile without naming, it will be an anonymous volume.
+2. We can use `docker volume ls` to list all volumes on the host machine. 
+3. The anonymous volume is managed by docker. Besides, the volume is bound to the container that once the container is removed, the anonymous volume will be removed too. 
+4. Besides, the user won't know where the volume is stored on the host machine as docker controls and manages the volume. 
+5. On the other hand, users have better control over `named volumes`. 
+6. Note that the main purpose of volumes is to persist data for containers to work with rather than edit the data directly by the user. 
+7. A named volume cannot be created through `Dockerfile` but when creating a container from an image. 
+8. An anonymous volume is attached to the container, while a named volume is not. 
+9. When creating a container by image, we can add `-v` flag with given name and path `docker run -d -p LOCAL_PORT:EXPOSE_PORT --rm --name [container_name] -v [volume_name]:[path_to_store_as_volume] [images_name]:[image_tag]`.
+10. In addition, if we create an anonymous volume without `--rm` when creating the container, the volume will persist though the container attached is removed later, but the volume will then become an orphan that is not accessible and useful. 
+11. To remove unused volumes, we can run `docker volume prune` or `docker volume rm [volume_name]`. 
+
 ## 2.8. Getting Started with Bind Mounts (Coding Sharing)
+1. Users has fully control with `bind mounts` which is similar to `volumes`. 
+2. Bind mounts are useful for persistent, editable data. In development cycle, this is useful to work with source code to do hot reload rather than rebuilding the image when the source code changes.
+3. To create a bind mount, we can do from the host machine rather than the `Dockerfile`.
+4. In addition, we may need to check on docker app settings under `Resources` to ensure docker has access authorization to the source code directory. 
+5. Note that the path for bind mounts should be **absolute path**. 
+6. On different OS of the host machine, we may use `$(pwd)` to current absolute path on UNIX based OS such as Linux and MacOS, and use `%cd%` to get the absolute path on Windows OS.
+    ```bash
+    # create docker container
+    docker run -d -p 3000:3000 --name docker-app -v named_volume:directory_to_keep_in_volume "absolute_path_to_bind_mounts_with:docker_WORKDIR" image_name:image_tag
+    ```
+7. In this case, we overwrite the files from given absolute path to the working directory in the docker container. 
+8. In cases, this may cause problem as `node_modules` and/or the other dependencies we setup from `Dockerfile` would be overwritten and lost. 
+9. Bind mounts are not portable between different host systems or environments, because they depend on the directory structure of the host system.
+
 ## 2.9. Combining and Merging Different Volumes
+1. When using bind mounts, the files in bind mounts will be shared and used in docker containers.
+2. However, in some case, we don't want all the data and files from the current directory on the host machine overwrites everything in the docker container. 
+3. For example, we can develop without `node_modules` in local repository but only install the dependencies in the docker container. 
+4. In this case, we can have an anonymous volume to keep `node_modules` of the container. 
+5. In the example, we may create a `named volume`, a `bind mount`, and an `anonymous volume`.
+6. Note that creating a volume without a column `:` is as creating `VOLUME ["path/in/container"]` in `Dockerfile`. 
+
 ## 2.10. A NodeJS-specific Adjustment: Using Nodemon in a Container
+1. For developing `Node.js` apps, we can use `nodemon` to let `Node.js` watch on the changes and hot reload to reflect. 
+2. In this case, we can change `npm start` to `nodemon your_app_entry.js` to run the app. We can also change the `CMD` to `["npm", "start"]` in `Dockerfile`. 
+3. Note that bind mounts doesn't work directly when using Docker on WindowsOS as Docker daemon is actually running on `wsl2` and it may not have the right permission to access the on the path.
+4. Therefore, the source code repository should be located in `wsl` file system to allow docker proceed bind mount and reflect on the changes. 
+
 ## 2.11. Volumes and Bind Mounts: Summary
+1. Anonymous volumes
+   1. Created specifically for a single container.
+   2. Survives container shutdown/restart unless `--rm` is used.
+   3. Cannot be shared across containers. 
+   4. Since it's anonymous, it cannot be re-used (even on the same image).
+   5. Can be useful to persist re-usable resource for a container or outsource to keep the resource on the host machine (such as `node_modules` or data caches). 
+2. Named volumes
+   1. Created in general, not tied to any specific container. 
+   2. Survives container shutdown/restart and can be removed through Docker CLI. 
+   3. Can share across containers.
+   4. Can be re-used for same container (across restarts).
+3. Bind mounts
+   1. Location on host file system, not tied to any specific container.
+   2. Survives container shutdown/restart removal on host file system.
+   3. Can share across containers.
+   4. Can be re-used for same container (across restarts).
+4. The main difference between volumes and bind mounts is that volumes cannot be modified directly from Docker CLI or the host machine, while bind mounts is a mapping which maps and reflects changes on certain file or directory on the host machine. 
+
 ## 2.12. A Look at Read-Only Volumes
 ## 2.13. Managing Docker Volumes
 ## 2.14. Using "COPY" vs Bind Mounts
