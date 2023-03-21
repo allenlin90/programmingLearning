@@ -453,11 +453,48 @@ VOLUME ["[WORKDIR]/[path_or_directory]"]
 4. The main difference between volumes and bind mounts is that volumes cannot be modified directly from Docker CLI or the host machine, while bind mounts is a mapping which maps and reflects changes on certain file or directory on the host machine. 
 
 ## 2.12. A Look at Read-Only Volumes
+1. By default bind mounts are enabled for `read-write` access. 
+2. To enabled `read-only` on bind mount, we can add the other column `:` after destination and give `ro` for `read-only`. `docker run -v $(pwd):[docker_file_path]:ro docker_image:tag`.
+3. Note that any sub-path or specified paths will overwrite the volumes above its scope. 
+4. For example, we create a volume for local `data` store while having the whole working directory to be `read-only` bind mount. 
+```bash
+docker run -v $(pwd):WORKDIR:ro -v named_volume:WORKDIR/data docker_image:tag
+```
+5. Note that the specified volumes only overwrites when its given as arguments in command rather than in `Dockerfile`. 
+
 ## 2.13. Managing Docker Volumes
+1. We can use `docker volume ls` to list all volumes. 
+2. We can easily notice anonymous volumes as their name will be a long hash. 
+3. Note that bind mounts are created by the user and docker has no directly control to the mounts. 
+4. We can create a volume directly with `docker volume create [volume_name]` and use the volume when creating a container. 
+5. `docker volume rm` and `docker volume prune` to remove volumes. 
+6. We can inspect docker volume with `docker volume inspect [volume_name]`.
+
 ## 2.14. Using "COPY" vs Bind Mounts
+1. Though we may use bind mount to put source code into the container and reflect changes.
+2. Thus, we don't need `COPY` in `Dockerfile` as source code will be replaced with bind mount injects.  
+3. However, when deploying to a online server, we don't use bind mount but require source code from the built image. 
+
 ## 2.15. Don't COPY Everything: Using "dockerignore" Files
+1. We can create a `.dockerignore` which is similar to `.gitignore`. 
+2. In common cases, we don't need to `COPY` `node_modules` as we don't need the local copy added to the container. 
+3. Besides, we can add every files that doesn't affect app execution to `.dockerignore`. 
+
 ## 2.16. Working with Environment Variables and ".env" Files
+1. We can pass build-time `ARG` arguments and runtime `ENV` environment variables. 
+2. `ARG`
+   1. Available inside of `Dockerfile`, NOT accessible in `CMD` or any application code. 
+   2. Set on image build (`docker build`) via `--build-arg`.
+3. `ENV`
+   1. Available inside of `Dockerfile` and in application code 
+   2. Set via `ENV` in `Dockerfile` or `--env` on `docker run`.
+4. To use variables such as `ARG` or `ENV` in `Dockerfile`, we can put a dollar sign `$` with the variable. 
+5. Note that specifying an `ENV` in `docker run` command will overwrite the values in `Dockerfile`. 
+6. Docker also allows to get environment variables from `.env` file with `--env-file [file_path]`.
+
 ## 2.17. Using Build Arguments (ARG)
+1. Arguments can be defined with `ARG` and used only in a `Dockerfile`. 
+2. We can also use `--build-arg` in the command similar to ENVs. 
 
 
 
