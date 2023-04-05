@@ -41,7 +41,7 @@ End -
   - [2.17. Using Build Arguments (ARG)](#217-using-build-arguments-arg)
 - [3. Networking: (Cross-)Container Communication](#3-networking-cross-container-communication)
   - [3.1. Case 1: Container to WWW Communication](#31-case-1-container-to-www-communication)
-  - [3.2. Case 2: Container to Local Host Machine Communiaction](#32-case-2-container-to-local-host-machine-communiaction)
+  - [3.2. Case 2: Container to Local Host Machine Communication](#32-case-2-container-to-local-host-machine-communication)
   - [3.3. Case 3: Container to Container Communication](#33-case-3-container-to-container-communication)
   - [3.4. Analyzing the Demo App](#34-analyzing-the-demo-app)
   - [3.5. Creating a Container and Communicating to the Web (WWW)](#35-creating-a-container-and-communicating-to-the-web-www)
@@ -49,6 +49,7 @@ End -
   - [3.7. Container to Container Communication: A Basic Solution](#37-container-to-container-communication-a-basic-solution)
   - [3.8. Introducing Docker Networks: Elegant Container to Container Communication](#38-introducing-docker-networks-elegant-container-to-container-communication)
   - [3.9. How Docker Resolves IP Addresses](#39-how-docker-resolves-ip-addresses)
+  - [3.10. Docker Network Drivers](#310-docker-network-drivers)
 - [4. Building Multi-Container Applications with Docker](#4-building-multi-container-applications-with-docker)
   - [4.1. Our Target App and Setup](#41-our-target-app-and-setup)
   - [4.2. Dockerizing the MongoDB Service](#42-dockerizing-the-mongodb-service)
@@ -500,19 +501,70 @@ docker run -v $(pwd):WORKDIR:ro -v named_volume:WORKDIR/data docker_image:tag
 
 # 3. Networking: (Cross-)Container Communication
 ## 3.1. Case 1: Container to WWW Communication
-## 3.2. Case 2: Container to Local Host Machine Communiaction
+1. Server in a container can use HTTP client such as `axios` to send HTTP request to WWW. 
+
+## 3.2. Case 2: Container to Local Host Machine Communication
+1. The server in a container may connect to a local hosted database such as MongoDB. 
+
 ## 3.3. Case 3: Container to Container Communication
+1. The server in a container may talk to the other container such as a MySQL database hosted on the other container. 
+
 ## 3.4. Analyzing the Demo App
+1. The server app has several endpoints to query and create entities in a MongoDB database. 
+2. There are other endpoints work as proxies to query data from a public API for Starwar movie data. 
+
 ## 3.5. Creating a Container and Communicating to the Web (WWW)
+1. A docker container works with WWW HTTP request by default without further configuration. 
+2. However, it doesn't work with localhost and communication between containers out of the box. 
+
 ## 3.6. Making Container to Host Communication Work
+1. To connect to localhost on the host machine, it needs to use `host.docker.internal` rather than using `localhost` directly. 
+
 ## 3.7. Container to Container Communication: A Basic Solution
+1. To allow containers communicate to each other, we can firstly use `docker inspect [container_name]` to check on a container for the details. 
+2. In the inspect object, we can find `IPAddress` in `NetworkSettings` to allow a container to connect to the other. 
+3. However, such method isn't ideal as we need to check on the IP address every time we spin up a container. 
+
 ## 3.8. Introducing Docker Networks: Elegant Container to Container Communication
+1. When running containers, we can firstly setup a Network which is shared by the scoped/group of containers. 
+2. To use a network, we can use `docker run --network [network_name]`. 
+3. Within a Docker network, all containers can communicate with each other and IPs are automatically resolved.
+4. Note that we need to create and set up a network before hand. Docker doesn't create a network on the fly when we try to use it as the other commands such as for using volumes.
+5. To create a docker network, we can use `docker network create [network_name]`.
+6. We then can list and check all networks with `docker network ls`. 
+7. After creating a network, we can use it when creating or running a docker container with `docker run -d --rm --name [container_name] --network [network_name] [image_name]`. 
+8. In a container, we can simply use the name of the other container we want to connect to as the URI, docker will resolve the container name as the IP address. 
+9. For example, we have a MongoDB container named `mongodb` and runs on port `27017`. We can connect to mongo db container through `mongodb://mongodb:27017/[database]` in the other containers. 
+10. In addition, containers in the same network can simply connect to each other through the name, and we don't need to use `-p` flag to expose the port and map it to something else as if we only need communication between containers.  
+
 ## 3.9. How Docker Resolves IP Addresses
+1. Though we can use container name in a container source code to replace the IP address for the other container in the same network, Docker doesn't actually replace the source but intercept the outgoing requests and resolves the name to an IP address.
+
+## 3.10. Docker Network Drivers
+1. Docker has `bridge` driver as default which has the usage in the note above. 
+2. There are some other drivers for different cases and scenarios, but for most of the cases, `bridge` by default has been suitable for most cases. 
+3. The other [Docker network drivers](https://docs.docker.com/network/)
 
 
 
 # 4. Building Multi-Container Applications with Docker
 ## 4.1. Our Target App and Setup
+1. In the demo project, we have 3 main building blocks
+   1. A MongoDB database
+   2. Backend - NodeJS Rest API
+   3. Frontend - React SPA
+2. The frontend SPA communicates to backend Node.js rest API which connects to the MongoDB. 
+3. In this demo solution, we'd like to keep some attributes for each of the building blocks.
+   1. MongoDB
+      1. Data must persist
+      2. Access should be limited
+   2. Backend
+      1. Data must persist (writing logs on the server)
+      2. Live source code update
+   3. Frontend
+      1. Live source code update
+
+
 ## 4.2. Dockerizing the MongoDB Service
 ## 4.3. Dockerizing the Node App
 ## 4.4. Moving the React SPA into a Container
