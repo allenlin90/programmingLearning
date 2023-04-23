@@ -88,7 +88,7 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [8.4. Binary Search Trees](#84-binary-search-trees)
   - [8.5. Balanced vs Unbalanced BST](#85-balanced-vs-unbalanced-bst)
   - [8.6. BST Pros and Cons](#86-bst-pros-and-cons)
-  - [Binary Search Tree](#binary-search-tree)
+  - [8.7. Binary Search Tree](#87-binary-search-tree)
 ---
 
 # 1. Big O
@@ -2650,7 +2650,7 @@ MyQueue.prototype.empty = function() {
 2. Cons
    1. No `O(1)` operations
 
-## Binary Search Tree
+## 8.7. Binary Search Tree
 1. Tentative solution
 ```js
 class Node {
