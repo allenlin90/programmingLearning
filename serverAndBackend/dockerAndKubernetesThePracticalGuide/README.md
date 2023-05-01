@@ -566,9 +566,64 @@ docker run -v $(pwd):WORKDIR:ro -v named_volume:WORKDIR/data docker_image:tag
 
 
 ## 4.2. Dockerizing the MongoDB Service
+1. We can run `docker run --name mongodb --rm -d -p 27017:27017 mongo` to use official MongoDB image to create a MongoDB container named `mongodb`. 
+2. MongoDB uses port `27017` by default. After initiating the container, we can use `docker ps` to check. 
+3. Besides, we can run `docker logs mongodb` to check logs from `mongodb` container. 
+
 ## 4.3. Dockerizing the Node App
+1. From the example, we can create a `Dockerfile` with the following configuration.
+    ```dockerfile
+    FROM node
+
+    WORKDIR /app
+
+    COPY package.json .
+
+    RUN npm install
+
+    COPY . .
+
+    EXPOSE 80
+
+    CMD ["node", "app.js"]
+    ```
+2. Run `docker image prune -a` to clear all the unassociated images. 
+3. Run `docker build -t goals-node .` to build a new image.
+4. Run `docker run --name goals-backend --rm goals-node` to run the container in attached mode. 
+5. However, the above initiation of the Node.js backend doesn't work as it will break when it tries to connect to MongoDB which is running on a docker container. 
+6. In this case, we can update the source code and replace `localhost` with `host.docker.internal`.
+7. Note that before running the new backend container, we need to rebuild the image as we change the source code. 
+8. However, by following the above instructions hasn't been enough as the Node.js backend doesn't expose a port for external connection.
+
 ## 4.4. Moving the React SPA into a Container
+1. As for Node.js backend, we can create a `Dockerfile` for the frontend app. 
+    ```dockerfile
+    FROM node
+
+    WORKDIR /app
+
+    COPY package.json .
+
+    RUN npm install
+
+    COPY . .
+
+    EXPOSE 3000
+
+    CMD ["npm", "start"]
+    ```
+2. Run `docker build -t goals-react .` to create an image. 
+3. Run `docker run --name goals-frontend --rm -d -p 3000:3000 goals-react` to run the image in a container.
+4. Note that that current settings runs the react app in development mode. 
+5. In this case, we can run it with `-it` flag `docker run --name goals-frontend --rm -d -p 3000:3000 -it goals-react`.
+6. At the current stage, we have put all 3 services, frontend, backend, and database in Docker containers.
+7. We can therefore, setup Docker network and allow the services connect to each other without access `localhost` network, network of the local machine. 
+
 ## 4.5. Adding Docker Networks for Efficient Cross-Container Communication
+1. Frontend react app needs too call the backend endpoint as an external service. 
+2. Therefore backend service needs to `EXPOSE PORT` as for calling from browser.
+3. In this case, react app is calling `localhost` as it was. 
+
 ## 4.6. Adding Data Persistence to MongoDB with Volumes
 ## 4.7. Volumes, Bind Mounts and Polishing for the NodeJS Container
 ## 4.8. Live Source Code Updates for the React Container (with Bind Mounts)
