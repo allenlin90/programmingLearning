@@ -625,7 +625,42 @@ docker run -v $(pwd):WORKDIR:ro -v named_volume:WORKDIR/data docker_image:tag
 3. In this case, react app is calling `localhost` as it was. 
 
 ## 4.6. Adding Data Persistence to MongoDB with Volumes
+1. To keep data consistent and not to be removed when the container stops running when initiating with `--rm` flag, we can create a volume and keep data in MongoDB.
+2. When starting up MongoDB container, we can use `docker run --name mongodb -v data:/data/db --network goals-network mongo` to create a MongoDB container with a volume name `data`. 
+3. According to [Docker](https://hub.docker.com/_/mongo), we can find MongoDB stores its data at `/data/db`. 
+4. Besides, we can set up both `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD` for additional authentication and security.
+5. We can assign environment variable with `-e` flag. 
+  ```bash
+  docker run --name mongodb -v data:/data/db --rm -d --network goals-net -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=username -e MONGO_INITDB_ROOT_PASSWORD=password mongo
+  ```
+6. Note that if the machine has created volume and initiate MongoDB, the volumes shall be recreated as the very first time when it's created, the root user can be something else.
+7. In addition, we need to add `?authSource=admin` as query string when connecting to MongoDB. 
+8. The updated connection link to MongoDB can be `mongodb://[username:password@]mongodb:27017/course-goals?authSource=admin`.
+
 ## 4.7. Volumes, Bind Mounts and Polishing for the NodeJS Container
+1. Create a volume for `logs` which is printed in `/app/logs` as the `WORKDIR` is `/app`.
+2. Bind mount local project directory to the container to allow real-time update in the container.
+3. Create an anonymous mount for `node_modules` to let Docker knows that DO NOT copy and bind the `node_modules` from local machine but use the one installed from `Dockerfile`. 
+    ```bash
+    docker run --name goals-backend -v logs:/app/logs -v [local_absolute_path_to_directory]:/app -v /app/node_modules --rm -d --network goals-net -p 80:80 goals-node
+    ```
+4. However, the current `CWD` runs `["node", "app.js"]` which is a static starts and DOES NOT update though the source code is bond and changed.
+5. We can use `nodemon` which to start the server. Note that if the server runs on Windows machine, it needs `-L` flag to reflect the source code changes in realtime. 
+6. Update `package.json`
+  ```json
+  {
+    "scripts": {
+      "start": "nodemon app.js",
+      // "start": "nodemon -L app.js" // for WINDOWs OS
+    }
+  }
+  ```
+7. Update `Dockerfile`
+    ```dockerfile
+    CMD ["npm", "start"]
+    ```
+
+
 ## 4.8. Live Source Code Updates for the React Container (with Bind Mounts)
 
 
