@@ -72,7 +72,7 @@ End -
   - [6.2. Utility Containers: Why would you use them?](#62-utility-containers-why-would-you-use-them)
   - [6.3. Different Ways of Running Commands in Containers](#63-different-ways-of-running-commands-in-containers)
   - [6.4. Building a First Utility Container](#64-building-a-first-utility-container)
-  - [6.5. Utilizing ENTRYPOINT](#65-utilizing-entrypoint)
+- [6.5. Utilizing ENTRYPOINT](#65-utilizing-entrypoint)
   - [6.6. Using Docker Compose](#66-using-docker-compose)
 - [7. A More Complex Setup: A Laravel and PHP Dockerized Project](#7-a-more-complex-setup-a-laravel-and-php-dockerized-project)
   - [7.1. The Target Setup](#71-the-target-setup)
@@ -965,10 +965,90 @@ docker run -v $(pwd):WORKDIR:ro -v named_volume:WORKDIR/data docker_image:tag
 # 6. Working with "Utility Containers" and Executing Commands In Container
 ## 6.1. Introduction and What are "Utility Containers"?
 ## 6.2. Utility Containers: Why would you use them?
+1. In some cases that we don't have certain runtime, extensions, and tools such as `PHP` or `Node.js` install on the local machine, we can use Docker to leverage the developing experience.
+2. For example, to run `npm` scripts and start a `Node.js` app, we need to install `Node.js` runtime. 
+3. Besides, some dependencies may vary on different devices and OS. 
+
 ## 6.3. Different Ways of Running Commands in Containers
+1. `docker run -it -d node` to start a `Node.js` runtime in a container.
+2. `docker exec` allows the user to execute certain commands besides the default commands when using a container. 
+3. Note that `exec` command needs the container name as an argument. When docker initiates a container, it always assign it a name though it's not specified.
+4. Though we initiate the container in detached mode, we can use `docker container attach [container-name]` tough the container is started. 
+5. To execute commands in a container, we can use `docker exec [container_name] [command]`. 
+6. For example, in a `Node.js` runtime container, we can run `docker exec [container_name] npm init` to start a new project. 
+7. However, the command stops interact immediately as we aren't attached to the container. 
+8. When execute the commands, we can add `-it` flag as starting over a container to interact with the container in the command line.   
+
 ## 6.4. Building a First Utility Container
-## 6.5. Utilizing ENTRYPOINT
+1. For a dev flow using Docker container, we can use a `alpine` version of `Node.js` which is much smaller than regular `Node.js` runtime.
+    ```dockerfile
+    # Dockerfile
+    FROM node:14-alpine
+
+    WORKDIR /app
+    ```
+2. Note that bind mounts are bi-directional file sharing mechanism it means that not only the bond files will reflect in the container, the changes in the container will also affect to local bond local directory. 
+3. In this case, we can initiate the docker container with `docker run -it -v [absolute_path_to_bind]:/app node-util [custom_commands]`.
+4. We can give commands after running the container.
+5. In this case, we run `npm init -y` to start a project with `npm` and create `package.json`. 
+6. To run the container in interactive mode and run by `docker-compose`, we can have the following settings. 
+    ```yaml
+    # docker-compose
+    version: '3'
+
+    services:
+      node-utils:
+        build: .
+        volumes:
+          - ./:/app
+        stdin_open: true
+        tty: true
+    ```
+
+# 6.5. Utilizing ENTRYPOINT
+1. The utility container created is only available for `Node.js` or `npm` related commands, while we shall also be aware that the container is bond to local machine can affect files on local machine. 
+2. Therefore, we need constraints for the commands that the container can run and take action. 
+3. Any custom command given when initiating the container with `docker run` will overwrite `CMD` in `Dockerfile`.
+4.  On the other hand, we can use `ENTRYPOINT` in `Dockerfile` rather than `CMD`.
+5.  All the commands given after `docker run` will run after `ENTRYPOINT`. 
+    ```dockerfile
+    # Dockerfile
+    FROM node:14-alpine
+
+    WORKDIR /app
+
+    ENTRYPOINT [ "npm" ]
+    ```
+6.  For the command above that we initiate a project with `npm init`, we now can only pass `init` to achieve the same action. 
+    ```bash
+    # build docker image
+    docker build -t node-utils .
+
+    # run docker container
+    docker run -it -v [absolute_path_to_directory]:/app node-utils init
+    ```
+
 ## 6.6. Using Docker Compose
+1. We can create and use `docker-compose` to work with the arguments and settings to run a docker container. 
+2. However, we cannot pass command as we do for a single docker service.
+3. In this case, we can use `docker-compose run` and specify the service we want to pass the command.
+    ```yaml
+    # docker-compose
+    version: '3'
+
+    services:
+      npm:
+        build: .
+        stdin_open: true
+        tty: true
+        container_name: node-utils
+        volumes:
+          - ./:/app
+    ```
+4. For example, `docker-compose run npm init -y` can do the same. However, we need to be aware that the `npm` here is the service name rather than using the command as `npm` itself. 
+5. Besides, as we have set up `ENTRYPOINT` in `Dockerfile`, if we don't pass any command, the container will firstly run `npm`. 
+6. In addition, `docker-compose run`, unlike `docker-compose up`, doesn't remove the container when it stops. 
+7. In this case, we can add `--rm` flag as we run the container with `docker run`. 
 
 
 
