@@ -688,13 +688,278 @@ docker run -v $(pwd):WORKDIR:ro -v named_volume:WORKDIR/data docker_image:tag
 
 # 5. Docker Compose: Elegant Multi-Container Orchestration
 ## 5.1. Docker-Compose: What and Why?
-## 5.2. Creating a Compose File
-## 5.3. Diving into the Compose File Configuration
-## 5.4. Docker Compose Up and Down
-## 5.5. Working with Multiple Containers
-## 5.6. Adding Another Container
-## 5.7. Building Images and Understanding Container Names
+1. Docker compose allows the dev to run multiple `docker build` and `docker run` as orchestration command in one configuration file. 
+2. Docker compose file DOES NOT replace `Dockerfile` for custom docker image.
+3. Docker compose IS NOT suited for managing multiple containers across different host machines. 
+4. The main parts of a Docker compose file, `services` which is used to build containers from Docker images. 
+5. Besides it can configure the followings for containers to work with. 
+   1. Ports to publish
+   2. Environment variables
+   3. Volumes
+   4. Networks
 
+## 5.2. Creating a Compose File
+1. We firstly specify the version of docker compose syntax. At the time of learning, we are using version `3`. 
+2. We can refer to the syntax from [Docker official docs](https://docs.docker.com/compose/compose-file/compose-file-v3/)
+3. YAML files take indentation similar to Python code.
+4. For each container, we can specify their name
+    ```yaml
+    version: '3.8'
+
+    services:
+      mongodb:
+
+      backend:
+
+      frontend:
+    ```
+
+## 5.3. Diving into the Compose File Configuration
+1. The yaml syntax takes indentation as for different levels (layers) and doesn't require `-` prefix for each pair of `key: value`. 
+2. However, for one line statement as `KEY=VALUE`, it needs a dash `-` for listing. 
+3. Besides, the syntax doesn't accept both 2 statements in the same level. 
+4. To assign environment variables, `docker-compose` accepts 2 syntax with `environment`
+   1. `ENV_KEY: ENV_VALUE`
+   2. `- ENV_KEY=ENV_VALUE`
+5. On the other hand, we can also keep environment variables only on the hosting machine in a specific file such as `.env`.
+6. We can then use `env_files` to read ENVs from specific file(s). 
+7. We don't need to specify `--rm` and `-d` to remove container when it's not running and running the container in detach mode. 
+8. For inter-container networking, all the containers setup by the same `docker-compose` will be added into the same network out of the box. Therefore, we don't need to specify `networks` in the compose file. 
+9. If we are using any named `volumes`, we should specify in the same level as `services`. 
+10. In addition, all containers setup by the `docker-compose` can share and keep data in the same volumes. 
+    ```yaml
+    # docker-compose
+    version: '3.8'
+
+    services:
+      mongodb:
+        image: 'mongo'
+        volumes:
+          - data:/data/db
+        # environment:
+        # - MONGO_INITDB_ROOT_PASSWORD=secret
+        # MONGO_INITDB_ROOT_USERNAME: root
+        env_file:
+          - ./.env
+        # docker-compose add all containers in the services into the same network automatically
+        # networks:
+        #   - gaols-net
+      backend:
+
+      frontend:
+
+    volumes:
+      data:
+    ```
+
+## 5.4. Docker Compose Up and Down
+1. To start with docker with `docker-compose`, we need to navigate to the path where the `docker-compose` file sits. 
+2. We then use `docker-compose up` to run the actions in the `docker-compose.yaml`.
+3. As running a single docker image in a container, we can use `-d` to run docker compose in detach mode. 
+4. To stop and remove all containers, we can use `docker-compose down`, so all the running containers will be stopped and removed. 
+5. Note that `docker-compose down` doesn't remove volumes by default.
+    ```yaml
+    # docker-compose
+    version: '3.8'
+
+    services:
+      mongodb:
+        image: 'mongo'
+        volumes:
+          - data:/data/db
+        # environment:
+        # - MONGO_INITDB_ROOT_PASSWORD=secret
+        # MONGO_INITDB_ROOT_USERNAME: root
+        env_file:
+          - ./.env
+        # docker-compose add all containers in the services into the same network automatically
+        # networks:
+        #   - gaols-net
+      # backend:
+
+      # frontend:
+
+    volumes:
+      data:
+    ```
+
+## 5.5. Working with Multiple Containers
+1. We can use `docker-compose` to build image by referring a `Dockerfile` 
+2. Under the container level, we can use `build` and specify the path where `docker-compose` should look for the `Dockerfile` as a shorter syntax.
+3. On the other hand, we can use `context` to specify the directory which `Dockerfile` should refer to and `dockerfile` to specify the `Dockerfile` if there's more than one `Dockerfile` such as separated `Dockerfile` for staging and production. 
+4. For ports, we can use `ports` on the same level as `build` and list it with `-` for `mappingPort:containerPort`, such as `80:80`. 
+5. For ENVs, we can use `environment` or `env_files` as mentioned in the last section.
+6. For `volumes`, we don't need to provide the absolute path as we do for running a Docker container from image.
+7. We can refer to the path where the `docker-compose` file is at.  
+8. For this `Node.js` backend, the server needs to connect to MongoDB, so we can use `depends_on` and give the name of the service, which is `mongodb` in this case. 
+9. This notice `docker-compose` that `backend` service is depending on `mongodb` service and needs to wait when `mongodb` is up and running.
+10. After configuration, we can use `docker-compose up` to start the containers. 
+11. Note that container (service) name is not the same as specified in the `yaml` file. For example, it can be added with the project name as prefix and assign with version of builds. 
+12. However, we can still use the same service name such as `mongodb` in the `Node.js` backend application. 
+13. Docker will resolve the networking issue as all the containers started by the same `docker-compose` will be the same. 
+    ```yaml
+    # docker-compose.yaml
+    version: '3.8'
+
+    services:
+      mongodb:
+        image: 'mongo'
+        volumes:
+          - data:/data/db
+        # environment:
+        # - MONGO_INITDB_ROOT_PASSWORD=secret
+        # MONGO_INITDB_ROOT_USERNAME: root
+        env_file:
+          - ./.env
+        # docker-compose add all containers in the services into the same network automatically
+        # networks:
+        #   - gaols-net
+      backend:
+        build: ./backend
+        # build:
+        #   context: ./backend
+        #   dockerfile: Dockerfile # for different Dockerfile, such as Dockerfile-dev
+        #   args: # used for ARG in Dockerfile
+        #     key: value
+        ports:
+          - '80:80'
+        volumes:
+          - logs:/app/logs
+          # can use relative path from where docker-compose.yaml is at
+          # Not required to be listed in volumes
+          - ./backend:/app # bind mount to local machine file for real-time code reflection.
+          - /app/node_modules
+        env_file:
+          - ./backend.env
+        depends_on:
+          - mongodb
+
+      # frontend:
+
+    volumes:
+      data:
+      logs:
+    ```
+    ```js
+    // backend app.js
+    mongoose.connect(
+      `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@mongodb:27017/course-goals?authSource=admin`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+      (err) => {
+        if (err) {
+          console.error('FAILED TO CONNECT TO MONGODB');
+          console.error(err);
+        } else {
+          console.log('CONNECTED TO MONGODB!!');
+          app.listen(80);
+        }
+      }
+    );
+    ```
+
+## 5.6. Adding Another Container
+1. To run frontend container with `-it` flag which is the combination of input and terminal attaching flag, we can set `stdin_open` for and `tty` to `true`. 
+    ```yaml
+    # docker-compose
+    version: '3.8'
+
+    services:
+      mongodb:
+        image: 'mongo'
+        volumes:
+          - data:/data/db
+        # environment:
+        # - MONGO_INITDB_ROOT_PASSWORD=secret
+        # MONGO_INITDB_ROOT_USERNAME: root
+        env_file:
+          - ./.env
+        # docker-compose add all containers in the services into the same network automatically
+        # networks:
+        #   - gaols-net
+      backend:
+        build: ./backend
+        # build:
+        #   context: ./backend
+        #   dockerfile: Dockerfile # for different Dockerfiles, such as Dockerfile-dev
+        #   args: # used for ARG in Dockerfile
+        #     key: value
+        ports:
+          - '80:80'
+        volumes:
+          - logs:/app/logs
+          # Not required to be listed in volumes
+          - ./backend:/app # bind mount to local machine file for real-time code reflection.
+          - /app/node_modules
+        env_file:
+          - ./backend.env
+        depends_on:
+          - mongodb
+
+      frontend:
+        build: ./frontend
+        ports:
+          - '3000:3000'
+        volumes:
+          - ./frontend/src:/app/src
+          - /app/node_modules
+        stdin_open: true
+        tty: true
+        depends_on:
+          - backend
+
+    volumes:
+      data:
+      logs:
+    ```
+
+## 5.7. Building Images and Understanding Container Names
+1. Besides regular `docker-compose up` to start up and `docker-compose down` to stop and removes all containers/services, we can have other options.
+2. For example, we can add `--build` and run `docker-compose up --build` to force docker-compose rebuild all images rather than using the built ones. 
+3. To only build the images without running the services, we can use `docker-compose build`.
+4. Note that `docker-compose up` has included `docker-compose build` by default. 
+5. We can also specify container name in `docker-compose` file. Note that the default container name is `[folder/project-name]_[service-name]_[incremental-number]`. 
+    ```yaml
+    # docker-compose
+    version: '3.8'
+
+    services:
+      mongodb:
+        image: 'mongo'
+        volumes:
+          - data:/data/db
+        container_name: mongodb
+        env_file:
+          - ./.env
+      backend:
+        build: ./backend
+        ports:
+          - '80:80'
+        volumes:
+          - logs:/app/logs
+          - ./backend:/app
+          - /app/node_modules
+        env_file:
+          - ./backend.env
+        depends_on:
+          - mongodb
+      frontend:
+        build: ./frontend
+        ports:
+          - '3000:3000'
+        volumes:
+          - ./frontend/src:/app/src
+          - /app/node_modules
+        stdin_open: true
+        tty: true
+        depends_on:
+          - backend
+    volumes:
+      data:
+      logs:
+    ```
 
 
 # 6. Working with "Utility Containers" and Executing Commands In Container
