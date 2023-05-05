@@ -659,9 +659,30 @@ docker run -v $(pwd):WORKDIR:ro -v named_volume:WORKDIR/data docker_image:tag
     ```dockerfile
     CMD ["npm", "start"]
     ```
+8. In addition, we can keep files that we are not interested in `.dockerignore`
+    ```dockerignore
+    node_modules
+    Dockerfile
+    .git
+    ```
 
 
 ## 4.8. Live Source Code Updates for the React Container (with Bind Mounts)
+1. We can have similar configuration as for the backend project to build the container for the frontend React app. 
+2. Note that on Windows machines which run Docker in WSL2, we need to put `WATCHPACK_POLLING=true` to run the React app in development mode. 
+    ```json
+    // package.json
+    "scripts": {
+      "start": "WATCHPACK_POLLING=true react-scripts start",
+    }
+    ```
+3. Besides, we can have exact the same `.dockerignore` file
+    ```dockerignore
+    node_modules
+    Dockerfile
+    .git
+    ```
+4. The command to run docker container is `docker run -v [absolute_path/src]:/app/src --name goals-frontend --rm -p 3000:3000 -it goals-react`.
 
 
 
