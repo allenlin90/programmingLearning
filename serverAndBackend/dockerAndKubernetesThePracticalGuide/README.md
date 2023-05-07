@@ -82,7 +82,7 @@ End -
   - [7.5. Adding a Composer Utility Container](#75-adding-a-composer-utility-container)
   - [7.6. Creating a Laravel App via the Composer Utility Container](#76-creating-a-laravel-app-via-the-composer-utility-container)
   - [7.7. Launching Only Some Docker Compose Services](#77-launching-only-some-docker-compose-services)
-  - [7.8. Adding More Utlity Containers](#78-adding-more-utlity-containers)
+  - [7.8. Adding More Utility Containers](#78-adding-more-utility-containers)
   - [7.9. Docker Compose with and without Dockerfiles](#79-docker-compose-with-and-without-dockerfiles)
   - [7.10. Bind Mounts and COPY: When to Use What](#710-bind-mounts-and-copy-when-to-use-what)
 - [8. Deploying Docker Containers](#8-deploying-docker-containers)
@@ -1054,17 +1054,494 @@ docker run -v $(pwd):WORKDIR:ro -v named_volume:WORKDIR/data docker_image:tag
 
 # 7. A More Complex Setup: A Laravel and PHP Dockerized Project
 ## 7.1. The Target Setup
+1. When developing `Node.js` apps, the runtime has included most of the dependencies to start up a server itself along with its package manager `npm`. 
+2. However, when developing with `php` in `Laravel` framework, it requires much more setup and installs dependencies.
+3. For example, we cannot start a web server with only `php` itself. We will need the server to host and serve the apps code with `php`. 
+4. In this case, we will need several other services, such as 
+   1. `nginx` to serve with `php` interpreter.
+   2. `mysql` as its database. 
+   3. Utility serviecs
+      1. `Composer` - package manager
+      2. `Laravel Artisan` - command line tool for `laravel` framework
+      3. `npm` - used for some frontend logic
+
 ## 7.2. Adding a Nginx (Web Server) Container
+1. To setup `nginx` container, we can use the official image `nginx`. 
+2. As this project requires multiple services, we can use `docker-composer` to keep all services.
+3. We use `nginx:stable-alpine` image for a minimum requirements to the server.
+4. Besides, we can refer to [official docs](https://hub.docker.com/_/nginx) of the image to setup volumes for `nginx` server 
+configuration. 
+5. In addition, we give additional `:ro` flag for the bind mount as we don't want any code or action inside the container manipulate `nginx.conf` file for whatever reason. 
+    ```yaml
+    # docker-compose
+    version: '3'
+
+    services:
+      server:
+        image: 'nginx:stable-alpine'
+        ports:
+          - '8000:80'
+        volumes:
+          - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # php:
+      # mysql:
+      # composer:
+      # artisan:
+      # npm:
+    ```
+6. In `nginx.conf` we set up the server to
+   1.  listen to `80` for regular http requests;
+   2.  serve files from `/var/www/html/public` on `root`; and 
+   3.  set up [`location`](https://docs.nginx.com/nginx/admin-guide/web-server/web-server/#locations) to redirect users to
+
+```conf
+# /etc/nginx/nginx.conf
+server {
+    listen 80;
+    index index.php index.html;
+    server_name localhost;
+    root /var/www/html/public;
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass php:3000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+}
+```
+
 ## 7.3. Adding a PHP Container
+1. Though docker provides official `php` image, we need to install more dependencies to work with `laravel`.
+2. Therefore, we create a `Dockerfile` for setting up a custom `php` container with official `php` image.
+3. We set up `WORKDIR` at `/var/www/html` as by referring the server configuration of `nginx`, we set the server root directory at `/var/www/html/public`. 
+4. To install additional `php` extensions, we can use `docker-php-ext-install` suggested from [official docker `php` image](https://hub.docker.com/_/php).
+5. We therefore give `RUN docker-php-ext-install pdo pdo_mysql` to install the required `php` extensions. 
+6. Note that we do specify `CMD` or `ENTRYPOINT` in this dockerfile. 
+7. If `CMD` or `ENTRYPOINT` is not specified, the container will run the default image command by itself. 
+8. In this case, the `php` container will initiate the `php` interpreter. 
+    ```dockerfile
+    # php.dockerfile
+    FROM php:7.4-fpm-alpine
+
+    WORKDIR /var/www/html
+
+    RUN docker-php-ext-install pdo pdo_mysql
+    ```
+9. In `docker-compose` file, we can setup `php` service.
+10. To build the image, we can refer to the `php.dockerfile` in the project.
+11. Besides, we need a bind mount to reflect `php` source code changes. 
+12. In this case, we add `delegated` flag which is to let docker engine having changes from the container to local machine in batch and hence improve the performance. 
+13. For the work port which `php` listens to, we can refer to its official docker image docs and notice that the internal exposed port is `9000`. 
+14. At the time of learning, there's no `7.4` version hosted in the Github repository. However, by checking `Dockerfile` in any version, [`8.2-rc`](https://github.com/docker-library/php/blob/master/8.2-rc/alpine3.17/fpm/Dockerfile) for example, the container is set to `EXPOSE 9000`.
+15. However, keep in mind that we actually don't require to interact with `php` container directly for `php` interpreter. 
+16. Therefore, setting up to map port `3000:9000` according to the configuration in `nginx` doesn't help. 
+    ```yaml
+    # docker-compose
+    version: '3'
+
+    services:
+      server:
+        image: 'nginx:stable-alpine'
+        ports:
+          - '8000:80'
+        volumes:
+          - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      php:
+        build:
+          context: ./dockerfiles
+          dockerfile: php.dockerfile
+        volumes:
+          - ./src:/var/www/html:delegated
+        ports: # this is not required
+          - 3000:9000
+      # mysql:
+      # composer:
+      # artisan:
+      # npm:
+    ```
+17. In the previous setup for `nginx.conf`, we actually connect the containers through `fastcgi_pass` in the settings. 
+18. Note that `php` here is actually the service name we set up in `docker-compose`. 
+    ```conf
+    # /etc/nginx/nginx.conf
+    server {
+        listen 80;
+        index index.php index.html;
+        server_name localhost;
+        root /var/www/html/public;
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+        location ~ \.php$ {
+            try_files $uri =404;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            # php is the service name in docker-compose
+            # it can be changed to other uri such as localhost
+            fastcgi_pass php:3000; # this shall be port 9000 according to php official image
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+    ```
+
 ## 7.4. Adding a MySQL Container
+1. We can use `mysql:5.7` to start a `mysql` database container. 
+2. According to [docker `mysql` image docs](https://hub.docker.com/_/mysql), we need several environment variables to set up the services. 
+3. In this case, we can create `/env/mysql.env` to keep ENVs in the directory. 
+4. By default, we can set `MYSQL_DATABASE` and `MYSQL_USER` to `homestead` according to default `laravel` settings.
+    ```env
+    MYSQL_DATABASE=homestead
+    MYSQL_USER=homestead
+    MYSQL_PASSWORD=secret
+    MYSQL_ROOT_PASSWORD=secret
+    ```
+5. For `docker-compose`, we can refer to `mysql.env` to start up the container.
+    ```yaml
+    # docker-compose
+    version: '3'
+
+    services:
+      server:
+        image: 'nginx:stable-alpine'
+        ports:
+          - '8000:80'
+        volumes:
+          - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      php:
+        build:
+          context: ./dockerfiles
+          dockerfile: php.dockerfile
+        volumes:
+          - ./src:/var/www/html:delegated
+      mysql:
+        image: 'mysql:5.7'
+        env_file:
+          - ./env/mysql.env
+      # composer:
+      # artisan:
+      # npm:
+    ```
+
 ## 7.5. Adding a Composer Utility Container
+1. In this case, we create the other service for `composer` and use `composer:latest` image. 
+2. The setup is relatively simple and we only need to point the working directory to `/var/www/html` as we will bind mount and copy the packages/dependencies to local machine. 
+3. Besides, for every command in `composer` container, we can give an `ENTRYPOINT` with `composer` (similar to `npm`) and `--ignore-platform-reqs` flag to ignore any error requested by the platform of missing dependencies.
+    ```dockerfile
+    FROM composer:latest
+
+    WORKDIR /var/www/html
+
+    ENTRYPOINT [ "composer", "--ignore-platform-reqs" ]
+    ```
+4. In `docker-compose`, we can only need to build the image and bind the `WORKDIR` to the local machine. 
+  ```yaml
+  # docker-compose
+    version: '3'
+
+    services:
+      server:
+        image: 'nginx:stable-alpine'
+        ports:
+          - '8000:80'
+        volumes:
+          - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      php:
+        build:
+          context: ./dockerfiles
+          dockerfile: php.dockerfile
+        volumes:
+          - ./src:/var/www/html:delegated
+      mysql:
+        image: 'mysql:5.7'
+        env_file:
+          - ./env/mysql.env
+      composer:
+        build:
+          context: ./dockerfiles
+          dockerfile: composer.dockerfile
+        volumes:
+          - ./src:/var/www/html
+      # artisan:
+      # npm:
+  ```
+
 ## 7.6. Creating a Laravel App via the Composer Utility Container
+1. To create a `laravel` project, we can use `composer` with `composer create-project laravel/laravel example-app` according to [https://laravel.com/docs/master/installation#your-first-laravel-project](https://laravel.com/docs/master/installation#your-first-laravel-project).
+2. As we only need to create a `laravel` project with `composer` container, we can only run `composer` service with `docker-compose`. 
+3. As we have set up `ENTRYPOINT` in `composer.dockerfile` we can simply pass `create-project laravel/laravel` without `composer` at the front.
+4. Besides, we has pointed the working directory with `WORKDIR` at `/var/www/html`.
+5. We can then give only `.` to create the `laravel` project and the files will be created in the working directory which is bond to local `/src` folder. 
+6. Note that we also give `--rm` flag with `docker-compose` as to remove the `composer` service directly right after it finishes creating the project. 
+    ```bash
+    docker compose run --rm composer create-project --prefer-dist laravel/laravel .
+    ```
+
 ## 7.7. Launching Only Some Docker Compose Services
-## 7.8. Adding More Utlity Containers
+1. After creating the `laravel` project, we can find `.env` in the `src` folder.
+    ```bash
+    # default laravel DB config 
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=laravel
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
+2. We then can update the ENVs according to our services in `docker-compose`
+    ```bash
+    # updated laravel .env
+    DB_CONNECTION=mysql
+    DB_HOST=mysql # service name in docker-compose through docker network
+    DB_PORT=3306
+    DB_DATABASE=homestead
+    DB_USERNAME=homestead
+    DB_PASSWORD=secret
+    ```
+3. However, in the current setup, though `php` interpreter is linked to the source code in `src`, the `nginx` server doesn't know anything about that. 
+4. Besides, all the traffic visiting the services will hit the `nginx` server first as it exposes its port at `80` which is for regular `http` service.
+5. We therefore need to add a volume to `nginx` service.
+6. In addition, the bind mount is pointing to the wrong `nginx.conf` in the container. 
+    ```yaml
+    version: '3.8'
+
+    services:
+      server:
+        image: 'nginx:stable-alpine'
+        ports:
+          - '8000:80'
+        volumes:
+          - ./src:/var/www/html # new added volume to reflect php source code changes
+          # incorrect bind mount
+          # - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+          - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      php:
+        build:
+          context: ./dockerfiles
+          dockerfile: php.dockerfile
+        volumes:
+          - ./src:/var/www/html:delegated
+      mysql:
+        image: 'mysql:5.7'
+        env_file:
+          - ./env/mysql.env
+      composer:
+        build:
+          context: ./dockerfiles
+          dockerfile: composer.dockerfile
+        volumes:
+          - ./src:/var/www/html
+      # artisan:
+      # npm:
+    ```
+7. After all setups are ready, we can run `docker-compose up` again to start all services. 
+8. However, we only need some of the services. For example, we don't require `composer` any more as we only use it to create a `laravel` project. 
+9. When running `docker-compose`, we can specify the services to run. In this case, we can run `docker-compose up -d server php mysql`. 
+10. However, the command to have all the services is very verbose. 
+11. We can add `depends_on` for `nginx` service as to ensure the other services it depends on are started. 
+12. We then can simply run only `server` service with `docker-compose up -d server php mysql` and the others will be started by `docker-compose`.
+13. However, by default, `docker-compose` only build images of each services once. 
+14. Therefore, any changes is not reflected as the images will be built only once and cached.
+15. We can pass `--build` flag to ensure every time `docker-compose` start over the services, it will check if images should be rebuilt. 
+
+## 7.8. Adding More Utility Containers
+1. To run commands from `artisan`, we can reuse `php` image as `laravel` is based on `php`.
+2. However, we'd like to add an `entrypoint` without modifying `php.dockerfile` as it's used by `php` service.
+3. In `docker-compose`, we can add `entrypoint` on the same level as `build` and `volumes` of a service. 
+4. Besides `artisan`, we can set up the service of `npm`. 
+5. Note that we can put all the commands in `Dockerfile` in the `docker-compose` directly. 
+6. In this case, we put `working_directory` which works as `WORKDIR`. 
+7. Besides, we need the other bind mount as we will install `node_modules` in the `src` directory by `npm` service. 
+```yaml
+# docker-compose
+version: '3.8'
+
+services:
+  server:
+    image: 'nginx:stable-alpine'
+    ports:
+      - '8000:80'
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+      - mysql
+  php:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www/html:delegated
+  mysql:
+    image: 'mysql:5.7'
+    env_file:
+      - ./env/mysql.env
+  composer:
+    build:
+      context: ./dockerfiles
+      dockerfile: composer.dockerfile
+    volumes:
+      - ./src:/var/www/html
+  artisan:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www/html
+    entrypoint: ['php', '/var/www/html/artisan']
+  npm:
+    image: node:14
+    working_dir: /var/www/html
+    entrypoint: ['npm']
+    volumes:
+      - ./src:/var/www/html
+```
+8. We can run `artisan` service with `docker-compose run --rm artisan migrate` that the service will write some data into the database and check if the current database settings works. 
+9. However, we may have connection error when trying to run this `artisan` service. Thus, we will need to ensure
+   1. All services from `docker-compose up -d --build server` are up and running.
+   2. Ensure both `/envs/mysql.env` and `/src/.env` have the same credentials and right connections.
+   3. `volumes` can be cleared up for a fresh start. 
+   4. Turn down all services with `docker-compose down -v` to remove all containers and volumes created by the `docker-compose` service.
+```bash
+# /env/mysql.env
+MYSQL_DATABASE=homestead
+MYSQL_USER=homestead
+MYSQL_PASSWORD=secret
+MYSQL_ROOT_PASSWORD=secret
+
+# /src/.env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=homestead
+DB_USERNAME=homestead
+DB_PASSWORD=secret
+```
+```bash
+# commands to clear project artisan caches
+docker-compose run --rm artisan cache:clear
+docker-compose run --rm artisan config:cache
+docker-compose run --rm artisan view:clear
+docker-compose run --rm artisan route:clear
+docker-compose run --rm artisan config:clear
+```
+
 ## 7.9. Docker Compose with and without Dockerfiles
+1. Though we can only have all instructions to run simple commands of a service in `docker-compose`, it doesn't support commands such as `run` and `copy`. 
+2. Such action is only available in a dedicated `Dockerfile`.
+3. Bind mounts are mostly used for development purpose. 
+4. In general, all the required data and files will be packed and built into an image to be deployed and used.
+
 ## 7.10. Bind Mounts and COPY: When to Use What
+1. To deploy the service and run in production, we can create a dedicated `Dockerfile` to keep the configuration.
+    ```dockerfile
+    # nginx.dockerfile
+    FROM nginx:stable-alpine
 
+    # where to put config file
+    WORKDIR /etc/nginx/conf.d
 
+    # copy config file from local machine
+    COPY nginx/nginx.conf .
+
+    # change name from nginx.conf to default.conf
+    RUN mv nginx.conf default.conf
+
+    # move to /var/www/html directory
+    WORKDIR /var/www/html
+
+    # copy all source code to the working directory
+    COPY src .
+    ```
+2. To start `nginx` service, we can use its default commands to start the server without giving specific instructions.
+3. We now can update the layers in `docker-compose` that how docker can start `server` service. 
+4. In previous cases, we always uses `context` to specify where the `Dockerfile` is. 
+5. However, this won't do the work in the current case, as we are trying to copy `nginx.conf` from `/nginx` on local machine. 
+6. If we specify `context` as `./dockerfiles` as the other services, docker cannot reach to both `nginx/nginx.conf` and `src` directory. 
+7. Therefore, for `server` service, we can set the `context` at `.` which is the current working directory where the `docker-compose` runs.
+8. Besides, we don't need bind mounts for `server` service in production mode.
+9. For the `php` container, we also need to copy the source code for it to run as we don't use bind mount to refer source code from local file system. 
+  ```dockerfile
+  # php.dockerfile
+  FROM php:7.4-fpm-alpine
+
+  WORKDIR /var/www/html
+
+  # copy source code from working directory when building image
+  COPY src .
+
+  RUN docker-php-ext-install pdo pdo_mysql
+  ```
+10. We then can update `docker-compose`. For the main services, such as `server` and `php`, we can remove volumes as all the source code are copied built in the docker image.
+    ```yaml
+    # docker-compose
+    version: '3.8'
+
+    services:
+      server:
+        # image: 'nginx:stable-alpine'
+        build: 
+          context: .
+          dockerfile: dockerfiles/nginx.dockerfile
+        ports:
+          - '8000:80'
+        # volumes:
+        #   - ./src:/var/www/html
+        #   - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+        depends_on:
+          - php
+          - mysql
+      php:
+        build:
+          context: .
+          dockerfile: dockerfiles/php.dockerfile
+        # volumes:
+        #   - ./src:/var/www/html:delegated
+      mysql:
+        image: 'mysql:5.7'
+        env_file:
+          - ./env/mysql.env    
+      composer:
+        build:
+          context: ./dockerfiles
+          dockerfile: composer.dockerfile
+        volumes:
+          - ./src:/var/www/html
+      artisan:
+        build:
+          context: ./dockerfiles
+          dockerfile: php.dockerfile
+        volumes:
+          - ./src:/var/www/html
+        entrypoint: ['php', '/var/www/html/artisan']
+      npm:
+        image: node:14
+        working_dir: /var/www/html
+        entrypoint: ['npm']
+        volumes:
+          - ./src:/var/www/html
+    ```
+11. However, the current build doesn't success as we visit `http://localhost:8000` because the `php` container doesn't have write access to its own file system.
+12. In this case, we can add `RUN chown -R www-data:www-data /var/www/html` in `php.dockerfile` to change owner and give write access to `www-data` which is a default user created when starting up `php:7.4-fpm-alpine` image.
+    ```dockerfile
+    # php.dockerfile
+    FROM php:7.4-fpm-alpine
+
+    WORKDIR /var/www/html
+
+    COPY src .
+
+    RUN docker-php-ext-install pdo pdo_mysql
+
+    RUN chown -R www-data:www-data /var/www/html
+    ```
 
 # 8. Deploying Docker Containers
 ## 8.1. From Development To Production
