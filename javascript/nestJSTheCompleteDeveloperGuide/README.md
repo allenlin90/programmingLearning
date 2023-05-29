@@ -50,6 +50,7 @@ Finished on
 2. NestJS uses some 3rd party models to work with "HTTP Implementation", we can choose either `Express` or `Fastify`.
   <img src="./images/4-nestjs_http_implementation.png">
 3. We configure tsconfig.json with the following setting.
+
   ```json
   // tsconfig.json
   {
