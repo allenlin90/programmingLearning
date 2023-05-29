@@ -2,7 +2,6 @@ Start learning on 2021/08/28
 Finished on
 
 1. Course Link [https://www.udemy.com/course/nestjs-the-complete-developers-guide/](https://www.udemy.com/course/nestjs-the-complete-developers-guide/)
-
 - [1. The Basics of Nest](#1-the-basics-of-nest)
   - [1.1. Project Setup](#11-project-setup)
   - [1.2. Typescript Configuration](#12-typescript-configuration)
@@ -287,31 +286,31 @@ Finished on
 ## 3.1. Accessing Request Data with Decorators
 1. In the controllers, we need to fetch some data from the requests such as the `body` for POST request and the `id` for a GET request to fetch specific data.
 2. For example, we can use `@Param`, `@Query`, `@Headers`, and `@Body` for each part of a HTTP request. All these decorators can be imported from the common library of NestJS.
-  <img src="./images/15-nest_decorator_for_http_request.png">
+    <img src="./images/15-nest_decorator_for_http_request.png">
 3. These HTTP decorators are used as arguments passing to the request handler. 
 4. `Param` is the query string sending with the requested endpoint. In most of the cases, it can simply be a `string`.
 5. For `Body`, it can be `any` type as it's very hard to expect that what kind of data will the request include.
 
-  ```ts
-  // src/messages/messagse.controller.ts
-  import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+    ```ts
+    // src/messages/messagse.controller.ts
+    import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 
-  @Controller('messages')
-  export class MessagesController {
-    @Get()
-    listMessages() {}
+    @Controller('messages')
+    export class MessagesController {
+      @Get()
+      listMessages() {}
 
-    @Post()
-    createMessage(@Body() body: any) { // pass @Body to be any
-      console.log(body);
+      @Post()
+      createMessage(@Body() body: any) { // pass @Body to be any
+        console.log(body);
+      }
+
+      @Get('/:id')
+      getMessage(@Param('id') id: string) { // pass @Param to be string
+        console.log(id);
+      }
     }
-
-    @Get('/:id')
-    getMessage(@Param('id') id: string) { // pass @Param to be string
-      console.log(id);
-    }
-  }
-  ```
+    ```
 
 ## 3.2. Using Pipes for Validation
 1. We can use a `Pipe` to validate the incoming data before it's sending to the route handler.
