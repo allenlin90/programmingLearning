@@ -65,9 +65,9 @@ Finished on
 
 ## 1.3. Creating a Controller
 1. In convention the `request` and `response` cycle is very similar in mostly every programming language and framework.
-  <img src="./images/5-server_request_response.png">
+    <img src="./images/5-server_request_response.png">
 2. In NestJS, there are several tools we can use in the request handling cycle, such as `Pipe`, `Guard`, `Controller`, `Service`, and `Repository`.
-  <img src="./images/5_5_nestjs_tools.png">
+    <img src="./images/5_5_nestjs_tools.png">
 3. Each NestJS server must have "Controllers" and "Modules". Note that are other tools as well. 
 4. NestJS uses much with Typescript decorators. In the following code, we try to make a class `AppController` and use `@Controller` to indicate that it's a "controller".
 5. We then import and use another object from `common` library which is the `Get` object that works with HTTP GET request.
