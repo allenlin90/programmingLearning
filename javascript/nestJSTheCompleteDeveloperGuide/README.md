@@ -451,16 +451,16 @@ Finished on
 # 4. Nest Architecture: Services and Repositories
 ## 4.1. Services and Repositories
 1. It can be very challenging to understand the difference between `Services` and `Repositories` in NestJS.
-  <img src="./images/20-services_vs_repositories.png">
+    <img src="./images/20-services_vs_repositories.png">
 2. In the current case, we have only 1 service and 1 repository.
-3. In this case, we will create a repository from strach. However, in regular cases, we can use libraries to create it. 
-  <img src="./images/20-service_and_repository.png">
+3. In this case, we will create a repository from scratch. However, in regular cases, we can use libraries to create it. 
+    <img src="./images/20-service_and_repository.png">
 4. Though `Services` can seem redundant in some cases as its function is not different from calling and sending data from repository directly, we still need `Services` as proxies to interact with `Repositories`.
 
 ## 4.2. Implementing a Repository
 1. There are commands in Nest that we can easily create the components as `module` and `controller`. However, we create the files manually in this case.
 2. We create `messages.repository.ts` and `messages.service.ts`.
-3. We then create a file `message.json` to store the data as a local database on the hardrive.
+3. We then create a file `message.json` to store the data as a local database on the hard-drive.
   ```json
   // messages.json
   {
@@ -578,13 +578,226 @@ Finished on
   ```
 
 ## 4.5. Manual Testing of the Controller
+1. We then import `MessagesService` to use in the controller. 
+    ```ts
+    import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+    import { CreateMessageDto } from './dtos/create-message.dto';
+    import { MessagesService } from './messages.service';
+
+    @Controller('messages')
+    export class MessagesController {
+      messagesService: MessagesService;
+
+      constructor() {
+        this.messagesService = new MessagesService();
+      }
+
+      @Get()
+      listMessages() {
+        return this.messagesService.findAll();
+      }
+
+      @Post()
+      createMessage(@Body() body: CreateMessageDto) {
+        return this.messagesService.create(body.content);
+      }
+
+      @Get('/:id')
+      getMessage(@Param('id') id: string) {
+        return this.messagesService.findOne(id);
+      }
+    }
+    ```
+2. For the mock `messages.json` db on the root directory, we can place a mock data as an empty object `{}`. 
 
 ## 4.6. Reporting Errors with Exceptions
+1. To prompt an error message for users trying to search for certain message with an ID, we can use `NotFoundException` which helps to prompt an error message with given content.
+2. Nest.js has provided several common HTTP related exceptions, such as errors with `4xx` and `5xx`. 
+    ```ts
+    import {
+      Body,
+      Controller,
+      Get,
+      NotFoundException,
+      Param,
+      Post,
+    } from '@nestjs/common';
+    import { CreateMessageDto } from './dtos/create-message.dto';
+    import { MessagesService } from './messages.service';
+
+    @Controller('messages')
+    export class MessagesController {
+      messagesService: MessagesService;
+
+      constructor() {
+        this.messagesService = new MessagesService();
+      }
+
+      @Get()
+      listMessages() {
+        return this.messagesService.findAll();
+      }
+
+      @Post()
+      createMessage(@Body() body: CreateMessageDto) {
+        return this.messagesService.create(body.content);
+      }
+
+      @Get('/:id')
+      async getMessage(@Param('id') id: string) {
+        const message = await this.messagesService.findOne(id);
+
+        if (!message) {
+          throw new NotFoundException('message not found');
+        }
+
+        return message;
+      }
+    }
+    ```
 
 ## 4.7. Understanding Inversion of Control
+1. Inversion of Control Principle -> Classes should not create instances of its dependencies on its own. 
+2. When initiating a new instance, the class acquire the required dependencies. 
+3. Besides, it requires on an object with an interface which isn't any specific class as in regular workflow. 
+4. This thus brings benefits in automated testing such as unit test, as we can easily mock the dependency and execution. 
+5. For example, if a service class requires a repository to work on database, by using IoC, we can easily mock the implementation of CRUD rather than interacting with a real database.
 
 ## 4.8. Introduction to Dependency Injection
+1. Though IoC brings benefits to decouple tightly dependencies of the classes, it creates more burden when declaring each instances as the class needs the dependency to initiate a new instance. 
+    ```ts
+    // provide dependencies when creating new instances. 
+    const repo = new MessageRepository()
+    const service = new MessageService(repo)
+    const controller = new MessageController(service)
+    ```
+2. We can introduce `Dependency Injection` (DI) which has a container to hold the dependencies and create instances relying on it. 
+3. DI container flow
+   1. At startup, register all classes with the container.
+   2. Container will figure out what each dependency each class has. 
+   3. We then ask the container to create an instance of a class for us. 
+   4. Container creates all required dependencies and gives us the instance. 
+   5. Container will hold onto the created dependency instances and reuse them if needed. 
 
 ## 4.9. Refactoring to Use Dependency Injection
+1. By referring the DI container flow in the previous section. 
+2. Use the `Injectable` decorator on each class and add them to the modules list of providers.
+   1. At startup, register all classes with the container.
+   2. Container will figure out what each dependency each class has. 
+3. Happens automatically - Nest will try to create controller instances for us. 
+   1. We then ask the container to create an instance of a class for us.  
+   2. Container creates all required dependencies and gives us the instance. 
+4. On each class that can be injected to the others, we can use `Injectable` to mark it, so Nest DI container will know and register it as an injectable. 
+    ```ts
+    // src/messages/messages.repository.ts
+    import { Injectable } from '@nestjs/common';
+    import { readFile, writeFile } from 'fs/promises';
+
+    @Injectable()
+    export class MessagesRepository {
+      async findOne(id: string) {
+        const contents = await readFile('messages.json', 'utf-8');
+        const messages = JSON.parse(contents);
+
+        return messages[id];
+      }
+
+      async findAll() {
+        const contents = await readFile('messages.json', 'utf8');
+        const messages = JSON.parse(contents);
+
+        return messages;
+      }
+
+      async create(content: string) {
+        const contents = await readFile('messages.json', 'utf8');
+        const messages = JSON.parse(contents);
+
+        // randomly generate a number from 0 to 999
+        const id = Math.floor(Math.random() * 999);
+
+        messages[id] = { id, content };
+
+        await writeFile('messages.json', JSON.stringify(messages));
+      }
+    }
+    ```
+    ```ts
+    // src/messages/messages.service.ts
+    import { Injectable } from '@nestjs/common';
+    import { MessagesRepository } from './messages.repository';
+
+    @Injectable()
+    export class MessagesService {
+      constructor(public messagesRepo: MessagesRepository) {}
+
+      findOne(id: string) {
+        return this.messagesRepo.findOne(id);
+      }
+
+      findAll() {
+        return this.messagesRepo.findAll();
+      }
+
+      create(content: string) {
+        return this.messagesRepo.create(content);
+      }
+    }
+    ```
+    ```ts
+    // src/messages/messages.controller.ts
+    import {
+      Body,
+      Controller,
+      Get,
+      NotFoundException,
+      Param,
+      Post,
+    } from '@nestjs/common';
+    import { CreateMessageDto } from './dtos/create-message.dto';
+    import { MessagesService } from './messages.service';
+
+    @Controller('messages')
+    export class MessagesController {
+      constructor(public messagesService: MessagesService) {}
+
+      @Get()
+      listMessages() {
+        return this.messagesService.findAll();
+      }
+
+      @Post()
+      createMessage(@Body() body: CreateMessageDto) {
+        return this.messagesService.create(body.content);
+      }
+
+      @Get('/:id')
+      async getMessage(@Param('id') id: string) {
+        const message = await this.messagesService.findOne(id);
+
+        if (!message) {
+          throw new NotFoundException('message not found');
+        }
+
+        return message;
+      }
+    }
+    ```
+5. We then update `messages.module.ts` to configure the `providers`. 
+    ```ts
+    // src/messages/messages.module.ts
+    import { Module } from '@nestjs/common';
+    import { MessagesController } from './messages.controller';
+    import { MessagesService } from './messages.service';
+    import { MessagesRepository } from './messages.repository';
+
+    @Module({
+      controllers: [MessagesController],
+      providers: [MessagesService, MessagesRepository],
+    })
+    export class MessagesModule {}
+    ```
+
 
 ## 4.10. Few More Notes on DI
+1. The container will re-use the instance for dependables rather than creating new ones.
