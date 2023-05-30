@@ -33,6 +33,10 @@ Finished on
   - [4.8. Introduction to Dependency Injection](#48-introduction-to-dependency-injection)
   - [4.9. Refactoring to Use Dependency Injection](#49-refactoring-to-use-dependency-injection)
   - [4.10. Few More Notes on DI](#410-few-more-notes-on-di)
+- [5. Nest Architecture: Organizing Code with Modules](#5-nest-architecture-organizing-code-with-modules)
+  - [5.1. Project Overview and Generating a Few Files](#51-project-overview-and-generating-a-few-files)
+  - [5.2. Setting up DI between modules](#52-setting-up-di-between-modules)
+  - [5.3. Consuming multiple modules](#53-consuming-multiple-modules)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -801,3 +805,186 @@ Finished on
 
 ## 4.10. Few More Notes on DI
 1. The container will re-use the instance for dependables rather than creating new ones.
+
+# 5. Nest Architecture: Organizing Code with Modules
+## 5.1. Project Overview and Generating a Few Files
+1. We can use `nest` cli tool to generate code snippets. 
+    <img src="./images/32-generating_a_few_files.png">
+2. In this case, we are building a `Computer` which is supported by `Disk`, `CPU` and `Power`. 
+    ```bash
+    # create new nest project
+    nest new di
+    
+    # generate modules
+    nest g module disk
+    nest g module computer
+    nest g module cpu
+    nest g module power
+
+    # generate services
+    nest g service disk
+    nest g service computer
+    nest g service cpu
+    nest g service power
+    ```
+3. We then can update `main.ts` to start with `ComputerModule`.
+4. To start DI, we firstly give `PowerService` a method 
+    ```ts
+    // src/power/power.service.ts
+    import { Injectable } from '@nestjs/common';
+
+    @Injectable()
+    export class PowerService {
+      supplyPower(watts: number) {
+        console.log(`Supplying ${watts} worth of power.`);
+      }
+    }
+    ```
+
+## 5.2. Setting up DI between modules
+1. In this case, `CPU` module requires `Power` module to work on. 
+    <img src="./images/33-setting_up_di_between_modules.png">
+2. Besides, we can also do `DI` in the same module.
+3. For example, the `Regulator` service requires `Power` service. 
+    <img src="./images/33-setting_up_di_between_modules_1.png">
+4. In the `Power` module, the `Power` service has been included as one of the providers to be injected. 
+5. However, the providers of a module is `private`, so we need to put the sharable service in `exports`
+    ```ts
+    // src/power/power.module.ts
+    import { Module } from '@nestjs/common';
+    import { PowerService } from './power.service';
+
+    @Module({
+      providers: [PowerService],
+      exports: [PowerService]
+    })
+    export class PowerModule {}
+    ```
+6. In `Cpu` module, we can import and inject the `Power` service from power module. 
+    ```ts
+    // src/cpu/cpu.module.ts
+    import { Module } from '@nestjs/common';
+    import { CpuService } from './cpu.service';
+    import { PowerModule } from 'src/power/power.module';
+
+    @Module({
+      imports: [PowerModule],
+      providers: [CpuService],
+    })
+    export class CpuModule {}
+    ```
+7. In `Cpu` service, we can declare the injectable `Power` service in the constructor and use it in class methods. 
+    ```ts
+    // src/cpu/cpu.service.ts
+    import { Injectable } from '@nestjs/common';
+    import { PowerService } from 'src/power/power.service';
+
+    @Injectable()
+    export class CpuService {
+      constructor(private powerService: PowerService) {}
+
+      compute(a: number, b: number) {
+        console.log('Drawing 10 watts of power from power Service');
+        this.powerService.supplyPower(10); // use PowerService from DI
+        return a + b;
+      }
+    }
+    ```
+8. We can do the same for `Disk` module and service. 
+    ```ts
+    // src/disk/disk.module.ts
+    import { Module } from '@nestjs/common';
+    import { DiskService } from './disk.service';
+    import { PowerModule } from 'src/power/power.module';
+
+    @Module({
+      imports: [PowerModule],
+      providers: [DiskService],
+    })
+    export class DiskModule {}
+    ```
+    ```ts
+    // src/disk/disk.service.ts
+    import { Injectable } from '@nestjs/common';
+    import { PowerService } from 'src/power/power.service';
+
+    @Injectable()
+    export class DiskService {
+      constructor(private powerService: PowerService) {}
+
+      getData() {
+        console.log('Drawing 20 watts of power from PowerService');
+        this.powerService.supplyPower(20);
+        return 'data';
+      }
+    }
+    ```
+
+## 5.3. Consuming multiple modules
+1. To use both `Disk` and `Cpu` modules in `Computer` controller, we need to export the services from the modules. 
+    ```ts
+    // src/cpu/cpu.module.ts
+    import { Module } from '@nestjs/common';
+    import { CpuService } from './cpu.service';
+    import { PowerModule } from 'src/power/power.module';
+
+    @Module({
+      imports: [PowerModule],
+      providers: [CpuService],
+      exports: [CpuService],
+    })
+    export class CpuModule {}
+    ```
+    ```ts
+    // src/disk/disk.module.ts
+    import { Module } from '@nestjs/common';
+    import { DiskService } from './disk.service';
+    import { PowerModule } from 'src/power/power.module';
+
+    @Module({
+      imports: [PowerModule],
+      providers: [DiskService],
+      exports: [DiskService],
+    })
+    export class DiskModule {}
+    ```
+2. We then need to import and inject from `Computer` module and refer in the controller class. 
+    ```ts
+    // src/computer/computer.module.ts
+    import { Module } from '@nestjs/common';
+    import { ComputerController } from './computer.controller';
+    import { CpuModule } from 'src/cpu/cpu.module';
+    import { DiskModule } from 'src/disk/disk.module';
+
+    @Module({
+      controllers: [ComputerController],
+      imports: [CpuModule, DiskModule],
+    })
+    export class ComputerModule {}
+    ```
+3. We then can refer `CpuService` and `DiskService` in `Computer.controller`. 
+4. However, DO NOTE that though services are only referred as types in the constructor, we need to import the actual code here in this context. 
+5. For some reason that it WILL NOT work if the services are imported as only types. 
+    ```ts
+    // src/computer/computer.controller.ts
+    import { Controller, Get } from '@nestjs/common';
+    import { CpuService } from 'src/cpu/cpu.service';
+    import { DiskService } from 'src/disk/disk.service';
+
+    // import as type DOES NOT work!
+    // import type { CpuService } from 'src/cpu/cpu.service';
+    // import type { DiskService } from 'src/disk/disk.service';
+
+    @Controller('computer')
+    export class ComputerController {
+      constructor(
+        private cpuService: CpuService,
+        private diskService: DiskService,
+      ) {}
+
+      @Get()
+      run() {
+        return [this.cpuService.compute(1, 2), this.diskService.getData()];
+      }
+    }
+    ```
