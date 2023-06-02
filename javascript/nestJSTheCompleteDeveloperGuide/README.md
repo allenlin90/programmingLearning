@@ -37,6 +37,32 @@ Finished on
   - [5.1. Project Overview and Generating a Few Files](#51-project-overview-and-generating-a-few-files)
   - [5.2. Setting up DI between modules](#52-setting-up-di-between-modules)
   - [5.3. Consuming multiple modules](#53-consuming-multiple-modules)
+- [6. Big Project Time](#6-big-project-time)
+  - [6.1. App Overview](#61-app-overview)
+  - [6.2. API Design](#62-api-design)
+  - [6.3. Module Design](#63-module-design)
+  - [6.4. Generating Modules, Controllers, and Services](#64-generating-modules-controllers-and-services)
+- [7. Persisting Data with TypeORM](#7-persisting-data-with-typeorm)
+  - [7.1. Persisting Data with Nest](#71-persisting-data-with-nest)
+  - [7.2. Setting up a database connection](#72-setting-up-a-database-connection)
+  - [7.3. Creating an entity and repository](#73-creating-an-entity-and-repository)
+  - [7.4. Viewing a DB's content](#74-viewing-a-dbs-content)
+  - [7.5. Understanding TypeORM Decorators](#75-understanding-typeorm-decorators)
+  - [7.6. One quick note on repositories](#76-one-quick-note-on-repositories)
+  - [7.7. A few extra routes](#77-a-few-extra-routes)
+  - [7.8. Setting up body validation](#78-setting-up-body-validation)
+- [8. Creating and saving User data](#8-creating-and-saving-user-data)
+  - [8.1. Creating and saving a user](#81-creating-and-saving-a-user)
+  - [8.2. Quick breather and review](#82-quick-breather-and-review)
+  - [8.3. More on Create vs Save](#83-more-on-create-vs-save)
+  - [8.4. Querying for data](#84-querying-for-data)
+  - [8.5. Updating data](#85-updating-data)
+  - [8.6. Removing users](#86-removing-users)
+  - [8.7. Finding and filtering records](#87-finding-and-filtering-records)
+  - [8.8. Removing records](#88-removing-records)
+  - [8.9. Updating records](#89-updating-records)
+  - [8.10. A few notes on exceptions](#810-a-few-notes-on-exceptions)
+  - [8.11. Excluding response properties](#811-excluding-response-properties)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -50,9 +76,9 @@ Finished on
 ## 1.2. Typescript Configuration
 1. We use the dependecies in the `scratch` project.
   <img src="./images/4-typescript_configuration.png">
-2. NestJS uses some 3rd party models to work with "HTTP Implementation", we can choose either `Express` or `Fastify`.
+1. NestJS uses some 3rd party models to work with "HTTP Implementation", we can choose either `Express` or `Fastify`.
   <img src="./images/4-nestjs_http_implementation.png">
-3. We configure tsconfig.json with the following setting.
+1. We configure tsconfig.json with the following setting.
 
   ```json
   // tsconfig.json
@@ -988,3 +1014,789 @@ Finished on
       }
     }
     ```
+
+# 6. Big Project Time
+## 6.1. App Overview
+1. Used car pricing API
+   1. Users sign up with email/password.
+   2. Users get an estimate for how much their car is worth based on the make/model/year/mileage.
+   3. Users can report what they sold their vehicle for.
+   4. Admins have to approve reported sales.
+
+## 6.2. API Design
+1. POST - `/auth/singup`
+   1. BODY `{ email, password }`
+   2. Create a new user and sign in
+2. POST - `/auth/signin`
+   1. BODY `{ email, password }`
+   2. Sign in as an existing user
+3. GET - `/reports`
+   1. QS `make`, `model`, `year`, `mileage`, `longitude`, `latitude`
+   2. Get an estimate for the cars value
+4. POST - `/reports`
+   1. BODY `{ make, model, year, mileage, longitude, latitude, price }`
+   2. Report how much a vehicle sold for
+5. PATCH - `/reports/:id`
+   1. BODY `{ approved }`
+   2. Approve or reject a report submitted by a user
+
+## 6.3. Module Design
+1. Users Module
+   1. Users Controller
+   2. Users Service
+   3. Users Repository
+2. Reports Module
+   1. Reports Controller
+   2. Reports Service
+   3. Reports Repository
+
+## 6.4. Generating Modules, Controllers, and Services
+```bash
+nest new mycv
+nest g module users
+nest g module reports
+nest g controller users
+nest g controller reports
+nest g service users
+nest g service reports
+```
+
+
+
+# 7. Persisting Data with TypeORM
+## 7.1. Persisting Data with Nest
+1. Nest works fine with any ORM, but works well out of the box with `TypeORM` and `Mongoose`. 
+2. This project will start up with `SQLite` and migrate to `Postgresql` in the later phase. 
+
+## 7.2. Setting up a database connection
+1. App layout
+    <img src="./images/42-setting_up_a_database_connection.png">
+2. Configure `app.module.ts` to connect to sqlite.
+    ```ts
+    // src/app.module.ts
+    import { Module } from '@nestjs/common';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { AppController } from './app.controller';
+    import { AppService } from './app.service';
+    import { UsersModule } from './users/users.module';
+    import { ReportsModule } from './reports/reports.module';
+
+    @Module({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: 'db.sqlite',
+          entities: [],
+          synchronize: true,
+        }),
+        UsersModule,
+        ReportsModule,
+      ],
+      controllers: [AppController],
+      providers: [AppService],
+    })
+    export class AppModule {}
+    ```
+3. We can check from the root directory that a `db.sqlite` is created after starting the server. 
+
+## 7.3. Creating an entity and repository
+1. Creating an Entity
+   1. Create an entity file, and create a class in it that lists all the properties that your entity will have.
+   2. Connect the entity to its parent module. This creates a repository.
+   3. Connect the entity to the root connection (in app module).
+
+    ```ts
+    // src/users/user.entity.ts
+    import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+    @Entity()
+    export class User {
+      @PrimaryGeneratedColumn()
+      id: number;
+
+      @Column()
+      email: string;
+
+      @Column()
+      password: string;
+    }
+    ```
+2. To create a repository for a module, we can use `TypeOrmModule.forFeature`.
+    ```ts
+    // src/users/users.module.ts
+    import { Module } from '@nestjs/common';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { UsersController } from './users.controller';
+    import { UsersService } from './users.service';
+    import { User } from './user.entity';
+
+    @Module({
+      imports: [TypeOrmModule.forFeature([User])],
+      controllers: [UsersController],
+      providers: [UsersService],
+    })
+    export class UsersModule {}
+    ```
+3. Besides, we need to refer this to root module `app.module.ts`.
+    ```ts
+    // src/app.module.ts
+    import { Module } from '@nestjs/common';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { AppController } from './app.controller';
+    import { AppService } from './app.service';
+    import { UsersModule } from './users/users.module';
+    import { ReportsModule } from './reports/reports.module';
+    import { User } from './users/user.entity';
+
+    @Module({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: 'db.sqlite',
+          entities: [User],
+          synchronize: true,
+        }),
+        UsersModule,
+        ReportsModule,
+      ],
+      controllers: [AppController],
+      providers: [AppService],
+    })
+    export class AppModule {}
+    ```
+
+## 7.4. Viewing a DB's content
+1. We create an entity for `Report`
+    ```ts
+    // src/reports/report.entity.ts
+    import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+    @Entity()
+    export class Report {
+      @PrimaryGeneratedColumn()
+      id: number;
+
+      @Column()
+      price: number;
+    }
+    ```
+2. We use the `Report` entity in `ReportModule`. 
+    ```ts
+    // src/reports/report.module.ts
+    import { Module } from '@nestjs/common';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { ReportsController } from './reports.controller';
+    import { ReportsService } from './reports.service';
+    import { Report } from './report.entity';
+
+    @Module({
+      imports: [TypeOrmModule.forFeature([Report])],
+      controllers: [ReportsController],
+      providers: [ReportsService],
+    })
+    export class ReportsModule {}
+    ```
+3. Refer `Report` entity in `app.module.ts`.
+    ```ts
+    // src/app.module.ts
+    import { Module } from '@nestjs/common';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { AppController } from './app.controller';
+    import { AppService } from './app.service';
+    import { UsersModule } from './users/users.module';
+    import { ReportsModule } from './reports/reports.module';
+    import { User } from './users/user.entity';
+    import { Report } from './reports/report.entity';
+
+    @Module({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: 'db.sqlite',
+          entities: [User, Report],
+          synchronize: true,
+        }),
+        UsersModule,
+        ReportsModule,
+      ],
+      controllers: [AppController],
+      providers: [AppService],
+    })
+    export class AppModule {}
+    ```
+4. To check data from the `.sqlite` extension, we can install [`sqlite`](https://marketplace.visualstudio.com/items?itemName=alexcvzz.vscode-sqlite) viewer in VSCode extension. 
+5. After installing, we can use <kbd>Ctrl + p</kbd> or <kbd>Command + p</kbd> to run sqlite extension to open a sqlite database. 
+6. We then can find a `SQLITE EXPLORER` on the left. 
+
+## 7.5. Understanding TypeORM Decorators
+1. By setting `synchronize` to `true`, `TypeORM` will check on the entities and update the database schema when the app spins up. 
+    ```ts
+    // src/app.module.ts
+    import { Module } from '@nestjs/common';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { AppController } from './app.controller';
+    import { AppService } from './app.service';
+    import { UsersModule } from './users/users.module';
+    import { ReportsModule } from './reports/reports.module';
+    import { User } from './users/user.entity';
+    import { Report } from './reports/report.entity';
+
+    @Module({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: 'db.sqlite',
+          entities: [User, Report],
+          synchronize: true, // run migration for every spin up
+        }),
+        UsersModule,
+        ReportsModule,
+      ],
+      controllers: [AppController],
+      providers: [AppService],
+    })
+    export class AppModule {}
+    ```
+2. By specifying `Entity`, it indicates to `TypeORM` that the following class should be handled as a table. 
+3. `PrimaryGeneratedColumn` will be read and create `id` to the table and work as primary key that will be auto-incremented.
+4. `Column` will create a field for the table. 
+    ```ts
+    // src/users/user.entity.ts
+    import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+    @Entity()
+    export class User {
+      @PrimaryGeneratedColumn()
+      id: number;
+
+      @Column()
+      email: string;
+
+      @Column()
+      password: string;
+    }
+    ```
+5. The synchronize flag should be used only in development environment as it may accidentally removes data from production database. 
+
+## 7.6. One quick note on repositories
+1. For repository API, there are several actions we can apply to work with data storage. 
+
+## 7.7. A few extra routes
+## 7.8. Setting up body validation
+1. For body payload validation, we need to set up a DTO. 
+2. To use validation pipe, we need to register it when the app starts up.
+3. Besides, we set `whitelist` as `true` to filter out any data that is no relevant to the incoming body. 
+    ```ts
+    // src/main.ts
+    import { NestFactory } from '@nestjs/core';
+    import { ValidationPipe } from '@nestjs/common';
+    import { AppModule } from './app.module';
+
+    async function bootstrap() {
+      const app = await NestFactory.create(AppModule);
+      app.useGlobalPipes(
+        new ValidationPipe({
+          whitelist: true,
+        }),
+      );
+      await app.listen(3000);
+    }
+    bootstrap();
+    ```
+4. In this case, our user has `email` and `password`. 
+    ```ts
+    // src/users/dtos/create-user.dto.ts
+    import { IsEmail, IsString } from 'class-validator';
+
+    export class CreateUserDTO {
+      @IsEmail()
+      email: string;
+
+      @IsString()
+      password: string;
+    }
+    ```
+5. We now can use the DTO to validate the incoming body. 
+6. By setting up `whitelist: true`, the body on `/users/signup` will have only 2 properties, `email` and `password`, passing to `createUser` method. 
+```ts
+// src/users.controller.ts
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreateUserDTO } from './dtos/create-user.dto';
+
+@Controller('users')
+export class UsersController {
+  @Post('/signup')
+  createUser(@Body() body: CreateUserDTO) {
+    console.log(body);
+  }
+}
+```
+
+
+
+# 8. Creating and saving User data
+## 8.1. Creating and saving a user
+1. To work with `controller`, we can put the business logic in `service`.
+2. For DI pattern, we require `Repository`, `InjectRepository`, and the `User` entity to register in the service class. 
+3. After injecting the repository, we create `create` method to work with the repository.
+    ```ts
+    // src/users/users.service.ts
+    import { Injectable } from '@nestjs/common';
+    import { Repository } from 'typeorm';
+    import { InjectRepository } from '@nestjs/typeorm';
+    import { User } from './user.entity';
+
+    // using DI pattern to assign repository
+    @Injectable()
+    export class UsersService {
+      constructor(@InjectRepository(User) private repo: Repository<User>) {}
+
+        create(email: string, password: string) {
+          const user = this.repo.create({ email, password });
+
+          return this.repo.save(user);
+        }
+    }
+
+    @Injectable()
+    export class UsersService {
+      repo: Repository<User>
+      constructor(private repo: Repository<User>) {
+        this.repo = repo
+      }
+    }
+    ```
+4. On the controller, we can inject the service to handle the incoming request. 
+    ```ts
+    // src/users.controller.ts
+    import { Body, Controller, Post } from '@nestjs/common';
+    import { CreateUserDTO } from './dtos/create-user.dto';
+    import { UsersService } from './users.service';
+
+    @Controller('users')
+    export class UsersController {
+      constructor(private userService: UsersService) {}
+
+      @Post('/signup')
+      createUser(@Body() body: CreateUserDTO) {
+        this.userService.create(body.email, body.password);
+      }
+    }
+    ```
+
+## 8.2. Quick breather and review 
+<img src="./images/51-quick_breather_and_review.png" />
+
+## 8.3. More on Create vs Save
+1. `TypeORM` provides some hooks to trigger at certain process or step of a service.
+2. However, if the service call `repo.save` directly with an object, the hooks will not execute which can be hard to debug when something goes wrong. 
+3. Besides, by calling `repo.insert`, `repo.update`, and `repo.delete` directly, the hooks won't be triggered. 
+4. This is the reason why `repo.save` and `repo.remove` are more preferable in most of the cases. 
+5. Thus, in the service, we use `repo.create` to create an entity instance and save the instance to the data storage rather than pass the object as argument and `repo.save` directly. 
+
+```ts
+// src/users/user.entity.ts
+import {
+  AfterInsert,
+  AfterRemove,
+  AfterUpdate,
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  email: string;
+
+  @Column()
+  password: string;
+
+  @AfterInsert()
+  logInsert() {
+    console.log(`Inserted User with id`, this.id);
+  }
+
+  @AfterUpdate()
+  logUpdate() {
+    console.log(`Updated User with id`, this.id);
+  }
+
+  @AfterRemove()
+  logRemove() {
+    console.log(`Removed User with id`, this.id);
+  }
+}
+```
+<img src="./images/52-more_on_create_vs_save.png" />
+
+## 8.4. Querying for data
+```ts
+// src/users/users.controller.ts
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './user.entity';
+
+@Injectable()
+export class UsersService {
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
+
+  create(email: string, password: string) {
+    const user = this.repo.create({ email, password });
+
+    return this.repo.save(user);
+  }
+
+  findOne(id: number) {
+    return this.repo.findOneBy({ id });
+  }
+
+  find(email: string) {
+    return this.repo.find({ where: { email } });
+  }
+
+  update() {}
+
+  remove() {}
+}
+```
+
+## 8.5. Updating data
+1. To update an entity, we can pass 2 arguments, `id` to find the entity and `attrs` for the properties to be updated. 
+2. Note that this process is not efficient as it will firstly query to find if an entity exists and update it. 
+3. However, if we'd like to enjoy the benefit from hooks, we need to use `repo.save` rather than calling `repo.update` directly. 
+```ts
+// src/users/users.controller.ts
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './user.entity';
+
+@Injectable()
+export class UsersService {
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
+
+  create(email: string, password: string) {
+    const user = this.repo.create({ email, password });
+
+    return this.repo.save(user);
+  }
+
+  findOne(id: number) {
+    return this.repo.findOneBy({ id });
+  }
+
+  find(email: string) {
+    return this.repo.find({ where: { email } });
+  }
+
+  async update(id: number, attrs: Partial<User>) {
+    const user = await this.findOne(id);
+
+    if (!user) {
+      throw new Error('user not found');
+    }
+
+    Object.assign(user, attrs);
+
+    return this.repo.save(user);
+  }
+
+  remove() {}
+}
+```
+
+## 8.6. Removing users
+```ts
+// src/users/users.service.ts
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './user.entity';
+
+@Injectable()
+export class UsersService {
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
+
+  create(email: string, password: string) {
+    const user = this.repo.create({ email, password });
+
+    return this.repo.save(user);
+  }
+
+  findOne(id: number) {
+    return this.repo.findOneBy({ id });
+  }
+
+  find(email: string) {
+    return this.repo.find({ where: { email } });
+  }
+
+  async update(id: number, attrs: Partial<User>) {
+    const user = await this.findOne(id);
+
+    if (!user) {
+      throw new Error('user not found');
+    }
+
+    Object.assign(user, attrs);
+
+    return this.repo.save(user);
+  }
+
+  async remove(id: number) {
+    const user = await this.findOne(id);
+
+    if (!user) {
+      throw new Error('user not found');
+    }
+
+    return await this.repo.remove(user);
+  }
+}
+```
+
+## 8.7. Finding and filtering records
+```ts
+// src/users/users.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Param,
+  Query,
+} from '@nestjs/common';
+import { CreateUserDTO } from './dtos/create-user.dto';
+import { UsersService } from './users.service';
+
+@Controller('users')
+export class UsersController {
+  constructor(private userService: UsersService) {}
+
+  @Post('/signup')
+  createUser(@Body() body: CreateUserDTO) {
+    this.userService.create(body.email, body.password);
+  }
+
+  @Get('/:id')
+  findUser(@Param('id') id: string) {
+    return this.userService.findOne(parseInt(id));
+  }
+
+  @Get('/')
+  findAllUsers(@Query('email') email: string) {
+    return this.userService.find(email);
+  }
+}
+```
+
+## 8.8. Removing records
+```ts
+// src/users/users.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Query,
+} from '@nestjs/common';
+import { CreateUserDTO } from './dtos/create-user.dto';
+import { UsersService } from './users.service';
+
+@Controller('users')
+export class UsersController {
+  constructor(private userService: UsersService) {}
+
+  @Post('/signup')
+  createUser(@Body() body: CreateUserDTO) {
+    this.userService.create(body.email, body.password);
+  }
+
+  @Get('/:id')
+  findUser(@Param('id') id: string) {
+    return this.userService.findOne(parseInt(id));
+  }
+
+  @Get('/')
+  findAllUsers(@Query('email') email: string) {
+    return this.userService.find(email);
+  }
+
+  @Delete('/:id')
+  removeUser(@Param('id') id: string) {
+    return this.userService.remove(parseInt(id));
+  }
+}
+```
+
+## 8.9. Updating records
+```ts
+// src/users/users.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Query,
+} from '@nestjs/common';
+import { CreateUserDTO } from './dtos/create-user.dto';
+import { UpdateUserDTO } from './dtos/update-user.dto';
+import { UsersService } from './users.service';
+
+@Controller('users')
+export class UsersController {
+  constructor(private userService: UsersService) {}
+
+  @Post('/signup')
+  createUser(@Body() body: CreateUserDTO) {
+    this.userService.create(body.email, body.password);
+  }
+
+  @Get('/:id')
+  findUser(@Param('id') id: string) {
+    return this.userService.findOne(parseInt(id));
+  }
+
+  @Get('/')
+  findAllUsers(@Query('email') email: string) {
+    return this.userService.find(email);
+  }
+
+  @Delete('/:id')
+  removeUser(@Param('id') id: string) {
+    return this.userService.remove(parseInt(id));
+  }
+
+  @Patch('/:id')
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDTO) {
+    return this.userService.update(parseInt(id), body);
+  }
+}
+```
+
+## 8.10. A few notes on exceptions
+1. Though we can throw an error in a service for a HTTP request, Nest controller working with other protocols such as `WebSocket` and `gRPC` cannot handle the exception directly.
+2. We can use `NotFoundException` from `@nestjs/common`. 
+3. For the API service design, we can either throw the not found error in service or controller for different purposes. 
+    ```ts
+    // src/users/users.service.ts
+    import { Injectable, NotFoundException } from '@nestjs/common';
+    import { Repository } from 'typeorm';
+    import { InjectRepository } from '@nestjs/typeorm';
+    import { User } from './user.entity';
+
+    @Injectable()
+    export class UsersService {
+      constructor(@InjectRepository(User) private repo: Repository<User>) {}
+
+      create(email: string, password: string) {
+        const user = this.repo.create({ email, password });
+
+        return this.repo.save(user);
+      }
+
+      findOne(id: number) {
+        return this.repo.findOneBy({ id });
+      }
+
+      find(email: string) {
+        return this.repo.find({ where: { email } });
+      }
+
+      async update(id: number, attrs: Partial<User>) {
+        const user = await this.findOne(id);
+
+        if (!user) {
+          throw new NotFoundException('user not found');
+        }
+
+        Object.assign(user, attrs);
+
+        return this.repo.save(user);
+      }
+
+      async remove(id: number) {
+        const user = await this.findOne(id);
+
+        if (!user) {
+          throw new NotFoundException('user not found');
+        }
+
+        return await this.repo.remove(user);
+      }
+    }
+    ```
+4. While the service can return a `null` when nothing is found, this behavior can be expected in some scenario and be reused in the other controllers or services. 
+5. Therefore, we can put the exception only on specific routes.
+    ```ts
+    // src/users/users.controller.ts
+    import {
+      Body,
+      Controller,
+      Post,
+      Get,
+      Patch,
+      Delete,
+      Param,
+      Query,
+      NotFoundException,
+    } from '@nestjs/common';
+    import { CreateUserDTO } from './dtos/create-user.dto';
+    import { UpdateUserDTO } from './dtos/update-user.dto';
+    import { UsersService } from './users.service';
+
+    @Controller('users')
+    export class UsersController {
+      constructor(private userService: UsersService) {}
+
+      @Post('/signup')
+      createUser(@Body() body: CreateUserDTO) {
+        this.userService.create(body.email, body.password);
+      }
+
+      @Get('/:id')
+      async findUser(@Param('id') id: string) {
+        const user = await this.userService.findOne(parseInt(id));
+
+        if (!user) {
+          throw new NotFoundException('user not found');
+        }
+
+        return user;
+      }
+
+      @Get('/')
+      findAllUsers(@Query('email') email: string) {
+        return this.userService.find(email);
+      }
+
+      @Delete('/:id')
+      removeUser(@Param('id') id: string) {
+        return this.userService.remove(parseInt(id));
+      }
+
+      @Patch('/:id')
+      updateUser(@Param('id') id: string, @Body() body: UpdateUserDTO) {
+        return this.userService.update(parseInt(id), body);
+      }
+    }
+    ```
+
+## 8.11. Excluding response properties
+
+
+
+
