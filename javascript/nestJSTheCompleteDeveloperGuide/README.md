@@ -62,7 +62,9 @@ Finished on
   - [8.8. Removing records](#88-removing-records)
   - [8.9. Updating records](#89-updating-records)
   - [8.10. A few notes on exceptions](#810-a-few-notes-on-exceptions)
-  - [8.11. Excluding response properties](#811-excluding-response-properties)
+- [9. Custom data serialization](#9-custom-data-serialization)
+  - [9.1. Excluding response properties](#91-excluding-response-properties)
+  - [9.2. Solution to Serialization](#92-solution-to-serialization)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -1795,8 +1797,115 @@ export class UsersController {
     }
     ```
 
-## 8.11. Excluding response properties
+# 9. Custom data serialization
+## 9.1. Excluding response properties
+1. We can control and intercept the data flow from querying from data storage before respond back to a request. 
+    <img src="./images/61-excluding_response_properties.png" />
+2. In this case, we'd like to exclude `password` from `User` entity.
+3. We can use `Exclude` from `class-transformer` when we install `class-validator`. 
+    ```ts
+    // src/users/user.entity.ts
+    import {
+      AfterInsert,
+      AfterRemove,
+      AfterUpdate,
+      Entity,
+      Column,
+      PrimaryGeneratedColumn,
+    } from 'typeorm';
+    import { Exclude } from 'class-transformer';
 
+    @Entity()
+    export class User {
+      @PrimaryGeneratedColumn()
+      id: number;
 
+      @Column()
+      email: string;
 
+      @Column()
+      @Exclude()
+      password: string;
+
+      @AfterInsert()
+      logInsert() {
+        console.log(`Inserted User with id`, this.id);
+      }
+
+      @AfterUpdate()
+      logUpdate() {
+        console.log(`Updated User with id`, this.id);
+      }
+
+      @AfterRemove()
+      logRemove() {
+        console.log(`Removed User with id`, this.id);
+      }
+    }
+    ```
+4. In the controller, we need to use `UseInterceptors` and `ClassSerializerInterceptor` to apply the `Exclude` of the entity. 
+5. However, this approach is not ideal and `Nest.js` has different approach to handle such cases. 
+
+    ```ts
+    import {
+      Body,
+      Controller,
+      Post,
+      Get,
+      Patch,
+      Delete,
+      Param,
+      Query,
+      NotFoundException,
+      UseInterceptors, 
+      ClassSerializerInterceptor,
+    } from '@nestjs/common';
+    import { CreateUserDTO } from './dtos/create-user.dto';
+    import { UpdateUserDTO } from './dtos/update-user.dto';
+    import { UsersService } from './users.service';
+
+    @Controller('users')
+    export class UsersController {
+      constructor(private userService: UsersService) {}
+
+      @Post('/signup')
+      createUser(@Body() body: CreateUserDTO) {
+        this.userService.create(body.email, body.password);
+      }
+
+      // intercept and apply custom serialization before respond
+      @UseInterceptors(ClassSerializerInterceptor)
+      @Get('/:id')
+      async findUser(@Param('id') id: string) {
+        const user = await this.userService.findOne(parseInt(id));
+
+        if (!user) {
+          throw new NotFoundException('user not found');
+        }
+
+        return user;
+      }
+
+      @Get('/')
+      findAllUsers(@Query('email') email: string) {
+        return this.userService.find(email);
+      }
+
+      @Delete('/:id')
+      removeUser(@Param('id') id: string) {
+        return this.userService.remove(parseInt(id));
+      }
+
+      @Patch('/:id')
+      updateUser(@Param('id') id: string, @Body() body: UpdateUserDTO) {
+        return this.userService.update(parseInt(id), body);
+      }
+    }
+    ```
+
+## 9.2. Solution to Serialization
+1. In future cases, we may extend the endpoints to serve users on different access and permissions.
+2. For example, a user can be a regular user or an `admin`.
+3. When different types of users calling the endpoint, the data and properties of the response can be different. 
+    <img src="./images/62-solution_to_serialization.png" />
 
