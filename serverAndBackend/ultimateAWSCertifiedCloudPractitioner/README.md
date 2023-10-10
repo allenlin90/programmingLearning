@@ -1,35 +1,36 @@
-1. [Course Introduction](#Course-Introduction)
-    1. [Estimated Cost to use services on AWS](#Estimated-Cost-to-use-services-on-AWS)
-    1. [Different types of cloud computing](#Different-types-of-cloud-computing)
-1. [What is Cloud Computing](What-is-Cloud-Computing)
-    1. [AWS Cloud Overview](#AWS-Cloud-Overview)
-1. [IAM - Identity and Access Management](#IAM---Identity-and-Access-Management)
-    1. [IAM Introduction Users, Gruops, Policies](#IAM-Introduction-Users,-Gruops,-Policies)
-    1. [IAM Policies](#IAM-Policies)
-    1. [IAM Users and Groups hands-on](#IAM-Users-and-Groups-hands-on)
-    1. [IAM Policies hands-on](#IAM-Policies-hands-on)
-    1. [IAM MFA Overview](#IAM-MFA-Overview)
-    1. [IAM MFA hands-on](#IAM-MFA-hands-on)
-    1. [AWS Access Key, CLI and SDK](#AWS-Access-Key,-CLI-and-SDK)
-    1. [AWS CLI Setup on Windows](#AWS-CLI-Setup-on-Windows)
-    1. [AWS CLI Setup on Mac](#AWS-CLI-Setup-on-Mac)
-    1. [AWS CLI Setup on Linux](#AWS-CLI-Setup-on-Linux)
-    1. [AWS CLI hands-on](#AWS-CLI-hands-on)
-    1. [AWS CloudShell](AWS-CloudShell)
-    1. [IAM Roles for AWS Services](#IAM-Roles-for-AWS-Services)
-    1. [IAM Roles hands-on](#IAM-Roles-hands-on)
-    1. [IAM Security Tools](#IAM-Security-Tools)
-    1. [IAM Security Tools hands-on](#IAM-Security-Tools-hands-on)
-    1. [IAM Best Practices](#IAM-Best-Practices)
-    1. [Shared Responsibility Model for IAM](#Shared-Responsibility-Model-for-IAM)
-1. [EC2 - Elastic Compute Cloud](#EC2---Elastic-Compute-Cloud)
-    1. [AWS Budget Setup](#AWS-Budget-Setup)
-    1. [EC2 Basics](#EC2-Basics)
-    1. [Create an EC2 Instance with EC2 User Data to have a Website hands-on](#Create-an-EC2-Instance-with-EC2-User-Data-to-have-a-Website-hands-on)
+- [1. Course Introduction](#1-course-introduction)
+  - [1.1. Estimated Cost to use services on AWS](#11-estimated-cost-to-use-services-on-aws)
+  - [1.2. Different types of cloud computing](#12-different-types-of-cloud-computing)
+- [2. What is Cloud Computing](#2-what-is-cloud-computing)
+  - [2.1. AWS Cloud Overview](#21-aws-cloud-overview)
+- [3. IAM - Identity and Access Management](#3-iam---identity-and-access-management)
+  - [3.1. IAM Introduction Users, Gruops, Policies](#31-iam-introduction-users-gruops-policies)
+  - [3.2. IAM Users and Groups hands-on](#32-iam-users-and-groups-hands-on)
+  - [3.3. IAM Policies](#33-iam-policies)
+  - [3.4. IAM Policies hands-on](#34-iam-policies-hands-on)
+  - [3.5. IAM MFA Overview](#35-iam-mfa-overview)
+  - [3.6. IAM MFA hands-on](#36-iam-mfa-hands-on)
+  - [3.7. AWS Access Key, CLI and SDK](#37-aws-access-key-cli-and-sdk)
+  - [3.8. AWS CLI Setup on Windows](#38-aws-cli-setup-on-windows)
+  - [3.9. AWS CLI Setup on Mac](#39-aws-cli-setup-on-mac)
+  - [3.10. AWS CLI Setup on Linux](#310-aws-cli-setup-on-linux)
+  - [3.11. AWS CLI hands-on](#311-aws-cli-hands-on)
+  - [3.12. AWS CloudShell](#312-aws-cloudshell)
+  - [3.13. IAM Roles for AWS Services](#313-iam-roles-for-aws-services)
+  - [3.14. IAM Roles hands-on](#314-iam-roles-hands-on)
+  - [3.15. IAM Security Tools](#315-iam-security-tools)
+  - [3.16. IAM Security Tools hands-on](#316-iam-security-tools-hands-on)
+  - [3.17. IAM Best Practices](#317-iam-best-practices)
+  - [3.18. Shared Responsibility Model for IAM](#318-shared-responsibility-model-for-iam)
+  - [3.19. IAM Summary](#319-iam-summary)
+- [4. EC2 - Elastic Compute Cloud](#4-ec2---elastic-compute-cloud)
+  - [4.1. AWS Budget Setup](#41-aws-budget-setup)
+  - [4.2. EC2 Basics](#42-ec2-basics)
+  - [4.3. Create an EC2 Instance with EC2 User Data to have a Website hands-on](#43-create-an-ec2-instance-with-ec2-user-data-to-have-a-website-hands-on)
 ---
 
-# Course Introduction
-## Estimated Cost to use services on AWS
+# 1. Course Introduction
+## 1.1. Estimated Cost to use services on AWS
 1. Registrar: $12.00
 1. Route53: $0.50
 1. Config: $0.18
@@ -37,7 +38,7 @@
 1. Other Services: $0.00
 1. Total: $12.7
 
-## Different types of cloud computing
+## 1.2. Different types of cloud computing
 1. The scope of management on the application is different
     1. Iaas - Infrastructure as a Service
         1. Amazon EC2
@@ -48,8 +49,8 @@
     1. Saas - Software as a Service
         1. Gmail, Zoom, etc.
 
-# What is Cloud Computing
-## AWS Cloud Overview
+# 2. What is Cloud Computing
+## 2.1. AWS Cloud Overview
 1. AWS Global Infrastructure
     1. AWS Regions
     1. AWS Availability Zones
@@ -73,8 +74,8 @@
         1. Lambda (FaaS)
         1. Rekognition (Saas)
 
-# IAM - Identity and Access Management
-## IAM Introduction Users, Gruops, Policies
+# 3. IAM - Identity and Access Management
+## 3.1. IAM Introduction Users, Gruops, Policies
 1. IAM stands for Identity and Access Management, which is a Global service.
 1. Root account created by default, should be used or shared.
 1. Users are people within your organization, and can be grouped.
@@ -84,7 +85,7 @@
 1. IAM Permissions can be assigned by "**policies**" in JSON format. The policies define the permissions of the users
 1. In AWS, we usually apply the least privilege principle. It means we don't provide additional permissions which the user doesn't need.
 
-## IAM Users and Groups hands-on
+## 3.2. IAM Users and Groups hands-on
 1. Though we may have root user which can access all the functions in the console, we should have a separated "admin" with scoped privilege.
 1. Note that IAM is a global service which policies can be applied to all the regions that the organization has. 
 1. Add a new user and create a group
@@ -95,19 +96,19 @@
 1. In IAM dashboard, we can check the sign-in URL for IAM users. We can also create alias to have a custom URL link. 
 1. In AWS management console login page, we can select to login as a root user or IAM. To select the AWS account, we can either use the account ID or the alias we created in IAM dashboard and provide IAM user name with password to login.
 
-## IAM Policies
+## 3.3. IAM Policies
 1. IAM Policies scope and groups
     <img src="images/40.jpg">
 1. IAM Policies Structure
     <img src="images/41.jpg">
 
-## IAM Policies hands-on
+## 3.4. IAM Policies hands-on
 1. Remove permission of users by the root user account.
 1. Give the user privilege "IAMReadOnlyAccess" which only allows the user to view the data but can't edit the user groups.
 1. Create another group with difference privilege(s) and add user to the group. 
 1. After configure the settings for a user, we can check a user that which group(s) is the user in and what privilege does the user have.
 
-## IAM MFA Overview
+## 3.5. IAM MFA Overview
 1. In AWS, we can setup a password policy
     1. Set a minimum password length
     1. Require specific character types
@@ -126,12 +127,12 @@
     <img src="images/44.jpg">
     <img src="images/45.jpg">
 
-## IAM MFA hands-on
+## 3.6. IAM MFA hands-on
 1. We can create and change password policy in "Account settings" in IAM. 
     <img src="images/19-setup_security_credentials_mfa.png">
 1. After setup the device for MFA, the AWS management console will ask to use passcode from MFA when login. This feature can be very useful to secure root user for AWS account.
 
-## AWS Access Key, CLI and SDK
+## 3.7. AWS Access Key, CLI and SDK
 1. To access AWS, we can use the following options
     1. AWS Management Console (protected by password + MFA). This is web-based user interface. 
     1. AWS Command Line Interface (CLI) (protected by access key)
@@ -149,52 +150,52 @@
     1. AWS SDK is language-specific APIs (set of libraries)
     1. This enables users to access and manage AWS services programmatically
 
-## AWS CLI Setup on Windows
-## AWS CLI Setup on Mac
-## AWS CLI Setup on Linux
+## 3.8. AWS CLI Setup on Windows
+## 3.9. AWS CLI Setup on Mac
+## 3.10. AWS CLI Setup on Linux
 1. We can download AWS CLI version 2 for the OS system we are using from [https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 1. After installing, we can use `aws --version` to check in the command-line shell.
 
-## AWS CLI hands-on
+## 3.11. AWS CLI hands-on
 1. In IAM, we can check a user from "users" and create security credentials which is a key/value pair. Note that the key value pair can only be checked when it's created. The secrect will be hidden and can't be revoked once we lost it. It's user's responsibility to keep the access key secret safe. 
 1. We can configure AWS with `aws configure`, so we can set up the user to login from the command-line shell. 
 1. After setting up, we can use `aws iam list-users` to check users created for the AWS account. Note that if the logged in user doesn't have the privilege to access, we can't check the data. This part is similar to the webpage checking "users" in IAM service on AWS management console.
 
-## AWS CloudShell
+## 3.12. AWS CloudShell
 1. This feature is only available in some of the regions. We can check the [list](https://aws.amazon.com/cloudshell/) if the region we are going access has the feature enabled. 
 1. This interface is similar to AWS CLI which is web-based. Besides, we can use this tool to easily upload or download the file to the server. 
 
-## IAM Roles for AWS Services
+## 3.13. IAM Roles for AWS Services
 1. Some AWS service will need to perform actions on your behalf. We can assign permissions to AWS services with "IAM Roles". This is to allow AWS services execute certain functions by under controlled with IAM privileges. 
 1. For example, we have an EC2 instance (virtual server) to do perform certain functions to AWS account. This can be applied to other AWS services such as LAMBDA. 
 
-## IAM Roles hands-on
+## 3.14. IAM Roles hands-on
 1. In AWS management console, we can check "Roles" tab and create a new "role" for AWS service.
 1. We can create a role for certain AWS services. The common services to apply are "EC2" and "LAMBDA". 
 
-## IAM Security Tools
+## 3.15. IAM Security Tools
 1. IAM credentials reports (account-level)
     1. A report that lists all the AWS account's users and the status of their various credentials.
 1. IAM Access Advisor (user-level)
     1. Access advisor shows the service permissions granted to a user and when those services were last accessed.
     1. We can use the information to revise IAM policies.
 
-## IAM Security Tools hands-on
+## 3.16. IAM Security Tools hands-on
 1. In IAM, we can look up "credential report" to download all the users and settings in CSV.
 1. For each user in "users", we can check "Access Advisor" to check what permission(s) is assigned to the user and when did the user last access the permission.
 
-## IAM Best Practices
+## 3.17. IAM Best Practices
 <img src="images/52.jpg">
 
-## Shared Responsibility Model for IAM
+## 3.18. Shared Responsibility Model for IAM
 1. The main take away is that AWS obvious is responsible for all the infrastructure and hardware maintainence an AWS user subscribes. The user must be reponsible for the security, management, and monitoring the usage of AWS services of the AWS account.
     <img src="images/53.jpg">
 
-## IAM Summary
+## 3.19. IAM Summary
 <img src="images/54.jpg">
 
-# EC2 - Elastic Compute Cloud
-## AWS Budget Setup
+# 4. EC2 - Elastic Compute Cloud
+## 4.1. AWS Budget Setup
 1. We can check the bill of an AWS account firstly with Root user access. By clicking the account and go to "My Bill Dashboard".
 1. We can check "Bills" in the navigation panel on the left. This shows the services the account used and list of service fee on each service.
     1. Each services groups regions that the AWS account access and uses the service at.
@@ -202,7 +203,7 @@
 1. We can navigate back to the "Home" page of bills to check usage on free-tier services on AWS. 
 1. To create a limited budget spending for each billing cycle, we can create a budget plan in "Budgets".
 
-## EC2 Basics
+## 4.2. EC2 Basics
 1. We can rent a virtual server from AWS with sepcific hardware.
     <img src="images/56.jpg">
     <img src="images/57.jpg">
@@ -210,7 +211,7 @@
 1. We can also setup "**EC2 User data**" script to bootstrap an instance when the machine starts.
     <img src="images/59.jpg">
 
-## Create an EC2 Instance with EC2 User Data to have a Website hands-on
+## 4.3. Create an EC2 Instance with EC2 User Data to have a Website hands-on
 1. In EC2, we can check "Instances" under Instances and create a new instance by clicking "Launch Instances". It takes several steps to setup a new instance.
     1. Choose AMI
         1. This is to select the image for OS and environment of the machine. For example, we can choose Ubuntu 18.04. 
