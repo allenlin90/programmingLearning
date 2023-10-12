@@ -147,7 +147,7 @@ elasticsearch.password: "password"
 3. Data is stored as `documents`, which are JSON objects.
 4. Documents are grouped together with indices.
 
-# 3. Inspecting cluster
+## 2.3. Inspecting cluster
 
 1. After getting in to Kibana, we can check on the side panel and go `Dev Tools`.
    <img src="./imgs/11-kibana_development_tool.png">
@@ -210,4 +210,27 @@ green  open   .kibana_task_manager_7.17.1_001                               IEZE
 green  open   .kibana_7.17.1_001                                            HDqB4wxmSryfHP7Bs4akCQ   1   0         30           17      4.8mb          4.8mb
 green  open   .ds-.logs-deprecation.elasticsearch-default-2023.10.11-000001 r07lU-IARrSijIZ4luEpVg   1   0          1            0     10.4kb         10.4kb
 green  open   .ds-ilm-history-5-2023.10.11-000001                           DsGvg8r3TASU0gL5KzmeUw   1   0          9            0     27.5kb         27.5kb
+```
+
+## 2.4. Sending queries with cURL
+
+1. We can try connecting with `cURL`.
+2. According to the version of ElasticSearch, it may return an empty reply.
+3. Since ver. `8.0.0`, ElasticSearch uses TLS connection by default.
+4. In the very first request, it may be denied as local ElasticSearch uses self-signed certificate which is not trusted by the HTTP client.
+5. One workaround is to use `cURL`'s `--insecure` flag.
+6. The other solution is to pass the local certificate to `cURL` using `--cacert [cert_path]` flag
+7. However, the request is denied with `401` as we don't pass token in the request header.
+8. We can use `-u` flag to pass username.
+9. When we query the endpoint, `cURL` will prompt to collect user password.
+10. We can pass password directly after username with a column `:`.
+11. To send a request to query indices, we can use `-d` flag to mock submitting a form request in `cURL` which adds `Content-Type: application/x-www-form-urlencoded` in header.
+12. Note that for `cURL` on Windows OS, it doesn't accept single quote `'`, we need to wrap the JSON object with double quotes and escape all the double quotes in between.
+13. Since we are sending payload as a JSON object, we need to specify the content type as `application/json`.
+14. We can use `-H` flag to specify the content type in request header.
+15. In this case, we may get a not found exception because we just had the brand new ElasticSearch without any index.
+
+```bash
+# elasticsearch may have a self-signed certificate in local config
+curl --cacert config/certs/http_ca.crt -u elastic:password -X GET -H "Content-Type:application/json" https://localhost:9200/products/_search -d '{ "query": { "match_all": { } } }'
 ```
