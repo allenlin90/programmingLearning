@@ -234,3 +234,146 @@ green  open   .ds-ilm-history-5-2023.10.11-000001                           DsGv
 # elasticsearch may have a self-signed certificate in local config
 curl --cacert config/certs/http_ca.crt -u elastic:password -X GET -H "Content-Type:application/json" https://localhost:9200/products/_search -d '{ "query": { "match_all": { } } }'
 ```
+
+## 2.5. Sharding and Scalability
+
+1. Sharding
+   1. Sharding is a way to divide indices into smaller pieces.
+   2. Each piece is referred to as a `shard`.
+   3. Sharding is done at the index level.
+   4. The main purpose is to horizontally scale the data volume.
+2. In a case that an index has data about 1TB, while a single node can have only up to 500GB.
+   1. It needs at least 2 nodes to contain all data of the index.
+   2. We can divide the index into 2 (or more) shards and host with each of them on different node.
+   3. Besides, a node can host more than 1 shard from the same index.
+3. Deeper in sharding
+   1. A shard is an independent index (subset of an index).
+   2. Each shard is an Apache Lucene index.
+   3. An ElasticSearch index consists of one or more Lucene indices.
+   4. A shard has no predefined size; it grows as documents are added to it.
+   5. A shard may store up to about 2 billion documents.
+4. Purpose of sharding
+   1. Mainly to be able to store more documents.
+   2. To easier fit large indices onto nodes.
+   3. Improved performance
+      1. Parallelization of queries increases the throughput of an index.
+5. When checking on `GET /_cat/indices?v`, we can get data with a property `pri` which is for primary shards.
+6. Configuring the number of shards
+   1. An index contains a single shard by default
+   2. Indices in ElasticSearch < `7.0.0` were created with 5 shards
+      1. This often led to over-sharding.
+   3. Increase the number of shards with the `Split` API.
+   4. Reduce the number of shards with the `Shrink` API.
+
+### 2.5.1. Summary
+
+1. Sharding splits indices into smaller pieces.
+2. Sharding increases the number of documents an index can store.
+3. Sharding makes it easier to fit large indices onto nodes.
+4. Sharding may improve query throughput.
+5. An index defaults to having one shard.
+6. Add a couple of shards for large indices; otherwise use default settings.
+
+## 2.6. Understanding replication
+
+1. Introduction to replication
+   1. What happens if a node's hard drive fails?
+   2. Hardware can fail at any time, so we need to handle that somehow.
+   3. ElasticSearch supports replication for fault tolerance.
+   4. Replication is supported natively and enabled by default.
+   5. With many databases, setting up replication can be a pain.
+   6. Replication is extremely easy with ElasticSearch.
+2. How does replication work?
+   1. Replication is configured at the index level.
+   2. Replication works by creating copies of shards, referred to as `replica` shard.
+   3. A shard that has been replicated, is called a `primary` shard.
+   4. A primary shard and its replica shards are referred to as a `plication` group.
+   5. Replica shards are a complete copy of shard.
+   6. A replica shard can serve search requests, exactly like its primary shard.
+   7. The number of replicas can be configured at index creation.
+3. In common cases to boost availability, replica shards are not stored on the same node of its primary shard.
+4. During development, we may have only a single node to function. In this case, replica shards may be created but being unassigned.
+5. Concerns for choosing the number of replica shards
+   1. How many replica shards are ideal, depends on the use case.
+   2. E.g. is the data stored elsewhere, such as in a RDBMS?
+   3. Is it ok for data to be unavailable while you restore it?
+   4. For mission critical systems, downtime is not acceptable.
+   5. Replicate shards once if data loss is not a disaster.
+   6. For critical systems, data should be replicated at least twice.
+
+### 2.6.1. Snapshots
+
+1. ElasticSearch supports taking snapshot as backups.
+2. Snapshots can be used to restore to a given point in time.
+3. Snapshots can be taken at the index level, or for the entire cluster.
+4. Use snapshots for backups, and replication for high availability (and performance).
+5. Snapshots replicate and copy data at a specific time and serve different purposes as replicate shards.
+6. Replicate shards will be synced and modified with the primary shard and serve the latest change.
+7. In a case that database is migrating or have specific upgrade.
+8. If the final output has any unexpected issue, we can roll it back to certain version by using snapshot.
+
+### 2.6.2. Increasing query throughput
+
+1. To improve traffic handling throughput, we can spin up a different node and host a replicate shard(s).
+2. Note that we can have the same replicate shards in a single node, while having the primary shard in the other.
+3. Replica shards of a replication group can serve different search requests simultaneously.
+   1. This increases the number of requests that can be handled at the same time.
+4. ElasticSearch intelligently routes requests to the best shard.
+5. CPU parallelization improves performance if multiple replica shards are stored on the same node.
+
+## 2.7. First task on index and shard
+
+1. In the `Dev Tools` on Kibana, we can put `PUT /pages` to create a new index `pages` and keep its default configuration.
+2. When we check on `GET /_cluster/health`, we may notice that the `cluster` status becomes `yellow`.
+3. We can check from `GET /_cluster/indices?v` and notice that there's a `pages` replica that is not assigned to any node.
+4. We can check `GET /_cluster/shards?v` to get a list of shards.
+5. We can notice that through a `pages` primary shard has been `STARTED`, the replica is `UNASSIGNED`.
+
+```bash
+# response from /_cluster/shards?v
+index                                                         shard prirep state      docs   store ip         node
+.kibana_security_session_1                                    0     p      STARTED                 172.20.0.2 5ca58ab5ef75
+.geoip_databases                                              0     p      STARTED      42  40.4mb 172.20.0.2 5ca58ab5ef75
+pages                                                         0     p      STARTED       0    226b 172.20.0.2 5ca58ab5ef75
+pages                                                         0     r      UNASSIGNED
+.ds-.logs-deprecation.elasticsearch-default-2023.10.11-000001 0     p      STARTED                 172.20.0.2 5ca58ab5ef75
+.apm-agent-configuration                                      0     p      STARTED       0    226b 172.20.0.2 5ca58ab5ef75
+.security-7                                                   0     p      STARTED      53 226.8kb 172.20.0.2 5ca58ab5ef75
+.kibana-event-log-7.17.1-000001                               0     p      STARTED                 172.20.0.2 5ca58ab5ef75
+.apm-custom-link                                              0     p      STARTED       0    226b 172.20.0.2 5ca58ab5ef75
+.kibana_task_manager_7.17.1_001                               0     p      STARTED      18   5.2mb 172.20.0.2 5ca58ab5ef75
+.ds-ilm-history-5-2023.10.11-000001                           0     p      STARTED                 172.20.0.2 5ca58ab5ef75
+.kibana_7.17.1_001                                            0     p      STARTED      41   4.7mb 172.20.0.2 5ca58ab5ef75
+```
+
+6. To resolve the `yellow` status of cluster, we need to create a new node to assign `pages` replica in this case.
+
+### 2.7.1. Kibana indices
+
+1. Kibana indices are those start with `.kibana` which are system config and would be hidden by default.
+2. Though they have `0` replica when there's a single node at the first place, they will be replicated automatically when more nodes are added to the cluster.
+3. This behaviors is configured by the setting `auto_expand_replicas`, so when a node is added to the cluster, the shard will be replicated.
+
+### 2.7.2. Summary
+
+1. Replication is used to ensure high availability for indices.
+2. A side benefit is increased query throughput.
+3. Replication works by copying a given shard's data.
+4. A replica shard is never stored on the same node as its primary shard.
+5. Replicate shards once if your system isn't critical; replicate at least twice if your system is mission critical.
+6. Snapshots can be taken as backups of specific indices, or the whole cluster.
+
+## 2.8. Adding more nodes to the cluster
+
+### Side notes
+
+1. Sharding enables us to scale an index' data volume.
+   1. But eventually we will need to add additional nodes.
+   2. Also, replication requires at least two nodes.
+2. In this lecture, we will add 2 more nodes to our cluster.
+3. This approach may not work if ElasticSearch is deployed on cloud service.
+
+### Configuration
+
+1. System indices are configured as follows: `index.auto_expand_replicas: 0-1`.
+2. In the elasticsearch instance directory, we can find the setting file `/config/elasticsearch.yml`.
