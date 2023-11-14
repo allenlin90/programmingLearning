@@ -18,7 +18,7 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [1.12. Big O Rule 4](#112-big-o-rule-4)
   - [1.13. What does this all mean?](#113-what-does-this-all-mean)
   - [1.14. O(n!)](#114-on)
-  - [1.15. 3 Pillars of Progamming](#115-3-pillars-of-progamming)
+  - [1.15. 3 Pillars of Programming](#115-3-pillars-of-programming)
   - [1.16. Space complexity](#116-space-complexity)
   - [1.17. Exercise: Space complexity](#117-exercise-space-complexity)
   - [1.18. Exercise: Twitter](#118-exercise-twitter)
@@ -77,8 +77,8 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [7.2. Queues](#72-queues)
   - [7.3. Stack vs Queue](#73-stack-vs-queue)
   - [7.4. Stack Implementation (Linked Lists)](#74-stack-implementation-linked-lists)
-  - [7.5. Stack Impletmentation (Array)](#75-stack-impletmentation-array)
-  - [7.6. Queue Impletmentation](#76-queue-impletmentation)
+  - [7.5. Stack Implementation (Array)](#75-stack-implementation-array)
+  - [7.6. Queue Implementation](#76-queue-implementation)
   - [7.7. Queues usings Stacks](#77-queues-usings-stacks)
   - [7.8. Stacks + Queues Review](#78-stacks--queues-review)
 - [8. Data Structure: Trees](#8-data-structure-trees)
@@ -101,11 +101,11 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
 ## 1.2. Big O and Scalability
 1. The duration of the code execution can vary according to hardware such as the CPU and RAM that the computer has. 
 2. In most of the cases, especially for programs and apps in production, the app may run on a very different machine that is different from the code we execute on the laptop.
-3. Therefore, we have a relatively fair is to count the steps as the complexity and efficency of the code is as Big O notation.
+3. Therefore, we have a relatively fair is to count the steps as the complexity and efficiency of the code is as Big O notation.
   <img src="./images/27-big_o_complexity_chart.png">
 
 ## 1.3. O(n)
-1. From the example of finding nemo in an array, the function will iterate through the array which gives a linear time complexity to fufill the request.
+1. From the example of finding nemo in an array, the function will iterate through the array which gives a linear time complexity to fulfill the request.
 2. In this case, we have to iterate through all the items in the list to finish the process. The more the items in the list the more time the function takes to execute. Its big O notation is `O(n)`.
   ```js
   // Javascript
@@ -232,7 +232,7 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   ```
 
 ## 1.11. O(n^2)
-1. In a nested loop or iteration, we use mutiplication for the complexity.
+1. In a nested loop or iteration, we use multiplication for the complexity.
 2. `O(n^2)` is quadratic time.
 3. If iterations execute in the same layer, we can simply add on the complexity, while if the iteration is nested, we can multiply the numbers.
   ```js
@@ -240,7 +240,7 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   // Log all pairs of array
   const boxes = ['a', 'b', 'c', 'd', 'e'];
 
-  function logAllpairsOfArray(array) {
+  function logAllPairsOfArray(array) {
     for (let i = 0; i < array.length; i++) {
       for (let j = 0; j < array.length; j++) {
         console.log(array[i], array[j]);
@@ -290,7 +290,7 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
 1. Factorial note `O(n!)`. This means the fucntions use multiple layers of nested loop. 
 2. In most of the cases, having this type of complexity means something is wrong with the function or code.
 
-## 1.15. 3 Pillars of Progamming
+## 1.15. 3 Pillars of Programming
 1. When programming, we may consider some factors
 2. Readability
 3. Scalability which includes 
@@ -517,19 +517,19 @@ combine them later.
 ## 3.1. What is data structure
 1. Data structure is a collection of values.
 2. Each data structure is specialized for its own thing and is a type of container in different form.
-3. For example, in daily life, we can use different containers for various purpose, such as waredrob, backpacks, folders, and cabinets which can be very different.
+3. For example, in daily life, we can use different containers for various purpose, such as wardrobe, backpacks, folders, and cabinets which can be very different.
 4. There are many types of data structures in each category. However, there are only few which are frequently used. The others are very specific for certain scenarios.
 
 ## 3.2. How computers store data
 1. Computers use mainly 3 parts, CPU, RAM, and Storage to work.
-2. When use code to declare a variable, CPU will make a calculation and store in the RAM and pass and store in the "storage" if it's required for permenant usage.
+2. When use code to declare a variable, CPU will make a calculation and store in the RAM and pass and store in the "storage" if it's required for permanent usage.
 3. In the RAM, we have multiple "addresses" to store the data. 
 4. CPU also has a small memory as "cache" to store most recent data to boost the overall performance.
 5. If the data is stored near in the Ram, the faster the computer can manipulate and work on the data.
 6. Computers store types of data differently on the RAM. 
 
 ## 3.3. Data structures in different languages
-1. Each programming language has its own specific data types (primitive types). In most of the cases, the default prmitive types of a programming language have covered most of the use case.
+1. Each programming language has its own specific data types (primitive types). In most of the cases, the default primitive types of a programming language have covered most of the use case.
 
 ## 3.4. Operations on data structure
 1. Insertion - add data to memory
@@ -547,7 +547,7 @@ combine them later.
 2. `push` add an item at the end of the array
 3. `pop` remove the last item of the array
 4. `unshift` add an item as the first item to an array
-5. `splice` add or remove an item at an abritrary position of an array
+5. `splice` add or remove an item at an arbitrary position of an array
   ```js
   const strings = ['a', 'b', 'c', 'd'];
   // 4*4 = 16 bytes of storage
@@ -688,7 +688,7 @@ combine them later.
     const backwards = [];
     const totalItems = str.length - 1;
     for (let i = totalItems; i === 0; i--) {
-      backwards.push([str[i]);
+      backwards.push(str[i]);
     }
 
     return backwards.join('');
@@ -698,9 +698,9 @@ combine them later.
     return str.split('').reverse().join('');
   }
 
-  const revser3 = str => str.split('').reverse().join('');
+  const reverse3 = str => str.split('').reverse().join('');
 
-  const revser4 = str => [...str].reverse().join('');
+  const reverse4 = str => [...str].reverse().join('');
   ```
 
 ## 4.7. Exercise: Merge Sorted Arrays
@@ -759,7 +759,7 @@ combine them later.
     return mergedArray;
   }
 
-  mregedSortedArray([0, 3, 4, 31], [4, 6, 30 ]);
+  mergedSortedArray([0, 3, 4, 31], [4, 6, 30 ]);
   ```
 
 ## 4.9. Arrays Review
@@ -906,7 +906,7 @@ combine them later.
     set(key, value) {
       const address = this._hash(key);
       if (!this.data[address]) {
-        // this is to prevent collission and cause new data overwrite old data
+        // this is to prevent collision and cause new data overwrite old data
         this.data[address] = [];
       }
       this.data[address].push([key, value]);
@@ -957,7 +957,7 @@ combine them later.
     set(key, value) {
       const address = this._hash(key);
       if (!this.data[address]) {
-        // this is to prevent collission and cause new data overwrite old data
+        // this is to prevent collision and cause new data overwrite old data
         this.data[address] = [];
       }
       this.data[address].push([key, value]);
@@ -1060,7 +1060,7 @@ combine them later.
 1. We can assume the input is an array of numbers.
 2. The tentative solution can have problems when there's falsy values in the given array such as number `0`, `null`, or `undefined`.
   ```js
-  // solution from the lecutre
+  // solution from the lecture
   // naive solution
   // O(n^2)
   function firstRecurringCharacter(input) {
@@ -1824,7 +1824,7 @@ combine them later.
 2. A regular linked list can only access the next item in the list. Therefore, there's no way it can access the previous value or node in the list.
 3. Doubly linked list allows to access the list reversely.
 4. Technically, "lookup" a value in doubly linked list is more efficient, as we can check which half of the linked list is and decide which way to go and check the desirable value rather than checking the value from the start. It's time complexity is `O(n/2)`.
-5. However, it takes more memery as each node has another pointer pointing to the previous node in the list (opposite to `next` property in a regular linked list).
+5. However, it takes more memory as each node has another pointer pointing to the previous node in the list (opposite to `next` property in a regular linked list).
 6. Tentative approach
     ```js
     // Javascript
@@ -2047,7 +2047,7 @@ combine them later.
     ```
 
 ## 6.11. Singly vs Doubly linked list
-1. Singly linked list is simplier to implement and uses less memory to store data.
+1. Singly linked list is simpler to implement and uses less memory to store data.
 2. We can't traverse a singly linked list from back to front.
 3. Besides, when we lose the head of the linked list, we will lose the whole linked list.
 4. Singly linked list can be useful when the memory is limited and should be used carefully.
@@ -2314,7 +2314,7 @@ combine them later.
 2. Cons
    1. Slow lookup
    2. More memory
-3. Linked list is a fundemental data structure which can be used in others such as queue, stack, trees, and graphs.
+3. Linked list is a fundamental data structure which can be used in others such as queue, stack, trees, and graphs.
 
 # 7. Data Structure: Stack and Queues
 ## 7.1. Stacks
@@ -2334,7 +2334,7 @@ combine them later.
    2. `dequeue` `O(1)` removes the first item in the queue.
    3. `peek` `O(1)` checks the first item in the queue. 
 3. Creating queues from an array isn't an ideal approach because it's not efficient.
-4. When we add a new item as `unshift`, we have to modifed the rest items in the array as well. 
+4. When we add a new item as `unshift`, we have to modified the rest items in the array as well. 
 
 ## 7.3. Stack vs Queue
 1. Both arrays and linked lists can be used as the base data structure for stack and queue.
@@ -2458,7 +2458,7 @@ combine them later.
     myStack.isEmpty();
     ```
 
-## 7.5. Stack Impletmentation (Array)
+## 7.5. Stack Implementation (Array)
 ```js
 class Stack {
   constructor() {
@@ -2486,7 +2486,7 @@ class Stack {
 }
 ```
 
-## 7.6. Queue Impletmentation 
+## 7.6. Queue Implementation 
 ```js
 class Node {
   constructor(value) {
