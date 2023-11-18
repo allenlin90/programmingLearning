@@ -89,6 +89,9 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [8.5. Balanced vs Unbalanced BST](#85-balanced-vs-unbalanced-bst)
   - [8.6. BST Pros and Cons](#86-bst-pros-and-cons)
   - [8.7. Binary Search Tree](#87-binary-search-tree)
+- [9. Data Structure: Graphs](#9-data-structure-graphs)
+  - [9.1. Graphs Introduction](#91-graphs-introduction)
+  - [9.2. Graph Data](#92-graph-data)
 ---
 
 # 1. Big O
@@ -2785,3 +2788,9 @@ function traverse(node) {
   return tree;
 }
 ```
+
+# 9. Data Structure: Graphs
+## 9.1. Graphs Introduction
+## 9.2. Graph Data
+
+1. 
