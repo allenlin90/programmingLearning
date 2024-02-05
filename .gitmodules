@@ -1,3 +1,6 @@
 [submodule "serverAndBackend/microserviceWithNodeJSandReact/ticketing"]
 	path = serverAndBackend/microserviceWithNodeJSandReact/ticketing
 	url = https://github.com/allenlin90/ticketing-micro-service.git
+[submodule "javascript/nodeJSAdvancedConcepts/3_project_starter"]
+	path = javascript/nodeJSAdvancedConcepts/3_project_starter
+	url = https://github.com/StephenGrider/AdvancedNodeStarter.git
