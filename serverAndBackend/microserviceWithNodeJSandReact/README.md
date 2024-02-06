@@ -2,6 +2,13 @@
   - [1.1. App overview - Ticketing App](#11-app-overview---ticketing-app)
   - [1.2. Resource Types](#12-resource-types)
   - [1.3. Service Types](#13-service-types)
+- [2. NATS streaming server - An event bus implementation](#2-nats-streaming-server---an-event-bus-implementation)
+  - [2.1. NATS streaming server deployment](#21-nats-streaming-server-deployment)
+  - [2.2. Event handling between services](#22-event-handling-between-services)
+  - [2.3. NATS test project](#23-nats-test-project)
+  - [2.4. Queue group](#24-queue-group)
+  - [2.5. Manual Ack mode](#25-manual-ack-mode)
+  - [2.6. Client health check](#26-client-health-check)
 
 # 1. Architecture of Multi-service apps
 ## 1.1. App overview - Ticketing App
@@ -65,3 +72,230 @@
 
 <img src="./images/109-events_and_architecture_design.png">
 
+# 2. NATS streaming server - An event bus implementation
+
+## 2.1. NATS streaming server deployment
+
+1. NATS streaming server is a deprecated service. This course is mainly for tutorial and introduction to micro service concept, not production ready solution.
+2. In this case, we don't create a consistent `NodePort` service but forward the port we want to access directly. 
+3. Note that port forwarding services is like running a process in terminal. 
+4. We can use `kubectl port-forward [pod-id] [target-port]:[port]` and allow us to access the pod at certain port directly on `localhost`. 
+
+```yml
+# infra/k8s/nats-depl.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nats-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nats
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+        - name: nats
+          image: nats-streaming:0.17.0
+          args: # commands/flags when starting up
+            [
+              '-p',
+              '4222',
+              '-m',
+              '8222',
+              '-hbi',
+              '5s',
+              '-hbt',
+              '5s',
+              '-hbf',
+              '2',
+              '-SD',
+              '-cid',
+              'ticketing',
+            ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-srv
+spec:
+  selector:
+    app: nats
+  ports:
+    - name: client
+      protocol: TCP
+      port: 4222
+      targetPort: 4222
+    - name: monitoring
+      protocol: TCP
+      port: 8222
+      targetPort: 8222
+```
+
+## 2.2. Event handling between services
+
+1. Using [node-nats-streaming](https://www.npmjs.com/package/node-nats-streaming).
+2. In the custom event bus made with `express` and `axios`, it simply broadcasts all the events to all the subscribers and let the subscribers decide how to handle the incoming events.
+3. With NATS streaming, it creates different `channels` (or `topics`) and each subscriber needs to subscribe channels of their interests. 
+4. Besides, all events are only stored in RAM in the customer `express` event bus, while `NATS` can store events to DB for persistence. 
+
+## 2.3. NATS test project
+1. Short-term goals
+   1. Create a new sub-project with typescript support.
+   2. Install `node-nats-streaming` library and connect to nats streaming server.
+   3. We should have 2 `npm` scripts, one to run code to `emit` events, and one to run code to `listen` for events. 
+   4. This program will be ran outside of k8s. 
+2. The 2nd argument passing to `nats.connect` is the client ID that the instance wants to register when connecting to `NATS`. 
+3. If we try to run a static client ID to connect to the same `NATS` cluster, the 2nd connection will be blocked by re-using the same client ID.
+
+```ts
+// publisher.ts
+import nats from 'node-nats-streaming';
+
+const stan = nats.connect('ticketing', 'abc', {
+  url: 'http://localhost:4222',
+});
+
+stan.on('connect', () => {
+  console.log('Publisher connected to NATS');
+
+  const data = JSON.stringify({
+    id: '123',
+    title: 'concert',
+    price: 20,
+  });
+
+  stan.publish('ticket:created', data, () => {
+    console.log('Event published');
+  });
+});
+```
+
+```ts
+// listener.ts
+import nats, { Message } from 'node-nats-streaming';
+
+console.clear();
+
+// generate random client ID
+const stan = nats.connect('ticketing', randomBytes(4).toString('hex'), {
+  url: 'http://localhost:4222',
+});
+
+stan.on('connect', () => {
+  console.log('Listener connected to NATS');
+
+  const subscription = stan.subscribe('ticket:created');
+
+  subscription.on('message', (msg: Message) => {
+    console.log('Message received');
+
+    const data = msg.getData();
+
+    if (typeof data === 'string') {
+      console.log(`Received event #${msg.getSequence()}, with data: ${data}`);
+    }
+  });
+});
+```
+
+## 2.4. Queue group
+1. When there's multiple listeners pending to handle certain events, we can create queue groups to separate and manage the traffic. 
+2. For example, we'd like the event to be handled only once such as creating a comment to a post in a blog which should be made once for a single request. 
+3. Without queue group, all the listeners may try to handle the same event and create identical,duplicate comments for the post. 
+4. If we have more services want to handle the same event, we can allow it subscribe to the same subject while excluded from the queue group.
+5. On the `stan.subscription` method, we can give a 2nd argument to specify the queue group it wants to join. 
+6. We only need to pass the same string to all the service listeners. 
+
+```ts
+// listener.ts
+import nats, { Message } from 'node-nats-streaming';
+import { randomBytes } from 'crypto';
+
+console.clear();
+
+const stan = nats.connect('ticketing', randomBytes(4).toString('hex'), {
+  url: 'http://localhost:4222',
+});
+
+stan.on('connect', () => {
+  console.log('Listener connected to NATS');
+
+  const subscription = stan.subscribe(
+    'ticket:created',
+    'orders-service-queue-group' // dedicated queue group to join 
+  );
+
+  subscription.on('message', (msg: Message) => {
+    console.log('Message received');
+
+    const data = msg.getData();
+
+    if (typeof data === 'string') {
+      console.log(`Received event #${msg.getSequence()}, with data: ${data}`);
+    }
+  });
+});
+```
+
+## 2.5. Manual Ack mode
+1. By default, event based architecture doesn't run as processing transaction in DB.
+2. If an event was sent over while the service has any error or issue processing it, the event simply get lost. 
+3. It means the event isn't handled successfully. In some cases, the publisher may need to be acknowledged to send an identical event to process the event or handle the error 
+4. For example, the publisher sends a **payment** related event which is very critical to the services. 
+5. If the process fails, it needs to respond or notify the user that such payment fails. 
+6. By default, if `NATS` doesn't receive acknowledgement of receiving an event, it will try to resend the event to the same client or the other client in the same queue group by interval (e.g. retry every 30 seconds). 
+7. To acknowledge the event, we can call `msg.ack()` in the `message` callback. 
+
+```ts
+// listener.ts
+import nats, { Message } from 'node-nats-streaming';
+import { randomBytes } from 'crypto';
+
+console.clear();
+
+const stan = nats.connect('ticketing', randomBytes(4).toString('hex'), {
+  url: 'http://localhost:4222',
+});
+
+stan.on('connect', () => {
+  console.log('Listener connected to NATS');
+
+  const options = stan.subscriptionOptions().setManualAckMode(true);
+
+  const subscription = stan.subscribe(
+    'ticket:created',
+    'orders-service-queue-group',
+    options
+  );
+
+  subscription.on('message', (msg: Message) => {
+    console.log('Message received');
+
+    const data = msg.getData();
+
+    if (typeof data === 'string') {
+      console.log(`Received event #${msg.getSequence()}, with data: ${data}`);
+    }
+
+    // manually acknowledge receiving event
+    msg.ack();
+  });
+});
+```
+
+## 2.6. Client health check
+1. We can forward the other port `8222` from k8s to access to NATS server.
+2. We visit `http://localhost:8222/streaming` and checks on the `channels`. 
+3. To check on the subscriptions of channels, we can pass a query string `subs=1` to list all subscribers to a channel. 
+4. When we restart a subscriber instance, there will be a period of time `NATS` still thinks the shut-down instance is still subscribing to it. 
+5. `NATS` doesn't immediately know if there's a subscriber disconnect/unsubscribe without explicit acknowledge. 
+6. When we spin up the `NATS` streaming server with k8s, we pass several arguments.
+7. Some of those start with `-hb` which means `heartbeat`.
+   1. `hbi` - how often should `NATS` request and check its clients.
+   2. `hbt` - how long should the client respond to `NATS`.
+   3. `hbf` - how many times of failure before `NATS` decide if a client is down. 
+8. In this case, we set `--hbt 5s --hbt 5s --hbf 2`, so in the worst case scenario, it can take up to 20 seconds `(5 + 5) * 2 = 20` to decide if a client is down. 
