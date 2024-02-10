@@ -9,6 +9,8 @@
   - [2.4. Queue group](#24-queue-group)
   - [2.5. Manual Ack mode](#25-manual-ack-mode)
   - [2.6. Client health check](#26-client-health-check)
+  - [2.7. Graceful client shutdown](#27-graceful-client-shutdown)
+  - [2.8. Core concurrent issue](#28-core-concurrent-issue)
 
 # 1. Architecture of Multi-service apps
 ## 1.1. App overview - Ticketing App
@@ -299,3 +301,36 @@ stan.on('connect', () => {
    2. `hbt` - how long should the client respond to `NATS`.
    3. `hbf` - how many times of failure before `NATS` decide if a client is down. 
 8. In this case, we set `--hbt 5s --hbt 5s --hbf 2`, so in the worst case scenario, it can take up to 20 seconds `(5 + 5) * 2 = 20` to decide if a client is down. 
+
+## 2.7. Graceful client shutdown
+1. We can add `SIGINT` and `SIGTERM` event handler on `node.js` `process` to trigger certain callback when the process is going to restart or to be terminated. 
+
+```js
+// intercept when process restarts
+process.on('SIGINT', () => stan.close());
+// terminate when process ends
+process.on('SIGTERM', () => stan.close());
+```
+
+## 2.8. Core concurrent issue
+1. When working with event based architecture, a common concurrent process issue can occur. Especially when working with finance, transaction, wallet, and any money related process.
+2. For example, when working with wallet or bank account system, it can easily have balancing issue when the user withdraw/deposit money to the account. 
+3. The order processing each action event is critical to the account and its balance. 
+   1. User has `100` USD as account balance.
+   2. User deposits `40` USD.
+   3. User withdraw `120` USD. 
+4. Though the user may process `deposit` before `withdraw`, if the transaction process is not done and committed, the user can have face error with insufficient fund though the deposit has been made first. 
+5. Besides, if the query or reading from DB is longer than event handling timeout, event bus or `NATS` in this case may consider if the event is not successfully handled. For example, 
+   1. User makes a request to `withdraw` money. 
+   2. It takes up to `29.99` seconds to query current account balance from DB.
+   3. It takes up to `1` second to process transaction. 
+   4. The total time to process the transaction can be up to `30.99` seconds. 
+   5. Event bus times out in `30` seconds if there's no response or event acknowledgement. 
+   6. The request to process `withdraw` on the first event listener fails but the service may still proceed. 
+   7. The event bus thought the request to the first event listener fails and send the request to the other listener. 
+   8. There's in total `2` requests of `withdraw` have been triggered and processed. 
+   9. Multiple result/output can happen
+      1. The account balance may be deducted more than once if balance is enough. 
+      2. The request is responded as `failed` though money is actually deducted by the timeout event(s).
+      3. The events can be emitted multiple times to deduct money until the account has insufficient balance. 
+6.  In short, it means the workflow and event bus is out of sync for the actual request/response state.
