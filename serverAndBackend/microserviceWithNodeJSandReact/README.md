@@ -11,6 +11,8 @@
   - [2.6. Client health check](#26-client-health-check)
   - [2.7. Graceful client shutdown](#27-graceful-client-shutdown)
   - [2.8. Core concurrent issue](#28-core-concurrent-issue)
+    - [2.8.1. Solution](#281-solution)
+    - [2.8.2. Service resilience](#282-service-resilience)
 
 # 1. Architecture of Multi-service apps
 ## 1.1. App overview - Ticketing App
@@ -334,3 +336,91 @@ process.on('SIGTERM', () => stan.close());
       2. The request is responded as `failed` though money is actually deducted by the timeout event(s).
       3. The events can be emitted multiple times to deduct money until the account has insufficient balance. 
 6.  In short, it means the workflow and event bus is out of sync for the actual request/response state.
+
+### 2.8.1. Solution
+1. For process transactions or other similar operations having orders and sequence, we can add an additional field to record the latest process that is made. 
+2. For example, in transaction service, withdrawal process can only be processed if there's enough money on the account.
+3.  Besides, we want to precisely trace on the account activities when money is either withdraw or deposit. 
+4.  In this case, we can add the number of sequence of an entity (such as a user's account) of the transaction.
+
+### 2.8.2. Service resilience
+1. In the event based architecture, if the listener service are down, events emitted during service downtime are not processed and stack up in event bus records. 
+2. With `NATS` we can configure the event listener to get all available events when it starts up. 
+3. In this case, we call `setDeliverAllAvailable` method on `stan` options.
+4. However, this simple setup can have a downside on the long run. As if the events can stack up to hundreds of thousands or even millions after starting services. 
+5. When ever we restart to initiate a new listener service instance, all events will flood into the new service instance. 
+6. Note that in this case, we also remove the subscription from queue group to inspect `NATS` behavior. 
+
+  ```ts
+  const options = stan
+    .subscriptionOptions()
+    .setManualAckMode(true)
+    // get all available events from NATS when boot up
+    // this can be overwhelmed if there's thousands or even millions events sent from event bus. 
+    .setDeliverAllAvailable();
+  
+  const subscription = stan.subscribe(
+    'ticket:created',
+    // 'orders-service-queue-group',
+    options
+  );
+  ```
+
+6. We can use **durable subscription** which is creating the other channel on event bus to indicate that certain events belong to a specific listener service. 
+7. We can chain `setDurableName` after `setDeliverAllAvailable` on the `stan.options`. 
+8. However, `NATS` has its mechanism to clear the durable subscription channel if no subscriber is listening to the channel. 
+9. Besides, all events will be given when a new listener subscribe to `NATS` because of using `setDeliveryAllAvailable` though with a specific `durable` subscription.
+10. For example, if we have only 1 subscriber to the durable subscription, when it disconnect or restarts all the records in the durable subscription will be cleared.
+11. Thus, `NATS` will provide all events as if it's firstly initiated the durable subscription. 
+12. Therefore, we can put subscription to the queue back to ensure the durable subscription persists though the subscriber disconnects or drops.
+13. If we try to start up the other listener service which subscribe to the same queue group and durable, the new instance won't get the previous events that is handled in the same queue group and durable. 
+
+```ts
+// listener.ts
+import nats, { Message } from 'node-nats-streaming';
+import { randomBytes } from 'crypto';
+
+console.clear();
+
+const stan = nats.connect('ticketing', randomBytes(4).toString('hex'), {
+  url: 'http://localhost:4222',
+});
+
+stan.on('connect', () => {
+  console.log('Listener connected to NATS');
+
+  stan.on('close', () => {
+    console.log('NATS connection closed!');
+    process.exit();
+  });
+
+  const options = stan
+    .subscriptionOptions()
+    .setManualAckMode(true)
+    .setDeliverAllAvailable()
+    .setDurableName('accounting-service');
+
+  const subscription = stan.subscribe(
+    'ticket:created',
+    'orders-service-queue-group',
+    options
+  );
+
+  subscription.on('message', (msg: Message) => {
+    console.log('Message received');
+
+    const data = msg.getData();
+
+    if (typeof data === 'string') {
+      console.log(`Received event #${msg.getSequence()}, with data: ${data}`);
+    }
+
+    msg.ack();
+  });
+});
+
+// intercept when process restarts
+process.on('SIGINT', () => stan.close());
+// terminate when process ends
+process.on('SIGTERM', () => stan.close());
+```
