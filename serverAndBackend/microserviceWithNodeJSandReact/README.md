@@ -13,6 +13,14 @@
   - [2.8. Core concurrent issue](#28-core-concurrent-issue)
     - [2.8.1. Solution](#281-solution)
     - [2.8.2. Service resilience](#282-service-resilience)
+- [3. Connecting to NATS in NodeJS](#3-connecting-to-nats-in-nodejs)
+  - [3.1. Reusable NATS Listeners](#31-reusable-nats-listeners)
+  - [3.2. The Listener Abstract Class](#32-the-listener-abstract-class)
+  - [3.3. Extending the Listener](#33-extending-the-listener)
+  - [3.4. Leverage Typescript for listener validation](#34-leverage-typescript-for-listener-validation)
+  - [3.5. Custom event](#35-custom-event)
+  - [3.6. Enforcing Listener Subjects](#36-enforcing-listener-subjects)
+  - [3.7. Enforcing Data Types](#37-enforcing-data-types)
 
 # 1. Architecture of Multi-service apps
 ## 1.1. App overview - Ticketing App
@@ -423,4 +431,217 @@ stan.on('connect', () => {
 process.on('SIGINT', () => stan.close());
 // terminate when process ends
 process.on('SIGTERM', () => stan.close());
+```
+
+# 3. Connecting to NATS in NodeJS
+## 3.1. Reusable NATS Listeners
+1. For now, the listener in the NATS test has multiple lines of code.
+2. We can create an abstract class which can be used to create sub-classes. 
+
+`Class Listener`
+
+| Property            | Type                       | Goal                                                    |
+| ------------------- | -------------------------- | ------------------------------------------------------- |
+| subject             | string                     | Name of the channel this listener is going to listen to |
+| onMessage           | (event: EventData) => void | Function to run when a message is received              |
+| client              | Stan                       | Pre-initialized NATS client                             |
+| queueGroupName      | string                     | Name of the queue group this listener will join         |
+| ackWait             | number                     | Number of seconds this listener has to ack a message    |
+| subscriptionOptions | SubscriptionOptions        | Default subscription options                            |
+| listen              | () => void                 | Code to setup the subscription                          |
+| parseMessage        | (msg: Message) => any      | Helper function to parse a message                      |
+
+## 3.2. The Listener Abstract Class
+
+```typescript 
+abstract class Listener {
+  abstract subject: string;
+  abstract queueGroupName: string;
+  abstract onMessage: (data: any, msg: Message): void;
+  private client: Stan;
+  protected ackWait = 5 * 1000;
+
+  constructor(client: Stan) {
+    this.client = client;
+  }
+
+  subscriptionOptions() {
+    return this.client
+      .subscriptionOptions()
+      .setDeliverAllAvailable()
+      .setManualAckMode(true)
+      .setAckWait(this.ackWait)
+      .setDurableName(this.queueGroupName);
+  }
+
+  listen() {
+    const subscription = this.client.subscribe(
+      this.subject,
+      this.queueGroupName,
+      this.subscriptionOptions()
+    );
+
+    subscription.on('message', (msg: Message) => {
+      console.log(`Message received: ${this.subject} / ${this.queueGroupName}`);
+
+      const parsedData = this.parseMessage(msg);
+      this.onMessage(parsedData, msg);
+    });
+  }
+
+  parseMessage(msg: Message) {
+    const data = msg.getData();
+
+    return typeof data === 'string'
+      ? JSON.parse(data)
+      : JSON.parse(data.toString('utf-8'));
+  }
+}
+```
+
+## 3.3. Extending the Listener
+1. We can refactor the listener and create class instance to simplify the code
+
+```ts
+import nats, { Message, Stan } from 'node-nats-streaming';
+import { randomBytes } from 'crypto';
+
+console.clear();
+
+const stan = nats.connect('ticketing', randomBytes(4).toString('hex'), {
+  url: 'http://localhost:4222',
+});
+
+stan.on('connect', () => {
+  console.log('Listener connected to NATS');
+
+  stan.on('close', () => {
+    console.log('NATS connection closed!');
+    process.exit();
+  });
+
+  new TicketCreatedListener(stan).listen();
+});
+
+// intercept when process restarts
+process.on('SIGINT', () => stan.close());
+// terminate when process ends
+process.on('SIGTERM', () => stan.close());
+
+abstract class Listener {
+  abstract subject: string;
+  abstract queueGroupName: string;
+  abstract onMessage(data: any, msg: Message): void;
+  private client: Stan;
+  protected ackWait = 5 * 1000;
+
+  constructor(client: Stan) {
+    this.client = client;
+  }
+
+  subscriptionOptions() {
+    return this.client
+      .subscriptionOptions()
+      .setDeliverAllAvailable()
+      .setManualAckMode(true)
+      .setAckWait(this.ackWait)
+      .setDurableName(this.queueGroupName);
+  }
+
+  listen() {
+    const subscription = this.client.subscribe(
+      this.subject,
+      this.queueGroupName,
+      this.subscriptionOptions()
+    );
+
+    subscription.on('message', (msg: Message) => {
+      console.log(`Message received: ${this.subject} / ${this.queueGroupName}`);
+
+      const parsedData = this.parseMessage(msg);
+      this.onMessage(parsedData, msg);
+    });
+  }
+
+  parseMessage(msg: Message) {
+    const data = msg.getData();
+
+    return typeof data === 'string'
+      ? JSON.parse(data)
+      : JSON.parse(data.toString('utf-8'));
+  }
+}
+
+class TicketCreatedListener extends Listener {
+  subject = 'ticket:created';
+  queueGroupName = 'payment-service';
+
+  onMessage(data: any, msg: Message) {
+    console.log('Event data!', data);
+
+    msg.ack();
+  }
+}
+```
+
+## 3.4. Leverage Typescript for listener validation
+## 3.5. Custom event 
+## 3.6. Enforcing Listener Subjects
+## 3.7. Enforcing Data Types
+1. The current implementation has hard coded `subject` in the event listener. 
+2. Each subject has different types of data payload which can be cumbersome to manage between publisher and listeners.
+3. We can use Typescript with `enum` to annotate types and has inferred payload type when we select certain objects. 
+4. We can then use the `enum` to create an `interface` with aligned payload. 
+
+```ts
+// src/events/subjects.ts
+export enum Subjects {
+  TicketCreated = 'ticket:created',
+  OrderUpdated = 'order:updated',
+}
+```
+
+```ts
+// src/events/ticket-created-event.ts
+import { Subjects } from './subjects';
+
+export interface TicketCreatedEvent {
+  subject: Subjects.TicketCreated;
+  data: {
+    id: string;
+    title: string;
+    price: number;
+  };
+}
+```
+
+```ts
+// src/events/ticket-created-listener.ts
+import { Message } from 'node-nats-streaming';
+import { Listener } from './base-listener';
+import { TicketCreatedEvent } from './ticket-created-event';
+import { Subjects } from './subjects';
+
+export class TicketCreatedListener extends Listener<TicketCreatedEvent> {
+  // to ensure subject will still be values in Subjects enum
+  // an extra annotation is required
+  subject: Subjects.TicketCreated = Subjects.TicketCreated;
+  // or use readonly
+  readonly subject = Subjects.TicketCreated;
+  queueGroupName = 'payment-service';
+
+  onMessage(data: TicketCreatedEvent['data'], msg: Message) {
+    console.log('Event data!', data);
+
+    console.log(data.id);
+    console.log(data.title);
+    console.log(data.price);
+    // type error
+    console.log(data.name);
+    // type error
+    console.log(data.cost);
+
+    msg.ack();
+  }
+}
 ```
