@@ -21,6 +21,8 @@
   - [3.5. Custom event](#35-custom-event)
   - [3.6. Enforcing Listener Subjects](#36-enforcing-listener-subjects)
   - [3.7. Enforcing Data Types](#37-enforcing-data-types)
+  - [3.8. Custom Publisher](#38-custom-publisher)
+  - [3.9. Awaiting event publication](#39-awaiting-event-publication)
 
 # 1. Architecture of Multi-service apps
 ## 1.1. App overview - Ticketing App
@@ -644,4 +646,96 @@ export class TicketCreatedListener extends Listener<TicketCreatedEvent> {
     msg.ack();
   }
 }
+```
+
+## 3.8. Custom Publisher
+
+1. Similar to refactoring listener, we can refactor publisher and re-use the code. 
+
+```ts
+// src/events/base-publisher.ts
+import { Stan } from 'node-nats-streaming';
+import { Subjects } from './subjects';
+
+interface Event {
+  subject: Subjects;
+  data: any;
+}
+
+export abstract class Publisher<T extends Event> {
+  abstract subject: T['subject'];
+  private client: Stan;
+
+  constructor(client: Stan) {
+    this.client = client;
+  }
+
+  publish(data: T['data']) {
+    this.client.publish(this.subject, data, () => {
+      console.log('Event published');
+    });
+  }
+}
+```
+
+## 3.9. Awaiting event publication
+1. We can improve the common publisher with async/await syntax.
+
+```ts
+// src/events/base-publisher.ts
+import { Stan } from 'node-nats-streaming';
+import { Subjects } from './subjects';
+
+interface Event {
+  subject: Subjects;
+  data: any;
+}
+
+export abstract class Publisher<T extends Event> {
+  abstract subject: T['subject'];
+  private client: Stan;
+
+  constructor(client: Stan) {
+    this.client = client;
+  }
+
+  publish(data: T['data']): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.client.publish(this.subject, JSON.stringify(data), (err) => {
+        if (err) return reject(err);
+
+        console.log('Event published to subject', this.subject);
+        resolve();
+      });
+    });
+  }
+}
+```
+
+```ts
+// src/events/publisher.ts
+import nats from 'node-nats-streaming';
+import { TicketCreatedPublisher } from './events/ticket-created-publisher';
+
+console.clear();
+
+const stan = nats.connect('ticketing', 'abc', {
+  url: 'http://localhost:4222',
+});
+
+stan.on('connect', async () => {
+  console.log('Publisher connected to NATS');
+
+  const publisher = new TicketCreatedPublisher(stan);
+
+  try {
+    await publisher.publish({
+      id: '123',
+      title: 'concert',
+      price: 20,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
 ```
