@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   elasticsearch:
@@ -6,8 +6,8 @@ services:
     ports:
       - 9200:9200
     environment:
-      discovery.type: "single-node"
-      xpack.security.enabled: "true"
+      discovery.type: 'single-node'
+      xpack.security.enabled: 'true'
       ELASTIC_PASSWORD: password
   kibana:
     image: kibana:7.17.1
