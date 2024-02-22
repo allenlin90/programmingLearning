@@ -243,15 +243,15 @@ curl --cacert config/certs/http_ca.crt -u elastic:password -X GET -H "Content-Ty
    3. Sharding is done at the index level.
    4. The main purpose is to horizontally scale the data volume.
 2. In a case that an index has data about 1TB, while a single node can have only up to 500GB.
-   1. It needs at least 2 nodes to contain all data of the index.
-   2. We can divide the index into 2 (or more) shards and host with each of them on different node.
+   1. It needs at least `2` nodes to contain all data of the index.
+   2. We can divide the index into `2` (or more) shards and host with each of them on different node.
    3. Besides, a node can host more than 1 shard from the same index.
 3. Deeper in sharding
    1. A shard is an independent index (subset of an index).
    2. Each shard is an Apache Lucene index.
    3. An ElasticSearch index consists of one or more Lucene indices.
    4. A shard has no predefined size; it grows as documents are added to it.
-   5. A shard may store up to about 2 billion documents.
+   5. A shard may store up to about `2 billion` documents.
 4. Purpose of sharding
    1. Mainly to be able to store more documents.
    2. To easier fit large indices onto nodes.
@@ -325,12 +325,12 @@ curl --cacert config/certs/http_ca.crt -u elastic:password -X GET -H "Content-Ty
 
 1. In the `Dev Tools` on Kibana, we can put `PUT /pages` to create a new index `pages` and keep its default configuration.
 2. When we check on `GET /_cluster/health`, we may notice that the `cluster` status becomes `yellow`.
-3. We can check from `GET /_cluster/indices?v` and notice that there's a `pages` replica that is not assigned to any node.
-4. We can check `GET /_cluster/shards?v` to get a list of shards.
+3. We can check from `GET /_cat/indices?v` and notice that there's a `pages` replica that is not assigned to any node.
+4. We can check `GET /_cat/shards?v` to get a list of shards.
 5. We can notice that through a `pages` primary shard has been `STARTED`, the replica is `UNASSIGNED`.
 
 ```bash
-# response from /_cluster/shards?v
+# response from /_cat/shards?v
 index                                                         shard prirep state      docs   store ip         node
 .kibana_security_session_1                                    0     p      STARTED                 172.20.0.2 5ca58ab5ef75
 .geoip_databases                                              0     p      STARTED      42  40.4mb 172.20.0.2 5ca58ab5ef75
@@ -365,7 +365,7 @@ pages                                                         0     r      UNASS
 
 ## 2.8. Adding more nodes to the cluster
 
-### Side notes
+### 2.8.1. Side notes
 
 1. Sharding enables us to scale an index' data volume.
    1. But eventually we will need to add additional nodes.
@@ -373,7 +373,176 @@ pages                                                         0     r      UNASS
 2. In this lecture, we will add 2 more nodes to our cluster.
 3. This approach may not work if ElasticSearch is deployed on cloud service.
 
-### Configuration
+### 2.8.2. Configuration
 
 1. System indices are configured as follows: `index.auto_expand_replicas: 0-1`.
 2. In the elasticsearch instance directory, we can find the setting file `/config/elasticsearch.yml`.
+3. Set up multi-node with Docker
+   1. ver. `7.17` - [https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docker.html#next-getting-started-tls-docker](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docker.html#next-getting-started-tls-docker)
+   2. ver. `8.12` - [https://www.elastic.co/guide/en/elasticsearch/reference/8.12/docker.html#next-getting-started-tls-docker](https://www.elastic.co/guide/en/elasticsearch/reference/8.12/docker.html#next-getting-started-tls-docker)
+4. Note that there's a different setup between ver. `7.x` and `8.x` that new nodes need **enrollment-token** from the master node to be added to the same cluster.
+5. NOTE THAT this is only for dev setup without proper configuration and security. 
+
+```yml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  es01:
+    image: elasticsearch:7.17.1
+    container_name: es01
+    environment:
+      # discovery.type: 'single-node'
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - ELASTIC_PASSWORD=password
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  es02:
+    image: elasticsearch:7.17.1
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - ELASTIC_PASSWORD=password
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  es03:
+    image: elasticsearch:7.17.1
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - ELASTIC_PASSWORD=password
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  kibana:
+    image: kibana:7.17.1
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      - elastic
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
+networks:
+  elastic:
+    driver: bridge
+```
+
+```yml
+# kibana.yml
+server.host: '0.0.0.0'
+# point to main node by container name
+elasticsearch.hosts: ['http://es01:9200']
+elasticsearch.username: 'elastic'
+elasticsearch.password: 'password'
+```
+
+## 2.9. Overview of node roles
+### 2.9.1. Node roles
+1. Master-eligible
+   1. Configuration `node.master: true | false`.
+   2. The node may be elected as the cluster's master node.
+   3. A master node is responsible for creating and deleting indices, among others. 
+   4. A node with this role will not automatically become the master node.
+      1. Unless there is no other master-eligible nodes.
+   5. May be used for having dedicated master nodes.
+      1. Useful for large clusters.
+2. Data
+   1. Configuration `node.data: true | false`.
+   2. Enables a node to store data
+   3. Storing data includes performing queries related to that data, such as search queries.
+   4. For relatively small clusters, this role is almost always enabled. 
+   5. Useful for having dedicated master nodes.
+   6. Used as part of configuring a dedicated master node. 
+3. Ingest
+   1. Configuration `node.ingest: true | false`.
+   2. Enables a node to run ingest pipelines
+   3. Ingest pipelines are a series of steps (processors) that are performed when indexing documents.
+      1. Processors may manipulate documents, e.g. resolving an IP to lat/lon. 
+   4. A simplified version of Logstash, directly within Elasticsearch. 
+4. Machine learning
+   1. Configuration
+      1. `node.ml: true | false`
+      2. `xpack.ml.enabled: true | false`
+   2. `node.ml` identifies a node as a machine learning node. 
+      1. This lets the node run machine learning jobs
+   3. `xpack.ml.enabled` enables or disables the machine learning API for the node. 
+   4. Useful for running ML jobs that don't affect other tasks. 
+5. Coordination
+   1. Configuration
+      1. `node.master: false`
+      2. `node.data: false`
+      3. `node.ingest: false`
+      4. `node.ml: false`
+      5. `xpack.ml.enabled: false`
+   2. Coordination refers to the distribution of queries and the aggregation of results. 
+   3. Useful for coordination nodes (for large clusters)
+   4. Configured by disabling all other roles
+6. Voting-only
+   1. Configuration `node.voting_only: true | false`.
+   2. Rarely used, and you almost certainly won't use it either.
+   3. A node with this role, will participate in the voting for a new master node.
+   4. The node cannot be elected as the master node itself.
+   5. Only used for large clusters. 
+
+### 2.9.2. Checking node list 
+1. We can check from `GET /_cat/nodes?v` to get list of connected nodes in the cluster. 
+2. `node.role` shows what the roles of node has. For example, if there's `dim`, which means `data`, `ingest`, `master`. 
+3. However, we don't specify the roles in the `docker-compose` so it may take all the eligible roles for this case as `cdfhilmrstw`.
+4. Note that if all nodes have `master` role, each of them can be elected as the master node. 
+
+```bash
+ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   master name
+172.21.0.2           65          91   0    0.22    0.17     0.15 cdfhilmrstw *      es03
+172.21.0.5           59          91   0    0.22    0.17     0.15 cdfhilmrstw -      es02
+172.21.0.3           46          91   0    0.22    0.17     0.15 cdfhilmrstw -      es01
+```
+
+5. When to change node roles?
+   1. It **depends**.
+   2. Useful for large clusters.
+   3. Typically done when optimizing the cluster to scale the number of requests.
+   4. You will often times change other things first. 
+      1. E.g. the number of nodes, shards, replica shards, etc.
+   5. Better understand what hardware resources are used for.
+   6. Only change roles if you know what you are doing. 
