@@ -546,3 +546,225 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
       1. E.g. the number of nodes, shards, replica shards, etc.
    5. Better understand what hardware resources are used for.
    6. Only change roles if you know what you are doing. 
+
+# 3. Managing Documents
+## 3.1. Creating and deleting indices
+1. In Kibana, we can use `PUT /:index` to create a an index and use `DELETE /:index` to delete an index. 
+2. Besides, we can pass a payload to configure the new index
+
+```json
+// PUT /products
+{
+   "settings": {
+      "number_of_shards": 2,
+      "number_of_replicas": 2
+   }
+}
+```
+
+## 3.2. Indexing document
+1. To create a document for an index, we can `POST /:index` with payload for document contents.
+2. Note that as we set up `2` shards for the index with `2` replicas, the document is distributed to `1` shard with `2` replicas which gives `_shard` as `3`.
+
+   ```json
+   // POST /products/_doc
+   {
+      "name": "Coffee Maker",
+      "price": 64,
+      "in_stock": 10
+   }
+
+   // response
+   {
+      "_index" : "products",
+      "_type" : "_doc",
+      "_id" : "9HNK0Y0BmvAMMQPLQVyL",
+      "_version" : 1,
+      "result" : "created",
+      "_shards" : {
+         "total" : 3,
+         "successful" : 3,
+         "failed" : 0
+      },
+      "_seq_no" : 0,
+      "_primary_term" : 1
+   }
+   ```
+3. Besides, we can specify ID for the document as `POST /:index/:id`
+
+   ```json
+   // POST /products/_doc/100
+   {
+   "name": "Toaster",
+   "price": 49,
+   "in_stock": 4
+   }
+
+   // response
+   {
+      "_index" : "products",
+      "_type" : "_doc",
+      "_id" : "100",
+      "_version" : 1,
+      "result" : "created",
+      "_shards" : {
+         "total" : 3,
+         "successful" : 3,
+         "failed" : 0
+      },
+      "_seq_no" : 1,
+      "_primary_term" : 1
+   }
+   ```
+
+## 3.3. Retrieving documents by ID
+1. We can simply use `GET /:index/_doc/:id` to retrieve specific document with given `id`. 
+2. There's `found` property in the response which indicates if the document exists. 
+   ```json
+   // GET /products/_doc/100
+   {
+      "_index" : "products",
+      "_type" : "_doc",
+      "_id" : "100",
+      "_version" : 1,
+      "_seq_no" : 1,
+      "_primary_term" : 1,
+      "found" : true,
+      "_source" : {
+         "name" : "Toaster",
+         "price" : 49,
+         "in_stock" : 4
+         }
+   }
+
+   // GET /products/_doc/10
+   // not_found document
+   {
+      "_index" : "products",
+      "_type" : "_doc",
+      "_id" : "10",
+      "found" : false
+   }
+   ```
+
+## 3.4. Updating documents
+1. To update a document, we can `POST /:index/_update/:id` with payload.
+2. A `result` property is in the response indicating that the document is updated.
+   
+   ```json
+   // POST /products/_update/100
+   {
+      "doc": {
+         "in_stock": 3
+      }
+   }
+
+   // response
+   {
+      "_index" : "products",
+      "_type" : "_doc",
+      "_id" : "100",
+      "_version" : 2,
+      "result" : "updated",
+      "_shards" : {
+         "total" : 3,
+         "successful" : 3,
+         "failed" : 0
+      },
+      "_seq_no" : 2,
+      "_primary_term" : 1
+   }
+   ```
+3. Note that documents in Elasticsearch are immutable.
+4. We actually replaced documents in this lecture. 
+5. The Update API did some things for us, making it look like we updated documents. 
+6. The Update API is simpler and saves some network traffic. 
+7. How the Update API works
+   1. The current document is retrieved. 
+   2. THe field values are changed. 
+   3. The existing document is replaced with the modified document. 
+   4. We could do the exact same thing at the application level. 
+
+## 3.5. Scripted updates
+1. Rather than updating on the `doc`, we can use `script` to update a document by passing `script` in the payload. 
+2. In this case, we check from the `source` in the context `ctx` and reduce `in_stock` property of the document with `--`. 
+3. We can on the other hand increase `in_stock` with `++`. 
+4. In addition, we can directly assign a number to `in_stock`. 
+
+   ```json
+   // POST /products/_update/100
+   {
+   "script": {
+      "source": "ctx._source.in_stock--",
+      "source": "ctx._source.in_stock = 10",
+   }
+   }
+
+   //response 
+   {
+   "_index" : "products",
+   "_type" : "_doc",
+   "_id" : "100",
+   "_version" : 3,
+   "result" : "updated",
+   "_shards" : {
+      "total" : 3,
+      "successful" : 3,
+      "failed" : 0
+   },
+   "_seq_no" : 3,
+   "_primary_term" : 2
+   }
+   ```
+
+5. Besides regular assigning values, we can have expression in the script. 
+
+   ```json
+   // POST /products/_update/100
+   {
+   "script": {
+      "source": "ctx._source.in_stock -= params.quantity",
+      "params": {
+         "quantity": 4
+      }
+   }
+   }
+   ```
+
+6. `script` also accepts multi-line with `if/else` condition. We can wrap the code snippet with triple double quotes `"""`
+```json
+// POST /products/_update/100
+{
+   "script": {
+      "source": """
+      if (ctx._source.in_stock == 0) {
+         ctx.op = 'noop';
+      }
+
+      ctx._source.in_stock--;
+      """
+   }
+}
+
+{
+   "script": {
+      "source": """
+      if (ctx._source.in_stock > 0) {
+         ctx._source.in_stock--;
+      }      
+      """
+   }
+}
+
+{
+   "script": {
+      "source": """
+      if (ctx._source.in_stock <= 1) {
+         ctx.op = 'delete';
+      }
+
+      ctx._source.in_stock--;
+      """
+   }
+}
+```
