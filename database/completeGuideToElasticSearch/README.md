@@ -768,3 +768,75 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    }
 }
 ```
+
+## 3.6. Upsert
+1. Upsert is to either insert when the document doesn't exist or update the document if it exists. 
+2. In the following request, it firstly create a new document for `Blender` while ignoring `script.source` as the document doesn't exist.
+3. If we run the same request again, it will run `script` instead and updates `in_stock`. 
+4. Note that `upsert` in Elasticsearch is different that it needs to work on `/:index/_update` API and with `script` in payload.
+5. In this case, `upsert` works like `insert` without directly updating the document.  
+
+   ```json
+   // POST /products/_update/101
+   {
+   "script": {
+      "source": "ctx._source.in_stock++"
+   },
+   "upsert": {
+      "name": "Blender",
+      "price": 399,
+      "in_stock": 5
+   }
+   }
+   ```
+
+## 3.7. Replacing documents
+1. We can use `PUT /:index/_doc/:id` to replace a document.
+2. We earlier added `tags: []` array and updates `in_stock` with `POST /:index/_update/:id` update API. 
+3. By executing the following request, the document is replaced by the given payload and we can find that both `price` and `in_stock` is updated, and `tags` is removed. 
+
+   ```json
+   // PUT /products/_doc/100
+   {
+   "name": "Toaster",
+   "price": 79,
+   "in_stock": 4
+   }
+   ```
+
+## 3.8. Deleting documents
+1. We can use `DELETE /:index/_doc/:id` to delete a document. 
+
+## 3.9. Understanding routing
+1. Routing is the process of resolving a shard for a document
+   1. Elasticsearch knows where to store documents.
+   2. Indexed document can then be found. 
+2. When a document is indexed, Elasticsearch uses a simple formula to calculate which shard should the document be stored as default routing strategy `shard_num = hash(_routing) % num_primary_shards`.
+3. The default routing strategy ensures that documents are distributed evenly. 
+4. On the other hand, we can apply custom routing rules for various purpose. 
+5. When we retrieve a document (e.g. `GET /:index/_doc/:id`), the document payload is kept in `_source`. 
+
+   ```json
+   // GET /products/_doc/100
+   {
+   "_index" : "products",
+   "_type" : "_doc",
+   "_id" : "100",
+   "_version" : 11,
+   "_seq_no" : 17,
+   "_primary_term" : 4,
+   "found" : true,
+   "_source" : {
+      "name" : "Toaster",
+      "price" : 79,
+      "in_stock" : 4
+      }
+   }
+   ```
+
+6. If a custom routing strategy applies, there will be an extra `routing` property in the response payload. 
+7. Such property is not included if the index applies default routing strategy. 
+8. Note that the number of shards can't be changed after the index is created. 
+9. This is due to the default routing strategy which applies the number for shards in the formula. 
+10. In addition, changing number of shards after creating an index, it may cause the documents to be distributed unevenly among the shards. 
+11. In summary, an index' shards cannot be changed as the routing formula would yield unexpected result. 
