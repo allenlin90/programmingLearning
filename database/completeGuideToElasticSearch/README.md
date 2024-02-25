@@ -840,3 +840,138 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
 9. This is due to the default routing strategy which applies the number for shards in the formula. 
 10. In addition, changing number of shards after creating an index, it may cause the documents to be distributed unevenly among the shards. 
 11. In summary, an index' shards cannot be changed as the routing formula would yield unexpected result. 
+
+## 3.10. How Elasticsearch read data
+1. When a Elasticsearch receives a query, a node in the cluster handles the request as the `coordinating node`. 
+2. The node starts routing which is used to figure out where does the document store. 
+3. In the previous section, we mentioned that routing is to resolve a shard which stores the desired document. 
+4. To be more specific, it resolves to a primary shard of a replication group in which we can always assume that there's replication of shards.
+5. As if Elasticsearch just retrieve the document directly from the primary shard, all retrieval would end up on the same shard and hampers the system from scaling. 
+6. Upon a retrieval, a shard is chose from the replication group. 
+7. Elasticsearch uses a technique called `Adaptive Replica Selection` or `ARS` for such purpose for scaling. 
+8. In short, we can count on Elasticsearch to choose the right shard copy for to yield the best performance. 
+
+   <img src="./imgs/27-how_es_reads_data.png" />
+
+## 3.11. How Elasticsearch write data
+1. Similar to reading document, the write request hits a `coordinating node` to resolve to a replication group. 
+2. However, unlike a read request, a write request always goes to a primary shard.
+3. The primary shard validates the request such as if the operations is valid (e.g. adding on number to a numeric property) and forwards it to a replica shard to proceed. 
+
+### 3.11.1. Recovery process in Elasticsearch
+1. Recovery process is critical as the are many async process running in parallel in Elasticsearch, when a lot of things can go wrong. 
+2. When a primary shard forward write request to proceed the operation and goes down, the remaining replica shards can be out of sync. 
+3. The operation is only forwarded to a replica shard to proceed, while the other replicas aren't updated as the primary shard is down and one of the other shard is promoted. 
+
+### 3.11.2. Primary terms and sequence numbers
+1. `Primary terms` is a way to distinguish between old and new primary shards. 
+2. It's essentially a counter for how many times the primary shard has changed.
+3. The primary term is appended to write operations. 
+4. In the recovery case, the primary term will increase when the primary shard goes down and one of the replica shard is promoted. 
+5. `_primary_term` is then appended to the write operation from primary to replica shard as a reference. 
+
+### 3.11.3. Sequence numbers
+1. A sequence number `_seq` is appended to write operations together with the primary term. 
+2. Essentially a counter that is incremented for each write operation. 
+3. The primary shard increases the sequence number.
+4. This sequence number allows Elasticsearch to order write operations. 
+
+### 3.11.4. Recovering when a primary shard fails
+1. Primary terms and sequence numbers are key when Elasticsearch needs to recover from a primary shard failure.
+   1. E.g. a networking error
+   2. This enables Elasticsearch to more efficiently figure out when write operations need to be applied.
+2. For large indexes, this process is expensive and costly. 
+   1. To speed things up, Elasticsearch use **checkpoints**.
+
+### 3.11.5. Global and local checkpoints
+1. Both global and local checkpoints are essentially sequence numbers. 
+2. Each replication group has a **global** checkpoint.
+3. Each replica shard has a **local** checkpoint. 
+4. Global checkpoints 
+   1. The sequence number that all the active shards within a replication group have been aligned at least up to. 
+   2. It means that any operations containing `_seq` lower than the global checkpoint has been performed on all shards within the replication group. 
+5. Local checkpoints
+   1. The sequence number for the last write operation that was performed. 
+   2. It means the replica shard only needs to look up operations having greater sequence number to execute. 
+6. These mechanism avoid the shards look up and execute the whole history of the replication group. 
+
+## 3.12. Understanding document versioning
+1. Document versioning in Elasticsearch is not a revision history of documents. 
+2. Elasticsearch stores an `_version` metadata field with every document. 
+   1. The value is an integer.
+   2. It is incremented when modifying a document.
+   3. The value is retained for 60 seconds when deleting a document. 
+   4. This can be configured with `index.gc_deletes` setting.
+   5. The `_version` field is returned when retrieving documents. 
+3. The default versioning type is `internal` versioning. 
+4. On the other hand, there's also an `external` versioning type.
+   1. External versioning type is useful when maintained outside of Elasticsearch. 
+   2. E.g. when documents are also stroed in a RDBMS. 
+5. We can give `version` and `version_type` in query string when making a request. 
+
+   ```json
+   // PUT /products/_doc/123?version=321&version_type=external
+   {
+      "name": "Coffee Maker",
+      "price": 64,
+      "in_stock": 10
+   }
+   ```
+6. By checking the `version`, we can know how many times a document has been modified. 
+7. However, this feature isn't useful as it was and is hardly used anymore.
+8. It was previously the way to optimistic concurrency control. 
+
+## 3.13. Optimistic concurrency control
+1. This is to prevent an old document to overwrite a recent one. 
+2. This also prevents overwriting documents inadvertently due to concurrent operations. 
+3. As Elasticsearch is a distributed system with networking execution write operations out of order and out of sync can happen in many scenarios. 
+4. Handling concurrent visitors for a web app
+   1. Visitor A makes an order and finishes checkout that updates the stock from `6` to `5`.
+   2. At the same time, visitor B retrieves the document before visitor A finishes checkout.
+   3. However, when visitor B makes an order and tries to checkout, the request may update incorrect `stock` to the database (Elasticsearch) and cause records out of sync. 
+   5. On the other hand, Elasticsearch may return an error as the stock has been changed to `5` while visitor B still sees the stock with `6`.
+
+   <img src="./imgs/30_1-optimistic_concurrency_control.png" />
+
+5. The old solution is to apply `version` in the flow. 
+6. In the same case, when visitor B tries to make a request with an old version of document, Elasticsearch denies it as it's out of order. 
+
+   <img src="./imgs/30_2-optimistic_concurrency_control.png" />
+7. The new solution for such issue is to apply sequence number `_seq_no` and primary term `_primary_term` in the update request.
+8. E.g. `POST /:index/_update/:id?if_primary_term=int&if_seq_no=int`
+
+   ```json
+   // POST /products/_update/100?if_primary_term=4&if_seq_no=17
+   {
+   "doc": {
+      "in_stock": 123
+   }
+   }
+
+   // error response when primary_term and/or 
+   // seq_no doesn't match
+   {
+   "error" : {
+      "root_cause" : [
+         {
+         "type" : "version_conflict_engine_exception",
+         "reason" : "[100]: version conflict, required seqNo [17], primary term [4]. current document has seqNo [18] and primary term [7]",
+         "index_uuid" : "m-Mnis6xQE6Mli8J6nopng",
+         "shard" : "0",
+         "index" : "products"
+         }
+      ],
+      "type" : "version_conflict_engine_exception",
+      "reason" : "[100]: version conflict, required seqNo [17], primary term [4]. current document has seqNo [18] and primary term [7]",
+      "index_uuid" : "m-Mnis6xQE6Mli8J6nopng",
+      "shard" : "0",
+      "index" : "products"
+   },
+   "status" : 409
+   }
+   ```
+
+9. By receiving this error, it means the error should be handled at the application level.
+   1. Retrieve the document again.
+   2. Use `_primary_term` and `_seq_no` for a new update request.
+   3. Remember to perform any calculations that use field values again, as the values may have been changed. 
