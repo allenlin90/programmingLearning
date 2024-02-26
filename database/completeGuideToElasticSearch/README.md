@@ -975,3 +975,261 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    1. Retrieve the document again.
    2. Use `_primary_term` and `_seq_no` for a new update request.
    3. Remember to perform any calculations that use field values again, as the values may have been changed. 
+
+## 3.14. Update by query
+1. In the previous section, we have learnt how to update `1` document at a time by using
+   1. `PUT /:index/_doc/:id` - replace document
+   2. `POST /:index/_update/:id` - update document
+2. We can update multiple documents with a single query similar to `UPDATE WHERE` in RDBMS. 
+3. The bulk update query applies 3 concepts
+   1. Primary terms
+   2. Sequence numbers
+   3. Optimistic concurrency control
+4. In this case, we use both `source` to run the script and `query` to find target documents to update.
+5. We didn't put any condition in `match_all` which then updates all the documents of the index if they are applicable. 
+6. We can find the number of document being updated in the `total` from result. 
+
+   ```json
+   // POST /products/_update_by_query
+   {
+      "script": {
+         "source": "ctx._source.in_stock--",
+         "query": {
+            "match_all": {}
+            }
+         }
+      }
+
+      // response
+      {
+      "took" : 100,
+      "timed_out" : false,
+      "total" : 3,
+      "updated" : 3,
+      "deleted" : 0,
+      "batches" : 1,
+      "version_conflicts" : 0,
+      "noops" : 0,
+      "retries" : {
+         "bulk" : 0,
+         "search" : 0
+      },
+      "throttled_millis" : 0,
+      "requests_per_second" : -1.0,
+      "throttled_until_millis" : 0,
+      "failures" : [ ]
+   }
+   ```
+7. When the update request hits coordinating node, it firstly takes a snapshot of the target index. 
+8. The search query is then sent to each of the shards (replication group).
+9. If there's any document matches the search query, a bulk request is sent to update those documents. 
+10. Bulk requests mainly work with `index`, `update`, and `delete` actions. 
+11. The `batches` key within the result specifies how many batches were used to retrieve the document. 
+12. The query uses `Scroll API` internally which is used to scroll through result sets and handle many (e.g. thousands) of documents. 
+13. The requests are sequenced in a `search` and then `bulk` order to mitigate issues from errors.
+14. By default, when there's an error of `search` or `bulk` action, Elasticsearch may retry up to `10` times.
+15. The number of retires can be specified within the `retries` key for both the `search` and `bulk` queries.
+16. If the affected query is not successful, the whole query is aborted, and the failure will be specified in the results within `failures` key. 
+17. It's important to note that the query is aborted and not rolled back.
+18. It means if a number of documents have been updated when error occurs, those documents are remained updated though the request failed. 
+19. For example, an update query tends to update replication A, B, and C but fails when updating group B. 
+20. The query is then aborted and only documents in group A are updated.
+   
+   <img src="./imgs/31-update_by_query.png" />
+
+21. `snapshot` is useful as a reference when handling errors of requests.
+22. It prevents overwriting changes made after the snapshot was taken.
+    1.  The query may take a while to finish if updating many documents.
+    2.  During the time, documents could be updated by the other update requests. 
+23. Each document's `primary term` and `sequence number` are used. 
+    1.  A document in only updated if the values match the ones from the snapshot.
+    2.  If the document has been changed, it will cause a version conflict. 
+    3.  This also causes the entire query to be aborted.
+24. The version conflicts are returned within the `version_conflicts` key. 
+25. However, we can overwrite the query configuration to prevent aborting with `conflicts=proceed` when version conflict happens. 
+
+   ```json
+   // GET /products/_search
+   {
+      "query": {
+         "match_all": {}
+      }
+   }
+
+   // POST /products/_update_by_query
+   {
+   "conflicts": "proceed", // proceed though hitting conflicts
+   "script": {
+      "source": "ctx._source.in_stock--",
+      "query": {
+         "match_all": {}
+         }
+      }
+   }
+   ```
+
+## 3.15. Delete by query
+1. We can use `DELETE /:index/_doc/:id` to remove a single document at a time. 
+2. The query is similar to `Update by Query` API.
+
+   ```json
+   //POST /products/_delete_by_query
+   {
+   "query": {
+         "match_all": {}
+      }
+   }
+   ```
+
+## 3.16. Batch processing
+1. Besides previous APIs introduced to `index`, `update` and `delete` documents, we can use `Bulk` API to work on multiple documents in a single query. 
+2. The Bulk API accepts a number of lines and expects data formatted using the `NDJSON` specific cation such as `\n` and `\r\n`.
+
+   ```json
+   """
+   action_and_metadata\n
+   optional_source\n
+   action_and_metadata\n
+   optional_source\n
+   """
+   ```
+
+3. When working with Bulk, we can pass multiple lines of JSON for the action and request body payload. 
+   1. The 1st line is the action and its metadata.
+   2. The 2nd line is the payload of request body.
+   3. We may skip `_id` and let Elasticsearch generates an ID for the document.
+4. Besides `index` action, we can use `create` to create a document.
+5. The difference between `index` and `create` action is that `create` action fails if the document exists, while `index` action will overwrite the existing document with the new request payload. 
+
+   ```json
+   // POST /_bulk
+   { "index": { "_index": "products", "_id": 200 } }
+   { "name": "Espresso Machine", "price": 199, "in_stock": 5 }
+   { "create": { "_index": "products", "_id": 201 } }
+   { "name": "Milk Frother", "price": 149, "in_stock": 14 }
+
+   // response
+   {
+   "took" : 25,
+   "errors" : false,
+   "items" : [
+         {
+            "index" : {
+            "_index" : "products",
+            "_type" : "_doc",
+            "_id" : "200",
+            "_version" : 1,
+            "result" : "created",
+            "_shards" : {
+               "total" : 3,
+               "successful" : 3,
+               "failed" : 0
+            },
+            "_seq_no" : 0,
+            "_primary_term" : 8,
+            "status" : 201
+            }
+         },
+         {
+            "create" : {
+            "_index" : "products",
+            "_type" : "_doc",
+            "_id" : "201",
+            "_version" : 1,
+            "result" : "created",
+            "_shards" : {
+               "total" : 3,
+               "successful" : 3,
+               "failed" : 0
+            },
+            "_seq_no" : 1,
+            "_primary_term" : 8,
+            "status" : 201
+            }
+         }
+      ]
+   }
+   ```
+6. If we take actions on the same index, we can pass it in the URL parameter without passing in the action metadata. 
+
+      ```json
+      // POST /products/_bulk
+      { "update": { "_id": 201 } }
+      { "doc": { "price": 129 } }
+      { "delete": { "_id": 202} }
+
+      // response
+      {
+      "took" : 37,
+      "errors" : false,
+      "items" : [
+            {
+               "update" : {
+               "_index" : "products",
+               "_type" : "_doc",
+               "_id" : "201",
+               "_version" : 2,
+               "result" : "updated",
+               "_shards" : {
+                  "total" : 3,
+                  "successful" : 3,
+                  "failed" : 0
+                  },
+               "_seq_no" : 2,
+               "_primary_term" : 8,
+               "status" : 200
+               }
+            },
+            {
+               "delete" : {
+               "_index" : "products",
+               "_type" : "_doc",
+               "_id" : "202",
+               "_version" : 1,
+               "result" : "not_found",
+               "_shards" : {
+                  "total" : 3,
+                  "successful" : 3,
+                  "failed" : 0
+                  },
+               "_seq_no" : 3,
+               "_primary_term" : 8,
+               "status" : 404
+               }
+            }
+         ]
+      }
+      ```
+
+### 3.16.1. Things to be aware of using Bulk API
+1. The Kibana Dev tool and Elasticsearch SDK handle these caveats for us. 
+2. The HTTP `Content-Type` header should be
+   1. `Content-Type: application/x-ndjson`.
+   2. `application/json` is accepted but is an incorrect way.
+3. However, when using other HTTP clients, this needs to be taken into concern. 
+4. Each line **must** end with a newline character `\n` or `\r\n`. 
+   1. This includes the last line.
+   2. It means that in a text editor, the last line should be empty. 
+5. A failed action will not affect other actions.
+   1. Neither will the bulk request as a whole be aborted.
+6. The Bulk API returns detailed information about each action.
+   1. Inspect the `items` key to see if a given action succeeded.
+   2. The order is the same as the actions within the request. 
+   3. The `errors` key tells if any errors occurred. 
+7. Perform lots of write operations at the same time.
+   1. When importing or modifying lots of data
+8. The Bulk API is more efficient than sending individual write requests.
+   1. A lot of network round trips are avoided. 
+9. Bulk API supports optimistic concurrency control
+   1.  Include `if_primary_term` and `if_seq_no` parameters within the action metadata. 
+
+## 3.17. Import data with cURL
+1. We can use `cURL` to import the JSON products into Elasticsearch
+2. Note that we can only specify the file name to attach in the request payload with `--data-binary`, while the user should on the same directory where the file (`products-bulk.json`) exists.
+3. Be surely aware that the JSON file is not a single object but have each action and document payload on multiple lines.
+4. Besides, there must be an empty line in the last of the file as mentioned earlier that it needs `\n` or `\r\n` at the end. 
+
+```bash
+# user should be on the same directory where JSON file is stored
+curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/products/_bulk --data-binary "@products-bulk.json
+```
