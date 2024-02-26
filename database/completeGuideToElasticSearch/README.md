@@ -1233,3 +1233,46 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
 # user should be on the same directory where JSON file is stored
 curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/products/_bulk --data-binary "@products-bulk.json
 ```
+
+# 4. Mapping and Analysis
+## 4.1. Introduction to analysis
+1. The main analysis is referred to `text` analysis as this is mostly applicable to text fields/values.
+2. Text values are analyzed when indexing documents.
+3. The analysis result is stored in the data structures that are efficient for searching. 
+4. The `_source` object is not used when searching for documents. 
+5. It contains the exact values specified when indexing document. 
+6. Before a text value is indexed, a so-called analyzer is used to process the text.
+7. An analyzer consists of three build blocks, `character filters`, a `tokenizer`, and `token filters`.
+8. The result of analyzing text values is then stored in a searchable data structure. 
+
+   <img src="./imgs/37-introduction_to_analysis.png" />
+
+### 4.1.1. Character filters
+1. Character filters receive the original text and transform the value by adding, removing, or changing characters.
+2. Analyzers contain zero or more character filters.
+3. Character filters are applied in the order in which they are specified. 
+4. For example, `html_strip` filter can remove HTML tags 
+   1. Input `<h1>Hello World</h1>`
+   2. Output `Hello World`
+
+### 4.1.2. Tokenizers
+1. An analyzer contains only `one` tokenizer. 
+2. A tokenizer tokenizes text/string values and split the value into tokens. 
+3. Characters may be stripped as part of the tokenization. E.g. punctuation, period, and exclamation mark.
+   1. Input `"I REALLY like beer!"`
+   2. Output `["I", "REALLY", "like", "beer"]`
+
+### 4.1.3. Token filters
+1. Token filters take output from tokenizer as input (e.g. tokens).
+2. A token filter can add, remove, or modify tokens.
+3. An analyzer contains zero or more token filters. 
+4. Token filters are applied in the order in which they are specified. 
+5. For example, `lowercase` filter
+   1. Input  `["I", "REALLY", "like", "beer"]`
+   2. Output `["i", "really", "like", "beer"]`
+
+### 4.1.4. Built-in and custom components
+1. Elasticsearch is shipped with various built-in analyzers, character filters, tokenizers, and token filters are available.
+2. For example, a standard analyzer proceed with no character filters, a `standard` tokenizer, and `lowercase` token filter. 
+
+   <img src="./imgs/38-using_the_analyzer_api.png" />
