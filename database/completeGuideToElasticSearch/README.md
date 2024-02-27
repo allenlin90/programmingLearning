@@ -381,11 +381,11 @@ pages                                                         0     r      UNASS
    1. ver. `7.17` - [https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docker.html#next-getting-started-tls-docker](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docker.html#next-getting-started-tls-docker)
    2. ver. `8.12` - [https://www.elastic.co/guide/en/elasticsearch/reference/8.12/docker.html#next-getting-started-tls-docker](https://www.elastic.co/guide/en/elasticsearch/reference/8.12/docker.html#next-getting-started-tls-docker)
 4. Note that there's a different setup between ver. `7.x` and `8.x` that new nodes need **enrollment-token** from the master node to be added to the same cluster.
-5. NOTE THAT this is only for dev setup without proper configuration and security. 
+5. NOTE THAT this is only for dev setup without proper configuration and security.
 
 ```yml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   es01:
@@ -398,7 +398,7 @@ services:
       - discovery.seed_hosts=es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - ELASTIC_PASSWORD=password
     ports:
       - 9200:9200
@@ -419,7 +419,7 @@ services:
       - discovery.seed_hosts=es01,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - ELASTIC_PASSWORD=password
     ulimits:
       memlock:
@@ -438,7 +438,7 @@ services:
       - discovery.seed_hosts=es01,es02
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - ELASTIC_PASSWORD=password
     ulimits:
       memlock:
@@ -470,19 +470,21 @@ networks:
 
 ```yml
 # kibana.yml
-server.host: '0.0.0.0'
+server.host: "0.0.0.0"
 # point to main node by container name
-elasticsearch.hosts: ['http://es01:9200']
-elasticsearch.username: 'elastic'
-elasticsearch.password: 'password'
+elasticsearch.hosts: ["http://es01:9200"]
+elasticsearch.username: "elastic"
+elasticsearch.password: "password"
 ```
 
 ## 2.9. Overview of node roles
+
 ### 2.9.1. Node roles
+
 1. Master-eligible
    1. Configuration `node.master: true | false`.
    2. The node may be elected as the cluster's master node.
-   3. A master node is responsible for creating and deleting indices, among others. 
+   3. A master node is responsible for creating and deleting indices, among others.
    4. A node with this role will not automatically become the master node.
       1. Unless there is no other master-eligible nodes.
    5. May be used for having dedicated master nodes.
@@ -491,23 +493,23 @@ elasticsearch.password: 'password'
    1. Configuration `node.data: true | false`.
    2. Enables a node to store data
    3. Storing data includes performing queries related to that data, such as search queries.
-   4. For relatively small clusters, this role is almost always enabled. 
+   4. For relatively small clusters, this role is almost always enabled.
    5. Useful for having dedicated master nodes.
-   6. Used as part of configuring a dedicated master node. 
+   6. Used as part of configuring a dedicated master node.
 3. Ingest
    1. Configuration `node.ingest: true | false`.
    2. Enables a node to run ingest pipelines
    3. Ingest pipelines are a series of steps (processors) that are performed when indexing documents.
-      1. Processors may manipulate documents, e.g. resolving an IP to lat/lon. 
-   4. A simplified version of Logstash, directly within Elasticsearch. 
+      1. Processors may manipulate documents, e.g. resolving an IP to lat/lon.
+   4. A simplified version of Logstash, directly within Elasticsearch.
 4. Machine learning
    1. Configuration
       1. `node.ml: true | false`
       2. `xpack.ml.enabled: true | false`
-   2. `node.ml` identifies a node as a machine learning node. 
+   2. `node.ml` identifies a node as a machine learning node.
       1. This lets the node run machine learning jobs
-   3. `xpack.ml.enabled` enables or disables the machine learning API for the node. 
-   4. Useful for running ML jobs that don't affect other tasks. 
+   3. `xpack.ml.enabled` enables or disables the machine learning API for the node.
+   4. Useful for running ML jobs that don't affect other tasks.
 5. Coordination
    1. Configuration
       1. `node.master: false`
@@ -515,7 +517,7 @@ elasticsearch.password: 'password'
       3. `node.ingest: false`
       4. `node.ml: false`
       5. `xpack.ml.enabled: false`
-   2. Coordination refers to the distribution of queries and the aggregation of results. 
+   2. Coordination refers to the distribution of queries and the aggregation of results.
    3. Useful for coordination nodes (for large clusters)
    4. Configured by disabling all other roles
 6. Voting-only
@@ -523,13 +525,14 @@ elasticsearch.password: 'password'
    2. Rarely used, and you almost certainly won't use it either.
    3. A node with this role, will participate in the voting for a new master node.
    4. The node cannot be elected as the master node itself.
-   5. Only used for large clusters. 
+   5. Only used for large clusters.
 
-### 2.9.2. Checking node list 
-1. We can check from `GET /_cat/nodes?v` to get list of connected nodes in the cluster. 
-2. `node.role` shows what the roles of node has. For example, if there's `dim`, which means `data`, `ingest`, `master`. 
+### 2.9.2. Checking node list
+
+1. We can check from `GET /_cat/nodes?v` to get list of connected nodes in the cluster.
+2. `node.role` shows what the roles of node has. For example, if there's `dim`, which means `data`, `ingest`, `master`.
 3. However, we don't specify the roles in the `docker-compose` so it may take all the eligible roles for this case as `cdfhilmrstw`.
-4. Note that if all nodes have `master` role, each of them can be elected as the master node. 
+4. Note that if all nodes have `master` role, each of them can be elected as the master node.
 
 ```bash
 ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   master name
@@ -542,27 +545,30 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    1. It **depends**.
    2. Useful for large clusters.
    3. Typically done when optimizing the cluster to scale the number of requests.
-   4. You will often times change other things first. 
+   4. You will often times change other things first.
       1. E.g. the number of nodes, shards, replica shards, etc.
    5. Better understand what hardware resources are used for.
-   6. Only change roles if you know what you are doing. 
+   6. Only change roles if you know what you are doing.
 
 # 3. Managing Documents
+
 ## 3.1. Creating and deleting indices
-1. In Kibana, we can use `PUT /:index` to create a an index and use `DELETE /:index` to delete an index. 
+
+1. In Kibana, we can use `PUT /:index` to create a an index and use `DELETE /:index` to delete an index.
 2. Besides, we can pass a payload to configure the new index
 
 ```json
 // PUT /products
 {
-   "settings": {
-      "number_of_shards": 2,
-      "number_of_replicas": 2
-   }
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 2
+  }
 }
 ```
 
 ## 3.2. Indexing document
+
 1. To create a document for an index, we can `POST /:index` with payload for document contents.
 2. Note that as we set up `2` shards for the index with `2` replicas, the document is distributed to `1` shard with `2` replicas which gives `_shard` as `3`.
 
@@ -590,6 +596,7 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
       "_primary_term" : 1
    }
    ```
+
 3. Besides, we can specify ID for the document as `POST /:index/:id`
 
    ```json
@@ -618,8 +625,10 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    ```
 
 ## 3.3. Retrieving documents by ID
-1. We can simply use `GET /:index/_doc/:id` to retrieve specific document with given `id`. 
-2. There's `found` property in the response which indicates if the document exists. 
+
+1. We can simply use `GET /:index/_doc/:id` to retrieve specific document with given `id`.
+2. There's `found` property in the response which indicates if the document exists.
+
    ```json
    // GET /products/_doc/100
    {
@@ -648,9 +657,10 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    ```
 
 ## 3.4. Updating documents
+
 1. To update a document, we can `POST /:index/_update/:id` with payload.
 2. A `result` property is in the response indicating that the document is updated.
-   
+
    ```json
    // POST /products/_update/100
    {
@@ -675,21 +685,23 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
       "_primary_term" : 1
    }
    ```
+
 3. Note that documents in Elasticsearch are immutable.
-4. We actually replaced documents in this lecture. 
-5. The Update API did some things for us, making it look like we updated documents. 
-6. The Update API is simpler and saves some network traffic. 
+4. We actually replaced documents in this lecture.
+5. The Update API did some things for us, making it look like we updated documents.
+6. The Update API is simpler and saves some network traffic.
 7. How the Update API works
-   1. The current document is retrieved. 
-   2. THe field values are changed. 
-   3. The existing document is replaced with the modified document. 
-   4. We could do the exact same thing at the application level. 
+   1. The current document is retrieved.
+   2. THe field values are changed.
+   3. The existing document is replaced with the modified document.
+   4. We could do the exact same thing at the application level.
 
 ## 3.5. Scripted updates
-1. Rather than updating on the `doc`, we can use `script` to update a document by passing `script` in the payload. 
-2. In this case, we check from the `source` in the context `ctx` and reduce `in_stock` property of the document with `--`. 
-3. We can on the other hand increase `in_stock` with `++`. 
-4. In addition, we can directly assign a number to `in_stock`. 
+
+1. Rather than updating on the `doc`, we can use `script` to update a document by passing `script` in the payload.
+2. In this case, we check from the `source` in the context `ctx` and reduce `in_stock` property of the document with `--`.
+3. We can on the other hand increase `in_stock` with `++`.
+4. In addition, we can directly assign a number to `in_stock`.
 
    ```json
    // POST /products/_update/100
@@ -700,7 +712,7 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    }
    }
 
-   //response 
+   //response
    {
    "_index" : "products",
    "_type" : "_doc",
@@ -717,21 +729,22 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    }
    ```
 
-5. Besides regular assigning values, we can have expression in the script. 
+5. Besides regular assigning values, we can have expression in the script.
 
    ```json
    // POST /products/_update/100
    {
-   "script": {
-      "source": "ctx._source.in_stock -= params.quantity",
-      "params": {
+     "script": {
+       "source": "ctx._source.in_stock -= params.quantity",
+       "params": {
          "quantity": 4
-      }
-   }
+       }
+     }
    }
    ```
 
 6. `script` also accepts multi-line with `if/else` condition. We can wrap the code snippet with triple double quotes `"""`
+
 ```json
 // POST /products/_update/100
 {
@@ -751,7 +764,7 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
       "source": """
       if (ctx._source.in_stock > 0) {
          ctx._source.in_stock--;
-      }      
+      }
       """
    }
 }
@@ -770,173 +783,189 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
 ```
 
 ## 3.6. Upsert
-1. Upsert is to either insert when the document doesn't exist or update the document if it exists. 
+
+1. Upsert is to either insert when the document doesn't exist or update the document if it exists.
 2. In the following request, it firstly create a new document for `Blender` while ignoring `script.source` as the document doesn't exist.
-3. If we run the same request again, it will run `script` instead and updates `in_stock`. 
+3. If we run the same request again, it will run `script` instead and updates `in_stock`.
 4. Note that `upsert` in Elasticsearch is different that it needs to work on `/:index/_update` API and with `script` in payload.
-5. In this case, `upsert` works like `insert` without directly updating the document.  
+5. In this case, `upsert` works like `insert` without directly updating the document.
 
    ```json
    // POST /products/_update/101
    {
-   "script": {
-      "source": "ctx._source.in_stock++"
-   },
-   "upsert": {
-      "name": "Blender",
-      "price": 399,
-      "in_stock": 5
-   }
+     "script": {
+       "source": "ctx._source.in_stock++"
+     },
+     "upsert": {
+       "name": "Blender",
+       "price": 399,
+       "in_stock": 5
+     }
    }
    ```
 
 ## 3.7. Replacing documents
+
 1. We can use `PUT /:index/_doc/:id` to replace a document.
-2. We earlier added `tags: []` array and updates `in_stock` with `POST /:index/_update/:id` update API. 
-3. By executing the following request, the document is replaced by the given payload and we can find that both `price` and `in_stock` is updated, and `tags` is removed. 
+2. We earlier added `tags: []` array and updates `in_stock` with `POST /:index/_update/:id` update API.
+3. By executing the following request, the document is replaced by the given payload and we can find that both `price` and `in_stock` is updated, and `tags` is removed.
 
    ```json
    // PUT /products/_doc/100
    {
-   "name": "Toaster",
-   "price": 79,
-   "in_stock": 4
+     "name": "Toaster",
+     "price": 79,
+     "in_stock": 4
    }
    ```
 
 ## 3.8. Deleting documents
-1. We can use `DELETE /:index/_doc/:id` to delete a document. 
+
+1. We can use `DELETE /:index/_doc/:id` to delete a document.
 
 ## 3.9. Understanding routing
+
 1. Routing is the process of resolving a shard for a document
    1. Elasticsearch knows where to store documents.
-   2. Indexed document can then be found. 
+   2. Indexed document can then be found.
 2. When a document is indexed, Elasticsearch uses a simple formula to calculate which shard should the document be stored as default routing strategy `shard_num = hash(_routing) % num_primary_shards`.
-3. The default routing strategy ensures that documents are distributed evenly. 
-4. On the other hand, we can apply custom routing rules for various purpose. 
-5. When we retrieve a document (e.g. `GET /:index/_doc/:id`), the document payload is kept in `_source`. 
+3. The default routing strategy ensures that documents are distributed evenly.
+4. On the other hand, we can apply custom routing rules for various purpose.
+5. When we retrieve a document (e.g. `GET /:index/_doc/:id`), the document payload is kept in `_source`.
 
    ```json
    // GET /products/_doc/100
    {
-   "_index" : "products",
-   "_type" : "_doc",
-   "_id" : "100",
-   "_version" : 11,
-   "_seq_no" : 17,
-   "_primary_term" : 4,
-   "found" : true,
-   "_source" : {
-      "name" : "Toaster",
-      "price" : 79,
-      "in_stock" : 4
-      }
+     "_index": "products",
+     "_type": "_doc",
+     "_id": "100",
+     "_version": 11,
+     "_seq_no": 17,
+     "_primary_term": 4,
+     "found": true,
+     "_source": {
+       "name": "Toaster",
+       "price": 79,
+       "in_stock": 4
+     }
    }
    ```
 
-6. If a custom routing strategy applies, there will be an extra `routing` property in the response payload. 
-7. Such property is not included if the index applies default routing strategy. 
-8. Note that the number of shards can't be changed after the index is created. 
-9. This is due to the default routing strategy which applies the number for shards in the formula. 
-10. In addition, changing number of shards after creating an index, it may cause the documents to be distributed unevenly among the shards. 
-11. In summary, an index' shards cannot be changed as the routing formula would yield unexpected result. 
+6. If a custom routing strategy applies, there will be an extra `routing` property in the response payload.
+7. Such property is not included if the index applies default routing strategy.
+8. Note that the number of shards can't be changed after the index is created.
+9. This is due to the default routing strategy which applies the number for shards in the formula.
+10. In addition, changing number of shards after creating an index, it may cause the documents to be distributed unevenly among the shards.
+11. In summary, an index' shards cannot be changed as the routing formula would yield unexpected result.
 
 ## 3.10. How Elasticsearch read data
-1. When a Elasticsearch receives a query, a node in the cluster handles the request as the `coordinating node`. 
-2. The node starts routing which is used to figure out where does the document store. 
-3. In the previous section, we mentioned that routing is to resolve a shard which stores the desired document. 
+
+1. When a Elasticsearch receives a query, a node in the cluster handles the request as the `coordinating node`.
+2. The node starts routing which is used to figure out where does the document store.
+3. In the previous section, we mentioned that routing is to resolve a shard which stores the desired document.
 4. To be more specific, it resolves to a primary shard of a replication group in which we can always assume that there's replication of shards.
-5. As if Elasticsearch just retrieve the document directly from the primary shard, all retrieval would end up on the same shard and hampers the system from scaling. 
-6. Upon a retrieval, a shard is chose from the replication group. 
-7. Elasticsearch uses a technique called `Adaptive Replica Selection` or `ARS` for such purpose for scaling. 
-8. In short, we can count on Elasticsearch to choose the right shard copy for to yield the best performance. 
+5. As if Elasticsearch just retrieve the document directly from the primary shard, all retrieval would end up on the same shard and hampers the system from scaling.
+6. Upon a retrieval, a shard is chose from the replication group.
+7. Elasticsearch uses a technique called `Adaptive Replica Selection` or `ARS` for such purpose for scaling.
+8. In short, we can count on Elasticsearch to choose the right shard copy for to yield the best performance.
 
    <img src="./imgs/27-how_es_reads_data.png" />
 
 ## 3.11. How Elasticsearch write data
-1. Similar to reading document, the write request hits a `coordinating node` to resolve to a replication group. 
+
+1. Similar to reading document, the write request hits a `coordinating node` to resolve to a replication group.
 2. However, unlike a read request, a write request always goes to a primary shard.
-3. The primary shard validates the request such as if the operations is valid (e.g. adding on number to a numeric property) and forwards it to a replica shard to proceed. 
+3. The primary shard validates the request such as if the operations is valid (e.g. adding on number to a numeric property) and forwards it to a replica shard to proceed.
 
 ### 3.11.1. Recovery process in Elasticsearch
-1. Recovery process is critical as the are many async process running in parallel in Elasticsearch, when a lot of things can go wrong. 
-2. When a primary shard forward write request to proceed the operation and goes down, the remaining replica shards can be out of sync. 
-3. The operation is only forwarded to a replica shard to proceed, while the other replicas aren't updated as the primary shard is down and one of the other shard is promoted. 
+
+1. Recovery process is critical as the are many async process running in parallel in Elasticsearch, when a lot of things can go wrong.
+2. When a primary shard forward write request to proceed the operation and goes down, the remaining replica shards can be out of sync.
+3. The operation is only forwarded to a replica shard to proceed, while the other replicas aren't updated as the primary shard is down and one of the other shard is promoted.
 
 ### 3.11.2. Primary terms and sequence numbers
-1. `Primary terms` is a way to distinguish between old and new primary shards. 
+
+1. `Primary terms` is a way to distinguish between old and new primary shards.
 2. It's essentially a counter for how many times the primary shard has changed.
-3. The primary term is appended to write operations. 
-4. In the recovery case, the primary term will increase when the primary shard goes down and one of the replica shard is promoted. 
-5. `_primary_term` is then appended to the write operation from primary to replica shard as a reference. 
+3. The primary term is appended to write operations.
+4. In the recovery case, the primary term will increase when the primary shard goes down and one of the replica shard is promoted.
+5. `_primary_term` is then appended to the write operation from primary to replica shard as a reference.
 
 ### 3.11.3. Sequence numbers
-1. A sequence number `_seq` is appended to write operations together with the primary term. 
-2. Essentially a counter that is incremented for each write operation. 
+
+1. A sequence number `_seq` is appended to write operations together with the primary term.
+2. Essentially a counter that is incremented for each write operation.
 3. The primary shard increases the sequence number.
-4. This sequence number allows Elasticsearch to order write operations. 
+4. This sequence number allows Elasticsearch to order write operations.
 
 ### 3.11.4. Recovering when a primary shard fails
+
 1. Primary terms and sequence numbers are key when Elasticsearch needs to recover from a primary shard failure.
    1. E.g. a networking error
    2. This enables Elasticsearch to more efficiently figure out when write operations need to be applied.
-2. For large indexes, this process is expensive and costly. 
+2. For large indexes, this process is expensive and costly.
    1. To speed things up, Elasticsearch use **checkpoints**.
 
 ### 3.11.5. Global and local checkpoints
-1. Both global and local checkpoints are essentially sequence numbers. 
+
+1. Both global and local checkpoints are essentially sequence numbers.
 2. Each replication group has a **global** checkpoint.
-3. Each replica shard has a **local** checkpoint. 
-4. Global checkpoints 
-   1. The sequence number that all the active shards within a replication group have been aligned at least up to. 
-   2. It means that any operations containing `_seq` lower than the global checkpoint has been performed on all shards within the replication group. 
+3. Each replica shard has a **local** checkpoint.
+4. Global checkpoints
+   1. The sequence number that all the active shards within a replication group have been aligned at least up to.
+   2. It means that any operations containing `_seq` lower than the global checkpoint has been performed on all shards within the replication group.
 5. Local checkpoints
-   1. The sequence number for the last write operation that was performed. 
-   2. It means the replica shard only needs to look up operations having greater sequence number to execute. 
-6. These mechanism avoid the shards look up and execute the whole history of the replication group. 
+   1. The sequence number for the last write operation that was performed.
+   2. It means the replica shard only needs to look up operations having greater sequence number to execute.
+6. These mechanism avoid the shards look up and execute the whole history of the replication group.
 
 ## 3.12. Understanding document versioning
-1. Document versioning in Elasticsearch is not a revision history of documents. 
-2. Elasticsearch stores an `_version` metadata field with every document. 
+
+1. Document versioning in Elasticsearch is not a revision history of documents.
+2. Elasticsearch stores an `_version` metadata field with every document.
    1. The value is an integer.
    2. It is incremented when modifying a document.
-   3. The value is retained for 60 seconds when deleting a document. 
+   3. The value is retained for 60 seconds when deleting a document.
    4. This can be configured with `index.gc_deletes` setting.
-   5. The `_version` field is returned when retrieving documents. 
-3. The default versioning type is `internal` versioning. 
+   5. The `_version` field is returned when retrieving documents.
+3. The default versioning type is `internal` versioning.
 4. On the other hand, there's also an `external` versioning type.
-   1. External versioning type is useful when maintained outside of Elasticsearch. 
-   2. E.g. when documents are also stroed in a RDBMS. 
-5. We can give `version` and `version_type` in query string when making a request. 
+   1. External versioning type is useful when maintained outside of Elasticsearch.
+   2. E.g. when documents are also stroed in a RDBMS.
+5. We can give `version` and `version_type` in query string when making a request.
 
    ```json
    // PUT /products/_doc/123?version=321&version_type=external
    {
-      "name": "Coffee Maker",
-      "price": 64,
-      "in_stock": 10
+     "name": "Coffee Maker",
+     "price": 64,
+     "in_stock": 10
    }
    ```
-6. By checking the `version`, we can know how many times a document has been modified. 
+
+6. By checking the `version`, we can know how many times a document has been modified.
 7. However, this feature isn't useful as it was and is hardly used anymore.
-8. It was previously the way to optimistic concurrency control. 
+8. It was previously the way to optimistic concurrency control.
 
 ## 3.13. Optimistic concurrency control
-1. This is to prevent an old document to overwrite a recent one. 
-2. This also prevents overwriting documents inadvertently due to concurrent operations. 
-3. As Elasticsearch is a distributed system with networking execution write operations out of order and out of sync can happen in many scenarios. 
+
+1. This is to prevent an old document to overwrite a recent one.
+2. This also prevents overwriting documents inadvertently due to concurrent operations.
+3. As Elasticsearch is a distributed system with networking execution write operations out of order and out of sync can happen in many scenarios.
 4. Handling concurrent visitors for a web app
+
    1. Visitor A makes an order and finishes checkout that updates the stock from `6` to `5`.
    2. At the same time, visitor B retrieves the document before visitor A finishes checkout.
-   3. However, when visitor B makes an order and tries to checkout, the request may update incorrect `stock` to the database (Elasticsearch) and cause records out of sync. 
-   5. On the other hand, Elasticsearch may return an error as the stock has been changed to `5` while visitor B still sees the stock with `6`.
+   3. However, when visitor B makes an order and tries to checkout, the request may update incorrect `stock` to the database (Elasticsearch) and cause records out of sync.
+   4. On the other hand, Elasticsearch may return an error as the stock has been changed to `5` while visitor B still sees the stock with `6`.
 
    <img src="./imgs/30_1-optimistic_concurrency_control.png" />
 
-5. The old solution is to apply `version` in the flow. 
-6. In the same case, when visitor B tries to make a request with an old version of document, Elasticsearch denies it as it's out of order. 
+5. The old solution is to apply `version` in the flow.
+6. In the same case, when visitor B tries to make a request with an old version of document, Elasticsearch denies it as it's out of order.
 
    <img src="./imgs/30_2-optimistic_concurrency_control.png" />
+
 7. The new solution for such issue is to apply sequence number `_seq_no` and primary term `_primary_term` in the update request.
 8. E.g. `POST /:index/_update/:id?if_primary_term=int&if_seq_no=int`
 
@@ -948,7 +977,7 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    }
    }
 
-   // error response when primary_term and/or 
+   // error response when primary_term and/or
    // seq_no doesn't match
    {
    "error" : {
@@ -974,20 +1003,21 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
 9. By receiving this error, it means the error should be handled at the application level.
    1. Retrieve the document again.
    2. Use `_primary_term` and `_seq_no` for a new update request.
-   3. Remember to perform any calculations that use field values again, as the values may have been changed. 
+   3. Remember to perform any calculations that use field values again, as the values may have been changed.
 
 ## 3.14. Update by query
+
 1. In the previous section, we have learnt how to update `1` document at a time by using
    1. `PUT /:index/_doc/:id` - replace document
    2. `POST /:index/_update/:id` - update document
-2. We can update multiple documents with a single query similar to `UPDATE WHERE` in RDBMS. 
+2. We can update multiple documents with a single query similar to `UPDATE WHERE` in RDBMS.
 3. The bulk update query applies 3 concepts
    1. Primary terms
    2. Sequence numbers
    3. Optimistic concurrency control
 4. In this case, we use both `source` to run the script and `query` to find target documents to update.
-5. We didn't put any condition in `match_all` which then updates all the documents of the index if they are applicable. 
-6. We can find the number of document being updated in the `total` from result. 
+5. We didn't put any condition in `match_all` which then updates all the documents of the index if they are applicable.
+6. We can find the number of document being updated in the `total` from result.
 
    ```json
    // POST /products/_update_by_query
@@ -1020,69 +1050,72 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
       "failures" : [ ]
    }
    ```
-7. When the update request hits coordinating node, it firstly takes a snapshot of the target index. 
+
+7. When the update request hits coordinating node, it firstly takes a snapshot of the target index.
 8. The search query is then sent to each of the shards (replication group).
-9. If there's any document matches the search query, a bulk request is sent to update those documents. 
-10. Bulk requests mainly work with `index`, `update`, and `delete` actions. 
-11. The `batches` key within the result specifies how many batches were used to retrieve the document. 
-12. The query uses `Scroll API` internally which is used to scroll through result sets and handle many (e.g. thousands) of documents. 
+9. If there's any document matches the search query, a bulk request is sent to update those documents.
+10. Bulk requests mainly work with `index`, `update`, and `delete` actions.
+11. The `batches` key within the result specifies how many batches were used to retrieve the document.
+12. The query uses `Scroll API` internally which is used to scroll through result sets and handle many (e.g. thousands) of documents.
 13. The requests are sequenced in a `search` and then `bulk` order to mitigate issues from errors.
 14. By default, when there's an error of `search` or `bulk` action, Elasticsearch may retry up to `10` times.
 15. The number of retires can be specified within the `retries` key for both the `search` and `bulk` queries.
-16. If the affected query is not successful, the whole query is aborted, and the failure will be specified in the results within `failures` key. 
+16. If the affected query is not successful, the whole query is aborted, and the failure will be specified in the results within `failures` key.
 17. It's important to note that the query is aborted and not rolled back.
-18. It means if a number of documents have been updated when error occurs, those documents are remained updated though the request failed. 
-19. For example, an update query tends to update replication A, B, and C but fails when updating group B. 
+18. It means if a number of documents have been updated when error occurs, those documents are remained updated though the request failed.
+19. For example, an update query tends to update replication A, B, and C but fails when updating group B.
 20. The query is then aborted and only documents in group A are updated.
-   
+
    <img src="./imgs/31-update_by_query.png" />
 
 21. `snapshot` is useful as a reference when handling errors of requests.
 22. It prevents overwriting changes made after the snapshot was taken.
     1.  The query may take a while to finish if updating many documents.
-    2.  During the time, documents could be updated by the other update requests. 
-23. Each document's `primary term` and `sequence number` are used. 
+    2.  During the time, documents could be updated by the other update requests.
+23. Each document's `primary term` and `sequence number` are used.
     1.  A document in only updated if the values match the ones from the snapshot.
-    2.  If the document has been changed, it will cause a version conflict. 
+    2.  If the document has been changed, it will cause a version conflict.
     3.  This also causes the entire query to be aborted.
-24. The version conflicts are returned within the `version_conflicts` key. 
-25. However, we can overwrite the query configuration to prevent aborting with `conflicts=proceed` when version conflict happens. 
+24. The version conflicts are returned within the `version_conflicts` key.
+25. However, we can overwrite the query configuration to prevent aborting with `conflicts=proceed` when version conflict happens.
 
-   ```json
-   // GET /products/_search
-   {
-      "query": {
-         "match_all": {}
+```json
+// GET /products/_search
+{
+   "query": {
+      "match_all": {}
+   }
+}
+
+// POST /products/_update_by_query
+{
+"conflicts": "proceed", // proceed though hitting conflicts
+"script": {
+   "source": "ctx._source.in_stock--",
+   "query": {
+      "match_all": {}
       }
    }
-
-   // POST /products/_update_by_query
-   {
-   "conflicts": "proceed", // proceed though hitting conflicts
-   "script": {
-      "source": "ctx._source.in_stock--",
-      "query": {
-         "match_all": {}
-         }
-      }
-   }
-   ```
+}
+```
 
 ## 3.15. Delete by query
-1. We can use `DELETE /:index/_doc/:id` to remove a single document at a time. 
+
+1. We can use `DELETE /:index/_doc/:id` to remove a single document at a time.
 2. The query is similar to `Update by Query` API.
 
    ```json
    //POST /products/_delete_by_query
    {
-   "query": {
-         "match_all": {}
-      }
+     "query": {
+       "match_all": {}
+     }
    }
    ```
 
 ## 3.16. Batch processing
-1. Besides previous APIs introduced to `index`, `update` and `delete` documents, we can use `Bulk` API to work on multiple documents in a single query. 
+
+1. Besides previous APIs introduced to `index`, `update` and `delete` documents, we can use `Bulk` API to work on multiple documents in a single query.
 2. The Bulk API accepts a number of lines and expects data formatted using the `NDJSON` specific cation such as `\n` and `\r\n`.
 
    ```json
@@ -1094,12 +1127,12 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
    """
    ```
 
-3. When working with Bulk, we can pass multiple lines of JSON for the action and request body payload. 
+3. When working with Bulk, we can pass multiple lines of JSON for the action and request body payload.
    1. The 1st line is the action and its metadata.
    2. The 2nd line is the payload of request body.
    3. We may skip `_id` and let Elasticsearch generates an ID for the document.
 4. Besides `index` action, we can use `create` to create a document.
-5. The difference between `index` and `create` action is that `create` action fails if the document exists, while `index` action will overwrite the existing document with the new request payload. 
+5. The difference between `index` and `create` action is that `create` action fails if the document exists, while `index` action will overwrite the existing document with the new request payload.
 
    ```json
    // POST /_bulk
@@ -1150,88 +1183,91 @@ ip         heap.percent ram.percent cpu load_1m load_5m load_15m node.role   mas
       ]
    }
    ```
-6. If we take actions on the same index, we can pass it in the URL parameter without passing in the action metadata. 
 
-      ```json
-      // POST /products/_bulk
-      { "update": { "_id": 201 } }
-      { "doc": { "price": 129 } }
-      { "delete": { "_id": 202} }
+6. If we take actions on the same index, we can pass it in the URL parameter without passing in the action metadata.
 
-      // response
-      {
-      "took" : 37,
-      "errors" : false,
-      "items" : [
-            {
-               "update" : {
-               "_index" : "products",
-               "_type" : "_doc",
-               "_id" : "201",
-               "_version" : 2,
-               "result" : "updated",
-               "_shards" : {
-                  "total" : 3,
-                  "successful" : 3,
-                  "failed" : 0
-                  },
-               "_seq_no" : 2,
-               "_primary_term" : 8,
-               "status" : 200
-               }
-            },
-            {
-               "delete" : {
-               "_index" : "products",
-               "_type" : "_doc",
-               "_id" : "202",
-               "_version" : 1,
-               "result" : "not_found",
-               "_shards" : {
-                  "total" : 3,
-                  "successful" : 3,
-                  "failed" : 0
-                  },
-               "_seq_no" : 3,
-               "_primary_term" : 8,
-               "status" : 404
-               }
+   ```json
+   // POST /products/_bulk
+   { "update": { "_id": 201 } }
+   { "doc": { "price": 129 } }
+   { "delete": { "_id": 202} }
+
+   // response
+   {
+   "took" : 37,
+   "errors" : false,
+   "items" : [
+         {
+            "update" : {
+            "_index" : "products",
+            "_type" : "_doc",
+            "_id" : "201",
+            "_version" : 2,
+            "result" : "updated",
+            "_shards" : {
+               "total" : 3,
+               "successful" : 3,
+               "failed" : 0
+               },
+            "_seq_no" : 2,
+            "_primary_term" : 8,
+            "status" : 200
             }
-         ]
-      }
-      ```
+         },
+         {
+            "delete" : {
+            "_index" : "products",
+            "_type" : "_doc",
+            "_id" : "202",
+            "_version" : 1,
+            "result" : "not_found",
+            "_shards" : {
+               "total" : 3,
+               "successful" : 3,
+               "failed" : 0
+               },
+            "_seq_no" : 3,
+            "_primary_term" : 8,
+            "status" : 404
+            }
+         }
+      ]
+   }
+   ```
 
 ### 3.16.1. Things to be aware of using Bulk API
-1. The Kibana Dev tool and Elasticsearch SDK handle these caveats for us. 
+
+1. The Kibana Dev tool and Elasticsearch SDK handle these caveats for us.
 2. The HTTP `Content-Type` header should be
    1. `Content-Type: application/x-ndjson`.
    2. `application/json` is accepted but is an incorrect way.
-3. However, when using other HTTP clients, this needs to be taken into concern. 
-4. Each line **must** end with a newline character `\n` or `\r\n`. 
+3. However, when using other HTTP clients, this needs to be taken into concern.
+4. Each line **must** end with a newline character `\n` or `\r\n`.
    1. This includes the last line.
-   2. It means that in a text editor, the last line should be empty. 
+   2. It means that in a text editor, the last line should be empty.
 5. A failed action will not affect other actions.
    1. Neither will the bulk request as a whole be aborted.
 6. The Bulk API returns detailed information about each action.
    1. Inspect the `items` key to see if a given action succeeded.
-   2. The order is the same as the actions within the request. 
-   3. The `errors` key tells if any errors occurred. 
+   2. The order is the same as the actions within the request.
+   3. The `errors` key tells if any errors occurred.
 7. Perform lots of write operations at the same time.
    1. When importing or modifying lots of data
 8. The Bulk API is more efficient than sending individual write requests.
-   1. A lot of network round trips are avoided. 
+   1. A lot of network round trips are avoided.
 9. Bulk API supports optimistic concurrency control
-   1.  Include `if_primary_term` and `if_seq_no` parameters within the action metadata. 
+   1. Include `if_primary_term` and `if_seq_no` parameters within the action metadata.
 
 ## 3.17. Import data with cURL
+
 1. We can use `cURL` to import the JSON products into Elasticsearch
 2. Note that we can only specify the file name to attach in the request payload with `--data-binary`, while the user should on the same directory where the file (`products-bulk.json`) exists.
 3. Be surely aware that the JSON file is not a single object but have each action and document payload on multiple lines.
-4. Besides, there must be an empty line in the last of the file as mentioned earlier that it needs `\n` or `\r\n` at the end. 
+4. Besides, there must be an empty line in the last of the file as mentioned earlier that it needs `\n` or `\r\n` at the end.
 
 ```bash
 # user should be on the same directory where JSON file is stored
-curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/products/_bulk --data-binary "@products-bulk.json
+curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/products/_bulk --data-binary "@products-bulk.json"
 ```
 
 # 4. Mapping and Analysis
