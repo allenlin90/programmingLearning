@@ -1312,3 +1312,133 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
 2. For example, a standard analyzer proceed with no character filters, a `standard` tokenizer, and `lowercase` token filter. 
 
    <img src="./imgs/38-using_the_analyzer_api.png" />
+
+## 4.2. Using the Analyze API
+1. We can `POST /_analyze` to analyze of a text value. 
+2. A analyzer `standard` is equivalent to no `char_filter`, `tokenizer: standard` and `filter: ["lowercase"]` by default.
+3. This `/_analyzer` API is also useful for testing custom components before applying those to documents. 
+
+   ```json
+   // POST /_analyze
+   {
+      "text": "2 guys walk into a bar, but the third... DUCKS! :-)",
+      "analyzer": "standard"
+   }
+   // POST /_analyze
+   {
+      "text": "2 guys walk into a bar, but the third... DUCKS! :-)",
+      "char_filter": [],
+      "tokenizer": "standard",
+      "filter": ["lowercase"]
+   }
+
+   // response
+   {
+   "tokens" : [
+         {
+            "token" : "2",
+            "start_offset" : 0,
+            "end_offset" : 1,
+            "type" : "<NUM>",
+            "position" : 0
+         },
+         {
+            "token" : "guys",
+            "start_offset" : 2,
+            "end_offset" : 6,
+            "type" : "<ALPHANUM>",
+            "position" : 1
+         },
+         {
+            "token" : "walk",
+            "start_offset" : 7,
+            "end_offset" : 11,
+            "type" : "<ALPHANUM>",
+            "position" : 2
+         },
+         {
+            "token" : "into",
+            "start_offset" : 12,
+            "end_offset" : 16,
+            "type" : "<ALPHANUM>",
+            "position" : 3
+         },
+         {
+            "token" : "a",
+            "start_offset" : 17,
+            "end_offset" : 18,
+            "type" : "<ALPHANUM>",
+            "position" : 4
+         },
+         {
+            "token" : "bar",
+            "start_offset" : 19,
+            "end_offset" : 22,
+            "type" : "<ALPHANUM>",
+            "position" : 5
+         },
+         {
+            "token" : "but",
+            "start_offset" : 24,
+            "end_offset" : 27,
+            "type" : "<ALPHANUM>",
+            "position" : 6
+         },
+         {
+            "token" : "the",
+            "start_offset" : 28,
+            "end_offset" : 31,
+            "type" : "<ALPHANUM>",
+            "position" : 7
+         },
+         {
+            "token" : "third",
+            "start_offset" : 32,
+            "end_offset" : 37,
+            "type" : "<ALPHANUM>",
+            "position" : 8
+         },
+         {
+            "token" : "ducks",
+            "start_offset" : 41,
+            "end_offset" : 46,
+            "type" : "<ALPHANUM>",
+            "position" : 9
+         }
+      ]
+   }
+   ```
+
+## 4.3. Understanding inverted indexes
+1. A field's values are stored in one of several data structures.
+   1. The data structure depends on the field's data type. 
+2. Multiple data types can be used for different fields is to ensure efficient data access pattern such as for searching or aggregating data. 
+3. These data structures are handled by Apache Lucene, not Elasticsearch. 
+4. An inverted index is mapping between `terms` and which `documents` contain them.
+5. `terms` are actually `tokens` for analyzers. However, when it's outside the context of analyzer, `terms` is used as the terminology. 
+6. Inverted indexes are powerful as they can efficient to query terms and look up the documents where terms live. 
+
+   <img src="./imgs/39_1-understanding_inverted_index.png">
+   <img src="./imgs/39_2-understanding_inverted_index.png">
+
+7. `terms` are sorted alphabetically. 
+8. Inverted indexes contain more than just terms and documents IDs. 
+   1. E.g. information for relevance scoring.
+9. Inverted indexes are created for each field (property) of documents for an index. 
+10. E.g. A document has both `name` and `description` property will have different inverted indexes for each of them. 
+
+   <img src="./imgs/39_3-understanding_inverted_index.png">
+
+11. On the hand, fields with other data types such as `numeric`, `date`, and `geospatial` are stored in different types of data structure such as `BKD trees`. 
+
+### 4.3.1. Summary
+1. Values for a text field are analyzed and the results are stored within an inverted index.
+2. Each field has a dedicated inverted index.
+3. An inverted index is a mapping between terms and which documents contain them.
+4. Terms are sorted alphabetically for performance reasons.
+5. Created and maintained by Apache Lucene, not Elasticsearch.
+6. Inverted indexes enable fast searches.
+7. Inverted indexes contain other data as well
+   1. E.g. thing used for relevance scoring
+8. Elasticsearch (technically, Apache Lucene) uses other data structures.
+   1. E.g. `BKD` trees for numeric values, dates, and geospatial data. 
