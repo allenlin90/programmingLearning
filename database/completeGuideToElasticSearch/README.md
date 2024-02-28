@@ -1442,3 +1442,140 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
    1. E.g. thing used for relevance scoring
 8. Elasticsearch (technically, Apache Lucene) uses other data structures.
    1. E.g. `BKD` trees for numeric values, dates, and geospatial data. 
+
+## 4.4. Introduction to Mapping 
+1. Mapping defines the structure of documents (fields and data types).
+2. Mapping is also used to configure how values are indexed.
+3. Mapping is similar to tables' schema in RDBMS. 
+
+   ```sql
+   /* MySQL */
+   /* SQL table schema */
+   CREATE TABLE employee(
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      first_name VARCHAR(255) NOT NULL,
+      last_name VARCHAR(255) NOT NULL,
+      dob DATE,
+      description TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
+   ```
+
+   ```json
+   // Elasticsearch
+   // PUT /employees
+   {
+      "mappings": {
+         "properties": {
+            "id": { "type": "integer" },
+            "first_name": { "type": "text" },
+            "last_name": { "type": "text" },
+            "dob": { "type": "date" },
+            "description": { "type": "text" },
+            "created_at": { "type": "date" }
+         }
+      }
+   }
+   ```
+
+4. In Elasticsearch, there's `explicit` and `dynamic` mapping approaches.
+5. Explicit mapping
+   1. We define field mappings ourselves. 
+6. Dynamic mapping
+   1. Elasticsearch generates fields mappings for us. 
+7. Elasticsearch is flexible and allow us to use both `explicit` and `dynamic` mapping in the same index. 
+
+## 4.5. Data Types
+1. There are various data types and some of them are mainly for specific uses such as `ip` which is used for storing IP addresses. 
+2. Some of the specialized data types are related to specific Elasticsearch features, such as auto-completion and geospatial search. 
+
+### 4.5.1. Object data type
+1. `Object` data type is used for any `JSON` object.
+2. Objects may be nested. 
+3. Objects are mapped using the `property` parameter.
+4. Objects are not stored as objects in Apache Lucene.
+   1. Objects are transformed to ensure that we can index any valid JSON. 
+   2. In particular, objects are flattened. 
+5. Each level in the hierarchy is denoted with a dot, such as that there are no longer any objects nested but keep the original hierarchy of data structure.  
+
+   ```json
+   // nested object
+   {
+      "name": "Coffee Maker",
+      "price": 64.2,
+      "manufacturer": {
+         "name": "Nespresso",
+         "country": "Switzerland"
+      }
+   }
+
+   // flattened object
+   {
+      "name": "Coffee Maker",
+      "price": 64.2,
+      "manufacturer.name": "Nespresso",
+      "manufacturer.country": "Switzerland",
+   }
+   ```
+6. If there's an array of objects in the field, they will be grouped by field name and indexed as an array. 
+   1. When query a field, all the values of such field of an array will be searched. 
+   2. Such data structure could be useful in some cases but not efficient and effective in the other scenarios. 
+   3. For example, searching a product which has reviews from a given author with review rating greater than and equal to a score. 
+   4. We try to search a product which is reviewed by `Jane Doe` **AND** has a review rating more than `4.0`.
+   5. In this case, the `Coffee Maker` will still be included though the review rating is only `3.5`. 
+   6. This is because when the object is indexed and flattened, the field values are mixed together and thus lose the relationship between object keys. 
+   7. It means that Elasticsearch doesn't know there's a relationship between `3.5` and `Jane Doe` of the review. 
+   8. In summary, the output actually becomes finding a product which is reviewed by `Jane Doe` **OR** has rating greater than or equal to `4.0`. 
+
+   ```json
+   // array of objects
+   {
+      "name": "Coffee Maker",
+      "reviews": [
+         {
+            "rating": 5.0,
+            "author": "John Doe",
+         },
+         {
+            "rating": 3.5,
+            "author": "Jane Doe",
+         }
+      ]
+   }
+
+   // flattened object
+   {
+      "name": "Coffee Maker",
+      "reviews.rating": [5.0, 3.5],
+      "reviews.author": ["John Doe", "Jane Doe"],
+   }
+   ```
+7. For such case above, we may use `nested` data type. 
+
+### 4.5.2. Nested data type
+1. `nested` data type is similar to `object` data type but maintains object relationships.
+2. `nested` is useful when indexing arrays of objects. 
+3. `nested` enables us to query objects independently. 
+4. It should be used with `nested` query. 
+5. `nested` objects are stored as hidden documents.
+6. These documents won't show up in the query result unless we query them directly. 
+7. Therefore, when we index a product with `10` reviews, `11` documents will be indexed as `1` for the product itself and the other `10` for the reviews. 
+
+   ```json
+   // PUT /products
+   {
+      "mappings": {
+         "properties": {
+            "name": { "type": "text" },
+            "reviews": { "type": "nested" }
+         }
+      }
+   }
+   ```
+
+### 4.5.3. Keyword data type
+1. `keyword` data type is used for exact matching of values.
+2. `keyword` is typically used for filtering, aggregations, and sorting. 
+3. E.g. `keyword` can be used for searching for articles with a status of `PUBLISHED`.
+4. For full-text searches, use `text` data type instead.
+   1. E.g. searching the body text of an article. 
