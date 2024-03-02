@@ -1851,3 +1851,250 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
       "_primary_term" : 1
    }
    ```
+
+## 4.10. Retrieving mappings
+1. We can retrieve the `mappings` of an index which is especially useful when the values are dynamically indexed.
+2. Besides retrieving the whole mapping of an index, we can specify to retrieve part of the mappings.
+3. Note that for `nested` objects, since objects are flattened, we need to use dot notation for such field.
+
+   ```json
+   // GET /reviews/_mappings
+   // response
+   {
+      "reviews" : {
+         "mappings" : {
+            "properties" : {
+            "author" : {
+               "properties" : {
+                  "email" : {
+                  "type" : "keyword"
+                  },
+                  "first_name" : {
+                  "type" : "text"
+                  },
+                  "last_name" : {
+                  "type" : "text"
+                  }
+               }
+            },
+            "content" : {
+               "type" : "text"
+            },
+            "product_id" : {
+               "type" : "integer"
+            },
+            "rating" : {
+               "type" : "float"
+            }
+            }
+         }
+      }
+   }
+
+   // GET /reviews/_mapping/content
+   // response
+   {
+      "reviews" : {
+         "mappings" : {
+            "content" : {
+            "full_name" : "content",
+            "mapping" : {
+               "content" : {
+                  "type" : "text"
+               }
+            }
+            }
+         }
+      }
+   }
+
+   // GET /reviews/_mapping/field/author.email
+   {
+      "reviews" : {
+         "mappings" : {
+            "author.email" : {
+            "full_name" : "author.email",
+            "mapping" : {
+               "email" : {
+                  "type" : "keyword"
+               }
+            }
+            }
+         }
+      }
+   }
+   ```
+
+## 4.11. Using dot notation in field names
+1. Though we can use nested object to creating `mappings` for an index, we can use dot notation for flattened object properties. 
+
+   ```json
+   // PUT /reviews
+   {
+      "mappings": {
+         "properties": {
+            "rating": { "type": "float" },
+            "content": { "type": "text" },
+            "product_id": { "type": "integer" },
+            "author": {
+            "properties": {
+               "first_name": { "type": "text" },
+               "last_name": { "type": "text" },
+               "email": { "type": "keyword" }
+            }
+            }
+         }
+      }
+   }
+
+   // PUT /reviews_dot_notation
+   {
+      "mappings": {
+         "properties": {
+            "rating": { "type": "float" },
+            "content": { "type": "text" },
+            "product_id": { "type": "integer" },
+            "author.first_name": { "type": "text" },
+            "author.last_name": { "type": "text" },
+            "author.email": { "type": "keyword" }
+         }
+      }
+   }
+
+   // GET /reviews_dot_notation
+   // response
+   {
+      "reviews_dot_notation" : {
+         "mappings" : {
+            "properties" : {
+            "author" : {
+               "properties" : {
+                  "email" : {
+                  "type" : "keyword"
+                  },
+                  "first_name" : {
+                  "type" : "text"
+                  },
+                  "last_name" : {
+                  "type" : "text"
+                  }
+               }
+            },
+            "content" : {
+               "type" : "text"
+            },
+            "product_id" : {
+               "type" : "integer"
+            },
+            "rating" : {
+               "type" : "float"
+            }
+            }
+         }
+      }
+   }
+   ```
+2. Dot notation can not only used in `mappings` but also for search queries.
+
+## 4.12. Adding mappings to existing indexes
+1. We can manage the `mappings` of an index after it's created.
+
+   ```json
+   // PUT /reviews/_mapping
+   {
+   "properties": {
+      "created_at": { "type": "date" }
+   }
+   }
+
+   // response
+   {
+      "acknowledged": true
+   }
+   ```
+
+## 4.13. How dates work in Elasticsearch
+1. `date` fields is specified in one of three ways
+   1. Specially formatted strings
+   2. Milliseconds since the epoch (long)
+   3. Seconds since the `epoch` (integer)
+   4. `epoch` refers to the 1st of Jan. 1970.
+2. Custom formats are supported. 
+3. Default behavior of `date` fields.
+   1. A date **without** time
+   2. A date **with** time
+   3. Milliseconds since the `epoch` (long)
+   4. `UTC` timezone is assumed if none is specified.
+   5. Date must be formatted according to the `ISO 8601` specification.
+4. `date` field is stored internally as milliseconds since the `epoch` (long).
+5. Any valid value that you supply at index time is converted to a long value internally.
+6. Dates are converted to the `UTC` timezone.
+7. The same date conversion happens for search queries too.
+8. `date` field support only given date, if time is not required for the case.
+9. For example, we can simply give a date such as `2024-01-01` without time. 
+10. Elasticsearch will assume the time as midnight on the date and convert the date into milliseconds since `epoch`.
+11. On the other hand, we can specify the time with timezone as `2024-01-01T13:07:41Z` where `T` separates date and time, and `Z` stands for `UTC` timezone.
+12. In addition, we can have timezone on date value such as `2024-01-01T13:07:41+01:00`.
+13. The other format is the long value of date in milliseconds such as `1436011284000`.
+14. Note that if the long value of date in milliseconds is an `UNIX` timestamp which is based in **seconds** needs to be multiplied by `1000` for **milliseconds**. 
+
+   ```json
+   // PUT /reviews/_doc/2
+   {
+      "rating": 4.5,
+      "content": "Not bad. Not bad at all!",
+      "product_id": 123,
+      "created_at": "2015-03-27",
+      "author": {
+         "first_name": "John",
+         "last_name": "Doe",
+         "email": "johndoe@example.com"
+      }
+   }
+
+   // PUT /reviews/_doc/3
+   {
+      "rating": 3.5,
+      "content": "Could be better",
+      "product_id": 123,
+      "created_at": "2015-03-27T13:07:41Z",
+      "author": {
+         "first_name": "Spencer",
+         "last_name": "Pearson",
+         "email": "spearson@example.com"
+      }
+   }
+
+   // PUT /reviews/_doc/4
+   {
+      "rating": 5.0,
+      "content": "Incredible!",
+      "product_id": 123,
+      "created_at": "2015-01-28T09:21:51+01:00",
+      "author": {
+         "first_name": "Adam",
+         "last_name": "Jones",
+         "email": "adam.jones@example.com"
+      }
+   }
+
+   // PUT /reviews/_doc/5
+   {
+      "rating": 4.5,
+      "content": "Very useful",
+      "product_id": 123,
+      "created_at": 1436011284000,
+      "author": {
+         "first_name": "Taylor",
+         "last_name": "West",
+         "email": "twest@example.com"
+      }
+   }
+
+   // GET /reviews/_search
+   {
+      "query": {
+         "match_all": {}
+      }
+   }
+   ```
