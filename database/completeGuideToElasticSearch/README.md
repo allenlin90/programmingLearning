@@ -1579,3 +1579,275 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
 3. E.g. `keyword` can be used for searching for articles with a status of `PUBLISHED`.
 4. For full-text searches, use `text` data type instead.
    1. E.g. searching the body text of an article. 
+
+## 4.6. How the keyword date type works
+1. Unlike `standard` analyzer for text fields, `keyword` fields are analyzed with `keyword` analyzer.
+2. The `keyword` analyzer is a **no-op** analyzer.
+   1. The analyzer outputs the unmodified string as a single token.
+   2. This `token` is then placed into the inverted index.
+3. The response has `token` key which just return the `text` in the request payload. 
+4. `keyword` analyzer doesn't remove any symbols and characters from the string.
+5.  Such behavior is useful for **exact matching** such as searching for specific `email` of a user or pre-defined status of an object, aggregations, and sorting. 
+
+```json
+// POST /_analyze
+{
+   "text": "2 guys walk into a bar, but the third... DUCKS! :-)",
+   "analyzer": "keyword"
+}
+
+// response
+{
+  "tokens" : [
+    {
+      "token" : "2 guys walk into a bar, but the third... DUCKS! :-)",
+      "start_offset" : 0,
+      "end_offset" : 51,
+      "type" : "word",
+      "position" : 0
+    }
+  ]
+}
+```
+
+## 4.7. Understanding type coercion
+1. Data types are inspected when indexing documents.
+   1. Values are validated, and *some* invalid values are rejected.
+   2. E.g. trying to index an object for a `text` field.
+2. `Coercion` inspects mapping and coerce into field data type if possible.
+3. In the following case, `price` field is indexed with `float` data type. 
+
+```json
+// PUT /coercion_test/_doc/1
+{ "price": 7.4 } // float
+
+// PUT /coercion_test/_doc/2
+{ "price": "7.4" } // mapped to float
+
+// PUT /coercion_test/_doc/3
+{ "price": "7.4m" } // this fails
+
+// GET /coercion_test/_doc/2
+// response
+{
+   "_source": { "price": "7.4" }
+}
+```
+
+1. However, Elasticsearch only checks if the value can be transformed but store the actual given value in the `_source`, while Elasticsearch does index such value with coerced type. 
+2. Search queries use indexed values rather than the value in `_source`. 
+   1. `BKD trees`, inverted indexes, etc.
+3. `_source` doesn't reflect how values are indexed.
+   1. Keep coercion in mind if values from `_source` are used. 
+   2. In the example, `price` field can be either a `string` or a `float`. 
+   3. To ensure the data is stored with correct data type, we need to provide it correctly at the first place or disable `coercion`.  
+4. Supplying a `float` for a `integer` field will truncate the value into an integer. 
+5. `Coercion` IS NOT used for dynamic mapping.
+   1. Supplying `"7.4"` for a new field will create a `text` mapping.
+6. Always try to use the correct data type. 
+   1. Especially the first time a field is indexed. 
+7. Disabling `coercion` is a matter of preference.
+8. `Coercion` is enabled by default in Elasticsearch.
+
+## 4.8. Understanding arrays
+1. There is no such thing as an `array` data type in Elasticsearch.
+2. Any field may contain zero or more values. 
+   1. No configuration or mapping needed.
+   2. Simply supply an array when indexing a document. 
+3. We did this for the `tags` field for the `products` index.
+
+   ```json
+   // POST /products/_doc
+   { "tags": "Smartphone" }
+
+   // POST /products/_doc
+   { "tags": ["Smartphone", "Electronics"] }
+
+   // product index
+   {
+      "products": {
+         "mappings": {
+            "properties": {
+               "tags": {
+                  "type": "text"
+               }
+            }
+         }
+      }
+   }
+   ```
+
+4. By indexing `string` values as `text`, there will be space to concatenate values of each value in the array. 
+5. Otherwise, the string value will become a single token, such as `simplymerged` in the following case.
+   ```json
+   // POST /_analyze
+   {
+      "text": ["Strings are simply", "merged together."],
+      "analyzer": "standard"
+   }
+
+   // response
+   {
+      "tokens" : [
+         {
+            "token" : "strings",
+            "start_offset" : 0,
+            "end_offset" : 7,
+            "type" : "<ALPHANUM>",
+            "position" : 0
+         },
+         {
+            "token" : "are",
+            "start_offset" : 8,
+            "end_offset" : 11,
+            "type" : "<ALPHANUM>",
+            "position" : 1
+         },
+         {
+            "token" : "simply",
+            "start_offset" : 12,
+            "end_offset" : 18,
+            "type" : "<ALPHANUM>",
+            "position" : 2
+         },
+         {
+            "token" : "merged",
+            "start_offset" : 19,
+            "end_offset" : 25,
+            "type" : "<ALPHANUM>",
+            "position" : 3
+         },
+         {
+            "token" : "together",
+            "start_offset" : 26,
+            "end_offset" : 34,
+            "type" : "<ALPHANUM>",
+            "position" : 4
+         }
+      ]
+   }
+   ```
+6. Several constraints are applied to values in an array.
+   1. Array values should be of the same data type.
+   2. Date types can be mixed together as long as the provided types can be coerced into the same data type used for mapping.
+   3. Coercion only works for fields that are already mapped. 
+   4. If creating a field mapping with dynamic mapping, an array must contain the same data type. 
+
+   ```json
+   // correct data types
+   [ "electronics", "expensive", "popular" ]
+   [ 37, 45, 9 ]
+   [ true, false, true ]
+   [ { "name": "Coffee Maker" }, { "name": "Toaster" }, { "name": "Blender" } ]
+
+   // coercion
+   [ true, false, "true" ]
+   [ "electronics", "expensive", 47 ]
+   [ 37, 45, "9" ]
+
+   // cannot coerce
+   [ { "name": "Coffee Maker" }, { "name": "Toaster" }, false]
+   ```
+7. Nested arrays
+   1. Arrays may contain nested arrays
+   2. Arrays are flattened during indexing
+   3. `[ 1, [ 2, 3 ] ]` becomes `[ 1, 2, 3 ]`
+8. To query objects independently, we can use `nested` data type for arrays of objects. 
+
+## 4.9. Adding explicit mapping
+1. Field mapping can be added both when creating an index and afterwards. 
+2. We can define the `mappings` within `mappings` key when we create a new index.
+3. All fields mapping should be defined within a `properties` key. 
+4. In the following case, we create `reviews` index with explicit mapping on its properties.
+5. `author` field is a `nested` object unlike the other fields, and we can have another `properties` key in it.
+6. `email` of an author can be typed as `keyword` as we would like to have an exact match when querying rather than full-text search for such field. 
+
+   ```json
+   // PUT /reviews
+   {
+      "mappings": {
+         "properties": {
+            "rating": { "type": "float" },
+            "content": { "type": "text" },
+            "product_id": { "type": "integer" },
+            "author": {
+            "properties": {
+               "first_name": { "type": "text" },
+               "last_name": { "type": "text" },
+               "email": { "type": "keyword" }
+            }
+            }
+         }
+      }
+   }
+
+   // response
+   {
+      "acknowledged" : true,
+      "shards_acknowledged" : true,
+      "index" : "reviews"
+   }
+   ```
+7. If we provide a value that cannot be coerced, Elasticsearch will respond an error. 
+   ```json
+   // PUT /reviews/_doc/1
+   {
+      "rating": "5.0",
+      "content": "Outstanding course! Bo really taught me a lot of Elasticsearch!",
+      "product_id": 123,
+      "author": {
+         "first_name": "John",
+         "last_name": "Doe",
+         "email": {}
+      }
+   }
+
+   // response 
+   {
+      "error" : {
+         "root_cause" : [
+            {
+            "type" : "mapper_parsing_exception",
+            "reason" : "failed to parse field [author.email] of type [keyword] in document with id '1'. Preview of field's value: '{}'"
+            }
+         ],
+         "type" : "mapper_parsing_exception",
+         "reason" : "failed to parse field [author.email] of type [keyword] in document with id '1'. Preview of field's value: '{}'",
+         "caused_by" : {
+            "type" : "illegal_state_exception",
+            "reason" : "Can't get text on a START_OBJECT at 8:14"
+         }
+      },
+      "status" : 400
+   }
+   ```
+8. We can have create a document with correct types of values. 
+   ```json
+   // PUT /reviews/_doc/1
+   {
+      "rating": 5.0,
+      "content": "Outstanding course! Bo really taught me a lot of Elasticsearch!",
+      "product_id": 123,
+      "author": {
+         "first_name": "John",
+         "last_name": "Doe",
+         "email": "johndoe123@example.com"
+      }
+   }
+
+   // response
+   {
+      "_index" : "reviews",
+      "_type" : "_doc",
+      "_id" : "1",
+      "_version" : 1,
+      "result" : "created",
+      "_shards" : {
+         "total" : 2,
+         "successful" : 2,
+         "failed" : 0
+      },
+      "_seq_no" : 0,
+      "_primary_term" : 1
+   }
+   ```
