@@ -2098,3 +2098,302 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
       }
    }
    ```
+
+## 4.14. How missing fields are handled
+1. Previously when we index documents, `/reviews/_doc/1` doesn't have `current_at`.
+2. For Elasticsearch documents, each field may have zero or more values (as in array).
+   1. All fields in Elasticsearch are optional.
+   2. Each field can be left out when indexing document. 
+   3. This is very different from RDBMS where `null` should only allowed for a column explicitly.
+3. Document (or object) integrity check should be done at the application level.
+4. Adding a field mapping doesn't make a field required.
+5. Searching automatically handle missing fields. 
+
+## 4.15. Overview of mapping parameters
+1. Notes
+   1. Though this section covers the most important mapping parameters, not all parameters are listed. 
+   2. There are some other parameters can be used in Elasticsearch.
+   3. Most other parameters are very specialized and rarely used.
+
+### 4.15.1. format parameter
+1. `format` is used to customize the format for `date` fields.
+2. The default format is recommended whenever possible.
+   1. `strict_date_optional_time`
+   2. `epoch_millis`
+3. Using Java's `DateFormatter` syntax.
+   1. e.g. `dd/MM/yyyy`
+4. Using `built-in formats
+   1. e.g. `epoch second`
+5. Other [formats](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html) available in Elasticsearch 
+
+   ```json
+   // PUT /sales
+   {
+      "mappings": {
+         "properties": {
+            "purchased_at": {
+               "type": "date", 
+               "format": "dd/MM/yyyy"
+            }
+         }
+      }
+   }
+
+   // PUT /sales
+   {
+      "mappings": {
+         "properties": {
+            "purchased_at": {
+               "type": "date", 
+               "format": "epoch_second"
+            }
+         }
+      }
+   }
+   ```
+
+### 4.15.2. properties parameter
+1. `properties` parameter is used to define nested fields for `object` and `nested` fields. 
+2. Note that `object` doesn't have a specific data type as `nested` in Elasticsearch. 
+3. We only need properties to specify type of each field instead of specifying the data type of the object itself.
+
+```json
+// PUT /sales
+{
+   "mappings": {
+      "properties": {
+         "sold_by": {
+            "properties": {
+               "name": { "type": "text" }
+            }
+         }
+      }
+   }
+}
+
+// PUT /sales
+{
+   "mappings": {
+      "properties": {
+         "products": {
+            "type": "nested",
+            "properties": {
+               "name": { "type": "text" }
+            }
+         }
+      }
+   }
+}
+```
+
+### 4.15.3. coerce parameter
+1. `coerce` parameter is used to enable or disable coercion of values (enabled by default).
+2. For example, if we give `amount` of the following mappings field a `string`, Elasticsearch will reject the request. 
+
+   ```json
+   // PUT /sales
+   {
+      "mappings": {
+         "properties": {
+            "amount": {
+               "type": "float",
+               "coerce": false
+            }
+         }
+      }
+   }
+   ```
+3. Since coercion is enabled by default, it only really makes sense to disable it at the index level. 
+4. However, we can still have a direct control of `coerce` on a field. 
+
+   ```json
+   // PUT /sales
+   {
+      "settings": {
+         "index.mapping.coerce": false,
+      },
+      "mappings": {
+         "properties": {
+            "amount": {
+               "type": "float",
+               "coerce": false
+            }
+         }
+      }
+   }
+   ```
+
+### 4.15.4. doc_values
+1. Elasticsearch makes use of several data structures.
+2. No single data structure serves all purposes.
+3. `Inverted indexes` are excellent for searching text.
+   1. However, they don't perform well for many other data access patterns.
+4. It is another data structure used by Apache Lucene.
+   1. It is used to optimize different data access pattern (document -> terms).
+   2. Instead of looking up terms and finding the documents that contain them, we need to look up the documents and find its terms for a field.
+5. It is essentially an **un-inverted** `inverted index`. 
+   1. This means besides `inverted index`, it also provides the field data of the request lookup.
+   2. Essentially, it act as a cache specifically designed for sorting, aggregations, and field value access.
+6. It is used for sorting, aggregations, and scripting and works as additional data structure, not a replacement to `inverted index`. 
+7. However, as enabling it will consume extra storage for pre-processed data for efficient lookup. 
+8. It can be turned off to 
+   1. save disk space
+   2. slightly increase indexing throughput, as it adds extra workload when indexing document. 
+9. It is particularly useful for large indexes, but typically not worth it for small ones.
+10. It cannot be changed without reindexing documents into new index.
+
+   ```json
+   // PUT /sales
+   {
+      "mappings": {
+         "properties": {
+            "buyer_email": {
+               "type": "keyword",
+               "doc_values": false
+            }
+         }
+      }
+   }
+   ```
+
+### 4.15.5. norms parameter
+1. `norms` is normalization factors used for relevance scoring.
+2. We often doesn't just want to **filter** results, but also **rank** them.
+3. It is used as part of the process to calculate relevance scores for documents.
+4. It can be disabled to save disk space. 
+5. Disabling it can be useful when a field won't be used for relevance scoring.
+6. A field with disabled `norm` can still be used for filtering and aggregation. 
+
+   ```json
+   // PUT /products
+   {
+      "mappings": {
+         "properties": {
+            "tags": {
+               "type": "text",
+               "norms": false
+            }
+         }
+      }
+   }
+   ```
+
+### 4.15.6. index parameter 
+1. This can disable indexing for a field.
+2. This completely prevents the field values from being indexed at all.
+3. Besides, the field cannot be used within search queries. 
+   1. Note that values are still stored within `_source`.
+4. Disabling it saves space and slightly improves indexing throughput.
+5. It is often disabled on fields for time series data which is a numeric field that is not working with `filtering`.
+6. Fields with indexing disabled can still be used for `aggregation`.
+
+   ```json
+   // PUT /server-metrics
+   {
+      "mappings": {
+         "properties": {
+            "server_id": {
+               "type": "integer",
+               "index": false
+            }
+         }
+      }
+   }
+   ```
+
+### 4.15.7. null_value parameter
+1. In normal conditions, a missing field is left out from indexing a document.
+2. It means the document doesn't have such field. 
+3. `null` values are ignored in Elasticsearch, meaning that they cannot be indexed or searched. 
+4. This applies to an empty array or an array of `null` values. 
+5. Therefore, if we need to be able to search `null` values, we can use `null_value` parameter to replace `null` with a value of your choice. 
+6. Whenever Elasticsearch encounters `null` for the field, it will index the value specified in the parameter and thereby make this value searchable.
+7. This only works for explicit `null` values.
+   1. An empty array doesn't cause Elasticsearch to perform replacement. 
+   2. The value for replacement must be of the same data type as the field's data. 
+8. It only affects how data is indexed but doesn't affect the value stored within `_source`. 
+
+   ```json
+   // PUT /sales
+   {
+      "mappings": {
+         "properties": {
+            "partner_id": {
+               "type": "keyword",
+               "null_value": "NULL"
+            }
+         }
+      }
+   }
+   ```
+
+### 4.15.8. copy_to parameter
+1. It is used to copy multiple field values into a **group field**.
+2. The value for the parameter should be the name of the field to which the field value should be copied.
+   1. The value becomes the name of the target field. 
+   2. `first_name` and `last_name` are copied to `full_name`. 
+3. `Values` are copied, not `terms` or `tokens`.
+   1. This is because it's not the tokens or terms yielded by the analyzers that are copied.
+   2. The analyzer of the target field is used for the values.
+4. The target field and the copied values are not part of `_source`.
+5. In the following example, `full_name` is not part of the `_source`. 
+6. The exception to include `full_name` in part of the document is to specify a value when indexing the document, though it's not common to do so.
+
+```json
+// PUT /sales
+{
+   "mappings": {
+      "properties": {
+         "first_name": {
+            "type": "text",
+            "copy_to": "full_name"
+         },
+         "last_name": {
+            "type": "text",
+            "copy_to": "full_name"
+         },
+         "full_name": {
+            "type": "text"
+         }
+      }
+   }
+}
+
+// POST /sales/_doc
+{
+   "first_name": "John",
+   "last_name": "Doe"
+}
+```
+
+## 4.16. Updating existing mappings
+
+## 4.17. Reindexing documents with the Reindex API
+
+## 4.18. Defining field aliases
+
+## 4.19. Multi-field mappings
+
+## 4.20. Index templates
+
+## 4.21. Introduction to dynamic mapping
+
+## 4.22. Combining explicit and dynamic mapping
+
+## 4.23. Configuring dynamic mapping
+
+## 4.24. Dynamic templates
+
+## 4.25. Mapping recommendations
+
+## 4.26. Stemming and stop words
+
+## 4.27. Analyzer and search queries
+
+## 4.28. Built-in analyzers
+
+## 4.29. Creating custom analyzers
+
+## 4.30. Adding analyzers to existing indexes
+
+## 4.31. Updating analyzers
