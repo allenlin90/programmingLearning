@@ -1807,12 +1807,12 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
       "error" : {
          "root_cause" : [
             {
-            "type" : "mapper_parsing_exception",
-            "reason" : "failed to parse field [author.email] of type [keyword] in document with id '1'. Preview of field's value: '{}'"
+               "type" : "mapper_parsing_exception",
+               "reason" : "failed to parse field [author.email] of type [keyword] in document with id '1'. Preview of field's value: '{}'"
             }
          ],
-         "type" : "mapper_parsing_exception",
-         "reason" : "failed to parse field [author.email] of type [keyword] in document with id '1'. Preview of field's value: '{}'",
+            "type" : "mapper_parsing_exception",
+            "reason" : "failed to parse field [author.email] of type [keyword] in document with id '1'. Preview of field's value: '{}'",
          "caused_by" : {
             "type" : "illegal_state_exception",
             "reason" : "Can't get text on a START_OBJECT at 8:14"
@@ -1864,28 +1864,28 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
       "reviews" : {
          "mappings" : {
             "properties" : {
-            "author" : {
-               "properties" : {
-                  "email" : {
-                  "type" : "keyword"
-                  },
-                  "first_name" : {
-                  "type" : "text"
-                  },
-                  "last_name" : {
-                  "type" : "text"
+               "author" : {
+                  "properties" : {
+                     "email" : {
+                        "type" : "keyword"
+                     },
+                     "first_name" : {
+                        "type" : "text"
+                     },
+                     "last_name" : {
+                        "type" : "text"
+                     }
                   }
+               },
+               "content" : {
+                  "type" : "text"
+               },
+               "product_id" : {
+                  "type" : "integer"
+               },
+               "rating" : {
+                  "type" : "float"
                }
-            },
-            "content" : {
-               "type" : "text"
-            },
-            "product_id" : {
-               "type" : "integer"
-            },
-            "rating" : {
-               "type" : "float"
-            }
             }
          }
       }
@@ -2367,8 +2367,273 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
 ```
 
 ## 4.16. Updating existing mappings
+1. Support we have an index which has mappings for `product_id` firstly as `integer` but now includes letters.
+2. We need to change the field data type from `integer` to `text` or `keyword`.
+3. This field is not used for full-text searches.
+4. This field can be used for filtering, so `keyword` is an ideal data type for this case. 
+
+   ```json
+   // PUT /reviews/_mapping
+   {
+      "properties": {
+         "product_id": {
+            "type": "keyword"
+         }
+      }
+   }
+
+   // response
+   {
+      "error" : {
+         "root_cause" : [
+            {
+            "type" : "illegal_argument_exception",
+            "reason" : "mapper [product_id] cannot be changed from type [integer] to [keyword]"
+            }
+         ],
+         "type" : "illegal_argument_exception",
+         "reason" : "mapper [product_id] cannot be changed from type [integer] to [keyword]"
+      },
+      "status" : 400
+   }
+   ```
+
+### 4.16.1. Limitations for updating mappings
+1. Generally, Elasticsearch filed mappings cannot be changed.
+2. We can add new field mappings, but that's about it.
+3. A few mapping parameters can be updated for existing mappings.
+4. In the following case, we give `ignore_above` to ignores string values longer than the given value to prevent the field being indexed or stored.
+
+   ```json
+   // PUT /reviews/_mapping
+   {
+      "properties": {
+         "author": {
+            "properties": {
+               "email": {
+                  "type": "keyword",
+                  "ignore_above": 256
+               }
+            }
+         }
+      }
+   }
+   ```
+5. Being able to update mappings would be problematic for existing documents.
+   1. Text values have already been analyzed.
+   2. Changing between some data types would require rebuilding the whole data structure. 
+6. We can't update a mapping even though the index is empty.
+7. Field mappings also cannot be removed.
+8. If we don't want to index such field, we can just leave out the field when indexing documents.
+9. Besides, we can remove such field from documents to reclaim disk space by using Update by Query API. 
+10. Changing a field mapping almost always requires documents to be reindexed.
+11. Therefore, to update mapping and change data type from `integer` to `keyword`, we need to create a new index with the updated mapping and reindex any existing documents into it.
 
 ## 4.17. Reindexing documents with the Reindex API
+1. We create a new mapping for `_review_new` which has `product_id` as `keyword` type.
+   ```json
+   // PUT /reviews_new
+   {
+      "mappings" : {
+         "properties" : {
+            "author" : {
+               "properties" : {
+                  "email" : {
+                     "type" : "keyword",
+                     "ignore_above" : 256
+                  },
+                  "first_name" : {
+                     "type" : "text"
+                  },
+                  "last_name" : {
+                     "type" : "text"
+                  }
+               }
+            },
+            "content" : {
+               "type" : "text"
+            },
+            "created_at" : {
+               "type" : "date"
+            },
+            "product_id" : {
+               "type" : "keyword"
+            },
+            "rating" : {
+               "type" : "float"
+            }
+         }
+      }
+   }
+   ```
+
+2. For re-indexing documents, we can retrieve the documents of the source index and index these documents at application level.
+3. On the other hand, Elasticsearch has `_reindex` API to serve such purpose.
+
+   ```json
+   // POST /_reindex
+   {
+      "source": {
+         "index": "source_index"
+      },
+      "dest": {
+         "index": "destination_index"
+      }
+   }
+   ```
+
+4. In this case, we use the previous `reviews` index and reindex the documents as `reviews_new`. 
+
+   ```json
+   // POST _reindex
+   {
+      "source": { "index": "reviews" },
+      "dest": { "index": "reviews_new" }
+   }
+
+   // GET /reviews_new/_search
+   // retrieve all documents indexed with reviews_new
+   {
+      "query": {
+         "match_all": {}
+      }
+   }
+   ```
+5. Note that the `_product_id` is given as integers from the previous dataset. 
+6. If we look into `_source` of documents of `reviews_new`, the field still contains the field values supplied at index time.
+7. The data type of `_source` doesn't reflect how the values are indexed. 
+8. It's common to use values from `_source` for search results.
+9. In this case, we may expect `product_id` is a string value as is typed as `keyword`.
+10. Therefore, we can modify the `_source` value while reindexing.
+11. However, we may skip this part in Elasticsearch and handle it at application level.
+12. In the previous example, as we have reindex `review_new` with new documents, we can use `POST /:index/_delete_by_query` to remove all matching documents. 
+
+   ```json
+   // POST /review_new/_delete_by_query
+   // query and delete all docs from review_new index
+   {
+      "query": {
+         "match_all": {}
+      }
+   }
+
+   // POST /_reindex
+   {
+      "source": { "index": "reviews" },
+      "dest": { "index": "reviews_new" },
+      "script": {
+            "source": """
+               if (ctx._source.product_id != null) {
+                  ctx._source.product_id = ctx._source.product_id.toString();
+               }
+            """
+      }
+   }
+   ```
+
+13. Besides simply reindex all documents of an index, we can only reindex matching documents with `query` when calling the API.
+
+   ```json
+   // POST /_reindex
+   {
+      "source": {
+         "index": "reviews",
+         "query": {
+            "range": {
+               "rating": {
+                  "get": 4.0
+               }
+            }
+         }
+      },
+      "dest": {
+         "index": "reviews_new"
+      }
+   }
+   ```
+14. Elasticsearch has the following attributes introduced in the previous sections.
+    1.  Field mappings cannot be deleted.
+    2.  Fields can be left out when indexing documents. 
+    3.  Meaning that the value for the field is not provided.
+    4.  Besides, the document won't have such field.
+15. In addition, we can use source filtering during reindexing to only include fields we want.
+
+   ```json
+   // POST /_reindex
+   {
+      "source": {
+         "index": "reviews",
+         "_source": ["content", "created_at", "rating"]
+      },
+      "dest": {
+         "index": "reviews_new"
+      }
+   }
+   ```
+16. We can also change a fields name during reindexing.
+    1.  `_source` is converted into a Java hashmap.
+    2.  `content` is removed from `_source`.
+    3.  value of `content` is assigned to new key `comment` of the document. 
+
+   ```json
+   // POST /_reindex
+   {
+      "source": {
+         "index": "reviews",
+      },
+      "dest": {
+         "index": "reviews_new"
+      },
+      "script": {
+         "source": """
+            # rename 'content' field to 'comment'
+            ctx._source.comment = ctx._source.remove('content')
+         """
+      }
+   }
+   ```
+
+17. We can also specify the operation for a document by using [`ctx.op`](https://www.elastic.co/guide/en/elasticsearch/painless/current/painless-reindex-context.html) from context variable in the script.
+18. For example, we ignore reviews with ratings below 4.0 in the following case.
+    1.  Usually, using `query` parameter is possible.
+    2.  For more advanced use cases, `ctx.op` can be used.
+    3.  Using `query` parameter has better performance and is preferred.
+    4.  Specifying `delete` deletes the document within the destination index.
+    5.  The destination index might not be empty as in the lecture example.
+    6.  The same can often be done with `_delete_by_query` API. 
+
+   ```json
+   // POST /_reindex
+   {
+      "source": {
+         "index": "reviews"
+      },
+      "dest": {
+         "index": "reviews_new"
+      },
+      "script": {
+         "source": """
+            if (ctx._source.rating < 4.0) {
+               ctx.op = 'noop' # can also set to 'delete' in this case
+            }
+         """
+      }
+   }
+   ```
+
+### 4.17.1. Parameters for reindex API
+1. More parameters are available than the ones covered above.
+   1. E.g. Handling version conflicts
+2. A snapshot is created before reindexing documents.
+3. A version conflict causes the query to be aborted by default.
+4. The destination index is not necessarily empty.
+
+### 4.17.2. Batching and throttling
+1. Similar to `_update_by_query` and `_delete_by_query` API, `_reindex` API also performs the operations in batches by using the scroll API. 
+2. This is how it handles reindexing millions of documents efficiently.
+3. Throttling can be configured to limit the performance impact.
+   1. This can be useful for production clusters.
+4. When processing reindex for huge amount of documents, we can refer to [reindex documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html).
 
 ## 4.18. Defining field aliases
 
