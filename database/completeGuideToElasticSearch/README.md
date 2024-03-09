@@ -2636,6 +2636,17 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
 4. When processing reindex for huge amount of documents, we can refer to [reindex documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html).
 
 ## 4.18. Defining field aliases
+1. Field names can be changed when reindexing documents.
+2. However, if there are too many documents, it may not be worthy to re-index all of them. 
+3. An alternative is to use `field` alias.
+4. Aliases can be used within queries. 
+5. Aliases are defined with a field mapping.
+6. A field alias is one of the few examples of mappings that can be updated.
+7. We can change the field that an alias points to by performing a mapping update with a new `path` value. 
+8. Aliases can be modified because they don't affect indexing.
+9. It's a query-level construct.
+10. Similar to field aliases, Elasticsearch also supports `index` aliases.
+11. Typically used when dealing with large data volumes.
 
 ## 4.19. Multi-field mappings
 
