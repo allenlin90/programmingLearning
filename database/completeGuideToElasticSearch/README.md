@@ -1,3 +1,109 @@
+- [1. Introduction](#1-introduction)
+  - [1.1. Overview of the Elastic Stack](#11-overview-of-the-elastic-stack)
+    - [1.1.1. Kibana](#111-kibana)
+    - [1.1.2. LogStash](#112-logstash)
+    - [1.1.3. X-Pack](#113-x-pack)
+    - [1.1.4. Beats](#114-beats)
+  - [1.2. Walkthrough common architecture](#12-walkthrough-common-architecture)
+- [2. Getting Started](#2-getting-started)
+  - [2.1. Setup ElasticSearch with Docker](#21-setup-elasticsearch-with-docker)
+  - [2.2. Understanding the basic architecture](#22-understanding-the-basic-architecture)
+    - [2.2.1. Summary](#221-summary)
+  - [2.3. Inspecting cluster](#23-inspecting-cluster)
+  - [2.4. Sending queries with cURL](#24-sending-queries-with-curl)
+  - [2.5. Sharding and Scalability](#25-sharding-and-scalability)
+    - [2.5.1. Summary](#251-summary)
+  - [2.6. Understanding replication](#26-understanding-replication)
+    - [2.6.1. Snapshots](#261-snapshots)
+    - [2.6.2. Increasing query throughput](#262-increasing-query-throughput)
+  - [2.7. First task on index and shard](#27-first-task-on-index-and-shard)
+    - [2.7.1. Kibana indices](#271-kibana-indices)
+    - [2.7.2. Summary](#272-summary)
+  - [2.8. Adding more nodes to the cluster](#28-adding-more-nodes-to-the-cluster)
+    - [2.8.1. Side notes](#281-side-notes)
+    - [2.8.2. Configuration](#282-configuration)
+  - [2.9. Overview of node roles](#29-overview-of-node-roles)
+    - [2.9.1. Node roles](#291-node-roles)
+    - [2.9.2. Checking node list](#292-checking-node-list)
+- [3. Managing Documents](#3-managing-documents)
+  - [3.1. Creating and deleting indices](#31-creating-and-deleting-indices)
+  - [3.2. Indexing document](#32-indexing-document)
+  - [3.3. Retrieving documents by ID](#33-retrieving-documents-by-id)
+  - [3.4. Updating documents](#34-updating-documents)
+  - [3.5. Scripted updates](#35-scripted-updates)
+  - [3.6. Upsert](#36-upsert)
+  - [3.7. Replacing documents](#37-replacing-documents)
+  - [3.8. Deleting documents](#38-deleting-documents)
+  - [3.9. Understanding routing](#39-understanding-routing)
+  - [3.10. How Elasticsearch read data](#310-how-elasticsearch-read-data)
+  - [3.11. How Elasticsearch write data](#311-how-elasticsearch-write-data)
+    - [3.11.1. Recovery process in Elasticsearch](#3111-recovery-process-in-elasticsearch)
+    - [3.11.2. Primary terms and sequence numbers](#3112-primary-terms-and-sequence-numbers)
+    - [3.11.3. Sequence numbers](#3113-sequence-numbers)
+    - [3.11.4. Recovering when a primary shard fails](#3114-recovering-when-a-primary-shard-fails)
+    - [3.11.5. Global and local checkpoints](#3115-global-and-local-checkpoints)
+  - [3.12. Understanding document versioning](#312-understanding-document-versioning)
+  - [3.13. Optimistic concurrency control](#313-optimistic-concurrency-control)
+  - [3.14. Update by query](#314-update-by-query)
+  - [3.15. Delete by query](#315-delete-by-query)
+  - [3.16. Batch processing](#316-batch-processing)
+    - [3.16.1. Things to be aware of using Bulk API](#3161-things-to-be-aware-of-using-bulk-api)
+  - [3.17. Import data with cURL](#317-import-data-with-curl)
+- [4. Mapping and Analysis](#4-mapping-and-analysis)
+  - [4.1. Introduction to analysis](#41-introduction-to-analysis)
+    - [4.1.1. Character filters](#411-character-filters)
+    - [4.1.2. Tokenizers](#412-tokenizers)
+    - [4.1.3. Token filters](#413-token-filters)
+    - [4.1.4. Built-in and custom components](#414-built-in-and-custom-components)
+  - [4.2. Using the Analyze API](#42-using-the-analyze-api)
+  - [4.3. Understanding inverted indexes](#43-understanding-inverted-indexes)
+    - [4.3.1. Summary](#431-summary)
+  - [4.4. Introduction to Mapping](#44-introduction-to-mapping)
+  - [4.5. Data Types](#45-data-types)
+    - [4.5.1. Object data type](#451-object-data-type)
+    - [4.5.2. Nested data type](#452-nested-data-type)
+    - [4.5.3. Keyword data type](#453-keyword-data-type)
+  - [4.6. How the keyword date type works](#46-how-the-keyword-date-type-works)
+  - [4.7. Understanding type coercion](#47-understanding-type-coercion)
+  - [4.8. Understanding arrays](#48-understanding-arrays)
+  - [4.9. Adding explicit mapping](#49-adding-explicit-mapping)
+  - [4.10. Retrieving mappings](#410-retrieving-mappings)
+  - [4.11. Using dot notation in field names](#411-using-dot-notation-in-field-names)
+  - [4.12. Adding mappings to existing indexes](#412-adding-mappings-to-existing-indexes)
+  - [4.13. How dates work in Elasticsearch](#413-how-dates-work-in-elasticsearch)
+  - [4.14. How missing fields are handled](#414-how-missing-fields-are-handled)
+  - [4.15. Overview of mapping parameters](#415-overview-of-mapping-parameters)
+    - [4.15.1. format parameter](#4151-format-parameter)
+    - [4.15.2. properties parameter](#4152-properties-parameter)
+    - [4.15.3. coerce parameter](#4153-coerce-parameter)
+    - [4.15.4. doc\_values](#4154-doc_values)
+    - [4.15.5. norms parameter](#4155-norms-parameter)
+    - [4.15.6. index parameter](#4156-index-parameter)
+    - [4.15.7. null\_value parameter](#4157-null_value-parameter)
+    - [4.15.8. copy\_to parameter](#4158-copy_to-parameter)
+  - [4.16. Updating existing mappings](#416-updating-existing-mappings)
+    - [4.16.1. Limitations for updating mappings](#4161-limitations-for-updating-mappings)
+  - [4.17. Reindexing documents with the Reindex API](#417-reindexing-documents-with-the-reindex-api)
+    - [4.17.1. Parameters for reindex API](#4171-parameters-for-reindex-api)
+    - [4.17.2. Batching and throttling](#4172-batching-and-throttling)
+  - [4.18. Defining field aliases](#418-defining-field-aliases)
+  - [4.19. Multi-field mappings](#419-multi-field-mappings)
+  - [4.20. Index templates](#420-index-templates)
+    - [4.20.1. Priorities](#4201-priorities)
+  - [4.21. Introduction to dynamic mapping](#421-introduction-to-dynamic-mapping)
+  - [4.22. Combining explicit and dynamic mapping](#422-combining-explicit-and-dynamic-mapping)
+  - [4.23. Configuring dynamic mapping](#423-configuring-dynamic-mapping)
+  - [4.24. Dynamic templates](#424-dynamic-templates)
+  - [4.25. Mapping recommendations](#425-mapping-recommendations)
+  - [4.26. Stemming and stop words](#426-stemming-and-stop-words)
+  - [4.27. Analyzer and search queries](#427-analyzer-and-search-queries)
+  - [4.28. Built-in analyzers](#428-built-in-analyzers)
+  - [4.29. Creating custom analyzers](#429-creating-custom-analyzers)
+  - [4.30. Adding analyzers to existing indexes](#430-adding-analyzers-to-existing-indexes)
+  - [4.31. Updating analyzers](#431-updating-analyzers)
+
+---
+
 # 1. Introduction
 
 ## 1.1. Overview of the Elastic Stack
@@ -2649,8 +2755,149 @@ curl -H "Content-Type: application/x-ndjson" -XPOST http://localhost:9200/produc
 11. Typically used when dealing with large data volumes.
 
 ## 4.19. Multi-field mappings
+1. A field of an index can be mapped with multiple types, such as `text` and `keyword` at the same time. 
+2. For example, if we have an index which has `description` and `ingredients` field for recipes.
+3. To allow users searching through all recipes, we need full-text search in both `description` and `ingredients`.
+4. Besides users searches, we want to create an index page which list all the ingredients and how many recipes use them.
+5. For such purpose, we can use **aggregations**, which however doesn't work with `text` type fields but `keyword`.
+6. Note that aggregations works with not only `keyword` but also `date` and `number`.
+7. Therefore, we need `ingredients` have mapping both `text` and `keyword`. 
+8. When creating an index, we can use `fields` with the field name which we have `keyword` in this case.
+9. Though it can be mapped with something else, such convention helps to understand there's additional mapping with certain data type.
+
+```json
+// PUT /multi_field_test
+{
+  "mappings": {
+    "properties": {
+      "description": {
+        "type": "text"
+      },
+      "ingredients": {
+        "type": "text",
+        "fields": {
+          "keyword": { // this creates ingredients.keyword
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
+
+// full text search
+// GET /multi_field_test/_search
+{
+  "query": {
+    "match": {
+      "ingredients": "Spaghetti"
+    }
+  }
+}
+
+// search for exact values with term level
+// GET /multi_field_test/_search
+{
+  "query": {
+    "term": {
+      "ingredients.keyword": "Spaghetti"
+    }
+  }
+}
+```
 
 ## 4.20. Index templates
+1. [https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-template.html](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-template.html)
+2. It's a way to automatically apply settings and mappings on index creation.
+3. It works by matching index names against an index pattern.
+
+   <img src="./imgs/56-index_template.png">
+
+4. It's typically used for data sets that are stored in multiple indexes.
+   1. For example, time series data in `year`, `month`, `day`. 
+5. In such as case that we want to have dynamic indexing API HTTP access logs for each month in a year, an index template can be used to create index dynamically every month when the first HTTP request hits.
+6. Without index template, the index will just be created with default settings without explicit mappings on data types and fields. 
+7. Therefore, we don't need scheduled jobs or cron jobs to create such index as a routine. 
+
+   ```json
+   // PUT /_index_template/access-logs
+   {
+      "index_patterns": ["access-logs-*"],
+      "template": {
+         "settings": {
+            "number_of_shards": 2,
+            "index.mappings.coerce": false
+         }
+      },
+      "mappings": {
+         "properties": {
+            "@timestamp": { "type": "date" },
+
+            // Requested URL
+            "url.original": { "type": "wildcard" },
+            "url.path": { "type": "wildcard" },
+            "url.scheme": { "type": "keyword" },
+            "url.domain": { "type": "keyword" },
+
+            // Client geography
+            "client.geo.continent_name": { "type": "keyword" },
+            "client.geo.country_name": { "type": "keyword" },
+            "client.geo.region_name": { "type": "keyword" },
+            "client.geo.city_name": { "type": "keyword" },
+
+            // User agent
+            "user_agent.original": { "type": "keyword" },
+            "user_agent.name": { "type": "keyword" },
+            "user_agent.version": { "type": "keyword" },
+            "user_agent.device.name": { "type": "keyword" },
+            "user_agent.os.name": { "type": "keyword" },
+            "user_agent.os.version": { "type": "keyword" }
+         }
+      }
+   }
+   ```
+8. By setting up index template, every time a new index is about to create, Elasticsearch will firstly check
+   1. Has the index existed?
+   2. Is there a matching index template can be applied?
+   3. Create the index
+9. Updating index templates is using the same API for creating an index template.
+10. If there's an existing one, the latest template will replace the current one. 
+
+   ```json
+   // retrieving an index template
+   // GET /_index_template/:index
+
+   // deleting an index template
+   // DELETE /_index_template/:index
+   ```
+
+10. Elasticsearch has several reserved index patterns
+    1.  `logs-*-*`
+    2.  `metrics-*-*`
+    3.  `synthetics-*-*`
+    4.  `profiling-*`
+
+### 4.20.1. Priorities
+1. Index patterns cannot overlap by default because only a single index template can be applied to a new index.
+2. Elasticsearch will return an error if we try to create 2 index template with the same `index_patterns`.
+
+   ```json
+   // PUT /_index_template/monthly-logs
+   {
+      "index_patterns": ["monthly-*"],
+      "template": {}
+   }
+
+   // PUT /_index_template/monthly-access-logs
+   {
+      // returns an error
+      "index_patterns": ["monthly-*"],
+      "template": {}
+   }
+   ```
+
+3. This can be solved by adding `priority` parameter to both index tempaltes.
+4. However, there's still only a single index template will be applied on the index.
 
 ## 4.21. Introduction to dynamic mapping
 
