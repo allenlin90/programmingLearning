@@ -91,7 +91,8 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [8.7. Binary Search Tree](#87-binary-search-tree)
 - [9. Data Structure: Graphs](#9-data-structure-graphs)
   - [9.1. Graphs Introduction](#91-graphs-introduction)
-  - [9.2. Graph Data](#92-graph-data)
+  - [9.2. Types of graph](#92-types-of-graph)
+  - [9.3. Graph Data](#93-graph-data)
 ---
 
 # 1. Big O
@@ -2791,6 +2792,59 @@ function traverse(node) {
 
 # 9. Data Structure: Graphs
 ## 9.1. Graphs Introduction
-## 9.2. Graph Data
 
-1. 
+1. A graph is simply a set of values that are related in a pairwise fashion.
+2. In a graph, each item is a `node` or `vertex`. 
+3. Nodes are connected with `edges`. 
+4. Graphs are great data structures to model read world relationships representing links.
+5. Graphs are ideal for cases where things that are connected to other things. 
+   1. Relationships like family tree
+   2. Networks and the world wide web
+   3. Roads connecting different cities on a map
+   4. Social network on social media like Facebook
+   5. Recommendation engines for e-commerce
+
+  <img src="./images//graph.png">
+6. Linked list and trees data structure in the previous section are also types of graph. 
+
+## 9.2. Types of graph
+1. In general graphs are separated as `directed` and `undirected` ones. 
+2. Directed graphs show the direction of ways 2 nodes linked to each other.
+3. It can be either one-way or bi-direction. 
+4. For example, relationships on Twitter (X) are considered directed, as though 2 users can follow each other, following one user doesn't mean the other follows back. 
+5. The other attribute of graphs is the `weight`. A graph can be `weighted` and `unweighted`. 
+6. Values (weight) can be applied on edges on a graph.
+7. A weighted graph can be useful for optimizing routes by considering several aspects such as interests on the location, preference of traveling, traffic, and so on. 
+8. On the other hand, graphs can be `cyclic` or `acyclic`. 
+9. A graph is `cyclic` if all nodes (vertices) are connected as a closed circular relationship.
+10. `Cyclic` graphs are common for `weighted` graphs as to be used for Google Maps.
+
+  <img src="./images/types_graphs.png">
+
+## 9.3. Graph Data
+
+```ts
+// Edge list
+const graph = [[0, 2], [2, 3], [2, 1], [1, 3]];
+
+// Adjacent list
+const graph = [[2], [2, 3], [0, 1, 3], [1, 2]];
+
+// Adjacent matrix in array
+const graph = [
+  [0, 0, 1, 0],
+  [0, 0, 1, 1],
+  [1, 1, 0, 1],
+  [0, 1, 1, 0],
+]
+
+// Adjacent matrix in object
+const graph = {
+  0: [0, 0, 1, 0],
+  1: [0, 0, 1, 1],
+  2: [1, 1, 0, 1],
+  3: [0, 1, 1, 0],
+}
+```
+
+<img src="./images/graph_representation.png">
