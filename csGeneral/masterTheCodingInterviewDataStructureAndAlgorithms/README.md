@@ -93,6 +93,7 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [9.1. Graphs Introduction](#91-graphs-introduction)
   - [9.2. Types of graph](#92-types-of-graph)
   - [9.3. Graph Data](#93-graph-data)
+  - [9.4. Exercise and solution](#94-exercise-and-solution)
 ---
 
 # 1. Big O
@@ -2848,3 +2849,52 @@ const graph = {
 ```
 
 <img src="./images/graph_representation.png">
+
+## 9.4. Exercise and solution
+
+<img src="./images/graph_exercise.png" />
+
+```ts
+class Graph {
+  constructor() {
+    this.numberOfNodes = 0;
+    this.adjacentList = {};
+  }
+
+  addVertex(node) {
+    this.adjacentList[node] = []
+    this.numberOfNodes++
+  }
+
+  addEdge(node1, node2) {
+    if (!this.adjacentList[node1]) {
+      this.addVertex(node1)
+    }
+
+    if (!this.adjacentList[node2]) {
+      this.addVertex(node2)
+    }
+
+    if (!this.adjacentList[node1].includes(node2)) {
+      this.adjacentList[node1].push(node2)
+    }
+
+    if (!this.adjacentList[node2].includes(node1)) {
+      this.adjacentList[node2].push(node1)
+    }
+  }
+
+  showConnections() {
+    const allNodes = Object.keys(this.adjacentList);
+
+    for (let node of allNodes) {
+      let nodeConnections = this.adjacentList[node];
+      let connections = "";
+      for (let vertex of nodeConnections) {
+        connections += vertex + " ";
+      }
+      console.log(node + "-->" + connections);
+    }
+  }
+}
+```
