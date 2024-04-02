@@ -108,7 +108,9 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
     - [12.6.2. DFS depth first search](#1262-dfs-depth-first-search)
   - [12.7. Exercise and solution: BFS vs DFS](#127-exercise-and-solution-bfs-vs-dfs)
   - [12.8. BFS breadth first search](#128-bfs-breadth-first-search)
-  - [BFS recursive](#bfs-recursive)
+  - [12.9. BFS recursive](#129-bfs-recursive)
+  - [12.10. Pre-order, In-order, Post-order](#1210-pre-order-in-order-post-order)
+  - [12.11. DFS Depth first search](#1211-dfs-depth-first-search)
 - [13. Dynamic programming](#13-dynamic-programming)
 
 ---
@@ -3363,7 +3365,7 @@ function traverse(node) {
 }
 ```
 
-## BFS recursive
+## 12.9. BFS recursive
 
 ```ts
 function breadthFirstSearchR(queue = [], list = []) {
@@ -3383,6 +3385,74 @@ function breadthFirstSearchR(queue = [], list = []) {
   }
 
   return breadthFirstSearchR(queue, list);
+}
+```
+
+## 12.10. Pre-order, In-order, Post-order
+1. In case of a BST tree structure of the following conditions. 
+2. `In-order` means the traverse will start from the smallest number rather than the root node. 
+3. The output of `in-order` will have a list of values of each node from the least to the largest. 
+4. `Pre-order` will start from the root node and go down the layers to the end of a branch, and start over on the other branches. 
+5. This `pre-order` process can be useful when we want to recreate the tree data. 
+6. `Post-order` will start from the bottom to the 2nd last node before the root node and start on the other side. 
+
+```ts
+// a binary search tree
+//     9
+//  4     20
+//1  6  15  170
+
+const InOrder = [1, 4, 6, 9, 15, 20, 170]
+const PreOrder = [9, 4, 1, 6, 20, 15, 170]
+const PostOrder = [1, 6, 4, 15, 170, 20, 9]
+```
+
+## 12.11. DFS Depth first search
+
+```ts
+// In-order
+function traverseInOrder(node, list) {
+  if (node.left) {
+    traverseInOrder(node.left, list);
+  }
+
+  list.push(node.value);
+
+  if (node.right) {
+    traverseInOrder(node.right, list);
+  }
+
+  return list;
+}
+
+// Pre-order
+function traversePreOrder(node, list) {
+  list.push(node.value);
+
+  if (node.left) {
+    traversePreOrder(node.left, list);
+  }
+
+  if (node.right) {
+    traversePreOrder(node.right, list);
+  }
+
+  return list;
+}
+
+// Post-order
+function traversePostOrder(node, list) { 
+  if (node.left) {
+    traversePostOrder(node.left, list);
+  }
+
+  if (node.right) {
+    traversePostOrder(node.right, list);
+  }
+
+  list.push(node.value);
+
+  return list;
 }
 ```
 
