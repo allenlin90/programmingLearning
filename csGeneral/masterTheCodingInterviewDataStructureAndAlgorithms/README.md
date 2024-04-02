@@ -94,6 +94,20 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [9.2. Types of graph](#92-types-of-graph)
   - [9.3. Graph Data](#93-graph-data)
   - [9.4. Exercise and solution](#94-exercise-and-solution)
+- [10. Recursion](#10-recursion)
+- [11. Sorting](#11-sorting)
+- [12. Searching, BFS, DFS](#12-searching-bfs-dfs)
+  - [12.1. Linear search](#121-linear-search)
+  - [12.2. Binary search](#122-binary-search)
+  - [12.3. Graph and tree traversal](#123-graph-and-tree-traversal)
+  - [12.4. Breadth first search BFS introduction](#124-breadth-first-search-bfs-introduction)
+  - [12.5. Depth first search DFS introduction](#125-depth-first-search-dfs-introduction)
+  - [12.6. BFS vs DFS](#126-bfs-vs-dfs)
+    - [12.6.1. BFS breadth first search](#1261-bfs-breadth-first-search)
+    - [12.6.2. DFS depth first search](#1262-dfs-depth-first-search)
+  - [12.7. Exercise and solution: BFS vs DFS](#127-exercise-and-solution-bfs-vs-dfs)
+  - [12.8. BFS breadth first search](#128-bfs-breadth-first-search)
+- [13. Dynamic programming](#13-dynamic-programming)
 ---
 
 # 1. Big O
@@ -2898,3 +2912,285 @@ class Graph {
   }
 }
 ```
+
+# 10. Recursion
+
+# 11. Sorting
+
+# 12. Searching, BFS, DFS
+## 12.1. Linear search
+1. In Javascript, several methods such as `indexOf`, `includes`, `findIndex`, and `find` are useful to search or find if a element is in an array.
+2. However, by linear search an array, which can be either sorted or unsorted, can be very inefficient, especially when the list is huge.
+3. In such case, a sorted array with the other searching algorithm can provide better searching efficiency. 
+
+## 12.2. Binary search
+1. Binary search is like searching an item in a binary search tree (BST), where all items are sorted in the list. 
+
+## 12.3. Graph and tree traversal
+1. Traversal and search can sometimes consider interchangeable.
+2. Traversal can be evaluated as visiting every node in a tree structure.
+3. By visiting all nodes in a tree or graph, we can apply the concepts of breadth first search (BFS) and depth first search (DFS).
+
+## 12.4. Breadth first search BFS introduction
+1. A BFS approach starts from the top of a tree, goes from left to right, and top to bottom level by level.
+2. Breadth first search uses additional memory because it's necessary to track the child nodes of all the nodes on a given level. 
+3. It means we need to track every node and its children in order. 
+
+## 12.5. Depth first search DFS introduction
+1. The search follows one branch of the tree down as many levels as possible until the target node is found or the end is reached. 
+2. When the search can't go on any further, it continues at the nearest ancestor with an unexplored child. 
+3. Depth first search has a lower memory requirement than breadth first search because it's not necessary to store all the child pointers at each level. 
+
+## 12.6. BFS vs DFS
+
+1. Both BFS and DFS have time complexity as o(n) as they both traverse all the nodes in a graph (or tree). 
+
+### 12.6.1. BFS breadth first search
+1. If you have additional information on the location of the target node and the node is likely in the upper level of a tree, a BFS is better.
+2. It's because BFS will search on the closest nodes first from the root node. 
+
+  | Pros          | Cons        |
+  | ------------- | ----------- |
+  | Shortest path | More memory |
+  | Closer nodes  |             |
+
+
+### 12.6.2. DFS depth first search
+1. If you know that the node is likely at the lower level of a tree, DFS would be a better approach.
+2. It can be used to check whether a path from the root node to the target node exists. 
+
+  | Pros             | Cons         |
+  | ---------------- | ------------ |
+  | Less memory      | Can get slow |
+  | Does path exist? |              |
+
+## 12.7. Exercise and solution: BFS vs DFS
+1. If you know a solution is not far from the root of the tree
+   1. Ans: BFS
+2. If the tree is very deep and solutions are rare
+   1. Ans: BFS ~~Ans: DFS~~
+   2. Using DFS would take much longer time. 
+   3. However, since the solution is rare, it can take much memory to traverse the tree. 
+3. If the tree is very wide
+   1. Ans: DFS ~~Ans: BFS~~
+   2. Using BFS will need much memory.
+4. If solutions are frequent but located deep in the tree
+   1. Ans: DFS
+5. Determining whether a path exists between 2 nodes
+   1. Ans: DFS
+6. Finding the shortest path
+   1. Ans: BFS
+
+## 12.8. BFS breadth first search
+1. In the method, we start from the `root` node and create an array `list` to take all the nodes traversed in the tree. 
+2. The `queue` is to track the current level we are at, so we can later access the children. 
+
+```ts
+function breadthFirstSearch(tree) {
+  let currentNode = tree.root;
+  let list = [];
+  let queue = [];
+
+  queue.push(currentNode);
+
+  while(queue.length > 0) {
+    currentNode = queue.shift();
+    list.push(currentNode.value);
+
+    if (currentNode.left) {
+      queue.push(currentNode.left)
+    }
+
+    if (currentNode.right) {
+      queue.push(currentNode.right)
+    }
+  }
+
+  return list;
+}
+```
+
+```ts
+class Node {
+  constructor(value) {
+    this.left = null;
+    this.right = null;
+    this.value = value;
+  }
+}
+
+class BinarySearchTree {
+  constructor() {
+    this.root = null;
+  }
+  insert(value) {
+    const newNode = new Node(value);
+
+    if (this.root === null) {
+      this.root = newNode;
+    } else {
+      let currentNode = this.root;
+      while (true) {
+        if (currentNode.value > value) {
+          // Left
+          if (!currentNode.left) {
+            currentNode.left = newNode;
+            return this;
+          }
+          currentNode = currentNode.left;
+        } else {
+          // Right
+          if (!currentNode.right) {
+            currentNode.right = newNode;
+            return this;
+          }
+          currentNode = currentNode.right;
+        }
+      }
+    }
+  }
+  lookup(value) {
+    if (!this.root) {
+      return false;
+    }
+    let currentNode = this.root;
+
+    while (currentNode) {
+      if (currentNode.value > value) {
+        // Left
+        currentNode = currentNode.left;
+      } else if (currentNode.value < value) {
+        // Right
+        currentNode = currentNode.right;
+      } else if (currentNode.value === value) {
+        return currentNode;
+      }
+    }
+    return false;
+  }
+
+  remove(value) {
+    if (!this.root) {
+      return false;
+    }
+    let currentNode = this.root;
+    let parentNode = null;
+    while (currentNode) {
+      if (value < currentNode.value) {
+        parentNode = currentNode;
+        currentNode = currentNode.left;
+      } else if (value > currentNode.value) {
+        parentNode = currentNode;
+        currentNode = currentNode.right;
+      } else if (currentNode.value === value) {
+        //We have a match, get to work!
+
+        //Option 1: No right child:
+        if (currentNode.right === null) {
+          if (parentNode === null) {
+            this.root = currentNode.left;
+          } else {
+            //if parent > current value, make current left child a child of parent
+            if (currentNode.value < parentNode.value) {
+              parentNode.left = currentNode.left;
+
+              //if parent < current value, make left child a right child of parent
+            } else if (currentNode.value > parentNode.value) {
+              parentNode.right = currentNode.left;
+            }
+          }
+
+          //Option 2: Right child which doesnt have a left child
+        } else if (currentNode.right.left === null) {
+          currentNode.right.left = currentNode.left;
+          if (parentNode === null) {
+            this.root = currentNode.right;
+          } else {
+            //if parent > current, make right child of the left the parent
+            if (currentNode.value < parentNode.value) {
+              parentNode.left = currentNode.right;
+
+              //if parent < current, make right child a right child of the parent
+            } else if (currentNode.value > parentNode.value) {
+              parentNode.right = currentNode.right;
+            }
+          }
+
+          //Option 3: Right child that has a left child
+        } else {
+          //find the Right child's left most child
+          let leftmost = currentNode.right.left;
+          let leftmostParent = currentNode.right;
+          while (leftmost.left !== null) {
+            leftmostParent = leftmost;
+            leftmost = leftmost.left;
+          }
+
+          //Parent's left subtree is now leftmost's right subtree
+          leftmostParent.left = leftmost.right;
+          leftmost.left = currentNode.left;
+          leftmost.right = currentNode.right;
+
+          if (parentNode === null) {
+            this.root = leftmost;
+          } else {
+            if (currentNode.value < parentNode.value) {
+              parentNode.left = leftmost;
+            } else if (currentNode.value > parentNode.value) {
+              parentNode.right = leftmost;
+            }
+          }
+        }
+        return true;
+      }
+    }
+  }
+
+  breadthFirstSearch() {
+    let currentNode = this.root;
+    let list = [];
+    let queue = [];
+
+    queue.push(currentNode);
+
+    while(queue.length > 0) {
+      currentNode = queue.shift();
+      list.push(currentNode.value);
+
+      if (currentNode.left) {
+        queue.push(currentNode.left)
+      }
+
+      if (currentNode.right) {
+        queue.push(currentNode.right)
+      }
+    }
+
+    return list;
+  }
+}
+
+const tree = new BinarySearchTree();
+tree.insert(9);
+tree.insert(4);
+tree.insert(6);
+tree.insert(20);
+tree.insert(170);
+tree.insert(15);
+tree.insert(1);
+tree.remove(170);
+JSON.stringify(traverse(tree.root));
+console.log(tree.lookup(20));
+//     9
+//  4     20
+//1  6  15  170
+
+function traverse(node) {
+  const tree = { value: node.value };
+  tree.left = node.left === null ? null : traverse(node.left);
+  tree.right = node.right === null ? null : traverse(node.right);
+  return tree;
+}
+```
+
+# 13. Dynamic programming
