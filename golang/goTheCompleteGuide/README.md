@@ -16,6 +16,7 @@
   - [1.15. Formatting floats in strings](#115-formatting-floats-in-strings)
   - [1.16. Creating formatted strings](#116-creating-formatted-strings)
   - [1.17. Building multi-line strings](#117-building-multi-line-strings)
+  - [1.18. Understanding functions](#118-understanding-functions)
 
 ---
 
@@ -277,3 +278,25 @@ func main() {
 1. By wrapping with double quotes `"`, we can have a string as one-liner.
 2. However, we can use backtick `\`` to create a string with multiple lines.
 3. In addition, in multi-line string, a line break character `\n` is not working any more and will become part of the string values.
+
+## 1.18. Understanding functions
+
+1. A function is only used when it's called.
+2. In Golang, all apps starts with a `main` function.
+3. Functions can be declared with keyword `func`.
+
+```go
+// main.go
+func main() {
+	outputText("Hello World")
+	outputMultiText("Hello", "World")
+}
+
+func outputText(text string) {
+	fmt.Print(text)
+}
+
+func outputMultiText(text, text2 string) {
+	fmt.Print(text, text2)
+}
+```
