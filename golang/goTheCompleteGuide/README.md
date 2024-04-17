@@ -17,6 +17,7 @@
   - [1.16. Creating formatted strings](#116-creating-formatted-strings)
   - [1.17. Building multi-line strings](#117-building-multi-line-strings)
   - [1.18. Understanding functions](#118-understanding-functions)
+  - [1.19. Functions: return value and variable scope](#119-functions-return-value-and-variable-scope)
 
 ---
 
@@ -300,3 +301,8 @@ func outputMultiText(text, text2 string) {
 	fmt.Print(text, text2)
 }
 ```
+
+## 1.19. Functions: return value and variable scope
+
+1. `const` and `var` can be put outside of a function.
+2. However, a function must be called in the other functions
