@@ -34,6 +34,7 @@
   - [1.33. Reading from files](#133-reading-from-files)
   - [1.34. Handling errors](#134-handling-errors)
   - [1.35. Time to panic](#135-time-to-panic)
+  - [1.36. Section exercise - the task](#136-section-exercise---the-task)
 
 ---
 
@@ -718,3 +719,5 @@ func main() {
 	}
 }
 ```
+
+## 1.36. Section exercise - the task
