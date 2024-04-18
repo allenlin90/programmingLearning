@@ -18,6 +18,7 @@
   - [1.17. Building multi-line strings](#117-building-multi-line-strings)
   - [1.18. Understanding functions](#118-understanding-functions)
   - [1.19. Functions: return value and variable scope](#119-functions-return-value-and-variable-scope)
+  - [1.20. An alternative return value syntax](#120-an-alternative-return-value-syntax)
 
 ---
 
@@ -305,4 +306,17 @@ func outputMultiText(text, text2 string) {
 ## 1.19. Functions: return value and variable scope
 
 1. `const` and `var` can be put outside of a function.
-2. However, a function must be called in the other functions
+2. When the variable is declared out of a function, the variable can be accessible in the entire code file.
+3. However, a function must be called in the other functions.
+4. A go function can only return multiple values if it's explicitly declared.
+
+```go
+func calculateFutureValues(investmentAmount, expectedReturnRate, years float64) (float64, float64) {
+	fv := investmentAmount * math.Pow((1 + expectedReturnRate / 100), years)
+	rfv := fv / math.Pow(1 + inflationRate / 100, years)
+
+	return fv, rfv
+}
+```
+
+## 1.20. An alternative return value syntax
