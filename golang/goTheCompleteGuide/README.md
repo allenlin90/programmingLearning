@@ -20,6 +20,20 @@
   - [1.19. Functions: return value and variable scope](#119-functions-return-value-and-variable-scope)
   - [1.20. An alternative return value syntax](#120-an-alternative-return-value-syntax)
   - [1.21. Exercise: working with functions](#121-exercise-working-with-functions)
+  - [1.22. Onwards to control structure](#122-onwards-to-control-structure)
+  - [1.23. Introducing "if" statement and booleans](#123-introducing-if-statement-and-booleans)
+  - [1.24. Working with "else if"](#124-working-with-else-if)
+  - [1.25. Exercise: "if" statements](#125-exercise-if-statements)
+  - [1.26. Using "else"](#126-using-else)
+  - [1.27. Nested "if" statements and using "return" to stop function](#127-nested-if-statements-and-using-return-to-stop-function)
+  - [1.28. Repeating code with "for" loops](#128-repeating-code-with-for-loops)
+  - [1.29. Infinite loops, "break" and "continue"](#129-infinite-loops-break-and-continue)
+  - [1.30. Conditional for loops](#130-conditional-for-loops)
+  - [1.31. Making sense of "switch" statements](#131-making-sense-of-switch-statements)
+  - [1.32. Writing to files](#132-writing-to-files)
+  - [1.33. Reading from files](#133-reading-from-files)
+  - [1.34. Handling errors](#134-handling-errors)
+  - [1.35. Time to panic](#135-time-to-panic)
 
 ---
 
@@ -369,5 +383,338 @@ func getUserInput(textInput string) float64 {
 	fmt.Scan(&userInput)
 
 	return userInput
+}
+```
+
+## 1.22. Onwards to control structure
+
+## 1.23. Introducing "if" statement and booleans
+
+## 1.24. Working with "else if"
+
+## 1.25. Exercise: "if" statements
+
+## 1.26. Using "else"
+
+## 1.27. Nested "if" statements and using "return" to stop function
+
+```go
+// bank.go
+package main
+
+import "fmt"
+
+func main() {
+	var accountBalance = 1000.0
+
+	fmt.Println("Welcome to Go Bank")
+	fmt.Println("What do you want to do?")
+	fmt.Println("1. Check balance")
+	fmt.Println("2. Deposit money")
+	fmt.Println("3. Withdraw money")
+	fmt.Println("4. Exit")
+
+	var choice int
+	fmt.Print("Your choice: ")
+	fmt.Scan(&choice)
+
+	// wantsCheckBalance := choice == 1
+
+	if choice == 1 {
+		fmt.Println("Your balance is", accountBalance)
+	} else if choice == 2 {
+		fmt.Println("Your deposit: ")
+		var depositAmount float64
+		fmt.Scan(&depositAmount)
+
+		if depositAmount <= 0 {
+			fmt.Println("Invalid amount. Must be greater than 0.")
+			return
+		}
+
+		accountBalance += depositAmount
+		fmt.Println("Balance updated! New amount: ", accountBalance)
+	} else if choice == 3 {
+		fmt.Println("Your deposit: ")
+		var withdrawalAmount float64
+		fmt.Scan(&withdrawalAmount)
+
+		if withdrawalAmount <= 0 {
+			fmt.Println("Invalid amount. Must be greater than 0.")
+			return
+		}
+
+		if withdrawalAmount > accountBalance {
+			fmt.Println("Invalid amount. You can't withdraw more than you have.")
+			return
+		}
+
+		accountBalance -= withdrawalAmount
+		fmt.Println("Balance updated! New amount: ", accountBalance)
+	} else {
+		fmt.Println("Goodbye!")
+	}
+
+	fmt.Println("Your choice:", choice)
+}
+```
+
+## 1.28. Repeating code with "for" loops
+
+## 1.29. Infinite loops, "break" and "continue"
+
+## 1.30. Conditional for loops
+
+## 1.31. Making sense of "switch" statements
+
+1. `for` loop is the only iteration for looping available in Golang.
+2. Unlike Javascript or the other programming language, Golang has no keyword `while` for infinite iteration.
+3. Instead, we can just declare a `for` loop without stopping it.
+4. On the other hand, besides a counter for regular `for` loops, we can give a boolean conditions as giving for `while` loop in the other languages to decide whether to continue or stop the iterations.
+5. Though we could use `break` keyword in `switch` statement, it doesn't break the iteration if it's nested in `for` loop.
+6. Therefore, we can stick to `if/else` statement for conditions in `for` loop.
+
+```go
+// bank.go
+package main
+
+import "fmt"
+
+func main() {
+	var accountBalance = 1000.0
+
+	fmt.Println("Welcome to Go Bank")
+
+	for {
+		fmt.Println("What do you want to do?")
+		fmt.Println("1. Check balance")
+		fmt.Println("2. Deposit money")
+		fmt.Println("3. Withdraw money")
+		fmt.Println("4. Exit")
+
+		var choice int
+		fmt.Print("Your choice: ")
+		fmt.Scan(&choice)
+
+		// wantsCheckBalance := choice == 1
+
+		if choice == 1 {
+			fmt.Println("Your balance is", accountBalance)
+		} else if choice == 2 {
+			fmt.Println("Your deposit: ")
+			var depositAmount float64
+			fmt.Scan(&depositAmount)
+
+			if depositAmount <= 0 {
+				fmt.Println("Invalid amount. Must be greater than 0.")
+				continue
+			}
+
+			accountBalance += depositAmount
+			fmt.Println("Balance updated! New amount: ", accountBalance)
+		} else if choice == 3 {
+			fmt.Println("Your deposit: ")
+			var withdrawalAmount float64
+			fmt.Scan(&withdrawalAmount)
+
+			if withdrawalAmount <= 0 {
+				fmt.Println("Invalid amount. Must be greater than 0.")
+				continue
+			}
+
+			if withdrawalAmount > accountBalance {
+				fmt.Println("Invalid amount. You can't withdraw more than you have.")
+				continue
+			}
+
+			accountBalance -= withdrawalAmount
+			fmt.Println("Balance updated! New amount: ", accountBalance)
+		} else {
+			fmt.Println("Goodbye!")
+			break
+		}
+
+		// switch choice {
+		// case 1:
+		// 	fmt.Println("Your balance is", accountBalance)
+		// case 2:
+		// 	fmt.Println("Your deposit: ")
+		// 	var depositAmount float64
+		// 	fmt.Scan(&depositAmount)
+
+		// 	if depositAmount <= 0 {
+		// 		fmt.Println("Invalid amount. Must be greater than 0.")
+		// 		continue
+		// 	}
+
+		// 	accountBalance += depositAmount
+		// 	fmt.Println("Balance updated! New amount: ", accountBalance)
+		// case 3:
+		// 	fmt.Println("Your deposit: ")
+		// 	var withdrawalAmount float64
+		// 	fmt.Scan(&withdrawalAmount)
+
+		// 	if withdrawalAmount <= 0 {
+		// 		fmt.Println("Invalid amount. Must be greater than 0.")
+		// 		continue
+		// 	}
+
+		// 	if withdrawalAmount > accountBalance {
+		// 		fmt.Println("Invalid amount. You can't withdraw more than you have.")
+		// 		continue
+		// 	}
+
+		// 	accountBalance -= withdrawalAmount
+		// 	fmt.Println("Balance updated! New amount: ", accountBalance)
+		// default:
+		// 	fmt.Println("Goodbye!")
+		// 	break
+		// }
+	}
+
+	fmt.Println("Thanks for choosing our bank")
+}
+```
+
+## 1.32. Writing to files
+
+## 1.33. Reading from files
+
+1. Similar to `fmt`, we can import `os` to work with file system of the local machine.
+2. `os.ReadFile` could cause an error if there's no existing file to read.
+3. However, in Golang, though the file is not read, the function simply returns an empty byte collection rather than crashing the app.
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
+
+const accountBalanceFile = "balance.txt"
+
+func getBalanceFromFile() float64 {
+	data, _ := os.ReadFile(accountBalanceFile)
+	balanceText := string(data)
+	balance, _ := strconv.ParseFloat(balanceText, 64)
+
+	return balance
+}
+
+func writeBalanceToFile(balance float64) {
+	balanceText := fmt.Sprint(balance)
+	os.WriteFile(accountBalanceFile, []byte(balanceText), 0644)
+}
+
+func main() {
+	var accountBalance = getBalanceFromFile()
+
+	fmt.Println("Welcome to Go Bank")
+
+	for {
+		fmt.Println("What do you want to do?")
+		fmt.Println("1. Check balance")
+		fmt.Println("2. Deposit money")
+		fmt.Println("3. Withdraw money")
+		fmt.Println("4. Exit")
+
+		var choice int
+		fmt.Print("Your choice: ")
+		fmt.Scan(&choice)
+
+		// wantsCheckBalance := choice == 1
+
+		switch choice {
+		case 1:
+			fmt.Println("Your balance is", accountBalance)
+		case 2:
+			fmt.Println("Your deposit: ")
+			var depositAmount float64
+			fmt.Scan(&depositAmount)
+
+			if depositAmount <= 0 {
+				fmt.Println("Invalid amount. Must be greater than 0.")
+				continue
+			}
+
+			accountBalance += depositAmount
+			fmt.Println("Balance updated! New amount: ", accountBalance)
+			writeBalanceToFile(accountBalance)
+		case 3:
+			fmt.Println("Your deposit: ")
+			var withdrawalAmount float64
+			fmt.Scan(&withdrawalAmount)
+
+			if withdrawalAmount <= 0 {
+				fmt.Println("Invalid amount. Must be greater than 0.")
+				continue
+			}
+
+			if withdrawalAmount > accountBalance {
+				fmt.Println("Invalid amount. You can't withdraw more than you have.")
+				continue
+			}
+
+			accountBalance -= withdrawalAmount
+			fmt.Println("Balance updated! New amount: ", accountBalance)
+			writeBalanceToFile(accountBalance)
+		default:
+			fmt.Println("Goodbye!")
+			fmt.Println("Thanks for choosing our bank")
+			return
+		}
+	}
+}
+```
+
+## 1.34. Handling errors
+
+## 1.35. Time to panic
+
+1. Therefore, we will get `0` in this case without error handling if the file doesn't exist.
+2. In go, if a function can fail, it's very common to return a 2nd value `error`.
+3. Besides simply `return` and stop code execution, we can use `panic()` function to print error message in the console.
+4. `panic()` will print the location of the code in the code file where an error happens.
+
+```go
+// bank.go
+import (
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+const accountBalanceFile = "balance.txt"
+
+func getBalanceFromFile() (float64, error) {
+	data, err := os.ReadFile(accountBalanceFile)
+
+	if err != nil {
+		return 1000, errors.New("Failed to find balance file.")
+	}
+
+	balanceText := string(data)
+	balance, err := strconv.ParseFloat(balanceText, 64)
+
+	if err != nil {
+		return 1000, errors.New("Failed to parse stored balance value.")
+	}
+
+	return balance, nil
+}
+
+func main() {
+	var accountBalance, err = getBalanceFromFile()
+
+	if err != nil {
+		fmt.Println("ERROR")
+		fmt.Println(err)
+		fmt.Println("--------")
+		// return
+		panic("Can't continue, sorry.")
+	}
 }
 ```
