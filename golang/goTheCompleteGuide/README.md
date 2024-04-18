@@ -35,6 +35,14 @@
   - [1.34. Handling errors](#134-handling-errors)
   - [1.35. Time to panic](#135-time-to-panic)
   - [1.36. Section exercise - the task](#136-section-exercise---the-task)
+- [2. Working with packages](#2-working-with-packages)
+  - [2.1. Splitting code across files in the same package](#21-splitting-code-across-files-in-the-same-package)
+  - [2.2. Why would you use more than one package](#22-why-would-you-use-more-than-one-package)
+  - [2.3. Preparing code for multiple packages](#23-preparing-code-for-multiple-packages)
+  - [2.4. Splitting code across multiple packages](#24-splitting-code-across-multiple-packages)
+  - [2.5. Importing packages](#25-importing-packages)
+  - [2.6. Exporting and importing identifiers (variables, function)](#26-exporting-and-importing-identifiers-variables-function)
+  - [2.7. Using third party packages](#27-using-third-party-packages)
 
 ---
 
@@ -785,5 +793,238 @@ func getUserInput(textInput string) (float64, error) {
 	}
 
 	return userInput, nil
+}
+```
+
+# 2. Working with packages
+
+## 2.1. Splitting code across files in the same package
+
+1. We can split code into multiple files without explicitly import to use as long as long they are in the same package such as `main`.
+
+## 2.2. Why would you use more than one package
+
+1. Splitting code into different packages can be beneficial for code re-use, especially for utility functions which can be used across multiple apps or projects.
+2. For example, the read/write file functions in the previous sections could be a good example to have its standalone package.
+
+## 2.3. Preparing code for multiple packages
+
+## 2.4. Splitting code across multiple packages
+
+1. In the split code file, we can have the other package file name.
+
+## 2.5. Importing packages
+
+## 2.6. Exporting and importing identifiers (variables, function)
+
+1. In the `main` package and function where to use the other packages, we need to explicitly declare the module name we declared in `go.mod` such as `module example.com/bank` in this case.
+2. However, all functions and constants from the other packages must start with a capital letter as we use `fmt.Print` that `P` from `fmt` is always an uppercase.
+
+```bash
+module example.com/bank
+
+go 1.19
+```
+
+```go
+// /fileops/fileops.go
+package fileops
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+func GetFloatFromFile(fileName string) (float64, error) {
+	data, err := os.ReadFile(fileName)
+
+	if err != nil {
+		return 1000, errors.New("Failed to find file.")
+	}
+
+	valueText := string(data)
+	value, err := strconv.ParseFloat(valueText, 64)
+
+	if err != nil {
+		return 1000, errors.New("Failed to parse stored value.")
+	}
+
+	return value, nil
+}
+
+func WriteFloatToFile(value float64, fileName string) {
+	valueText := fmt.Sprint(value)
+	os.WriteFile(fileName, []byte(valueText), 0644)
+}
+```
+
+```go
+// /bank.go
+package main
+
+import (
+	"fmt"
+	"example.com/bank/fileops"
+)
+
+const accountBalanceFile = "balance.txt"
+
+func main() {
+	var accountBalance, err = fileops.GetFloatFromFile(accountBalanceFile)
+
+	if err != nil {
+		fmt.Println("ERROR")
+		fmt.Println(err)
+		fmt.Println("--------")
+	}
+
+	fmt.Println("Welcome to Go Bank")
+
+	for {
+		fmt.Println("What do you want to do?")
+		fmt.Println("1. Check balance")
+		fmt.Println("2. Deposit money")
+		fmt.Println("3. Withdraw money")
+		fmt.Println("4. Exit")
+
+		var choice int
+		fmt.Print("Your choice: ")
+		fmt.Scan(&choice)
+
+		// wantsCheckBalance := choice == 1
+
+		switch choice {
+		case 1:
+			fmt.Println("Your balance is", accountBalance)
+		case 2:
+			fmt.Println("Your deposit: ")
+			var depositAmount float64
+			fmt.Scan(&depositAmount)
+
+			if depositAmount <= 0 {
+				fmt.Println("Invalid amount. Must be greater than 0.")
+				continue
+			}
+
+			accountBalance += depositAmount
+			fmt.Println("Balance updated! New amount: ", accountBalance)
+			fileops.WriteFloatToFile(accountBalance, accountBalanceFile)
+		case 3:
+			fmt.Println("Your deposit: ")
+			var withdrawalAmount float64
+			fmt.Scan(&withdrawalAmount)
+
+			if withdrawalAmount <= 0 {
+				fmt.Println("Invalid amount. Must be greater than 0.")
+				continue
+			}
+
+			if withdrawalAmount > accountBalance {
+				fmt.Println("Invalid amount. You can't withdraw more than you have.")
+				continue
+			}
+
+			accountBalance -= withdrawalAmount
+			fmt.Println("Balance updated! New amount: ", accountBalance)
+			fileops.WriteFloatToFile(accountBalance, accountBalanceFile)
+		default:
+			fmt.Println("Goodbye!")
+			fmt.Println("Thanks for choosing our bank")
+			return
+		}
+	}
+}
+```
+
+## 2.7. Using third party packages
+
+1. We can find and search existing external packages at [https://pkg.go.dev/](https://pkg.go.dev/).
+2. For example, we can generate random data from [https://pkg.go.dev/github.com/Pallinder/go-randomdata](https://pkg.go.dev/github.com/Pallinder/go-randomdata).
+3. To install the package, we can use `go get [package_link]`.
+4. After installing the package, we can notice `go.mod` is modified to `require` the package.
+5. If the project is cloned to run on the other machine, we can just `go get` to install the listed packages before executing the app.
+6. To use the 3rd party package, we also need to import in the `main` file with as using the local custom package.
+
+```go
+// bank.go
+package main
+
+import (
+	"fmt"
+
+	"example.com/bank/fileops"
+	"github.com/Pallinder/go-randomdata"
+)
+
+const accountBalanceFile = "balance.txt"
+
+func main() {
+	var accountBalance, err = fileops.GetFloatFromFile(accountBalanceFile)
+
+	if err != nil {
+		fmt.Println("ERROR")
+		fmt.Println(err)
+		fmt.Println("--------")
+	}
+
+	fmt.Println("Welcome to Go Bank")
+
+	fmt.Println("Reach us 24/7", randomdata.PhoneNumber())
+
+	for {
+		fmt.Println("What do you want to do?")
+		fmt.Println("1. Check balance")
+		fmt.Println("2. Deposit money")
+		fmt.Println("3. Withdraw money")
+		fmt.Println("4. Exit")
+
+		var choice int
+		fmt.Print("Your choice: ")
+		fmt.Scan(&choice)
+
+		// wantsCheckBalance := choice == 1
+
+		switch choice {
+		case 1:
+			fmt.Println("Your balance is", accountBalance)
+		case 2:
+			fmt.Println("Your deposit: ")
+			var depositAmount float64
+			fmt.Scan(&depositAmount)
+
+			if depositAmount <= 0 {
+				fmt.Println("Invalid amount. Must be greater than 0.")
+				continue
+			}
+
+			accountBalance += depositAmount
+			fmt.Println("Balance updated! New amount: ", accountBalance)
+			fileops.WriteFloatToFile(accountBalance, accountBalanceFile)
+		case 3:
+			fmt.Println("Your deposit: ")
+			var withdrawalAmount float64
+			fmt.Scan(&withdrawalAmount)
+
+			if withdrawalAmount <= 0 {
+				fmt.Println("Invalid amount. Must be greater than 0.")
+				continue
+			}
+
+			if withdrawalAmount > accountBalance {
+				fmt.Println("Invalid amount. You can't withdraw more than you have.")
+				continue
+			}
+
+			accountBalance -= withdrawalAmount
+			fmt.Println("Balance updated! New amount: ", accountBalance)
+			fileops.WriteFloatToFile(accountBalance, accountBalanceFile)
+		default:
+			fmt.Println("Goodbye!")
+			fmt.Println("Thanks for choosing our bank")
+			return
+		}
+	}
 }
 ```
