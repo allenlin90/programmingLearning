@@ -19,6 +19,7 @@
   - [1.18. Understanding functions](#118-understanding-functions)
   - [1.19. Functions: return value and variable scope](#119-functions-return-value-and-variable-scope)
   - [1.20. An alternative return value syntax](#120-an-alternative-return-value-syntax)
+  - [1.21. Exercise: working with functions](#121-exercise-working-with-functions)
 
 ---
 
@@ -320,3 +321,53 @@ func calculateFutureValues(investmentAmount, expectedReturnRate, years float64) 
 ```
 
 ## 1.20. An alternative return value syntax
+
+1. We can declare variable name for return value of a function.
+2. Instead of declaring variables in the same name as the return values, we can assign values to the variables which will be returned.
+3. Besides, we can simply give `return` keyword without explicitly returning the variables.
+
+```go
+func calculateFutureValues(investmentAmount, expectedReturnRate, years float64) (fv float64, rfv float64) {
+	// use '=' to assign rather than ':=' to declare
+	fv = investmentAmount * math.Pow((1 + expectedReturnRate / 100), years)
+	rfv = fv / math.Pow(1 + inflationRate / 100, years)
+
+	return
+}
+```
+
+## 1.21. Exercise: working with functions
+
+```go
+package main
+
+import "fmt"
+
+func profit() {
+	revenue := getUserInput("What's your revenue?")
+	expenses := getUserInput("What's your expenses?")
+	taxRate := getUserInput("What's your tax rate?")
+
+	ebt, profit, ratio := calculateFinancials(revenue, expenses, taxRate)
+
+	fmt.Printf("%.1f\n", ebt)
+	fmt.Printf("%.1f\n", profit)
+	fmt.Printf("%.3f\n", ratio)
+}
+
+func calculateFinancials(revenue, expenses, taxRate float64) (float64, float64, float64) {
+	ebt := revenue - expenses
+	profit := ebt * (1 - taxRate / 100)
+	ratio := ebt / profit
+
+	return ebt, profit, ratio
+}
+
+func getUserInput(textInput string) float64 {
+	var userInput float64
+	fmt.Print(textInput)
+	fmt.Scan(&userInput)
+
+	return userInput
+}
+```
