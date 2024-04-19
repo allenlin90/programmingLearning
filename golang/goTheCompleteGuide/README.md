@@ -43,6 +43,13 @@
   - [2.5. Importing packages](#25-importing-packages)
   - [2.6. Exporting and importing identifiers (variables, function)](#26-exporting-and-importing-identifiers-variables-function)
   - [2.7. Using third party packages](#27-using-third-party-packages)
+- [3. Pointers](#3-pointers)
+  - [3.1. Understanding pointers](#31-understanding-pointers)
+  - [3.2. Writing code without pointers](#32-writing-code-without-pointers)
+  - [3.3. Creating a pointer](#33-creating-a-pointer)
+  - [3.4. Pointers as values](#34-pointers-as-values)
+  - [3.5. Using pointers and passing pointers to functions](#35-using-pointers-and-passing-pointers-to-functions)
+  - [3.6. Using pointers for data mutation](#36-using-pointers-for-data-mutation)
 
 ---
 
@@ -1026,5 +1033,70 @@ func main() {
 			return
 		}
 	}
+}
+```
+
+# 3. Pointers
+
+## 3.1. Understanding pointers
+
+1. Pointers are variables that store value `addresses` instead of values.
+2. These pointers are similar to the concept for variables assigned objects in Javascript.
+
+   ```ts
+   // Javascript
+   const obj1 = {};
+   const obj2 = obj1;
+   const obj3 = {};
+
+   obj1 === obj2; // true
+   obj1 === obj3; // false
+   obj2 === obj3; // false
+   ```
+
+3. By using pointers, we can avoid unnecessary value copies
+   1. When we pass a variable as an argument to a function in go, go copies the value in the function context.
+   2. Therefore, until the function finishes and go runtime garbage collects the unused values, there will be 2 copies of the same value.
+   3. If the value is large and complex, it may take up too much memory unnecessarily.
+4. On the other hand, we can directly mutate values and the functions mutating the value don't need to return a value.
+
+## 3.2. Writing code without pointers
+
+## 3.3. Creating a pointer
+
+## 3.4. Pointers as values
+
+## 3.5. Using pointers and passing pointers to functions
+
+## 3.6. Using pointers for data mutation
+
+1. To pass a pointer of its value, we can put an asterisk `*` at front to indicate that we are using the value at the address, not the address itself.
+2. In the function, we need to modify the argument to indicate that the incoming argument is a pointer.
+3. Besides, to use the value, we also need to put an asterisk on the argument variable.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	age := 32 // regular variable
+
+	agePointer := &age
+
+	fmt.Println("Age:", *agePointer)
+
+	adultYears := getAdultYears(agePointer)
+	fmt.Println(adultYears)
+	editAgeToAdultYears(agePointer)
+	fmt.Println(age)
+}
+
+func getAdultYears(age *int) int {
+	return *age - 18
+}
+
+func editAgeToAdultYears(age *int) {
+	*age -= 18
 }
 ```
