@@ -50,6 +50,30 @@
   - [3.4. Pointers as values](#34-pointers-as-values)
   - [3.5. Using pointers and passing pointers to functions](#35-using-pointers-and-passing-pointers-to-functions)
   - [3.6. Using pointers for data mutation](#36-using-pointers-for-data-mutation)
+- [4. Structs and custom types](#4-structs-and-custom-types)
+  - [4.1. Which problem do structs solve](#41-which-problem-do-structs-solve)
+  - [4.2. Defining a struct type](#42-defining-a-struct-type)
+  - [4.3. Instantiating structs and structs literal notation](#43-instantiating-structs-and-structs-literal-notation)
+  - [4.4. Alternative struct literal notation and struct null values](#44-alternative-struct-literal-notation-and-struct-null-values)
+  - [4.5. Passing struct values as arguments](#45-passing-struct-values-as-arguments)
+  - [4.6. Struct and pointers](#46-struct-and-pointers)
+  - [4.7. Introducing methods](#47-introducing-methods)
+  - [4.8. Mutation methods](#48-mutation-methods)
+  - [4.9. Using creation/constructor functions](#49-using-creationconstructor-functions)
+  - [4.10. Using constructor functions for validation](#410-using-constructor-functions-for-validation)
+  - [4.11. Structs, packages and exports](#411-structs-packages-and-exports)
+  - [4.12. Exposing methods and a different constructor function](#412-exposing-methods-and-a-different-constructor-function)
+  - [4.13. Struct embedding](#413-struct-embedding)
+  - [4.14. Exposing methods and a different constructor function](#414-exposing-methods-and-a-different-constructor-function)
+  - [4.15. Struct embedding](#415-struct-embedding)
+  - [4.16. Creating other custom types and adding methods](#416-creating-other-custom-types-and-adding-methods)
+  - [4.17. Practice: Getting user input](#417-practice-getting-user-input)
+  - [4.18. Practice: Creating a struct and constructor function](#418-practice-creating-a-struct-and-constructor-function)
+  - [4.19. Practice: Adding a method](#419-practice-adding-a-method)
+  - [4.20. Practice: Handling long user input text](#420-practice-handling-long-user-input-text)
+  - [4.21. Practice: Preparing save to file functionality](#421-practice-preparing-save-to-file-functionality)
+  - [4.22. Practice: Encoding JSON content](#422-practice-encoding-json-content)
+  - [4.23. Understanding Struct tags](#423-understanding-struct-tags)
 
 ---
 
@@ -1100,3 +1124,51 @@ func editAgeToAdultYears(age *int) {
 	*age -= 18
 }
 ```
+
+# 4. Structs and custom types
+
+## 4.1. Which problem do structs solve
+
+## 4.2. Defining a struct type
+
+## 4.3. Instantiating structs and structs literal notation
+
+## 4.4. Alternative struct literal notation and struct null values
+
+## 4.5. Passing struct values as arguments
+
+## 4.6. Struct and pointers
+
+## 4.7. Introducing methods
+
+## 4.8. Mutation methods
+
+## 4.9. Using creation/constructor functions
+
+## 4.10. Using constructor functions for validation
+
+## 4.11. Structs, packages and exports
+
+## 4.12. Exposing methods and a different constructor function
+
+## 4.13. Struct embedding
+
+## 4.14. Exposing methods and a different constructor function
+
+## 4.15. Struct embedding
+
+## 4.16. Creating other custom types and adding methods
+
+## 4.17. Practice: Getting user input
+
+## 4.18. Practice: Creating a struct and constructor function
+
+## 4.19. Practice: Adding a method
+
+## 4.20. Practice: Handling long user input text
+
+## 4.21. Practice: Preparing save to file functionality
+
+## 4.22. Practice: Encoding JSON content
+
+## 4.23. Understanding Struct tags
