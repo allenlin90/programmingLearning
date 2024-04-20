@@ -1,79 +1,84 @@
 - [1. Go Essentials](#1-go-essentials)
-  - [1.1. Working with functions and values](#11-working-with-functions-and-values)
-  - [1.2. Organizing code with packages](#12-organizing-code-with-packages)
-  - [1.3. The important of the name "main"](#13-the-important-of-the-name-main)
-  - [1.4. Understand Go modules and build Go programs](#14-understand-go-modules-and-build-go-programs)
-  - [1.5. The main function is important](#15-the-main-function-is-important)
-  - [1.6. Onwards to a new project](#16-onwards-to-a-new-project)
-  - [1.7. Working with variables, values, and operators](#17-working-with-variables-values-and-operators)
-  - [1.8. Understanding value types](#18-understanding-value-types)
-  - [1.9. Type conversions and explicit type assignment](#19-type-conversions-and-explicit-type-assignment)
-  - [1.10. Using alternative variable declaration types](#110-using-alternative-variable-declaration-types)
-  - [1.11. Making sense of constant values](#111-making-sense-of-constant-values)
-  - [1.12. Understanding the importance of variables](#112-understanding-the-importance-of-variables)
-  - [1.13. Improved user input fetching](#113-improved-user-input-fetching)
-  - [1.14. Formatting strings - Basics](#114-formatting-strings---basics)
-  - [1.15. Formatting floats in strings](#115-formatting-floats-in-strings)
-  - [1.16. Creating formatted strings](#116-creating-formatted-strings)
-  - [1.17. Building multi-line strings](#117-building-multi-line-strings)
-  - [1.18. Understanding functions](#118-understanding-functions)
-  - [1.19. Functions: return value and variable scope](#119-functions-return-value-and-variable-scope)
-  - [1.20. An alternative return value syntax](#120-an-alternative-return-value-syntax)
-  - [1.21. Exercise: working with functions](#121-exercise-working-with-functions)
-  - [1.22. Onwards to control structure](#122-onwards-to-control-structure)
-  - [1.23. Introducing "if" statement and booleans](#123-introducing-if-statement-and-booleans)
-  - [1.24. Working with "else if"](#124-working-with-else-if)
-  - [1.25. Exercise: "if" statements](#125-exercise-if-statements)
-  - [1.26. Using "else"](#126-using-else)
-  - [1.27. Nested "if" statements and using "return" to stop function](#127-nested-if-statements-and-using-return-to-stop-function)
-  - [1.28. Repeating code with "for" loops](#128-repeating-code-with-for-loops)
-  - [1.29. Infinite loops, "break" and "continue"](#129-infinite-loops-break-and-continue)
-  - [1.30. Conditional for loops](#130-conditional-for-loops)
-  - [1.31. Making sense of "switch" statements](#131-making-sense-of-switch-statements)
-  - [1.32. Writing to files](#132-writing-to-files)
-  - [1.33. Reading from files](#133-reading-from-files)
-  - [1.34. Handling errors](#134-handling-errors)
-  - [1.35. Time to panic](#135-time-to-panic)
-  - [1.36. Section exercise - the task](#136-section-exercise---the-task)
+	- [1.1. Working with functions and values](#11-working-with-functions-and-values)
+	- [1.2. Organizing code with packages](#12-organizing-code-with-packages)
+	- [1.3. The important of the name "main"](#13-the-important-of-the-name-main)
+	- [1.4. Understand Go modules and build Go programs](#14-understand-go-modules-and-build-go-programs)
+	- [1.5. The main function is important](#15-the-main-function-is-important)
+	- [1.6. Onwards to a new project](#16-onwards-to-a-new-project)
+	- [1.7. Working with variables, values, and operators](#17-working-with-variables-values-and-operators)
+	- [1.8. Understanding value types](#18-understanding-value-types)
+	- [1.9. Type conversions and explicit type assignment](#19-type-conversions-and-explicit-type-assignment)
+	- [1.10. Using alternative variable declaration types](#110-using-alternative-variable-declaration-types)
+	- [1.11. Making sense of constant values](#111-making-sense-of-constant-values)
+	- [1.12. Understanding the importance of variables](#112-understanding-the-importance-of-variables)
+	- [1.13. Improved user input fetching](#113-improved-user-input-fetching)
+	- [1.14. Formatting strings - Basics](#114-formatting-strings---basics)
+	- [1.15. Formatting floats in strings](#115-formatting-floats-in-strings)
+	- [1.16. Creating formatted strings](#116-creating-formatted-strings)
+	- [1.17. Building multi-line strings](#117-building-multi-line-strings)
+	- [1.18. Understanding functions](#118-understanding-functions)
+	- [1.19. Functions: return value and variable scope](#119-functions-return-value-and-variable-scope)
+	- [1.20. An alternative return value syntax](#120-an-alternative-return-value-syntax)
+	- [1.21. Exercise: working with functions](#121-exercise-working-with-functions)
+	- [1.22. Onwards to control structure](#122-onwards-to-control-structure)
+	- [1.23. Introducing "if" statement and booleans](#123-introducing-if-statement-and-booleans)
+	- [1.24. Working with "else if"](#124-working-with-else-if)
+	- [1.25. Exercise: "if" statements](#125-exercise-if-statements)
+	- [1.26. Using "else"](#126-using-else)
+	- [1.27. Nested "if" statements and using "return" to stop function](#127-nested-if-statements-and-using-return-to-stop-function)
+	- [1.28. Repeating code with "for" loops](#128-repeating-code-with-for-loops)
+	- [1.29. Infinite loops, "break" and "continue"](#129-infinite-loops-break-and-continue)
+	- [1.30. Conditional for loops](#130-conditional-for-loops)
+	- [1.31. Making sense of "switch" statements](#131-making-sense-of-switch-statements)
+	- [1.32. Writing to files](#132-writing-to-files)
+	- [1.33. Reading from files](#133-reading-from-files)
+	- [1.34. Handling errors](#134-handling-errors)
+	- [1.35. Time to panic](#135-time-to-panic)
+	- [1.36. Section exercise - the task](#136-section-exercise---the-task)
 - [2. Working with packages](#2-working-with-packages)
-  - [2.1. Splitting code across files in the same package](#21-splitting-code-across-files-in-the-same-package)
-  - [2.2. Why would you use more than one package](#22-why-would-you-use-more-than-one-package)
-  - [2.3. Preparing code for multiple packages](#23-preparing-code-for-multiple-packages)
-  - [2.4. Splitting code across multiple packages](#24-splitting-code-across-multiple-packages)
-  - [2.5. Importing packages](#25-importing-packages)
-  - [2.6. Exporting and importing identifiers (variables, function)](#26-exporting-and-importing-identifiers-variables-function)
-  - [2.7. Using third party packages](#27-using-third-party-packages)
+	- [2.1. Splitting code across files in the same package](#21-splitting-code-across-files-in-the-same-package)
+	- [2.2. Why would you use more than one package](#22-why-would-you-use-more-than-one-package)
+	- [2.3. Preparing code for multiple packages](#23-preparing-code-for-multiple-packages)
+	- [2.4. Splitting code across multiple packages](#24-splitting-code-across-multiple-packages)
+	- [2.5. Importing packages](#25-importing-packages)
+	- [2.6. Exporting and importing identifiers (variables, function)](#26-exporting-and-importing-identifiers-variables-function)
+	- [2.7. Using third party packages](#27-using-third-party-packages)
 - [3. Pointers](#3-pointers)
-  - [3.1. Understanding pointers](#31-understanding-pointers)
-  - [3.2. Writing code without pointers](#32-writing-code-without-pointers)
-  - [3.3. Creating a pointer](#33-creating-a-pointer)
-  - [3.4. Pointers as values](#34-pointers-as-values)
-  - [3.5. Using pointers and passing pointers to functions](#35-using-pointers-and-passing-pointers-to-functions)
-  - [3.6. Using pointers for data mutation](#36-using-pointers-for-data-mutation)
+	- [3.1. Understanding pointers](#31-understanding-pointers)
+	- [3.2. Writing code without pointers](#32-writing-code-without-pointers)
+	- [3.3. Creating a pointer](#33-creating-a-pointer)
+	- [3.4. Pointers as values](#34-pointers-as-values)
+	- [3.5. Using pointers and passing pointers to functions](#35-using-pointers-and-passing-pointers-to-functions)
+	- [3.6. Using pointers for data mutation](#36-using-pointers-for-data-mutation)
 - [4. Structs and custom types](#4-structs-and-custom-types)
-  - [4.1. Which problem do structs solve](#41-which-problem-do-structs-solve)
-  - [4.2. Defining a struct type](#42-defining-a-struct-type)
-  - [4.3. Instantiating structs and structs literal notation](#43-instantiating-structs-and-structs-literal-notation)
-  - [4.4. Alternative struct literal notation and struct null values](#44-alternative-struct-literal-notation-and-struct-null-values)
-  - [4.5. Passing struct values as arguments](#45-passing-struct-values-as-arguments)
-  - [4.6. Struct and pointers](#46-struct-and-pointers)
-  - [4.7. Introducing methods](#47-introducing-methods)
-  - [4.8. Mutation methods](#48-mutation-methods)
-  - [4.9. Using creation/constructor functions](#49-using-creationconstructor-functions)
-  - [4.10. Using constructor functions for validation](#410-using-constructor-functions-for-validation)
-  - [4.11. Structs, packages and exports](#411-structs-packages-and-exports)
-  - [4.12. Exposing methods and a different constructor function](#412-exposing-methods-and-a-different-constructor-function)
-  - [4.13. Struct embedding](#413-struct-embedding)
-  - [4.14. Exposing methods and a different constructor function](#414-exposing-methods-and-a-different-constructor-function)
-  - [4.15. Struct embedding](#415-struct-embedding)
-  - [4.16. Creating other custom types and adding methods](#416-creating-other-custom-types-and-adding-methods)
-  - [4.17. Practice: Getting user input](#417-practice-getting-user-input)
-  - [4.18. Practice: Creating a struct and constructor function](#418-practice-creating-a-struct-and-constructor-function)
-  - [4.19. Practice: Adding a method](#419-practice-adding-a-method)
-  - [4.20. Practice: Handling long user input text](#420-practice-handling-long-user-input-text)
-  - [4.21. Practice: Preparing save to file functionality](#421-practice-preparing-save-to-file-functionality)
-  - [4.22. Practice: Encoding JSON content](#422-practice-encoding-json-content)
-  - [4.23. Understanding Struct tags](#423-understanding-struct-tags)
+	- [4.1. Which problem do structs solve](#41-which-problem-do-structs-solve)
+	- [4.2. Defining a struct type](#42-defining-a-struct-type)
+	- [4.3. Instantiating structs and structs literal notation](#43-instantiating-structs-and-structs-literal-notation)
+	- [4.4. Alternative struct literal notation and struct null values](#44-alternative-struct-literal-notation-and-struct-null-values)
+	- [4.5. Passing struct values as arguments](#45-passing-struct-values-as-arguments)
+	- [4.6. Struct and pointers](#46-struct-and-pointers)
+	- [4.7. Introducing methods](#47-introducing-methods)
+	- [4.8. Mutation methods](#48-mutation-methods)
+	- [4.9. Using creation/constructor functions](#49-using-creationconstructor-functions)
+	- [4.10. Using constructor functions for validation](#410-using-constructor-functions-for-validation)
+	- [4.11. Structs, packages and exports](#411-structs-packages-and-exports)
+	- [4.12. Exposing methods and a different constructor function](#412-exposing-methods-and-a-different-constructor-function)
+	- [4.13. Struct embedding](#413-struct-embedding)
+	- [4.14. Exposing methods and a different constructor function](#414-exposing-methods-and-a-different-constructor-function)
+	- [4.15. Struct embedding](#415-struct-embedding)
+	- [4.16. Creating other custom types and adding methods](#416-creating-other-custom-types-and-adding-methods)
+	- [4.17. Practice: Getting user input](#417-practice-getting-user-input)
+	- [4.18. Practice: Creating a struct and constructor function](#418-practice-creating-a-struct-and-constructor-function)
+	- [4.19. Practice: Adding a method](#419-practice-adding-a-method)
+	- [4.20. Practice: Handling long user input text](#420-practice-handling-long-user-input-text)
+	- [4.21. Practice: Preparing save to file functionality](#421-practice-preparing-save-to-file-functionality)
+	- [4.22. Practice: Encoding JSON content](#422-practice-encoding-json-content)
+	- [4.23. Understanding Struct tags](#423-understanding-struct-tags)
+- [5. Course project: Build a REST API](#5-course-project-build-a-rest-api)
+	- [5.1. Planning the API](#51-planning-the-api)
+	- [5.2. Installing the GIN framework](#52-installing-the-gin-framework)
+	- [5.3. Setting up a first route and handling a first request](#53-setting-up-a-first-route-and-handling-a-first-request)
+	- [5.4. Setting up an event model](#54-setting-up-an-event-model)
 
 ---
 
@@ -1172,3 +1177,79 @@ func editAgeToAdultYears(age *int) {
 ## 4.22. Practice: Encoding JSON content
 
 ## 4.23. Understanding Struct tags
+
+# 5. Course project: Build a REST API
+
+## 5.1. Planning the API
+1. Event booking REST API
+   1. GET `/events` - Get list of available events
+   2. GET `/events/:id` - Get an available event
+   3. POST `/events` - Create a new bookable event **Auth Required** 
+   4. PUT `/events/:id` - Update an event **Auth Required** **Only by Creator**
+   5. DELETE `/events/:id` - Delete an event **Auth Required** **Only by Creator**
+   6. POST `/signup` - Create new user
+   7. POST `/login` - Authenticate user **Auth token (JWT)**
+   8. POST `/events/:id/register` - Register user for event **Auth Required**
+   9.  DELETE `/events/:id/register` - Cancel registration **Auth Required**
+
+## 5.2. Installing the GIN framework
+1. To accept http requests, we can use [`http`](https://pkg.go.dev/net/http) package from go standard library library.
+2. However, since we want a more comprehensive feature to build the app, we can use [`gin`](https://pkg.go.dev/github.com/gin-gonic/gin) package which is a HTTP web framework similar to `express` for `Node.js`. 
+3. To install, we can use `go get -u github.com/gin-gonic/gin`. 
+
+## 5.3. Setting up a first route and handling a first request
+1. After importing the package, we can use `gin.Default()` which **returns an Engine instance with the Logger and Recovery middleware already attached**.
+2. We can give a port to receive such as `server.Run(:8080)` to allow the process receiving requests on port `8080`. 
+3. On the `server` instance, we can use http verbs to define routes and handler function. For example, `server.GET("/route", route_handler)`
+4. In the route handler, we can use `context` which is `gin.Context` type that we can check on the request and respond to the request. 
+5. To handle the request, we can use `context.JSON()` to respond in JSON.
+6. This `context.JSON` take 2 arguments, http status code and the response payload. 
+7. Besides explicitly giving the status code in numbers such as `200`, we can use `http` package from go standard library, such as `http.StatusOK` which stands for `200`. 
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	server := gin.Default()
+
+	server.GET("/events", getEvents)
+
+	server.Run(":8080") // localhost:8080
+}
+
+func getEvents(context *gin.Context) {
+	context.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+}
+```
+
+## 5.4. Setting up an event model
+
+```go
+// models/event.go
+package models
+
+import "time"
+
+type Event struct {
+	ID          int
+	Name        string
+	Description string
+	Location    string
+	DateTime    time.Time
+	UserID 			int
+}
+
+var events []Event = []Event{}
+
+func (e Event) Save() {
+	// TODO: add it to a database
+
+	events = append(events, e)
+}
+```
