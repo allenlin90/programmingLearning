@@ -1134,6 +1134,8 @@ func editAgeToAdultYears(age *int) {
 
 ## 4.1. Which problem do structs solve
 
+1. Similar to `objects` and `maps` in Javascript, `Struct` in golang helps to prevent passing multiple arguments to a function in specific order and explicitly redeclare typings multiple times.
+
 ## 4.2. Defining a struct type
 
 ## 4.3. Instantiating structs and structs literal notation
@@ -1144,13 +1146,190 @@ func editAgeToAdultYears(age *int) {
 
 ## 4.6. Struct and pointers
 
+1. To initiate a `struct`, we can assign it to a variable and use curly braces for the values. 
+2. We then can assign the values to the keys. 
+3. On the other hand, we can assign a null value as `appUser := user{}`. 
+4. Go allows shorthand for struct with pointers that we don't need to explicitly use pointer argument with asterisk `*` such as `(*u).FirstName` in this case which is equivalent to `u.FirstName`.
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type user struct {
+	FirstName string
+	LastName  string
+	Birthdate string
+	CreatedAt time.Time
+}
+
+func main() {
+	firstName := getUserData("Please enter your first name: ")
+	lastName := getUserData("Please enter your last name: ")
+	birthdate := getUserData("Please enter your birthdate (MM/DD/YYYY): ")
+
+	// ... do something awesome with that gathered data!
+	// appUser := user{}
+	appUser := user{
+		FirstName: firstName,
+		LastName:  lastName,
+		Birthdate: birthdate,
+		CreatedAt: time.Now(),
+	}
+
+	outputUserDetails(appUser)
+}
+
+func outputUserDetails(u user) {
+	// ...
+	// technically correct to use pointer
+	firstName := (*u).FirstName
+	// use pointer value with go shorthand
+	fmt.Println(firstName, u.LastName, u.Birthdate)
+}
+
+func getUserData(promptText string) string {
+	fmt.Print(promptText)
+	var value string
+	fmt.Scan(&value)
+	return value
+}
+```
+
 ## 4.7. Introducing methods
+
+1. We can use **receiver** function to a struct which is similar to declare a method for a class in an OOP languages.
+
+```go
+type user struct {
+	FirstName string
+	LastName  string
+	Birthdate string
+	CreatedAt time.Time
+}
+
+func (u user) outputUserDetails() {
+	// ...	
+	fmt.Println(u.FirstName, u.LastName, u.Birthdate)
+}
+```
 
 ## 4.8. Mutation methods
 
+1. As regular function call, if we don't use pointer in a go struct method, the argument passing to the method will be duplicated.
+2. Thus, any mutation to the value is on the duplicated value. 
+3. Therefore, to mutate directly to the struct data, we need to use pointer on the argument. 
+
+```go
+type user struct {
+	FirstName string
+	LastName  string
+	Birthdate string
+	CreatedAt time.Time
+}
+
+// use pointer to mutate the struct data
+func (u *user) clearUserName() {
+	u.FirstName = ""
+	u.LastName = ""
+}
+```
+
 ## 4.9. Using creation/constructor functions
+1. In golang, a constructor pattern is used (similar to initiate a new class instance in OOP) to create a new object.
+2. This constructor function is just go pattern rather than a requirement or feature. 
+
+```go
+type user struct {
+	FirstName string
+	LastName  string
+	Birthdate string
+	CreatedAt time.Time
+}
+
+func newUser(firstName, lastName, birthdate string) user {
+	return user{
+		FirstName: firstName,
+		LastName:  lastName,
+		Birthdate: birthdate,
+		CreatedAt: time.Now(),
+	}
+}
+```
 
 ## 4.10. Using constructor functions for validation
+1. The constructor function can be used for validation when creating a new struct.
+2. In this case, we change `fmt.Scan` to `fmt.Scanln` to accept empty string and just enter from user input in the terminal.
+3. Otherwise, using `fmt.Scan` will explicitly wait for user input and user must give a char to continue the process.
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"time"
+)
+
+type user struct {
+	FirstName string
+	LastName  string
+	Birthdate string
+	CreatedAt time.Time
+}
+
+func (u *user) outputUserDetails() {
+	// ...	
+	fmt.Println(u.FirstName, u.LastName, u.Birthdate)
+}
+
+func (u *user) clearUserName() {
+	u.FirstName = ""
+	u.LastName = ""
+}
+
+func newUser(firstName, lastName, birthdate string) (*user, error) {
+	if firstName == "" || lastName == "" || birthdate == "" {
+		return nil, errors.New("first name, last name and birthdate are required")
+	}
+
+	return &user{
+		FirstName: firstName,
+		LastName:  lastName,
+		Birthdate: birthdate,
+		CreatedAt: time.Now(),
+	}, nil
+}
+
+func main() {
+	firstName := getUserData("Please enter your first name: ")
+	lastName := getUserData("Please enter your last name: ")
+	birthdate := getUserData("Please enter your birthdate (MM/DD/YYYY): ")
+
+	// ... do something awesome with that gathered data!
+	// appUser := user{}
+	appUser, err := newUser(firstName, lastName, birthdate)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	appUser.outputUserDetails()
+	appUser.clearUserName()
+	appUser.outputUserDetails()
+}
+
+func getUserData(promptText string) string {
+	fmt.Print(promptText)
+	var value string
+	fmt.Scanln(&value)
+	return value
+}
+```
 
 ## 4.11. Structs, packages and exports
 
