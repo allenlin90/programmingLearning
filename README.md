@@ -1,4 +1,5 @@
 **Intro**
+<br />
 This list of learning materials are used when transferring job from operations management professional to web development since April 2020 after COVID pandemic hit. The target is not only changing the career but becoming an export in the field as a professional **Frontend Engineer** with comprehensive knowledge.
 
 Personal background - [https://www.linkedin.com/in/lin-meng-ting/](https://www.linkedin.com/in/lin-meng-ting/)
@@ -13,6 +14,9 @@ Some of the materials aren't related directly to frontend and resources and note
   - [1.2. Events and Summary](#12-events-and-summary)
 - [2. Learning materials and resources](#2-learning-materials-and-resources)
   - [2.1. JavaScript](#21-javascript)
+    - [2.1.1. React](#211-react)
+    - [2.1.2. Node.js](#212-nodejs)
+    - [2.1.3. Desktop](#213-desktop)
   - [2.2. HTML5 and CSS3](#22-html5-and-css3)
   - [2.3. Server, Backends, and Infrastructure](#23-server-backends-and-infrastructure)
   - [2.4. Integrated course](#24-integrated-course)
@@ -29,6 +33,7 @@ Some of the materials aren't related directly to frontend and resources and note
   - [2.15. Internet](#215-internet)
 
 ---
+
 # 1. Journal and events
 ## 1.1. Posts
 [Posts](./journal/posts)
@@ -41,13 +46,26 @@ Some of the materials aren't related directly to frontend and resources and note
 2. [Eloquent JavaScript](./javascript/eloquentJS/README.md) - [materials](https://eloquentjavascript.net/) 3rd edition
 3. [JavaScript.Info](./javascript/javascriptinfo/README.md) - [materials](https://javascript.info/)
 4. [JavaScript: Understanding the Weird Parts](./javascript/understandingTheWeirdPartsInJS/README.md) - [materials](https://www.udemy.com/course/understand-javascript/)
-5. [The Complete JavaScript Course 2020: Build Real Projects!](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/completeJavaScriptCourse2020) - This is previous version of 2021. The later new course will be revisited.
-6. [The Complete JavaScript Course 2021: From Zero to Expert!]() - [materials](https://www.udemy.com/course/the-complete-javascript-course/)
-7. [The Complete Node.js Developer Course (3rd Edition)](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/theCompleteNodejsDeveloperCourse) - [materials](https://www.udemy.com/course/the-complete-nodejs-developer-course-2/)
-8. [Modern React with Redux [2020 Update]](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/modernReactWithRedux) - [materials](https://www.udemy.com/course/react-redux/)
-9. [https://www.udemy.com/course/vuejs-2-the-complete-guide/](https://github.com/allenlin90/programmingLearning/tree/master/javascript/vueTheCompleteGuide) - [materials](https://www.udemy.com/course/vuejs-2-the-complete-guide/)
-10. [Typescript: The Complete Developer's Guide](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/typeScriptTheCompleteDeveloperGuide) - [materials](https://www.udemy.com/course/typescript-the-complete-developers-guide/)
-11. [NestJS: The Complete Developer's Guide](https://github.com/allenlin90/programmingLearning/tree/master/javascriptLearning/nestJSTheCompleteDeveloperGuide) - [materials](https://www.udemy.com/course/nestjs-the-complete-developers-guide/)
+5. [The Complete JavaScript Course 2020: From Zero to Expert!](./javascript/completeJavaScriptCourse2020/README.md) - [materials](https://www.udemy.com/course/the-complete-javascript-course/)
+6. [Vue - The Complete Guide (incl. Router & Composition API)](./javascript/vueTheCompleteGuide/README.md) - [materials](https://www.udemy.com/course/vuejs-2-the-complete-guide/)
+7. [Typescript: The Complete Developer's Guide](./javascript/typeScriptTheCompleteDeveloperGuide/README.md) - [materials](https://www.udemy.com/course/typescript-the-complete-developers-guide/)
+8. [Introduction to Web AR](./javascript/introductionToWebAR/README.md)
+
+### 2.1.1. React
+1. [Modern React with Redux [2020 Update]](./javascript/react/modernReactWithRedux/README.md) - [materials](https://www.udemy.com/course/react-redux/)
+2. [GraphQL with React: The Complete Developers Guide](./javascript/react/graphQLwithReactTheCompleteDevelopersGuide/README.md) - [materials](https://www.udemy.com/course/graphql-with-react-course)
+3. [Next.js 14 & React - The Complete Guide](./javascript/react/nextjsAndReactTheCompleteGuide/README.md) - [materials](https://www.udemy.com/course/nextjs-react-the-complete-guide)
+4. [React and Typescript: Build a Portfolio Project](./javascript/react/reactAndTypescriptBuildAPortFolioPorject/README.md) - [materials](https://www.udemy.com/course/react-and-typescript-build-a-portfolio-project/)
+5. [React Query and state management](./javascript//react/reactQueryServerStateManagement/README.md)
+6. [React Testing Library with Jest / Vitest](./javascript/react/testingReactWithJestAndTestingLibrary/README.md) - [materials](https://www.udemy.com/course/react-testing-library/)
+
+### 2.1.2. Node.js
+1. [NestJS: The Complete Developer's Guide](./javascript/nodeJS/nestJSTheCompleteDeveloperGuide/README.md) - [materials](https://www.udemy.com/course/nestjs-the-complete-developers-guide/)
+2. [Node JS: Advanced Concepts](./javascript/nodeJS/nodeJSAdvancedConcepts/README.md) - [materials](https://www.udemy.com/course/advanced-node-for-developers/)
+3. [The Complete Node.js Developer Course (3rd Edition)](./javascript/theCompleteNodejsDeveloperCourse/README.md) - [materials](https://www.udemy.com/course/the-complete-nodejs-developer-course-2/)
+
+### 2.1.3. Desktop
+1. [Electron for Desktop Apps: The Complete Developer's Guide](./javascript/electronForDesktopAppsTheCompleteDevelopersGuide/README.md) - [Electron](https://www.udemy.com/course/electron-react-tutorial)
 
 ## 2.2. HTML5 and CSS3
 1. [Modern HTML & CSS From The Beginning (Including Sass)](./webDesign/modernHTMLAndCSSFromTheBeginning/README.md) - [materials](https://www.udemy.com/course/modern-html-css-from-the-beginning/)

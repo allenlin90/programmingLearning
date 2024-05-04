@@ -1,15 +1,319 @@
-# The JavaScript language
-# JavaScript Fundamentals 
-### **Interaction in browser** - alert, prompt, confirm 
+- [1. The JavaScript language](#1-the-javascript-language)
+- [2. JavaScript Fundamentals](#2-javascript-fundamentals)
+    - [2.0.1. **Interaction in browser** - alert, prompt, confirm](#201-interaction-in-browser---alert-prompt-confirm)
+    - [2.0.2. **Conditional operators** - if, '?'](#202-conditional-operators---if-)
+    - [2.0.3. **Logical operators** - ||, \&\&, !](#203-logical-operators-----)
+    - [2.0.4. **Nullish coalescing operator '??'**](#204-nullish-coalescing-operator-)
+    - [2.0.5. **Loops: while and for**](#205-loops-while-and-for)
+    - [2.0.6. **The switch statement**](#206-the-switch-statement)
+    - [2.0.7. **Function basics**](#207-function-basics)
+    - [2.0.8. **Function expression**](#208-function-expression)
+    - [2.0.9. **Callback functions**](#209-callback-functions)
+    - [2.0.10. **Difference between function expression and function declaration**](#2010-difference-between-function-expression-and-function-declaration)
+    - [2.0.11. Arrow functions (Basics)](#2011-arrow-functions-basics)
+- [3. Code Quality](#3-code-quality)
+    - [3.0.1. Debugging in Chrome](#301-debugging-in-chrome)
+    - [3.0.2. Code Styling](#302-code-styling)
+- [4. Objects Basics](#4-objects-basics)
+    - [4.0.1. Objects](#401-objects)
+    - [4.0.2. Symbol](#402-symbol)
+    - [4.0.3. Object methods, "this"](#403-object-methods-this)
+    - [4.0.4. Object to primitive conversion](#404-object-to-primitive-conversion)
+- [5. Data types](#5-data-types)
+    - [5.0.1. Constructor and operator new](#501-constructor-and-operator-new)
+    - [5.0.2. Methods of primitives](#502-methods-of-primitives)
+    - [5.0.3. Numbers](#503-numbers)
+    - [5.0.4. Strings](#504-strings)
+    - [5.0.5. Arrays](#505-arrays)
+    - [5.0.6. Array Methods](#506-array-methods)
+      - [5.0.6.1. Exercise 1 - Translate border-left-width to borderLeftwidth](#5061-exercise-1---translate-border-left-width-to-borderleftwidth)
+      - [5.0.6.2. Exercise 2 - Filter range](#5062-exercise-2---filter-range)
+      - [5.0.6.3. Exercise 3 - Sort in decreasing order](#5063-exercise-3---sort-in-decreasing-order)
+      - [5.0.6.4. Exercise 4 - Copy and sort array](#5064-exercise-4---copy-and-sort-array)
+      - [5.0.6.5. Exercise 5 - Create an extendable calculator](#5065-exercise-5---create-an-extendable-calculator)
+      - [5.0.6.6. Exercise 6 - Map to names](#5066-exercise-6---map-to-names)
+      - [5.0.6.7. Exercise 7 - Map to objects](#5067-exercise-7---map-to-objects)
+      - [5.0.6.8. Exercise 8 - Sort users by age](#5068-exercise-8---sort-users-by-age)
+      - [5.0.6.9. Exercise 9 - Shuffle an array](#5069-exercise-9---shuffle-an-array)
+      - [5.0.6.10. Exercise 10 - Get average age](#50610-exercise-10---get-average-age)
+      - [5.0.6.11. Exercise 11 - Filter unique array members](#50611-exercise-11---filter-unique-array-members)
+      - [5.0.6.12. Exercise 12 - Create keyed object from array](#50612-exercise-12---create-keyed-object-from-array)
+    - [5.0.7. Iterables](#507-iterables)
+    - [5.0.8. Map and Set](#508-map-and-set)
+      - [5.0.8.1. Exercise 1 - Filter unique array members](#5081-exercise-1---filter-unique-array-members)
+      - [5.0.8.2. Exercise 2 - Filter anagrams](#5082-exercise-2---filter-anagrams)
+      - [5.0.8.3. Exercise 3 - Iterable keys](#5083-exercise-3---iterable-keys)
+    - [5.0.9. WeakMap and WeakSet](#509-weakmap-and-weakset)
+      - [5.0.9.1. Exercise 1 - Store "Unread" Flags](#5091-exercise-1---store-unread-flags)
+      - [5.0.9.2. Exercise 2 - Store Read Dates](#5092-exercise-2---store-read-dates)
+    - [5.0.10. Object.keys, values, entries](#5010-objectkeys-values-entries)
+      - [5.0.10.1. Exercise 1 - Sum the Properties](#50101-exercise-1---sum-the-properties)
+      - [5.0.10.2. Exercise 2 - Count Properties](#50102-exercise-2---count-properties)
+    - [5.0.11. Destructuring Assignment](#5011-destructuring-assignment)
+      - [5.0.11.1. Destructuring Assignment](#50111-destructuring-assignment)
+      - [5.0.11.2. The Maximal Salary](#50112-the-maximal-salary)
+    - [5.0.12. Date and Time](#5012-date-and-time)
+      - [5.0.12.1. Exercise 1 - Create a Day](#50121-exercise-1---create-a-day)
+      - [5.0.12.2. Exercise 2 - Show a Weekday](#50122-exercise-2---show-a-weekday)
+      - [5.0.12.3. Exercise 3 - European Weekday](#50123-exercise-3---european-weekday)
+      - [5.0.12.4. Exercise 4 - Which Day of Month Was Many Days Ago?](#50124-exercise-4---which-day-of-month-was-many-days-ago)
+      - [5.0.12.5. Exercise 5 - Last Day of Month?](#50125-exercise-5---last-day-of-month)
+      - [5.0.12.6. Exercise 6 - How Many Seconds Have Passed Today?](#50126-exercise-6---how-many-seconds-have-passed-today)
+      - [5.0.12.7. Exercise 7 - How Many Seconds Till Tomorrow?](#50127-exercise-7---how-many-seconds-till-tomorrow)
+      - [5.0.12.8. Exercise 8 - Format the Relative Date](#50128-exercise-8---format-the-relative-date)
+    - [5.0.13. JSON Methods, toJSON](#5013-json-methods-tojson)
+      - [5.0.13.1. Exercise 1 - Turn the Object into JSON and Back](#50131-exercise-1---turn-the-object-into-json-and-back)
+      - [5.0.13.2. Exercise 2 - Exclude Backreferences](#50132-exercise-2---exclude-backreferences)
+- [6. Advanced working with functions](#6-advanced-working-with-functions)
+  - [6.1. Recursion and Stack](#61-recursion-and-stack)
+    - [6.1.1. Two Ways of Thinking](#611-two-ways-of-thinking)
+    - [6.1.2. The Execution Context and Stack](#612-the-execution-context-and-stack)
+    - [6.1.3. Recursive Traversals](#613-recursive-traversals)
+    - [6.1.4. Recursive Structures](#614-recursive-structures)
+    - [6.1.5. Linked list](#615-linked-list)
+    - [6.1.6. Exercise 1 - Sum all numbers till the given one](#616-exercise-1---sum-all-numbers-till-the-given-one)
+      - [6.1.6.1. Exercise 2 - Calculate factorial](#6161-exercise-2---calculate-factorial)
+      - [6.1.6.2. Exercise 3 - Fibonacci numbers](#6162-exercise-3---fibonacci-numbers)
+      - [6.1.6.3. Exercise 4 - Output a single-linked list](#6163-exercise-4---output-a-single-linked-list)
+      - [6.1.6.4. Exercise 5 - Output a single-linked list in the reverse order](#6164-exercise-5---output-a-single-linked-list-in-the-reverse-order)
+  - [6.2. Rest Parameters and Spread Syntax](#62-rest-parameters-and-spread-syntax)
+    - [6.2.1. Rest Parameters](#621-rest-parameters)
+    - [6.2.2. The "arguments" variable](#622-the-arguments-variable)
+    - [6.2.3. Spread Syntax](#623-spread-syntax)
+    - [6.2.4. Get a new copy of an array/object](#624-get-a-new-copy-of-an-arrayobject)
+  - [6.3. Variable Scope, Closure](#63-variable-scope-closure)
+    - [6.3.1. Code Blocks](#631-code-blocks)
+    - [6.3.2. Nested Functions](#632-nested-functions)
+    - [6.3.3. Lexical Environment](#633-lexical-environment)
+    - [6.3.4. Closure](#634-closure)
+    - [6.3.5. Garbage Collection](#635-garbage-collection)
+    - [6.3.6. Real-life Optimization](#636-real-life-optimization)
+      - [6.3.6.1. Exercise 1 - Does function pickup latest changes](#6361-exercise-1---does-function-pickup-latest-changes)
+      - [6.3.6.2. Exercise 2 - Which variables are available?](#6362-exercise-2---which-variables-are-available)
+      - [6.3.6.3. Exercise 3 - Are counters independent?](#6363-exercise-3---are-counters-independent)
+      - [6.3.6.4. Exercise 4 - Counter object](#6364-exercise-4---counter-object)
+      - [6.3.6.5. Exercise 5 - Function in if](#6365-exercise-5---function-in-if)
+      - [6.3.6.6. Exercise 6 - Sum with closures](#6366-exercise-6---sum-with-closures)
+      - [6.3.6.7. Exercise 7 - Is variable visible?](#6367-exercise-7---is-variable-visible)
+      - [6.3.6.8. Exercise 8 - Filter through function](#6368-exercise-8---filter-through-function)
+      - [6.3.6.9. Exercise 9 - Sort by field](#6369-exercise-9---sort-by-field)
+      - [6.3.6.10. Exercise 10 - Army of functions](#63610-exercise-10---army-of-functions)
+  - [6.4. The Old "var"](#64-the-old-var)
+    - [6.4.1. "var" has no block scope](#641-var-has-no-block-scope)
+    - [6.4.2. "var" tolerates redeclarations](#642-var-tolerates-redeclarations)
+    - [6.4.3. "var" variables can be declared below their use](#643-var-variables-can-be-declared-below-their-use)
+    - [6.4.4. IIFE](#644-iife)
+  - [6.5. Global Object](#65-global-object)
+    - [6.5.1. Using for Polyfills](#651-using-for-polyfills)
+  - [6.6. Function Object, NFE](#66-function-object-nfe)
+    - [6.6.1. The "name" property](#661-the-name-property)
+    - [6.6.2. The "length" property](#662-the-length-property)
+    - [6.6.3. Custom Properties](#663-custom-properties)
+    - [6.6.4. Named Function Expression](#664-named-function-expression)
+      - [6.6.4.1. Exercise 1 - Set and decrease for counter](#6641-exercise-1---set-and-decrease-for-counter)
+      - [6.6.4.2. Exercise 2 - Sum with an arbitrary amount of brackets](#6642-exercise-2---sum-with-an-arbitrary-amount-of-brackets)
+  - [6.7. The "new Function" Syntax](#67-the-new-function-syntax)
+    - [6.7.1. Syntax](#671-syntax)
+    - [6.7.2. Closure](#672-closure)
+  - [6.8. Scheduling: setTimeout and setInterval](#68-scheduling-settimeout-and-setinterval)
+    - [6.8.1. setTimeout](#681-settimeout)
+    - [6.8.2. Canceling with clearTimeout](#682-canceling-with-cleartimeout)
+    - [6.8.3. setInterval](#683-setinterval)
+    - [6.8.4. Nested setTimeout](#684-nested-settimeout)
+      - [6.8.4.1. Garbage collection and setInterval/setTimeout callback](#6841-garbage-collection-and-setintervalsettimeout-callback)
+    - [6.8.5. Zero delay setTimeout](#685-zero-delay-settimeout)
+      - [6.8.5.1. Exercise 1 - Output every second](#6851-exercise-1---output-every-second)
+      - [6.8.5.2. Exercise 2 - What will setTimeout show?](#6852-exercise-2---what-will-settimeout-show)
+  - [6.9. Decorators and Forwarding, call/apply](#69-decorators-and-forwarding-callapply)
+    - [6.9.1. Transparent caching](#691-transparent-caching)
+    - [6.9.2. Using "func.call" for the context](#692-using-funccall-for-the-context)
+    - [6.9.3. Going multi-argument](#693-going-multi-argument)
+    - [6.9.4. func.apply](#694-funcapply)
+    - [6.9.5. Borrowing a method](#695-borrowing-a-method)
+    - [6.9.6. Decorators and function properties](#696-decorators-and-function-properties)
+      - [6.9.6.1. Exercise 1 - Spy decorator](#6961-exercise-1---spy-decorator)
+      - [6.9.6.2. Exercise 2 - Delaying Decorator](#6962-exercise-2---delaying-decorator)
+      - [6.9.6.3. Exercise 3 - Debounce decorator](#6963-exercise-3---debounce-decorator)
+      - [6.9.6.4. Exercise 4 - Throttle decorator](#6964-exercise-4---throttle-decorator)
+  - [6.10. Function binding](#610-function-binding)
+    - [6.10.1. Losing `this`](#6101-losing-this)
+    - [6.10.2. Solution 1: a wrapper](#6102-solution-1-a-wrapper)
+    - [6.10.3. Solution 2: bind](#6103-solution-2-bind)
+    - [6.10.4. Partial functions](#6104-partial-functions)
+    - [6.10.5. Going partial without context](#6105-going-partial-without-context)
+      - [6.10.5.1. Exercise 1 - Bound function as a method](#61051-exercise-1---bound-function-as-a-method)
+      - [6.10.5.2. Exercise 2 - Second bind](#61052-exercise-2---second-bind)
+      - [6.10.5.3. Exercise 3 - Function property after bind](#61053-exercise-3---function-property-after-bind)
+      - [6.10.5.4. Exercise 4 - Fix a function that loses `this`](#61054-exercise-4---fix-a-function-that-loses-this)
+      - [6.10.5.5. Exercise 5 - Partial application for login](#61055-exercise-5---partial-application-for-login)
+  - [6.11. Arrow Functions Revisited](#611-arrow-functions-revisited)
+    - [6.11.1. Arrow functions have no `this`](#6111-arrow-functions-have-no-this)
+    - [6.11.2. Arrows have no "arguments"](#6112-arrows-have-no-arguments)
+- [7. Object Properties Configuration](#7-object-properties-configuration)
+  - [7.1. Property Flags and Descriptors](#71-property-flags-and-descriptors)
+    - [7.1.1. Property flags](#711-property-flags)
+    - [7.1.2. Non-writable](#712-non-writable)
+    - [7.1.3. Non-enumerable](#713-non-enumerable)
+    - [7.1.4. Non-configurable](#714-non-configurable)
+    - [7.1.5. Object.defineProperties](#715-objectdefineproperties)
+    - [7.1.6. Object.getOwnPropertyDescriptors](#716-objectgetownpropertydescriptors)
+    - [7.1.7. Sealing an object globally](#717-sealing-an-object-globally)
+  - [7.2. Property Getters and Setters](#72-property-getters-and-setters)
+    - [7.2.1. Getters and setters](#721-getters-and-setters)
+    - [7.2.2. Accessor descriptors](#722-accessor-descriptors)
+    - [7.2.3. Smarter getters/setters](#723-smarter-getterssetters)
+    - [7.2.4. Using for compatibility](#724-using-for-compatibility)
+- [8. Prototypes, Inheritance](#8-prototypes-inheritance)
+  - [8.1. Prototypal Inheritance](#81-prototypal-inheritance)
+    - [8.1.1. Writing doesn’t use prototype](#811-writing-doesnt-use-prototype)
+    - [8.1.2. The value of "this"](#812-the-value-of-this)
+    - [8.1.3. for...in loop](#813-forin-loop)
+      - [8.1.3.1. Exercise 1 - Working with prototype](#8131-exercise-1---working-with-prototype)
+      - [8.1.3.2. Exercise 2 - Searching Algorithm](#8132-exercise-2---searching-algorithm)
+      - [8.1.3.3. Exercise 3 - Where does it write?](#8133-exercise-3---where-does-it-write)
+      - [8.1.3.4. Exercise 4 - Why are hamsters full?](#8134-exercise-4---why-are-hamsters-full)
+  - [8.2. F.Prototype](#82-fprototype)
+  - [8.3. Native Prototypes](#83-native-prototypes)
+  - [8.4. Prototype Methods, Object without __proto__](#84-prototype-methods-object-without-proto)
+- [9. Classes](#9-classes)
+  - [9.1. Class Basic Syntax](#91-class-basic-syntax)
+  - [9.2. Class Inheritance](#92-class-inheritance)
+  - [9.3. Static Properties and Methods](#93-static-properties-and-methods)
+  - [9.4. Private and Protected Properties and Methods](#94-private-and-protected-properties-and-methods)
+  - [9.5. Extending Built-in Classes](#95-extending-built-in-classes)
+  - [9.6. Class checking: "instanceof"](#96-class-checking-instanceof)
+  - [9.7. Mixins](#97-mixins)
+- [10. Promises, async/await](#10-promises-asyncawait)
+  - [10.1. Introduction: callbacks](#101-introduction-callbacks)
+  - [10.2. Promise](#102-promise)
+  - [10.3. Promises Chaining](#103-promises-chaining)
+  - [10.4. Error Handling with Promises](#104-error-handling-with-promises)
+  - [10.5. Promisification](#105-promisification)
+  - [10.6. Microtasks](#106-microtasks)
+  - [10.7. Async/await](#107-asyncawait)
+- [11. Generators, advanced iteration](#11-generators-advanced-iteration)
+  - [11.1. Generators](#111-generators)
+  - [11.2. Async iteration and generators](#112-async-iteration-and-generators)
+- [12. Modules](#12-modules)
+  - [12.1. Modules, Introduction](#121-modules-introduction)
+  - [12.2. Export and Import](#122-export-and-import)
+  - [12.3. Dynamic Imports](#123-dynamic-imports)
+- [13. Miscellaneous](#13-miscellaneous)
+  - [13.1. Proxy and Reflect](#131-proxy-and-reflect)
+  - [13.2. Eval: run a code string](#132-eval-run-a-code-string)
+  - [13.3. Currying](#133-currying)
+  - [13.4. Reference Type](#134-reference-type)
+  - [13.5. BigInt](#135-bigint)
+- [14. Browser: Document, Events, Interfaces](#14-browser-document-events-interfaces)
+- [15. Document](#15-document)
+  - [15.1. Browser Environment, Specs](#151-browser-environment-specs)
+  - [15.2. DOM Tree](#152-dom-tree)
+  - [15.3. Searching: getElement\*, querySelector\*](#153-searching-getelement-queryselector)
+  - [15.4. Node Properties: Type, Tag and Contents](#154-node-properties-type-tag-and-contents)
+  - [15.5. Attributes and Properties](#155-attributes-and-properties)
+  - [15.6. Modifying the Document](#156-modifying-the-document)
+  - [15.7. Styles and Classes](#157-styles-and-classes)
+  - [15.8. Element Size and Scrolling](#158-element-size-and-scrolling)
+  - [15.9. Window Sizes and Scrolling](#159-window-sizes-and-scrolling)
+  - [15.10. Coordinates](#1510-coordinates)
+- [16. Introduction to Events](#16-introduction-to-events)
+  - [16.1. Introduction to Browser Events](#161-introduction-to-browser-events)
+  - [16.2. Bubbling and Capturing](#162-bubbling-and-capturing)
+  - [16.3. Event Delegation](#163-event-delegation)
+  - [16.4. Browser Default Actions](#164-browser-default-actions)
+  - [16.5. Dispatching Custom Events](#165-dispatching-custom-events)
+- [17. UI Events](#17-ui-events)
+  - [17.1. Mouse Events](#171-mouse-events)
+  - [17.2. Moving the Mouse: mouseover/out, mouseenter/leave](#172-moving-the-mouse-mouseoverout-mouseenterleave)
+  - [17.3. Drag'n'Drop with mouse events](#173-dragndrop-with-mouse-events)
+  - [17.4. Pointer Events](#174-pointer-events)
+  - [17.5. Keyboard: keydown and keyup](#175-keyboard-keydown-and-keyup)
+  - [17.6. Scrolling](#176-scrolling)
+- [18. Forms, Controls](#18-forms-controls)
+  - [18.1. Form Properties and Methods](#181-form-properties-and-methods)
+  - [18.2. Focusing: focus/blur](#182-focusing-focusblur)
+  - [18.3. Events: change, input, cut, copy, paste](#183-events-change-input-cut-copy-paste)
+  - [18.4. Forms: event and method submit](#184-forms-event-and-method-submit)
+- [19. Document and Resource Loading](#19-document-and-resource-loading)
+  - [19.1. Page: DOMContentLoaded, load, beforeunload, unload](#191-page-domcontentloaded-load-beforeunload-unload)
+  - [19.2. Scripts: async, defer](#192-scripts-async-defer)
+  - [19.3. Resource Loading: onload and onerror](#193-resource-loading-onload-and-onerror)
+- [20. Miscellaneous](#20-miscellaneous)
+  - [20.1. Mutation Observer](#201-mutation-observer)
+  - [20.2. Selection and Range](#202-selection-and-range)
+  - [20.3. Event Loop: Microtasks and Macrotasks](#203-event-loop-microtasks-and-macrotasks)
+- [21. Additional Articles](#21-additional-articles)
+- [22. Frames and Windows](#22-frames-and-windows)
+  - [22.1. Popups and Window Methods](#221-popups-and-window-methods)
+  - [22.2. Cross-window Communication](#222-cross-window-communication)
+  - [22.3. The Clickjacking Attack](#223-the-clickjacking-attack)
+- [23. Binary Data, Files](#23-binary-data-files)
+  - [23.1. ArrayBuffer, Binary Arrays](#231-arraybuffer-binary-arrays)
+  - [23.2. TextDecoder and TextEncoder](#232-textdecoder-and-textencoder)
+  - [23.3. Blob](#233-blob)
+  - [23.4. File and FileReader](#234-file-and-filereader)
+- [24. Network Requests](#24-network-requests)
+  - [24.1. Fetch](#241-fetch)
+  - [24.2. FormData](#242-formdata)
+  - [24.3. Fetch: Download progress](#243-fetch-download-progress)
+  - [24.4. Fetch: Abort](#244-fetch-abort)
+  - [24.5. Fetch: Cross-Origin Requests](#245-fetch-cross-origin-requests)
+  - [24.6. Fetch API](#246-fetch-api)
+  - [24.7. URL objects](#247-url-objects)
+  - [24.8. XMLHttpRequest](#248-xmlhttprequest)
+  - [24.9. Resumable File Upload](#249-resumable-file-upload)
+  - [24.10. Long Polling](#2410-long-polling)
+  - [24.11. WebSocket](#2411-websocket)
+  - [24.12. Server Sent Events](#2412-server-sent-events)
+- [25. Storing Data in the Browser](#25-storing-data-in-the-browser)
+  - [25.1. Cookies, document.cookie](#251-cookies-documentcookie)
+  - [25.2. LocalStorage, sessionStorage](#252-localstorage-sessionstorage)
+  - [25.3. IndexedDB](#253-indexeddb)
+- [26. Animation](#26-animation)
+  - [26.1. Bezier Curve](#261-bezier-curve)
+  - [26.2. CSS-animations](#262-css-animations)
+  - [26.3. JavaScript animations](#263-javascript-animations)
+- [27. Web Components](#27-web-components)
+  - [27.1. From the Orbital Height](#271-from-the-orbital-height)
+  - [27.2. Custom Elements](#272-custom-elements)
+  - [27.3. Shadow DOM](#273-shadow-dom)
+  - [27.4. Template Element](#274-template-element)
+  - [27.5. Shadow DOM Slots, Composition](#275-shadow-dom-slots-composition)
+  - [27.6. Shadow DOM Styling](#276-shadow-dom-styling)
+  - [27.7. Shadow DOM and Events](#277-shadow-dom-and-events)
+- [28. Regular Expressions](#28-regular-expressions)
+  - [28.1. Patterns and Flags](#281-patterns-and-flags)
+  - [28.2. Character Classes](#282-character-classes)
+  - [28.3. Unicode: flag "u" and class \\p{...}](#283-unicode-flag-u-and-class-p)
+  - [28.4. Anchors: string start ^ and end $](#284-anchors-string-start--and-end-)
+  - [28.5. Multiline Mode of Anchors ^ $, flag "m"](#285-multiline-mode-of-anchors---flag-m)
+  - [28.6. Word Boundary: \\b](#286-word-boundary-b)
+  - [28.7. Escaping, Special Characters](#287-escaping-special-characters)
+  - [28.8. Sets and Ranges \[...\]](#288-sets-and-ranges-)
+  - [28.9. Quantifiers +, \*, ? and {n}](#289-quantifiers----and-n)
+  - [28.10. Greedy and Lazy Quantifiers](#2810-greedy-and-lazy-quantifiers)
+  - [28.11. Capturing Groups](#2811-capturing-groups)
+  - [28.12. Backreferences in Pattern: \\N and \\k](#2812-backreferences-in-pattern-n-and-k)
+  - [28.13. ALternation (OR) |](#2813-alternation-or-)
+  - [28.14. Lookahead and lookbehind](#2814-lookahead-and-lookbehind)
+  - [28.15. Catastrophic backgtracking](#2815-catastrophic-backgtracking)
+  - [28.16. Sticky Flag "y", Searching at Position](#2816-sticky-flag-y-searching-at-position)
+  - [28.17. Methods of RegExp and String](#2817-methods-of-regexp-and-string)
+
+---
+
+# 1. The JavaScript language
+# 2. JavaScript Fundamentals 
+### 2.0.1. **Interaction in browser** - alert, prompt, confirm 
 1. `prompt()` takes 2 arguments, the 1st is the message to hint the user for the inpout, while the 2nd is the default value given in the input bar. Note that in WINDOWS IE, the default value will be undefined if the user doesn't give any input. Therefore, it's suggested to have `prompt("Test", '')`, so it will return an empty string. 
 1. `confirm() will sho` a prompt and asked YES or NO. If the user click YES, the event returns a boollean `true`, otherwise it returns `false`. 
 
-### **Conditional operators** - if, '?'
+### 2.0.2. **Conditional operators** - if, '?'
 1. If the expression is very simple and in one line, we can put it right after the IF conditions without using curly braces. However, it's still suggested to have curly braces all the time though the following code is only one line. 
 1. We can use variables with their bollean types. For example, `0`, `null`, `undefined`, `NaN`, and `false` are boolean `false`. If we put them in the condition of an IF statement, the code won't run. 
 1. Question mark "?" is a trinary operator which can represent a simple IF/ELSE statement. For example, `let result = condition ? value1 : value2;`. We can use multiple question marks, while they are like nested IF or ELSE IF statement. 
 
-### **Logical operators** - ||, &&, ! 
+### 2.0.3. **Logical operators** - ||, &&, ! 
 1. Each of the following characters have their meaning `||` for OR, `&&` for AND, and `!` for NOT. 
 1. In IF statement, the condition will be changed to booelan value by its value type. 
 1. If we use "||" in a statement, it will check operands from the left to the right, turn all operands into Boolean type. If it reaches a boolean `true`, it stops and return the operand. If all operand are falsy, such as undefined, NaN, null, false, it will return the last operand it checks. 
@@ -17,7 +321,7 @@
 1. AND `&&` is in higher priority than OR `||`. Thus, `a && b || c && d` is equivalent to `(a && b) || (c && d)`. 
 1. We can use double exclmation marks to turn a value into Boolean type, such as `!!0` becomes `false` as it's a falsy value. 
 
-### **Nullish coalescing operator '??'**
+### 2.0.4. **Nullish coalescing operator '??'**
 ```js
 let height = 0;
 
@@ -41,7 +345,7 @@ alert(area); // 5000
 let area = height ?? (100 * width) ?? 50;
 ```
 
-### **Loops: while and for**
+### 2.0.5. **Loops: while and for**
 1. A single execution of the loop body is called an **_iteration_**. 
 1. If the loop body has a single statement, we can omit the curly braces `{}`
 1. We can move the condition to check in `do..while`. The loop body will be executed at least once, if the condition in while loop is true, the code will be executed again. However, the regualr `while` loop is more preferable. 
@@ -49,7 +353,7 @@ let area = height ?? (100 * width) ?? 50;
 1. We can use keyword `break` and `continute` if IF/ELSE statement to check if to continue or jump out from the loop. However, we can not use `break/continue` with ternary operator `?` as one of the returned statement. This is a reason not to use question mark operator `?` instead of `if`. 
 1. We can label a `for` loop and have the label after keyword `break` as if we have nested `for` loops in a statement. `continue` can also be used as 
 
-### **The switch statement**
+### 2.0.6. **The switch statement**
 1. switch statement will check the variable in the condition if it is strictly equal (the same as triple equals `===`) to any of the following value in each case. Otherwise, it will return the default if there's any. Besides, each case should end with a keyword `break` or `return`. If there's no `break` or `return`, it will keep continuing the code until hitting the next `break` or end of the statement. Note that we can put the value as an expression in the case condition to be compared with the given value. 
 1. We can "**categorize**" the cases without having `break` in the expression. Besides, the comparison between the condition and value in the cases are strict. A String "`3`" and Number `3` are different. 
 ```js
@@ -70,7 +374,7 @@ switch (browser) {
 }
 ```
 
-### **Function basics**
+### 2.0.7. **Function basics**
 1. If a same-named variable is declared inside the function then it shadows the outer one when the outter variable name is the same. 
 1. When invoking a function, if a parameter is not provided, then its value becomes `undefined`. Besides, parameters can be given as expression. For example, we can give default value, if there's no any. If the argument is given, it will be overwritten with the given argument. The default value can be a function as well. 
 1. However, in older JavaScript, the argument can not be given in expression. 
@@ -79,15 +383,15 @@ switch (browser) {
 1. We can have an expression in different lines in parenthesis. Note that without parenthesis and changing the line, JavaScript will assume there's a semi-column and returns only the expression after `return` in the same line. 
 1. Functions are actions, so their name is usually a verb. Besides, one function should take only one action to prevent confusion. 
 
-### **Function expression** 
+### 2.0.8. **Function expression** 
 1. There are 2 ways to create a `function` by using **_function declaration_** and **_function expression_**. By both ways, the function will be assigned to a variable as the declared name or the variable created with the expression. Besides, the function is the value to the variable. (Note that if we call only the variable without parenthesis, the console will return only the function statement rather than call the function itself. However, in some other languages, the function will execute when it is called, though without parenethesis). Therefore, we can assign the function value to the other variable when assigning without parenthesis. If there are parenthesis, it means the function is called and the variable will get assigned with the output of the function. 
 
-### **Callback functions**
+### 2.0.9. **Callback functions**
 1. **_Callback functions_** are function passed to other funcitons as arguments. Therefore, when we call the main function, it can return the callback when a certain condition is fulfilled. 
 1. The functions can be anonymous as an one-time function, which only stays in the main function we called or created. 
 1. Note that regular values such as `Strings` and `Numbers` represent the **data**, while a function is an **action**. 
 
-### **Difference between function expression and function declaration**
+### 2.0.10. **Difference between function expression and function declaration**
 1. When using a function expression, the function should be created before it is called.
 1. For a global function declaration, it can be called any where in the code even though before the function is declared. When JavaScript starts and read the code, it will check all the function declaration before it starts working in its "**initialization stage**". 
 1. Function declaration can be scoped as other value and variables. If a function is declared in a code block, it's parent or other outer parts can't call be function. However, if we use function expression to let a variable carry function value, the function can be called out from the code block. 
@@ -114,7 +418,7 @@ if (age < 18) {
 welcome()
 ```
 
-### Arrow functions (Basics)
+### 2.0.11. Arrow functions (Basics)
 1. Arrow function expression is a simpler and more succinct way to create a function. 
     ```js 
     function sum (a, b) {
@@ -142,9 +446,9 @@ welcome()
     };
     sum(1,2); //3 
     ``` 
-# Code Quality 
-### [Debugging in Chrome](https://javascript.info/debugging-chrome) 
-### Code Styling 
+# 3. Code Quality 
+### 3.0.1. [Debugging in Chrome](https://javascript.info/debugging-chrome) 
+### 3.0.2. Code Styling 
 <img src="codeStyling.png">
 
 1. **Curly braces** 
@@ -231,8 +535,8 @@ welcome()
     1. We can use some extensions such as `linters` to check for pattern issues. 
     1. At the time of learning, <ins>**ESLint**</ins> is the lastest and modern one. 
 
-# Objects Basics
-### Objects 
+# 4. Objects Basics
+### 4.0.1. Objects 
 1. An `Object` can be created with curly braces with an optional list of properties. A property is a key/value pair (similar to python dictionaries type data). `key` is a `String` which can also be called property name, while the `value` can be any types of data, such as a `String`, `Number`, `Array`, `Boolean`, `Object`. We can use dot notation to retrive the value of a property from an `Object`. 
 1. Keyword `delete` can remvoe a property from an `Object`. Note that `delete` returns a boolean value to indicate if a property is deleted. 
 1. We can use multiple words to name a property but the `String` should be quoted. Howveer the property with space in its name should be called with square brackets notation. Besides, to call a property by square brackets the `String` should be quoted as it can take a variable. 
@@ -325,7 +629,7 @@ welcome()
     console.log(obj2) //{}
     ``` 
 
-### Symbol 
+### 4.0.2. Symbol 
 1. `Object` property keys can be either `String` or `Symbol` type. Othher property names, such as numbers and boolean values will be transferred to `String`. `Symbols` are guaranteed to be unique. 2 `Symbols` that with the same description are not equal. `Symbol` is not `String` type and can't be converted into `String` directly. However, we can use `.toString()` method or `.description` (not a method) to check the description of a `Symbol`. 
     ```js 
     let id1 = Symbol('id');
@@ -379,7 +683,7 @@ welcome()
     ```
 1. **Summary of `Symbol`** - `Symbol` is a primitive type for unique identifiers which is created with `Symbol()` with an optional description as the argument. Besides, they are always different values though we assign the same description. We can use "**global registry**" and `Symbol.for(key)` to have same-named symbols to be equal. 
 
-### Object methods, "this"
+### 4.0.3. Object methods, "this"
 1. We can use either "function expression" or "function declaration" to add a method to an `Object`. 
 1. IF we want to call the and use the properties of the `Object` in a method of the `Object` itself, we can use keyword `this` to refer to the `Object`. `this` will refer to different `Object` according to how the method and `this` is called. It means that `this` is dynamic and knows which object it refers to when the code runs. This feature give is both pros and cons that the function using `this` can be reuse, but without pointing to a specific object, it may return wrong value. 
 1. Arrow functions have no `this`. These functions will refer to `Object` from its outer element. 
@@ -404,12 +708,12 @@ welcome()
     ladder.up().up().down().up().down().showStep(); // 1 
     ```
 
-### Object to primitive conversion 
+### 4.0.4. Object to primitive conversion 
 1. All objects are `true` in a boolean context. We can check with `Boolean({})` that it returns true. Therefore, an `Object` can only be converted to "**numeric**" or "**string**" type. The numeric conversion happens when we subtract objects or apply mathematical functions. We can use `Number(obj)` or `+obj` with a plus sign to convert an `Object` to a number. 
 1. As for the string conversion – it usually happens when we output an object like `console.log(obj)`. We can also pass an `Object` in square bracket notation as the property key of another `Object`. 
 
-# Data types 
-### Constructor and operator new
+# 5. Data types 
+### 5.0.1. Constructor and operator new
 1. Constructor functions technically are regular functions, while they have 2 conventions
     1. They are named with capital letter first. 
     1. They should be executed only with keyword `new`. 
@@ -475,7 +779,7 @@ welcome()
     john.sayHi(); // My name is: John
     ```
 
-### Methods of primitives 
+### 5.0.2. Methods of primitives 
 1. `Primitives` are not `Objects`. A `Primitive` is a primitive type. There are 7 primitive types in JavaScript: 
     1. `string`
     1. `number`
@@ -496,7 +800,7 @@ welcome()
     '4' === String(4) // true
     ```
 
-### Numbers 
+### 5.0.3. Numbers 
 1. In modern JavaScript, there are 2 types of numbers. 
     1. Regular numbers which we use most of the time. 
     1. BigInt that can represent integer at any length between (-2^53) and 2^53. 
@@ -583,7 +887,7 @@ welcome()
 
 Note: We should be very careful with the calculation by programming language due to "**impercision**" that makes the calculation incorrect. For example, in the exercise, `6.35.toFixed(1)` is `6.3` rather than rounded as `6.4`. We have to use multiplication `console.log(Math.round(6.35 * 10) / 10)` to make the number correct. 
 
-### Strings 
+### 5.0.4. Strings 
 1. In JavaScript the textual data is stored as `Strings`. There is no separate type for a single character, such as "char" type in C language, while "string" is an array of chars. 
 1. The internal format for strings is always UTF-16, it is not tied to the page encoding, which could be "UTF-8" or other types. 
 
@@ -731,7 +1035,7 @@ Note: We should be very careful with the calculation by programming language due
 
 
 
-### Arrays 
+### 5.0.5. Arrays 
 **Decalartion**
 1. An `Array` in JavaScript can be declared by creating an `Array` "Object" or with square brackets notation. 
     ```js 
@@ -909,7 +1213,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(getMaxSubSum([-1, -2, -3]) ); // 0
     ```
 
-### Array Methods 
+### 5.0.6. Array Methods 
 **Methods that modifies**
 1. Since `Array` is an `Object` in JavaScript, we can use keyword `delete` to delete an element of an `Array`. However, though we delete an element from the `Array`, the `length` property of `Array` is still the same, as the method doesn't affect to `length` property. 
 1. We can use `.splice()` (which is like a swiss army knife that can "insert", "remove", and "replace" elements. The syntax is as `arr.splice(index[, deleteCount, elem1, ..., elemN])`. The method starts from `index`, removes `deleteCount` elements, inserts `elem1, ..., elemN`, and return the `Array` of removed elements. (This method is similar to other methods that it doesn't return the modified `Array` itself.)
@@ -1138,7 +1442,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(soldiers2[0].age); // 20
     ```
 
-#### Exercise 1 - Translate border-left-width to borderLeftwidth 
+#### 5.0.6.1. Exercise 1 - Translate border-left-width to borderLeftwidth 
 1. Write the function camelize(str) that changes dash-separated words like “my-short-string” into camel-cased “myShortString”.
 1. Attemptive solution. This approach doesn't work, as it also takes the first text to change the first letter to uppercase. Besides, if the input `String` starts with a dash sign "-", the method `.toUpperCase()` returns an error because the method can't work on emtpy `String`. 
     ```js 
@@ -1173,7 +1477,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 2 - Filter range
+#### 5.0.6.2. Exercise 2 - Filter range
 1. Write a function filterRange(arr, a, b) that gets an array arr, looks for elements between a and b in it and returns an array of them. The function should not modify the array. It should return the new array.
 1. Attemptive solution. `.filter()` takes a function and push the element to a new `Array` if the function returns `true` when iterates the element. 
     ```js 
@@ -1205,7 +1509,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 3 - Sort in decreasing order 
+#### 5.0.6.3. Exercise 3 - Sort in decreasing order 
 1. Sort elements of an `Array` to decreasing order. 
 1. Attemptive solution. `.sort()` method takes a function and check adjacent elements one by one. If the function returns positive nubmer, the `Array` will be sorted in "**descending**" order. If the function returns negative, the `Array` will be sorted in "**ascending**" order. 
     ```js 
@@ -1220,7 +1524,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(arr) // [ 8, 5, 2, 1, -10 ]
     ```
 
-#### Exercise 4 - Copy and sort array 
+#### 5.0.6.4. Exercise 4 - Copy and sort array 
 1. We'd like to get a copy of `Array` sorted without modifying the `Array`. 
 1. Attemptive solution. `.slice()` return a copy of `Array` by giving starting and ending position. If there's no start/end point given, the method returns a copy of the whole `Array`. `.sort()` method is similar that it also returns a sorted `Array` by comparing `Strings`. However, from the notes, it'd be better to use `.localCompare` to ensure the letters are compared correctly if there's special characters, such as letters from the other language. 
     ```js 
@@ -1239,7 +1543,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 5 - Create an extendable calculator 
+#### 5.0.6.5. Exercise 5 - Create an extendable calculator 
 1. First, implement the method calculate(str) that takes a string like "1 + 2" in the format “NUMBER operator NUMBER” (space-delimited) and returns the result. Should understand plus + and minus -. 
 1. Attemptive solution. When solving this problem, we should be careful about the data structure. The Attemptive solution is an deadend for the following solution because it's not extendable. The Attemptive solution was going to use `.call()` method which is not the right direction. The solution uses very basic features of `Objects`. Besides, the value of a key/value pair in `Object` can be any thing, even an expression. 
     ```js 
@@ -1279,7 +1583,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 6 - Map to names  
+#### 5.0.6.6. Exercise 6 - Map to names  
 1. You have an array of user objects, each one has user.name. Write the code that converts it into an array of names.
     ```js 
     let john = { name: "John", age: 25 };
@@ -1301,7 +1605,7 @@ Note: We should be very careful with the calculation by programming language due
     let names = users.map(item => item.name); 
     ```
 
-#### Exercise 7 - Map to objects 
+#### 5.0.6.7. Exercise 7 - Map to objects 
 1. You have an array of `user` objects, each one has `name`, `surname` and `id`. Write the code to create another array from it, of objects with `id` and `fullName`, where `fullName` is generated from `name` and `surname`.
     ```js 
     let john = { name: "John", surname: "Smith", id: 1 };
@@ -1336,7 +1640,7 @@ Note: We should be very careful with the calculation by programming language due
     }));
     ```
 
-#### Exercise 8 - Sort users by age 
+#### 5.0.6.8. Exercise 8 - Sort users by age 
 1. Write the function sortByAge(users) that gets an array of objects with the age property and sorts them by age.
     ```js 
     let john = { name: "John", age: 25 };
@@ -1366,7 +1670,7 @@ Note: We should be very careful with the calculation by programming language due
     function sortByAge(users){users.sort((a, b) => (a.age > b.age) ? 1 : -1)};
     ```
 
-#### Exercise 9 - Shuffle an array
+#### 5.0.6.9. Exercise 9 - Shuffle an array
 1. Write the function shuffle(array) that shuffles (randomly reorders) elements of the array. Multiple runs of shuffle may lead to different orders of elements. All element orders should have an equal probability.
     ```js 
     let arr = [1, 2, 3];
@@ -1418,7 +1722,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 10 - Get average age 
+#### 5.0.6.10. Exercise 10 - Get average age 
 1. Write the function getAverageAge(users) that gets an array of objects with property age and returns the average age. The formula for the average is `(age1 + age2 + ... + ageN) / N`.
     ```js 
     let john = { name: "John", age: 25 };
@@ -1451,7 +1755,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 11 - Filter unique array members
+#### 5.0.6.11. Exercise 11 - Filter unique array members
 1. Let `arr` be an array. Create a function `unique(arr)` that should return an array with unique items of `arr`. 
     ```js 
     let strings = ["Hare", "Krishna", "Hare", "Krishna",
@@ -1484,7 +1788,7 @@ Note: We should be very careful with the calculation by programming language due
         return result;
     }
 
-#### Exercise 12 - Create keyed object from array 
+#### 5.0.6.12. Exercise 12 - Create keyed object from array 
 1. Let’s say we received an array of users in the form `{id:..., name:..., age... }`. Create a function `groupById(arr)` that creates an object from it, with `id` as the key, and array items as values and use `.reduce()` method to solve the problem. 
     ```js 
     let users = [
@@ -1536,7 +1840,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### Iterables 
+### 5.0.7. Iterables 
 1. "Iterable" object is the concept for `Objects` which can be iterated through `for of` loop. Not only `Arrays` but many other built-in objects are iterable, such as `String`. 
 
 **Symbol.iterator**
@@ -1708,7 +2012,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(counter === 5); // true 
     ```
 
-### Map and Set
+### 5.0.8. Map and Set
 1. Map is a collection of keyed data items, just like an Object. But the main difference is that Map allows keys of any type. A regular object will turn its key into strings. For example, if we give a boolean `true` as the key of an object, the key will be turn into `true` as a string value. (Note that we can still use boolean `true` to access the value of the property of the object. However, the property can also be access with dotnotation or square brackets with string values). We can use following methods to manipulate `Map` objects in JavaScript.
     1. `new Map()` - Create a new `Map` object
     1. `map.set(key, value) - Set a value to the `Map` object according to the key.
@@ -1806,7 +2110,7 @@ Note: We should be very careful with the calculation by programming language due
     1. `set.values()` - same as `set.keys()`, for compatibility with `Map`.
     1. `set.entries()` - returns an iterable object for entries `[value, value]`, exists for compatibility with `Map`.
 
-#### Exercise 1 - Filter unique array members
+#### 5.0.8.1. Exercise 1 - Filter unique array members
 1. Let `arr` be an array.
 1. Create a function `unique(arr)` that should return an array with unique items of `arr`.
     ```js
@@ -1833,7 +2137,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 2 - Filter anagrams
+#### 5.0.8.2. Exercise 2 - Filter anagrams
 1. "**Anagrams**" are words that have the same number of same letters, but in different order.
     1. nap - pan
     1. ear - are - era
@@ -1870,7 +2174,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 3 - Iterable keys
+#### 5.0.8.3. Exercise 3 - Iterable keys
 1. We’d like to get an array of `map.keys()` in a variable and then do apply array-specific methods to it, e.g. `Array.push`, but that doesn't work. 
     ```js
     let map = new Map();
@@ -1895,7 +2199,7 @@ Note: We should be very careful with the calculation by programming language due
     keysArr.push('more');
     ```
 
-### WeakMap and WeakSet
+### 5.0.9. WeakMap and WeakSet
 **WeakMap**
 1. In JavaScript, `Arrays` and `Objects` are reference (pointer) to the data in memory. If we assign the variable a `null` to overwrite its previous value, the object will be removed. However, if we keep the `Object` in another `Object`, though the variable thats keeps the object can be overwritten by other value, the `Object` will still be in the `Object`.
     ```js
@@ -2056,7 +2360,7 @@ Note: We should be very careful with the calculation by programming language due
     // visitedSet will be cleaned automatically
     ```
 
-#### Exercise 1 - Store "Unread" Flags
+#### 5.0.9.1. Exercise 1 - Store "Unread" Flags
 1. There’s an array of messages:
     1. Your code can access it, but the messages are managed by someone else’s code. New messages are added, old ones are removed regularly by that code, and you don’t know the exact moments when it happens.
     1. When a message is removed from messages, it should disappear from your structure as well.
@@ -2117,7 +2421,7 @@ Note: We should be very careful with the calculation by programming language due
     messages[0][isRead] = true;
     ```
 
-#### Exercise 2 - Store Read Dates
+#### 5.0.9.2. Exercise 2 - Store Read Dates
 1. There’s an array of messages as in the previous task. The situation is similar.
     1. The question now is: which data structure you’d suggest to store the information: “when the message was read?”.
     1. In the previous task we only needed to store the “yes/no” fact. Now we need to store the date, and it should only remain in memory until the message is garbage collected.
@@ -2153,7 +2457,7 @@ Note: We should be very careful with the calculation by programming language due
     readMap.set(messages[0], new Date(2017, 1, 1));
     ```
 
-### Object.keys, values, entries
+### 5.0.10. Object.keys, values, entries
 1. We have been using `.keys()`, `.values()`, and `.entreis()` methods for `Map` objects in previous sections. These methods are generic and can be used for other types of data, such as `Map`, `Set`, and `Array`. 
     1. `Object.keys(obj)` returns an array of keys of the `obj`.
     1. `Object.values(obj)` returns an array of values of the `obj`.
@@ -2176,7 +2480,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(doublePrices.meat);
     ```
 
-#### Exercise 1 - Sum the Properties
+#### 5.0.10.1. Exercise 1 - Sum the Properties
 1. There is a `salaries` object with arbitrary number of salaries. Write the function `sumSalaries(salaries)` that returns the sum of all salaries using `Object.values` and the `for..of` loop. If `salaries` is empty, then the result must be 0.
     ```js
     let salaries = {
@@ -2213,7 +2517,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(sumSalaries(salaries)); // 650
     ```
 
-#### Exercise 2 - Count Properties
+#### 5.0.10.2. Exercise 2 - Count Properties
 1. Write a function `count(obj)` that returns the number of properties in the object:
     ```js
     let user = {
@@ -2234,7 +2538,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### Destructuring Assignment
+### 5.0.11. Destructuring Assignment
 1. `Destructuring assignment` is a special syntax that allows us to "unpack" arrays or objects into a bunch of variables, as sometimes that’s more convenient. Destructuring also works great with complex functions that have a lot of parameters, default values, and so on.
 
 **Array Destructuring**
@@ -2508,7 +2812,7 @@ Note: We should be very careful with the calculation by programming language due
     showMenu(); // Menu 100 200
     ```
 
-#### Destructuring Assignment
+#### 5.0.11.1. Destructuring Assignment
 1. We have an `user` object. Write the destructuring assignment that reads:
     1. `name` property into the variable `name`.
     1. `years` property into the variable `age`.
@@ -2543,7 +2847,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(isAdmin); // false
     ```
 
-#### The Maximal Salary
+#### 5.0.11.2. The Maximal Salary
 1. We have a `salaries` object. Create the function `topSalary(salaries)` that returns the name of the top-paid person.
     1. If `salaries` is empty, it should return `null`.
     1. If there are multiple top-paid persons, return any of them.
@@ -2590,7 +2894,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### Date and Time 
+### 5.0.12. Date and Time 
 1. A Date object is a built-in class which can store the date and time and provide methods for date/time management. 
 
 **Creation**
@@ -2808,7 +3112,7 @@ Note: We should be very careful with the calculation by programming language due
 1. Sometimes we need more precise time measurements. JavaScript itself does not have a way to measure time in microseconds (1 millionth of a second), but most environments provide it. For instance, browser has performance.now() that gives the number of milliseconds from the start of page loading with microsecond precision (3 digits after the point)
 1. Node.js has `microtime` module and other ways. Technically, almost any device and environment allows to get more precision, it’s just not in `Date`.
 
-#### Exercise 1 - Create a Day
+#### 5.0.12.1. Exercise 1 - Create a Day
 1. Create a Date object for the date: Feb 20, 2012, 3:12am. The time zone is local. Show it using `console.log`.
     ```js
     let date = new Date('2012-02-20T03:12');
@@ -2825,7 +3129,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(d2);
     ```
 
-#### Exercise 2 - Show a Weekday
+#### 5.0.12.2. Exercise 2 - Show a Weekday
 1. Write a function getWeekDay(date) to show the weekday in short format: ‘MO’, ‘TU’, ‘WE’, ‘TH’, ‘FR’, ‘SA’, ‘SU’.
     ```js
     let date = new Date(2012, 0, 3);  // 3 Jan 2012
@@ -2879,7 +3183,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log( getWeekDay(date) ); // FR
     ```
 
-#### Exercise 3 - European Weekday
+#### 5.0.12.3. Exercise 3 - European Weekday
 1. European countries have days of week starting with Monday (number 1), then Tuesday (number 2) and till Sunday (number 7). Write a function `getLocalDay(date)` that returns the “European” day of week for `date`.
     ```js
     let date = new Date(2012, 0, 3);  // 3 Jan 2012
@@ -2902,7 +3206,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(getLocalDay(date));
     ```
 
-#### Exercise 4 - Which Day of Month Was Many Days Ago?
+#### 5.0.12.4. Exercise 4 - Which Day of Month Was Many Days Ago?
 1. Create a function `getDateAgo(date, days)` to return the day of month `days` ago from the `date`. 
 1. For instance, if today is 20th, then `getDateAgo(new Date(), 1)` should be 19th and `getDateAgo(new Date(), 2)` should be 18th. Should work reliably for days=365 or more. 
 1. The function should not modify the given `date`.
@@ -2934,7 +3238,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(getDateAgo(date, 365)); // 2, (2 Jan 2014)
     ```
 
-#### Exercise 5 - Last Day of Month?
+#### 5.0.12.5. Exercise 5 - Last Day of Month?
 1. Write a function `getLastDayOfMonth(year, month)` that returns the last day of month. Sometimes it is 30th, 31st or even 28/29th for Feb.
 1. Parameters:
     1. `year` – four-digits year, for instance 2012.
@@ -2962,7 +3266,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(getLastDayOfMonth(2013, 1)); // 28
     ```
 
-#### Exercise 6 - How Many Seconds Have Passed Today?
+#### 5.0.12.6. Exercise 6 - How Many Seconds Have Passed Today?
 1. Write a function `getSecondsToday()` that returns the number of seconds from the beginning of today.
 1. For instance, if now were `10:00 am`, and there was no daylight savings shift, then `getSecondsToday() == 36000 // (3600 * 10)`.
     ```js
@@ -2997,7 +3301,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(getSecondsToday());
     ```
 
-#### Exercise 7 - How Many Seconds Till Tomorrow?
+#### 5.0.12.7. Exercise 7 - How Many Seconds Till Tomorrow?
 1. Create a function `getSecondsToTomorrow()` that returns the number of seconds till tomorrow.
 1. For instance, if now is `23:00`, then `getSecondsToTomorrow() == 3600`.
     ```js
@@ -3034,7 +3338,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 8 - Format the Relative Date
+#### 5.0.12.8. Exercise 8 - Format the Relative Date
 1. Write a function `formatDate(date)` that should format date as follows
     1. If since `date` passed less than 1 second, then "`right now`".
     1. Otherwise, if since `date` passed less than 1 minute, then "`n sec. ago`".
@@ -3137,7 +3441,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(formatDate(new Date(new Date - 86400 * 1000)));
     ```
 
-### JSON Methods, toJSON
+### 5.0.13. JSON Methods, toJSON
 **JSON.stringify**
 1. JSON data type stands for JavaScript Object Notation which is created to serve pain that we'd like to convert the data into `String` when delivering it over a network. Besides, most of the other programming languages on the server-side have libraries to handle data in JSON format. There are 2 main methods we can use. 
     1. `JSON.stringify()` is to turn an Object into JSON.
@@ -3382,7 +3686,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(schedule.meetups[1].date.getDate()); // works!
     ```
 
-#### Exercise 1 - Turn the Object into JSON and Back
+#### 5.0.13.1. Exercise 1 - Turn the Object into JSON and Back
 1. Turn the `user` into JSON and then read it back into another variable.
     ```js
     let user = {
@@ -3403,7 +3707,7 @@ Note: We should be very careful with the calculation by programming language due
     let user2 = JSON.parse(JSON.stringify(user));
     ```
 
-#### Exercise 2 - Exclude Backreferences
+#### 5.0.13.2. Exercise 2 - Exclude Backreferences
 1. In simple cases of circular references, we can exclude an offending property from serialization by its name. But sometimes we can’t just use the name, as it may be used both in circular references and normal properties. So we can check the property by its value. Write `replacer` function to stringify everything, but remove properties that reference `meetup`. 
     ```js
     let room = {
@@ -3466,12 +3770,12 @@ Note: We should be very careful with the calculation by programming language due
     */
     ```
 
-# Advanced working with functions
-## Recursion and Stack
+# 6. Advanced working with functions
+## 6.1. Recursion and Stack
 1. Recursion is a programming pattern that is useful in situations when a task can be naturally split into several tasks of the same kind, but simpler. Or when a task can be simplified into an easy action plus a simpler variant of the same task. Or, as we’ll see soon, to deal with certain data structures. 
 1. When a function solves a task, in the process it can call many other functions. A partial case of this is when a function calls itself. That’s called recursion.
 
-### Two Ways of Thinking
+### 6.1.1. Two Ways of Thinking
 1. For something simple to start with – let’s write a function `pow(x, n)` that raises `x` to a natural power of `n`. In other words, multiplies x by itself n times.
 1. Iterative thinking: the `for` loop
     ```js
@@ -3519,7 +3823,7 @@ Note: We should be very careful with the calculation by programming language due
 1. The maximal recursion depth is limited by JavaScript engine. We can rely on it being 10000, some engines allow more, but 100000 is probably out of limit for the majority of them. There are automatic optimizations that help alleviate this (“tail calls optimizations”), but they are not yet supported everywhere and work only in simple cases. 
 1. That limits the application of recursion, but it still remains very wide. There are many tasks where recursive way of thinking gives simpler code, easier to maintain.
 
-### The Execution Context and Stack
+### 6.1.2. The Execution Context and Stack
 1. The information about the process of execution of a running function is stored in its "**execution context**". The execution context is an internal data structure that contains details about the execution of a function: where the control flow is now, the current variables, the value of `this`, and few other internal details.
 1. When a function makes a nested call, the following happens:
     1. The current function is paused.
@@ -3538,7 +3842,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. Any recursion can be rewritten as a loop. The loop variant usually can be made more effective. However, sometimes the rewrite is non-trivial, especially when function uses different recursive subcalls depending on conditions and merges their results or when the branching is more intricate. And the optimization may be unneeded and totally not worth the efforts. Recursion can give a shorter code, easier to understand and support. Optimizations are not required in every place, mostly we need a good code, that’s why it’s used.
 
-### Recursive Traversals
+### 6.1.3. Recursive Traversals
 1. Another great application of the recursion is a recursive traversal. For example, we have a company. The staff structure can be presented as an object. In other words, a company has departments.
     1. A department may have an array of staff. For instance, `sales` department has 2 employees, John and Alice.
     1. Or a department may split into subdepartments, like `development` has two branches, `sites` and `internals`. Each of them has their own staff.
@@ -3603,12 +3907,12 @@ Note: We should be very careful with the calculation by programming language due
     console.log(sumSalaries(company)); // 7700
     ```
 
-### Recursive Structures
+### 6.1.4. Recursive Structures
 1. A recursive (recursively-defined) data structure is a structure that replicates itself in parts. In the example of the `company` departments above. A company department is 
     1. Either an array of people.
     1. Or an object with departments.
 
-### Linked list
+### 6.1.5. Linked list
 1. Linked list is also a type of recursive structure which is useful in certain cases. For example, we want to store an ordered list of objects. 
     ```js
     let arr = [obj1, obj2, obj3];
@@ -3668,7 +3972,7 @@ Note: We should be very careful with the calculation by programming language due
     1. We can add property `prev` in addition to `next` to reference the previous element, to move back easily.
     1. We can also add a variable named `tail` referencing the last element of the list (and update it when adding/removing elements from the end).
 
-### Exercise 1 - Sum all numbers till the given one
+### 6.1.6. Exercise 1 - Sum all numbers till the given one
 1. Write a function `sumTo(n)` that calculates the sum of numbers `1 + 2 + ... + n`. Make 3 solution variants:
     1. Using a for loop.
     1. Using a recursion, cause `sumTo(n) = n + sumTo(n-1) for n > 1`.
@@ -3727,7 +4031,7 @@ Note: We should be very careful with the calculation by programming language due
     }    
     ```
 
-#### Exercise 2 - Calculate factorial
+#### 6.1.6.1. Exercise 2 - Calculate factorial
 1. The factorial of a natural number is a number multiplied by "number minus one", then by "number minus two", and so on till 1. The factorial of `n` is denoted as `n!`. 
 1. P.S. Hint: `n!` can be written as `n * (n-1)!` For instance, `3! = 3*2! = 3*2*1! = 6`.
     ```js 
@@ -3771,7 +4075,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 3 - Fibonacci numbers
+#### 6.1.6.2. Exercise 3 - Fibonacci numbers
 1. The sequence of Fibonacci numbers has the formula Fn = Fn-1 + Fn-2. In other words, the next number is a sum of the two preceding ones.
     1. First two numbers are `1`, then `2(1+1)`, then `3(1+2)`, `5(2+3)` and so on: `1, 1, 2, 3, 5, 8, 13, 21...`.
     1. Fibonacci numbers are related to the Golden ratio and many natural phenomena around us.
@@ -3830,7 +4134,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(fib(77)); // 5527939700884757
     ```
 
-#### Exercise 4 - Output a single-linked list
+#### 6.1.6.3. Exercise 4 - Output a single-linked list
 1. Output a single-linked list from the previous task Output a single-linked list in the reverse order.
 1. Write a function `printList(list)` that outputs list items one-by-one.
 1. Make two solutions: using a loop and using a recursion.
@@ -3915,7 +4219,7 @@ Note: We should be very careful with the calculation by programming language due
     printListFor(list);
     ```
 
-#### Exercise 5 - Output a single-linked list in the reverse order
+#### 6.1.6.4. Exercise 5 - Output a single-linked list in the reverse order
 1. Output a single-linked list from the previous task Output a single-linked list in the reverse order.
 1. Make two solutions: using a loop and using a recursion.
     ```js
@@ -4004,8 +4308,8 @@ Note: We should be very careful with the calculation by programming language due
     printReverseListFor(list);
     ```
 
-## Rest Parameters and Spread Syntax
-### Rest Parameters
+## 6.2. Rest Parameters and Spread Syntax
+### 6.2.1. Rest Parameters
 1. A function can be called with any number of arguments, no matter how it is defined. There will be no error because of "excessive" arguments. But of course in the result only the first two will be counted.
 1. The rest of the parameters can be included in the function definition by using three dots `...` followed by the name of the array that will contain them. The dots literally mean "gather the remaining parameters into an array".
     ```js
@@ -4032,7 +4336,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-### The "arguments" variable
+### 6.2.2. The "arguments" variable
 1. There is also a special array-like object named `arguments` that contains all arguments by their index.
 1. In old times, rest parameters did not exist in the language, and using `arguments` was the only way to get all arguments of the function. And it still works, we can find it in the old code.
 1. But the downside is that although `arguments` is both array-like and iterable, it’s not an array. It does not support array methods, so we can’t call `arguments.map(...)` for example.
@@ -4062,7 +4366,7 @@ Note: We should be very careful with the calculation by programming language due
     f(1); // 1
     ```
 
-### Spread Syntax
+### 6.2.3. Spread Syntax
 1. This is opposite to use `...rest` to retrieve all parameters from function arguments except the declared ones or `arguments` to retrieve all parametesr as a single array. We can use spread syntax to pass an array to a function that takes multiple arguments. 
     1. We can pass multiple iterables to a function. 
     1. We can even combine the spread syntax with normal values.
@@ -4093,7 +4397,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. Note that there's a subtle difference between `Array.from(obj)` and `[..obj]`. `Array.from` operates on both array-like and iterables, while spread syntax works only with iterables.
 
-### Get a new copy of an array/object
+### 6.2.4. Get a new copy of an array/object
 1. In the pervious chapter about `Object`, we learnt how to use `Object.assign` to duplicate an object. We can also use spread syntax to copy it.
     ```js
     let obj = {
@@ -4122,10 +4426,10 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. This way of copying an object is much shorter than `let objCopy = Object.assign({}, obj);` or for an array `let arrCopy = Object.assign([], arr);` so we prefer to use it whenever we can. 
 
-## Variable Scope, Closure
+## 6.3. Variable Scope, Closure
 1. There are 3 keywords can be used to declare, `let`, `const`, and `var`.
 
-### Code Blocks
+### 6.3.1. Code Blocks
 1. If a variable is declared inside a code block `{...}`, it’s only visible inside that block. However, this is not the case for `var`. Further details will be introduced in the next section. There’d be an error without blocks. 
     ```js
     {
@@ -4168,7 +4472,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(i); // Error, no such variable
     ```
 
-### Nested Functions
+### 6.3.2. Nested Functions
 1. A function is called "**nested**" when it is created inside another function. This feature is easy to use in JavaScript. A nested function can be returned either as a property of a new object or as a result by itself. It can then be used somewhere else. No matter where, it still has access to the same outer variables.
     ```js
     function sayHiBye(firstName, lastName) {
@@ -4196,7 +4500,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(counter()); // 2
     ```
 
-### Lexical Environment
+### 6.3.3. Lexical Environment
 **Step 1. Variables**
 1. In JavaScript, every running function, code block `{...}`, and the script as a whole have an internal (hidden) associated object known as the "**_Lexical Environment_**". The Lexical Environment object consists of two parts:
     1. Environment Record – an object that stores all local variables as its properties (and some other information like the value of `this`).
@@ -4251,11 +4555,11 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. A variable is updated in the Lexical Environment where it lives. If we call `counter()` multiple times, the `count` variable will be increased to 2, 3 and so on, at the same place.
 
-### Closure
+### 6.3.4. Closure
 1. A closure is a function that remembers its outer variables and can access them. In some languages, that’s not possible, or a function should be written in a special way to make it happen. But as explained above, in JavaScript, all functions are naturally closures (there is only one exception, to be covered in The "**`new Function`**" syntax, which is used for "**classes**"). 
 1. In JavaScript, functions automatically remember where they were created using a hidden `[[Environment]]` property, and then their code can access outer variables.
 
-### Garbage Collection
+### 6.3.5. Garbage Collection
 1. Usually, a Lexical Environment is removed from memory with all the variables after the function call finishes. That’s because there are no references to it. As any JavaScript object, it’s only kept in memory while it’s reachable. However, if there’s a nested function that is still reachable after the end of a function, then it has `[[Environment]]` property that references the lexical environment. In that case the Lexical Environment is still reachable even after the completion of the function, so it stays alive.
     ```js
     function f() {
@@ -4298,7 +4602,7 @@ Note: We should be very careful with the calculation by programming language due
     g = null; // ...and now the memory is cleaned up
     ```
 
-### Real-life Optimization
+### 6.3.6. Real-life Optimization
 1. In theory while a function is alive, all outer variables are also retained. But in practice, JavaScript engines try to optimize that. They analyze variable usage and if it’s obvious from the code that an outer variable is not used – it is removed. 
     1. An important side effect in V8 (Chrome, Edge, Opera) is that such variable will become unavailable in debugging. 
     ```js
@@ -4329,7 +4633,7 @@ Note: We should be very careful with the calculation by programming language due
     g();
     ```
 
-#### Exercise 1 - Does function pickup latest changes
+#### 6.3.6.1. Exercise 1 - Does function pickup latest changes
 1. The function sayHi uses an external variable name. When the function runs, which value is it going to use? Such situations are common both in browser and server-side development. A function may be scheduled to execute later than it is created, for instance after a user action or a network request.
     ```js
     let name = "John";
@@ -4344,7 +4648,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. Solution. The function should return `'Pete'` as in the execution context, variable `name` has been changed from `'John'` to `'Pete'`.
 
-#### Exercise 2 - Which variables are available?
+#### 6.3.6.2. Exercise 2 - Which variables are available?
 1. The function `makeWorker` below makes another function and returns it. That new function can be called from somewhere else. Will it have access to the outer variables from its creation place, or the invocation place, or both?
     ```js
     function makeWorker() {
@@ -4365,7 +4669,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. Solution. The function will return `'Pete'` because the closest variable to the executed lexical context is in the direct outter scope. The value will only become `'John'` if there's no `name` variable in the function declaration. 
 
-#### Exercise 3 - Are counters independent?
+#### 6.3.6.3. Exercise 3 - Are counters independent?
 1. Here we make two counters: `counter` and `counter2` using the same makeCounter function. Are they independent? What is the second counter going to show? `0,1` or `2,3` or something else?
     ```js
     function makeCounter() {
@@ -4386,7 +4690,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. Solution. The 2nd section for function execution with variable `counter2` will have its own lexical environment which is separated from the other `counter`. Therefore, the result will be `0,1`.
 
-#### Exercise 4 - Counter object
+#### 6.3.6.4. Exercise 4 - Counter object
 1. Here a counter object is made with the help of the constructor function. Will it work? What will it show?
     ```js
     function Counter() {
@@ -4407,7 +4711,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. Solution. Both nested functions are created within the same outer Lexical Environment, so they share access to the same `count` variable. Note that we can only use `new` keyword to create a new object that as both functions as its methods.
 
-#### Exercise 5 - Function in if
+#### 6.3.6.5. Exercise 5 - Function in if
 1. Look at the code. What will be the result of the call at the last line?
     ```js
     let phrase = "Hello";
@@ -4422,7 +4726,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. Solution. `sayHi()` function should return `'Hello, John'`. This part is a bit weird, as by theory, the function is declared in the code block which shouldn't be visible in global context. However, we still can execute `sayHi` function in both chrome, edge, firefox and Node.js runtime. Tested on 2020/OCT/11.
 
-#### Exercise 6 - Sum with closures
+#### 6.3.6.6. Exercise 6 - Sum with closures
 1. Write function `sum` that works like this: `sum(a)(b) = a+b`. Yes, exactly this way, using double parentheses (not a mistype).
     ```js
     function sum(n){
@@ -4443,7 +4747,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 7 - Is variable visible?
+#### 6.3.6.7. Exercise 7 - Is variable visible?
 1. What will be the result of this code?
     ```js
     let x = 1;
@@ -4466,7 +4770,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 8 - Filter through function
+#### 6.3.6.8. Exercise 8 - Filter through function
 1. We have a built-in method `arr.filter(f)` for arrays. It filters all elements through the function `f`. If it returns `true`, then that element is returned in the resulting array.
 1. Make a set of “ready to use” filters:
     1. `inBetween(a, b)` – between a and b or equal to them (inclusively).
@@ -4531,7 +4835,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(arr.filter(inBetween(0, 2))); // 1,2 
     ```
 
-#### Exercise 9 - Sort by field
+#### 6.3.6.9. Exercise 9 - Sort by field
 1. We’ve got an array of objects to sort:. 
     ```js
     let users = [
@@ -4568,7 +4872,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 10 - Army of functions
+#### 6.3.6.10. Exercise 10 - Army of functions
 1. The following code creates an array of `shooters`. Every function is meant to output its number. But something is wrong...
 1. Why do all of the shooters show the same value? Fix the code so that they work as intended.
     ```js
@@ -4639,10 +4943,10 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-## The Old "var"
+## 6.4. The Old "var"
 1. Since there are several ways to declare variables, we can use `let`, `const` or `var` to declare a variable. Though `var` and `let` are very similar, they actually work very differently by defining the context and scope of the declared variable.
 
-### "var" has no block scope
+### 6.4.1. "var" has no block scope
 1. Variables, declared with `var`, are either "**function-scoped**" or "**global-scoped**". They are visible through blocks. The same thing for loops. `var` cannot be block- or loop-local.
 1. var pierces through `if`, `for` or other **code blocks**. That’s because a long time ago in JavaScript, blocks had no Lexical Environments, and `var` is a remnant of that.
     ```js
@@ -4670,10 +4974,10 @@ Note: We should be very careful with the calculation by programming language due
     console.log(phrase); // Error: phrase is not defined (Check the Developer Console)
     ```
 
-### "var" tolerates redeclarations
+### 6.4.2. "var" tolerates redeclarations
 1. If we declare the same variable with `let` twice in the same scope, that’s an error. With `var`, we can redeclare a variable any number of times. If we use `var` with an already-declared variable, it’s just ignored.
 
-### "var" variables can be declared below their use
+### 6.4.3. "var" variables can be declared below their use
 1. `var` declarations are processed when the function starts (or script starts for globals).
 1. In other words, `var` variables are defined from the beginning of the function, no matter where the definition is (assuming that the definition is not in the nested function).
 1. This behavior "hoisting" (raising), because all `var` are "hoisted" (raised) to the top of the function. In the example, `if (false)` branch never executes, but that doesn’t matter. The `var` inside it is processed in the beginning of the function, so at the moment of `(*)` the variable exists.
@@ -4716,7 +5020,7 @@ Note: We should be very careful with the calculation by programming language due
     sayHi(); // undefined
     ```
 
-### IIFE
+### 6.4.4. IIFE
 1. In the past, as there was only `var`, and it has no block-level visibility, programmers invented a way to emulate it. What they did was called "**immediately-invoked function expressions**" (abbreviated as IIFE).
 1. A Function Expression is created and immediately called. So the code executes right away and has its own private variables.
     ```js
@@ -4748,7 +5052,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 
 
-## Global Object
+## 6.5. Global Object
 1. The global object provides variables and functions that are available anywhere. By default, those that are built into the language or the environment.
 1. In a browser it is named `window`, for Node.js it is `global`, for other environments it may have another name.
 1. Recently, `globalThis` was added to the language, as a standardized name for a global object, that should be supported across all environments. It’s supported in all major browsers.
@@ -4783,7 +5087,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. Using global variables is generally discouraged. There should be as few global variables as possible. The code design where a function gets “input” variables and produces certain “outcome” is clearer, less prone to errors and easier to test than if it uses outer or global variables.
 
-### Using for Polyfills
+### 6.5.1. Using for Polyfills
 1. We use the global object to test for support of modern language features. For instance, test if a built-in `Promise` object exists (it doesn’t in really old browsers).
 1. If there’s none (say, we’re in an old browser), we can create "**polyfills**": add functions that are not supported by the environment, but exist in the modern standard.
     ```js
@@ -4796,10 +5100,10 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-## Function Object, NFE
+## 6.6. Function Object, NFE
 1. a function in JavaScript is a value. Every value in JavaScript has a type. In JavaScript, functions are `objects`. A good way to imagine functions is as callable "action objects". We can not only call them, but also treat them as objects: add/remove properties, pass by reference etc.
 
-### The "name" property
+### 6.6.1. The "name" property
 1. Function objects contain some useable properties. The name-assigning logic is smart. It also assigns the correct name to a function even if it’s created without one, and then immediately assigned. In the specification, this feature is called a “contextual name”. If the function does not provide one, then in an assignment it is figured out from the context. 
     ```js
     function sayHi(){
@@ -4843,7 +5147,7 @@ Note: We should be very careful with the calculation by programming language due
     // the engine has no way to set up the right name, so there is none
     ```
 
-### The "length" property
+### 6.6.2. The "length" property
 1. There is another built-in property "length" that returns the number of function parameters. Note that rest parameters are not counted in `many` function of the example below.
     ```js
     function f1(a) {}
@@ -4878,7 +5182,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. This is a particular case of so-called "**polymorphism**" – treating arguments differently depending on their type or, in our case depending on the length. The idea does have a use in JavaScript libraries.
 
-### Custom Properties
+### 6.6.3. Custom Properties
 1. We can also add properties of our own. Here we add the `counter` property to track the total calls count.
     ```js
     function sayHi() {
@@ -4925,7 +5229,7 @@ Note: We should be very careful with the calculation by programming language due
     console.log(counter()); // 10
     ```
 
-### Named Function Expression
+### 6.6.4. Named Function Expression
 1. Named Function Expression, or NFE, is a term for Function Expressions that have a name. 
 1. Note that for function expression, we can still can add a name on it. We still have a Function Expression. Adding the name "`func`" after function did not make it a _Function Declaration_, because it is still created as a part of an assignment expression. Adding such a name also did not break anything. The function is still available as `sayHi()`.
     ```js
@@ -4993,7 +5297,7 @@ Note: We should be very careful with the calculation by programming language due
 1. Functions may carry additional properties. Many well-known JavaScript libraries make great use of this feature.
 1. They create a "main" function and attach many other "helper" functions to it. For instance, the **jQuery** library creates a function named `$`. The **lodash** library creates a function `_`, and then adds `_.clone`, `_.keyBy` and other properties to it (see the docs when you want learn more about them). Actually, they do it to lessen their pollution of the global space, so that a single library gives only one global variable. That reduces the possibility of naming conflicts.
 
-#### Exercise 1 - Set and decrease for counter
+#### 6.6.4.1. Exercise 1 - Set and decrease for counter
 1. Modify the code of `makeCounter()` so that the counter can also decrease and set the number:
     1. `counter()` should return the next number (as before).
     1. `counter.set(value)` should set the counter to value.
@@ -5054,7 +5358,7 @@ Note: We should be very careful with the calculation by programming language due
     }
     ```
 
-#### Exercise 2 - Sum with an arbitrary amount of brackets
+#### 6.6.4.2. Exercise 2 - Sum with an arbitrary amount of brackets
 1. Write function sum that would work that it can be called multiple times. 
 1. P.S. Hint: you may need to setup custom object to primitive conversion for your function.
     ```js
@@ -5093,10 +5397,10 @@ Note: We should be very careful with the calculation by programming language due
     +sum(1)(2)(3) === 6; // true
     ```
 
-## The "new Function" Syntax
+## 6.7. The "new Function" Syntax
 1. There’s one more way to create a function. It’s rarely used, but sometimes there’s no alternative.
 
-### Syntax
+### 6.7.1. Syntax
 1. The function is created with the arguments `arg1...argN` and the given `functionBody`.
 
     ```js
@@ -5119,7 +5423,7 @@ Note: We should be very careful with the calculation by programming language due
     func();
     ```
 
-### Closure
+### 6.7.2. Closure
 1. Usually, a function remembers where it was born in the special property `[[Environment]]`. It references the Lexical Environment from where it’s created (we covered that in the chapter [Variable scope, closure](#variable,-closure)).
 1. But when a function is created using new Function, its `[[Environment]]` is set to reference not the current Lexical Environment, but the global one. So, such function doesn’t have access to outer variables, only to the global ones.
     ```js
@@ -5136,13 +5440,13 @@ Note: We should be very careful with the calculation by programming language due
 1. For instance, if a function has `let userName`, minifier replaces it `let a` (or another letter if this one is occupied), and does it everywhere. That’s usually a safe thing to do, because the variable is local, nothing outside the function can access it. And inside the function, minifier replaces every mention of it. Minifiers are smart, they analyze the code structure, so they don’t break anything. They’re not just a dumb find-and-replace.
 1. So if `new Function` had access to outer variables, it would be unable to find renamed `userName`. If `new Function` had access to outer variables, it would have problems with minifiers. Besides, such code would be architecturally bad and prone to errors. To pass something to a function, created as `new Function`, we should use its arguments.
 
-## Scheduling: setTimeout and setInterval
+## 6.8. Scheduling: setTimeout and setInterval
 1. We may decide to execute a function not right now, but at a certain time later. That’s called "**scheduling a call**".
     1. `setTimeout` allows us to run a function once after the interval of time.
     1. `setInterval` allows us to run a function repeatedly, starting after the interval of time, then repeating continuously at that interval.
 1. These methods are not a part of JavaScript specification. But most environments have the internal scheduler and provide these methods. In particular, they are supported in all browsers and Node.js.
 
-### setTimeout
+### 6.8.1. setTimeout
 1. The syntax of `setTimeout`.
     1. `func | code` - Function or a string of code to execute. Usually, that’s a function. For historical reasons, a string of code can be passed, but that’s not recommended.
     1. `delay` - The delay before run, in milliseconds (1000 ms = 1 second), by default 0.
@@ -5171,7 +5475,7 @@ Note: We should be very careful with the calculation by programming language due
     ```
 1. That doesn’t work, because `setTimeout` expects a reference to a function. And here `sayHi()` runs the function, and the result of its execution is passed to `setTimeout`. In our case the result of `sayHi()` is `undefined` (the function returns nothing), so nothing is scheduled.
 
-### Canceling with clearTimeout
+### 6.8.2. Canceling with clearTimeout
 1. A call to `setTimeout` returns a "timer identifier" `timerId` that we can use to cancel the execution.
     ```js
     let timerId = setTimeout(...);
@@ -5187,7 +5491,7 @@ Note: We should be very careful with the calculation by programming language due
 1. Again, there is no universal specification for these methods, so that’s fine.
 1. For browsers, timers are described in the timers section of HTML5 standard.
 
-### setInterval
+### 6.8.3. setInterval
 1. The `setInterval` method has the same syntax as `setTimeout`. 
     1. All arguments have the same meaning. But unlike `setTimeout` it runs the function not only once, but regularly after the given interval of time.
     1. To stop further calls, we should call `clearInterval(timerId)`.
@@ -5197,7 +5501,7 @@ Note: We should be very careful with the calculation by programming language due
 1. If we use `alert` to show the message in browser, time goes on while alert is shown. In most browsers, including Chrome and Firefox the internal timer continues "ticking" while showing `alert/confirm/prompt`. 
 1. So if you run the code above and don’t dismiss the `alert` window for some time, then in the next `alert` will be shown immediately as you do it. The actual interval between `alert`s will be shorter than 2 seconds.
 
-### Nested setTimeout
+### 6.8.4. Nested setTimeout
 1. There are two ways of running something regularly. One is `setInterval`. The other one is a nested `setTimeout`.
     ```js
     /** instead of:
@@ -5252,7 +5556,7 @@ In this case the engine waits for `func` to complete, then checks the scheduler 
 
 **The nested setTimeout guarantees the fixed delay (here 100ms)**
     <img src="./setTimeout.PNG">
-#### Garbage collection and setInterval/setTimeout callback
+#### 6.8.4.1. Garbage collection and setInterval/setTimeout callback
 1. When a function is passed in `setInterval/setTimeout`, an internal reference is created to it and saved in the scheduler. It prevents the function from being garbage collected, even if there are no other references to it.
     ```js
     // the function stays in memory until the scheduler calls it
@@ -5261,7 +5565,7 @@ In this case the engine waits for `func` to complete, then checks the scheduler 
 1. For `setInterval` the function stays in memory until `clearInterval` is called.
 1. There’s a side-effect. A function references the outer lexical environment, so, while it lives, outer variables live too. They may take much more memory than the function itself. So when we don’t need the scheduled function anymore, it’s better to cancel it, even if it’s very small.
 
-### Zero delay setTimeout
+### 6.8.5. Zero delay setTimeout
 1. There’s a special use case: `setTimeout(func, 0)`, or just `setTimeout(func)`. This schedules the execution of `func` as soon as possible. But the scheduler will invoke it only after the currently executing script is complete.
 1. So the function is scheduled to run "right after" the current script. For instance, this outputs "Hello", then immediately "World". This feature is often used to represent the contact of executing asynchronous JavaScript.
     ```js
@@ -5299,7 +5603,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. The browser tab is in the background mode.
     1. The laptop is on battery.
 
-#### Exercise 1 - Output every second
+#### 6.8.5.1. Exercise 1 - Output every second
 1. Write a function `printNumbers(from, to)` that outputs a number every second, starting from `from` and ending with `to`.
     1. Using `setInterval`.
     1. Using nested `setTimeout`.
@@ -5387,7 +5691,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     printNumbers(5, 10);
     ```
 
-#### Exercise 2 - What will setTimeout show?
+#### 6.8.5.2. Exercise 2 - What will setTimeout show?
 1. In the code below there’s a `setTimeout` call scheduled, then a heavy calculation is run, that takes more than 100ms to finish. When will the scheduled function run?
     1. After the loop.
     1. Before the loop.
@@ -5407,10 +5711,10 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 
 
 
-## Decorators and Forwarding, call/apply
+## 6.9. Decorators and Forwarding, call/apply
 1. JavaScript gives exceptional flexibility when dealing with functions. They can be passed around, used as objects, and now we’ll see how to **_forward_** calls between them and **_decorate_** them.
 
-### Transparent caching
+### 6.9.1. Transparent caching
 1. If we have a function `slow(x)` which is CPU-heavy, but its results are stable. In other words, for the same `x` it always returns the same result.
 1. If the function is called often, we may want to cache (remember) the results to avoid spending extra-time on recalculations.
 1. But instead of adding that functionality into `slow()` we’ll create a wrapper function, that adds caching. As we’ll see, there are many benefits of doing so.
@@ -5453,7 +5757,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. The caching logic is separate, it did not increase the complexity of `slow` itself (if there was any).
     1. We can combine multiple decorators if needed (other decorators will follow).
 
-### Using "func.call" for the context
+### 6.9.2. Using "func.call" for the context
 1. The caching decorator mentioned above is not suited to work with object methods. For instance, in the code below `worker.slow()` stops working after the decoration.
     ```js
     // we'll make worker.slow caching
@@ -5560,7 +5864,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     console.log(worker.slow(2)); // works, doesn't call the original (cached)
     ```
 
-### Going multi-argument
+### 6.9.3. Going multi-argument
 1. In this case, we have a method that takes multiple arguments.
     ```js
     let worker = {
@@ -5612,7 +5916,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     console.log("Again " + worker.slow(3, 5)); // same (cached)
     ```
 
-### func.apply
+### 6.9.4. func.apply
 1. Instead of `func.call(this, ...arguments)` we could use `func.apply(this, arguments)`.
     ```js
     func.apply(context, args)
@@ -5628,7 +5932,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. The `apply` accepts only array-like `args`.
 1. So, where we expect an iterable, `call` works, and where we expect an array-like, `apply` works. And for objects that are both iterable and array-like, like a real array, we can use any of them, but `apply` will probably be faster, because most JavaScript engines internally optimize it better. Passing all arguments along with the context to another function is called call forwarding.
 
-### Borrowing a method
+### 6.9.5. Borrowing a method
 1. If we'd like to glue any number of arguments passed to a function, we can use `Array.join()` method. Therefore, we can use `arguments` keyword to take the arguments as array-like object and run `.join()` method. However, `arguments` doesn't really create an array, so `.join()` methods can't be used directly.
     ```js
     function hash() {
@@ -5654,13 +5958,13 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. …Do so until `this.length` items are glued.
     1. Return `result`.
 
-### Decorators and function properties
+### 6.9.6. Decorators and function properties
 1. It is generally safe to replace a function or a method with a decorated one, except for one little thing. If the original function had properties on it, like `func.calledCount` or whatever, then the decorated one will not provide them. Because that is a wrapper. So one needs to be careful if one uses them.
 1. E.g. in the example above if `slow` function had any properties on it, then `cachingDecorator(slow)` is a wrapper without them.
 1. Some decorators may provide their own properties. E.g. a decorator may count how many times a function was invoked and how much time it took, and expose this information via wrapper properties.
 1. There exists a way to create decorators that keep access to function properties, but this requires using a special `Proxy` object to wrap a function. We’ll discuss it later in the article [Proxy and Reflect](#Proxy-and-Reflect).
 
-#### Exercise 1 - Spy decorator
+#### 6.9.6.1. Exercise 1 - Spy decorator
 1. Create a decorator `spy(func)` that should return a wrapper that saves all calls to function in its `calls` property. Every call is saved as an array of arguments.
 1. P.S. That decorator is sometimes useful for unit-testing. Its advanced form is sinon.spy in Sinon.JS library.
     ```js
@@ -5702,7 +6006,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     }
     ```
 
-#### Exercise 2 - Delaying Decorator
+#### 6.9.6.2. Exercise 2 - Delaying Decorator
 1. Create a decorator `delay(f, ms)` that delays each call of `f` by `ms` milliseconds.
 1. In other words, `delay(f, ms)` returns a "delayed by `ms`" variant of `f`.
 1. In the code above, `f` is a function of a single argument, but your solution should pass all arguments and the context `this`.
@@ -5748,7 +6052,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     f1000("test"); // shows "test" after 1000ms
     ```
 
-#### Exercise 3 - Debounce decorator
+#### 6.9.6.3. Exercise 3 - Debounce decorator
 1. The result of `debounce(f, ms)` decorator is a wrapper that suspends calls to `f` until there’s `ms` milliseconds of inactivity (no calls, “cooldown period”), then invokes `f` once with the latest arguments.
 1. In other words, `debounce` is like a secretary that accepts “phone calls”, and waits until there’s `ms` milliseconds of being quiet. And only then it transfers the latest call information to “the boss” (calls the actual `f`).
 1. For instance, we had a function `f` and replaced it with `f = debounce(f, 1000)`.
@@ -5788,7 +6092,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     }
     ```
 
-#### Exercise 4 - Throttle decorator
+#### 6.9.6.4. Exercise 4 - Throttle decorator
 1. Create a "throttling" decorator `throttle(f, ms)` – that returns a wrapper.
 1. When it’s called multiple times, it passes the call to `f` at maximum once per `ms` milliseconds.
 1. The difference with debounce is that it’s completely different decorator:
@@ -5887,10 +6191,10 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     // ...outputs 3, intermediate value 2 was ignored
     ```
 
-## Function binding
+## 6.10. Function binding
 1. When passing object methods as callbacks, for instance to `setTimeout`, there’s a known problem: "losing `this`" because the execution context goes into the lexical scope of `setTimeout`.
 
-### Losing `this`
+### 6.10.1. Losing `this`
 1. We’ve already seen examples of losing `this`. Once a method is passed somewhere separately from the object – `this` is lost.
     ```js
     let user = {
@@ -5907,7 +6211,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     ```
 1. The method `setTimeout` in-browser is a little special: it sets `this=window` for the function call (for Node.js, `this` becomes the timer object, but doesn’t really matter here). So for `this.firstName` it tries to get `window.firstName`, which does not exist. In other similar cases, usually `this` just becomes `undefined`.
 
-### Solution 1: a wrapper
+### 6.10.2. Solution 1: a wrapper
 1. We can use a wrapping function. Now it works, because it receives `user` from the outer lexical environment, and then calls the method normally. 
     ```js
     let user = {
@@ -5943,7 +6247,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     // Another user in setTimeout!
     ```
 
-### Solution 2: bind
+### 6.10.3. Solution 2: bind
 1. Functions provide a built-in method bind that allows to fix `this`.
     ```js
     // more complex syntax will come a little later
@@ -5997,7 +6301,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     }
     ```
 
-### Partial functions
+### 6.10.4. Partial functions
 1. Until now we have only been talking about binding `this`. Let’s take it a step further.
 1. We can bind not only `this`, but also arguments. That’s rarely done, but sometimes can be handy.
     ```js
@@ -6018,7 +6322,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 1. In other cases, partial application is useful when we have a very generic function and want a less universal variant of it for convenience.
 1. For instance, we have a function `send(from, to, text)`. Then, inside a user object we may want to use a partial variant of it: `sendTo(to, text)` that sends from the current user.
 
-### Going partial without context
+### 6.10.5. Going partial without context
 1. We can fix some arguments without fixing the context `this` for an object method. We can use a function to wrap and return another function which fixes the arguments fromthe wrapper.
 1. The result of `partial(func[, arg1, arg2...])` call is a wrapper `(*)` that calls `func` with.
     1. Same `this` as it gets (for `user.sayNow` call it’s `user`)
@@ -6047,7 +6351,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     // [10:00] John: Hello!
     ```
 
-#### Exercise 1 - Bound function as a method
+#### 6.10.5.1. Exercise 1 - Bound function as a method
 1. What will be the output? 
     ```js
     function f() {
@@ -6062,7 +6366,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     ```
 1. Reasoned answer before checking solution. The output should be the same object which function `f` calls that is the execution context, which is `global object` in this case.
 1. Solution. It noticed that the context of a bound function is hard-fixed. There’s just no way to further change it. So even while we run `user.g()`, the original function is called with `this=null`. Note that we will get `this=null` as the answer if we use in strict mode. Otherwise, `this` of a regular function object will refer to the global object of the runtime.
-#### Exercise 2 - Second bind
+#### 6.10.5.2. Exercise 2 - Second bind
 1. Can we change `this` by additional binding? What will be the output?
     ```js
     function f() {
@@ -6077,7 +6381,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 1. Solution. The exotic bound function object returned by f.bind(...) remembers the context (and arguments if provided) only at creation time. A function cannot be re-bound.
 1. The function created by the first `bind` call has turned its `this` into `this.name` with `John`. Since the `this` is fixed, we can't modify it with the 2nd object which is `Ann` in this case.
 
-#### Exercise 3 - Function property after bind
+#### 6.10.5.3. Exercise 3 - Function property after bind
 1. There’s a value in the property of a function. Will it change after bind? Why, or why not?
     ```js
     function sayHi() {
@@ -6107,7 +6411,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     console.log(g.name); // bound method    
     ```
 
-#### Exercise 4 - Fix a function that loses `this`
+#### 6.10.5.4. Exercise 4 - Fix a function that loses `this`
 1. The call to `askPassword()` in the code below should check the password and then call `user.loginOk/loginFail` depending on the answer.
 1. But it leads to an error. Why?
 1. Fix the highlighted line for everything to start working right (other lines are not to be changed).
@@ -6140,7 +6444,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     askPassword(() => user.loginOk(), () => user.loginFail());
     ```
 
-#### Exercise 5 - Partial application for login
+#### 6.10.5.5. Exercise 5 - Partial application for login
 1. The task is a little more complex variant of Fix a function that loses "this".
 1. The `user` object was modified. Now instead of two functions `loginOk/loginFail`, it has a single function `user.login(true/false)`.
 1. What should we pass `askPassword` in the code below, so that it calls `user.login(true)` as ok and `user.login(false)` as `fail`?
@@ -6167,11 +6471,11 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     askPassword(() => user.login(true), () => user.login(false));
     ```
 
-## Arrow Functions Revisited
+## 6.11. Arrow Functions Revisited
 1. In JavaScript, function objects are very special and becomes one of its uniqueness that they can be passed as values to other functions. 
 1. Arrow functions are not only shorthand to declare functions in JavaScript but have special feature for its execution context. 
 
-### Arrow functions have no `this`
+### 6.11.1. Arrow functions have no `this`
 1. Arrow functions do not have `this`. If `this` is accessed, it is taken from the outside.
 1. Here in `forEach`, the arrow function is used, so this.title in it is exactly the same as in the outer method `showList`. That is `group.title`.
     ```js
@@ -6211,7 +6515,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. `.bind(this)` creates a “bound version” of the function.
     1. The arrow `=>` doesn’t create any binding. The function simply doesn’t have `this`. The lookup of `this` is made exactly the same way as a regular variable search: in the outer lexical environment.
 
-### Arrows have no "arguments"
+### 6.11.2. Arrows have no "arguments"
 1. Arrow functions also have no `arguments` variable.
 1. That’s great for decorators, when we need to forward a call with the current `this` and `arguments`.
 1. For instance, `defer(f, ms)` gets a function and returns a wrapper around it that delays the call by `ms` milliseconds.
@@ -6241,11 +6545,11 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     }
     ```
 
-# Object Properties Configuration
-## Property Flags and Descriptors
+# 7. Object Properties Configuration
+## 7.1. Property Flags and Descriptors
 1. For `Objects` in JavaScript, we can not only have regualr key/value pairs to store data but modify each property with different attributes. With the feature, we can configure each property in an object individually.
 1. Note that though we can use `const` to delcare objects and arrays in JavaScript, the objects (including arrays) are mutable. Therefore, we can use such feature to have a middleware function to filter the commands and requests for further requirements or advance features.
-### Property flags
+### 7.1.1. Property flags
 1. Object properties, besides a `value`, have three special attributes (so-called "flags"):
     1. `writable` – if `true`, the value can be changed, otherwise it’s read-only.
     1. `enumerable` – if `true`, then listed in loops, otherwise not listed.
@@ -6301,7 +6605,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     */
     ```
 
-### Non-writable
+### 7.1.2. Non-writable
 1. We can make `user.name` non-writable (can’t be reassigned) by changing `writable` flag.
 1. Now no one can change the name of our user, unless they apply their own `defineProperty` to override ours.
     ```js
@@ -6330,7 +6634,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 **Errors appear only in strict mode**
 1. In the non-strict mode, no errors occur when writing to non-writable properties and such. But the operation still won’t succeed. Flag-violating actions are just silently ignored in non-strict. Besides, the command call returns the assigned value without modifying anything.
 
-### Non-enumerable
+### 7.1.3. Non-enumerable
 1. We can add a custom `toString` method to `user` object.
 1. Normally, a built-in `toString` for objects is non-enumerable, it does not show up in `for..in`. But if we add a `toString` of our own, then by default it shows up in `for..in`.
     ```js
@@ -6363,7 +6667,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     console.log(Object.keys(user)); // name
     ```
 
-### Non-configurable
+### 7.1.4. Non-configurable
 1. The non-configurable flag (`configurable:false`) is sometimes preset for built-in objects and properties. A non-configurable property can not be deleted.
 1. For instance, `Math.PI` is non-writable, non-enumerable and non-configurable. 
     ```js
@@ -6415,7 +6719,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     Object.defineProperty(user, "name", { value: "Pete" });
     ```
 
-### Object.defineProperties
+### 7.1.5. Object.defineProperties
 1. There’s a method `Object.defineProperties(obj, descriptors)` that allows to define many properties at once.
     ```js
     Object.defineProperties(obj, {
@@ -6437,7 +6741,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     });
     ```
 
-### Object.getOwnPropertyDescriptors
+### 7.1.6. Object.getOwnPropertyDescriptors
 1. To get all property descriptors at once, we can use the method `Object.getOwnPropertyDescriptors(obj)`.
 1. Together with `Object.defineProperties` it can be used as a "flags-aware" way of cloning an object.
     ```js
@@ -6451,7 +6755,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     }
     ```
 
-### Sealing an object globally
+### 7.1.7. Sealing an object globally
 1. Property descriptors work at the level of individual properties. There are also methods that limit access to the whole object. However, These methods are rarely used in practice.
     1. `Object.preventExtensions(obj)` - Forbids the addition of new properties to the object.
     1. `Object.seal(obj)` - Forbids adding/removing of properties. Sets `configurable: false` for all existing properties.
@@ -6460,11 +6764,11 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. `Object.isSealed(obj)` - Returns `true` if adding/removing properties is forbidden, and all existing properties have `configurable: false`.
     1. `Object.isFrozen(obj)` - Returns `true` if adding/removing/changing properties is forbidden, and all current properties are `configurable: false, writable: false`.
 
-## Property Getters and Setters
+## 7.2. Property Getters and Setters
 1. There are two kinds of object properties.
     1. The first kind is **_data properties_**. We already know how to work with them. All properties that we’ve been using until now were data properties.
     1. The second type of properties is something new. It’s **_accessor properties_**. They are essentially functions that execute on getting and setting a value, but look like regular properties to an external code.
-### Getters and setters
+### 7.2.1. Getters and setters
 1. Accessor properties are represented by "getter" and "setter" methods. In an object literal they are denoted by `get` and `set`. 
     ```js
     let obj = {
@@ -6521,7 +6825,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     console.log(user.surname); // Cooper
     ```
 
-### Accessor descriptors
+### 7.2.2. Accessor descriptors
 1. Descriptors for accessor properties are different from those for data properties. For accessor properties, there is no `value` or `writable`, but instead there are `get` and `set` functions.
     1. `get` – a function without arguments, that works when a property is read,
     1. `set` – a function with one argument, that is called when the property is set,
@@ -6563,7 +6867,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     });
     ```
 
-### Smarter getters/setters
+### 7.2.3. Smarter getters/setters
 1. Getters/setters can be used as wrappers over "real" property values to gain more control over operations with them. For instance, if we want to forbid too short names for `user`, we can have a setter `name` and keep the value in a separate property `_name`.
 1. So, the name is stored in `_name` property, and the access is done via getter and setter.
 1. Technically, external code is able to access the name directly by using `user._name`. But there is a widely known convention that properties starting with an underscore `"_"` are internal and should not be touched from outside the object.
@@ -6587,7 +6891,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 
     user.name = ""; // Name is too short...
     ```
-### Using for compatibility
+### 7.2.4. Using for compatibility
 1. One of the great uses of accessors is that they allow to take control over a "regular" data property at any moment by replacing it with a **_getter_** and a **_setter_** and tweak its behavior.
 1. Imagine we started implementing user objects using data properties `name` and `age`.
     ```js
@@ -6631,8 +6935,8 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     console.log(john.age);      // ...as well as the age
     ```
 
-# Prototypes, Inheritance
-## Prototypal Inheritance
+# 8. Prototypes, Inheritance
+## 8.1. Prototypal Inheritance
 1. In JavaScript, objects have a special hidden property `[[Prototype]]` (as named in the specification), that is either `null` or references another object. That object is called "a prototype". 
 1. The prototype is a little bit "**magical**". When we want to read a property from object, and it’s missing, JavaScript automatically takes it from the prototype. 
 1. The property `[[Prototype]]` is internal and hidden, but there are many ways to set it. One of them is to use the special name `__proto__`.
@@ -6684,7 +6988,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. The value of `__proto__` can be either an object or `null`. Other types are ignored.
 1. Also it may be obvious, but still: there can be only one `[[Prototype]]`. An object may not inherit from two others.
 
-### Writing doesn’t use prototype
+### 8.1.1. Writing doesn’t use prototype
 1. The prototype is only used for reading properties. Write/delete operations work directly with the object.
 1. In the example below, we assign its own walk method to rabbit.
 1. From now on, `rabbit.walk()` call finds the method immediately in the object and executes it, without using the prototype.
@@ -6741,7 +7045,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     console.log(user.fullName); // John Smith, state of user protected
     ```
 
-### The value of "this"
+### 8.1.2. The value of "this"
 1. An interesting question may arise in the example above: what’s the value of this inside `set fullName(value)`? Where are the properties `this.name` and `this.surname` written: into `user` or `admin`?
 1. The answer is simple: `this` is not affected by prototypes at all.
 1. **No matter where the method is found: in an object or its prototype. In a method call, `this` is always the object before the dot.**
@@ -6776,7 +7080,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 1. If we had other objects, like `bird`, `snake`, etc., inheriting from `animal`, they would also gain access to methods of `animal`. But `this` in each method call would be the corresponding object, evaluated at the call-time (before dot), not `animal`. So when we write data into `this`, it is stored into these objects.
 1. As a result, methods are shared, but the object state is not.
 
-### for...in loop
+### 8.1.3. for...in loop
 1. The `for..in` loop iterates over inherited properties too.
     ```js
     let animal = {
@@ -6824,7 +7128,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
 1. Almost all other key/value-getting methods, such as `Object.keys`, `Object.values` and so on ignore inherited properties.
 1. They only operate on the object itself. Properties from the prototype are not taken into account.
 
-#### Exercise 1 - Working with prototype
+#### 8.1.3.1. Exercise 1 - Working with prototype
 1. Here’s the code that creates a pair of objects, then modifies them.Which values are shown in the process?
     ```js
     let animal = {
@@ -6854,7 +7158,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. `null`, taken from `animal`.
     1. `undefined`, there’s no such property any more.
 
-#### Exercise 2 - Searching Algorithm
+#### 8.1.3.2. Exercise 2 - Searching Algorithm
 1. The task has two parts. Given the following objects.
     1. Use `__proto__` to assign prototypes in a way that any property lookup will follow the path: `pockets` → `bed` → `table` → `head`. For instance, `pockets.pen` should be `3` (found in `table`), and `bed.glasses` should be `1` (found in `head`).
     1. Answer the question: is it faster to get `glasses` as `pockets.glasses` or `head.glasses`? Benchmark if needed.
@@ -6898,7 +7202,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. In modern engines, performance-wise, there's no difference whether we take a property from an object or its prototype. They remember where the property was found and reuse it in the next request.
     1. For instance, for `pockets.glasses` they remember where they found `glasses` (in `head`), and next time will search right there. They are also smart enough to update internal caches if something changes, so that optimization is safe.
 
-#### Exercise 3 - Where does it write?
+#### 8.1.3.3. Exercise 3 - Where does it write?
 1. We have `rabbit` inheriting from `animal`.
 1. If we call `rabbit.eat()`, which object receives the full property: `animal` or `rabbit`?
     ```js
@@ -6920,7 +7224,7 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     1. Property lookup and execution are two different things.
     1. The method `rabbit.eat` is first found in the prototype, then executed with `this=rabbit`.
 
-#### Exercise 4 - Why are hamsters full?
+#### 8.1.3.4. Exercise 4 - Why are hamsters full?
 1. We have two hamsters: `speedy` and `lazy` inheriting from the general `hamster` object.
 1. When we feed one of them, the other one is also full. Why? How can we fix it?
     ```js
@@ -6986,148 +7290,148 @@ There are also advanced browser-related use cases of zero-delay timeout, that we
     console.log(lazy.stomach); // <nothing>
     ```
 
-## F.Prototype
-## Native Prototypes
-## Prototype Methods, Object without __proto__
+## 8.2. F.Prototype
+## 8.3. Native Prototypes
+## 8.4. Prototype Methods, Object without __proto__
 
-# Classes 
-## Class Basic Syntax
-## Class Inheritance
-## Static Properties and Methods
-## Private and Protected Properties and Methods
-## Extending Built-in Classes
-## Class checking: "instanceof"
-## Mixins
+# 9. Classes 
+## 9.1. Class Basic Syntax
+## 9.2. Class Inheritance
+## 9.3. Static Properties and Methods
+## 9.4. Private and Protected Properties and Methods
+## 9.5. Extending Built-in Classes
+## 9.6. Class checking: "instanceof"
+## 9.7. Mixins
 
-# Promises, async/await
-## Introduction: callbacks
-## Promise
-## Promises Chaining
-## Error Handling with Promises
-## Promisification
-## Microtasks
-## Async/await
+# 10. Promises, async/await
+## 10.1. Introduction: callbacks
+## 10.2. Promise
+## 10.3. Promises Chaining
+## 10.4. Error Handling with Promises
+## 10.5. Promisification
+## 10.6. Microtasks
+## 10.7. Async/await
 
-# Generators, advanced iteration
-## Generators 
-## Async iteration and generators
+# 11. Generators, advanced iteration
+## 11.1. Generators 
+## 11.2. Async iteration and generators
 
-# Modules
-## Modules, Introduction
-## Export and Import
-## Dynamic Imports
+# 12. Modules
+## 12.1. Modules, Introduction
+## 12.2. Export and Import
+## 12.3. Dynamic Imports
 
-# Miscellaneous
-## Proxy and Reflect
-## Eval: run a code string
-## Currying
-## Reference Type
-## BigInt
+# 13. Miscellaneous
+## 13.1. Proxy and Reflect
+## 13.2. Eval: run a code string
+## 13.3. Currying
+## 13.4. Reference Type
+## 13.5. BigInt
 
-# Browser: Document, Events, Interfaces
-# Document
-## Browser Environment, Specs
-## DOM Tree
-## Searching: getElement*, querySelector*
-## Node Properties: Type, Tag and Contents
-## Attributes and Properties
-## Modifying the Document
-## Styles and Classes
-## Element Size and Scrolling
-## Window Sizes and Scrolling
-## Coordinates
+# 14. Browser: Document, Events, Interfaces
+# 15. Document
+## 15.1. Browser Environment, Specs
+## 15.2. DOM Tree
+## 15.3. Searching: getElement*, querySelector*
+## 15.4. Node Properties: Type, Tag and Contents
+## 15.5. Attributes and Properties
+## 15.6. Modifying the Document
+## 15.7. Styles and Classes
+## 15.8. Element Size and Scrolling
+## 15.9. Window Sizes and Scrolling
+## 15.10. Coordinates
 
-# Introduction to Events
-## Introduction to Browser Events
-## Bubbling and Capturing
-## Event Delegation
-## Browser Default Actions
-## Dispatching Custom Events
+# 16. Introduction to Events
+## 16.1. Introduction to Browser Events
+## 16.2. Bubbling and Capturing
+## 16.3. Event Delegation
+## 16.4. Browser Default Actions
+## 16.5. Dispatching Custom Events
 
-# UI Events
-## Mouse Events
-## Moving the Mouse: mouseover/out, mouseenter/leave
-## Drag'n'Drop with mouse events
-## Pointer Events
-## Keyboard: keydown and keyup
-## Scrolling
+# 17. UI Events
+## 17.1. Mouse Events
+## 17.2. Moving the Mouse: mouseover/out, mouseenter/leave
+## 17.3. Drag'n'Drop with mouse events
+## 17.4. Pointer Events
+## 17.5. Keyboard: keydown and keyup
+## 17.6. Scrolling
 
-# Forms, Controls
-## Form Properties and Methods
-## Focusing: focus/blur
-## Events: change, input, cut, copy, paste
-## Forms: event and method submit
+# 18. Forms, Controls
+## 18.1. Form Properties and Methods
+## 18.2. Focusing: focus/blur
+## 18.3. Events: change, input, cut, copy, paste
+## 18.4. Forms: event and method submit
 
-# Document and Resource Loading
-## Page: DOMContentLoaded, load, beforeunload, unload
-## Scripts: async, defer
-## Resource Loading: onload and onerror
+# 19. Document and Resource Loading
+## 19.1. Page: DOMContentLoaded, load, beforeunload, unload
+## 19.2. Scripts: async, defer
+## 19.3. Resource Loading: onload and onerror
 
-# Miscellaneous
-## Mutation Observer
-## Selection and Range
-## Event Loop: Microtasks and Macrotasks
+# 20. Miscellaneous
+## 20.1. Mutation Observer
+## 20.2. Selection and Range
+## 20.3. Event Loop: Microtasks and Macrotasks
 
-# Additional Articles
-# Frames and Windows
-## Popups and Window Methods
-## Cross-window Communication
-## The Clickjacking Attack
+# 21. Additional Articles
+# 22. Frames and Windows
+## 22.1. Popups and Window Methods
+## 22.2. Cross-window Communication
+## 22.3. The Clickjacking Attack
 
-# Binary Data, Files
-## ArrayBuffer, Binary Arrays
-## TextDecoder and TextEncoder
-## Blob
-## File and FileReader
+# 23. Binary Data, Files
+## 23.1. ArrayBuffer, Binary Arrays
+## 23.2. TextDecoder and TextEncoder
+## 23.3. Blob
+## 23.4. File and FileReader
 
-# Network Requests
-## Fetch 
-## FormData
-## Fetch: Download progress
-## Fetch: Abort
-## Fetch: Cross-Origin Requests
-## Fetch API
-## URL objects
-## XMLHttpRequest
-## Resumable File Upload
-## Long Polling
-## WebSocket
-## Server Sent Events
+# 24. Network Requests
+## 24.1. Fetch 
+## 24.2. FormData
+## 24.3. Fetch: Download progress
+## 24.4. Fetch: Abort
+## 24.5. Fetch: Cross-Origin Requests
+## 24.6. Fetch API
+## 24.7. URL objects
+## 24.8. XMLHttpRequest
+## 24.9. Resumable File Upload
+## 24.10. Long Polling
+## 24.11. WebSocket
+## 24.12. Server Sent Events
 
-# Storing Data in the Browser
-## Cookies, document.cookie
-## LocalStorage, sessionStorage
-## IndexedDB
+# 25. Storing Data in the Browser
+## 25.1. Cookies, document.cookie
+## 25.2. LocalStorage, sessionStorage
+## 25.3. IndexedDB
 
-# Animation
-## Bezier Curve
-## CSS-animations
-## JavaScript animations
+# 26. Animation
+## 26.1. Bezier Curve
+## 26.2. CSS-animations
+## 26.3. JavaScript animations
 
-# Web Components
-## From the Orbital Height
-## Custom Elements
-## Shadow DOM
-## Template Element
-## Shadow DOM Slots, Composition
-## Shadow DOM Styling
-## Shadow DOM and Events
+# 27. Web Components
+## 27.1. From the Orbital Height
+## 27.2. Custom Elements
+## 27.3. Shadow DOM
+## 27.4. Template Element
+## 27.5. Shadow DOM Slots, Composition
+## 27.6. Shadow DOM Styling
+## 27.7. Shadow DOM and Events
 
-# Regular Expressions
-## Patterns and Flags
-## Character Classes
-## Unicode: flag "u" and class \p{...}
-## Anchors: string start ^ and end $
-## Multiline Mode of Anchors ^ $, flag "m"
-## Word Boundary: \b
-## Escaping, Special Characters
-## Sets and Ranges [...]
-## Quantifiers +, *, ? and {n}
-## Greedy and Lazy Quantifiers
-## Capturing Groups
-## Backreferences in Pattern: \N and \k<name>
-## ALternation (OR) |
-## Lookahead and lookbehind
-## Catastrophic backgtracking
-## Sticky Flag "y", Searching at Position
-## Methods of RegExp and String
+# 28. Regular Expressions
+## 28.1. Patterns and Flags
+## 28.2. Character Classes
+## 28.3. Unicode: flag "u" and class \p{...}
+## 28.4. Anchors: string start ^ and end $
+## 28.5. Multiline Mode of Anchors ^ $, flag "m"
+## 28.6. Word Boundary: \b
+## 28.7. Escaping, Special Characters
+## 28.8. Sets and Ranges [...]
+## 28.9. Quantifiers +, *, ? and {n}
+## 28.10. Greedy and Lazy Quantifiers
+## 28.11. Capturing Groups
+## 28.12. Backreferences in Pattern: \N and \k<name>
+## 28.13. ALternation (OR) |
+## 28.14. Lookahead and lookbehind
+## 28.15. Catastrophic backgtracking
+## 28.16. Sticky Flag "y", Searching at Position
+## 28.17. Methods of RegExp and String
