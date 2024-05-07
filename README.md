@@ -7,6 +7,18 @@ Personal background - [https://www.linkedin.com/in/lin-meng-ting/](https://www.l
 Note:
 Some of the materials aren't related directly to frontend and resources and notes aren't listed by order of learning. Skills and knowledge are mostly acquired directly depend on the requirements from the projects from time to time. As working in startups in the beginning stages, the skill requirements can be broad but not deep. However, this can be a good chance to explore and study different technology and tools.
 
+**DEMO**
+
+- [Figma Clone](https://cowork-figma-clone.vercel.app/)
+  - [Repo](https://github.com/allenlin90/figma-clone)
+  - A clone to Figma for design and co-working
+- [Zoom Clone](https://cowork-zoom-clone.vercel.app/)
+  - [Repo](https://github.com/allenlin90/zoom-clone)
+  - A clone to Zoom for video call and online meetings
+- [Pricewise](https://pricewise-follower.vercel.app/)
+  - [Repo](https://github.com/allenlin90/pricewise)
+  - A AWS product price email subscriber
+
 ---
 
 - [1. Journal and events](#1-journal-and-events)
