@@ -55,13 +55,13 @@ Some of the materials aren't related directly to frontend and resources and note
 
 # 2. Learning materials and resources
 ## 2.1. JavaScript
-2. [Eloquent JavaScript](./javascript/eloquentJS/README.md) - [materials](https://eloquentjavascript.net/) 3rd edition
-3. [JavaScript.Info](./javascript/javascriptinfo/README.md) - [materials](https://javascript.info/)
-4. [JavaScript: Understanding the Weird Parts](./javascript/understandingTheWeirdPartsInJS/README.md) - [materials](https://www.udemy.com/course/understand-javascript/)
-5. [The Complete JavaScript Course 2020: From Zero to Expert!](./javascript/completeJavaScriptCourse2020/README.md) - [materials](https://www.udemy.com/course/the-complete-javascript-course/)
-6. [Vue - The Complete Guide (incl. Router & Composition API)](./javascript/vueTheCompleteGuide/README.md) - [materials](https://www.udemy.com/course/vuejs-2-the-complete-guide/)
-7. [Typescript: The Complete Developer's Guide](./javascript/typeScriptTheCompleteDeveloperGuide/README.md) - [materials](https://www.udemy.com/course/typescript-the-complete-developers-guide/)
-8. [Introduction to Web AR](./javascript/introductionToWebAR/README.md)
+1. [Eloquent JavaScript](./javascript/eloquentJS/README.md) - [materials](https://eloquentjavascript.net/) 3rd edition
+2. [JavaScript.Info](./javascript/javascriptinfo/README.md) - [materials](https://javascript.info/)
+3. [JavaScript: Understanding the Weird Parts](./javascript/understandingTheWeirdPartsInJS/README.md) - [materials](https://www.udemy.com/course/understand-javascript/)
+4. [The Complete JavaScript Course 2020: From Zero to Expert!](./javascript/completeJavaScriptCourse2020/README.md) - [materials](https://www.udemy.com/course/the-complete-javascript-course/)
+5. [Vue - The Complete Guide (incl. Router & Composition API)](./javascript/vueTheCompleteGuide/README.md) - [materials](https://www.udemy.com/course/vuejs-2-the-complete-guide/)
+6. [Typescript: The Complete Developer's Guide](./javascript/typeScriptTheCompleteDeveloperGuide/README.md) - [materials](https://www.udemy.com/course/typescript-the-complete-developers-guide/)
+7. [Introduction to Web AR](./javascript/introductionToWebAR/README.md)
 
 ### 2.1.1. React
 1. [Modern React with Redux [2020 Update]](./javascript/react/modernReactWithRedux/README.md) - [materials](https://www.udemy.com/course/react-redux/)
