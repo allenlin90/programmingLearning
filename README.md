@@ -83,7 +83,6 @@ Some of the materials aren't related directly to frontend and resources and note
 ## 2.2. HTML5 and CSS3
 1. [Modern HTML & CSS From The Beginning (Including Sass)](./webDesign/modernHTMLAndCSSFromTheBeginning/README.md) - [materials](https://www.udemy.com/course/modern-html-css-from-the-beginning/)
 2. [Advanced CSS And Sass: Flexbox, Grid, Animations And More!](./webDesign/AdvancedCSSAndSassFlexboxGridAnimationsAndMore/README.md) - [materials](https://www.udemy.com/course/advanced-css-and-sass/)
-3. [Modern HTML & CSS From The Beginning (Including Sass)](./webDesign/modernHTMLAndCSSFromTheBeginning/README.md) - [materials](https://www.udemy.com/course/modern-html-css-from-the-beginning/)
 
 ## 2.3. Server, Backends, and Infrastructure
 1. [Docker & Kubernetes: The Practical Guide](./serverAndBackend/dockerAndKubernetesThePracticalGuide/README.md) - [materials](https://www.udemy.com/course/docker-kubernetes-the-practical-guide/)
