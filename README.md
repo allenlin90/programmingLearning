@@ -75,6 +75,7 @@ Some of the materials aren't related directly to frontend and resources and note
 1. [NestJS: The Complete Developer's Guide](./javascript/nodeJS/nestJSTheCompleteDeveloperGuide/README.md) - [materials](https://www.udemy.com/course/nestjs-the-complete-developers-guide/)
 2. [Node JS: Advanced Concepts](./javascript/nodeJS/nodeJSAdvancedConcepts/README.md) - [materials](https://www.udemy.com/course/advanced-node-for-developers/)
 3. [The Complete Node.js Developer Course (3rd Edition)](./javascript/theCompleteNodejsDeveloperCourse/README.md) - [materials](https://www.udemy.com/course/the-complete-nodejs-developer-course-2/)
+4. [Microservices with Node JS and React](./serverAndBackend/microserviceWithNodeJSandReact/README.md) - [materials](https://www.udemy.com/course/microservices-with-node-js-and-react)
 
 ### 2.1.3. Desktop
 1. [Electron for Desktop Apps: The Complete Developer's Guide](./javascript/electronForDesktopAppsTheCompleteDevelopersGuide/README.md) - [Electron](https://www.udemy.com/course/electron-react-tutorial)
@@ -88,8 +89,7 @@ Some of the materials aren't related directly to frontend and resources and note
 1. [Docker & Kubernetes: The Practical Guide](./serverAndBackend/dockerAndKubernetesThePracticalGuide/README.md) - [materials](https://www.udemy.com/course/docker-kubernetes-the-practical-guide/)
 2. [[NEW] Ultimate AWS Certified Cloud Practitioner - 2021](./serverAndBackend/ultimateAWSCertifiedCloudPractitioner/README.md) - [materials](https://www.udemy.com/course/aws-certified-cloud-practitioner-new/)
 3. [Linux OS](./serverAndBackend/linuxOs/README.md)
-4. [Microservices with Node JS and React](./serverAndBackend/microserviceWithNodeJSandReact/README.md) - [materials](https://www.udemy.com/course/microservices-with-node-js-and-react)
-5. [REST API Design, Development & Management](./serverAndBackend/RESTAPIDesignDevelopmentAndManagement/README.md) - [materials](https://www.udemy.com/course/rest-api)
+4. [REST API Design, Development & Management](./serverAndBackend/RESTAPIDesignDevelopmentAndManagement/README.md) - [materials](https://www.udemy.com/course/rest-api)
 
 ## 2.4. Integrated course
 1. [The Web Developer Bootcamp](./bootcamps/advancedDeveloperBootcamp/README.md) - [materials](https://www.udemy.com/course/the-web-developer-bootcamp/)
