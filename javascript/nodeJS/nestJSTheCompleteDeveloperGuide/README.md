@@ -65,6 +65,12 @@ Finished on
 - [9. Custom data serialization](#9-custom-data-serialization)
   - [9.1. Excluding response properties](#91-excluding-response-properties)
   - [9.2. Solution to Serialization](#92-solution-to-serialization)
+  - [9.3. How to build interceptors](#93-how-to-build-interceptors)
+  - [9.4. Serialization in interceptor](#94-serialization-in-interceptor)
+  - [9.5. Customizing the interceptor's DTO](#95-customizing-the-interceptors-dto)
+  - [9.6. Wrapping the interceptor in a decorator](#96-wrapping-the-interceptor-in-a-decorator)
+  - [9.7. Controller-wide serialization](#97-controller-wide-serialization)
+  - [9.8. A bit of type safety around serialize](#98-a-bit-of-type-safety-around-serialize)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -1907,5 +1913,316 @@ export class UsersController {
 1. In future cases, we may extend the endpoints to serve users on different access and permissions.
 2. For example, a user can be a regular user or an `admin`.
 3. When different types of users calling the endpoint, the data and properties of the response can be different. 
+4. Besides, `DTO` (Data Transfer Object) can not only handle incoming object in request but also outgoing object in response. 
+5. In this case, we will create a custom interceptor with a DTO. 
     <img src="./images/62-solution_to_serialization.png" />
 
+## 9.3. How to build interceptors
+1. A custom interceptor follow naming convention as `CustomInterceptor` and the class has a `intercept` method. 
+2. `intercept` method has 2 arguments `context` and `next`. 
+
+    <img src="./images/64-how_to_build_custom_interceptor.png">
+
+    ```ts
+    // src/interceptors/serialize.interceptor.ts
+    import {
+      UseInterceptors,
+      NestInterceptor,
+      ExecutionContext,
+      CallHandler,
+    } from '@nestjs/common';
+    import { Observable } from 'rxjs';
+    import { map } from 'rxjs/operators';
+    import { plainToClass } from 'class-transformer';
+
+    export class SerializeInterceptor implements NestInterceptor {
+      intercept(
+        context: ExecutionContext,
+        next: CallHandler,
+      ): Observable<any> | Promise<Observable<any>> {
+        // Run something before a request is handled
+        // by the request handler
+        console.log('Im running before the handler', context);
+
+        return next.handle().pipe(
+          map((data: any) => {
+            // Run something before the response is sent out
+            console.log('Im running before the response is sent out', data);
+          }),
+        );
+      }
+    }
+    ```
+
+3. In this case, we put the interceptor on router handler level. 
+
+    ```ts
+    // src/users/users.controller.ts
+    import {
+      Controller,
+      Get,
+      Param,
+      NotFoundException,
+      UseInterceptors,
+    } from '@nestjs/common';
+    import { UsersService } from './users.service';
+    import { SerializeInterceptor } from '../interceptors/serialize.interceptor';
+
+    @Controller('auth')
+    export class UsersController {
+      constructor(private usersService: UsersService) {}
+
+      @UseInterceptors(SerializeInterceptor)
+      @Get('/:id')
+      async findUser(@Param('id') id: string) {
+        console.log('handler is running');
+        const user = await this.usersService.findOne(parseInt(id));
+        if (!user) {
+          throw new NotFoundException('user not found');
+        }
+        return user;
+      }
+    }
+    ```
+
+4. By request to the route, we can see terminal prints in the following sequence
+  ```bash
+  # Im running before the handler
+  # handler is running
+  # Im running before the response is sent out
+  ```
+
+## 9.4. Serialization in interceptor
+1. We create a new `UserDTO` for outgoing data structure.
+2. We use `Expose` to explicitly annotate which property we'd like to expose.
+    ```ts
+    // src/users/dtos/user.dto.ts
+    import { Expose } from 'class-transformer';
+
+    export class UserDTO {
+      @Expose()
+      id: number;
+
+      @Expose()
+      email: string;
+    }
+    ```
+3. We then use the DTO in the interceptor with `plainToInstance` to refine the object before it sends out. 
+4. Note that the lecture introduced using `plainToClass` for the same flow but this function has been deprecated, while the `nest.js` suggested to use `plainToInstance`.
+5. Besides, we use `excludeExtraneousValues=true` to indicate that the properties in DTO must explicitly annotate with `Exclude` or `Expose` to be transformed. 
+6. In other words, properties without annotated with `Expose` will not be included. 
+7. This interceptor is hard-coded with using only `UserDTO`. We will refactor it to be more generic in the following section. 
+
+    ```ts
+    // src/interceptors/serialize.interceptors.ts
+    import {
+      NestInterceptor,
+      ExecutionContext,
+      CallHandler,
+    } from '@nestjs/common';
+    import { Observable } from 'rxjs';
+    import { map } from 'rxjs/operators';
+    import { plainToInstance } from 'class-transformer';
+
+    import { UserDTO } from '../users/dtos/user.dto';
+
+    export class SerializeInterceptor implements NestInterceptor {
+      intercept(
+        context: ExecutionContext,
+        next: CallHandler,
+      ): Observable<any> | Promise<Observable<any>> {
+        return next.handle().pipe(
+          map((data: any) => {
+            // UserDTO is hard-coded and makes this interceptor not generic
+            return plainToInstance(UserDTO, data, {
+              excludeExtraneousValues: true,
+            });
+          }),
+        );
+      }
+    }
+    ```
+
+## 9.5. Customizing the interceptor's DTO
+1. Similar to the other decorators, we can pass a instance of a class or the class itself for the decorator to initiate the class.
+2. In this case, we refactor `SerializeInterceptor` to have a constructor to accept the DTO we want to modify in the interceptor. 
+3. However, though this solution makes the serialize interceptor more generic, it can still be tedious to use it with decorator. 
+
+    ```ts
+    // src/interceptors/serialize.interceptor.ts
+    import {
+      NestInterceptor,
+      ExecutionContext,
+      CallHandler,
+    } from '@nestjs/common';
+    import { Observable } from 'rxjs';
+    import { map } from 'rxjs/operators';
+    import { plainToInstance } from 'class-transformer';
+
+    export class SerializeInterceptor implements NestInterceptor {
+      // pass in the DTO we will use
+      constructor(private dto: any) {}
+
+      intercept(
+        context: ExecutionContext,
+        next: CallHandler,
+      ): Observable<any> | Promise<Observable<any>> {
+        return next.handle().pipe(
+          map((data: any) => {
+            return plainToInstance(this.dto, data, {
+              excludeExtraneousValues: true,
+            });
+          }),
+        );
+      }
+    }
+    ```
+
+    ```ts
+    // src/users/users.controller.ts
+    import {
+      Controller,
+      Get,
+      Param,
+      NotFoundException,
+      UseInterceptors,
+    } from '@nestjs/common';
+    import { UsersService } from './users.service';
+    import { SerializeInterceptor } from '../interceptors/serialize.interceptor';
+    import { UserDTO } from './dtos/user.dto';
+
+    @Controller('auth')
+    export class UsersController {
+      constructor(private usersService: UsersService) {}
+
+      @UseInterceptors(new SerializeInterceptor(UserDTO))
+      @Get('/:id')
+      async findUser(@Param('id') id: string) {
+        console.log('handler is running');
+        const user = await this.usersService.findOne(parseInt(id));
+        if (!user) {
+          throw new NotFoundException('user not found');
+        }
+        return user;
+      }
+    }
+    ```
+
+## 9.6. Wrapping the interceptor in a decorator
+1. For now, every time we need to use the `SerializeInterceptor`, we need to declare it with multiple calls like `@UseInterceptors(new SerializeInterceptor(UserDTO))` on the route handler or the controller.
+2. Besides, though we can grain-fined the route handler, the other routes in `UsersController` may return `User` entity as well. 
+3. In this case, we can apply the interceptor on controller level. 
+
+```ts
+// src/interceptors/serialize.interceptors.ts
+import {
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  UseInterceptors,
+} from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { plainToInstance } from 'class-transformer';
+
+// a custom decorator to be used
+export function Serialize(dto: any) {
+  return UseInterceptors(new SerializeInterceptor(dto));
+}
+
+export class SerializeInterceptor implements NestInterceptor {
+  constructor(private dto: any) {}
+
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<any> | Promise<Observable<any>> {
+    return next.handle().pipe(
+      map((data: any) => {
+        return plainToInstance(this.dto, data, {
+          excludeExtraneousValues: true,
+        });
+      }),
+    );
+  }
+}
+```
+
+## 9.7. Controller-wide serialization
+1. We refactor the class and put the serializer on controller level.
+2. Note that we can apply decorator on the wider control like controller level, while put a fine-grained control on route handler.
+3. For example, if a specific route in the controller applies a different DTO such as for `admin`. 
+4. The decorator on the route handler will overwrite the one on controller (class-wise) level. 
+
+```ts
+// src/users/users.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UsersService } from './users.service';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { UserDTO } from './dtos/user.dto';
+
+class CustomUserDTO {}
+
+@Controller('auth')
+@Serialize(UserDTO) // serializer on controller level
+export class UsersController {
+  constructor(private usersService: UsersService) {}
+
+  @Post('/signup')
+  createUser(@Body() body: CreateUserDto) {
+    this.usersService.create(body.email, body.password);
+  }
+
+  @Get('/:id')
+  // this decorator will overwrite the one on controller level
+  @Serialize(CustomUserDTO)
+  async findUser(@Param('id') id: string) {
+    const user = await this.usersService.findOne(parseInt(id));
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return user;
+  }
+
+  @Get()
+  findAllUsers(@Query('email') email: string) {
+    return this.usersService.find(email);
+  }
+
+  @Delete('/:id')
+  removeUser(@Param('id') id: string) {
+    return this.usersService.remove(parseInt(id));
+  }
+
+  @Patch('/:id')
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.usersService.update(parseInt(id), body);
+  }
+}
+```
+
+## 9.8. A bit of type safety around serialize
+1. In the current implementation, the custom decorator accepts any type of `dto` including primitive values which are not Javascript classes. 
+
+```ts
+// src/interceptors/serialize.interceptor.ts
+interface ClassInstructor {
+  new (...args: any[]): NonNullable<unknown>;
+}
+
+export function Serialize(dto: ClassInstructor) {
+  return UseInterceptors(new SerializeInterceptor(dto));
+}
+```
