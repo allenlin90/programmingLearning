@@ -71,6 +71,27 @@ Finished on
   - [9.6. Wrapping the interceptor in a decorator](#96-wrapping-the-interceptor-in-a-decorator)
   - [9.7. Controller-wide serialization](#97-controller-wide-serialization)
   - [9.8. A bit of type safety around serialize](#98-a-bit-of-type-safety-around-serialize)
+- [10. Authentication from Scratch](#10-authentication-from-scratch)
+  - [10.1. Authentication overview](#101-authentication-overview)
+  - [10.2. Reminder on Service setup](#102-reminder-on-service-setup)
+  - [10.3. Implementing signup functionality](#103-implementing-signup-functionality)
+  - [10.4. Understanding password hashing](#104-understanding-password-hashing)
+  - [10.5. Salting and hashing the password](#105-salting-and-hashing-the-password)
+  - [10.6. Creating a user](#106-creating-a-user)
+  - [10.7. Handling user sign in](#107-handling-user-sign-in)
+  - [10.8. Setting up sessions](#108-setting-up-sessions)
+  - [10.9. Changing and fetching session data](#109-changing-and-fetching-session-data)
+  - [10.10. Signing in a user](#1010-signing-in-a-user)
+  - [10.11. Getting the current user](#1011-getting-the-current-user)
+  - [10.12. Signing out a user](#1012-signing-out-a-user)
+  - [10.13. Two automation tools](#1013-two-automation-tools)
+  - [10.14. Custom param decorators](#1014-custom-param-decorators)
+  - [10.15. Why a decorator and interceptor](#1015-why-a-decorator-and-interceptor)
+  - [10.16. Communicating from interceptor to decorator](#1016-communicating-from-interceptor-to-decorator)
+  - [10.17. Small fix for CurrentUserInterceptor](#1017-small-fix-for-currentuserinterceptor)
+  - [10.18. Connecting an interceptor to dependency injection](#1018-connecting-an-interceptor-to-dependency-injection)
+  - [10.19. Globally scoped interceptors](#1019-globally-scoped-interceptors)
+  - [10.20. Preventing access with authentication guards](#1020-preventing-access-with-authentication-guards)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -2226,3 +2247,933 @@ export function Serialize(dto: ClassInstructor) {
   return UseInterceptors(new SerializeInterceptor(dto));
 }
 ```
+
+# 10. Authentication from Scratch
+## 10.1. Authentication overview
+
+<img src="./images/70-authentication_overview.png"/>
+
+1. In this case, we can build the `signup` and `signin` flow in `UserService` or a dedicated `AuthService`. 
+2. To separate the concerns and keep the project scalable, it's recommended to create a separate `AuthService` which works with `UserService`. 
+
+## 10.2. Reminder on Service setup
+1. In `UsersModule`, we have `AuthService` access `UserRepository` through `UserService`. 
+
+    <img src="./images/71-reminder_on_service_setup.png" />
+    <img src="./images/71-reminder_on_service_setup_2.png" />
+
+2. In this case, we create `AuthService` and put a `@Injectable` decorator.
+  
+    ```ts
+    // src/users/auth.service.ts
+    import { Injectable } from '@nestjs/common';
+    import { UsersService } from './users.service';
+
+    @Injectable()
+    export class AuthService {
+      constructor(private usersService: UsersService) {}
+    }
+    ```
+
+3. We configure `UsersModule` and put both `UserService` and `AuthService` in providers.
+
+    ```ts
+    // src/users/users.module.ts
+    import { Module } from '@nestjs/common';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { UsersController } from './users.controller';
+    import { UsersService } from './users.service';
+    import { AuthService } from './auth.service';
+    import { User } from './user.entity';
+
+    @Module({
+      imports: [TypeOrmModule.forFeature([User])],
+      controllers: [UsersController],
+      providers: [UsersService, AuthService],
+    })
+    export class UsersModule {}
+    ```
+
+## 10.3. Implementing signup functionality
+
+```ts
+// src/users/auth.service.ts
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { UsersService } from './users.service';
+
+@Injectable()
+export class AuthService {
+  constructor(private usersService: UsersService) {}
+
+  async signup(email: string, password: string) {
+    // see if email is in use
+    const users = await this.usersService.find(email);
+
+    if (users.length) {
+      throw new BadRequestException('email in use');
+    }
+
+    // hash the users password
+    // create a new user and save it
+    // return the user
+  }
+
+  signin() {}
+}
+```
+
+## 10.4. Understanding password hashing
+## 10.5. Salting and hashing the password
+1. We can use `scrypt` from Node.js standard library without adding extra dependencies. 
+2. However, `scrypt` works async and uses callback, so we can use `promisify` to wrap it and use it in async/await syntax. 
+3. We use `crypto.randomBytes` to generate random `8` bytes in this case and encode the bytes into hexadecimal string. 
+4. Side note that `1 byte` is `8 bits` which means it can be represented as a number from `0` to `255` if it's unsigned.
+5. A hexadecimal number can be represented by 16 symbols from `0` to `f` (`0-9` and `a-f` have 16 symbols in total).
+6. It means a hexadecimal number is half byte as it's `2^4`, while a byte is 8 bits which is `2^8`.
+7. Therefore, you can use 2 hexadecimal numbers to represent a byte.
+8. For example, a byte `255` can be represented as `ff` in hexadecimal numbers.
+9. After all, when we generate a `salt` based on 8 random bytes and encode it into hexadecimal numbers, which can be represented as a string of `16` characters composed by `0-f`. 
+
+    ```ts
+    // src/users/auth.service.ts
+    import { BadRequestException, Injectable } from '@nestjs/common';
+    import { UsersService } from './users.service';
+    import { randomBytes, scrypt as _scrypt } from 'crypto';
+    import { promisify } from 'util';
+
+    const scrypt = promisify(_scrypt);
+
+    @Injectable()
+    export class AuthService {
+      constructor(private usersService: UsersService) {}
+
+      async signup(email: string, password: string) {
+        // see if email is in use
+        const users = await this.usersService.find(email);
+
+        if (users.length) {
+          throw new BadRequestException('email in use');
+        }
+
+        // hash the users password
+        // Generate a salt
+        const salt = randomBytes(8).toString('hex');
+
+        // Hash the salt and the password together
+        const hash = (await scrypt(password, salt, 32)) as Buffer;
+
+        // Join the hashed result and salt together
+        const result = `${salt}.${hash.toString('hex')}`;
+
+        // create a new user and save it
+        // return the user
+      }
+
+      signin() {}
+    }
+    ```
+
+## 10.6. Creating a user
+1. After generating hash with a random salt, we can create a user entity. 
+2. Besides, we can use `AuthService` to "Sign up" a user rather than create through `UserService` directly. 
+
+```ts
+// src/users/auth.service.ts
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const scrypt = promisify(_scrypt);
+
+@Injectable()
+export class AuthService {
+  constructor(private usersService: UsersService) {}
+
+  async signup(email: string, password: string) {
+    // see if email is in use
+    const users = await this.usersService.find(email);
+
+    if (users.length) {
+      throw new BadRequestException('email in use');
+    }
+
+    // hash the users password
+    // Generate a salt
+    const salt = randomBytes(8).toString('hex');
+
+    // Hash the salt and the password together
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+
+    // Join the hashed result and salt together
+    const result = `${salt}.${hash.toString('hex')}`;
+
+    // create a new user and save it
+    const user = await this.usersService.create(email, result);
+
+    // return the user
+    return user;
+  }
+
+  signin() {}
+}
+```
+
+```ts
+// src/users/users.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UsersService } from './users.service';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { UserDto } from './dtos/user.dto';
+import { AuthService } from './auth.service';
+
+@Controller('auth')
+@Serialize(UserDto)
+export class UsersController {
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
+
+  @Post('/signup')
+  createUser(@Body() body: CreateUserDto) {
+    return this.authService.signup(body.email, body.password);
+  }
+
+  @Get('/:id')
+  async findUser(@Param('id') id: string) {
+    const user = await this.usersService.findOne(parseInt(id));
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return user;
+  }
+
+  @Get()
+  findAllUsers(@Query('email') email: string) {
+    return this.usersService.find(email);
+  }
+
+  @Delete('/:id')
+  removeUser(@Param('id') id: string) {
+    return this.usersService.remove(parseInt(id));
+  }
+
+  @Patch('/:id')
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.usersService.update(parseInt(id), body);
+  }
+}
+```
+
+## 10.7. Handling user sign in
+1. Similar to sign up a user, we hash the password in the sign in flow to compare with the stored hash and salt.
+
+```ts
+// src/users/auth.service.ts
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { UsersService } from './users.service';
+import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const scrypt = promisify(_scrypt);
+
+@Injectable()
+export class AuthService {
+  constructor(private usersService: UsersService) {}
+
+  async signup(email: string, password: string) {
+    // see if email is in use
+    const users = await this.usersService.find(email);
+
+    if (users.length) {
+      throw new BadRequestException('email in use');
+    }
+
+    // hash the users password
+    // Generate a salt
+    const salt = randomBytes(8).toString('hex');
+
+    // Hash the salt and the password together
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+
+    // Join the hashed result and salt together
+    const result = `${salt}.${hash.toString('hex')}`;
+
+    // create a new user and save it
+    const user = await this.usersService.create(email, result);
+
+    // return the user
+    return user;
+  }
+
+  async signin(email: string, password: string) {
+    const [user] = await this.usersService.find(email);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    const [salt, storedHash] = user.password.split('.');
+
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+
+    if (storedHash !== hash.toString('hex')) {
+      throw new BadRequestException('bad password');
+    }
+
+    return user;
+  }
+}
+```
+
+## 10.8. Setting up sessions
+1. We use `cookie-session` to add a middleware to the app which parse, decode, and validate session credentials stored in the cookie.
+2. Note that `cookie-session` doesn't work directly with Typescript, so we use `require` to include the library. 
+
+<img src="./images/77-setting_up_sessions.png" />
+
+```ts
+// src/main.ts
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
+// eslint-disable-next-line
+const cookieSession = require('cookie-session');
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  (app as any).set('etag', false);
+  app.use((req, res, next) => {
+    res.removeHeader('x-powered-by');
+    res.removeHeader('date');
+    next();
+  });
+
+  app.use(
+    cookieSession({
+      keys: [process.env.SESSION_SECRET],
+    }),
+  );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+## 10.9. Changing and fetching session data
+1. In this, case we can have a route handler to setup properties and session related data in `session` object with `Session` decorator which is similar to `Param` and `Query`. 
+2. Besides, we don't need to return any data in the payload but simply configure and update `session` object.
+3. To read the data from session, we can also use `Session` decorator. 
+
+## 10.10. Signing in a user
+1. We update the controller and add `user.id` to the session when a user signs up or signs in. 
+
+```ts
+// src/users/users.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  NotFoundException,
+  Session,
+} from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UsersService } from './users.service';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { UserDto } from './dtos/user.dto';
+import { AuthService } from './auth.service';
+
+@Controller('auth')
+@Serialize(UserDto)
+export class UsersController {
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
+
+  @Post('/signup')
+  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signup(body.email, body.password);
+    session.userId = user.id;
+    return user;
+  }
+
+  @Post('/signin')
+  async signin(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signin(body.email, body.password);
+    session.userId = user.id;
+    return user;
+  }
+
+  @Get('/:id')
+  async findUser(@Param('id') id: string) {
+    const user = await this.usersService.findOne(parseInt(id));
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return user;
+  }
+
+  @Get()
+  findAllUsers(@Query('email') email: string) {
+    return this.usersService.find(email);
+  }
+
+  @Delete('/:id')
+  removeUser(@Param('id') id: string) {
+    return this.usersService.remove(parseInt(id));
+  }
+
+  @Patch('/:id')
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.usersService.update(parseInt(id), body);
+  }
+}
+```
+
+## 10.11. Getting the current user
+1. We add a new route and handler to check the current signed in user based on session. 
+
+```ts
+// src/users/users.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  NotFoundException,
+  Session,
+} from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UsersService } from './users.service';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { UserDto } from './dtos/user.dto';
+import { AuthService } from './auth.service';
+
+@Controller('auth')
+@Serialize(UserDto)
+export class UsersController {
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
+
+  @Get('/whoami')
+  whoAmI(@Session() session: any) {
+    return this.usersService.findOne(session.userId);
+  }
+
+  @Post('/signup')
+  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signup(body.email, body.password);
+    session.userId = user.id;
+    return user;
+  }
+
+  @Post('/signin')
+  async signin(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signin(body.email, body.password);
+    session.userId = user.id;
+    return user;
+  }
+
+  @Get('/:id')
+  async findUser(@Param('id') id: string) {
+    const user = await this.usersService.findOne(parseInt(id));
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return user;
+  }
+
+  @Get()
+  findAllUsers(@Query('email') email: string) {
+    return this.usersService.find(email);
+  }
+
+  @Delete('/:id')
+  removeUser(@Param('id') id: string) {
+    return this.usersService.remove(parseInt(id));
+  }
+
+  @Patch('/:id')
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.usersService.update(parseInt(id), body);
+  }
+}
+```
+
+## 10.12. Signing out a user
+1. We can add a new route handler `/signout` to clear up `session.userId` by assign it `null`. 
+2. However, the current implement for `userService.findOne` doesn't work right that though we give `null` to query from db, it returns the very first record in the db if `user.id` is not given.
+3. Therefore, we update `UserService` to return `null` right away if an `id` is not given.
+
+```ts
+// src/users/users.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  NotFoundException,
+  Session,
+} from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UsersService } from './users.service';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { UserDto } from './dtos/user.dto';
+import { AuthService } from './auth.service';
+
+@Controller('auth')
+@Serialize(UserDto)
+export class UsersController {
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
+
+  @Get('/whoami')
+  whoAmI(@Session() session: any) {
+    return this.usersService.findOne(session.userId);
+  }
+
+  @Post('/signout')
+  signOut(@Session() session: any) {
+    session.userId = null;
+  }
+
+  @Post('/signup')
+  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signup(body.email, body.password);
+    session.userId = user.id;
+    return user;
+  }
+
+  @Post('/signin')
+  async signin(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signin(body.email, body.password);
+    session.userId = user.id;
+    return user;
+  }
+
+  @Get('/:id')
+  async findUser(@Param('id') id: string) {
+    const user = await this.usersService.findOne(parseInt(id));
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return user;
+  }
+
+  @Get()
+  findAllUsers(@Query('email') email: string) {
+    return this.usersService.find(email);
+  }
+
+  @Delete('/:id')
+  removeUser(@Param('id') id: string) {
+    return this.usersService.remove(parseInt(id));
+  }
+
+  @Patch('/:id')
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.usersService.update(parseInt(id), body);
+  }
+}
+```
+
+```ts
+// src/users/users/service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './user.entity';
+
+@Injectable()
+export class UsersService {
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
+
+  create(email: string, password: string) {
+    const user = this.repo.create({ email, password });
+
+    return this.repo.save(user);
+  }
+
+  findOne(id: number) {
+    if (!id) return null;
+    return this.repo.findOneBy({ id });
+  }
+
+  find(email: string) {
+    return this.repo.find({ where: { email } });
+  }
+
+  async update(id: number, attrs: Partial<User>) {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    Object.assign(user, attrs);
+    return this.repo.save(user);
+  }
+
+  async remove(id: number) {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return this.repo.remove(user);
+  }
+}
+```
+
+## 10.13. Two automation tools
+1. We can create reusable code to achieve targets 
+2. Automatically tell a handler who the currently signed in user is. 
+   1. Interceptor 
+   2. Decorator
+3. Reject requests to certain handlers if the user is not signed in. 
+   1. Guard
+
+<img src="./images/82-two_automation_tools.png" />
+
+## 10.14. Custom param decorators
+1. We create a custom decorator `CurrentUser`. 
+2. `createParamDecorator` takes a callback function which has 2 arguments for the `data` and `context`.
+3. The `context` is the wrapper of the incoming request which can be different types of abstraction for websocket, incoming message, gRPC, or HTTP request. 
+4. We then can use it in a route handler like other decorators `@Param`, `@Query`, etc.
+
+```ts
+// src/users/decorators/current-user.decorators.ts
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
+export const CurrentUser = createParamDecorator(
+  (data: any, context: ExecutionContext) => {},
+);
+```
+
+## 10.15. Why a decorator and interceptor
+1. The data in the custom decorator is the argument passed into the function as `@CurrentUser(object)`.
+2. The `data` argument will be the `object` passed to it. 
+3. In this case, since we are not passing any argument, we can mark it as `never` to indicate that no argument shall be passed to the decorator.  
+    <image src="./images/84-why_a_decorator_and_interceptor.png" />
+4. We'd like to access `UserService` to `UserRepo` to query a user from db. 
+5. However, both `UserService` and `UserRepo` are injected with DI, while param decorators exist outside the DI system.
+    <image src="./images/84-why_a_decorator_and_interceptor_2.png" />
+6. Technically, the interceptor is the only middleware we need as we can later use `@Request` decorator to retrieve it from `req` object.
+7. In this case, we create `@CurrentUser` to unified the retrieval process with a better reading purpose. 
+
+## 10.16. Communicating from interceptor to decorator
+## 10.17. Small fix for CurrentUserInterceptor
+
+```ts
+// src/users/interceptor/current-user.interceptor.ts
+import {
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Injectable,
+} from '@nestjs/common';
+import { UsersService } from '../users.service';
+
+@Injectable()
+export class CurrentUserInterceptor implements NestInterceptor {
+  constructor(private usersService: UsersService) {}
+
+  async intercept(context: ExecutionContext, handler: CallHandler<any>) {
+    const request = context.switchToHttp().getRequest();
+    const { userId } = request.session || {};
+
+    if (userId) {
+      const user = await this.usersService.findOne(userId);
+      request.currentUser = user;
+    }
+
+    return handler.handle();
+  }
+}
+```
+
+## 10.18. Connecting an interceptor to dependency injection
+1. By use `@Injectable` decorator, we indicate that if a class should be delegated to DI container. 
+2. As later this `CurrentUserInterceptor` will be globally used elsewhere in the project, we need it to be accessible from DI. 
+3. This is the main reason why we don't provide the `UserSerializer` in the module providers as it's mainly used in `UsersModule`.
+4. By listing the interceptor in `providers`, the other controllers referring `UsersModule` can inject the delegated interceptor from DI container. 
+
+    ```ts
+    // src/users/users.module.ts
+    import { Module } from '@nestjs/common';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { UsersController } from './users.controller';
+    import { UsersService } from './users.service';
+    import { AuthService } from './auth.service';
+    import { User } from './user.entity';
+    import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
+
+    @Module({
+      imports: [TypeOrmModule.forFeature([User])],
+      controllers: [UsersController],
+      // list CurrentUserInterceptor in providers
+      providers: [UsersService, AuthService, CurrentUserInterceptor],
+    })
+    export class UsersModule {}
+    ```
+
+5. We then can use `UseInterceptor` as the `Serialize` wrapper to inject `CurrentUserInterceptor`. 
+
+    ```ts
+    // src/users/users.controller.ts
+    import {
+      Body,
+      Controller,
+      Post,
+      Get,
+      Patch,
+      Delete,
+      Param,
+      Query,
+      NotFoundException,
+      Session,
+      UseInterceptors,
+    } from '@nestjs/common';
+    import { CreateUserDto } from './dtos/create-user.dto';
+    import { UpdateUserDto } from './dtos/update-user.dto';
+    import { UsersService } from './users.service';
+    import { Serialize } from '../interceptors/serialize.interceptor';
+    import { UserDto } from './dtos/user.dto';
+    import { AuthService } from './auth.service';
+    import { CurrentUser } from './decorators/current-user.decorator';
+    import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
+    import { User } from './user.entity';
+
+    @Controller('auth')
+    @Serialize(UserDto)
+    @UseInterceptors(CurrentUserInterceptor)
+    export class UsersController {
+      constructor(
+        private usersService: UsersService,
+        private authService: AuthService,
+      ) {}
+
+      @Get('/whoami')
+      whoAmI(@CurrentUser() user: User) {
+        return user;
+      }
+
+      @Post('/signout')
+      signOut(@Session() session: any) {
+        session.userId = null;
+      }
+
+      @Post('/signup')
+      async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+        const user = await this.authService.signup(body.email, body.password);
+        session.userId = user.id;
+        return user;
+      }
+
+      @Post('/signin')
+      async signin(@Body() body: CreateUserDto, @Session() session: any) {
+        const user = await this.authService.signin(body.email, body.password);
+        session.userId = user.id;
+        return user;
+      }
+
+      @Get('/:id')
+      async findUser(@Param('id') id: string) {
+        const user = await this.usersService.findOne(parseInt(id));
+        if (!user) {
+          throw new NotFoundException('user not found');
+        }
+        return user;
+      }
+
+      @Get()
+      findAllUsers(@Query('email') email: string) {
+        return this.usersService.find(email);
+      }
+
+      @Delete('/:id')
+      removeUser(@Param('id') id: string) {
+        return this.usersService.remove(parseInt(id));
+      }
+
+      @Patch('/:id')
+      updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+        return this.usersService.update(parseInt(id), body);
+      }
+    }
+    ```
+
+## 10.19. Globally scoped interceptors
+1. To apply `CurrentUserInterceptor` globally, we can remove the decorator on `UsersController`. 
+    <img src="./images/88-globally_scoped_interceptor.png" />
+2. We can register the interceptor on global level, so we don't need to configure on controllers and route handlers to intercept communication.
+    <img src="./images/88-globally_scoped_interceptor_2.png" />
+
+    ```ts
+    // src/users/users.module.ts
+    import { Module } from '@nestjs/common';
+    import { APP_INTERCEPTOR } from '@nestjs/core';
+
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { UsersController } from './users.controller';
+    import { UsersService } from './users.service';
+    import { AuthService } from './auth.service';
+    import { User } from './user.entity';
+    import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
+
+    @Module({
+      imports: [TypeOrmModule.forFeature([User])],
+      controllers: [UsersController],
+      providers: [
+        UsersService,
+        AuthService,
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: CurrentUserInterceptor,
+        },
+      ],
+    })
+    export class UsersModule {}
+    ```
+
+## 10.20. Preventing access with authentication guards
+1. By convention, a `Guard` is class which has `canActive` method returns a boolean value to indicate whether the incoming request should be proceeded. 
+2. In Nest.js, `Guard` can be applied on different level, such as global on all controllers and routes, certain controller and all its routes, and specific route handler. 
+
+    <img src="./images/89-prevent_access_without_authentication_guard.png" />
+
+    ```ts
+    // src/guards/auth.guard.ts
+    import { CanActivate, ExecutionContext } from '@nestjs/common';
+
+    export class AuthGuard implements CanActivate {
+      canActivate(context: ExecutionContext) {
+        const request = context.switchToHttp().getRequest();
+        return request.session.userId;
+      }
+    }
+    ```
+3. We can then try to apply the auth guard on a specific route such as `/whoami`. 
+
+    ```ts
+    // src/users/users.controller.ts
+    import {
+      Body,
+      Controller,
+      Post,
+      Get,
+      Patch,
+      Delete,
+      Param,
+      Query,
+      NotFoundException,
+      Session,
+      UseGuards,
+    } from '@nestjs/common';
+    import { CreateUserDto } from './dtos/create-user.dto';
+    import { UpdateUserDto } from './dtos/update-user.dto';
+    import { UsersService } from './users.service';
+    import { Serialize } from '../interceptors/serialize.interceptor';
+    import { UserDto } from './dtos/user.dto';
+    import { AuthService } from './auth.service';
+    import { CurrentUser } from './decorators/current-user.decorator';
+    import { User } from './user.entity';
+    import { AuthGuard } from '../guards/auth.guard';
+
+    @Controller('auth')
+    @Serialize(UserDto)
+    export class UsersController {
+      constructor(
+        private usersService: UsersService,
+        private authService: AuthService,
+      ) {}
+
+      @Get('/whoami')
+      @UseGuards(AuthGuard)
+      whoAmI(@CurrentUser() user: User) {
+        return user;
+      }
+
+      @Post('/signout')
+      signOut(@Session() session: any) {
+        session.userId = null;
+      }
+
+      @Post('/signup')
+      async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+        const user = await this.authService.signup(body.email, body.password);
+        session.userId = user.id;
+        return user;
+      }
+
+      @Post('/signin')
+      async signin(@Body() body: CreateUserDto, @Session() session: any) {
+        const user = await this.authService.signin(body.email, body.password);
+        session.userId = user.id;
+        return user;
+      }
+
+      @Get('/:id')
+      async findUser(@Param('id') id: string) {
+        const user = await this.usersService.findOne(parseInt(id));
+        if (!user) {
+          throw new NotFoundException('user not found');
+        }
+        return user;
+      }
+
+      @Get()
+      findAllUsers(@Query('email') email: string) {
+        return this.usersService.find(email);
+      }
+
+      @Delete('/:id')
+      removeUser(@Param('id') id: string) {
+        return this.usersService.remove(parseInt(id));
+      }
+
+      @Patch('/:id')
+      updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+        return this.usersService.update(parseInt(id), body);
+      }
+    }
+    ```
