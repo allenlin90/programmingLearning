@@ -4217,13 +4217,283 @@ bootstrap();
 
 # 13. Managing app configuration
 ## 13.1. Understanding Dotenv
+1. Nest.js and Dotenv have different opinion on managing `.env` files.
+   1. Nest.js says multiple `.env` files (with different names) are ok.
+   2. Dotenv says never create more than one `.env` file. 
+
+    <img src="./images/118-understanding_dotenv.png" />
 
 ## 13.2. Applying Dotenv for config
+1. We can refactor `app.module.ts` for the imports to inject `ConfigModule` to read environment variables using `dotenv` and inject to DI container.
+2. For `TypeOrm` setup, we can use `forRootAsync` and read ENVs from config service through DI container.
+3. However, we need to be aware that if `env.process.NODE_ENV` is not set correctly or set to `undefined`, we can have runtime error which can be easily identified for incorrect envs. 
+
+```ts
+// src/app.module.ts
+import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { ReportsModule } from './reports/reports.module';
+import { User } from './users/user.entity';
+import { Report } from './reports/report.entity';
+
+// eslint-disable-next-line
+const cookieSession = require('cookie-session');
+
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          type: 'sqlite',
+          database: config.get<string>('DB_NAME'),
+          synchronize: true,
+          entities: [User, Report],
+        };
+      },
+    }),
+    UsersModule,
+    ReportsModule,
+  ],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+      }),
+    },
+  ],
+})
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        cookieSession({
+          keys: [SESSION_SECRET],
+        }),
+      )
+      .forRoutes('*');
+  }
+}
+```
 
 ## 13.3. Specifying the runtime environment
+1. We can specify ENVs in `scripts` to run in `package.json`.
+2. However, for different machine and OS environment, the setup and commands can be different. 
+3. In this case, we can use `cross-env` to simplify ENVs setup. 
+
+```json
+// package.json
+{
+  "scripts": {
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "cross-env NODE_ENV=development nest start",
+    "start:dev": "cross-env NODE_ENV=development nest start --watch",
+    "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "cross-env NODE_ENV=test jest",
+    "test:watch": "cross-env NODE_ENV=test jest --watch --maxWorkers=1",
+    "test:cov": "cross-env NODE_ENV=test jest --coverage",
+    "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json"
+  },
+}
+```
 
 ## 13.4. Solving SQLite error
+1. When running tests, `jest` can run the test cases in parallel. 
+2. This can cause an issue that multiple test cases are trying to connecting to the test db at the same time. 
+3. Note that each e2e or integration test is considered running in an isolated environment but may share certain resources such as database. 
+4. In this case, we can give `maxWorker=1` flag to prevent `jest` run tests in parallel. 
+
+```json
+// package.json
+{
+  "scripts": {
+    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json maxWorker=1"
+  },
+}
+```
 
 ## 13.5. It works!
+1. To clean up and re-initiate a database, we can configure `jest-e2e.json` for test configuration.
+
+    ```json
+    // test/jest-e2e.json
+    {
+      "moduleFileExtensions": ["js", "json", "ts"],
+      "rootDir": ".",
+      "testEnvironment": "node",
+      "testRegex": ".e2e-spec.ts$",
+      "transform": {
+        "^.+\\.(t|j)s$": "ts-jest"
+      },
+      "setupFilesAfterEnv": ["<rootDir>/setup.ts"]
+    }
+    ```
+2. We then create `setup.ts` in the same directory as `jest-e2e.json`.
+3. In this case, we place a global `beforeEach` hook to run before any test case rus.
+4. This simply remove the existing `SQLite` local database which will then be created when running test cases. 
+
+    ```ts
+    // test/setup.ts
+    import { rm } from 'fs/promises';
+    import { join } from 'path';
+
+    global.beforeEach(async () => {
+      try {
+        await rm(join(__dirname, '..', 'test.sqlite'));
+      } catch {}
+    });
+    ```
 
 ## 13.6. A followup test
+1. We add a new test case to check if we can 
+   1. `/signup` as a new user
+   2. retrieve `cookie` from response for `cookie-session`
+   3. check at `/whoami` if user credentials and cookie is valid.
+2. With Windows OS, we can't remove the `test.sqlite` right after the test case finishes.
+3. This side-effect will affect the 2nd and following test cases that the db is not re-initiated from the previous test case, so the database still keeps the data and entities from previous cases.
+4. The following cases can fall such as registering users with the same email.
+5. Therefore, we need a `afterEach` hook to run after each test case in this test suites which close the app by `app.close` after each test case.
+
+    ```ts
+    // src/test/auth.e2e-spec.ts
+    import { Test, TestingModule } from '@nestjs/testing';
+    import { INestApplication } from '@nestjs/common';
+    import * as request from 'supertest';
+    import { AppModule } from './../src/app.module';
+
+    describe('Authentication System', () => {
+      let app: INestApplication;
+
+      beforeEach(async () => {
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+          imports: [AppModule],
+        }).compile();
+
+        app = moduleFixture.createNestApplication();
+        await app.init();
+      });
+
+      // clean up and abort connection to db
+      afterEach(() => {
+        app.close();
+      });
+
+      it('handles a signup request', () => {
+        const email = 'email@test.com';
+        return request(app.getHttpServer())
+          .post('/auth/signup')
+          .send({ email, password: 'password' })
+          .expect(201)
+          .then((res) => {
+            const { id, email } = res.body;
+            expect(id).toBeDefined();
+            expect(email).toEqual(email);
+          });
+      });
+
+      it('signup as a new user then get the currently logged in user', async () => {
+        const email = 'email@test.com';
+
+        const res = await request(app.getHttpServer())
+          .post('/auth/signup')
+          .send({ email, password: 'password' })
+          .expect(201);
+
+        const cookie = res.get('Set-Cookie');
+
+        const { body } = await request(app.getHttpServer())
+          .get('/auth/whoami')
+          .set('Cookie', cookie)
+          .expect(200);
+
+        expect(body.email).toEqual(email);
+      });
+    });
+    ```
+6. In addition, we refactor the `cookie-session` middleware to move it from `main.ts` to `app.module.ts` and put it to `configure` method in `AppModule`.
+7. However, by the lifecycle of Nest.js app initiation, the ENVs aren't accessible if we try to access it directly in `app.module.ts` because the app hasn't been finished initiation.
+8. For such as, we can install `dotenv` dependency and call `require('dotenv').config()` in `app.module.ts` which exposes the ENVs directly in the Node.js runtime when starting up the app.
+9. On the other hand, we can apply constructor with DI container to access `ConfigService` in `AppModule`. 
+
+```ts
+// src/app.module.ts
+import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { ReportsModule } from './reports/reports.module';
+import { User } from './users/user.entity';
+import { Report } from './reports/report.entity';
+
+// eslint-disable-next-line
+const cookieSession = require('cookie-session');
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          type: 'sqlite',
+          database: config.get<string>('DB_NAME'),
+          synchronize: true,
+          entities: [User, Report],
+        };
+      },
+    }),
+    UsersModule,
+    ReportsModule,
+  ],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+      }),
+    },
+  ],
+})
+export class AppModule {
+  // get ConfigService from DI container
+  constructor(private readonly config: ConfigService) {}
+
+  configure(consumer: MiddlewareConsumer) {
+    const SESSION_SECRET = this.config.get('SESSION_SECRET');
+
+    consumer
+      .apply(
+        cookieSession({
+          keys: [SESSION_SECRET],
+        }),
+      )
+      .forRoutes('*');
+  }
+}
+```
