@@ -92,6 +92,43 @@ Finished on
   - [10.18. Connecting an interceptor to dependency injection](#1018-connecting-an-interceptor-to-dependency-injection)
   - [10.19. Globally scoped interceptors](#1019-globally-scoped-interceptors)
   - [10.20. Preventing access with authentication guards](#1020-preventing-access-with-authentication-guards)
+- [11. Getting started with unit testing](#11-getting-started-with-unit-testing)
+  - [11.1. Testing overview](#111-testing-overview)
+  - [11.2. Testing setup](#112-testing-setup)
+  - [11.3. Yes, testing is confusing](#113-yes-testing-is-confusing)
+  - [11.4. Getting TypeScript to Help with Mocks](#114-getting-typescript-to-help-with-mocks)
+  - [11.5. Quick note to help speed up your tests](#115-quick-note-to-help-speed-up-your-tests)
+  - [11.6. Improving file layout](#116-improving-file-layout)
+  - [11.7. Ensuring password gets hashed](#117-ensuring-password-gets-hashed)
+  - [11.8. Refactor 'email in use' test to address jest breaking changes](#118-refactor-email-in-use-test-to-address-jest-breaking-changes)
+  - [11.9. Changing mock implementations](#119-changing-mock-implementations)
+  - [11.10. Refactor 'unused email' test to address jest breaking changes](#1110-refactor-unused-email-test-to-address-jest-breaking-changes)
+  - [11.11. Testing the signin flow](#1111-testing-the-signin-flow)
+  - [11.12. Refactor 'invalid password' test to address jest breaking changes](#1112-refactor-invalid-password-test-to-address-jest-breaking-changes)
+  - [11.13. Checking password comparison](#1113-checking-password-comparison)
+  - [11.14. More intelligent mocks](#1114-more-intelligent-mocks)
+  - [11.15. Refactor 3 mocks to address jest breaking changes](#1115-refactor-3-mocks-to-address-jest-breaking-changes)
+  - [11.16. Refactoring to use intelligent mocks](#1116-refactoring-to-use-intelligent-mocks)
+  - [11.17. Unit test a controller](#1117-unit-test-a-controller)
+  - [11.18. More mock implementations](#1118-more-mock-implementations)
+  - [11.19. Refactor 'user id is not found' test to address jest breaking changes](#1119-refactor-user-id-is-not-found-test-to-address-jest-breaking-changes)
+  - [11.20. Not super effective tests](#1120-not-super-effective-tests)
+  - [11.21. Testing the signin method](#1121-testing-the-signin-method)
+- [12. Integration testing](#12-integration-testing)
+  - [12.1. Getting started with end to end testing](#121-getting-started-with-end-to-end-testing)
+  - [12.2. Creating an end to end test](#122-creating-an-end-to-end-test)
+  - [12.3. App setup issues in spec files](#123-app-setup-issues-in-spec-files)
+  - [12.4. Applying a globally scoped pipe](#124-applying-a-globally-scoped-pipe)
+  - [12.5. Applying a globally scoped middleware](#125-applying-a-globally-scoped-middleware)
+  - [12.6. Solving failures around repeat test runs](#126-solving-failures-around-repeat-test-runs)
+  - [12.7. Creating separate test and dev databases](#127-creating-separate-test-and-dev-databases)
+- [13. Managing app configuration](#13-managing-app-configuration)
+  - [13.1. Understanding Dotenv](#131-understanding-dotenv)
+  - [13.2. Applying Dotenv for config](#132-applying-dotenv-for-config)
+  - [13.3. Specifying the runtime environment](#133-specifying-the-runtime-environment)
+  - [13.4. Solving SQLite error](#134-solving-sqlite-error)
+  - [13.5. It works!](#135-it-works)
+  - [13.6. A followup test](#136-a-followup-test)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -3177,3 +3214,1016 @@ export class CurrentUserInterceptor implements NestInterceptor {
       }
     }
     ```
+
+# 11. Getting started with unit testing
+## 11.1. Testing overview
+1. Each class can have one or more dependencies.
+2. While using DI, we can easily mock and give fake dependencies for testing purpose.
+    <img src="./images/90-test_overview.png" />
+    <img src="./images/90-test_overview_2.png" />
+
+## 11.2. Testing setup
+## 11.3. Yes, testing is confusing
+1. In `Test.createTestingModule`, we list the providers we want to access from the module.
+2. However, since we want to mock `UsersService` rather than using real `UsersService` class and access real database.
+
+<img src="./images/91-testing_setup.png" />
+<img src="./images/91-testing_setup_2.png" />
+
+```ts
+// src/users/auth.service.spec.ts
+import { Test } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+
+it('can create an instance of auth service', async () => {
+  // create a fake copy of the users service
+  const fakeUsersService = {
+    find: () => Promise.resolve([]),
+    create: (email: string, password: string) =>
+      Promise.resolve({ id: 1, email, password }),
+  };
+
+  const module = await Test.createTestingModule({
+    providers: [
+      AuthService,
+      {
+        provide: UsersService,
+        useValue: fakeUsersService,
+      },
+    ],
+  }).compile();
+
+  const service = module.get(AuthService);
+
+  expect(service).toBeDefined();
+});
+```
+
+## 11.4. Getting TypeScript to Help with Mocks
+1. In the current setup in `auth.service.spec.ts`, there's no type safe infer for mocked `UsersService` in providers list.
+2. It means that we can pass anything to `useValue` property and `fakeUsersService` doesn't need to follow the exact interface of `UsersService` which can bring us more error in runtime. 
+
+```ts
+// src/users/auth.service.spec.ts
+import { Test } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
+
+it('can create an instance of auth service', async () => {
+  // create a fake copy of the users service
+  const fakeUsersService: Partial<UsersService> = {
+    find: () => Promise.resolve([]),
+    create: (email: string, password: string) =>
+      Promise.resolve({ id: 1, email, password } as User),
+  };
+
+  const module = await Test.createTestingModule({
+    providers: [
+      AuthService,
+      {
+        provide: UsersService,
+        useValue: fakeUsersService,
+      },
+    ],
+  }).compile();
+
+  const service = module.get(AuthService);
+
+  expect(service).toBeDefined();
+});
+```
+
+## 11.5. Quick note to help speed up your tests
+In the scripts section, find the following line and add `--maxWorkers=1`. 
+```json
+// package.json
+{
+  "scripts": {
+    // "test:watch": "jest --watch",
+    "test:watch": "jest --watch --maxWorkers=1",
+  }
+}
+```
+
+## 11.6. Improving file layout
+1. We can wrap test suites with `describe` which simply group the test cases and give a description.
+2. `beforeEach` hook will run before every `it` or `test` cases. 
+3. We put `service` out as to assign a new, fresh `AuthService` instance for every test case. 
+4. This is also the boilerplate when we use `Nest.js` cli tool to generate controller with a `spec` file. 
+
+```ts
+// src/users/auth.service.spec.ts
+import { Test } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
+
+describe('AuthService', () => {
+  let service: AuthService;
+
+  beforeEach(async () => {
+    // create a fake copy of the users service
+    const fakeUsersService: Partial<UsersService> = {
+      find: () => Promise.resolve([]),
+      create: (email: string, password: string) =>
+        Promise.resolve({ id: 1, email, password } as User),
+    };
+
+    const module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+      ],
+    }).compile();
+
+    service = module.get(AuthService);
+  });
+
+  it('can create an instance of auth service', async () => {
+    expect(service).toBeDefined();
+  });
+});
+```
+
+## 11.7. Ensuring password gets hashed
+
+```ts
+// src/users/auth.service.spec.ts
+import { Test } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
+
+describe('AuthService', () => {
+  let service: AuthService;
+
+  beforeEach(async () => {
+    // create a fake copy of the users service
+    const fakeUsersService: Partial<UsersService> = {
+      find: () => Promise.resolve([]),
+      create: (email: string, password: string) =>
+        Promise.resolve({ id: 1, email, password } as User),
+    };
+
+    const module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+      ],
+    }).compile();
+
+    service = module.get(AuthService);
+  });
+
+  it('can create an instance of auth service', async () => {
+    expect(service).toBeDefined();
+  });
+
+  it('creates a new user with a salted and hashed password', async () => {
+    const user = await service.signup('asdf@asdf.com', 'asdf');
+
+    expect(user.password).not.toEqual('asdf');
+    const [salt, hash] = user.password.split('.');
+    expect(salt).toBeDefined();
+    expect(hash).toBeDefined();
+  });
+});
+```
+
+## 11.8. Refactor 'email in use' test to address jest breaking changes
+## 11.9. Changing mock implementations
+1. The `done` argument and callback is not used in `jest` from the lecture. 
+2. The `done` callback looks like
+```ts
+it('test case', async (done) => {
+  try {
+    funcToThrowError();
+  } catch (error) {
+    done();
+  }
+})
+```
+
+```ts
+// src/users/auth.service.spec.ts
+import { Test } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
+
+describe('AuthService', () => {
+  let service: AuthService;
+  let fakeUsersService: Partial<UsersService>;
+
+  beforeEach(async () => {
+    // create a fake copy of the users service
+    fakeUsersService = {
+      find: () => Promise.resolve([]),
+      create: (email: string, password: string) =>
+        Promise.resolve({ id: 1, email, password } as User),
+    };
+
+    const module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+      ],
+    }).compile();
+
+    service = module.get(AuthService);
+  });
+
+  it('can create an instance of auth service', async () => {
+    expect(service).toBeDefined();
+  });
+
+  it('creates a new user with a salted and hashed password', async () => {
+    const user = await service.signup('asdf@asdf.com', 'asdf');
+
+    expect(user.password).not.toEqual('asdf');
+    const [salt, hash] = user.password.split('.');
+    expect(salt).toBeDefined();
+    expect(hash).toBeDefined();
+  });
+
+  it('throws an error if user signs up with email that is in use', async () => {
+    fakeUsersService.find = () =>
+      Promise.resolve([{ id: 1, email: 'a', password: '1' } as User]);
+
+    await expect(service.signup('asdf@asdf.com', 'asdf')).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+});
+```
+
+1. Alternative implementation
+
+```ts
+// src/users/auth.service.spec.ts
+import { Test } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
+
+describe('AuthService', () => {
+  let service: AuthService;
+  let fakeUsersService: Partial<UsersService>;
+
+  beforeEach(async () => {
+    // create a fake copy of the users service
+    fakeUsersService = {
+      find: () => Promise.resolve([]),
+      create: (email: string, password: string) =>
+        Promise.resolve({ id: 1, email, password } as User),
+    };
+
+    const module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+      ],
+    }).compile();
+
+    service = module.get(AuthService);
+  });
+
+  it('can create an instance of auth service', async () => {
+    expect(service).toBeDefined();
+  });
+
+  it('creates a new user with a salted and hashed password', async () => {
+    const user = await service.signup('asdf@asdf.com', 'asdf');
+
+    expect(user.password).not.toEqual('asdf');
+    const [salt, hash] = user.password.split('.');
+    expect(salt).toBeDefined();
+    expect(hash).toBeDefined();
+  });
+
+  it('throws an error if user signs up with email that is in use', async () => {
+    fakeUsersService.find = () =>
+      Promise.resolve([{ id: 1, email: 'a', password: '1' } as User]);
+
+    // catch thrown error 
+    await service
+      .signup('asdf@asdf.com', 'asdf')
+      .catch((error) => expect(error).toBeInstanceOf(BadRequestException));
+  });
+});
+```
+
+## 11.10. Refactor 'unused email' test to address jest breaking changes
+## 11.11. Testing the signin flow
+
+```ts
+// src/users/auth.service.spec.ts
+import { Test } from '@nestjs/testing';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
+
+describe('AuthService', () => {
+  let service: AuthService;
+  let fakeUsersService: Partial<UsersService>;
+
+  beforeEach(async () => {
+    // create a fake copy of the users service
+    fakeUsersService = {
+      find: () => Promise.resolve([]),
+      create: (email: string, password: string) =>
+        Promise.resolve({ id: 1, email, password } as User),
+    };
+
+    const module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+      ],
+    }).compile();
+
+    service = module.get(AuthService);
+  });
+
+  it('can create an instance of auth service', async () => {
+    expect(service).toBeDefined();
+  });
+
+  it('creates a new user with a salted and hashed password', async () => {
+    const user = await service.signup('asdf@asdf.com', 'asdf');
+
+    expect(user.password).not.toEqual('asdf');
+    const [salt, hash] = user.password.split('.');
+    expect(salt).toBeDefined();
+    expect(hash).toBeDefined();
+  });
+
+  it('throws an error if user signs up with email that is in use', async () => {
+    fakeUsersService.find = () =>
+      Promise.resolve([{ id: 1, email: 'a', password: '1' } as User]);
+
+    await expect(service.signup('asdf@asdf.com', 'asdf')).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('throws if signin is called with an unused email', async () => {
+    await expect(service.signin('asdf@asdf.com', 'asdf')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+});
+```
+
+## 11.12. Refactor 'invalid password' test to address jest breaking changes
+## 11.13. Checking password comparison
+## 11.14. More intelligent mocks
+
+1. We refactor and allow test cases to create entities in runtime.
+2. Therefore, we can have dynamic content without explicitly setup static hashed password, which may not be flexible for various test cases.
+
+```ts
+// src/users/auth.service.spec.ts
+import { Test } from '@nestjs/testing';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
+
+describe('AuthService', () => {
+  let service: AuthService;
+  let fakeUsersService: Partial<UsersService>;
+
+  beforeEach(async () => {
+    const users: User[] = [];
+    // create a fake copy of the users service
+    fakeUsersService = {
+      find: (email: string) => {
+        const filteredUsers = users.filter((user) => user.email === email);
+        return Promise.resolve(filteredUsers);
+      },
+      create: (email: string, password: string) => {
+        const user = {
+          id: Math.floor(Math.random() * 999999),
+          email,
+          password,
+        } as User;
+        users.push(user);
+
+        return Promise.resolve(user);
+      },
+    };
+
+    const module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+      ],
+    }).compile();
+
+    service = module.get(AuthService);
+  });
+
+  it('can create an instance of auth service', async () => {
+    expect(service).toBeDefined();
+  });
+
+  it('creates a new user with a salted and hashed password', async () => {
+    const user = await service.signup('asdf@asdf.com', 'asdf');
+
+    const [salt, hash] = user.password.split('.');
+
+    expect(user.password).not.toEqual('asdf');
+    expect(salt).toBeDefined();
+    expect(hash).toBeDefined();
+  });
+
+  it('throws an error if user signs up with email that is in use', async () => {
+    await service.signup('asdf@asdf.com', 'asdf');
+
+    await expect(service.signup('asdf@asdf.com', 'asdf')).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('throws if signin is called with an unused email', async () => {
+    await expect(service.signin('asdf@asdf.com', 'asdf')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('throws if an invalid password is provided', async () => {
+    await service.signup('asdf@asdf.com', 'asdfasdf');
+
+    await expect(service.signin('asdf@asdf.com', 'asdf')).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('returns a user if correct password is provided', async () => {
+    await service.signup('asdf@asdf.com', 'asdf');
+    const user = await service.signin('asdf@asdf.com', 'asdf');
+
+    expect(user).toBeDefined();
+  });
+});
+```
+
+## 11.15. Refactor 3 mocks to address jest breaking changes
+## 11.16. Refactoring to use intelligent mocks
+## 11.17. Unit test a controller
+## 11.18. More mock implementations
+
+```ts
+// src/users/users.controller.spec.ts
+import { Test, TestingModule } from '@nestjs/testing';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { AuthService } from './auth.service';
+import { User } from './user.entity';
+
+describe('UsersController', () => {
+  let controller: UsersController;
+  let fakeUsersService: Partial<UsersService>;
+  let fakeAuthService: Partial<AuthService>;
+
+  beforeEach(async () => {
+    fakeUsersService = {
+      findOne: (id: number) => {
+        return Promise.resolve({
+          id,
+          email: 'asdf@asdf.com',
+          password: 'asdf',
+        } as User);
+      },
+      find: (email: string) => {
+        return Promise.resolve([{ id: 1, email, password: 'asdf' } as User]);
+      },
+      // remove: () => {},
+      // update: () => {},
+    };
+    fakeAuthService = {
+      // signup: () => {},
+      // signin: () => {},
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [UsersController],
+      providers: [
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+        {
+          provide: AuthService,
+          useValue: fakeAuthService,
+        },
+      ],
+    }).compile();
+
+    controller = module.get<UsersController>(UsersController);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+});
+```
+
+## 11.19. Refactor 'user id is not found' test to address jest breaking changes
+## 11.20. Not super effective tests
+
+```ts
+// src/users/users.controller.spec.ts
+import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { AuthService } from './auth.service';
+import { User } from './user.entity';
+
+describe('UsersController', () => {
+  let controller: UsersController;
+  let fakeUsersService: Partial<UsersService>;
+  let fakeAuthService: Partial<AuthService>;
+
+  beforeEach(async () => {
+    fakeUsersService = {
+      findOne: (id: number) => {
+        return Promise.resolve({
+          id,
+          email: 'asdf@asdf.com',
+          password: 'asdf',
+        } as User);
+      },
+      find: (email: string) => {
+        return Promise.resolve([{ id: 1, email, password: 'asdf' } as User]);
+      },
+      // remove: () => {},
+      // update: () => {},
+    };
+    fakeAuthService = {
+      // signup: () => {},
+      // signin: () => {},
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [UsersController],
+      providers: [
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+        {
+          provide: AuthService,
+          useValue: fakeAuthService,
+        },
+      ],
+    }).compile();
+
+    controller = module.get<UsersController>(UsersController);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  it('findAllUsers returns a list of users with the given email', async () => {
+    const users = await controller.findAllUsers('asdf@asdf.com');
+    expect(users.length).toEqual(1);
+    expect(users[0].email).toEqual('asdf@asdf.com');
+  });
+
+  it('findUser returns a single user with the given id', async () => {
+    const user = await controller.findUser('1');
+    expect(user).toBeDefined();
+  });
+
+  it('findUser throws an error if user with given id is not found', async () => {
+    fakeUsersService.findOne = () => null;
+    await expect(controller.findUser('1')).rejects.toThrow(NotFoundException);
+  });
+});
+```
+
+## 11.21. Testing the signin method
+
+```ts
+// src/users/users.controller.spec.ts
+import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { AuthService } from './auth.service';
+import { User } from './user.entity';
+
+describe('UsersController', () => {
+  let controller: UsersController;
+  let fakeUsersService: Partial<UsersService>;
+  let fakeAuthService: Partial<AuthService>;
+
+  beforeEach(async () => {
+    fakeUsersService = {
+      findOne: (id: number) => {
+        return Promise.resolve({
+          id,
+          email: 'asdf@asdf.com',
+          password: 'asdf',
+        } as User);
+      },
+      find: (email: string) => {
+        return Promise.resolve([{ id: 1, email, password: 'asdf' } as User]);
+      },
+      // remove: () => {},
+      // update: () => {},
+    };
+    fakeAuthService = {
+      // signup: () => {},
+      signin: (email: string, password: string) => {
+        return Promise.resolve({ id: 1, email, password } as User);
+      },
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [UsersController],
+      providers: [
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+        {
+          provide: AuthService,
+          useValue: fakeAuthService,
+        },
+      ],
+    }).compile();
+
+    controller = module.get<UsersController>(UsersController);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  it('findAllUsers returns a list of users with the given email', async () => {
+    const users = await controller.findAllUsers('asdf@asdf.com');
+    expect(users.length).toEqual(1);
+    expect(users[0].email).toEqual('asdf@asdf.com');
+  });
+
+  it('findUser returns a single user with the given id', async () => {
+    const user = await controller.findUser('1');
+    expect(user).toBeDefined();
+  });
+
+  it('findUser throws an error if user with given id is not found', async () => {
+    fakeUsersService.findOne = () => null;
+    await expect(controller.findUser('1')).rejects.toThrow(NotFoundException);
+  });
+
+  it('signin updates session and returns user', async () => {
+    // ensure userId in session will be changed
+    const session = { userId: -10 };
+    const user = await controller.signin(
+      { email: 'asdf@asdf', password: 'asdf' },
+      session,
+    );
+
+    expect(user.id).toEqual(1);
+    expect(session.userId).toEqual(1);
+  });
+});
+```
+
+# 12. Integration testing
+## 12.1. Getting started with end to end testing
+1. Each test case is isolated.
+1. Each test case will start a server, listen to request, respond to the request, and shut down the server.
+  <img src="./images/111-get_started_with_e2e_testing.png" />
+
+## 12.2. Creating an end to end test
+
+1. The current setup doesn't work, as the error `expected 201 "Created", got 500 "Internal Server Error"`. 
+2. The root cause is that `TypeError: Cannot set properties of undefined (setting 'userId') at UsersController.createUser`.
+3. The error comes that there's no `session` object in the `Request` when we'd like to spy and modify it through interceptor. 
+
+```ts
+// test/auth.e2e-spec.ts
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from './../src/app.module';
+
+describe('Authentication System', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+
+  it('handles a signup request', () => {
+    const email = 'test@test.com';
+    return request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({ email, password: 'password' })
+      .expect(201)
+      .then((res) => {
+        const { id, email } = res.body;
+        expect(id).toBeDefined();
+        expect(email).toEqual(email);
+      });
+  });
+});
+```
+
+## 12.3. App setup issues in spec files
+1. The main difference between the test case and regular server start up is that we use `main.ts` to start the server instance which can use `app.use` to apply middlewares and plugins in the server lifecycle. 
+2. However, when we start the server with `moduleFixture.createNestApplication`, it doesn't initiate `cookie-session` and `validation-pipe` in our use case. 
+
+    ```ts
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+    ```
+3. Therefore, when the request hits the interceptor where we want to parse, retrieve, and inject the `userId`, it can't apply validation pipe and find the `session` object on `Request`.
+4. One straight forward solution is to follow what we have done in `main.ts`.
+5. Though **NOT recommended**, we can extract the setup logic and add middlewares and plugins to `app` server instance.
+
+```ts
+// src/main.ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { setupApp } from './setup-app.ts';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  (app as any).set('etag', false);
+  setupApp(app);
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+```ts
+// src/setup-app.ts
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+// eslint-disable-next-line
+const cookieSession = require('cookie-session');
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+export const setupApp = (app: INestApplication) => {
+  app.use((req, res, next) => {
+    res.removeHeader('x-powered-by');
+    res.removeHeader('date');
+    next();
+  });
+
+  app.use(
+    cookieSession({
+      keys: [SESSION_SECRET],
+    }),
+  );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
+}
+```
+
+## 12.4. Applying a globally scoped pipe
+1. Instead of setting in `main.ts`, we can configure the pipe in `app.module.ts` for global scope.
+
+    ```ts
+    // src/app.module.ts
+    import { Module, ValidationPipe } from '@nestjs/common';
+    import { APP_PIPE } from '@nestjs/core';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { ConfigModule } from '@nestjs/config';
+    import { AppController } from './app.controller';
+    import { AppService } from './app.service';
+    import { UsersModule } from './users/users.module';
+    import { ReportsModule } from './reports/reports.module';
+    import { User } from './users/user.entity';
+    import { Report } from './reports/report.entity';
+
+    @Module({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: 'db.sqlite',
+          entities: [User, Report],
+          synchronize: true,
+        }),
+        UsersModule,
+        ReportsModule,
+        ConfigModule.forRoot(),
+      ],
+      controllers: [AppController],
+      providers: [
+        AppService,
+        // apply global validation pipe
+        {
+          provide: APP_PIPE,
+          useValue: new ValidationPipe({
+            whitelist: true,
+          }),
+        },
+      ],
+    })
+    export class AppModule {}
+    ```
+
+2. We then can remove the setup in `main.ts`. 
+
+    ```ts
+    // src/main.ts
+    import { NestFactory } from '@nestjs/core';
+    import { AppModule } from './app.module';
+    // eslint-disable-next-line
+    const cookieSession = require('cookie-session');
+
+    const SESSION_SECRET = process.env.SESSION_SECRET;
+
+    async function bootstrap() {
+      const app = await NestFactory.create(AppModule);
+      (app as any).set('etag', false);
+      app.use((req, res, next) => {
+        res.removeHeader('x-powered-by');
+        res.removeHeader('date');
+        next();
+      });
+
+      app.use(
+        cookieSession({
+          keys: [SESSION_SECRET],
+        }),
+      );
+      await app.listen(3000);
+    }
+    bootstrap();
+    ```
+
+## 12.5. Applying a globally scoped middleware
+1. Similar to what we setup for global validation pipe, we can move the global middleware in `app.module.ts` to apply to all routs.
+
+```ts
+// src/app.module.ts
+import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { ReportsModule } from './reports/reports.module';
+import { User } from './users/user.entity';
+import { Report } from './reports/report.entity';
+
+// eslint-disable-next-line
+const cookieSession = require('cookie-session');
+
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db.sqlite',
+      entities: [User, Report],
+      synchronize: true,
+    }),
+    UsersModule,
+    ReportsModule,
+    ConfigModule.forRoot(),
+  ],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+      }),
+    },
+  ],
+})
+export class AppModule {
+  // apply middleware similar to app.use()
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        cookieSession({
+          keys: [SESSION_SECRET],
+        }),
+      )
+      .forRoutes('*');
+  }
+}
+```
+
+```ts
+// src/main.ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  (app as any).set('etag', false);
+  app.use((req, res, next) => {
+    res.removeHeader('x-powered-by');
+    res.removeHeader('date');
+    next();
+  });
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+## 12.6. Solving failures around repeat test runs
+1. In the previous sections, we have refactored and move the global validation pipe and middleware to app module.
+2. However, in the e2e case where we actually connect to db and create entities, by creating users with static emails, the solution is not reusable.
+3. In this case, we can initiate a new DB instance and clean up with every e2e test run.
+4. This DB is separated from the one we used in development mode to avoid pollution and reseeding with fixtures after every test run.
+
+    <img src="./images/116-solving_failures_around_repeat_test_runs.png" />
+    
+    <img src="./images/116-solving_failures_around_repeat_test_runs_2.png" />
+
+5. On the other hand, a simpler solution would be generating random email and user profile info. to create different entities.
+6. However, this approach without cleanup can introduce a lot of garbage to the dev environment. 
+
+## 12.7. Creating separate test and dev databases
+1. We can configure database connection in `app.module.ts` in this case. 
+2. We are using `TypeOrmModule` to local `sqlite` database.
+3. For example, we can check from `process.env.NODE_ENV` to know whether the code is running in `production`, `development`, or `test`.
+
+    ```ts
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { AppController } from './app.controller';
+    import { User } from './users/user.entity';
+    import { Report } from './reports/report.entity';
+
+    @Module({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: process.env.NODE_ENV === 'test' ? 'test.sqlite' : 'db.sqlite',
+          entities: [User, Report],
+          synchronize: true,
+        }),
+      ],
+      controllers: [AppController],
+    })
+    export class AppModule {}
+    ```
+
+    <img src="./images/117-creating_separated_test_and_dev_databases.png" />
+
+4. However, Nest.js suggests a different way to handle the condition (though it can be considered overly complicated).
+5. We can re-use the DI container to read environment variables and inject them to the modules.
+    <img src="./images/117-creating_separated_test_and_dev_databases_2.png" />
+
+# 13. Managing app configuration
+## 13.1. Understanding Dotenv
+
+## 13.2. Applying Dotenv for config
+
+## 13.3. Specifying the runtime environment
+
+## 13.4. Solving SQLite error
+
+## 13.5. It works!
+
+## 13.6. A followup test
