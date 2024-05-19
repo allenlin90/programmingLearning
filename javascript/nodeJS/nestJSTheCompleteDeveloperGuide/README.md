@@ -129,6 +129,21 @@ Finished on
   - [13.4. Solving SQLite error](#134-solving-sqlite-error)
   - [13.5. It works!](#135-it-works)
   - [13.6. A followup test](#136-a-followup-test)
+- [14. Relations with TypeORM](#14-relations-with-typeorm)
+  - [14.1. Back to reports](#141-back-to-reports)
+  - [14.2. Adding properties to reports](#142-adding-properties-to-reports)
+  - [14.3. A DTO for report creation](#143-a-dto-for-report-creation)
+  - [14.4. Receiving report creation requests](#144-receiving-report-creation-requests)
+  - [14.5. Saving a report with the reports service](#145-saving-a-report-with-the-reports-service)
+  - [14.6. Testing report creation](#146-testing-report-creation)
+  - [14.7. Building associations](#147-building-associations)
+  - [14.8. Types of associations](#148-types-of-associations)
+  - [14.9. The ManyToOne and OneToMany decorators](#149-the-manytoone-and-onetomany-decorators)
+  - [14.10. Important note about deleting database](#1410-important-note-about-deleting-database)
+  - [14.11. More on decorators](#1411-more-on-decorators)
+  - [14.12. Setting up the association](#1412-setting-up-the-association)
+  - [14.13. Formatting the report response](#1413-formatting-the-report-response)
+  - [14.14. Transforming properties with a DTO](#1414-transforming-properties-with-a-dto)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -4495,5 +4510,372 @@ export class AppModule {
       )
       .forRoutes('*');
   }
+}
+```
+
+# 14. Relations with TypeORM
+## 14.1. Back to reports
+
+## 14.2. Adding properties to reports
+1. We add several columns to `Report` entity. 
+
+    ```ts
+    // src/reports/report.entity.ts
+    import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+    @Entity()
+    export class Report {
+      @PrimaryGeneratedColumn()
+      id: number;
+
+      @Column()
+      price: number;
+
+      @Column()
+      make: string;
+
+      @Column()
+      model: string;
+
+      @Column()
+      year: number;
+
+      @Column()
+      lng: number;
+
+      @Column()
+      lat: number;
+
+      @Column()
+      mileage: number;
+    }
+    ```
+
+## 14.3. A DTO for report creation
+1. We add a new route handler in `reports.controller.ts` and a DTO to create a report. 
+
+```ts
+// src/reports/reports.controller.ts
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreateReportDto } from './dtos/create-report.dto';
+
+@Controller('reports')
+export class ReportsController {
+  @Post()
+  createReport(@Body() body: CreateReportDto) {}
+}
+```
+
+```ts
+// src/reports/dtos/create-report.dto.ts
+export class CreateReportDto {
+  make: string;
+  model: string;
+  year: number;
+  mileage: number;
+  lng: number;
+  lat: number;
+  price: number;
+}
+```
+
+## 14.4. Receiving report creation requests
+1. We update `create-report.dto.ts` with decorators.
+
+    ```ts
+    // src/reports/dtos/create-report.dto.ts
+    import {
+      IsString,
+      IsNumber,
+      Min,
+      Max,
+      IsLongitude,
+      IsLatitude,
+    } from 'class-validator';
+
+    export class CreateReportDto {
+      @IsString()
+      make: string;
+
+      @IsString()
+      model: string;
+
+      @IsNumber()
+      @Min(1930)
+      @Max(2050)
+      year: number;
+
+      @IsNumber()
+      @Min(0)
+      @Max(1000000)
+      mileage: number;
+
+      @IsLongitude()
+      lng: number;
+
+      @IsLatitude()
+      lat: number;
+
+      @IsNumber()
+      @Min(0)
+      @Max(1000000)
+      price: number;
+    }
+    ```
+2. Similar to `UsersController` and service injection, we use `ReportsService` from DI and use `AuthGuard` to authentication the request.
+
+    ```ts
+    // src/reports/reports.controller.ts
+    import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+    import { CreateReportDto } from './dtos/create-report.dto';
+    import { ReportsService } from './reports.service';
+    import { AuthGuard } from '../guards/auth.guard';
+
+    @Controller('reports')
+    export class ReportsController {
+      constructor(private reportsService: ReportsService) {}
+
+      @Post()
+      @UseGuards(AuthGuard)
+      createReport(@Body() body: CreateReportDto) {
+        return this.reportsService.create(body);
+      }
+    }
+    ```
+
+## 14.5. Saving a report with the reports service
+1. We add update `create` method in `ReportsService` which can be used in `ReportsController`. 
+
+    ```ts
+    // src/reports/reports.service.ts
+    import { Injectable } from '@nestjs/common';
+    import { InjectRepository } from '@nestjs/typeorm';
+    import { Repository } from 'typeorm';
+    import { Report } from './report.entity';
+    import { CreateReportDto } from './dtos/create-report.dto';
+
+    @Injectable()
+    export class ReportsService {
+      constructor(@InjectRepository(Report) private repo: Repository<Report>) {}
+
+      create(reportDto: CreateReportDto) {
+        const report = this.repo.create(reportDto);
+
+        return this.repo.save(report);
+      }
+    }
+    ```
+
+## 14.6. Testing report creation
+1. Since we've applied `AuthGuard`, if the user is not logged in, the request will get a `403` error.
+
+    ```http
+    POST http://localhost:3000/reports
+    Content-Type: application/json
+
+    {
+      "make": "toyota",
+      "model": "corolla",
+      "year": 1980,
+      "mileage": 100000,
+      "lng": 0,
+      "lat": 0,
+      "price": 50000
+    }
+    ```
+
+## 14.7. Building associations
+1. To create an association between entities, one entity can refer to the `id` of the other entity. 
+2. For example, a `User` can have multiple `Report` in this case, so we can add a `user_id` column to `Report` to indicate the owner (`User`) of a `Report`.
+
+    <img src="./images/130-building_association.png" />
+
+## 14.8. Types of associations
+1. One-To-One relationship
+
+    <img src="./images/131-types_of_associations.png" />
+
+2. One-To-Many and Many-To-One relationship
+
+    <img src="./images/131-types_of_associations_2.png" />
+
+3. Many-To-Many relationship
+
+    <img src="./images/131-types_of_associations_3.png" />
+
+
+## 14.9. The ManyToOne and OneToMany decorators
+1. In this project, a `User` can have multiple `Report`, so we can decorate `OneToMany` from `User` and `ManyToOne` on `Report`. 
+
+    <img src="./images/132-the_many_to_one_and_one_to_many_decorator.png" />
+
+2. We then update both `user.entity.ts` and `report.entity.ts`.
+3. Note that Typescript will prompt error if only one of the entities is updated. 
+4. We need to set up relationships on both entities to resolve the error.
+
+    ```ts
+    // src/users/user.entity.ts
+    import { Entity,  OneToMany } from 'typeorm';
+    import { Report } from '../reports/report.entity';
+
+    @Entity()
+    export class User {
+      @OneToMany(() => Report, (report) => report.user)
+      reports: Report[];
+    }
+    ```
+
+    ```ts
+    // src/reports/report.entity.ts
+    import { Entity, ManyToOne } from 'typeorm';
+    import { User } from '../users/user.entity';
+
+    @Entity()
+    export class Report {
+      @ManyToOne(() => User, (user) => user.reports)
+      user: User;
+    }
+    ```
+
+## 14.10. Important note about deleting database
+1. After setting up the relationship, we need to `migrate` the database.
+2. In this case, we can simply remove `db.sqlite` in the root directory and set up a new database by calling any API. 
+
+## 14.11. More on decorators
+1. By default, association is not automatically fetched when we fetch a `User`. 
+2. It means that if we have a `User` and want to query the user's `Report`s, the app will query to database twice. 
+   1. Query for a `User`
+   2. Query for `Report`s associated with the `User`. 
+3. This same condition is applied to check on `Report` to get its `User`. 
+4. This is a typical `N+1` issue for query optimization.
+
+    <img src="./images/134-more_one_decorators.png" />
+
+5. On the other hand, the syntax for the 1st argument for `ManyToOne` and `OneToMany` is a callback function returning the entity. 
+
+    ```ts
+    class Report {
+      @OneToMany(() => User, (report) => report.user)
+      user: User
+    }
+    ```
+
+6. This is because when `Nest.js` starts up, it can cause a circular dependency that all modules are initiated one after the other. 
+7. In that case, the association may not be established during runtime and cause an error. 
+8. For the 2nd argument is to tell `TypeOrm` that how should it model the relationship of the entities.
+9. This will heavily related to the business logic of the app.
+10. For example, a `Report` can have a owner `User` who creates the report.
+11. On the other hand, we can later introduce an `approval` feature which is only allowed for an admin `User` who is not necessarily the owner of the `Report`.
+
+    <img src="./images/134-more_one_decorators_2.png" />
+
+## 14.12. Setting up the association
+<img src="./images/135-setting_up_association.png" />
+
+1. To build up association, we will make changes on both `reports.controller.ts` and `reports.service.ts`. 
+    <img src="./images/135-setting_up_association_2.png" />
+2. However, the current implementation doesn't apply the interceptor on the serializer to remove password in the response when creating a `Report`. 
+
+```ts
+// src/reports/reports.controller.ts
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { CreateReportDto } from './dtos/create-report.dto';
+import { ReportsService } from './reports.service';
+import { AuthGuard } from '../guards/auth.guard';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { User } from '../users/user.entity';
+
+@Controller('reports')
+export class ReportsController {
+  constructor(private reportsService: ReportsService) {}
+
+  @Post()
+  @UseGuards(AuthGuard)
+  createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
+    return this.reportsService.create(body, user);
+  }
+}
+```
+
+```ts
+// src/reports/reports.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Report } from './report.entity';
+import { CreateReportDto } from './dtos/create-report.dto';
+import { User } from '../users/user.entity';
+
+@Injectable()
+export class ReportsService {
+  constructor(@InjectRepository(Report) private repo: Repository<Report>) {}
+
+  create(reportDto: CreateReportDto, user: User) {
+    const report = this.repo.create(reportDto);
+    report.user = user;
+    return this.repo.save(report);
+  }
+}
+```
+
+## 14.13. Formatting the report response
+1. The current response when creating a `Report` by a `User` is as the following.
+
+    ```json
+    // POST /reports
+    {
+      "price": 50000,
+      "make": "toyota",
+      "model": "corolla",
+      "year": 1980,
+      "lng": 0,
+      "lat": 0,
+      "mileage": 100000,
+      "user": {
+        "id": 1,
+        "email": "asdf1@asdf.com",
+        "password": "aa9a9cd6c88a5d0d.1abda384ce37a6bcbecadb54a8526b9da67289919c86434c1258516544a5ffe2"
+      },
+      "id": 2
+    }
+    ```
+2. By convention, we don't need to return the whole `User` object back to the user but returns just the `userId`. 
+3. We can follow the pattern to use our custom `Serialize` decorator with a dedicated `DTO`. 
+
+## 14.14. Transforming properties with a DTO
+1. In this case, we can use `Transform` decorator from `class-transform` to retrieve `userId`. 
+
+```ts
+// src/reports/dtos/report.dto.ts
+import { Expose, Transform } from 'class-transformer';
+
+export class ReportDto {
+  @Expose()
+  id: number;
+
+  @Expose()
+  price: number;
+
+  @Expose()
+  year: number;
+
+  @Expose()
+  lng: number;
+
+  @Expose()
+  lat: number;
+
+  @Expose()
+  make: string;
+
+  @Expose()
+  model: string;
+
+  @Expose()
+  mileage: number;
+
+  @Transform(({ obj }) => obj.user.id)
+  @Expose()
+  userId: number;
 }
 ```
