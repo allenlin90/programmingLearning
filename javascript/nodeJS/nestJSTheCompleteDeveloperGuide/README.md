@@ -144,6 +144,23 @@ Finished on
   - [14.12. Setting up the association](#1412-setting-up-the-association)
   - [14.13. Formatting the report response](#1413-formatting-the-report-response)
   - [14.14. Transforming properties with a DTO](#1414-transforming-properties-with-a-dto)
+- [15. A basic permissions system](#15-a-basic-permissions-system)
+  - [15.1. Adding in report approval](#151-adding-in-report-approval)
+  - [15.2. Required update for changeApproval method](#152-required-update-for-changeapproval-method)
+  - [15.3. Testing report approval](#153-testing-report-approval)
+  - [15.4. Authorization vs Authentication](#154-authorization-vs-authentication)
+  - [15.5. Adding an authorization guard](#155-adding-an-authorization-guard)
+  - [15.6. The guard doesn't work](#156-the-guard-doesnt-work)
+  - [15.7. Middlewares, guards, and interceptors](#157-middlewares-guards-and-interceptors)
+  - [15.8. Assigning CurrentUser with a middleware](#158-assigning-currentuser-with-a-middleware)
+  - [15.9. Fixing a type definition error](#159-fixing-a-type-definition-error)
+  - [15.10. Validating query string values](#1510-validating-query-string-values)
+  - [15.11. Transforming query string data](#1511-transforming-query-string-data)
+  - [15.12. How will we generate an estimate](#1512-how-will-we-generate-an-estimate)
+- [16. Query builders with TypeORM](#16-query-builders-with-typeorm)
+  - [16.1. Creating a query builder](#161-creating-a-query-builder)
+  - [16.2. Writing a query to produce the estimate](#162-writing-a-query-to-produce-the-estimate)
+  - [16.3. Testing the estimate logic](#163-testing-the-estimate-logic)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -4879,3 +4896,713 @@ export class ReportDto {
   userId: number;
 }
 ```
+
+# 15. A basic permissions system
+## 15.1. Adding in report approval
+1. In this case, we add new property `approve` to `Report` entity.
+2. We give a default `false` to the column if the entity is created.
+
+    ```ts
+    // src/reports/report.entity.ts
+    import { Entity, Column } from 'typeorm';
+
+    @Entity()
+    export class Report {
+      @Column({ default: false })
+      approved: boolean;
+    }
+    ```
+
+3. We update the controller `ReportsController` with a new route to intake any `report_id`.
+
+    ```ts
+    // src/reports/reports.controller.ts
+    import {
+      Body,
+      Controller,
+      Post,
+      UseGuards,
+      Patch,
+      Param,
+    } from '@nestjs/common';
+    import { CreateReportDto } from './dtos/create-report.dto';
+    import { ReportsService } from './reports.service';
+    import { AuthGuard } from '../guards/auth.guard';
+    import { CurrentUser } from '../users/decorators/current-user.decorator';
+    import { User } from '../users/user.entity';
+    import { ReportDto } from './dtos/report.dto';
+    import { Serialize } from '../interceptors/serialize.interceptor';
+    import { ApproveReportDto } from './dtos/approve-report.dto';
+
+    @Controller('reports')
+    export class ReportsController {
+      constructor(private reportsService: ReportsService) {}
+
+      @Post()
+      @UseGuards(AuthGuard)
+      @Serialize(ReportDto)
+      createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
+        return this.reportsService.create(body, user);
+      }
+
+      @Patch('/:id')
+      approveReport(@Param('id') id: string, @Body() body: ApproveReportDto) {}
+    }
+    ```
+
+4. We then create `approve-report.dto.ts` to validate the request body.
+
+    ```ts
+    // src/reports/dtos/approve-report.dto.ts
+    import { IsBoolean } from 'class-validator';
+
+    export class ApproveReportDto {
+      @IsBoolean()
+      approved: boolean;
+    }
+    ```
+
+## 15.2. Required update for changeApproval method
+1. As per update of `TypeORM`, we need to change the query statement for report. 
+    ```ts
+    class ReportsService {
+      async changeApproval(id: string, approved: boolean) {
+        const report = await this.repo.findOne({ where: { id: parseInt(id) } });
+      }
+    }
+    ```
+
+## 15.3. Testing report approval
+1. We update `reports.service.ts` and use the service method in `reports.controller.ts`. 
+
+    ```ts
+    // src/reports/reports.service.ts
+    import { Injectable, NotFoundException } from '@nestjs/common';
+    import { InjectRepository } from '@nestjs/typeorm';
+    import { Repository } from 'typeorm';
+    import { Report } from './report.entity';
+    import { CreateReportDto } from './dtos/create-report.dto';
+    import { User } from '../users/user.entity';
+
+    @Injectable()
+    export class ReportsService {
+      constructor(@InjectRepository(Report) private repo: Repository<Report>) {}
+
+      create(reportDto: CreateReportDto, user: User) {
+        const report = this.repo.create(reportDto);
+        report.user = user;
+        return this.repo.save(report);
+      }
+
+      async changeApproval(id: string, approved: boolean) {
+        const report = await this.repo.findOne({ where: { id: parseInt(id) } });
+        if (!report) {
+          throw new NotFoundException('report not found');
+        }
+        report.approved = approved;
+        return this.repo.save(report);
+      }
+    }
+    ```
+
+    ```ts
+    // src/reports/reports.controller.ts
+    import {
+      Body,
+      Controller,
+      Post,
+      UseGuards,
+      Patch,
+      Param,
+    } from '@nestjs/common';
+    import { CreateReportDto } from './dtos/create-report.dto';
+    import { ReportsService } from './reports.service';
+    import { AuthGuard } from '../guards/auth.guard';
+    import { CurrentUser } from '../users/decorators/current-user.decorator';
+    import { User } from '../users/user.entity';
+    import { ReportDto } from './dtos/report.dto';
+    import { Serialize } from '../interceptors/serialize.interceptor';
+    import { ApproveReportDto } from './dtos/approve-report.dto';
+
+    @Controller('reports')
+    export class ReportsController {
+      constructor(private reportsService: ReportsService) {}
+
+      @Post()
+      @UseGuards(AuthGuard)
+      @Serialize(ReportDto)
+      createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
+        return this.reportsService.create(body, user);
+      }
+
+      @Patch('/:id')
+      approveReport(@Param('id') id: string, @Body() body: ApproveReportDto) {
+        return this.reportsService.changeApproval(id, body.approved);
+      }
+    }
+    ```
+
+## 15.4. Authorization vs Authentication
+1. The idea and implementation is similar to applying `AuthGuard` for authentication and check if the request is from a valid logged in `User`. 
+    
+    <img src="./images/141-authn_vs_authz.png" />
+
+2. In this case, we are checking not only authentication `authn` but authorization `authz` to see if the `User` is authorized to take certain actions.
+3. For example, we only allow a `User` to **approve** a `Report` if s/he is an `admin`. 
+
+    <img src="./images/141-authn_vs_authz_2.png" />
+
+## 15.5. Adding an authorization guard
+1. We update `User.entity.ts` to add a new column `admin`.
+2. For testing purpose, we set `admin=true` as default to every new registered user.
+3. However, we need to refactor this part later before release the app for production use.
+
+    ```ts
+    // src/users/user.entity.ts
+    import {
+      AfterInsert,
+      AfterRemove,
+      AfterUpdate,
+      Entity,
+      Column,
+      PrimaryGeneratedColumn,
+      OneToMany,
+    } from 'typeorm';
+    import { Report } from '../reports/report.entity';
+
+    @Entity()
+    export class User {
+      @PrimaryGeneratedColumn()
+      id: number;
+
+      @Column()
+      email: string;
+
+      @Column()
+      password: string;
+
+      @Column({ default: true })
+      admin: boolean;
+
+      @OneToMany(() => Report, (report) => report.user)
+      reports: Report[];
+
+      @AfterInsert()
+      logInsert() {
+        console.log('Inserted User with id', this.id);
+      }
+
+      @AfterUpdate()
+      logUpdate() {
+        console.log('Updated User with id', this.id);
+      }
+
+      @AfterRemove()
+      logRemove() {
+        console.log('Removed User with id', this.id);
+      }
+    }
+    ```
+
+4. We then can add a new `AdminGuard` to check if the current user is an admin. 
+
+    ```ts
+    // src/guards/admin.guard.ts
+    import { CanActivate, ExecutionContext } from '@nestjs/common';
+    import { Observable } from 'rxjs';
+
+    export class AdminGuard implements CanActivate {
+      canActivate(
+        context: ExecutionContext,
+      ): boolean | Promise<boolean> | Observable<boolean> {
+        const request = context.switchToHttp().getRequest();
+        if (!request.currentUser) {
+          return false;
+        }
+
+        return request.currentUser.admin;
+      }
+    }
+    ```
+
+## 15.6. The guard doesn't work
+1. We apply the `authz` guard to `approveReport` route handler.
+2. However, this doesn't work right away as every following request will hit `403 Forbidden` by the current implementation.
+
+```ts
+// src/reports/reports.controller.ts
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Patch,
+  Param,
+} from '@nestjs/common';
+import { CreateReportDto } from './dtos/create-report.dto';
+import { ReportsService } from './reports.service';
+import { AuthGuard } from '../guards/auth.guard';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { User } from '../users/user.entity';
+import { ReportDto } from './dtos/report.dto';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { ApproveReportDto } from './dtos/approve-report.dto';
+import { AdminGuard } from '../guards/admin.guard';
+
+@Controller('reports')
+export class ReportsController {
+  constructor(private reportsService: ReportsService) {}
+
+  @Post()
+  @UseGuards(AuthGuard)
+  @Serialize(ReportDto)
+  createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
+    return this.reportsService.create(body, user);
+  }
+
+  @Patch('/:id')
+  @UseGuards(AdminGuard)
+  approveReport(@Param('id') id: string, @Body() body: ApproveReportDto) {
+    return this.reportsService.changeApproval(id, body.approved);
+  }
+}
+```
+
+## 15.7. Middlewares, guards, and interceptors
+1. By having a closer look to `Nest.js` request lifecycle, the `currentUser` is assigned by the interceptor which runs after the `AdminGuard`. 
+2. Therefore, we will always get `false` from `request.currentUser` in the `AdminGuard`. 
+    <img src="./images/144-middleware_guards_interceptor.png" />
+3. To handle such issue, we need to turn the interceptor to a middleware, so we can ensure `currentUser` is available when it hits the `AdminGuard`.
+    <img src="./images/144-middleware_guards_interceptor_2.png" />
+4. Therefore, we will refactor `src/users/interceptors/current-user.interceptor.ts` to a global middleware.
+5. We can take a similar approach as applying `cookie-session` middleware in the `AppModule`. 
+
+## 15.8. Assigning CurrentUser with a middleware
+1. We create a new `CurrentUserMiddleware` for the case.
+2. There's a type error for `req.currentUser` which will be fixed later in the following section. 
+3. We use `@ts-ignore` and `eslint-disable-next-line` to resolve the issue in the IDE first. 
+
+    ```ts
+    // src/users/middlewares/current-user.middleware.ts
+    import { Injectable, NestMiddleware } from '@nestjs/common';
+    import { Request, Response, NextFunction } from 'express';
+    import { UsersService } from '../users.service';
+
+    @Injectable()
+    export class CurrentUserMiddleware implements NestMiddleware {
+      constructor(private readonly usersService: UsersService) {}
+
+      async use(req: Request, res: Response, next: NextFunction) {
+        const { userId } = req.session || {};
+
+        if (userId) {
+          const user = await this.usersService.findOne(userId);
+          // eslint-disable-next-line
+          // @ts-ignore
+          req.currentUser = user;
+        }
+
+        next();
+      }
+    }
+    ```
+
+4. We update `UserModule` and apply the middleware and remove the interceptor.
+
+    ```ts
+    // src/users/users.module.ts
+    import { Module, MiddlewareConsumer } from '@nestjs/common';
+    // import { APP_INTERCEPTOR } from '@nestjs/core';
+
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { UsersController } from './users.controller';
+    import { UsersService } from './users.service';
+    import { AuthService } from './auth.service';
+    import { User } from './user.entity';
+    // import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
+    import { CurrentUserMiddleware } from './middlewares/current-user.middleware';
+
+    @Module({
+      imports: [TypeOrmModule.forFeature([User])],
+      controllers: [UsersController],
+      providers: [
+        UsersService,
+        AuthService,
+        // THIS SHOULD BE REMOVED
+        /*
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: CurrentUserInterceptor,
+        },
+        */
+      ],
+    })
+    export class UsersModule {
+      configure(consumer: MiddlewareConsumer) {
+        consumer.apply(CurrentUserMiddleware).forRoutes('*');
+      }
+    }
+    ```
+
+## 15.9. Fixing a type definition error
+1. As by default, `Request` in `express.js` doesn't have a `currentUser` property. 
+
+```ts
+// src/users/middlewares/current-user.middleware.ts
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+import { UsersService } from '../users.service';
+import { User } from '../user.entity';
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      currentUser?: User;
+    }
+  }
+}
+
+@Injectable()
+export class CurrentUserMiddleware implements NestMiddleware {
+  constructor(private readonly usersService: UsersService) {}
+
+  async use(req: Request, _res: Response, next: NextFunction) {
+    const { userId } = req.session || {};
+
+    if (userId) {
+      const user = await this.usersService.findOne(userId);
+      req.currentUser = user;
+    }
+
+    next();
+  }
+}
+```
+
+## 15.10. Validating query string values
+1. We will create a new route to estimate a car's value based on given attributes.
+2. We create `GetEstimateDto` for the handler
+
+    ```ts
+    // src/reports/dtos/get-estimate.dto.ts
+    import {
+      IsString,
+      IsNumber,
+      Min,
+      Max,
+      IsLongitude,
+      IsLatitude,
+    } from 'class-validator';
+
+    export class GetEstimateDto {
+      @IsString()
+      make: string;
+
+      @IsString()
+      model: string;
+
+      @IsNumber()
+      @Min(1930)
+      @Max(2050)
+      year: number;
+
+      @IsNumber()
+      @Min(0)
+      @Max(1000000)
+      mileage: number;
+
+      @IsLongitude()
+      lng: number;
+
+      @IsLatitude()
+      lat: number;
+    }
+    ```
+
+3. We can then update the `ReportsController` with a new route handler `createEstimate`. 
+4. However, the current implementation given from query strings are in `string` type. 
+5. Such behavior will cause `400 Bad request`, as the values are in wrong data type. 
+
+    ```ts
+    // src/reports/reports.controller.ts
+    import {
+      Body,
+      Controller,
+      Post,
+      UseGuards,
+      Patch,
+      Param,
+      Get,
+      Query,
+    } from '@nestjs/common';
+    import { CreateReportDto } from './dtos/create-report.dto';
+    import { ReportsService } from './reports.service';
+    import { AuthGuard } from '../guards/auth.guard';
+    import { CurrentUser } from '../users/decorators/current-user.decorator';
+    import { User } from '../users/user.entity';
+    import { ReportDto } from './dtos/report.dto';
+    import { Serialize } from '../interceptors/serialize.interceptor';
+    import { ApproveReportDto } from './dtos/approve-report.dto';
+    import { AdminGuard } from '../guards/admin.guard';
+    import { GetEstimateDto } from './dtos/get-estimate.dto';
+
+    @Controller('reports')
+    export class ReportsController {
+      constructor(private reportsService: ReportsService) {}
+
+      @Get()
+      createEstimate(@Query() query: GetEstimateDto) {}
+
+      @Post()
+      @UseGuards(AuthGuard)
+      @Serialize(ReportDto)
+      createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
+        return this.reportsService.create(body, user);
+      }
+
+      @Patch('/:id')
+      @UseGuards(AdminGuard)
+      approveReport(@Param('id') id: string, @Body() body: ApproveReportDto) {
+        return this.reportsService.changeApproval(id, body.approved);
+      }
+    }
+    ```
+
+## 15.11. Transforming query string data
+1. We can use `Transform` from `class-transform` to convert data type from one to another. 
+2. Note that latitude and longitude are usually have decimals.
+3. Therefore, rather using `parseInt` to convert the values to integers, we can use `parseFloat` to keep the decimal digits.
+
+```ts
+// src/reports/dtos/get-estimate.dto.ts
+import {
+  IsString,
+  IsNumber,
+  Min,
+  Max,
+  IsLongitude,
+  IsLatitude,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
+
+export class GetEstimateDto {
+  @IsString()
+  make: string;
+
+  @IsString()
+  model: string;
+
+  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  @Min(1930)
+  @Max(2050)
+  year: number;
+
+  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  @Min(0)
+  @Max(1000000)
+  mileage: number;
+
+  @Transform(({ value }) => parseFloat(value))
+  @IsLongitude()
+  lng: number;
+
+  @Transform(({ value }) => parseFloat(value))
+  @IsLatitude()
+  lat: number;
+}
+```
+
+## 15.12. How will we generate an estimate
+1. By getting the parameters from query strings, we will search reports in the database. 
+   1. Find reports for the same make/model.
+   2. Find latitude and longitude within +/- 5 degrees.
+   3. Find the years within 3 years. 
+   4. Find by closet mileage. 
+2. We will take the top 3 closet reports and average their value to get the estimate.
+
+<img src="./images/149-how_will_we_generate_an_estimate.png" />
+
+# 16. Query builders with TypeORM
+## 16.1. Creating a query builder
+1. Besides regular repo operations, we need a custom `createQueryBuilder` for our complex need.
+
+    <img src="./images/150-creating_a_query_builder.png" />
+
+2. We create a new method `createEstimate` in `reports.service.ts` and use in the route handler in `ReportsController`.
+
+    ```ts
+    // src/reports/reports.controller.ts
+    import {
+      Body,
+      Controller,
+      Post,
+      UseGuards,
+      Patch,
+      Param,
+      Get,
+      Query,
+    } from '@nestjs/common';
+    import { CreateReportDto } from './dtos/create-report.dto';
+    import { ReportsService } from './reports.service';
+    import { AuthGuard } from '../guards/auth.guard';
+    import { CurrentUser } from '../users/decorators/current-user.decorator';
+    import { User } from '../users/user.entity';
+    import { ReportDto } from './dtos/report.dto';
+    import { Serialize } from '../interceptors/serialize.interceptor';
+    import { ApproveReportDto } from './dtos/approve-report.dto';
+    import { AdminGuard } from '../guards/admin.guard';
+    import { GetEstimateDto } from './dtos/get-estimate.dto';
+
+    @Controller('reports')
+    export class ReportsController {
+      constructor(private reportsService: ReportsService) {}
+
+      @Get()
+      createEstimate(@Query() query: GetEstimateDto) {
+        return this.reportsService.createEstimate(query);
+      }
+
+      @Post()
+      @UseGuards(AuthGuard)
+      @Serialize(ReportDto)
+      createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
+        return this.reportsService.create(body, user);
+      }
+
+      @Patch('/:id')
+      @UseGuards(AdminGuard)
+      approveReport(@Param('id') id: string, @Body() body: ApproveReportDto) {
+        return this.reportsService.changeApproval(id, body.approved);
+      }
+    }
+    ```
+
+3. In this case, we call `createQueryBuilder` from the `repo`, chain `select('*')`, and a `where` with `getRawMany()`. 
+
+    ```ts
+    // src/reports/reports.service.ts
+    import { Injectable, NotFoundException } from '@nestjs/common';
+    import { InjectRepository } from '@nestjs/typeorm';
+    import { Repository } from 'typeorm';
+    import { Report } from './report.entity';
+    import { CreateReportDto } from './dtos/create-report.dto';
+    import { User } from '../users/user.entity';
+    import { GetEstimateDto } from './dtos/get-estimate.dto';
+
+    @Injectable()
+    export class ReportsService {
+      constructor(@InjectRepository(Report) private repo: Repository<Report>) {}
+
+      createEstimate(estimateDto: GetEstimateDto) {
+        return this.repo
+          .createQueryBuilder()
+          .select('*')
+          .where('make = :make', { make: estimateDto.make })
+          .getRawMany();
+      }
+
+      create(reportDto: CreateReportDto, user: User) {
+        const report = this.repo.create(reportDto);
+        report.user = user;
+        return this.repo.save(report);
+      }
+
+      async changeApproval(id: string, approved: boolean) {
+        const report = await this.repo.findOne({ where: { id: parseInt(id) } });
+        if (!report) {
+          throw new NotFoundException('report not found');
+        }
+        report.approved = approved;
+        return this.repo.save(report);
+      }
+    }
+    ```
+
+## 16.2. Writing a query to produce the estimate
+1. With a closer look on `where('make = :make', { make: estimateDto.make })`, it indicates the query should look up `make` column of the table with a placeholder `:make` which is then provided in the 2nd argument. 
+2. Instead of giving the value for `make` in the raw SQL, this syntax provides a more secure way to query and prevents SQL injection. 
+3. In addition, we can destructure the argument with a shorthand syntax to pass the variable. 
+4. Note that if we have multiple conditions for query, we cannot chain `where` clause directly as the following `where` call will overwrite the previous one.
+5. Therefore, we need to use `andWhere` instead of `where` for the 2nd and so on. 
+
+```ts
+// src/reports/reports.service.ts
+@Injectable()
+export class ReportsService {
+  constructor(@InjectRepository(Report) private repo: Repository<Report>) {}
+
+  createEstimate({ make, model, lng, lat, year, mileage }: GetEstimateDto) {
+    return this.repo
+      .createQueryBuilder()
+      .select('AVG(price)', 'price')
+      .where('make = :make', { make })
+      .andWhere('model = :model', { model })
+      .andWhere('lng - :lng BETWEEN -5 AND 5', { lng })
+      .andWhere('lat - :lat BETWEEN -5 AND 5', { lat })
+      .andWhere('year - :year BETWEEN -3 AND 3', { year })
+      .orderBy('ABS(mileage - :mileage)', 'DESC')
+      .setParameters({ mileage })
+      .limit(3)
+      .getRawMany();
+  }
+}
+```
+
+## 16.3. Testing the estimate logic
+1. We can use REST client to create multiple reports and test on the route. 
+
+    ```http
+    POST http://localhost:3000/reports
+    Content-Type: application/json
+
+    {
+      "make": "ford",
+      "model": "mustang",
+      "year": 1982,
+      "mileage": 50000,
+      "lng": 45,
+      "lat": 45,
+      "price": 20000
+    }
+
+    ### Approve an existing report
+    PATCH http://localhost:3000/reports/1
+    Content-Type: application/json
+
+    {
+      "approved": true
+    }
+
+    ### Get an estimate for an existing vehicle
+    GET http://localhost:3000/reports?make=ford&model=mustang&year=1981&mileage=20000&lat=45&lng=45
+    Content-Type: application/json
+    ```
+
+2. Beside, we update the queryBuilder with `approved` is `true`. 
+
+    ```ts
+    // src/reports/reports.service.ts
+    @Injectable()
+    export class ReportsService {
+      constructor(@InjectRepository(Report) private repo: Repository<Report>) {}
+
+      createEstimate({ make, model, lng, lat, year, mileage }: GetEstimateDto) {
+        return this.repo
+          .createQueryBuilder()
+          .select('AVG(price)', 'price')
+          .where('make = :make', { make })
+          .andWhere('model = :model', { model })
+          .andWhere('lng - :lng BETWEEN -5 AND 5', { lng })
+          .andWhere('lat - :lat BETWEEN -5 AND 5', { lat })
+          .andWhere('year - :year BETWEEN -3 AND 3', { year })
+          .andWhere('approved IS TRUE')
+          .orderBy('ABS(mileage - :mileage)', 'DESC')
+          .setParameters({ mileage })
+          .limit(3)
+          .getRawMany();
+      }
+    }
+    ```
