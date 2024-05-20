@@ -161,6 +161,26 @@ Finished on
   - [16.1. Creating a query builder](#161-creating-a-query-builder)
   - [16.2. Writing a query to produce the estimate](#162-writing-a-query-to-produce-the-estimate)
   - [16.3. Testing the estimate logic](#163-testing-the-estimate-logic)
+- [17. Production deployment](#17-production-deployment)
+  - [17.1. The path to production](#171-the-path-to-production)
+  - [17.2. Providing the cookie key](#172-providing-the-cookie-key)
+  - [17.3. Understanding the synchronize flag](#173-understanding-the-synchronize-flag)
+  - [17.4. The dangers of synchronize](#174-the-dangers-of-synchronize)
+  - [17.5. The theory behind migrations](#175-the-theory-behind-migrations)
+  - [17.6. Headaches with config management](#176-headaches-with-config-management)
+  - [17.7. TypeORM and Nest config is great](#177-typeorm-and-nest-config-is-great)
+    - [17.7.1. Using static files](#1771-using-static-files)
+    - [17.7.2. Setting ENVs on the local machine](#1772-setting-envs-on-the-local-machine)
+    - [17.7.3. Using ts or js config files](#1773-using-ts-or-js-config-files)
+  - [17.8. Env-specific database config](#178-env-specific-database-config)
+  - [17.9. Installing the TypeORM CLI](#179-installing-the-typeorm-cli)
+  - [17.10. Generating and running migrations](#1710-generating-and-running-migrations)
+  - [17.11. Required migration update for production](#1711-required-migration-update-for-production)
+  - [17.12. Running migrations during e2e tests](#1712-running-migrations-during-e2e-tests)
+  - [17.13. Production DB config](#1713-production-db-config)
+  - [17.14. Heroku CLI setup](#1714-heroku-cli-setup)
+  - [17.15. Heroku specific project config](#1715-heroku-specific-project-config)
+  - [17.16. Deploying the app](#1716-deploying-the-app)
 
 # 1. The Basics of Nest
 ## 1.1. Project Setup
@@ -5606,3 +5626,193 @@ export class ReportsService {
       }
     }
     ```
+
+# 17. Production deployment
+## 17.1. The path to production
+1. Similar for `test` environment, we have 
+    
+    <img src="./images/153-the_path_to_production.png" />
+
+## 17.2. Providing the cookie key
+1. This has been solved in the previous section.
+2. The solution is the use `ConfigService` in constructor by referring from the DI container. 
+
+```ts
+// src/app.module.ts
+export class AppModule {
+  constructor(private readonly config: ConfigService) {}
+
+  configure(consumer: MiddlewareConsumer) {
+    const SESSION_SECRET = this.config.get('SESSION_SECRET');
+
+    consumer
+      .apply(
+        cookieSession({
+          keys: [SESSION_SECRET],
+        }),
+      )
+      .forRoutes('*');
+  }
+}
+```
+
+## 17.3. Understanding the synchronize flag
+1. When we setup connection to database through `TypeORM` client, we setup various properties.
+2. This `synchronize` flag is useful in the development mode, but can be very risky in production, as it will sync up the columns of a table according to the aligned model, such as `UserEntity` in this project.
+
+    ```ts
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          type: 'sqlite',
+          database: config.get<string>('DB_NAME'),
+          // synchronize flag
+          synchronize: true,
+          entities: [User, Report],
+        };
+      },
+    }),
+    ```
+
+
+## 17.4. The dangers of synchronize
+1. If we now remove `password` column in `UserEntity`, the next time we start up the app, `TypeORM` will check from `UserEntity` and found that the `user` table still has `password` and thus delete it directly. 
+2. On the other hand, if have new properties for an entity, `TypeORM` will add the new column to the table. 
+
+    <img src="./images/154-understand_the_sync_flag.png" />
+    <img src="./images/154-understand_the_sync_flag_2.png" />
+
+## 17.5. The theory behind migrations
+1. In migration, there are typically 2 methods.
+   1. `up` - describe how to `update` the structure of the DB.
+   2. `down` - describe how to `undo` the steps in `up`.
+
+    <img src="./images/157-the_theory_behind_migration.png" />
+    <img src="./images/157-the_theory_behind_migration_2.png" />
+
+2. In addition, we can create multiple migration file and run them all in a row.
+    
+    <img src="./images/157-the_theory_behind_migration_3.png" />
+
+## 17.6. Headaches with config management
+1. When migrating and update database schema, we'd follow the steps.
+   1. Stop the development server
+   2. Use `TypeORM` CLI to generate an empty migration file
+   3. Add some code to change our DB in the migration file
+   4. Use the `TypeORM` CLI to apply the migration to the DB
+   5. DB is updated. Restart the development server
+
+    <img src="./images/158-headaches_with_config_management.png" />
+    
+
+2. The problem we will face is that `TypeORM` will execute only the entity files and the migration file, then connect to the DB to make the changes. 
+3. However, we put the ENVs in the `ConfigService` and `ConfigModule` from `Nest.js` which is not recognized by `TypeORM` CLI.
+
+    <img src="./images/158-headaches_with_config_management_2.png" />
+
+4. Therefore, our target is to provide an unified way to serve ENVs to both `ConfigModule` for `Nest.js` and `TypeORM` CLI for migration. 
+5. Besides, we also need to separate ENVs set for different environments such as `production`, `development`, and `test`. 
+
+
+## 17.7. TypeORM and Nest config is great
+1. For `TypeORM` settings and ENVs, we can have a dedicated `ormconfig.json` file. This configuration file can also be in the other format and suffix such as `xml`, `yaml` and `ts`. 
+2. However, using `ormconfig.json` is deprecated and dropped by `TypeORM`. 
+   1. [https://typeorm.io/changelog#breaking-changes-2](https://typeorm.io/changelog#breaking-changes-2)
+   2. [https://typeorm.io/changelog#deprecations](https://typeorm.io/changelog#deprecations)
+
+### 17.7.1. Using static files
+1. By using the static configuration file (such as `json` and `yaml` file), we cannot change the settings dynamically. 
+
+### 17.7.2. Setting ENVs on the local machine
+1. Though we could set environment variables directly on the machine, in cloud service provider some of the ENVs have specific name which cannot be customized.
+2. `TypeORM` has also its own requirements on the ENVs such as all the ENVs it needs should be prefixed with `TYPEORM_`. 
+3. On the other hand, PaaS such as `vercel`, `Heroku`, and `Netlify` has their own ENVs naming for specific services such as for attached databases.
+
+### 17.7.3. Using ts or js config files
+1. We can create a `ormconfig.ts` in the root directory.
+
+    ```ts
+    // ormconfig.ts
+    // typescript
+    export = {
+      type: 'sqlite',
+      database: 'db.sqlite',
+      entities: ['**/*.entity.ts'],
+      synchronize: false,
+    }
+    ```
+
+2. Without configuring setups for `TypeScript`, giving only the ts file in the root directory doesn't work because the `tsc` transpiler doesn't include and transpile `ormconfig.ts` in build time.
+3. Therefore, after the app is compiled and starts running, it tries to refer code from a typescript file which doesn't work directly with the JS runtime. 
+4. Therefore, for such case, the easiest solution is to have `ormconfig.js` rather than `TypesScript` suffix.
+5. Besides, since we are in `Node.js` runtime, we need to use `commonJS` syntax with `require` and `module.exports`.
+
+    ```js
+    // ormconfig.js
+    // Javascript, Node.js runtime
+    module.exports = {
+      type: 'sqlite',
+      database: 'db.sqlite',
+      entities: ['**/*.entity.ts'],
+      synchronize: false,
+    }
+    ```
+
+6. However, if we take a closer look into the configuration for `entities`, we can notice that all the `entity` files are in `TypeScript` which is still not compatible for the solution. 
+7. Though we could hack the way by referring the compiled JS files in the `dist` directory and change the suffix in settings from `ts` to `js`, this solution doesn't work in `test` environment. 
+
+    ```js
+    // ormconfig.js
+    // Javascript, Node.js runtime
+    module.exports = {
+      type: 'sqlite',
+      database: 'db.sqlite',
+      // change to js suffix
+      entities: ['**/*.entity.js'],
+      synchronize: false,
+    }
+    ```
+
+8. The previous workaround is only applicable for `development` environment. However, when it comes to `test`, the setup doesn't work because the project transpilation lifecycle is different for each environment. 
+9. In `test` mode, `Nest.js` will use `ts-jest` which can read and compile from `TypeScript` files directly. 
+10. It therefore doesn't allow us to run `ormconfig.js` but requires `ormconfig.ts`. 
+11. In this case, we can either 
+    1.  setup `jest` to read a from a different config file, or
+    2.  update `tsconfig.json` by setting `allowJs` to `true`.
+12. However, by only these setup, it still doesn't work as we still have entities as `.js` in the config file. 
+
+    ```js
+    // ormconfig.js
+    // Javascript, Node.js runtime
+    module.exports = {
+      type: 'sqlite',
+      database: 'db.sqlite',
+      // change to js suffix
+      entities: process.env.NODE_ENV === 'development'
+        ? ['**/*.entity.js']
+        : ['**/*.entity.ts'],
+      synchronize: false,
+    }
+    ```
+
+13. Note that we still have a `production` environment to work with, so having only a ternary isn't enough. 
+14. We could chain 2 conditions of ternary or extract the logic outside of the exporting object for readability.
+
+## 17.8. Env-specific database config
+
+## 17.9. Installing the TypeORM CLI
+
+## 17.10. Generating and running migrations
+
+## 17.11. Required migration update for production
+
+## 17.12. Running migrations during e2e tests
+
+## 17.13. Production DB config
+
+## 17.14. Heroku CLI setup
+
+## 17.15. Heroku specific project config
+
+## 17.16. Deploying the app
