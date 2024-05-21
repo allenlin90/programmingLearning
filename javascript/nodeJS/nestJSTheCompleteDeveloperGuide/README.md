@@ -1,5 +1,5 @@
 Start learning on 2021/08/28
-Finished on
+Finished on 2024/05/21
 
 1. Course Link [https://www.udemy.com/course/nestjs-the-complete-developers-guide/](https://www.udemy.com/course/nestjs-the-complete-developers-guide/)
 - [1. The Basics of Nest](#1-the-basics-of-nest)
@@ -5800,19 +5800,369 @@ export class AppModule {
 14. We could chain 2 conditions of ternary or extract the logic outside of the exporting object for readability.
 
 ## 17.8. Env-specific database config
+1. The lecturer introduced to refactor in `app.module.ts` and have a `ormconfig.js` in the root directory. 
+2. However, this doesn't work with a newer version of `TypeORM`, which is `0.3.17` when taking this lesson. 
+3. In the lecture, we refactored `AppModule` and use `TypeOrm.forRoot` without passing any parameter.
+
+    ```ts
+    // src/app.module.ts
+    import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
+    import { APP_PIPE } from '@nestjs/core';
+    import { TypeOrmModule } from '@nestjs/typeorm';
+    import { ConfigModule, ConfigService } from '@nestjs/config';
+    import { AppController } from './app.controller';
+    import { AppService } from './app.service';
+    import { UsersModule } from './users/users.module';
+    import { ReportsModule } from './reports/reports.module';
+
+    // eslint-disable-next-line
+    const cookieSession = require('cookie-session');
+
+    @Module({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          envFilePath: `.env.${process.env.NODE_ENV}`,
+        }),
+        // ues forRoot without args rather than forRootAsync
+        TypeOrmModule.forRoot(),
+        UsersModule,
+        ReportsModule,
+      ],
+      controllers: [AppController],
+      providers: [
+        AppService,
+        {
+          provide: APP_PIPE,
+          useValue: new ValidationPipe({
+            whitelist: true,
+          }),
+        },
+      ],
+    })
+    export class AppModule {
+      constructor(private readonly config: ConfigService) {}
+
+      configure(consumer: MiddlewareConsumer) {
+        const SESSION_SECRET = this.config.get('SESSION_SECRET');
+
+        consumer
+          .apply(
+            cookieSession({
+              keys: [SESSION_SECRET],
+            }),
+          )
+          .forRoutes('*');
+      }
+    }
+    ```
+
+4. We then have `ormconfig.js` in the root directory.
+
+    ```js
+    // ormconfig.js
+    const dbConfig = {
+      synchronize: false,
+    };
+
+    switch (process.env.NODE_ENV) {
+      case 'development':
+        Object.assign(dbConfig, {
+          type: 'sqlite',
+          database: 'db.sqlite',
+          entities: ['/**/*.entity.js'],
+        });
+        break;
+      case 'test':
+        Object.assign(dbConfig, {
+          type: 'sqlite',
+          database: 'test.sqlite',
+          entities: ['/**/*.entity.ts'],
+        });
+        break;
+      case 'production':
+        break;
+      default:
+        throw new Error('unknown environment');
+    }
+
+    module.exports = dbConfig;
+    ```
+
+5. Note that the above solution only works on ver. `0.2.34` given from the lecture materials. 
+6. Besides, we can try to remove the `db.sqlite` and `test.sqlite` in the project. 
+7. With the current setup, when the app connects to the database, it may find `SQLITE_ERROR: no such table: user` which error will be handled later in the following migrations. 
 
 ## 17.9. Installing the TypeORM CLI
+1. [https://typeorm.io/using-cli#if-entities-files-are-in-typescript](https://typeorm.io/using-cli#if-entities-files-are-in-typescript).
+2. `TypeOrm` CLI doesn't work directly with typescript files, we need to use `ts-node`. 
+3. However, `Nest.js` has been using with `ts-node`, so we don't need to install it globally on the machine.
+4. We then add a new script in `package.json` to run migration files.
+
+```json
+// package.json
+{
+  "scripts": {
+    "typeorm": "cross-env NODE_ENV=development node --require ts-node/register ./node_modules/typeorm/cli.js"
+  }
+}
+```
 
 ## 17.10. Generating and running migrations
+1. [https://typeorm.io/migrations#creating-a-new-migration](https://typeorm.io/migrations#creating-a-new-migration)
+2. We update `ormconfig.js` with other properties fro migrations.
+
+    ```js
+    // ormconfig.js
+    const dbConfig = {
+      synchronize: false,
+      // migration files location and suffix
+      migrations: ['migrations/*.js'],
+      cli: {
+        migrationsDir: 'migrations',
+      },
+    };
+    ```
+
+3. Note that `TypeORM` CLI doesn't work directly with typescript file, we can use `o` flag `--outputJs` to generate migration files. 
+4. We then can run the CLI tool to generate a migration file.
+
+    ```shell
+    npm run typeorm migration:generate -- -n initial-schema -o
+    ```
+
+5. If the process goes well, we can generate migration file with the above command. However, by the time working with this, `TypeORM` version should be `0.2.45`. 
+6. We then can run the migration to do the changes. 
+
+    ```shell
+    npm run typeorm migration:run
+    ```
 
 ## 17.11. Required migration update for production
+1. The auto-generated migration won't work properly when we move our app to production.
+
+```js
+// migrations/initial-migration
+const { MigrationInterface, QueryRunner, Table } = require('typeorm');
+ 
+module.exports = class initialSchema1625847615203 {
+  name = 'initialSchema1625847615203';
+ 
+  async up(queryRunner) {
+    await queryRunner.createTable(
+      new Table({
+        name: 'user',
+        columns: [
+          {
+            name: 'id',
+            type: 'integer',
+            isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'increment',
+          },
+          {
+            name: 'email',
+            type: 'varchar',
+          },
+          {
+            name: 'password',
+            type: 'varchar',
+          },
+          {
+            name: 'admin',
+            type: 'boolean',
+            default: 'true',
+          },
+        ],
+      }),
+    );
+ 
+    await queryRunner.createTable(
+      new Table({
+        name: 'report',
+        columns: [
+          {
+            name: 'id',
+            type: 'integer',
+            isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'increment',
+          },
+          { name: 'approved', type: 'boolean', default: 'false' },
+          { name: 'price', type: 'float' },
+          { name: 'make', type: 'varchar' },
+          { name: 'model', type: 'varchar' },
+          { name: 'year', type: 'integer' },
+          { name: 'lng', type: 'float' },
+          { name: 'lat', type: 'float' },
+          { name: 'mileage', type: 'integer' },
+          { name: 'userId', type: 'integer' },
+        ],
+      }),
+    );
+  }
+ 
+  async down(queryRunner) {
+    await queryRunner.query(`DROP TABLE ""report""`);
+    await queryRunner.query(`DROP TABLE ""user""`);
+  }
+};
+```
 
 ## 17.12. Running migrations during e2e tests
+1. To avoid errors, we can update `tsconfig.json` to `allowJs:true` to use plain Javascript files in the project.
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "allowJs": true
+  }
+}
+```
+
+```js
+// ormconfig.js
+const dbConfig = {
+  synchronize: false,
+  migrations: ['migrations/*.js'],
+  cli: {
+    migrationsDir: 'migrations',
+  },
+};
+
+switch (process.env.NODE_ENV) {
+  case 'development':
+    Object.assign(dbConfig, {
+      type: 'sqlite',
+      database: 'db.sqlite',
+      entities: ['/**/*.entity.js'],
+    });
+    break;
+  case 'test':
+    Object.assign(dbConfig, {
+      type: 'sqlite',
+      database: 'test.sqlite',
+      entities: ['/**/*.entity.ts'],
+      migrationsRun: true,
+    });
+    break;
+  case 'production':
+    break;
+  default:
+    throw new Error('unknown environment');
+}
+
+module.exports = dbConfig;
+```
 
 ## 17.13. Production DB config
+1. We will use `PostgreSQL` in production environment based on `Heroku` cloud service.
+2. We will need database client `pg` 
+
+    ```shell
+    npm install pg
+    ```
+
+3. Besides, we need to update `ormconfig.js` for `production` section. 
+
+    ```js
+    // ormconfig.js
+    const dbConfig = {
+      synchronize: false,
+      migrations: ['migrations/*.js'],
+      cli: {
+        migrationsDir: 'migrations',
+      },
+    };
+
+    switch (process.env.NODE_ENV) {
+      case 'development':
+        Object.assign(dbConfig, {
+          type: 'sqlite',
+          database: 'db.sqlite',
+          entities: ['/**/*.entity.js'],
+        });
+        break;
+      case 'test':
+        Object.assign(dbConfig, {
+          type: 'sqlite',
+          database: 'test.sqlite',
+          entities: ['/**/*.entity.ts'],
+          migrationsRun: true,
+        });
+        break;
+      case 'production':
+        Object.assign(dbConfig, {
+          type: 'postgres',
+          url: process.env.DATABASE_URL,
+          migrationsRun: true,
+          entities: ['/**/*.entity.js'],
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        });
+        break;
+      default:
+        throw new Error('unknown environment');
+    }
+
+    module.exports = dbConfig;
+    ```
 
 ## 17.14. Heroku CLI setup
-
 ## 17.15. Heroku specific project config
-
 ## 17.16. Deploying the app
+
+- [https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up](https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up)
+
+1. To get the port exposed on the PaaS, we can change the app listening port from the ENV. 
+
+    ```ts
+    // main.ts
+    import { NestFactory } from '@nestjs/core';
+    import { AppModule } from './app.module';
+
+    async function bootstrap() {
+      const app = await NestFactory.create(AppModule);
+      (app as any).set('etag', false);
+      app.use((req, res, next) => {
+        res.removeHeader('x-powered-by');
+        res.removeHeader('date');
+        next();
+      });
+      
+      // listen from port from ENV
+      await app.listen(process.env.PORT || 3000);
+    }
+    bootstrap();
+    ```
+
+2. `heroku` needs a `Procfile` in the root directory to initiate the app. 
+3. Depending on the platform, `heroku` will firstly build the project when we push new commits or PR to the project which triggers a hook in `heroku`. 
+
+    ```procfile
+    # Procfile
+    web: npm run start:prod
+    ```
+
+4. In addition, in `tsconfig.build.json`, we need to specify that `Typescript` should not compile `migrations` and `ormconfig.js`. 
+5. We can list the files and directory in `exclude` property.
+
+    ```json
+    // tsconfig.build.json
+    {
+      "extends": "./tsconfig.json",
+      "exclude": [
+        "ormconfig.js",
+        "migrations",
+        "node_modules",
+        "test",
+        "dist",
+        "**/*spec.ts"
+      ]
+    }
+    ```
+
+6. By pushing the commits to `Github`, `heroku` should start building the app, while we also need to create an add-on `postgresql` for `PostgreSQL` database. 
+7. Besides, we need to setup ENVs such as `SESSION_SECRET` (`COOKIE_KEY`) for the secret of `cookie-session` encryption.
