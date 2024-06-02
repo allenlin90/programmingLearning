@@ -112,6 +112,10 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [12.10. Pre-order, In-order, Post-order](#1210-pre-order-in-order-post-order)
   - [12.11. DFS Depth first search](#1211-dfs-depth-first-search)
 - [13. Dynamic programming](#13-dynamic-programming)
+  - [13.1. Dynamic programming introduction](#131-dynamic-programming-introduction)
+  - [13.2. Memoization 1](#132-memoization-1)
+  - [13.3. Memoization 2](#133-memoization-2)
+  - [13.4. Fibonacci and Dynamic Programming](#134-fibonacci-and-dynamic-programming)
 
 ---
 
@@ -3457,3 +3461,86 @@ function traversePostOrder(node, list) {
 ```
 
 # 13. Dynamic programming
+## 13.1. Dynamic programming introduction
+1. Dynamic programming is a way to solve problems by breaking it down into a collection of sub-problems, solve each of these problems just once, and store the solutions in case the next time the sub-problem occurs. 
+
+## 13.2. Memoization 1
+
+```ts
+function addTo80(n: number) {
+  return n + 80;
+}
+
+let cache = {};
+function memoizedAddTo80(n) {
+  if (n in cache) {
+    return cache[n];
+  }
+
+  cache[n] = n + 80;
+  return cache[n];
+}
+```
+
+## 13.3. Memoization 2
+1. To avoid using a global variable to store cache, we can apply closure in Javascript to hide the cache store.
+
+```ts
+function memoizedAddTo80() {
+  let cache = {};
+  return function(n: number) {
+    if (n in cache) {
+      return cache[n];
+    }
+
+    cache[n] = n + 80;
+    return cache[n];
+  }
+}
+
+const memoized = memoizedAddTo80();
+memoized(5);
+memoized(5); // return cached value
+```
+
+## 13.4. Fibonacci and Dynamic Programming
+1. A regular recursive fibonacci sequence can be calculated as the followings.
+
+    ```ts
+    function fibonacci(n: number) {
+      if (n < 2) {
+        return n;
+      }
+
+      return fibonacci(n-1) + fibonacci(n-2);
+    }
+    ```
+
+2. By calculating the large number, we need to recalculate the base cases again and again.
+
+  ```ts
+  function fibonacciMaster() {
+    let cache = {}
+    return function fib(n: number) {
+      if (n in cache) return cache[n];
+
+      if (n < 2) return n;
+
+      cache[n] = fib(n-1) + fib(n-2);
+      return cache[n];
+    }
+  }
+  ```
+
+3. A bottom up solution as an alternative to recursion.
+
+  ```ts
+  function fibonacciMaster2(n:number) {
+    if (n === 0) return 0;
+    let answer = [0, 1];
+    for (let i = 2; i <= n; i++) {
+      answer.push(answer[i-2] + answer[i-1]);
+    }
+    return answer.pop();
+  }
+  ```
