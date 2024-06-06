@@ -97,6 +97,19 @@ Course Material: [Master the Coding Interview: Data Structures + Algorithms](htt
   - [9.4. Exercise and solution](#94-exercise-and-solution)
 - [10. Recursion](#10-recursion)
 - [11. Sorting](#11-sorting)
+  - [11.1. Sort introduction](#111-sort-introduction)
+  - [11.2. The issue with sort()](#112-the-issue-with-sort)
+  - [11.3. Sorting algorithms](#113-sorting-algorithms)
+  - [11.4. Bubble sort](#114-bubble-sort)
+  - [11.5. Selection sort](#115-selection-sort)
+  - [11.6. Dancing algorithms](#116-dancing-algorithms)
+  - [11.7. Insertion sort](#117-insertion-sort)
+  - [11.8. Merge sort and O(n log n)](#118-merge-sort-and-on-log-n)
+  - [11.9. Stable vs unstable algorithms](#119-stable-vs-unstable-algorithms)
+  - [11.10. Quick sort](#1110-quick-sort)
+  - [11.11. Which sort is best?](#1111-which-sort-is-best)
+  - [11.12. Heap sort](#1112-heap-sort)
+  - [11.13. Radix sort + counting sort](#1113-radix-sort--counting-sort)
 - [12. Searching, BFS, DFS](#12-searching-bfs-dfs)
   - [12.1. Linear search](#121-linear-search)
   - [12.2. Binary search](#122-binary-search)
@@ -3083,6 +3096,189 @@ class Graph {
 # 10. Recursion
 
 # 11. Sorting
+
+## 11.1. Sort introduction
+## 11.2. The issue with sort()
+1. In Javascript, `array.sort` will convert values into `string` and check on char code.
+2. Therefore, without giving a callback to compare the values, the output would not be expected.
+
+    ```ts
+    const numbers = [2, 65, 34, 2, 1, 7, 8];
+    console.log(numbers.sort());
+    // [1, 2, 2, 34, 65, 7, 8]
+
+    // ascending order
+    console.log(numbers.sort((a, b) => a - b));
+    // [1, 2, 2, 7, 8, 34, 65]
+    ```
+
+3. Besides, `sort` method is implemented in different algorithm in different environment and runtime, such as Node.js and different browsers. 
+
+## 11.3. Sorting algorithms
+
+[Animated sorting algorithms](https://www.toptal.com/developers/sorting-algorithms)
+
+<img src="./images/sorting_complexity.png" />
+
+## 11.4. Bubble sort
+1. Bubble sort compares 2 numbers and re-order them in ascending order.
+2. In this algorithm it keeps the largest value to the end of the array on each iteration. 
+
+  ```ts
+  function bubbleSort(array: number[]) {
+    for (let i = 0; i < array.length; i++) {
+      for (let j = 0; j < array.length - i; j++) {
+        if (array[j] > array[j + 1]) {
+          let temp = array[j];
+          array[j] = array[j + 1];
+          array[j + 1] = temp;
+        }
+      }
+    }
+  }
+  ```
+
+## 11.5. Selection sort
+1. It iterate through the list to find the smallest value and swap it with the value that is at the beginning of the list.
+2. As opposite to bubble sort, this algorithm keeps the smallest value to the beginning by each iteration. 
+
+```ts
+function selectionSort(array) {
+  for (let i = 0; i < array.length; i++) {
+    let index = i;
+    let min = array[i];
+    for (let j = i + 1; j < array.length; j++) {
+      if (array[j] < min) {
+        min = array[j];
+        index = j;
+      }
+    }
+    array[index] = array[i];
+    array[i] = min;
+  }
+  return array;
+}
+```
+
+## 11.6. Dancing algorithms
+[https://www.youtube.com/@AlgoRythmics](https://www.youtube.com/@AlgoRythmics)
+
+## 11.7. Insertion sort
+1. This algorithm is especially good for smaller dataset and nearly sorted arrays.
+2. When it iterates through the array, it find the position to insert the incoming value to the relative position in the current array.
+
+```ts
+function insertionSort(array) {
+  const list = [array[0]];
+  
+  for (let i = 1; i < array.length; i++){
+    const current = array[i];    
+    // cache the current length
+    // otherwise splice will keep changing list array
+    const length = list.length
+    for (let j = 0; j < length; j++){
+      if (current < list[j]) {
+        list.splice(j, 0, current);
+        break;
+      } else if (j === list.length - 1) {
+        list.push(current);
+      }
+    }
+  }
+
+  return list;
+}
+```
+
+## 11.8. Merge sort and O(n log n)
+1. Merge sort break elements down into single values and compare them pair by pair and merge, then iterate the process until the list is merged back. 
+
+```ts
+const numbers = [99, 44, 6, 2, 1, 5, 63, 87, 283, 4, 0];
+
+function mergeSort (array) {
+  if (array.length === 1) {
+    return array
+  }
+  // Split Array in into right and left
+  const length = array.length;
+  const middle = Math.floor(length / 2);
+  const left = array.slice(0, middle);
+  const right = array.slice(middle);
+  
+  return merge(
+    mergeSort(left),
+    mergeSort(right)
+  )
+}
+
+function merge(left, right){
+  let i = 0;
+  let j = 0;
+
+  const list = [];
+  let num1 = left[i];
+  let num2 = right[j];
+  
+  while (num1 || num2) {
+    if (num1 < num2) {
+      list.push(num1);
+      num1 = left[++i];
+    } else if (num1 > num2) {
+      list.push(num2);
+      num2 = right[++j];
+    } else if (num1 !== undefined) {
+      list.push(num1);
+      num1 = left[++i];
+    } else if (num2 !== undefined) {
+      list.push(num2);
+      num2 = right[++j];
+    }
+  }
+
+  return list;
+}
+
+const result = mergeSort(numbers);
+```
+
+## 11.9. Stable vs unstable algorithms
+1. In sorting algorithms, stability refers to how the algorithm handles elements with equal keys (values used for sorting).
+2. For a stable sorting algorithm, it maintains the original order of elements with equal keys in the sorted output.
+3. An unstable algorithm does not guarantee to preserve the original order of elements with equal keys.
+
+## 11.10. Quick sort
+1. It firstly randomly pick a pivot as a benchmark and move all the values less than it to its left and values greater than it to its right.
+2. The worst case for quick sort algorithm is `o(n^2)` as if the pivot is the smallest or largest in the list. 
+3. However, if the pivot could be chosen to be around the middle of the list, this is usually the most efficient sorting algorithm among the others. 
+
+```ts
+function quickSort(array: number[]): number[] {
+  if (array.length <= 1) return array;
+  
+  const [pivot]= array.slice(-1);
+  const left = [];
+  const right= [];
+
+  for (let i = 0; i < array.length - 1; i++) {
+    const num = array[i];
+    if (num < pivot) {
+      left.push(num);
+    } else {
+      right.push(num);
+    }
+  }
+
+  return [...quickSort(left), pivot, ...quickSort(right)];
+}
+```
+
+## 11.11. Which sort is best?
+
+## 11.12. Heap sort 
+[https://brilliant.org/wiki/heap-sort/](https://brilliant.org/wiki/heap-sort/)
+
+## 11.13. Radix sort + counting sort
 
 # 12. Searching, BFS, DFS
 
