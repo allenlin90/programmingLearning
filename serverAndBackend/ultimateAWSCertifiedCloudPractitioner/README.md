@@ -27,6 +27,12 @@
   - [4.1. AWS Budget Setup](#41-aws-budget-setup)
   - [4.2. EC2 Basics](#42-ec2-basics)
   - [4.3. Create an EC2 Instance with EC2 User Data to have a Website hands-on](#43-create-an-ec2-instance-with-ec2-user-data-to-have-a-website-hands-on)
+  - [4.4. EC2 Instance type basics](#44-ec2-instance-type-basics)
+    - [4.4.1. General purpose](#441-general-purpose)
+    - [4.4.2. Compute optimized](#442-compute-optimized)
+    - [4.4.3. Memory optimized](#443-memory-optimized)
+    - [4.4.4. Storage optimized](#444-storage-optimized)
+  - [4.5. Security groups and classic ports overview](#45-security-groups-and-classic-ports-overview)
 ---
 
 # 1. Course Introduction
@@ -235,3 +241,56 @@
         3. Note that the `.pem` file is critical for SSH connection as the password and can only be downloaded once. Besides, anyone has the `.pem` file can connect to the instnace through SSH. For security reason, we should carefully manage the file.
 2. After creating a new instance, we can manage instances to start, stop, or terminate and dispose the instance if we don't need it.
 3. Note that every time the instance stop and start as rebooting, the public IPv4 address will change. 
+
+## 4.4. EC2 Instance type basics
+
+1. There are several [EC2 instance types](https://aws.amazon.com/ec2/instance-types/) focusing on different purposes. 
+2. List of EC2 instances [https://ec2instances.info/](https://ec2instances.info/) and [https://instances.vantage.sh/](https://instances.vantage.sh/)
+3. We can tell the instance type, generation, and size from its name. 
+
+    <img src="./images/60.jpg">
+
+4. In this course, we use `t2.micro` in free tier which is a general purpose instance.
+
+### 4.4.1. General purpose
+1. Great for a diversity of workloads such as web servers or code repositories.
+2. It's balanced between 
+   1. Compute
+   2. Memory
+   3. Networking
+
+    <img src="./images/61.jpg">
+
+### 4.4.2. Compute optimized
+1. Great for compute intensive tasks that require high performance processors. 
+   1. Batch processing workloads
+   2. Media transcoding
+   3. High performance web servers
+   4. High performance computing (HPC)
+   5. Scientific modeling and machine learning
+   6. Dedicated gaming servers
+
+    <img src="./images/62.jpg">
+
+### 4.4.3. Memory optimized 
+1. Fast performance for workloads that process large data sets in memory.
+   1. High performance, relational/non-relational databases
+   2. Distributed web scale cache stores
+   3. In-memory databases optimized for BI (business intelligence)
+   4. Applications performing real-time processing of big unstructured data
+
+    <img src="./images/63.jpg">
+
+### 4.4.4. Storage optimized
+1. Great for storage-intensive tasks that require high, sequential read and write access to large data sets on local storage. 
+   1. High frequency online transaction processing (OLTP) systems
+   2. Relational and NoSQL databases
+   3. Cache for in-memory databases (for example, Redis)
+   4. Data warehousing applications
+   5. Distributed file systems
+
+    <img src="./images/64.jpg">
+
+    <img src="./images/65.jpg">
+
+## 4.5. Security groups and classic ports overview
