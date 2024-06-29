@@ -294,3 +294,36 @@
     <img src="./images/65.jpg">
 
 ## 4.5. Security groups and classic ports overview
+1. Security groups are the fundamental of network security in AWS.
+2. They control how traffic is allowed into or out of our EC2 instances. 
+3. Security groups only contain allow rules.
+4. Security groups rules can reference by IP or by security group.
+5. Security groups are acting as "**firewall**" on EC2 instances.
+6. They regulate 
+   1. access to ports
+   2. Authorized IP ranges - IPv4 and IPv6
+   3. Control of inbound network (from other to the instance)
+   4. Control of outbound network (from the instance to other)
+
+    <img src="./images/67.jpg">
+    <img src="./images/68.jpg">
+
+7. Security group good to know
+   1. A security group can be attached to multiple instances, while an instance can attach multiple security groups too. 
+   2. Security group is locked down to the region/VPC combination.
+   3. Security group lives outside the EC2. It means that if the traffic is blocked, the EC2 instance won't see the request/traffic.
+   4. It's good to maintain one separate security group for SSH access.
+   5. Usually if an application is not accessible (timeout), it can be an issue from security group. 
+   6. On the other hand, if the connection gets a "connection refused" error, it can be an error from the application in EC2 or the app is not even running.
+   7. All inbound traffic is **blocked** by default.
+   8. All outbound traffic is **authorized** by default. 
+8. A security group can reference other security groups.
+9. For example, we can specify if traffic from security group 1 and 2 is authorized, so if there's any other instances applying security group other than 1 and 2 (such as applying 3), the request will be blocked. 
+10. Classic ports to know
+    1.  `22` - SSH (Secure Shell) - log into a linux instance.
+    2.  `21` - FTP (File Transfer Protocol) - upload files into a file share.
+    3.  `22` - SFTP (Secure File transfer Protocol) - upload files using SSH.
+    4.  `80` - HTTP - access unsecured websites
+    5.  `443` - HTTPS - access secured websites
+    6.  `3389` - RDP (Remote Desktop Protocol) - log into a Windows instance.
+11. `22` and `3389` are like counterparts for connecting to instances using different OS.
