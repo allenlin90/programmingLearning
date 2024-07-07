@@ -1,13 +1,16 @@
-- [1. Median of Two Sorted Arrays](#1-median-of-two-sorted-arrays)
-  - [1.1. Description](#11-description)
-  - [1.2. Solution](#12-solution)
+- [1. Hard](#1-hard)
+  - [1.1. Median of Two Sorted Arrays](#11-median-of-two-sorted-arrays)
+    - [1.1.1. Description](#111-description)
+    - [1.1.2. Solution](#112-solution)
 
 ---
 
-# 1. Median of Two Sorted Arrays
+# 1. Hard
+
+## 1.1. Median of Two Sorted Arrays
 [4. Median of Two Sorted Arrays](https://leetcode.com/problems/median-of-two-sorted-arrays)
 
-## 1.1. Description
+### 1.1.1. Description
 Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return the median of the two sorted arrays.
 
 The overall run time complexity should be `O(log (m+n))`.
@@ -23,7 +26,7 @@ Input: `nums1 = [1,2]`, `nums2 = [3,4]`
 Output: `2.50000`
 Explanation: merged array = [1,2,3,4] and median is `(2 + 3) / 2 = 2.5`.
 
-## 1.2. Solution
+### 1.1.2. Solution
 
 1. Divide and conquer
    1. big question: Find `K`th smallest number in two sorted array `A`, `B`.
