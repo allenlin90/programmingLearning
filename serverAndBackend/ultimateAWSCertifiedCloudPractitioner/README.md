@@ -49,6 +49,8 @@
     - [4.11.8. Which purchasing option is right for me?](#4118-which-purchasing-option-is-right-for-me)
   - [4.12. IP Address Charges in AWS](#412-ip-address-charges-in-aws)
   - [4.13. Shared Responsibility Model for EC2](#413-shared-responsibility-model-for-ec2)
+  - [4.14. EC2 Summary](#414-ec2-summary)
+  - [4.15. EC2 quiz](#415-ec2-quiz)
 
 ---
 
@@ -555,8 +557,31 @@ aws iam list-users
 
 ## 4.13. Shared Responsibility Model for EC2
 
-| AWS                                      | User                 |
-| ---------------------------------------- | -------------------- |
-| Infrastructure (global network security) | Security Group rules |
+| AWS                                      | User                                                     |
+| ---------------------------------------- | -------------------------------------------------------- |
+| Infrastructure (global network security) | Security Group rules                                     |
+| Isolation on physical hosts              | Operating-system patches and updates                     |
+| Replacing faulty hardware                | Software and utilities installed on the EC2 instance     |
+| Compliance validation                    | IAM roles assigned to EC2 and IAM user access management |
+|                                          | Data security on your instance                           |
 
 <img src="./images/86.jpg">
+
+## 4.14. EC2 Summary
+
+1. EC2 instance: AMI (OS) + Instance Size (CPU + RAM) + Storage + security groups + EC2 user data
+2. Security groups: Firewall attached to the EC2 instance
+3. EC2 user data: Script launched at the first start of an instance
+4. SSH: Start a terminal into our EC2 instances (port 22)
+5. EC2 Instance Role: Link to IAM roles
+6. Purchasing Options: On-demand, Spot, Reserved (Standard + Convertible), Dedicated Host, Dedicated Instance
+
+<img src="./images/87.jpg">
+
+## 4.15. EC2 quiz
+
+1. Which EC2 purchasing option can provide the biggest discount, but is not suitable for critical jobs or databases?
+   1. Reserved instances
+   2. Convertible instances
+   3. Dedicated instances
+   4. Spot instances
