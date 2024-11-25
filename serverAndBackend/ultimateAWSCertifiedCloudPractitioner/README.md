@@ -73,6 +73,24 @@
     - [5.11.1. Amazon FSx for Windows File Server](#5111-amazon-fsx-for-windows-file-server)
     - [5.11.2. Amazon FSx for Lustre](#5112-amazon-fsx-for-lustre)
   - [5.12. EC2 Instance Storage Summary](#512-ec2-instance-storage-summary)
+- [6. ELB \& ASG - Elastic Load Balancing \& Auto Scaling Groups](#6-elb--asg---elastic-load-balancing--auto-scaling-groups)
+  - [6.1. High Availability, Scalability, Elasticity](#61-high-availability-scalability-elasticity)
+    - [6.1.1. Vertical Scalability](#611-vertical-scalability)
+    - [6.1.2. Horizontal Scalability](#612-horizontal-scalability)
+    - [6.1.3. High Availability](#613-high-availability)
+    - [6.1.4. High Availability \& Scalability for EC2](#614-high-availability--scalability-for-ec2)
+    - [6.1.5. Scalability vs Elasticity (vs Agility)](#615-scalability-vs-elasticity-vs-agility)
+  - [6.2. Elastic Loading Balancing (ELB) Overview](#62-elastic-loading-balancing-elb-overview)
+    - [6.2.1. What is load balancing?](#621-what-is-load-balancing)
+    - [6.2.2. Why use a load balancer?](#622-why-use-a-load-balancer)
+    - [6.2.3. Why use an Elastic Load Balancer?](#623-why-use-an-elastic-load-balancer)
+    - [6.2.4. Difference between ALB, NLB, GLB](#624-difference-between-alb-nlb-glb)
+  - [6.3. Application Load Balancer (ALB) Hands on](#63-application-load-balancer-alb-hands-on)
+  - [6.4. Auto scaling groups (ASG) Overview](#64-auto-scaling-groups-asg-overview)
+  - [6.5. Auto scaling groups (ASG) Hands on](#65-auto-scaling-groups-asg-hands-on)
+  - [6.6. Auto scaling groups (ASG) Strategies](#66-auto-scaling-groups-asg-strategies)
+  - [6.7. Section Cleanup](#67-section-cleanup)
+  - [6.8. ELB \& ASG Summary](#68-elb--asg-summary)
 
 ---
 
@@ -834,3 +852,249 @@ aws iam list-users
 8. FSx for Lustre: High Performance Computing Linux file system.
 
    <img src="./images/105.jpg">
+
+# 6. ELB & ASG - Elastic Load Balancing & Auto Scaling Groups
+
+## 6.1. High Availability, Scalability, Elasticity
+
+1. Scalability means that an application / system can handle greater loads by adapting.
+2. There are two kinds of scalability
+
+   1. Vertical Scalability
+   2. Horizontal Scalability (=elasticity)
+
+3. Scalability is linked but different to **High Availability**
+
+   <img src="./images/107.jpg">
+
+### 6.1.1. Vertical Scalability
+
+1. Vertical Scalability means increasing the size of the instance.
+2. For example, your application runs a **t2.micro**.
+3. Scaling that application vertically means running it on a **t2.large**.
+4. Vertical scalability is very common for non-distributed systems, such as database.
+5. There's usually a limit to how much you can vertically scale (hardware limit).
+
+   <img src="./images/108.jpg">
+
+### 6.1.2. Horizontal Scalability
+
+1. Horizontal Scalability means increasing the number of instances/systems for your application.
+2. Horizontal scaling implies distributed systems.
+3. This is very common for web applications/modern applications.
+4. It's easy to horizontally scale thanks the cloud offerings such as Amazon EC2.
+
+   <img src="./images/109.jpg">
+
+### 6.1.3. High Availability
+
+1. High availability usually goes hand in hand with horizontal scaling.
+2. High availability means running your application/ system in at least 2 Availability Zones.
+3. The goal of high availability is to survive a data center loss (disaster).
+
+   <img src="./images/110.jpg">
+
+### 6.1.4. High Availability & Scalability for EC2
+
+1. Vertical Scaling: Increase instance size (=scale up/down)
+
+   1. From: t2.nano - 0.5G of RAM, 1 vCPU
+   2. To: u-12tb1.metal - 12.3TB of RAM, 448 vCPUs
+
+2. Horizontal Scaling: Increase number of instances (=scale out/in)
+
+   1. Auto scaling group
+   2. Load balancer
+
+3. High Availability: Run instances for the same application across multiple AZ.
+
+   1. Auto Scaling Group multiple AZ
+   2. Load Balancer multiple AZ
+
+   <img src="./images/111.jpg">
+
+### 6.1.5. Scalability vs Elasticity (vs Agility)
+
+1. Scalability: ability to accommodate a larger load by making the hardware stronger (scale up), or by adding nodes (scale out).
+2. Elasticity: once a system is scalable, elasticity means that there will be some "**auto-scaling**" so that the system can scale based on the load. This is "**cloud-friendly**": pay-per-use, match demand, optimize costs.
+3. Agility: (not related to scalability - distractor) new IT resources are only a click away, which means that you reduce the time to make those resources available to your developers from weeks to just minutes.
+
+   <img src="./images/112.jpg">
+
+## 6.2. Elastic Loading Balancing (ELB) Overview
+
+### 6.2.1. What is load balancing?
+
+1. Load balancers are servers that forward internet traffic to multiple servers (EC2 instances) downstream.
+
+   <img src="./images/113.jpg">
+
+### 6.2.2. Why use a load balancer?
+
+1. Spread load across multiple downstream instances
+2. Expose a single point of access (DNS) to your application
+3. Seamlessly handle failures of downstream instances
+4. Do regular health checks to your instances
+5. Provide SSL termination (HTTPS) for your websites
+6. High availability across zones
+
+   <img src="./images/114.jpg">
+
+### 6.2.3. Why use an Elastic Load Balancer?
+
+1. An ELB (Elastic Load Balancer) is a **managed load balancer**
+   1. AWS guarantees that it will be working
+   2. AWS takes care of upgrades, maintenance, high availability
+   3. AWS provides only a few configuration knobs
+2. It costs less to setup your own load balancer but it will be a lot more effort on your end (maintenance, integrations)
+3. 4 kinds of load balancers offered by AWS:
+
+   1. Application Load Balancer (HTTP/HTTPS only) - Layer 7
+   2. Network Load Balancer (ultra-high performance, allows for TCP) - Layer 4
+   3. Gateway Load Balancer - Layer 3
+   4. Class Load Balancer (retired in 2023) - Layer 4 & 7
+
+    <img src="./images/115.jpg">
+
+### 6.2.4. Difference between ALB, NLB, GLB
+
+| Application Load Balancer           | Network Load Balancer                             | Gateway Load Balancer                                       |
+| ----------------------------------- | ------------------------------------------------- | ----------------------------------------------------------- |
+| HTTP/HTTPS/gRPC protocols (Layer 7) | TCP/UDP protocols (Layer 4)                       | GENEVE protocol on IP packets (Layer 3)                     |
+| HTTP Routing features               | High Performance: millions of request per seconds | Route Traffic to firewalls that you manage on EC2 instances |
+| Static DNS (URL)                    | Static IP through Elastic IP                      | Intrusion detection or deep packet inspection               |
+
+1. Gateway load balancer doesn't balance load of applications but balance the load of traffic to the virtual appliances that you run on EC2 instances so that you can analyze the traffic or perform firewall operations.
+2. Therefore, when a request hits the architecture using GLB, the traffic will be sent to EC2 instances (3rd party security virtual appliances) to analyze the traffic.
+3. The traffic will be sent back to GLB and forward back to the applications.
+4. GLB allow us to analyze IP packets and perform firewall features, intrusion detection, or deep packet inspection.
+
+   <img src="./images/aws_load_balancers.png">
+
+## 6.3. Application Load Balancer (ALB) Hands on
+
+1. To enable ALB, we need multiple EC2 instances to be balanced for the traffic.
+2. In this case, we can create 2 `t2.micro` instances for experiment.
+   1. Don't need key pair because SSH is not required.
+   2. Select existing security group and re-use settings for accessible protocols such as HTTP and SSH.
+3. We can use some configuration for EC2 user data in advanced settings.
+4. The following settings are just to create a simple HTTP server with `httpd` (apache server) and return HTML.
+
+   ```bash
+   #!/bin/bash
+   # Use this for your user data (script from top to bottom)
+   # install httpd (Linux 2 version)
+   yum update -y
+   yum install -y httpd
+   systemctl start httpd
+   systemctl enable httpd
+   echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
+   ```
+
+5. After creating the instances, we can create load balancers in **Load Balancing** section.
+6. We can keep the IP address type as `IPv4`.
+7. Assign the load balancer to all the AZs we want to handle the traffic in the region.
+8. Select the security group.
+   1. In this case, we create a new security group which allows only HTTP/HTTPS traffic.
+9. Create a target group where the load balancer points to
+   1. The targets in this context are the EC2 instances that we want the load balancer directs.
+   2. We can select instances, Lambda functions, or the other load balancer to handle and forward the traffic.
+10. Load balancers checks instances health that if any of the instances are down, the traffic will only be forwarded to the healthy instances in the target group.
+
+## 6.4. Auto scaling groups (ASG) Overview
+
+1. In real-life, the load on your website and application can change.
+2. In the cloud, you can create and get rid of servers very quickly.
+3. The goal of an Auto Scaling Group (ASG) is to:
+
+   1. Scale out (add EC2 instances) to match an increased load.
+   2. Scale in (remove EC2 instances) to match a decreased load.
+   3. Ensure we have a minimum and a maximum number of machines running.
+   4. Automatically register new instances to a load balancer.
+   5. Replace unhealthy instances.
+
+4. Cost savings: only run at an optimal capacity (principle of the cloud)
+
+   <img src="./images/116.jpg">
+
+   <img src="./images/117.jpg">
+
+5. ASG works hand in hand with Load balancer.
+6. When the traffic goes high and more EC2 instances are created, load balancer will register the instances and distribute traffic accordingly.
+
+   <img src="./images/118.jpg">
+
+## 6.5. Auto scaling groups (ASG) Hands on
+
+1. To experiment ASG, we can firstly terminate the running instances.
+2. Navigate to **Auto Scaling** section on the left panel for **Auto Scaling Groups**.
+3. We then can setup a **launch template** which tells AWS how to create new instances.
+4. The configuration and flow is very similar to setting up an EC2 instance.
+5. We can attach existing and re-use security group settings.
+6. Besides, we can attach user data as when we create EC2 instance.
+7. For example, creating a simple HTTP server with apache server
+
+   ```bash
+   #!/bin/bash
+   # Use this for your user data (script from top to bottom)
+   # install httpd (Linux 2 version)
+   yum update -y
+   yum install -y httpd
+   systemctl start httpd
+   systemctl enable httpd
+   echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
+   ```
+
+8. After creating the launch template, we can select it in the auto scaling group.
+9. After selecting the launch template for EC2 instance templates, we can configure the other settings such as networking, load balancer, and health check.
+10. Besides, we can configure group size to set target desired number of EC2 instances with minimum and maximum number.
+    1. Minimum capacity at `1`
+    2. Target capacity at `2`
+    3. Maximum capacity at `4`
+11. If any of the instances in the target group becomes unhealthy, ASG will spin up the other instance to cope up with the desire capacity which is `2` in this case.
+12. For example, we can manually terminate one of the instances in the target group.
+
+## 6.6. Auto scaling groups (ASG) Strategies
+
+1. Manual Scaling: Update the size of an ASG manually
+2. Dynamic Scaling: Respond to changing demand
+
+   1. Simple/step scaling
+      1. When a CloudWatch alarm is triggered (example `CPU > 70%`), then add 2 units
+      2. When a CloudWatch alarm is triggered (example `CPU < 30%`), then remove 1 unit
+   2. Target tracking scaling
+      1. Example: I want the average ASG CPU to stay at around `40%`.
+   3. Scheduled scaling
+      1. Anticipate a scaling based on known usage patterns.
+      2. Example: increase the min capacity to `10` at 5pm on Fridays.
+
+   <img src="./images/119.jpg">
+
+3. Predictive scaling
+
+   1. Uses **machine learning** to predict future traffic ahead of time.
+   2. Automatically provisions the right number of EC2 instances in advance.
+   3. Useful when your load has predictable time-based patterns
+
+   <img src="./images/120.jpg">
+
+## 6.7. Section Cleanup
+
+1. To remove the instances, we need to remove the auto scaling group (ASG) rather than the instances.
+2. Otherwise, ASG will keep adding new instances to the target group.
+3. After deleting ASG, we can delete the load balancer.
+
+## 6.8. ELB & ASG Summary
+
+1. High Availability vs Scalability (vertical and horizontal) vs Elasticity vs Agility in the Cloud.
+2. Elastic Load Balancers (ELB)
+   1. Distribute traffic across backend EC2 instances, can be multi-AZ.
+   2. Supports health checks
+   3. 4 types: Class (old), Application (HTTP - L7), Network (TCP - L4), Gateway (L3).
+3. Auto Scaling Groups (ASG)
+
+   1. Implement Elasticity for your application across multiple AZs.
+   2. Scale EC2 instances based on the demand on your system, replace unhealthy.
+   3. Integrated with the ELB.
+
+   <img src="./images/121.jpg">
