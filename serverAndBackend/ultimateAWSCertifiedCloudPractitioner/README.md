@@ -91,6 +91,13 @@
   - [6.6. Auto scaling groups (ASG) Strategies](#66-auto-scaling-groups-asg-strategies)
   - [6.7. Section Cleanup](#67-section-cleanup)
   - [6.8. ELB \& ASG Summary](#68-elb--asg-summary)
+- [7. Amazon S3](#7-amazon-s3)
+  - [7.1. S3 Overview](#71-s3-overview)
+    - [7.1.1. Amazon S3 use cases](#711-amazon-s3-use-cases)
+    - [7.1.2. Amazon S3 - Buckets](#712-amazon-s3---buckets)
+    - [7.1.3. Amazon S3 - Objects](#713-amazon-s3---objects)
+  - [7.2. S3 Hands on](#72-s3-hands-on)
+  - [7.3. S3 security Bucket policy](#73-s3-security-bucket-policy)
 
 ---
 
@@ -1098,3 +1105,93 @@ aws iam list-users
    3. Integrated with the ELB.
 
    <img src="./images/121.jpg">
+
+# 7. Amazon S3
+
+## 7.1. S3 Overview
+
+1. Amazon S3 is one of the main building blocks of AWS
+2. It's advertised as "**infinitely scaling**" storage
+3. Many websites use Amazon S3 as a backbone
+4. Many AWS services use Amazon S3 as an integration as well
+
+   <img src="./images/123.jpg">
+
+### 7.1.1. Amazon S3 use cases
+
+1. Backup and storage
+2. Disaster Recovery
+3. Archive
+4. Hybrid Cloud storage
+5. Application hosting
+6. Media hosting
+7. Data lakes and big data analytics
+8. Software delivery
+9. Static website
+
+   <img src="./images/124.jpg">
+
+### 7.1.2. Amazon S3 - Buckets
+
+1. Amazon S3 allows people to store objects (files) in "buckets" (directories).
+2. Buckets must have a globally unique name (across all regions all accounts).
+3. Buckets are defined at the region level.
+4. S3 looks like a global service but buckets are created in a region.
+5. Naming convention
+
+   1. No uppercase, No underscore
+   2. 3-63 characters long
+   3. Not an IP
+   4. Must start with lowercase letter or number
+   5. Must NOT start with the prefix `xn--`
+   6. Must NOT end with the suffix `-s3alias`
+
+   <img src="./images/125.jpg">
+
+### 7.1.3. Amazon S3 - Objects
+
+1. Objects (files) have a Key.
+2. The `key` is the FULL path:
+   1. `s3://my-bucket/my_file.txt`
+   2. `s3://my-bucket/my_folder/another_folder/my_file.txt`
+3. The key is composed of `prefix` + `object name`
+   1. `s3://my-bucket/my_folder1/another_folder/my_file.txt`
+4. There's no concept of `directories` with buckets. (Although the UI will trick you to think otherwise)
+5. Just keys with very long names that contain slashes (`/`).
+
+   <img src="./images/126.jpg">
+
+6. Object values are the content of the body
+
+   1. Max object size is 5TB.
+   2. If uploading more than 5GB, must use "multi-part" upload.
+
+7. Metadata (list of text key/value pairs - system or user metadata).
+8. Tags (unicode key/value pair - up to 10) useful for security /lifecycle.
+9. Version ID (if versioning is enabled).
+
+   <img src="./images/127.jpg">
+
+## 7.2. S3 Hands on
+
+1. When creating a bucket to store objects, it can be `General purpose` or `Directory` type.
+   1. Some region may not support the bucket type yet.
+2. In most of the cases and scope of cloud practitioner, `General purpose` is the type to go.
+3. The bucket name must be unique across region and all AWS accounts.
+4. We can keep object ownership as default `ACLs disabled` for security settings.
+5. For maximum security of the bucket, we can block all public access, so only the account owner can upload files to it.
+6. Default encryption can be `Server-side` encryption with Amazon S3 managed keys (SSE-S3).
+7. Besides, we can enable bucket key to use an S3 `bucket key`.
+8. In this case, we keep all the settings with default and only changes the bucket name.
+9. After creating a bucket, we can use the web UI to upload files to it.
+10. After uploading the file (object), we can click on it and check on the object details such as properties, permissions, and versions.
+11. If we click on "**open**" on the object, it will make a GET request so we can preview the object in the browser.
+12. For example, if the object is an image file, the browser will render the image.
+13. However, if we navigate to the link of "**object URL**", we will get an access denied.
+14. The URL generated from "**open**" attaches with some other credentials to allow the user to check on the object.
+15. Besides uploading files, we can create folders by the UI.
+16. In addition, we can delete files/objects and remove a directory that will also remove all the files in the folder.
+
+## 7.3. S3 security Bucket policy
+
+   <img src="./images/128.jpg">
