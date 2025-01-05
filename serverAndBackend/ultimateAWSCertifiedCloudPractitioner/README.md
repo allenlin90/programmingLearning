@@ -105,6 +105,9 @@
     - [7.3.5. Example: EC2 instance Access to S3 - IAM roles](#735-example-ec2-instance-access-to-s3---iam-roles)
     - [7.3.6. Advanced: Cross-Account access - Bucket Policy](#736-advanced-cross-account-access---bucket-policy)
     - [7.3.7. Bucket settings for block public access](#737-bucket-settings-for-block-public-access)
+  - [7.4. S3 security: Bucket policy hands-on](#74-s3-security-bucket-policy-hands-on)
+  - [7.5. S3 website overview](#75-s3-website-overview)
+  - [7.6. S3 Website hands on](#76-s3-website-hands-on)
 
 ---
 
@@ -1293,3 +1296,38 @@ aws iam list-users
 3. Can be set at the account level.
 
    <img src="./images/134.jpg">
+
+## 7.4. S3 security: Bucket policy hands-on
+
+1. We can setup **Permissions** of a S3 bucket through the admin dashboard.
+2. To allow public traffic, we need to unable ""**Block all public access**"" by editing "**Edit Block public access (bucket settings)**".
+3. We can generate bucket policy template using AWS policy generator.
+4. Step 1 - Choose the template to generate the policy (S3 Bucket).
+5. Step 2 - Add statements
+   1. The `Effect` is either "Allow" or "Deny" as the permission.
+   2. The `Principal` can be assigned as asterisk `*` as to allow any request.
+   3. `AWS Service` as Amazon S3
+   4. For readonly purpose, we can give `Actions` as only `GetObject`.
+   5. For `ARN` (Amazon Resource Name), we can assign the bucket name with an asterisk for all the objects in the bucket.
+6. The above statements will be generated in a JSON template.
+7. After applying the settings, the objects in the bucket will be publicly available through the object URL.
+
+## 7.5. S3 website overview
+
+1. S3 can host static websites and have them accessible on the Internet.
+2. The website URL will be (depending on the region)
+
+   1. http://<span style="color: #025E91">bucket-name</span>.s3-website<span style="color: red;">-</span><span style="color: #025E91">aws-region</span>.amazonaws.com
+   2. http://<span style="color: #025E91">bucket-name</span>.s3-website<span style="color: red;">.</span><span style="color: #025E91">aws-region</span>.amazonaws.com
+
+3. If you get a 403 Forbidden error, make sure the bucket policy allows public reads.
+
+   <img src="./images/135.jpg">
+
+## 7.6. S3 Website hands on
+
+1. We can setup website hosting in `Properties` of a bucket for `Static website hosting`.
+2. In the settings, we can choose
+   1. The `Hosting type` to be "**Host a static website**".
+   2. Index document as `index.html`.
+3. In the `Static website hosting` section, we can find `Bucket website endpoint` that provides an URL for the website.
