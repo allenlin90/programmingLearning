@@ -108,6 +108,17 @@
   - [7.4. S3 security: Bucket policy hands-on](#74-s3-security-bucket-policy-hands-on)
   - [7.5. S3 website overview](#75-s3-website-overview)
   - [7.6. S3 Website hands on](#76-s3-website-hands-on)
+  - [7.7. S3 Versioning overview](#77-s3-versioning-overview)
+  - [7.8. S3 versioning hands on](#78-s3-versioning-hands-on)
+  - [7.9. S3 Replication overview](#79-s3-replication-overview)
+  - [7.10. S3 Replication hands on](#710-s3-replication-hands-on)
+  - [7.11. S3 Storage Classes](#711-s3-storage-classes)
+    - [7.11.1. S3 Durability and Availability](#7111-s3-durability-and-availability)
+    - [7.11.2. S3 Standard - General Purpose](#7112-s3-standard---general-purpose)
+    - [7.11.3. S3 Storage Classes - Infrequent Access](#7113-s3-storage-classes---infrequent-access)
+    - [7.11.4. Amazon S3 Glacier Storage Classes](#7114-amazon-s3-glacier-storage-classes)
+    - [7.11.5. S3 Intelligent - Tiering](#7115-s3-intelligent---tiering)
+  - [7.12. S3 Storage Classes Hands On](#712-s3-storage-classes-hands-on)
 
 ---
 
@@ -1331,3 +1342,158 @@ aws iam list-users
    1. The `Hosting type` to be "**Host a static website**".
    2. Index document as `index.html`.
 3. In the `Static website hosting` section, we can find `Bucket website endpoint` that provides an URL for the website.
+
+## 7.7. S3 Versioning overview
+
+1. You can version your files in Amazon S3.
+2. It is enabled at the bucket level.
+3. It is best practice to version your buckets.
+
+   1. Protect against unintended deletes (ability to restore a version).
+   2. Easy to rollback to previous version
+
+4. Notes:
+
+   1. Any file that is not versioned prior to enabling versioning will have version `null`.
+   2. Suspending versioning does not delete the previous versions.
+
+   <img src="./images/136.jpg">
+
+## 7.8. S3 versioning hands on
+
+1. We can enable versioning in bucket `properties` settings.
+2. As state in the previous section, any object uploaded before enabling versioning will have version ID as `null`.
+3. To rollback to the previous version (e.g. using previous version of `index.html`), we can remove the latest one with a specific "**version ID**".
+4. Note that if we delete an object without version ID, it puts on a `Delete marker`, which has its version ID, to indicate that the object is removed.
+5. To resume the object, we can remove the `Delete marker` with its version ID.
+
+## 7.9. S3 Replication overview
+
+1. Must enable versioning in source and destination bucket.
+2. **Cross-region Replication (CRR)**
+3. **Same-region Replication (SRR)**
+4. Buckets can be in different AWS accounts.
+5. Copying is asynchronous
+6. Must give proper IAM permissions to S3.
+7. Use cases:
+
+   1. CRR - compliance, lower latency access, replication across accounts.
+   2. SRR - log aggregation, live replication between production and test accounts.
+
+   <img src="./images/138.jpg">
+
+## 7.10. S3 Replication hands on
+
+1. In bucket settings, we can find `Replication rules` in `Management`.
+2. We can choose to `Apply to all objects in the bucket` for the source bucket.
+3. and then specify the name of the destination bucket whether it's in the same or the other account.
+4. For `IAM role`, we can `Choose from existing IAM roles` and `Create new role`.
+5. Note that by setting the replication rules, AWS may ask if we'd like to replicate all existing objects from the source bucket to the destination with batch operations.
+6. The replication feature only works on the new objects uploaded to the source bucket after configuring the settings.
+7. Note that replication feature and batch operations to replicate existing objects are 2 different features.
+8. The replicated objects in the destination bucket will have the same version IDs as of from the source bucket.
+
+## 7.11. S3 Storage Classes
+
+1. Amazon S3 Standard - General Purpose
+2. Amazon S3 Standard - Infrequent Access (IA)
+3. Amazon S3 One Zone - Infrequent Access
+4. Amazon S3 Glacier Instant Retrieval
+5. Amazon S3 Glacier Flexible Retrieval
+6. Amazon S3 Glacier Deep Archive
+7. Amazon S3 Intelligent Tiering
+8. Can move between classes manually or using S3 Lifecycle configurations
+
+   <img src="./images/139.jpg">
+
+### 7.11.1. S3 Durability and Availability
+
+1. Durability
+
+   1. High durability (99.9999999%, 11 9's) of objects across multiple AZ
+   2. If you store 10,000,000 objects with Amazon S3, you can on average expect to incur a loss of a single object once every 10,000 years.
+   3. Same for all storage classes
+
+2. Availability
+
+   1. Measure how readily available a service is
+   2. Varies depending on storage class
+   3. Example: S3 standard has 99.99% availability = not available 53 minutes a year
+
+   <img src="./images/140.jpg">
+
+### 7.11.2. S3 Standard - General Purpose
+
+1. 99.99% availability
+2. Used for frequently accessed data
+3. Low latency and high throughput
+4. Sustain 2 concurrent facility failures
+5. Use cases: big data analytics, mobile and gaming applications, content distribution...
+
+   <img src="./images/141.jpg">
+
+### 7.11.3. S3 Storage Classes - Infrequent Access
+
+1. For data that is less frequently accessed, but requires rapid access when needed.
+2. Lower cost than S3 standard.
+3. Amazon S3 Standard - Infrequent Access (S3 Standard-IA)
+
+   1. 99.9% availability
+   2. Use cases: Disaster Recovery, backups
+
+4. Amazon S3 One Zone - Infrequent Access (S3 One Zone-IA)
+
+   1. High durability (99.999999999%) in a single AZ; data lost when AZ is destroyed
+   2. 99.5% availability
+   3. Use cases: Storing secondary backup copies of on-premise data, or data you can recreate
+
+   <img src="./images/142.jpg">
+
+   <img src="./images/144.jpg">
+
+### 7.11.4. Amazon S3 Glacier Storage Classes
+
+1. Low-cost object storage meant for archiving/backup
+2. Pricing: price for storage + object retrieval cost
+3. Amazon S3 Glacier Instant Retrieval
+
+   1. Millisecond retrieval, great for data accessed once a quarter
+   2. Minimum storage duration of 90 days
+
+4. Amazon S3 Glacier Flexible Retrieval (Formerly Amazon S3 Glacier)
+
+   1. Expedited (1 to 5 minutes), Standard (3 to 5 hours), Bulk (5 to 12 hours) - free
+   2. Minimum storage duration of 90 days
+
+5. Amazon S3 Glacier Deep Archive - for long term storage
+
+   1. Standard (12 hours), Bulk (48 hours)
+   2. Minimum storage duration of 180 days
+
+   <img src="./images/145.jpg">
+
+### 7.11.5. S3 Intelligent - Tiering
+
+1. Small monthly monitoring and auto-tiering fee.
+2. Moves objects automatically between **Access Tiers** based on usage.
+3. There are no retrieval charges in S3 Intelligent-Tiering.
+4. Frequent access tier (automatic): default tier.
+5. Infrequent access tier (automatic): objects not accessed for 30 days.
+6. Archive Instance Access tier (automatic): objects not accessed for 90 days.
+7. Archive Access tier (optional): configurable from 90 days to 700+ days.
+8. Deep Archive Access tier (optional): configurable from 180 days to 700+ days.
+
+## 7.12. S3 Storage Classes Hands On
+
+1. By uploading an object to a S3 bucket, we can configure the object property to change its storage class.
+2. After uploading the object with a storage class, we can check on an object and change the storage class in its property.
+3. In the bucket `Management`, we can change the `Lifecycle rules` and choose to apply the lifecycle rules to all objects in the bucket.
+4. For example, We can choose to "**move current versions of objects between storage classes**" in `Lifecycle rule actions`.
+5. Besides, we can setup storage class transition for objects after certain period of time.
+
+   1. Choose storage class to change to `Standard-IA` after object creation for `30` days.
+   2. Choose storage class to change to `Intelligent-Tiering` after object creation for `60` days.
+   3. Choose storage class to change to `Glacier Flexible Retrieval` after object creation for `180` days.
+
+6. We can use the `Lifecycle rules` to automate storage transition based on duration and conditions.
+
