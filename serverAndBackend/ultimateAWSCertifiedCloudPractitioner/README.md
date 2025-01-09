@@ -119,6 +119,15 @@
     - [7.11.4. Amazon S3 Glacier Storage Classes](#7114-amazon-s3-glacier-storage-classes)
     - [7.11.5. S3 Intelligent - Tiering](#7115-s3-intelligent---tiering)
   - [7.12. S3 Storage Classes Hands On](#712-s3-storage-classes-hands-on)
+  - [7.13. S3 Encryption](#713-s3-encryption)
+  - [7.14. IAM Access Analyzer for S3](#714-iam-access-analyzer-for-s3)
+  - [7.15. Shared Responsibility Model for S3](#715-shared-responsibility-model-for-s3)
+  - [7.16. AWS Snow Family overview](#716-aws-snow-family-overview)
+    - [7.16.1. Data Migrations with Snowball](#7161-data-migrations-with-snowball)
+    - [7.16.2. What is edge computing?](#7162-what-is-edge-computing)
+  - [7.17. AWS Snowball Edge - Pricing](#717-aws-snowball-edge---pricing)
+  - [7.18. Storage Gateway Overview](#718-storage-gateway-overview)
+  - [7.19. S3 Summary](#719-s3-summary)
 
 ---
 
@@ -1483,6 +1492,8 @@ aws iam list-users
 7. Archive Access tier (optional): configurable from 90 days to 700+ days.
 8. Deep Archive Access tier (optional): configurable from 180 days to 700+ days.
 
+   <img src="./images/143.jpg">
+
 ## 7.12. S3 Storage Classes Hands On
 
 1. By uploading an object to a S3 bucket, we can configure the object property to change its storage class.
@@ -1497,3 +1508,124 @@ aws iam list-users
 
 6. We can use the `Lifecycle rules` to automate storage transition based on duration and conditions.
 
+   <img src="./images/146.jpg">
+
+   <img src="./images/147.jpg">
+
+## 7.13. S3 Encryption
+
+1.  Server-side encryption (default) encrypts objects when user uploads the objects to S3 service.
+2.  AWS S3 server encrypts the file after receiving it.
+3.  On the other hand, the client (user) can encrypts the file and upload the encrypted file to AWS S3 as Client-side encryption.
+4.  Note that without configuration, server-side encryption is always on.
+
+## 7.14. IAM Access Analyzer for S3
+
+1. Ensures that only intended people have access to your S3 buckets.
+2. Example: public accessible bucket, bucket shared with other AWS account...
+3. Evaluates S3 bucket policies, S3 ACLs, S3 Access Point Policies.
+4. Powered by IAM Access Analyzer
+
+## 7.15. Shared Responsibility Model for S3
+
+| AWS                                                                                                           | User                                   |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| Infrastructure (global security, durability, availability, sustain concurrent loss of data in two facilities) | S3 versioning                          |
+| Configuration and vulnerability analysis                                                                      | S3 bucket policies                     |
+| Compliance validation                                                                                         | S3 replication setup                   |
+|                                                                                                               | Logging and Monitoring                 |
+|                                                                                                               | S3 Storage Classes                     |
+|                                                                                                               | Data encryption at rest and in transit |
+
+   <img src="./images/149.jpg">
+
+## 7.16. AWS Snow Family overview
+
+1. Highly-secure, portable devices to collect and process data at the **edge**, and **migrate data into and out of AWS**.
+2. Helps migrate up to Petabytes of data.
+
+   <img src="./images/150.jpg">
+
+### 7.16.1. Data Migrations with Snowball
+
+1. Challenges
+   1. Limited connectivity
+   2. Limited bandwidth
+   3. High network cost
+   4. Shared bandwidth (can't maximize the line)
+   5. Connection stability
+2. AWS snowball offline devices to perform data migrations
+3. If it takes more than a week to transfer over the network, use Snowball devices.
+
+   <img src="./images/151.jpg">
+
+4. For example, we can get a Snowball device offline and manage the data and ship it back to AWS to export and keep the data in S3 service.
+
+   <img src="./images/152.jpg">
+
+### 7.16.2. What is edge computing?
+
+1. Process data while it's being created on an edge location.
+   1. A truck on the road, a ship on the sea, a mining station undergroud...
+2. These locations may have limited internet and no access to computing power.
+3. We setup a Snowball edge device to do edge computing
+   1. **Snowball Edge Compute Optimized** (dedicated for that use case) and **Storage Optimized**
+   2. Run EC2 Instances or Lambda functions at the edge
+4. Use cases: preprocess data, machine learning, transcoding media
+
+   <img src="./images/158.jpg">
+
+## 7.17. AWS Snowball Edge - Pricing
+
+1. You pay for device usage and data transfer out of AWS
+2. **Data transfer IN to Amazon S3 is $0.00 per GB**
+3. On-demand
+   1. Includes a one-time service fee per job, which includes
+      1. 10 days of usage for Snowball Edge Storage Optimized 80 TB.
+      2. 15 days of usage for Snowball Edge Storage Optimized 210 TB.
+   2. Shipping days are NOT counted towards the included 10 or 15 days
+   3. Pay per day for any additional days
+4. Committed Upfront
+
+   1. Pay in advance for monthly, 1-year, and 3-year of usage (Edge Computing).
+   2. Up to 62% discounted pricing.
+
+## 7.18. Storage Gateway Overview
+
+1. AWS is pushing for hybrid cloud
+   1. Part of your infrastructure is on-premises.
+   2. Part of your infrastructure is on the cloud.
+2. This can be due to
+   1. Long cloud migrations
+   2. Security requirements
+   3. Compliance requirements
+   4. IT strategy
+3. S3 is a proprietary storage technology (unlike EFS/NFS), so how do you expose the S3 data on-premise?
+4. AWS Storage Gateway
+
+   <img src="./images/162.jpg">
+
+5. Bridge between on-premise data and cloud data in S3.
+6. Hybrid storage service to allow on-premises to seamlessly use the AWS cloud.
+7. Use cases: disaster recovery, backup, and restore, tiered storage.
+8. Types of Storage Gateway
+   1. File Gateway
+   2. Volume Gateway
+   3. Tape Gateway
+9. No need to know the types at the exam
+
+   <img src="./images/163.jpg">
+
+## 7.19. S3 Summary
+
+1. Buckets vs Objects: global unique name, tied to a region.
+2. S3 security: IAM policy, S3 Bucket Policy (public access), S3 Encryption.
+3. S3 Websites: host a static website on Amazon S3.
+4. S3 Versioning: multiple versions for files, prevent accidental deletes.
+5. S3 Replication: same-region or cross-region, must enable versioning.
+6. S3 Storage Classes: Standard, IA, IZ-IA, Intelligent, Glacier (Instant, Flexible, Deep).
+7. Snow Family: import data onto S3 through a physical device, edge computing.
+8. OpsHub: Desktop application to manage Snow Family devices.
+9. Storage Gateway: hybrid solution to extend on-premisses storage to S3.
+
+   <img src="./images/164.jpg">
