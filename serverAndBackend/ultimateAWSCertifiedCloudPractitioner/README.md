@@ -128,6 +128,40 @@
   - [7.17. AWS Snowball Edge - Pricing](#717-aws-snowball-edge---pricing)
   - [7.18. Storage Gateway Overview](#718-storage-gateway-overview)
   - [7.19. S3 Summary](#719-s3-summary)
+- [8. Databases and Analytics](#8-databases-and-analytics)
+  - [8.1. Database Introduction](#81-database-introduction)
+    - [8.1.1. Relational databases](#811-relational-databases)
+    - [8.1.2. NoSQL databases](#812-nosql-databases)
+    - [8.1.3. NoSQL data example: JSON](#813-nosql-data-example-json)
+    - [8.1.4. Databases and shared responsibility on AWS](#814-databases-and-shared-responsibility-on-aws)
+  - [8.2. RDS and Aurora Overview](#82-rds-and-aurora-overview)
+    - [8.2.1. Amazon RDS Overview](#821-amazon-rds-overview)
+    - [8.2.2. Advantages over using RDS versus deploying DB on EC2](#822-advantages-over-using-rds-versus-deploying-db-on-ec2)
+    - [8.2.3. RDS Solution Architecture](#823-rds-solution-architecture)
+    - [8.2.4. Amazon Aurora](#824-amazon-aurora)
+    - [8.2.5. Amazon Aurora Serverless](#825-amazon-aurora-serverless)
+  - [8.3. RDS Hands on](#83-rds-hands-on)
+  - [8.4. RDS Deployments Options](#84-rds-deployments-options)
+    - [8.4.1. RDS Deployments: Multi-Region](#841-rds-deployments-multi-region)
+  - [8.5. ElasticCache Overview](#85-elasticcache-overview)
+    - [8.5.1. ElastiCache Solution Architecture - Cache](#851-elasticache-solution-architecture---cache)
+  - [8.6. DynamoDB Overview](#86-dynamodb-overview)
+    - [8.6.1. Dynamic DB - type of data](#861-dynamic-db---type-of-data)
+    - [8.6.2. DynamoDB Accelerator - DAX](#862-dynamodb-accelerator---dax)
+  - [8.7. DynamoDB Hands on](#87-dynamodb-hands-on)
+  - [8.8. DynamoDB Global tables](#88-dynamodb-global-tables)
+  - [8.9. Redshift Overview](#89-redshift-overview)
+    - [8.9.1. Redshift Serverless](#891-redshift-serverless)
+  - [8.10. EMR Overview](#810-emr-overview)
+  - [8.11. Athena Overview](#811-athena-overview)
+  - [8.12. QuickSight Overview](#812-quicksight-overview)
+  - [8.13. DocumentDB Overview](#813-documentdb-overview)
+  - [8.14. Neptune Overview](#814-neptune-overview)
+  - [8.15. Timestream Overview](#815-timestream-overview)
+  - [8.16. QLDB Overview](#816-qldb-overview)
+  - [8.17. Managed Blockchain Overview](#817-managed-blockchain-overview)
+  - [8.18. Glue Overview](#818-glue-overview)
+  - [8.19. DMS Overview](#819-dms-overview)
 
 ---
 
@@ -1629,3 +1663,330 @@ aws iam list-users
 9. Storage Gateway: hybrid solution to extend on-premisses storage to S3.
 
    <img src="./images/164.jpg">
+
+# 8. Databases and Analytics
+
+## 8.1. Database Introduction
+
+1. Storing data on disk (EFS, EBS, EC2 instance store, S3) can have its limits
+2. Sometimes, you want to store data in a database.
+3. You can structure the data
+4. You build indexes to efficiently query/search through the data.
+5. You define relationships between your datasets.
+6. Databases are optimized for a purpose and come with different features, shapes and constraints.
+
+   <img src="./images/166.jpg">
+
+### 8.1.1. Relational databases
+
+1. Looks just like Excel spreadsheets, with links between them.
+2. Can use the SQL language to perform queries/lookups.
+
+   <img src="./images/167.jpg">
+
+### 8.1.2. NoSQL databases
+
+1. NoSQL = non-SQL = non relational databases
+2. NoSQL databases are purpose built for specific data models and have flexible schemas for building modern applications.
+3. Benefits
+   1. Flexibility: easy to evolve data model.
+   2. Scalability: designed to scale-out by using distributed clusters.
+   3. High-performance: optimized for a specific data model.
+   4. Highly functional: types optimized for the data model.
+4. Example: Key-value, document, graph, in-memory, search databases.
+
+   <img src="./images/168.jpg">
+
+### 8.1.3. NoSQL data example: JSON
+
+1.  `JSON` Javascript Object Notation
+2.  JSON is a common form of data that fits into a NoSQL model
+3.  Fields can change over time
+4.  Support for new types: arrays, etc...
+
+   <img src="./images/169.jpg">
+
+### 8.1.4. Databases and shared responsibility on AWS
+
+1. AWS offers use to manage different databases
+2. Benefits include:
+   1. Quick Provisioning, High Availability, Vertical and Horizontal Scaling.
+   2. Automated Backup and Restore, Operations, Upgrades.
+   3. Operating System Patching is handled by AWS.
+   4. Monitoring, alerting
+3. Note: many databases technologies could be run on EC2, but you must handle yourself the resiliency, backup, patching, high availability, fault tolerance, scaling...
+
+   <img src="./images/170.jpg">
+
+## 8.2. RDS and Aurora Overview
+
+### 8.2.1. Amazon RDS Overview
+
+1. RDS stands for Relational Database Service.
+2. It's managed DB service for DB use SQL as a query language.
+3. It allows you to create databases in the cloud that are managed by AWS.
+
+   1. Postgres
+   2. MySQL
+   3. MariaDB
+   4. Oracle
+   5. Microsoft SQL Server
+   6. IBM DB2
+   7. Aurora (AWS proprietary database)
+
+   <img src="./images/171.jpg">
+
+### 8.2.2. Advantages over using RDS versus deploying DB on EC2
+
+1. RDS in a managed service
+   1. Automated provisioning, OS patching
+   2. Continuous backup and restore to specific timestamp (Point in Time Restore)!
+   3. Monitoring dashboards
+   4. Read replicas for improved read performance
+   5. Multi AZ setup for DR (Disaster Recovery)
+   6. Maintenance windows for upgrades
+   7. Scaling capability (vertical and horizontal)
+   8. Storage backed by EBS
+2. BUT you cannot SSH into your instances
+
+   <img src="./images/172.jpg">
+
+### 8.2.3. RDS Solution Architecture
+
+   <img src="./images/173.jpg">
+
+### 8.2.4. Amazon Aurora
+
+1. Aurora is a proprietary technology from AWS (not open sourced).
+2. PostgresSQL and MySQL are both supported by Aurora DB.
+3. Aurora is AWS cloud optimized adn claims 5x performance in improvement over MySQL on RDS, over 3x the performance of Postgres on RDS.
+4. Aurora storage automatically grows in increments of 10GB, up to 128GB.
+5. Aurora costs more than RDS (20% more) - but is more efficient.
+6. Not in the free tier.
+
+   <img src="./images/174.jpg">
+
+### 8.2.5. Amazon Aurora Serverless
+
+1. Automated database instantiation and auto-scaling based on actual usage.
+2. PostgresSQL and MySQL are both supported as Aurora Serverless DB.
+3. No capacity planning needed.
+4. Least management overhead.
+5. Pay per second, can be more cost-effective.
+6. Use cases: good for infrequent, intermittent or unpredictable workloads...
+
+## 8.3. RDS Hands on
+
+1. In the `RDS` section, we can choose to create a database with `Standard` or `Easy` create which follows pre-configured settings and best practices.
+2. We can choose which engine we'd like to work with, such as `Postgres` and `MySQL`.
+3. We can choose the template to decide whether the database instance will be used for production, testing, or free tier.
+4. We can choose the DB instance class (similar to EC2 instances) for the hardware and bandwidth of the desirable instance.
+5. We can choose to allocate certain storage volume (e.g. 20GB) with storage type (e.g. General Purpose SSD `gp2`).
+6. We can assign storage autoscaling in case that the storage reaches threshold. (e.g. we can allow the maximum limit that the database can scale to as `1000GB`).
+7. For **Connectivity**, we can choose whether to expose the db instance publicly, so we can connect it by our computer.
+   1. Choose network type as `IPv4`.
+   2. Choose "Don't connect to an EC2".
+8. We can assign it to an existing VPC security group or create a new one.
+9. After creating DB instance, we can take snapshots at a moment which can be used to restore db by creating a new db instance.
+10. We can duplicate the snapshot to the other AZs.
+
+## 8.4. RDS Deployments Options
+
+1. Read Replicas
+
+   1. Scale the read workload of your DB.
+   2. Can create up to 15 read replicas.
+   3. Data in only written to the main DB.
+
+2. Multi-AZ
+
+   1. Failover in case of AZ outage (high availability)
+   2. Data is only read/written to the main database
+   3. Can only have one other AZ as failover
+
+   <img src="./images/175.jpg">
+
+### 8.4.1. RDS Deployments: Multi-Region
+
+1. Multi-Region (Read replicas)
+
+   1. Disaster recovery in case of region issue
+   2. Local performance for global reads
+   3. Replication cost
+
+   <img src="./images/176.jpg">
+
+## 8.5. ElasticCache Overview
+
+1. The same way RDS is to get managed Relational Databases.
+2. ElastiCache is to get managed `Redis` or `Memcached`.
+3. Caches are in-memory databases with high performance, low latency.
+4. Helps reduce load off databases for read intensive workloads.
+5. AWS takes care of OS maintenance/patching, optimizations, setup, configuration, monitoring, failure recovery and backups.
+
+   <img src="./images/177.jpg">
+
+### 8.5.1. ElastiCache Solution Architecture - Cache
+
+1. ELB directs traffic to EC2 which then query to either
+
+   1. Fast - ElastiCache in-memory database
+   2. Slow - RDS (SQL relational database)
+
+   <img src="./images/178.jpg">
+
+## 8.6. DynamoDB Overview
+
+1. Fully managed highly available with replication across 3 AZs.
+2. NoSQL database - not a relational database.
+3. Scales to massive workloads, distributed `serverless` database.
+4. Millions of requests per seconds, trillions of row, 100s of TB of storage.
+5. Fast and consistent in performance.
+6. Single-digit millisecond latency - low latency retrieval.
+7. Integrated with IAM for security, authorization and administration.
+8. Low cost and auto scaling capabilities.
+9. Standard and Infrequent Access (IA) Table Class.
+
+   <img src="./images/179.jpg">
+
+### 8.6.1. Dynamic DB - type of data
+
+1. DynamoDB is a key/value database.
+2. The primary key can be either 1 or 2 columns for a partition key and a sort key.
+
+   <img src="./images/180.jpg">
+
+### 8.6.2. DynamoDB Accelerator - DAX
+
+1. Fully managed in-memory cache for DynamoDB.
+2. Secure, highly scalable and highly available.
+3. Difference with ElastiCache at the CCP level: DAX is only used for and is integrated with DynamoDB, while ElastiCache can be used for the other databases.
+
+   <img src="./images/181.jpg">
+
+## 8.7. DynamoDB Hands on
+
+1. To use DynamoDB, we can create a table with partition key.
+2. In AWS cloud practitioner, `Sort` key is an optional option and not covered.
+3. Note that we can just create a table and start using DynamoDB without creating a database.
+4. DynamoDB is a serverless service.
+5. As a NoSQL-like database, we can put any attribute for records in the same table without have exact same schema and attributes.
+6. Unlike RDBMS, we don't join tables to get the data but have all data of a record in a single table.
+7. Therefore, there's no direct solution to join tables in the db layer.
+
+## 8.8. DynamoDB Global tables
+
+1. Make a DynamoDB table accessible with low latency in multiple-regions.
+2. Active-Active replication (read/write to any AWS region).
+
+## 8.9. Redshift Overview
+
+1. Redshift is based on PostgreSQL, but it's not used for OLTP (online transaction processing).
+2. It's OLAP (online analytical processing) for analytics and data warehousing.
+3. Load data once every hour, not every second
+4. 10x better performance than other data warehouses, scale to PBs of data.
+5. Columnar storage of data (instead of row based).
+6. Massively Parallel Query Execution (MPP), highly available.
+7. Pay as you go based on the instances provisioned.
+8. Has a SQL interface for performing the queries.
+9. BI tools such as AWS Quicksight or Tableau integrate with it.
+
+   <img src="./images/182.jpg">
+
+### 8.9.1. Redshift Serverless
+
+1. Automatically provisions and scales data warehouse underlying capacity.
+2. Run analytics workloads without managing data warehouse infrastructure.
+3. Pay only for what you use (save costs)
+4. Use cases: Reporting, dashboarding applications, real-time analytics...
+
+   <img src="./images/redshift_serverless.png">
+
+## 8.10. EMR Overview
+
+1. EMR stands for **Elastic MapReduce**
+2. EMR helps creating Hadoop clusters (Big Data) to analyze and process vast amount of data.
+3. The clusters can be made of hundreds of EC2 instances.
+4. Also supports Apache Spark, HBase, Presto, Flink...
+5. EMR takes care of all the provisioning and configuration.
+6. Auto-scaling and integrated with Spot instances.
+7. Use cases: data processing, machine learning, web indexing, big data...
+
+   <img src="./images/183.jpg">
+
+## 8.11. Athena Overview
+
+1. Serverless query service to perform analytics against S3 objects.
+2. Users standard SQL language to query the files.
+3. Supports CSV, JSON, ORC, Avro, and Parquet (built on Presto).
+4. Pricing: $5.00 per TB of data scanned.
+5. Use compressed or columnar data for cost-saving (less scan).
+6. Use cases: Business intelligence/analytics/reporting, analyze, and query VPC Flow logs, ELB logs, CloudTrail trails, etc...
+7. Exam Tip: analyze data in S3 using serverless SQL, use Athena.
+
+   <img src="./images/athena_overview.png">
+
+## 8.12. QuickSight Overview
+
+1. Serverless machine learning-powered business intelligence service to create interactive dashboards.
+2. Fast, automatically scalable, embeddable, with per-session pricing.
+3. Use cases:
+   1. Business analytics
+   2. Building visualizations
+   3. Perform ad-hoc analysis
+   4. Get business insights using data
+4. Integrated with RDS, Aurora, Athena, Redshift, S3...
+
+   <img src="./images/185.jpg">
+
+## 8.13. DocumentDB Overview
+
+1. `Aurora` is an AWS-implementation of PostgresSQL/MySQL ...
+2. `DocumentDB` is the same for MongoDB (which is a NoSQL database)
+3. MongoDB is used to store, query, and index JSON data.
+4. Similar "Deployment concepts as Aurora.
+5. Fully managed, highly available with replication across 3 AZs.
+6. DocumentDB storage automatically grows in increments of 10GB.
+7. Automatically scales to workloads with millions of requests per seconds.
+
+   <img src="./images/186.jpg">
+
+## 8.14. Neptune Overview
+
+1. Fully managed graph database
+2. A popular graph database would be a social network
+   1. Users have friends
+   2. Posts have comments
+   3. Comments have likes from users
+   4. Users share and like posts
+3. Highly available across 3 AZs, with up to 15 read replicas.
+4. Build and run applications working with highly connected datasets - optimized for these complex and hard queries.
+5. Can store up to billions of relations and query the graph with milliseconds latency.
+6. Highly available with replications across multiple AZs.
+7. Great for knowledge graphs (Wikipedia), fraud detection, recommendation engines, social networking.
+
+   <img src="./images/187.jpg">
+
+## 8.15. Timestream Overview
+
+1. Fully managed, fast, scalable, serverless time series database.
+2. Automatically scales up/down to adjust capacity.
+3. Store and analyze trillions of events per day.
+
+   <img src="./images/timestream_overview.png">
+
+## 8.16. QLDB Overview
+
+   <img src="./images/188.jpg">
+
+## 8.17. Managed Blockchain Overview
+
+   <img src="./images/189.jpg">
+
+## 8.18. Glue Overview
+
+   <img src="./images/190.jpg">
+
+## 8.19. DMS Overview
+
+   <img src="./images/191.jpg">
