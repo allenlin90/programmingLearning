@@ -1,40 +1,39 @@
-# Dependency Maintenance
+# Dependency Policy
 
-This repository is a historical learning archive. None of the contained course projects are deployed, production-supported, or treated as maintained applications.
+This repository is a historical learning archive. None of the archived course projects are deployed, production-supported, or treated as maintained applications.
 
-## Automated scope
+## Automation policy
 
-Dependabot is intentionally limited to GitHub Actions workflow dependencies.
+Automated dependency updates are disabled for both historical course projects and repository workflows.
 
-npm, Yarn, and other course-project manifests are excluded from automated version-update PRs because they represent historical exercises and snapshots rather than deployed software.
-
-## Risk interpretation
-
-- A vulnerable dependency reported inside a historical course manifest does not represent an active production exposure in this repository.
-- Course examples should not be deployed or reused as production systems without a fresh dependency review, lockfile regeneration, tests, and framework migration work.
-- Existing dependency alerts may be dismissed as **not used** or **tolerable risk** when the affected package is only present in an undeployed historical example.
-- A project should receive automated dependency maintenance only after it is explicitly promoted to an Active project.
-
-## Update policy
-
-- Check GitHub Actions dependencies monthly on Monday at 09:00 Asia/Bangkok.
-- Group safe minor and patch workflow updates.
-- Review major workflow-action upgrades separately.
-- Do not add historical course directories to `.github/dependabot.yml`.
+The repository keeps a path-naming pull-request check because naming consistency is an active structural rule. That workflow should be updated manually only when necessary.
 
 ## Historical manifests
 
-Package manifests and lockfiles may remain when they are useful for understanding the original course setup. During repository cleanup, they may be removed when they are redundant, generated, copied, or no longer useful.
+A package manifest or lockfile may remain when it helps explain the original learning environment. Its presence does not mean that:
 
-For each historical project, choose one of these actions:
+- the project installs successfully on a current runtime;
+- the dependencies are secure or supported;
+- the example is suitable for deployment;
+- the repository owner promises upgrades or fixes.
 
-- Keep it as a learning reference with no update promise.
-- Preserve only notes and original exercises, then remove obsolete manifests and lockfiles.
-- Remove exact duplicates, generated files, and copied third-party distributions.
-- Promote it to Active only after adding supported runtimes, reproducible lockfiles, build checks, and tests.
+Do not deploy or reuse a historical example without a fresh dependency, runtime, licensing, security, and test review.
 
-## Repository settings
+## Dependency alerts
 
-To eliminate npm security-update PRs, keep npm ecosystems out of `.github/dependabot.yml`.
+A vulnerable package inside an undeployed historical example is not an active production exposure in this repository. Alerts may be dismissed as **not used** or **tolerable risk** when that description is accurate.
 
-GitHub dependency-graph alerts are controlled separately under **Settings → Advanced Security**. Alerts for undeployed historical examples can be dismissed individually with the appropriate reason, or Dependabot alerts can be disabled for the repository if no dependency monitoring is desired.
+Repository-level Dependabot alerts may also be disabled if they produce noise without informing an active project decision.
+
+## Promoting a project to Active
+
+Dependency automation should return only after a specific project is deliberately promoted to Active and receives:
+
+1. A supported runtime and toolchain.
+2. A reproducible lockfile.
+3. Build and test validation.
+4. Security and licensing review.
+5. A named maintenance owner.
+6. An explicit deployment or ongoing-learning purpose.
+
+Until then, historical projects are preserved as learning evidence with no update promise.

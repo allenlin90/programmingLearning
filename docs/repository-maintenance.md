@@ -1,115 +1,87 @@
 # Repository Maintenance
 
-This document defines how the learning archive should be maintained without losing useful history.
+This document defines the maintenance policy for a historical learning archive with a small number of active study tracks.
 
-See [Path naming conventions](./path-naming-conventions.md) for the staged kebab-case migration policy.
+See [Archive inventory](./archive-inventory.md) for the top-level classification and [Path naming conventions](./path-naming-conventions.md) for naming rules.
 
-## Current condition
+## Repository model
 
-The repository has grown over several years and contains:
+This repository is not a maintained application portfolio or a multi-project production monorepo. Most contained projects are historical course snapshots, exercises, or notes. They may use obsolete runtimes, unsupported frameworks, vulnerable dependencies, or copied teaching assets.
 
-- Active notes and current study tracks.
-- Historical course notes and exercises.
-- Many standalone JavaScript projects with independent dependency manifests.
-- Starting, intermediate, and final course snapshots that duplicate substantial code.
-- Old package manifests that may reference unsupported or vulnerable dependencies.
-- Generated or local files that should not be added again.
+The maintenance objective is limited to:
 
-GitHub currently reports the repository at roughly 622 MB. The goal is not to make every historical project runnable. The goal is to keep the archive navigable, preserve high-value learning evidence, and reduce unnecessary maintenance and storage.
+1. Keep active study tracks easy to find.
+2. Preserve meaningful personal learning evidence.
+3. Prevent generated files, secrets, and naming drift.
+4. Avoid automation that implies support for historical projects.
+5. Make destructive cleanup evidence-based and reviewable.
 
 ## Classification model
 
-Each top-level course or project should eventually receive one status:
-
 | Status | Meaning | Default action |
 |---|---|---|
-| Active | Currently maintained or used for study | Keep and validate |
-| Reference | Notes remain useful, but code is not actively maintained | Keep notes; minimize project copies |
-| Historical | Preserved as learning history | Keep selectively; add an archive notice |
-| Duplicate | Starting/final copies or repeated course assets | Keep the most useful representative version |
+| Active | Currently used for structured study | Maintain documentation and validate relevant artifacts |
+| Reference | Useful notes or examples with no support promise | Preserve and review before reuse |
+| Historical | Course work or snapshots retained as learning evidence | Preserve as-is unless clearly generated or duplicated |
+| Duplicate | Verified equivalent content | Keep the most useful representative copy |
 | Generated | Dependencies, build output, caches, logs | Remove from Git tracking |
-| External material | Unmodified or lightly modified course distribution | Prefer links or a concise index over copied content |
+| External material | Third-party course distribution or copied assets | Retain only when appropriate; prefer source links for new work |
 
-## Package policy
+## Dependency stance
 
-A `package.json` inside a historical exercise does not imply ongoing maintenance.
+A historical `package.json`, lockfile, or manifest records the original learning environment. It does not imply that the project is supported, safe, deployable, or expected to install today.
 
-For each project:
+- Do not run automated dependency updates against archived projects.
+- Do not perform repository-wide dependency modernization.
+- Do not treat dependency alerts in undeployed historical exercises as active production exposure.
+- Promote a project to Active only after an explicit runtime, dependency, test, security, and ownership review.
+- Never commit dependency directories, build output, caches, logs, secrets, or local environment files.
 
-1. Keep the manifest only when the code example is worth preserving or running.
-2. Add a local README when the setup or historical context is not obvious.
-3. Do not perform repository-wide dependency upgrades across unrelated course projects.
-4. Do not run automated dependency update bots against the entire archive.
-5. Remove lockfiles when reproducibility is no longer a goal and the project is explicitly historical.
-6. Never commit `node_modules`, build output, caches, logs, or secrets.
+## Completed archive cleanup
 
-## Cleanup phases
+- [x] Replaced the original course index with an archive-oriented root README.
+- [x] Linked current AI and CCAR-F study tracks.
+- [x] Added archive, dependency, and naming policies.
+- [x] Strengthened `.gitignore` for generated and local content.
+- [x] Removed known debug logs and obsolete repository artifacts.
+- [x] Migrated user-defined paths to kebab-case.
+- [x] Added a pull-request check to prevent new naming drift.
+- [x] Removed automated npm updates for historical projects.
+- [x] Removed remaining Dependabot workflow updates because the repository has no supported deployment surface.
+- [x] Added a top-level archive inventory and disposition record.
+- [x] Explicitly declined broad modernization and Git-history rewriting.
 
-### Phase 1 — Navigation and policy
+## Retained automation
 
-- [x] Replace the outdated root course index with a current repository overview.
-- [x] Strengthen `.gitignore` for common generated files.
-- [x] Establish classification and deletion rules.
-- [x] Merge the CCAR-F study workspace.
-- [x] Establish dependency-maintenance policy.
-- [ ] Complete the staged kebab-case path migration.
+The only repository-level maintenance automation that should remain is the pull-request path-naming check. It enforces an active repository convention without attempting to maintain historical project dependencies.
 
-### Phase 2 — Inventory
+## Safe deletion rules
 
-Create a reviewable inventory containing:
+A future deletion should satisfy at least one of these conditions:
 
-- Top-level path.
-- Approximate size.
-- Last meaningful update.
-- Number of package manifests and lockfiles.
-- Whether the content is primarily notes, original exercises, or copied course material.
-- Proposed status and action.
-- Proposed kebab-case path and collision status.
+- The content is generated output or a local environment artifact.
+- The content is accidental and has no learning value.
+- The content is verified as an exact duplicate.
+- The content should not be retained for licensing, privacy, or security reasons.
 
-No large deletion or rename should happen before its inventory is reviewed.
-
-### Phase 3 — Safe mechanical cleanup
-
-Remove only clearly generated or accidental content:
-
-- Tracked dependency directories.
-- Build and coverage output.
-- IDE/OS files.
-- Debug logs and caches.
-- Exact duplicate folders such as accidental `copy` directories, after comparison.
-
-### Phase 4 — Historical course consolidation
-
-For courses containing many starting/intermediate/final snapshots:
-
-1. Preserve the user's notes and meaningful original exercises.
-2. Select one representative runnable project only when it still has learning value.
-3. Replace redundant snapshots with an archive README describing the course and retained evidence.
-4. Move unusually large third-party assets out of the active repository or remove them when they can be obtained from the original source.
-
-### Phase 5 — Git-history optimization
-
-Deleting files in a normal commit does not reduce existing clone history. After the working tree is cleaned and verified, evaluate a separate history rewrite using `git filter-repo`.
-
-A history rewrite must be treated as a standalone migration because it changes commit hashes and requires force-pushing and fresh clones.
+Do not delete material merely because it is old, does not build, or contains obsolete dependencies.
 
 ## Pull-request rules
 
-- Separate policy/navigation changes from destructive cleanup.
-- List every removed or renamed top-level path in the PR description.
-- Prefer one topic or course family per cleanup or rename PR.
-- Preserve recoverability through Git history until any deliberate history rewrite.
-- Use draft PRs for cleanup proposals until the retained content has been reviewed.
-- Update links, imports, scripts, manifests, workflows, and dependency-monitoring paths in the same PR as a rename.
+- Keep structural changes small and reviewable.
+- List every removed or renamed top-level path.
+- Preserve personal notes and original exercises by default.
+- Update links, imports, scripts, workflows, and documentation in the same change as a rename.
+- Use a separate, explicitly approved migration for any Git-history rewrite.
 
 ## Definition of done
 
-The repository is considered clean enough for active study when:
+The archive is clean enough for continued study when:
 
-- The root README clearly points to active study tracks.
-- New work has an obvious location and status.
-- Historical projects are not mistaken for maintained applications.
-- Generated content is excluded.
-- User-defined paths follow the kebab-case policy.
-- Large duplicated course snapshots have a reviewed disposition.
-- Repository size and clone cost are understood, even if historical reduction is deferred.
+- Active tracks are prominent and correctly linked.
+- Historical projects are clearly identified as unsupported.
+- Dependency-update automation does not target archived content.
+- Generated content is ignored and known accidental artifacts are removed.
+- User-defined paths follow the kebab-case convention.
+- Retained historical content has an explicit preservation policy.
+- No broad deletion or history rewrite is presented as required maintenance.
