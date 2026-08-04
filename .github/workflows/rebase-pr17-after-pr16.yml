@@ -1,0 +1,52 @@
+name: Rebase PR 17 after PR 16
+
+on:
+  push:
+    branches:
+      - agent/kebab-case-whole-repo
+    paths:
+      - .github/rebase-pr17-trigger.txt
+
+permissions:
+  contents: write
+
+jobs:
+  rebase:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: agent/kebab-case-whole-repo
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch updated master
+        run: git fetch origin master
+
+      - name: Verify PR 16 content is preserved
+        run: |
+          test -f ai/ai-engineer-core-track-llm-engineering-rag-qlora-agents/README.md
+          test ! -e ai/ai_engineer_core_track_llm_engineering_rag_qlora_agents/README.md
+
+      - name: Create resolved merge commit
+        shell: bash
+        run: |
+          head_sha=$(git rev-parse HEAD)
+          master_sha=$(git rev-parse origin/master)
+
+          rm -f .github/workflows/rebase-pr17-after-pr16.yml
+          rm -f .github/rebase-pr17-trigger.txt
+          git add -A
+
+          tree_sha=$(git write-tree)
+          commit_sha=$(printf '%s\n' "chore: reconcile whole-repository migration with PR 16" | git commit-tree "$tree_sha" -p "$head_sha" -p "$master_sha")
+
+          git reset --hard "$commit_sha"
+          git push origin HEAD:agent/kebab-case-whole-repo
