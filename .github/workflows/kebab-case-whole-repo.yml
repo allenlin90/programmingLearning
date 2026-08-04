@@ -237,12 +237,17 @@ jobs:
           See [the complete old-to-new path map](./kebab-case-path-map.csv).
           EOF
 
-      - name: Validate complete repository
-        run: |
-          python tools/kebab-case-migration.py check
-          git add -A
-          git diff --cached --check
-          test -s docs/migrations/kebab-case-path-map.csv
+      - name: Stage repository migration
+        run: git add -A
+
+      - name: Validate path compliance
+        run: python tools/kebab-case-migration.py check
+
+      - name: Validate staged changes
+        run: git diff --cached --check
+
+      - name: Validate migration report
+        run: test -s docs/migrations/kebab-case-path-map.csv
 
       - name: Remove one-time automation
         run: |
