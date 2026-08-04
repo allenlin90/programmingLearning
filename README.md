@@ -18,15 +18,15 @@ This repository started in 2020 during a career transition into software enginee
 
 | Area | Contents |
 |---|---|
-| [`ai/`](./ai/) | AI engineering, LLMs, RAG, agents, and certification study |
-| [`javascript/`](./javascript/) | JavaScript, TypeScript, React, Vue, Node.js, and related course work |
-| [`serverAndBackend/`](./serverAndBackend/) | Backend engineering, Docker, Kubernetes, Linux, APIs, and cloud |
-| [`database/`](./database/) | SQL, Elasticsearch, and database exercises |
-| [`dataScience/`](./dataScience/) | Machine learning and data-science material |
-| [`webDesign/`](./webDesign/) | HTML, CSS, Sass, layouts, and design exercises |
-| [`mobileApp/`](./mobileApp/) | Flutter, PWA, and mobile-related material |
-| [`csGeneral/`](./csGeneral/) | Computer-science fundamentals, algorithms, and interview preparation |
-| [`journal/`](./journal/) | Historical learning journal, events, and posts |
+| [`ai/`](./ai) | AI engineering, LLMs, RAG, agents, and certification study |
+| [`javascript/`](./javascript) | JavaScript, TypeScript, React, Vue, Node.js, and related course work |
+| [`serverAndBackend/`](./server-and-backend) | Backend engineering, Docker, Kubernetes, Linux, APIs, and cloud |
+| [`database/`](./database) | SQL, Elasticsearch, and database exercises |
+| [`dataScience/`](./data-science) | Machine learning and data-science material |
+| [`webDesign/`](./web-design) | HTML, CSS, Sass, layouts, and design exercises |
+| [`mobileApp/`](./mobile-app) | Flutter, PWA, and mobile-related material |
+| [`csGeneral/`](./cs-general) | Computer-science fundamentals, algorithms, and interview preparation |
+| [`journal/`](./journal) | Historical learning journal, events, and posts |
 | Other language folders | Python, PHP, Go, C++, and older exploratory material |
 
 ## Content status

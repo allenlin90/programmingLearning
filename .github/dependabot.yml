@@ -3,8 +3,8 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directories:
-      - "/javascript/nodeJS/nestJSTheCompleteDeveloperGuide/10-custom_data_serialization"
-      - "/javascript/nodeJS/nestJSTheCompleteDeveloperGuide/vehicle_report_project"
+      - "/javascript/node-js/nest-js-the-complete-developer-guide/10-custom-data-serialization"
+      - "/javascript/node-js/nest-js-the-complete-developer-guide/vehicle-report-project"
     schedule:
       interval: "monthly"
       day: "monday"

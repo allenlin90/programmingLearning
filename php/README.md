@@ -109,7 +109,7 @@
 1. There are 2 types of MySQL can be used on WSL, one is MariaDB, and the other is the version from Ubuntu repository. [https://unix.stackexchange.com/questions/561454/ubuntu-18-04-mysql-installation-error-error-dpkg-dependency-problems-prevent](https://unix.stackexchange.com/questions/561454/ubuntu-18-04-mysql-installation-error-error-dpkg-dependency-problems-prevent)
 1. Modify 2 files `/etc/apt/sources.list` and remove the file in `/etc/apt/sources.list.d/` folder of repository from MariaDB.
 1. PHP problems `The Egulias\EmailValidator\Validation\DNSCheckValidation class requires the Intl extension`. In this case, we can go to `php.ini` which is the PHP configuration can be found in `C:\xampp\php` or checked "config" for `apache` and uncomment `extension=intl` by taking off semi-column `;` at the front.
-    <img src="./images/xampp.PNG">
+    <img src="./images/xampp.png">
 
 
 ### Reference

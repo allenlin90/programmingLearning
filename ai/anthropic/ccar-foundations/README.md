@@ -59,7 +59,7 @@ Finish with a score, confidence adjustment, and next review date.
 
 ## Navigation
 
-- [`ROADMAP.md`](./ROADMAP.md) — four-week learning sequence
+- [`ROADMAP.md`](./roadmap.md) — four-week learning sequence
 - [`references.md`](./references.md) — official Anthropic source index
 - [`notes/prompt-caching.md`](./notes/prompt-caching.md) — first remediation module
 - [`progress/assessment-log.md`](./progress/assessment-log.md) — scores and evidence
