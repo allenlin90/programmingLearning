@@ -244,7 +244,14 @@ jobs:
         run: python tools/kebab-case-migration.py check
 
       - name: Validate staged changes
-        run: git diff --cached --check
+        shell: bash
+        run: |
+          test -n "$(git diff --cached --name-only)"
+          if git diff --cached --name-only --diff-filter=U | grep -q .; then
+            echo "Unresolved merge conflicts detected."
+            git diff --cached --name-only --diff-filter=U
+            exit 1
+          fi
 
       - name: Validate migration report
         run: test -s docs/migrations/kebab-case-path-map.csv
