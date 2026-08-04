@@ -2,12 +2,12 @@
 
 A long-running personal learning archive covering software engineering, web development, infrastructure, data, and AI.
 
-This repository started in 2020 during a career transition into software engineering. It now serves two purposes:
+This repository began in 2020 during a career transition into software engineering. It now has two explicit purposes:
 
-1. Preserve historical learning notes and course exercises.
-2. Maintain active study tracks that are still being developed.
+1. Preserve historical notes, exercises, and course snapshots as learning evidence.
+2. Host a small number of active study tracks.
 
-> Historical material may use outdated frameworks, dependencies, APIs, or practices. Treat course snapshots as archived learning evidence unless a folder is explicitly marked active.
+> Most code in this repository is archival. Historical projects are not maintained, deployed, dependency-patched, or guaranteed to build on current runtimes.
 
 ## Active study tracks
 
@@ -16,40 +16,45 @@ This repository started in 2020 during a career transition into software enginee
 
 ## Repository organization
 
-| Area | Contents |
-|---|---|
-| [`ai/`](./ai) | AI engineering, LLMs, RAG, agents, and certification study |
-| [`javascript/`](./javascript) | JavaScript, TypeScript, React, Vue, Node.js, and related course work |
-| [`serverAndBackend/`](./server-and-backend) | Backend engineering, Docker, Kubernetes, Linux, APIs, and cloud |
-| [`database/`](./database) | SQL, Elasticsearch, and database exercises |
-| [`dataScience/`](./data-science) | Machine learning and data-science material |
-| [`webDesign/`](./web-design) | HTML, CSS, Sass, layouts, and design exercises |
-| [`mobileApp/`](./mobile-app) | Flutter, PWA, and mobile-related material |
-| [`csGeneral/`](./cs-general) | Computer-science fundamentals, algorithms, and interview preparation |
-| [`journal/`](./journal) | Historical learning journal, events, and posts |
-| Other language folders | Python, PHP, Go, C++, and older exploratory material |
+| Area | Status | Contents |
+|---|---|---|
+| [`ai/`](./ai) | Mixed: active and reference | AI engineering, LLMs, RAG, agents, and certification study |
+| [`javascript/`](./javascript) | Historical | JavaScript, TypeScript, React, Vue, Node.js, and related course work |
+| [`server-and-backend/`](./server-and-backend) | Historical | Backend engineering, Docker, Kubernetes, Linux, APIs, and cloud |
+| [`database/`](./database) | Historical | SQL, Elasticsearch, and database exercises |
+| [`data-science/`](./data-science) | Historical | Machine learning and data-science material |
+| [`web-design/`](./web-design) | Historical | HTML, CSS, Sass, layouts, and design exercises |
+| [`mobile-app/`](./mobile-app) | Historical | Flutter, PWA, and mobile-related material |
+| [`cs-general/`](./cs-general) | Historical | Computer-science fundamentals, algorithms, and interview preparation |
+| [`journal/`](./journal) | Historical | Learning journal, events, and posts |
+| Other language folders | Historical | Python, PHP, Go, C++, and older exploratory material |
 
-## Content status
+See [Archive inventory](./docs/archive-inventory.md) for the repository-level classification and retained-content decisions.
 
-Folders generally fall into one of these states:
+## Maintenance stance
 
-- **Active** — currently maintained and used for structured study.
-- **Reference** — useful notes that remain technically relevant.
-- **Historical** — preserved course work or snapshots that may no longer run.
-- **Candidate for archive/removal** — duplicated projects, generated artifacts, or low-value course copies awaiting review.
-
-See [Repository maintenance](./docs/repository-maintenance.md) for cleanup rules and the phased cleanup plan.
-See [Path naming conventions](./docs/path-naming-conventions.md) for the staged kebab-case migration policy.
+- Historical projects are preserved as-is unless an item is clearly generated, accidental, or an exact duplicate.
+- Old dependency manifests do not create a maintenance obligation.
+- Automated dependency updates are disabled for archived course projects and repository workflows.
+- New user-defined paths must use kebab-case; standard ecosystem filenames remain exempt.
+- The pull-request path-naming check remains active to prevent new naming drift.
+- Broad dependency upgrades, repository-wide modernization, and Git-history rewriting are intentionally out of scope.
 
 ## Working conventions
 
-- New structured learning tracks should live under a clear topic path and include a local `README.md`.
-- User-defined directory and file names should use kebab-case; standard tool-discovery filenames are exempt.
-- Prefer notes, architecture diagrams, exercises, and assessment evidence over complete copies of third-party course projects.
-- Do not assume old `package.json` files can be installed safely or successfully.
-- Generated folders and local environment files must not be committed.
-- Destructive cleanup and broad renames should be performed in small pull requests with an inventory of affected paths.
+- Put new structured learning tracks under a clear topic path with a local `README.md`.
+- Prefer notes, architecture diagrams, exercises, and assessment evidence over copied third-party distributions.
+- Do not deploy or reuse historical examples without a fresh security, dependency, runtime, and licensing review.
+- Never commit dependencies, build output, caches, logs, secrets, or local environment files.
+- Use small, reviewable pull requests for future structural changes.
+
+## Documentation
+
+- [Repository maintenance](./docs/repository-maintenance.md)
+- [Dependency policy](./docs/dependency-maintenance.md)
+- [Archive inventory](./docs/archive-inventory.md)
+- [Path naming conventions](./docs/path-naming-conventions.md)
 
 ## Historical context
 
-The original repository documented a transition from operations management into frontend and software engineering beginning in April 2020. The broad range of topics reflects project-driven learning across startups and engineering roles.
+The original repository documented a transition from operations management into frontend and software engineering beginning in April 2020. Its breadth reflects project-driven learning across courses, startups, and engineering roles rather than a maintained application portfolio.
