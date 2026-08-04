@@ -1,59 +1,40 @@
 # Dependency Maintenance
 
-This repository contains many historical course projects. A dependency manifest does not automatically mean that a project is actively maintained.
+This repository is a historical learning archive. None of the contained course projects are deployed, production-supported, or treated as maintained applications.
 
-## Current automated scope
+## Automated scope
 
-Dependabot is intentionally limited to the two most recently maintained runnable NestJS examples:
+Dependabot is intentionally limited to GitHub Actions workflow dependencies.
 
-- `javascript/node-js/nest-js-the-complete-developer-guide/10-custom-data-serialization`
-- `javascript/node-js/nest-js-the-complete-developer-guide/vehicle-report-project`
+npm, Yarn, and other course-project manifests are excluded from automated version-update PRs because they represent historical exercises and snapshots rather than deployed software.
 
-GitHub Actions dependencies are also monitored when workflow files are added.
+## Risk interpretation
+
+- A vulnerable dependency reported inside a historical course manifest does not represent an active production exposure in this repository.
+- Course examples should not be deployed or reused as production systems without a fresh dependency review, lockfile regeneration, tests, and framework migration work.
+- Existing dependency alerts may be dismissed as **not used** or **tolerable risk** when the affected package is only present in an undeployed historical example.
+- A project should receive automated dependency maintenance only after it is explicitly promoted to an Active project.
 
 ## Update policy
 
-- Check for updates monthly on Monday at 09:00 Asia/Bangkok.
-- Group security fixes together where GitHub can resolve them safely.
-- Group minor and patch version updates by dependency name across the monitored projects.
-- Do not automatically propose routine semantic-version major upgrades.
-- Keep security updates visible even when remediation requires a major version; review those changes manually.
-- Review major upgrades separately because NestJS, TypeScript, ESLint, Jest, TypeORM, and related tooling can require coordinated migration work.
-- Add another project to `.github/dependabot.yml` only after it is classified as Active or as a retained runnable Reference project.
-
-The `allow.update-types` rules constrain routine version updates only. They do not suppress Dependabot security updates.
-
-## Lockfile limitation
-
-The monitored projects currently do not contain committed npm lockfiles. Dependabot can update declared versions in `package.json`, but dependency resolution is not reproducible until a lockfile is generated.
-
-Before merging a dependency update:
-
-1. Use a supported Node.js release.
-2. Run `npm install` to generate or refresh `package-lock.json`.
-3. Run `npm run build`.
-4. Run `npm test` and `npm run test:e2e` when the project environment is available.
-5. Review framework migration notes for any major update.
-6. Commit the validated lockfile with the dependency change.
-
-## Security settings
-
-After the configuration reaches the default branch, enable these repository settings under **Settings → Advanced Security**:
-
-- Dependency graph
-- Dependabot alerts
-- Dependabot security updates
-- Grouped security updates
-
-The configuration file controls update behavior, while alerts and security-update enablement are repository settings.
+- Check GitHub Actions dependencies monthly on Monday at 09:00 Asia/Bangkok.
+- Group safe minor and patch workflow updates.
+- Review major workflow-action upgrades separately.
+- Do not add historical course directories to `.github/dependabot.yml`.
 
 ## Historical manifests
 
-Historical course snapshots remain excluded from routine version updates. Their old dependencies should not be interpreted as supported production software.
+Package manifests and lockfiles may remain when they are useful for understanding the original course setup. During repository cleanup, they may be removed when they are redundant, generated, copied, or no longer useful.
 
-For each historical project, choose one of these actions during cleanup:
+For each historical project, choose one of these actions:
 
-- Promote it to Active and add Dependabot coverage.
-- Keep it as Reference with an archive notice and no update promise.
+- Keep it as a learning reference with no update promise.
 - Preserve only notes and original exercises, then remove obsolete manifests and lockfiles.
 - Remove exact duplicates, generated files, and copied third-party distributions.
+- Promote it to Active only after adding supported runtimes, reproducible lockfiles, build checks, and tests.
+
+## Repository settings
+
+To eliminate npm security-update PRs, keep npm ecosystems out of `.github/dependabot.yml`.
+
+GitHub dependency-graph alerts are controlled separately under **Settings → Advanced Security**. Alerts for undeployed historical examples can be dismissed individually with the appropriate reason, or Dependabot alerts can be disabled for the repository if no dependency monitoring is desired.
