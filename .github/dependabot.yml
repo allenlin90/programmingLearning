@@ -1,35 +1,6 @@
 version: 2
 
 updates:
-  - package-ecosystem: "npm"
-    directories:
-      - "/javascript/node-js/nest-js-the-complete-developer-guide/10-custom-data-serialization"
-      - "/javascript/node-js/nest-js-the-complete-developer-guide/vehicle-report-project"
-    schedule:
-      interval: "monthly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Bangkok"
-    open-pull-requests-limit: 5
-    allow:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-minor"
-          - "version-update:semver-patch"
-    groups:
-      security-fixes:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      safe-version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-        group-by: "dependency-name"
-
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
