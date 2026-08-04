@@ -38,15 +38,17 @@ Folders generally fall into one of these states:
 - **Historical** — preserved course work or snapshots that may no longer run.
 - **Candidate for archive/removal** — duplicated projects, generated artifacts, or low-value course copies awaiting review.
 
-See [Repository maintenance](./docs/REPOSITORY_MAINTENANCE.md) for cleanup rules and the phased cleanup plan.
+See [Repository maintenance](./docs/repository-maintenance.md) for cleanup rules and the phased cleanup plan.
+See [Path naming conventions](./docs/path-naming-conventions.md) for the staged kebab-case migration policy.
 
 ## Working conventions
 
 - New structured learning tracks should live under a clear topic path and include a local `README.md`.
+- User-defined directory and file names should use kebab-case; standard tool-discovery filenames are exempt.
 - Prefer notes, architecture diagrams, exercises, and assessment evidence over complete copies of third-party course projects.
 - Do not assume old `package.json` files can be installed safely or successfully.
 - Generated folders and local environment files must not be committed.
-- Destructive cleanup should be performed in small pull requests with an inventory of removed paths.
+- Destructive cleanup and broad renames should be performed in small pull requests with an inventory of affected paths.
 
 ## Historical context
 

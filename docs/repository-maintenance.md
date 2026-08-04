@@ -2,6 +2,8 @@
 
 This document defines how the learning archive should be maintained without losing useful history.
 
+See [Path naming conventions](./path-naming-conventions.md) for the staged kebab-case migration policy.
+
 ## Current condition
 
 The repository has grown over several years and contains:
@@ -48,7 +50,9 @@ For each project:
 - [x] Replace the outdated root course index with a current repository overview.
 - [x] Strengthen `.gitignore` for common generated files.
 - [x] Establish classification and deletion rules.
-- [ ] Merge the CCAR-F study workspace.
+- [x] Merge the CCAR-F study workspace.
+- [x] Establish dependency-maintenance policy.
+- [ ] Complete the staged kebab-case path migration.
 
 ### Phase 2 — Inventory
 
@@ -60,8 +64,9 @@ Create a reviewable inventory containing:
 - Number of package manifests and lockfiles.
 - Whether the content is primarily notes, original exercises, or copied course material.
 - Proposed status and action.
+- Proposed kebab-case path and collision status.
 
-No large deletion should happen before this inventory is reviewed.
+No large deletion or rename should happen before its inventory is reviewed.
 
 ### Phase 3 — Safe mechanical cleanup
 
@@ -91,10 +96,11 @@ A history rewrite must be treated as a standalone migration because it changes c
 ## Pull-request rules
 
 - Separate policy/navigation changes from destructive cleanup.
-- List every removed top-level path in the PR description.
-- Prefer one topic or course family per cleanup PR.
+- List every removed or renamed top-level path in the PR description.
+- Prefer one topic or course family per cleanup or rename PR.
 - Preserve recoverability through Git history until any deliberate history rewrite.
 - Use draft PRs for cleanup proposals until the retained content has been reviewed.
+- Update links, imports, scripts, manifests, workflows, and dependency-monitoring paths in the same PR as a rename.
 
 ## Definition of done
 
@@ -104,5 +110,6 @@ The repository is considered clean enough for active study when:
 - New work has an obvious location and status.
 - Historical projects are not mistaken for maintained applications.
 - Generated content is excluded.
+- User-defined paths follow the kebab-case policy.
 - Large duplicated course snapshots have a reviewed disposition.
 - Repository size and clone cost are understood, even if historical reduction is deferred.
