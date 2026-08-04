@@ -71,7 +71,7 @@ Starting date: [2021-08-30](#2021-08-30)
 
 ## 2021-09-04
 1. FE interview day 4
-   1. How does HTML5 document working offline? [Note](./posts/html_and_css/service_worker_appcache.md)
+   1. How does HTML5 document working offline? [Note](./posts/html-and-css/service-worker-appcache.md)
 2. Review on Vue framework
 3. `props` can be used to communicate from parent to its child component. 
    1. It's an one-way communication only from parent to child. 
@@ -200,7 +200,7 @@ Starting date: [2021-08-30](#2021-08-30)
    1. CSS methods to hide HTML elements on page. [Note](../resource/posts/html_and_css/css_methods_hiding_elements.md)
    2. Create a function which takes 2 arguments (string and character) to remove the last character in the string from the given argument. 
 2. Add `auth` module in NuxtJS when developing [MakeSend Driver Web](https://driver-webapp.makesend.asia/) with Vue framework. [Notes](../resource/posts/nuxt/auth_module.md)
-3. [Review Vue notes](../javascript/vueTheCompleteGuide/README.md)
+3. [Review Vue notes](../javascript/vue-the-complete-guide/README.md)
    1. `ref` attribute can be given to an element in vue, so it can be accessed with `this.$refs[ref_name]`.
    2. Vue app has multiple stages in its lifecycle since it's created and unmounted from the screen.
    3. Components can help Vue app manage and reduce repetitive code. A component can be reused in similar context and conditions.
@@ -212,8 +212,8 @@ Starting date: [2021-08-30](#2021-08-30)
 1. Explain and realize "Holy Grail" and "Double Wing" layout with HTML and CSS. [Notes](../resource/posts/html_and_css/holy_grail_double_wing_layout.md)
 
 ## 2021-09-01
-1. Declare a recursive function which creates an array of 5 unique random integers in a given range (inclusive). [Solution](../sandbox/javascriptPractice/recursiveFiveRandomNumberInArray.js)
-2. [Review Vue notes](../javascript/vueTheCompleteGuide/README.md)
+1. Declare a recursive function which creates an array of 5 unique random integers in a given range (inclusive). [Solution](../sandbox/javascript-practice/recursive-five-random-number-in-array.js)
+2. [Review Vue notes](../javascript/vue-the-complete-guide/README.md)
    1. Section 1 
       1. `computed` property is called by Vue, so we don't call the function directly. 
       2. The value returned by functions in `computed` only changes when the related state is updated.
@@ -262,7 +262,7 @@ Starting date: [2021-08-30](#2021-08-30)
 1. Happy Birthday
 2. FE interview day 1
    1. [Link](../posts/html_and_css/link_tag_and_@import.md) - Difference between using `link` tag in HTML and `@import` in CSS.
-3. [Review Vue notes Section 1](../javascript/vueTheCompleteGuide/README.md)
+3. [Review Vue notes Section 1](../javascript/vue-the-complete-guide/README.md)
    1. `v-once` can be used to works with the view only when the page is firstly rendered.
    2. `v-html` can inject raw HTML elements while it's not recommeded to prevent XSS attack.
    3. `v-bind` can work with a HTML attribute dynamically, such as `value`,  and `v-on` to bind with event handler.

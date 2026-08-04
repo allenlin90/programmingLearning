@@ -66,12 +66,12 @@
         });
         ```
 1. When setting cookies from server-side, we can check in the developer console
-    <img src="./images/cookies_setCookiesFromServer.png">
+    <img src="./images/cookies-set-cookies-from-server.png">
 
 ## 1.2. Cookie Properties
 1. Cookies are sent with every request.
     1. We can check the details in "Cookie" > "request" > "Network" in developer console.
-        <img src="./images/cookies_requestWithAllCookies.png">
+        <img src="./images/cookies-request-with-all-cookies.png">
     1. We if clear the cookies of a domain bucket, no "Cookie" property will be in the header when sending requests.
 
 ### 1.2.1. Cookies Scope
@@ -226,7 +226,7 @@
         1. Authorization
         1. User-Agent
         1. Referrer
-    <img src="./images/httpHeaderFields.PNG">
+    <img src="./images/http-header-fields.png">
 1. HTTP status codes 
     1. 1xx: Informational - Request recieved / processing
     1. 2xx: Success - Successfully recieved, understood and accepted
@@ -267,9 +267,9 @@
     });
     ```
 1. We can use POSTMAN to simulate the POST request. In the `body` tag, we can choose `x-www-form-urlencoded` to send key/value pairs, as to simulate sending the data from a `<form>` element from HTML. For example, we pass `name: Allen` and `email: apple@gmail.com`. 
-    <img src="./images/x-www-form-urlencodedPOSTReq.PNG">
+    <img src="./images/x-www-form-urlencoded-post-req.png">
 1. Note that POSTMAN will add `content-type` automatically in the header info. 
-    <img src="./images/x-www-form-urlencodedHeader.PNG">
+    <img src="./images/x-www-form-urlencoded-header.png">
 1. Therefore, if we modify the property of `req.body` to `req.body.name`, we will get only `Allen` from the `name` key. Besides, we can also change the data to be sent on the page when the request is successful. 
     ```js 
     app.post('/contact', (req, res) => {
@@ -305,7 +305,7 @@
     });
     ```
 1. Therefore, we can use POSTMAN to test the endpoint. If we pass `x-auth-token` the same as it required at the end-opoint, we can get access to the service and get the last statement as `Logged in`.
-    <img src="./images/x-auth-token.PNG">
+    <img src="./images/x-auth-token.png">
 1. Simulate a `PUT` request for editing a blog post. 
     ```js 
     app.put('/post/:id', (req, res) => {
@@ -315,7 +315,7 @@
         });
     });
     ```
-    <img src="./images/JSONPutReq.PNG">
+    <img src="./images/json-put-req.png">
 1. Simluate `DELETE` request for deleting a blog post. 
     ```js
     app.delete('/post/:id', (req, res) => {
@@ -324,7 +324,7 @@
         });
     });
     ```
-    <img src="./images/JSONDeleteReq.PNG">
+    <img src="./images/json-delete-req.png">
 
 ### 2.0.4. Use express to create a static HTML website
 1. With `app.use(express.static('public'))`, we can create `public` folder in the root directory and creates a static HTML file `index.js`. Therefore, users use GET request to access the root directory will get teh HTML file returend. Besides, we can put other JavaScript script code and CSS file in the `public` folder and imported to use in the HTML file. 

@@ -6,8 +6,8 @@ This repository contains many historical course projects. A dependency manifest 
 
 Dependabot is intentionally limited to the two most recently maintained runnable NestJS examples:
 
-- `javascript/nodeJS/nestJSTheCompleteDeveloperGuide/10-custom_data_serialization`
-- `javascript/nodeJS/nestJSTheCompleteDeveloperGuide/vehicle_report_project`
+- `javascript/node-js/nest-js-the-complete-developer-guide/10-custom-data-serialization`
+- `javascript/node-js/nest-js-the-complete-developer-guide/vehicle-report-project`
 
 GitHub Actions dependencies are also monitored when workflow files are added.
 
