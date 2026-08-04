@@ -12,7 +12,7 @@ This repository started in 2020 during a career transition into software enginee
 ## Active study tracks
 
 - [Anthropic Claude Certified Architect — Foundations](./ai/anthropic/ccar-foundations/README.md)
-- [AI Engineer Core Track](./ai/ai_engineer_core_track_llm_engineering_rag_qlora_agents/README.md)
+- [AI Engineer Core Track](./ai/ai-engineer-core-track-llm-engineering-rag-qlora-agents/README.md)
 
 ## Repository organization
 
