@@ -1,9 +1,13 @@
 name: Whole repository kebab-case migration
 
 on:
-  push:
+  pull_request:
     branches:
-      - agent/kebab-case-whole-repo
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
   workflow_dispatch:
 
 permissions:
@@ -11,15 +15,19 @@ permissions:
 
 jobs:
   migrate:
-    if: github.actor != 'github-actions[bot]'
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.head.ref == 'agent/kebab-case-whole-repo') &&
+      github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 120
 
     steps:
-      - name: Check out repository
+      - name: Check out migration branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: agent/kebab-case-whole-repo
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -236,8 +244,10 @@ jobs:
           git diff --cached --check
           test -s docs/migrations/kebab-case-path-map.csv
 
-      - name: Remove one-time workflow
-        run: rm .github/workflows/kebab-case-whole-repo.yml
+      - name: Remove one-time automation
+        run: |
+          rm -f .github/workflows/kebab-case-whole-repo.yml
+          rm -f .github/kebab-case-trigger.txt
 
       - name: Commit migration
         run: |
