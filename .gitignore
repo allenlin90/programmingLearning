@@ -3,11 +3,8 @@ node_modules/
 bower_components/
 vendor/
 
-# Dependency locks in this archive
-# Historical lockfiles already committed remain tracked until explicitly removed.
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+# Lockfiles are intentionally trackable for reproducible active projects.
+# Remove historical lockfiles explicitly during reviewed archive cleanup.
 
 # Build and generated output
 dist/
